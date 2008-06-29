@@ -41,7 +41,7 @@ class HallMeasurement(ProcessOrMeasurement):
 
 class SixChambersLayer(models.Model):
     models.IntegerField(primary_key=True)
-    sample = models.ForeignKey(SixChambersDeposition)
+    deposition = models.ForeignKey(SixChambersDeposition)
     pressure = models.CharField(max_length=15, help_text="with unit")
     time = models.TimeField()
     substrate_electrode_distance = models.FloatField(null=True, blank=True, help_text=u"in mm")
@@ -75,6 +75,7 @@ class SixChambersChannel(models.Model):
 
 class Sample(models.Model):
     name = models.CharField(max_length=30, primary_key=True)
+    current_place = models.CharField(max_length=50)
     origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="origin")
     processes_and_measurements = models.ManyToManyField(ProcessOrMeasurement, null=True, blank=True)
     def __unicode__(self):
