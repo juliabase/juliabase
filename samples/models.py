@@ -12,7 +12,7 @@ class Operator(models.Model):
     class Admin:
         pass
 
-class ProcessOrMeasurement(models.Model):
+class Process(models.Model):
     timestamp = models.DateTimeField()
     operator = models.ForeignKey(Operator)
     # `name` needn't be unique!  Just a descriptive way like ``"deposition"``
@@ -24,7 +24,7 @@ class ProcessOrMeasurement(models.Model):
     class Admin:
         pass
 
-class SixChambersDeposition(ProcessOrMeasurement):
+class SixChambersDeposition(Process):
     run_title = models.CharField(max_length=15, unique=True)
     carrier = models.CharField(max_length=10)
     comments = models.TextField(blank=True)
@@ -33,7 +33,7 @@ class SixChambersDeposition(ProcessOrMeasurement):
     class Admin:
         pass
 
-class HallMeasurement(ProcessOrMeasurement):
+class HallMeasurement(Process):
     def __unicode__(self):
         return "%s" % (self.name)
     class Admin:
@@ -47,8 +47,8 @@ class SixChambersLayer(models.Model):
     substrate_electrode_distance = models.FloatField(null=True, blank=True, help_text=u"in mm")
     comments = models.TextField(blank=True)
     transfer_in_chamber = models.CharField(max_length=10, default="Ar")
-    pre_heat = models.CharField(max_length=10, null=True, blank=True)  # FixMe: No idea what this is
-    argon_pre_heat = models.CharField(max_length=10, null=True, blank=True)  # FixMe: No idea what this is
+    pre_heat = models.TimeField(null=True, blank=True)
+    argon_pre_heat = models.TimeField(null=True, blank=True)
     heating_temperature = models.FloatField(help_text=u"in ℃")
     transfer_out_of_chamber = models.CharField(max_length=10, default="Ar")
     plasma_start_power = models.FloatField(help_text=u"in W")
@@ -74,16 +74,16 @@ class SixChambersChannel(models.Model):
         pass
 
 class Sample(models.Model):
-    name = models.CharField(max_length=30, primary_key=True)
-    current_place = models.CharField(max_length=50)
-    origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="origin")
-    processes_and_measurements = models.ManyToManyField(ProcessOrMeasurement, null=True, blank=True)
+    name = models.SlugField(max_length=30, primary_key=True)
+    current_location = models.CharField(max_length=50)
+    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="origin")
+    processes = models.ManyToManyField(Process, null=True, blank=True)
     def __unicode__(self):
         return self.name
     class Admin:
         pass
 
-class SampleSplit(ProcessOrMeasurement):
+class SampleSplit(Process):
     parent = models.ForeignKey(Sample)  # for a fast lookup
     def __unicode__(self):
         return "%s" % (self.name)
