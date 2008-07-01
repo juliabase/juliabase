@@ -15,10 +15,8 @@ class Operator(models.Model):
 class Process(models.Model):
     timestamp = models.DateTimeField()
     operator = models.ForeignKey(Operator)
-    # `name` needn't be unique!  Just a descriptive way like ``"deposition"``
-    name = models.CharField(max_length=30)
     def __unicode__(self):
-        return "%s #%d" % (self.name, self.id)
+        return "Process #%d" % self.id
     class Meta:
         ordering = ['timestamp']
     class Admin:
@@ -29,7 +27,7 @@ class SixChambersDeposition(Process):
     carrier = models.CharField(max_length=10)
     comments = models.TextField(blank=True)
     def __unicode__(self):
-        return "%s %s" % (self.name, self.run_title)
+        return "6-Kammer-Deposition " + self.run_title
     class Admin:
         pass
 
@@ -76,7 +74,7 @@ class SixChambersChannel(models.Model):
 class Sample(models.Model):
     name = models.SlugField(max_length=30, primary_key=True)
     current_location = models.CharField(max_length=50)
-    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="origin")
+    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="split_origin")
     processes = models.ManyToManyField(Process, null=True, blank=True)
     def __unicode__(self):
         return self.name
