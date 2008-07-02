@@ -27,7 +27,7 @@ class SixChamberDeposition(Process):
     carrier = models.CharField(max_length=10)
     comments = models.TextField(blank=True)
     def __unicode__(self):
-        return "6-Kammer-Deposition " + self.deposition_number
+        return "6-chamber deposition " + self.deposition_number
     class Admin:
         pass
 
@@ -39,7 +39,7 @@ class HallMeasurement(Process):
 
 class SixChamberLayer(models.Model):
     number = models.IntegerField()
-    chamber = models.CharField(max_length=30)  # FixMe: Activate choices
+    chamber = models.IntegerField()
     deposition = models.ForeignKey(SixChamberDeposition)
     pressure = models.CharField(max_length=15, help_text="with unit")
     time = models.TimeField()
