@@ -22,12 +22,12 @@ class Process(models.Model):
     class Admin:
         pass
 
-class SixChambersDeposition(Process):
-    run_title = models.CharField(max_length=15, unique=True)
+class SixChamberDeposition(Process):
+    deposition_number = models.CharField(max_length=15, primary_key=True)
     carrier = models.CharField(max_length=10)
     comments = models.TextField(blank=True)
     def __unicode__(self):
-        return "6-Kammer-Deposition " + self.run_title
+        return "6-Kammer-Deposition " + self.deposition_number
     class Admin:
         pass
 
@@ -37,9 +37,10 @@ class HallMeasurement(Process):
     class Admin:
         pass
 
-class SixChambersLayer(models.Model):
-    models.IntegerField(primary_key=True)
-    deposition = models.ForeignKey(SixChambersDeposition)
+class SixChamberLayer(models.Model):
+    number = models.IntegerField()
+    chamber = models.CharField(max_length=30)  # FixMe: Activate choices
+    deposition = models.ForeignKey(SixChamberDeposition)
     pressure = models.CharField(max_length=15, help_text="with unit")
     time = models.TimeField()
     substrate_electrode_distance = models.FloatField(null=True, blank=True, help_text=u"in mm")
@@ -51,23 +52,27 @@ class SixChambersLayer(models.Model):
     transfer_out_of_chamber = models.CharField(max_length=10, default="Ar")
     plasma_start_power = models.FloatField(help_text=u"in W")
     plasma_start_with_carrier = models.BooleanField(default=False)
-    deposition_frequence = models.FloatField(help_text=u"in MHz")
+    deposition_frequency = models.FloatField(help_text=u"in MHz")
     deposition_power = models.FloatField(help_text=u"in W")
     base_pressure = models.FloatField(help_text=u"in Torr")
     def __unicode__(self):
         return str(self.number)
+    class Meta:
+        ordering = ['number']
     class Admin:
         pass
 
-class SixChambersChannel(models.Model):
-    layer = models.ForeignKey(SixChambersLayer)
-    number = models.IntegerField(primary_key=True)
+class SixChamberChannel(models.Model):
+    layer = models.ForeignKey(SixChamberLayer)
+    number = models.IntegerField()
     gas = models.CharField(max_length=10)
     diluted_in = models.CharField(max_length=10, null=True, blank=True)
     concentration = models.FloatField(null=True, blank=True, help_text="in percent")
     flow_rate = models.FloatField(help_text="in sccm")
     def __unicode__(self):
         return str(self.number)
+    class Meta:
+        ordering = ['number']
     class Admin:
         pass
 
