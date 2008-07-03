@@ -1,13 +1,13 @@
+{% load i18n %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE|default:"en" }}" xml:lang="{{ LANGUAGE_CODE|default:"en" }}">
 <head>
 <title>{% block title %}{{ title|escape }}{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="/static_media/css/main.css" />
 </head>
-{% load i18n %}
 
 <body>
-  <img class="logo" src="/static_media/juelich.png" />
+  <p style="margin:0pt"><img class="logo" src="/static_media/juelich.png" alt="Jülich Forschungszentrum logo"/></p>
   <p class="logo-text">Chantal</p>
   <p class="logo-subtext">{% trans 'The samples database' %}</p>
 
