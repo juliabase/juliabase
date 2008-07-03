@@ -16,14 +16,14 @@ class Process(models.Model):
     timestamp = models.DateTimeField()
     operator = models.ForeignKey(Operator)
     def __unicode__(self):
-        return "Process #%d" % self.id
+        return unicode(find_actual_process(self))
     class Meta:
         ordering = ['timestamp']
     class Admin:
         pass
 
 class SixChamberDeposition(Process):
-    deposition_number = models.CharField(max_length=15, primary_key=True)
+    deposition_number = models.CharField(max_length=15, unique=True)
     carrier = models.CharField(max_length=10)
     comments = models.TextField(blank=True)
     def __unicode__(self):
@@ -56,7 +56,7 @@ class SixChamberLayer(models.Model):
     deposition_power = models.FloatField(help_text=u"in W")
     base_pressure = models.FloatField(help_text=u"in Torr")
     def __unicode__(self):
-        return str(self.number)
+        return u"layer %d of %s" % (self.number, self.deposition)
     class Meta:
         ordering = ['number']
     class Admin:
@@ -70,7 +70,7 @@ class SixChamberChannel(models.Model):
     concentration = models.FloatField(null=True, blank=True, help_text="in percent")
     flow_rate = models.FloatField(help_text="in sccm")
     def __unicode__(self):
-        return str(self.number)
+        return u"channel %d of %s" % (self.number, self.layer)
     class Meta:
         ordering = ['number']
     class Admin:
@@ -93,3 +93,12 @@ class SampleSplit(Process):
     class Admin:
         pass
 
+import copy, inspect
+_globals = copy.copy(globals())
+process_types = [cls.__name__.lower() for cls in _globals.values()
+                 if inspect.isclass(cls) and issubclass(cls, Process)]
+del _globals, cls
+def find_actual_process(process):
+    for process_type in process_types:
+        if hasattr(process, process_type):
+            return getattr(process, process_type)
