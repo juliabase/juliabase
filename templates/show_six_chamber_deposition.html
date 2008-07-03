@@ -16,12 +16,12 @@
   {% for layer in process.sixchamberlayer_set.all %}
   <tr>
     <td style="border-style: solid; border-color: black; border-width: thin">
-      <table width="100%">
+      <table width="100%" border="1">
 	<tr>
 	  <td>
 	    <table width="100%">
 	      <tr>
-		<td style="vertical-align: top; width: 7em; text-align: right">
+		<td style="vertical-align: top; text-align: right; width: 16.66%">
 		  <div 
 		    style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
 			   margin-left: 0.3em;
@@ -29,15 +29,15 @@
 			   border-color: black; float:right">{{ layer.number }}</div>
 		  <div>{% trans 'Layer number:' %}</div>
 		</td>
-		<td style="vertical-align: top; padding-left: 2em">
+		<td style="vertical-align: top; width: 16.66%">
 		  <span class="label">{% trans 'Chamber:' %}</span><span class="value">#{{ layer.chamber }}</span>
 		</td>
-		<td>
-		  <table width="100%">
+		<td style="width: 66.66%">
+		  <table width="100%" border="1">
 		    <tr>
-		      <td class="label">{% trans 'Transfer in the chamber:' %}</td>
-		      <td class="value">{{ layer.transfer_in_chamber }}</td>
-		      <td class="label">{% trans 'Plasma start power:' %}</td>
+		      <td class="label" style="width: 33.33%">{% trans 'Transfer in the chamber:' %}</td>
+		      <td class="value" style="width: 16.66%">{{ layer.transfer_in_chamber }}</td>
+		      <td class="label" style="width: 33.33%">{% trans 'Plasma start power:' %}</td>
 		      <td class="value">{{ layer.plasma_start_power|quantity:"W" }}</td>
 		    </tr>
 		    <tr>
@@ -60,14 +60,14 @@
 	</tr>
 	<tr>
 	  <td>
-	    <table width="100%">
+	    <table width="100%" border="1">
 	      <tr>
-		<td class="label">{% trans 'Deposition pressure:' %}</td>
-		<td class="value">{{ layer.pressure }}</td>
-		<td class="label">{% trans 'Heating temperature:' %}</td>
-		<td class="value">{{ layer.heating_temperature|quantity:"℃" }}</td>
-		<td class="label">{% trans 'Deposition power:' %}</td>
-		<td class="value">{{ layer.deposition_power|quantity:"W" }}</td>
+		<td class="label" style="width: 22.22%">{% trans 'Deposition pressure:' %}</td>
+		<td class="value" style="width: 11.11%">{{ layer.pressure }}</td>
+		<td class="label" style="width: 22.22%">{% trans 'Heating temperature:' %}</td>
+		<td class="value" style="width: 11.11%">{{ layer.heating_temperature|quantity:"℃" }}</td>
+		<td class="label" style="width: 22.22%">{% trans 'Deposition power:' %}</td>
+		<td class="value" style="width: 11.11%">{{ layer.deposition_power|quantity:"W" }}</td>
 	      </tr>
 	      <tr>
 		<td class="label">{% trans 'Deposition time:' %}</td>
