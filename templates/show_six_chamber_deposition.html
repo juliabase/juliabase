@@ -1,0 +1,130 @@
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  <span class="label">Deposition number:</span><span class="value">{{ process.deposition_number }}</span>
+  <span class="label">Carrier:</span><span class="value">{{ process.carrier }}</span>
+</p>
+
+{% if process.comments %}
+  <p>
+    <span class="label">Comments:</span>{{ process.comments }}
+  </p>
+{% endif %}
+
+<table width="100%">
+  {% for layer in process.sixchamberlayer_set.all %}
+  <tr>
+    <td style="border-style: solid; border-color: black; border-width: thin">
+      <table width="100%">
+	<tr>
+	  <td>
+	    <table width="100%">
+	      <tr>
+		<td style="vertical-align: top; width: 7em; text-align: right">
+		  <div 
+		    style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+			   margin-left: 0.3em;
+			   border-style: solid; border-width: thin;
+			   border-color: black; float:right">{{ layer.number }}</div>
+		  <div>{% trans 'Layer number:' %}</div>
+		</td>
+		<td style="vertical-align: top; padding-left: 2em">
+		  <span class="label">{% trans 'Chamber:' %}</span><span class="value">#{{ layer.chamber }}</span>
+		</td>
+		<td>
+		  <table width="100%">
+		    <tr>
+		      <td class="label">{% trans 'Transfer in the chamber:' %}</td>
+		      <td class="value">{{ layer.transfer_in_chamber }}</td>
+		      <td class="label">{% trans 'Plasma start power:' %}</td>
+		      <td class="value">{{ layer.plasma_start_power|quantity:"W" }}</td>
+		    </tr>
+		    <tr>
+		      <td class="label">{% trans 'Pre-heat:' %}</td>
+		      <td class="value">{{ layer.pre_heat|default_if_none:"—" }}</td>
+		      <td class="label">{% trans 'Plasma start with carrier:' %}</td>
+		      <td class="value">{{ layer.plasma_start_with_carrier|fancy_bool }}</td>
+		    </tr>
+		    <tr>
+		      <td class="label">{% trans 'Argon pre-heat:' %}</td>
+		      <td class="value">{{ layer.argon_pre_heat|default_if_none:"—" }}</td>
+		      <td class="label">{% trans 'Deposition frequency:' %}</td>
+		      <td class="value">{{ layer.deposition_frequency|quantity:"MHz" }}</td>
+		    </tr>
+		  </table>
+		</td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <table width="100%">
+	      <tr>
+		<td class="label">{% trans 'Deposition pressure:' %}</td>
+		<td class="value">{{ layer.pressure }}</td>
+		<td class="label">{% trans 'Heating temperature:' %}</td>
+		<td class="value">{{ layer.heating_temperature|quantity:"℃" }}</td>
+		<td class="label">{% trans 'Deposition power:' %}</td>
+		<td class="value">{{ layer.deposition_power|quantity:"W" }}</td>
+	      </tr>
+	      <tr>
+		<td class="label">{% trans 'Deposition time:' %}</td>
+		<td class="value">{{ layer.time }}</td>
+		<td class="label">{% trans 'Transfer out of the chamber:' %}</td>
+		<td class="value">{{ layer.transfer_out_of_chamber }}</td>
+		<td class="label">{% trans 'Base pressure:' %}</td>
+		<td class="value">{{ layer.base_pressure|quantity:"Torr" }}</td>
+	      </tr>
+	      <tr>
+		<td class="label">{% trans 'Substrate–electrode distance:' %}</td>
+		<td class="value">{{ layer.substrate_electrode_distance|quantity:"mm"|default_if_none:"—" }}</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    <table width="100%">
+	      <tr>
+		{% if layer.comments %}
+		<td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+		    {{ layer.comments|linebreaksbr }}
+		</td>
+		{% else %}
+		<td>&nbsp;</td>
+		{% endif %}
+		<td style="width: 50%; vertical-align: top; padding: 1ex">
+		  <table width="100%" style="text-align: center">
+		    <tr>
+		      <th>{% trans 'Channel' %}</th>
+		      <th>{% trans 'Gas type' %}</th>
+		      <th>{% trans 'diluted in' %}</th>
+		      <th>{% trans 'Concentration' %}</th>
+		      <th>{% trans 'Flow rate' %}</th>
+		    </tr>
+		    {% for channel in layer.sixchamberchannel_set.all %}
+		    <tr>
+		      <td>{{ channel.number }}</td>
+		      <td>{{ channel.gas|chem_markup }}</td>
+		      <td>{{ channel.diluted_in|chem_markup }}</td>
+		      <td>{{ channel.concentration|default_if_none:"" }}</td>
+		      <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
+		    </tr>
+		    {% endfor %}
+		  </table>
+		</td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
