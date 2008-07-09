@@ -108,7 +108,7 @@
 		      <td>{{ channel.number }}</td>
 		      <td>{{ channel.gas|chem_markup }}</td>
 		      <td>{{ channel.diluted_in|chem_markup }}</td>
-		      <td>{{ channel.concentration|default_if_none:"" }}</td>
+		      <td>{{ channel.concentration|quantity:"%"|default_if_none:"" }}</td>
 		      <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
 		    </tr>
 		    {% endfor %}
