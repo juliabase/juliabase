@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans '6-chamber deposition “' %}{{ title|escape }}{% trans '”' %}{% endblock %}
+{% block content_title %}<h1>{% trans '6-chamber deposition “' %}{{ title|escape }}{% trans '”' %}</h1>{% endblock %}
+
+{% block css %}
+<style type="text/css">
+  td.value { text-align: left; vertical-align: middle; font-weight: normal }
+  td.label { text-align: right; vertical-align: middle }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="">
+  <p>
+    <span class="label">Deposition number:</span>{{ deposition.deposition_number }}
+    <span class="label">Carrier:</span><span class="value">{{ deposition.carrier }}</span>
+  </p>
+
+  <p>
+    <span class="label">Comments:<br /></span>{{ deposition.comments }}
+  </p>
+
+  <table width="100%">
+    {% for layer, channels in layers_and_channels %}
+    <tr>
+      <td style="border-style: solid; border-color: black; border-width: thin">
+        <table width="100%">
+          <tr>
+            <td>
+              <table width="100%">
+                <tr>
+                  <td colspan="2" rowspan="3" style="vertical-align: top">
+                    <table>
+                      <tr>
+                        <td style="vertical-align: top; text-align: right">
+                          <div>{% trans 'Layer number:' %}</div>
+                          <div 
+                            style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                   margin-left: 0.3em">{{ layer.number }}</div>
+                        </td>
+                        <td style="vertical-align: top; padding-left: 2em">
+                          <span class="label">{% trans 'Chamber:' %}</span><span class="value">#{{ layer.chamber }}</span>
+                        </td>
+                      </tr>
+		      <tr>
+			<td colspan="2">
+			  <p><input type="checkbox"
+				    name="structural-change-duplicate-layerindex-{{ forloop.counter0 }}" />
+			    {% trans 'duplicate this layer' %}<br />
+			  <input type="checkbox"
+				    name="structural-change-delete-layerindex-{{ forloop.counter0 }}" />
+			    {% trans 'delete this layer' %}</p>
+			</td>
+		      </tr>
+                    </table>
+                  </td>
+                  <td class="label">{% trans 'Transfer in the chamber:' %}</td>
+                  <td class="value">{{ layer.transfer_in_chamber }}</td>
+                  <td class="label">{% trans 'Plasma start power:' %}</td>
+                  <td class="value">{{ layer.plasma_start_power }}<br />
+                    <span class="help">({{ layer.plasma_start_power.help_text }})</td>
+                </tr>
+                <tr>
+                  <td class="label">{% trans 'Pre-heat:' %}</td>
+                  <td class="value">{{ layer.pre_heat }}</td>
+                  <td class="label">{% trans 'Plasma start with carrier:' %}</td>
+                  <td class="value">{{ layer.plasma_start_with_carrier }}</td>
+                </tr>
+                <tr>
+                  <td class="label">{% trans 'Argon pre-heat:' %}</td>
+                  <td class="value">{{ layer.argon_pre_heat }}</td>
+                  <td class="label">{% trans 'Deposition frequency:' %}</td>
+                  <td class="value">{{ layer.deposition_frequency }}<br />
+                    <span class="help">({{ layer.deposition_frequency.help_text }})</td>
+                </tr>
+                <tr>
+                  <td class="label">{% trans 'Deposition pressure:' %}</td>
+                  <td class="value">{{ layer.pressure }}<br />
+                    <span class="help">({{ layer.pressure.help_text }})</span></td>
+                  <td class="label">{% trans 'Heating temperature:' %}</td>
+                  <td class="value">{{ layer.heating_temperature }}<br />
+                    <span class="help">({{ layer.heating_temperature.help_text }})</td>
+                  <td class="label">{% trans 'Deposition power:' %}</td>
+                  <td class="value">{{ layer.deposition_power }}<br />
+                    <span class="help">({{ layer.deposition_power.help_text }})</td>
+                </tr>
+                <tr>
+                  <td class="label">{% trans 'Deposition time:' %}</td>
+                  <td class="value">{{ layer.time }}<br /><span class="help">({{ layer.time.help_text }})</td>
+                  <td class="label">{% trans 'Transfer out of the chamber:' %}</td>
+                  <td class="value">{{ layer.transfer_out_of_chamber }}</td>
+                  <td class="label">{% trans 'Base pressure:' %}</td>
+                  <td class="value">{{ layer.base_pressure }}<br />
+                    <span class="help">({{ layer.base_pressure.help_text }})</td>
+                </tr>
+                <tr>
+                  <td class="label">{% trans 'Substrate–electrode distance:' %}</td>
+                  <td class="value">{{ layer.substrate_electrode_distance }}<br />
+                    <span class="help">({{ layer.substrate_electrode_distance.help_text }})</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table width="100%">
+                <tr>
+                  {% if layer.comments %}
+                  <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                    <div>{% trans 'Comments:' %}</div>
+                      {{ layer.comments }}
+                  </td>
+                  {% else %}
+                  <td>&nbsp;</td>
+                  {% endif %}
+                  <td style="vertical-align: top; padding: 1ex">
+                    <table width="100%" style="text-align: center">
+                      <tr>
+                        <th>{% trans 'Channel' %}</th>
+                        <th>{% trans 'Gas type' %}</th>
+                        <th>{% trans 'diluted in' %}</th>
+                        <th>{% trans 'Concentration' %}<br />
+			  <span class="help">({{ channels.0.concentration.help_text }})</th>
+                        <th>{% trans 'Flow rate' %}<br /><span class="help">({{ channels.0.flow_rate.help_text }})</th>
+			<th>delete</th>
+                      </tr>
+                      {% for channel in channels %}
+                      <tr>
+                        <td>{{ channel.number }}</td>
+                        <td>{{ channel.gas }}</td>
+                        <td>{{ channel.diluted_in }}</td>
+                        <td>{{ channel.concentration }}</td>
+                        <td>{{ channel.flow_rate }}</td>
+			<td><input type="checkbox" 
+  name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" />
+                      </tr>
+                      {% endfor %}
+                    </table>
+                    <p>{% trans 'Number of channels to be added:' %}&nbsp;<input
+                      name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}" 
+                      type="text" size="3" /></p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p>{% trans 'Number of layers to be added:' %}&nbsp;<input name="structural-change-add-layers" type="text" size="3" /></p>
+  <p><input type="submit" /></p>
+</form>
+
+
+{% endblock %}
