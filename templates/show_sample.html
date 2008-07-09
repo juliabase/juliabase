@@ -6,7 +6,8 @@
 
 {% block content %}
 {% for process in processes %}
-<p class="timestamp">
+<p class="operator_and_timestamp">
+{{ process.operator }},
 {{ process.timestamp }}
 </p>
 <h2>{{ process.title }}</h2>
