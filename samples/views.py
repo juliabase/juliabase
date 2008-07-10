@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import string
+import string, copy
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, loader
 from django.shortcuts import render_to_response, get_object_or_404
@@ -76,11 +76,54 @@ def edit_six_chamber_deposition(request, deposition_number):
             if any([not channel_form.is_valid() for channel_form in forms]):
                 return False
         return True
-    def change_structure(deposition_form, layer_forms, channel_forms):
-        print "Hallo"
-        for i, layer_form in enumerate(layer_forms):
-            print layer_form.cleaned_data["structural-change-duplicate-layerindex-%d" % i]
-        return False
+    def change_structure(deposition_form, layer_forms, channel_forms, change_params, deposition):
+        structure_changed = False
+        layers = deposition.sixchamberlayer_set.all()
+        old_number_of_layers = deposition.sixchamberlayer_set.count()
+        to_be_duplicated_layernumbers = [layer_forms[index].cleaned_data["number"] for index in range(old_number_of_layers)
+                                         if "structural-change-duplicate-layerindex-%d" % index in change_params]
+        try:
+            to_be_added_layers = int(change_params["structural-change-add-layers"])
+        except ValueError:
+            to_be_added_layers = 0
+        if to_be_duplicated_layernumbers or to_be_added_layers:
+            biggest_layer_number = max([layer.number for layer in layers])
+        # First step: Duplicate layers
+        if to_be_duplicated_layernumbers:
+            structure_changed = True
+            for number in to_be_duplicated_layernumbers:
+                warnings.filterwarnings("ignore", "")
+                print number
+                layer = layers.get(number=number)
+                old_channels = layer.sixchamberchannel_set.all()
+                layer.number = biggest_layer_number + 1
+                biggest_layer_number += 1
+                layer.id = None  # create a new one in the database
+                layer.save()
+                for channel in old_channels:
+                    channel.id = None  # create a new one in the database
+                    channel.layer = layer
+                    channel.save()
+        # Second step: Add layers
+        for i in range(to_be_added_layers):
+            structure_changed = True
+            layer = models.SixChamberLayer(number=biggest_layer_number+1)
+            layer.save()
+            biggest_layer_number += 1
+            deposition.sixchamberlayer_set.add(layer)
+        # Third step: Add channels
+        layers_with_new_channels = [(layer_forms[index].cleaned_data["number"],
+                                     change_params["structural-change-add-channels-for-layerindex-%d" % index])
+                                     for index in range(old_number_of_layers)
+                                     if "structural-change-add-channels-for-layerindex-%d" % index in change_params]
+        for index in range(old_number_of_layers):
+            try:
+                to_be_added_channels = int(change_params.get("structural-change-add-channels-for-layerindex-%d" % index, 0))
+            except ValueError:
+                to_be_added_channels = 0
+            for i in range(to_be_added_channels):
+                pass
+        return structure_changed
     
     six_chamber_deposition = get_object_or_404(models.SixChamberDeposition, deposition_number=deposition_number)
     if request.method == "POST":
@@ -92,10 +135,11 @@ def edit_six_chamber_deposition(request, deposition_number):
             channel_forms.append(
                 [SixChamberChannelForm(request.POST, prefix=str(layer.number)+"_"+str(channel.number), instance=channel)
                  for channel in layer.sixchamberchannel_set.all()])
-        if is_all_valid(deposition_form, layer_forms, channel_forms) \
-                and not change_structure(deposition_form, layer_forms, channel_forms):
+        change_params = dict([(key, request.POST[key]) for key in request.POST if key.startswith("structural-change-")])
+        if is_all_valid(deposition_form, layer_forms, channel_forms):
             # Todo: Write data back into the database
-            return HttpResponseRedirect("/admin")
+            if not change_structure(deposition_form, layer_forms, channel_forms, change_params, six_chamber_deposition):
+                return HttpResponseRedirect("/admin")
     else:
         deposition_form = SixChamberDepositionForm(instance=six_chamber_deposition)
         layer_forms = [SixChamberLayerForm(prefix=str(layer.number), instance=layer)
