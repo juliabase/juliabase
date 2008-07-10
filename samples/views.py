@@ -37,10 +37,11 @@ def show_sample(request, sample_name):
 class SixChamberDepositionForm(ModelForm):
     class Meta:
         model = models.SixChamberDeposition
+        exclude = ("process_ptr",)
 
 class SixChamberLayerForm(ModelForm):
-    def __init__(self, **keyw):
-        super(SixChamberLayerForm, self).__init__(**keyw)
+    def __init__(self, data=None, **keyw):
+        super(SixChamberLayerForm, self).__init__(data, **keyw)
         self.fields["number"].widget = \
             forms.TextInput(attrs={"size": "2", "style": "text-align: center; font-size: xx-large"})
         self.fields["chamber"].widget = forms.TextInput(attrs={"size": "3"})
@@ -51,10 +52,11 @@ class SixChamberLayerForm(ModelForm):
             self.fields[fieldname].widget = forms.TextInput(attrs={"size": "10"})
     class Meta:
         model = models.SixChamberLayer
+        exclude = ("deposition",)
 
 class SixChamberChannelForm(ModelForm):
-    def __init__(self, **keyw):
-        super(SixChamberChannelForm, self).__init__(**keyw)
+    def __init__(self, data=None, **keyw):
+        super(SixChamberChannelForm, self).__init__(data, **keyw)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["gas"].widget = forms.TextInput(attrs={"size": "10"})
         self.fields["diluted_in"].widget = forms.TextInput(attrs={"size": "10"})
@@ -62,6 +64,7 @@ class SixChamberChannelForm(ModelForm):
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     class Meta:
         model = models.SixChamberChannel
+        exclude = ("layer",)
 
 def edit_six_chamber_deposition(request, deposition_number):
     def is_all_valid(deposition_form, layer_forms, channel_forms):
@@ -73,6 +76,11 @@ def edit_six_chamber_deposition(request, deposition_number):
             if any([not channel_form.is_valid() for channel_form in forms]):
                 return False
         return True
+    def change_structure(deposition_form, layer_forms, channel_forms):
+        print "Hallo"
+        for i, layer_form in enumerate(layer_forms):
+            print layer_form.cleaned_data["structural-change-duplicate-layerindex-%d" % i]
+        return False
     
     six_chamber_deposition = get_object_or_404(models.SixChamberDeposition, deposition_number=deposition_number)
     if request.method == "POST":
@@ -84,7 +92,8 @@ def edit_six_chamber_deposition(request, deposition_number):
             channel_forms.append(
                 [SixChamberChannelForm(request.POST, prefix=str(layer.number)+"_"+str(channel.number), instance=channel)
                  for channel in layer.sixchamberchannel_set.all()])
-        if is_all_valid(deposition_form, layer_forms, channel_forms):
+        if is_all_valid(deposition_form, layer_forms, channel_forms) \
+                and not change_structure(deposition_form, layer_forms, channel_forms):
             # Todo: Write data back into the database
             return HttpResponseRedirect("/admin")
     else:
