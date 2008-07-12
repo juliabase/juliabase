@@ -61,6 +61,7 @@ def change_structure(layer_forms, channel_form_lists, change_params):
     biggest_layer_number = max([int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms])
     new_layers = []
     new_channel_lists = []
+    
     # First step: Duplicate layers
     for i, layer_form in enumerate(layer_forms):
         if layer_form.is_valid() and all([channel.is_valid() for channel in channel_form_lists[i]]) and \
@@ -76,30 +77,33 @@ def change_structure(layer_forms, channel_form_lists, change_params):
                     [ChannelForm(prefix_dict(channel.cleaned_data, "%d_%d"%(layer_index, channel_index)),
                                            prefix="%d_%d"%(layer_index, channel_index))
                      for channel_index, channel in enumerate(channel_form_lists[i])])
+
     # Second step: Add layers
     to_be_added_layers = int_or_zero(change_params["structural-change-add-layers"])
     structure_changed = structure_changed or to_be_added_layers
     for i in range(to_be_added_layers):
         layer_index = len(layer_forms) + len(new_layers)
-        new_layers.append(LayerForm({"%d-number"%layer_index: biggest_layer_number+1},
-                                              prefix=str(layer_index)))
+        new_layers.append(LayerForm({"%d-number"%layer_index: biggest_layer_number+1}, prefix=str(layer_index)))
         biggest_layer_number += 1
         new_channel_lists.append([])
+
+    # Third and forth steps: Add and delete channels
     for layer_index, channels in enumerate(channel_form_lists):
-        # Third step: Add channels
+        # Add channels
         to_be_added_channels = int_or_zero(change_params.get(
                 "structural-change-add-channels-for-layerindex-%d" % layer_index))
         structure_changed = structure_changed or to_be_added_channels
         number_of_channels = len(channels)
         for channel_index in range(number_of_channels, number_of_channels+to_be_added_channels):
             channels.append(ChannelForm(prefix="%d_%d"%(layer_index, channel_index)))
-        # Forth step: Delete channels
+        # Delete channels
         to_be_deleted_channels = [channel_index for channel_index in range(number_of_channels)
                                   if "structural-change-delete-channelindex-%d-for-layerindex-%d" %
                                   (channel_index, layer_index) in change_params]
         structure_changed = structure_changed or to_be_deleted_channels
         for channel_index in reversed(to_be_deleted_channels):
             del channels[channel_index]
+
     # Fifth step: Delete layers
     to_be_deleted_layers = [layer_index for layer_index in range(len(layer_forms))
                             if "structural-change-delete-layerindex-%d" % layer_index in change_params]
@@ -107,9 +111,22 @@ def change_structure(layer_forms, channel_form_lists, change_params):
     for layer_index in reversed(to_be_deleted_layers):
         del layer_forms[layer_index]
 
+    # Apply changes
     layer_forms.extend(new_layers)
     channel_form_lists.extend(new_channel_lists)
     return structure_changed
+
+def save_to_database(deposition_form, layer_forms, channel_form_lists):
+    deposition = deposition_form.save()
+    deposition.sixchamberlayer_set.all().delete()  # deletes channels, too
+    for layer_form, channel_form_list in zip(layer_forms, channel_form_lists):
+        layer = layer_form.save(commit=False)
+        layer.deposition = deposition
+        layer.save()
+        for channel_form in channel_form_list:
+            channel = channel_form.save(commit=False)
+            channel.layer = layer
+            channel.save()
 
 def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number)
@@ -128,38 +145,29 @@ def edit(request, deposition_number):
                 layer_index, channel_index = int(match.group("layer_index")), int(match.group("channel_index"))
                 channel_indices.setdefault(layer_index, set()).add(channel_index)
         layer_forms = [LayerForm(request.POST, prefix=str(layer_index)) for layer_index in layer_indices]
-        channel_forms = []
+        channel_form_lists = []
         for layer_index in layer_indices:
-            channel_forms.append(
+            channel_form_lists.append(
                 [ChannelForm(request.POST, prefix="%d_%d"%(layer_index, channel_index))
                  for channel_index in channel_indices[layer_index]])
 
         change_params = dict([(key, request.POST[key]) for key in request.POST if key.startswith("structural-change-")])
-        all_valid = is_all_valid(deposition_form, layer_forms, channel_forms)
-        structure_changed = change_structure(layer_forms, channel_forms, change_params)
+        all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
+        structure_changed = change_structure(layer_forms, channel_form_lists, change_params)
         if all_valid and not structure_changed:
-            new_deposition = deposition_form.save()
-            deposition.sixchamberlayer_set.all().delete()  # deletes channels, too
-            for layer_form, channel_form_list in zip(layer_forms, channel_forms):
-                layer = layer_form.save(commit=False)
-                layer.deposition = new_deposition
-                layer.save()
-                for channel_form in channel_form_list:
-                    channel = channel_form.save(commit=False)
-                    channel.layer = layer
-                    channel.save()
+            save_to_database(deposition_form, layer_forms, channel_form_lists)
             return HttpResponseRedirect("/admin")
     else:
         deposition_form = ChamberForm(instance=deposition)
         layers = deposition.sixchamberlayer_set.all()
         layer_forms = [LayerForm(prefix=str(layer_index), instance=layer)
                        for layer_index, layer in enumerate(layers)]
-        channel_forms = []
+        channel_form_lists = []
         for layer_index, layer in enumerate(layers):
-            channel_forms.append(
+            channel_form_lists.append(
                 [ChannelForm(prefix="%d_%d"%(layer_index, channel_index), instance=channel)
                  for channel_index, channel in enumerate(layer.sixchamberchannel_set.all())])
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": deposition_number,
                                "deposition": deposition_form,
-                               "layers_and_channels": zip(layer_forms, channel_forms)})
+                               "layers_and_channels": zip(layer_forms, channel_form_lists)})
