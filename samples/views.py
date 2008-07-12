@@ -109,13 +109,28 @@ def edit_six_chamber_deposition(request, deposition_number):
                                                   prefix=str(layer_index)))
             biggest_layer_number += 1
             new_channel_lists.append([])
-        # Third step: Add channels
-        for i, channels in enumerate(channel_forms):
-            to_be_added_channels = int_or_zero(change_params.get("structural-change-add-channels-for-layerindex-%d" % i))
+        for layer_index, channels in enumerate(channel_forms):
+            # Third step: Add channels
+            to_be_added_channels = int_or_zero(change_params.get(
+                    "structural-change-add-channels-for-layerindex-%d" % layer_index))
             structure_changed = structure_changed or to_be_added_channels > 0
-            for j in range(to_be_added_channels):
-                channels.append(SixChamberChannelForm())
-                
+            number_of_channels = len(channels)
+            for channel_index in range(number_of_channels, number_of_channels+to_be_added_channels):
+                channels.append(SixChamberChannelForm(prefix="%d_%d"%(layer_index, channel_index)))
+            # Forth step: Delete channels
+            to_be_deleted_channels = [channel_index for channel_index in range(number_of_channels)
+                                      if "structural-change-delete-channelindex-%d-for-layerindex-%d" %
+                                      (channel_index, layer_index) in change_params]
+            structure_changed = structure_changed or to_be_deleted_channels > 0
+            for channel_index in reversed(to_be_deleted_channels):
+                del channels[channel_index]
+        # Fifth step: Delete layers
+        to_be_deleted_layers = [layer_index for layer_index in range(len(layer_forms))
+                                if "structural-change-delete-layerindex-%d" % layer_index in change_params]
+        structure_changed = structure_changed or to_be_deleted_layers > 0
+        for layer_index in reversed(to_be_deleted_layers):
+            del layer_forms[layer_index]
+        
         layer_forms.extend(new_layers)
         channel_forms.extend(new_channel_lists)
         return structure_changed
@@ -123,19 +138,25 @@ def edit_six_chamber_deposition(request, deposition_number):
     six_chamber_deposition = get_object_or_404(models.SixChamberDeposition, deposition_number=deposition_number)
     if request.method == "POST":
         deposition_form = SixChamberDepositionForm(request.POST, instance=six_chamber_deposition)
-        layer_index = 0
-        layer_forms = []
+        layer_indices = set()
+        channels_indices = {}
+        for name in request.POST:
+            match = re.match(ur"(?P<layer_index>\d+)-.+", name)
+            if match:
+                layer_index = int(match.group("layer_index"))
+                layer_indices.add(layer_index)
+                channels_indices.setdefault(layer_index, set())
+            match = re.match(ur"(?P<layer_index>\d+)_(?P<channel_index>\d+)-.+", name)
+            if match:
+                layer_index, channel_index = int(match.group("layer_index")), int(match.group("channel_index"))
+                channels_indices.setdefault(layer_index, set()).add(channel_index)
+        layer_forms = [SixChamberLayerForm(request.POST, prefix=str(layer_index)) for layer_index in layer_indices]
         channel_forms = []
-        while "%d-number" % layer_index in request.POST:
-            layer_forms.append(SixChamberLayerForm(request.POST, prefix=str(layer_index)))
-            channel_index = 0
-            channel_forms_for_current_layer = []
-            while "%d_%d-number" % (layer_index, channel_index) in request.POST:
-                channel_forms_for_current_layer.append(
-                    SixChamberChannelForm(request.POST, prefix=str(layer_index)+"_"+str(channel_index)))
-                channel_index += 1
-            channel_forms.append(channel_forms_for_current_layer)
-            layer_index += 1
+        for layer_index in layer_indices:
+            channel_forms.append(
+                [SixChamberChannelForm(request.POST, prefix=str(layer_index)+"_"+str(channel_index))
+                 for channel_index in channels_indices[layer_index]])
+
         change_params = dict([(key, request.POST[key]) for key in request.POST if key.startswith("structural-change-")])
         all_valid = is_all_valid(deposition_form, layer_forms, channel_forms)
         structure_changed = change_structure(layer_forms, channel_forms, change_params)
