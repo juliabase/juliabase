@@ -8,7 +8,7 @@ from django.newforms import ModelForm
 import django.newforms as forms
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 
-class ChamberForm(ModelForm):
+class DepositionForm(ModelForm):
     class Meta:
         model = SixChamberDeposition
         exclude = ("process_ptr",)
@@ -56,8 +56,9 @@ def int_or_zero(number):
 def prefix_dict(dictionary, prefix):
     return dict([(prefix+"-"+key, dictionary[key]) for key in dictionary])
 
-def change_structure(layer_forms, channel_form_lists, change_params):
+def change_structure(layer_forms, channel_form_lists, post_data):
     structure_changed = False
+    change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
     biggest_layer_number = max([int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms])
     new_layers = []
     new_channel_lists = []
@@ -128,45 +129,50 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
             channel.layer = layer
             channel.save()
 
+def forms_from_post_data(post_data):
+    layer_indices = set()
+    channel_indices = {}
+    for name in post_data:
+        match = re.match(ur"(?P<layer_index>\d+)-.+", name)
+        if match:
+            layer_index = int(match.group("layer_index"))
+            layer_indices.add(layer_index)
+            channel_indices.setdefault(layer_index, set())
+        match = re.match(ur"(?P<layer_index>\d+)_(?P<channel_index>\d+)-.+", name)
+        if match:
+            layer_index, channel_index = int(match.group("layer_index")), int(match.group("channel_index"))
+            channel_indices.setdefault(layer_index, set()).add(channel_index)
+    layer_forms = [LayerForm(post_data, prefix=str(layer_index)) for layer_index in layer_indices]
+    channel_form_lists = []
+    for layer_index in layer_indices:
+        channel_form_lists.append(
+            [ChannelForm(post_data, prefix="%d_%d"%(layer_index, channel_index))
+             for channel_index in channel_indices[layer_index]])
+    return layer_forms, channel_form_lists
+
+def forms_from_database(deposition):
+    layers = deposition.sixchamberlayer_set.all()
+    layer_forms = [LayerForm(prefix=str(layer_index), instance=layer) for layer_index, layer in enumerate(layers)]
+    channel_form_lists = []
+    for layer_index, layer in enumerate(layers):
+        channel_form_lists.append(
+            [ChannelForm(prefix="%d_%d"%(layer_index, channel_index), instance=channel)
+             for channel_index, channel in enumerate(layer.sixchamberchannel_set.all())])
+    return layer_forms, channel_form_lists
+
 def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number)
     if request.method == "POST":
-        deposition_form = ChamberForm(request.POST, instance=deposition)
-        layer_indices = set()
-        channel_indices = {}
-        for name in request.POST:
-            match = re.match(ur"(?P<layer_index>\d+)-.+", name)
-            if match:
-                layer_index = int(match.group("layer_index"))
-                layer_indices.add(layer_index)
-                channel_indices.setdefault(layer_index, set())
-            match = re.match(ur"(?P<layer_index>\d+)_(?P<channel_index>\d+)-.+", name)
-            if match:
-                layer_index, channel_index = int(match.group("layer_index")), int(match.group("channel_index"))
-                channel_indices.setdefault(layer_index, set()).add(channel_index)
-        layer_forms = [LayerForm(request.POST, prefix=str(layer_index)) for layer_index in layer_indices]
-        channel_form_lists = []
-        for layer_index in layer_indices:
-            channel_form_lists.append(
-                [ChannelForm(request.POST, prefix="%d_%d"%(layer_index, channel_index))
-                 for channel_index in channel_indices[layer_index]])
-
-        change_params = dict([(key, request.POST[key]) for key in request.POST if key.startswith("structural-change-")])
+        deposition_form = DepositionForm(request.POST, instance=deposition)
+        layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
-        structure_changed = change_structure(layer_forms, channel_form_lists, change_params)
+        structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
         if all_valid and not structure_changed:
             save_to_database(deposition_form, layer_forms, channel_form_lists)
             return HttpResponseRedirect("/admin")
     else:
-        deposition_form = ChamberForm(instance=deposition)
-        layers = deposition.sixchamberlayer_set.all()
-        layer_forms = [LayerForm(prefix=str(layer_index), instance=layer)
-                       for layer_index, layer in enumerate(layers)]
-        channel_form_lists = []
-        for layer_index, layer in enumerate(layers):
-            channel_form_lists.append(
-                [ChannelForm(prefix="%d_%d"%(layer_index, channel_index), instance=channel)
-                 for channel_index, channel in enumerate(layer.sixchamberchannel_set.all())])
+        deposition_form = DepositionForm(instance=deposition)
+        layer_forms, channel_form_lists = forms_from_database(deposition)
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": deposition_number,
                                "deposition": deposition_form,
