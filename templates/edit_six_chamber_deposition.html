@@ -14,9 +14,13 @@
 
 {% block content %}
 <form method="post" action="">
-  {% for field in deposition %}
-    {% if field.errors %}<p>{{ field.label_tag }}{{ field }}{{ field.errors }}</p>{% endif %}
-  {% endfor %}
+  {% if not layer.is_valid %}
+    <table width="100%"><tr><td class="error-messages">
+      {% for field in deposition %}
+        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+      {% endfor %}
+    </td></tr></table>
+  {% endif %}
   <p>
     <span class="label">Deposition number:</span>{{ deposition.deposition_number }}
     <span class="label" style="margin-left: 2em">Carrier:</span><span class="value">{{ deposition.carrier }}</span>
@@ -41,11 +45,6 @@
 
   <table width="100%">
     {% for layer, channels in layers_and_channels %}
-      {% for channel in channels %}
-        {% for field in channel %}
-          {% if field.errors %}<p>{{ field.label_tag }}{{ field.errors }}</p>{% endif %}
-        {% endfor %}
-      {% endfor %}
       <tr>
         <td style="border-style: solid; border-color: black; border-width: thin">
           <table width="100%">
@@ -54,9 +53,9 @@
                 <table width="100%">
                   {% if not layer.is_valid %}
                     <tr>
-                      <td colspan="0">
+                      <td colspan="0" class="error-messages">
                         {% for field in layer %}
-                          {% if field.errors %}<p>{{ field.label_tag }}{{ field.errors }}</p>{% endif %}
+                          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
                         {% endfor %}
                       </td>
                     </tr>
@@ -162,15 +161,24 @@
                           <th>delete</th>
                         </tr>
                         {% for channel in channels %}
-                        <tr>
-                          <td>{{ channel.number }}</td>
-                          <td>{{ channel.gas }}</td>
-                          <td>{{ channel.diluted_in }}</td>
-                          <td>{{ channel.concentration }}</td>
-                          <td>{{ channel.flow_rate }}</td>
-                          <td><input type="checkbox" 
+                          {% if not channel.is_valid %}
+                            <tr>
+                              <td colspan="0" class="error-messages">
+                                {% for field in channel %}
+                                  {% if field.errors %}<p>{{ field.label }}:</p>{{ field.errors }}{% endif %}
+                                {% endfor %}
+                              </td>
+                            </tr>
+                          {% endif %}
+                          <tr>
+                            <td>{{ channel.number }}</td>
+                            <td>{{ channel.gas }}</td>
+                            <td>{{ channel.diluted_in }}</td>
+                            <td>{{ channel.concentration }}</td>
+                            <td>{{ channel.flow_rate }}</td>
+                            <td><input type="checkbox" 
     name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" />
-                        </tr>
+                          </tr>
                         {% endfor %}
                       </table>
                       <p>{% trans 'Number of channels to be added:' %}&nbsp;<input
