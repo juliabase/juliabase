@@ -156,40 +156,42 @@
                     <td>&nbsp;</td>
                     {% endif %}
                     <td style="vertical-align: top; padding: 1ex">
-                      <table width="100%" style="text-align: center">
-                        <tr>
-                          <th>{% trans 'Channel' %}</th>
-                          <th>{% trans 'Gas type' %}</th>
-                          <th>{% trans 'diluted in' %}</th>
-                          <th>{% trans 'Concentration' %}<br />
-                            <span class="help">({{ channels.0.concentration.help_text }})</th>
-                          <th>{% trans 'Flow rate' %}<br /><span class="help">({{ channels.0.flow_rate.help_text }})</th>
-                          <th>delete</th>
-                        </tr>
-                        {% for channel in channels %}
-                          {% if not channel.is_valid or channel.non_field_errors %}
-                            <tr>
-                              <td colspan="0" class="error-messages">
-                                {% for field in channel %}
-                                  {% if field.errors %}<p>{{ field.label }}:</p>{{ field.errors }}{% endif %}
-                                {% endfor %}
-                                {% if channel.non_field_errors %}
-                                  <p>{% trans 'Channel error' %}</p>{{ channel.non_field_errors }}
-                                {% endif %}
-                              </td>
-                            </tr>
-                          {% endif %}
+                      {% if channels %}
+                        <table width="100%" style="text-align: center">
                           <tr>
-                            <td>{{ channel.number }}</td>
-                            <td>{{ channel.gas }}</td>
-                            <td>{{ channel.diluted_in }}</td>
-                            <td>{{ channel.concentration }}</td>
-                            <td>{{ channel.flow_rate }}</td>
-                            <td><input type="checkbox" 
-    name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" />
+                            <th>{% trans 'Channel' %}</th>
+                            <th>{% trans 'Gas type' %}</th>
+                            <th>{% trans 'diluted in' %}</th>
+                            <th>{% trans 'Concentration' %}<br />
+                              <span class="help">({{ channels.0.concentration.help_text }})</th>
+                            <th>{% trans 'Flow rate' %}<br /><span class="help">({{ channels.0.flow_rate.help_text }})</th>
+                            <th>delete</th>
                           </tr>
-                        {% endfor %}
-                      </table>
+                          {% for channel in channels %}
+                            {% if not channel.is_valid or channel.non_field_errors %}
+                              <tr>
+                                <td colspan="0" class="error-messages">
+                                  {% for field in channel %}
+                                    {% if field.errors %}<p>{{ field.label }}:</p>{{ field.errors }}{% endif %}
+                                  {% endfor %}
+                                  {% if channel.non_field_errors %}
+                                    <p>{% trans 'Channel error' %}</p>{{ channel.non_field_errors }}
+                                  {% endif %}
+                                </td>
+                              </tr>
+                            {% endif %}
+                            <tr>
+                              <td>{{ channel.number }}</td>
+                              <td>{{ channel.gas }}</td>
+                              <td>{{ channel.diluted_in }}</td>
+                              <td>{{ channel.concentration }}</td>
+                              <td>{{ channel.flow_rate }}</td>
+                              <td><input type="checkbox" 
+      name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" />
+                            </tr>
+                          {% endfor %}
+                        </table>
+                      {% endif %}
                       <p>{% trans 'Number of channels to be added:' %}&nbsp;<input
                         name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}" 
                         type="text" size="3" /></p>
