@@ -14,11 +14,14 @@
 
 {% block content %}
 <form method="post" action="">
-  {% if not layer.is_valid %}
+  {% if not deposition.is_valid or deposition.non_field_errors %}
     <table width="100%"><tr><td class="error-messages">
       {% for field in deposition %}
         {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
       {% endfor %}
+      {% if deposition.non_field_errors %}
+        <p>{% trans 'Deposition error' %}</p>{{ deposition.non_field_errors }}
+      {% endif %}
     </td></tr></table>
   {% endif %}
   <p>
@@ -51,12 +54,15 @@
             <tr>
               <td>
                 <table width="100%">
-                  {% if not layer.is_valid %}
+                  {% if not layer.is_valid or layer.non_field_errors %}
                     <tr>
                       <td colspan="0" class="error-messages">
                         {% for field in layer %}
                           {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
                         {% endfor %}
+                        {% if layer.non_field_errors %}
+                          <p>{% trans 'Layer error' %}</p>{{ layer.non_field_errors }}
+                        {% endif %}
                       </td>
                     </tr>
                   {% endif %}
@@ -161,12 +167,15 @@
                           <th>delete</th>
                         </tr>
                         {% for channel in channels %}
-                          {% if not channel.is_valid %}
+                          {% if not channel.is_valid or channel.non_field_errors %}
                             <tr>
                               <td colspan="0" class="error-messages">
                                 {% for field in channel %}
                                   {% if field.errors %}<p>{{ field.label }}:</p>{{ field.errors }}{% endif %}
                                 {% endfor %}
+                                {% if channel.non_field_errors %}
+                                  <p>{% trans 'Channel error' %}</p>{{ channel.non_field_errors }}
+                                {% endif %}
                               </td>
                             </tr>
                           {% endif %}

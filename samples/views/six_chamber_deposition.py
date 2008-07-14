@@ -5,6 +5,7 @@ import re
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.newforms import ModelForm
+from django.newforms.util import ErrorList
 import django.newforms as forms
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 
@@ -117,14 +118,42 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     channel_form_lists.extend(new_channel_lists)
     return structure_changed
 
+def append_error(form, fieldname, error_message):
+    form._errors.setdefault(fieldname, ErrorList()).append(error_message)
+
+def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
+    referencially_valid = True
+    if not layer_forms:
+        append_error(deposition_form, "__all__", "No layers given")
+        referencially_valid = False
+    layer_numbers = set()
+    for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
+        if layer_form.is_valid():
+            if layer_form.cleaned_data["number"] in layer_numbers:
+                append_error(layer_form, "__all__", "Number is a duplicate")
+            else:
+                layer_numbers.add(layer_form.cleaned_data["number"])
+        if not channel_forms:
+            referencially_valid = False
+            append_error(layer_form, "__all__", "No channels given")
+        channel_numbers = set()
+        for channel_form in channel_forms:
+            if channel_form.is_valid():
+                print channel_form.cleaned_data["number"]
+                if channel_form.cleaned_data["number"] in channel_numbers:
+                    append_error(channel_form, "__all__", "Number is a duplicate")
+                else:
+                    channel_numbers.add(channel_form.cleaned_data["number"])
+    return referencially_valid
+    
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
     deposition = deposition_form.save()
     deposition.sixchamberlayer_set.all().delete()  # deletes channels, too
-    for layer_form, channel_form_list in zip(layer_forms, channel_form_lists):
+    for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         layer = layer_form.save(commit=False)
         layer.deposition = deposition
         layer.save()
-        for channel_form in channel_form_list:
+        for channel_form in channel_forms:
             channel = channel_form.save(commit=False)
             channel.layer = layer
             channel.save()
@@ -167,7 +196,8 @@ def edit(request, deposition_number):
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
-        if all_valid and not structure_changed:
+        referencially_valid = is_referencially_valid(deposition_form, layer_forms, channel_form_lists)
+        if all_valid and referencially_valid and not structure_changed:
             save_to_database(deposition_form, layer_forms, channel_form_lists)
             return HttpResponseRedirect("/admin")
     else:

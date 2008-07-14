@@ -40,5 +40,5 @@ span.help { font-size: small }
 td.error-messages { text-align: left; font-size: x-small }
 td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
 		      color:white; background-color: maroon; font-weight: bold }
-td ul.errorlist { margin:0 !important; padding:0 !important; }
-.errorlist li { padding: 0pt 0.5ex 0.5ex 0.5ex; display:block; color:white; background-color: maroon }
+td ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon }
+.errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }
