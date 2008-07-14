@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import string, re
-from django.http import HttpResponse, HttpResponseRedirect
+import string
 from django.template import Context, loader
 from django.shortcuts import render_to_response, get_object_or_404
-from django.newforms import ModelForm
-import django.newforms as forms
-import models
+from chantal.samples.models import Sample
 
 def camel_case_to_underscores(name):
     result = []
@@ -21,12 +18,12 @@ def camel_case_to_underscores(name):
     return "".join(result)
 
 def digest_process(process):
-    process = models.find_actual_process(process)
+    process = process.find_actual_process()
     template = loader.get_template("show_"+camel_case_to_underscores(process.__class__.__name__)+".html")
     return process, process._meta.verbose_name, template.render(Context({"process": process}))
 
-def show_sample(request, sample_name):
-    sample = get_object_or_404(models.Sample, pk=sample_name)
+def show(request, sample_name):
+    sample = get_object_or_404(Sample, pk=sample_name)
     processes = []
     for process in sample.processes.all():
         process, title, body = digest_process(process)
