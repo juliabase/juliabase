@@ -133,9 +133,6 @@ def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
                 append_error(layer_form, "__all__", "Number is a duplicate")
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
-        if not channel_forms:
-            referencially_valid = False
-            append_error(layer_form, "__all__", "No channels given")
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
