@@ -22,7 +22,8 @@ class LayerForm(ModelForm):
         self.fields["chamber"].widget = forms.TextInput(attrs={"size": "3"})
         self.fields["comments"].widget = forms.Textarea(attrs={"cols": "30"})
         for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
-                          "argon_pre_heat", "heating_temperature", "transfer_out_of_chamber", "plasma_start_power",
+                          "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
+                          "transfer_out_of_chamber", "plasma_start_power",
                           "deposition_frequency", "deposition_power", "base_pressure"]:
             self.fields[fieldname].widget = forms.TextInput(attrs={"size": "10"})
     class Meta:
@@ -33,9 +34,7 @@ class ChannelForm(ModelForm):
     def __init__(self, data=None, **keyw):
         super(ChannelForm, self).__init__(data, **keyw)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
-        self.fields["gas"].widget = forms.TextInput(attrs={"size": "10"})
-        self.fields["diluted_in"].widget = forms.TextInput(attrs={"size": "10"})
-        self.fields["concentration"].widget = forms.TextInput(attrs={"size": "5"})
+        self.fields["gas"].widget = forms.TextInput(attrs={"size": "25"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     class Meta:
         model = SixChamberChannel
@@ -60,7 +59,7 @@ def prefix_dict(dictionary, prefix):
 def change_structure(layer_forms, channel_form_lists, post_data):
     structure_changed = False
     change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
-    biggest_layer_number = max([int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms])
+    biggest_layer_number = max([int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms] + [0])
     new_layers = []
     new_channel_lists = []
     

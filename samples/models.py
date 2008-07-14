@@ -15,8 +15,14 @@ class Operator(models.Model):
 class Process(models.Model):
     timestamp = models.DateTimeField()
     operator = models.ForeignKey(Operator)
+    def find_actual_process(self):
+        for process_type in process_types:
+            if hasattr(self, process_type):
+                return getattr(self, process_type)
+        else:
+            raise Exception("internal error: process not found")
     def __unicode__(self):
-        return unicode(find_actual_process(self))
+        return unicode(self.find_actual_process())
     class Meta:
         ordering = ['timestamp']
         verbose_name_plural = "processes"
@@ -42,22 +48,25 @@ class HallMeasurement(Process):
 
 class SixChamberLayer(models.Model):
     number = models.IntegerField()
-    chamber = models.IntegerField()
+    chamber = models.IntegerField(null=True, blank=True)
     deposition = models.ForeignKey(SixChamberDeposition)
-    pressure = models.CharField(max_length=15, help_text="with unit")
-    time = models.CharField(max_length=9, help_text="format SS:MM:SS")
-    substrate_electrode_distance = models.FloatField(null=True, blank=True, help_text=u"in mm")
+    pressure = models.CharField(max_length=15, help_text="with unit", blank=True)
+    time = models.CharField(max_length=9, help_text="format HH:MM:SS", blank=True)
+    substrate_electrode_distance = models.DecimalField(null=True, blank=True, max_digits=3, decimal_places=1,
+                                                       help_text=u"in mm")
     comments = models.TextField(blank=True)
-    transfer_in_chamber = models.CharField(max_length=10, default="Ar")
-    pre_heat = models.TimeField(null=True, blank=True)
-    argon_pre_heat = models.TimeField(null=True, blank=True)
-    heating_temperature = models.FloatField(help_text=u"in ℃")
-    transfer_out_of_chamber = models.CharField(max_length=10, default="Ar")
-    plasma_start_power = models.FloatField(help_text=u"in W")
-    plasma_start_with_carrier = models.BooleanField(default=False)
-    deposition_frequency = models.FloatField(help_text=u"in MHz")
-    deposition_power = models.FloatField(help_text=u"in W")
-    base_pressure = models.FloatField(help_text=u"in Torr")
+    transfer_in_chamber = models.CharField(max_length=10, default="Ar", blank=True)
+    pre_heat = models.CharField(max_length=9, null=True, blank=True, help_text="format HH:MM:SS")
+    gas_pre_heat_gas = models.CharField("gas of gas pre-heat", max_length=10, blank=True)
+    gas_pre_heat_pressure = models.CharField("pressure of gas pre-heat", max_length=15, blank=True, help_text="with unit")
+    gas_pre_heat_time = models.CharField("time of gas pre-heat", max_length=15, blank=True, help_text="format HH:MM:SS")
+    heating_temperature = models.IntegerField(help_text=u"in ℃", null=True, blank=True)
+    transfer_out_of_chamber = models.CharField(max_length=10, default="Ar", blank=True)
+    plasma_start_power = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, help_text=u"in W")
+    plasma_start_with_carrier = models.BooleanField(default=False, null=True, blank=True)
+    deposition_frequency = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text=u"in MHz")
+    deposition_power = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, help_text=u"in W")
+    base_pressure = models.FloatField(help_text=u"in Torr", null=True, blank=True)
     def __unicode__(self):
         return u"layer %d of %s" % (self.number, self.deposition)
     class Meta:
@@ -68,12 +77,10 @@ class SixChamberLayer(models.Model):
         pass
 
 class SixChamberChannel(models.Model):
+    number = models.IntegerField("channel number")
     layer = models.ForeignKey(SixChamberLayer)
-    number = models.IntegerField()
-    gas = models.CharField(max_length=10)
-    diluted_in = models.CharField(max_length=10, blank=True)
-    concentration = models.FloatField(null=True, blank=True, help_text="in %")
-    flow_rate = models.FloatField(help_text="in sccm")
+    gas = models.CharField("gas and dilution", max_length=30)
+    flow_rate = models.DecimalField(max_digits=4, decimal_places=1, help_text="in sccm")
     def __unicode__(self):
         return u"channel %d of %s" % (self.number, self.layer)
     class Meta:
@@ -108,9 +115,3 @@ _globals = copy.copy(globals())
 process_types = [cls.__name__.lower() for cls in _globals.values()
                  if inspect.isclass(cls) and issubclass(cls, Process)]
 del _globals, cls
-def find_actual_process(process):
-    for process_type in process_types:
-        if hasattr(process, process_type):
-            return getattr(process, process_type)
-    else:
-        raise Exception("internal error: process not found")
