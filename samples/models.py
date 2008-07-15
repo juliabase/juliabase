@@ -46,26 +46,37 @@ class HallMeasurement(Process):
     class Admin:
         pass
 
+six_chamber_chamber_choices = (
+    ("#1", "#1"),
+    ("#2", "#2"),
+    ("#3", "#3"),
+    ("#4", "#4"),
+    ("#5", "#5"),
+    ("#6", "#6"),
+    ("LL", "LL"),
+    ("TL1", "TL1"),
+    ("TL2", "TL2"))
+
 class SixChamberLayer(models.Model):
-    number = models.IntegerField()
-    chamber = models.IntegerField(null=True, blank=True)
+    number = models.IntegerField("layer number")
+    chamber = models.CharField(max_length=5, choices=six_chamber_chamber_choices)
     deposition = models.ForeignKey(SixChamberDeposition)
-    pressure = models.CharField(max_length=15, help_text="with unit", blank=True)
-    time = models.CharField(max_length=9, help_text="format HH:MM:SS", blank=True)
-    substrate_electrode_distance = models.DecimalField(null=True, blank=True, max_digits=3, decimal_places=1,
-                                                       help_text=u"in mm")
+    pressure = models.CharField("deposition pressure", max_length=15, help_text="with unit", blank=True)
+    time = models.CharField("deposition time", max_length=9, help_text="format HH:MM:SS", blank=True)
+    substrate_electrode_distance = models.DecimalField("substrate–electrode distance", null=True, blank=True, max_digits=4,
+                                                       decimal_places=1, help_text=u"in mm")
     comments = models.TextField(blank=True)
-    transfer_in_chamber = models.CharField(max_length=10, default="Ar", blank=True)
-    pre_heat = models.CharField(max_length=9, null=True, blank=True, help_text="format HH:MM:SS")
+    transfer_in_chamber = models.CharField("transfer in the chamber", max_length=10, default="Ar", blank=True)
+    pre_heat = models.CharField("pre-heat", max_length=9, null=True, blank=True, help_text="format HH:MM:SS")
     gas_pre_heat_gas = models.CharField("gas of gas pre-heat", max_length=10, blank=True)
     gas_pre_heat_pressure = models.CharField("pressure of gas pre-heat", max_length=15, blank=True, help_text="with unit")
     gas_pre_heat_time = models.CharField("time of gas pre-heat", max_length=15, blank=True, help_text="format HH:MM:SS")
     heating_temperature = models.IntegerField(help_text=u"in ℃", null=True, blank=True)
-    transfer_out_of_chamber = models.CharField(max_length=10, default="Ar", blank=True)
-    plasma_start_power = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, help_text=u"in W")
+    transfer_out_of_chamber = models.CharField("transfer out of the chamber", max_length=10, default="Ar", blank=True)
+    plasma_start_power = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, help_text=u"in W")
     plasma_start_with_carrier = models.BooleanField(default=False, null=True, blank=True)
     deposition_frequency = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text=u"in MHz")
-    deposition_power = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, help_text=u"in W")
+    deposition_power = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, help_text=u"in W")
     base_pressure = models.FloatField(help_text=u"in Torr", null=True, blank=True)
     def __unicode__(self):
         return u"layer %d of %s" % (self.number, self.deposition)
@@ -76,10 +87,23 @@ class SixChamberLayer(models.Model):
     class Admin:
         pass
 
+six_chamber_gas_choices = (
+    ("SiH4", "SiH4"),
+    ("H2", "H2"),
+    ("PH3+SiH4", "PH3 in 2% SiH4"),
+    ("TMB", "TMB in 1% He"),
+    ("B2H6", "B2H6 in 5ppm H2"),
+    ("CH4", "CH4"),
+    ("CO2", "CO2"),
+    ("GeH4", "GeH4"),
+    ("Ar", "Ar"),
+    ("Si2H6", "Si2H6"),
+    ("PH3", "PH3 in 10 ppm H2"))
+    
 class SixChamberChannel(models.Model):
-    number = models.IntegerField("channel number")
+    number = models.IntegerField("channel")
     layer = models.ForeignKey(SixChamberLayer)
-    gas = models.CharField("gas and dilution", max_length=30)
+    gas = models.CharField("gas and dilution", max_length=30, choices=six_chamber_gas_choices)
     flow_rate = models.DecimalField(max_digits=4, decimal_places=1, help_text="in sccm")
     def __unicode__(self):
         return u"channel %d of %s" % (self.number, self.layer)
@@ -112,6 +136,13 @@ class SampleSplit(Process):
 
 import copy, inspect
 _globals = copy.copy(globals())
-process_types = [cls.__name__.lower() for cls in _globals.values()
-                 if inspect.isclass(cls) and issubclass(cls, Process)]
+process_types = [cls.__name__.lower() for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, Process)]
+
+all_labels = {}
+for cls in [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]:
+    local_labels = {}
+    for field in cls._meta.local_fields:
+        local_labels[field.name] = field.verbose_name
+    all_labels[cls.__name__] = local_labels
+
 del _globals, cls
