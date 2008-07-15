@@ -32,53 +32,54 @@
                                  margin-left: 0.3em;
                                  border-style: solid; border-width: thin;
                                  border-color: black; float:right">{{ layer.number }}</div>
-                        <div>{% trans 'Layer number:' %}</div>
+                        <div>{{ all_labels.SixChamberLayer.number }}:</div>
                       </td>
                       <td style="vertical-align: top; padding-left: 2em">
-                        <span class="label">{% trans 'Chamber:' %}</span><span class="value">{{ layer.chamber }}</span>
+                        <span class="label">{{ all_labels.SixChamberLayer.chamber }}:</span
+                              ><span class="value">{{ layer.chamber }}</span>
                       </td>
                     </tr>
                   </table>
                 </td>
-                <td class="label">{% trans 'Transfer in the chamber:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.transfer_in_chamber }}:</td>
                 <td class="value">{{ layer.transfer_in_chamber|default:"—" }}</td>
-                <td class="label">{% trans 'Plasma start power:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.plasma_start_power }}:</td>
                 <td class="value">{{ layer.plasma_start_power|quantity:"W"|default_if_none:"—" }}</td>
               </tr>
               <tr>
-                <td class="label">{% trans 'Pre-heat:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.pre_heat }}:</td>
                 <td class="value">{{ layer.pre_heat|default:"—" }}</td>
-                <td class="label">{% trans 'Plasma start with carrier:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.plasma_start_with_carrier }}:</td>
                 <td class="value">{{ layer.plasma_start_with_carrier|fancy_bool }}</td>
               </tr>
               <tr>
-                <td class="label">{% trans 'Heating temperature:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.heating_temperature }}:</td>
                 <td class="value">{{ layer.heating_temperature|quantity:"℃"|default_if_none:"—" }}</td>
-                <td class="label">{% trans 'Deposition frequency:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.deposition_frequency }}:</td>
                 <td class="value">{{ layer.deposition_frequency|quantity:"MHz"|default_if_none:"—" }}</td>
               </tr>
               <tr>
-                <td class="label">{% trans 'Gas pre-heat gas:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.gas_pre_heat_gas }}:</td>
                 <td class="value">{{ layer.gas_pre_heat_gas|default:"—" }}</td>
-                <td class="label">{% trans 'Gas pre-heat pressure:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.gas_pre_heat_pressure }}:</td>
                 <td class="value">{{ layer.gas_pre_heat_pressure|default:"—" }}</td>
-                <td class="label">{% trans 'Gas pre-heat time:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.gas_pre_heat_time }}:</td>
                 <td class="value">{{ layer.gas_pre_heat_time|default:"—" }}</td>
               </tr>
               <tr>
-                <td class="label">{% trans 'Deposition pressure:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.pressure }}:</td>
                 <td class="value">{{ layer.pressure|default:"—" }}</td>
-                <td class="label">{% trans 'Transfer out of the chamber:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.transfer_out_of_chamber }}:</td>
                 <td class="value">{{ layer.transfer_out_of_chamber|default:"—" }}</td>
-                <td class="label">{% trans 'Deposition power:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.deposition_power }}:</td>
                 <td class="value">{{ layer.deposition_power|quantity:"W"|default_if_none:"—" }}</td>
               </tr>
               <tr>
-                <td class="label">{% trans 'Deposition time:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.time }}:</td>
                 <td class="value">{{ layer.time|default:"—" }}</td>
-                <td class="label">{% trans 'Substrate–electrode distance:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.substrate_electrode_distance }}:</td>
                 <td class="value">{{ layer.substrate_electrode_distance|quantity:"mm"|default_if_none:"—" }}</td>
-                <td class="label">{% trans 'Base pressure:' %}</td>
+                <td class="label">{{ all_labels.SixChamberLayer.base_pressure }}:</td>
                 <td class="value">{{ layer.base_pressure|quantity:"Torr"|default_if_none:"—" }}</td>
               </tr>
             </table>
@@ -101,14 +102,14 @@
                       {% if channels %}
                         <table width="100%" style="text-align: center">
                           <tr>
-                            <th>{% trans 'Channel' %}</th>
-                            <th>{% trans 'Gas type' %}</th>
-                            <th>{% trans 'Flow rate' %}</th>
+                            <th>{{ all_labels.SixChamberChannel.number }}</th>
+                            <th>{{ all_labels.SixChamberChannel.gas }}</th>
+                            <th>{{ all_labels.SixChamberChannel.flow_rate }}</th>
                           </tr>
                           {% for channel in channels %}
                           <tr>
                             <td>{{ channel.number }}</td>
-                            <td>{{ channel.gas|chem_markup }}</td>
+                            <td>{{ channel.get_gas_display|chem_markup }}</td>
                             <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
                           </tr>
                           {% endfor %}
