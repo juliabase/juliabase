@@ -15,17 +15,37 @@ class DepositionForm(ModelForm):
         model = SixChamberDeposition
         exclude = ("process_ptr",)
 
-time_pattern = re.compile(r"^\s*(?P<H>\d{1,3}):(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
+time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):
     if not value:
         return ""
     match = time_pattern.match(value)
     if not match:
         raise ValidationError("Time must be given in the form HH:MM:SS.")
-    hours, minutes, seconds = int(match.group("H")), int(match.group("M")), int(match.group("S"))
+    hours, minutes, seconds = match.group("H"), int(match.group("M")), int(match.group("S"))
+    hours = int(hours) if hours is not None else 0
     if minutes >= 60 or seconds >= 60:
         raise ValidationError("Minutes and seconds must be smaller than 60.")
-    return "%d:%02d:%02d" % (hours, minutes, seconds)
+    if not hours:
+        return "%d:%02d" % (minutes, seconds)
+    else:
+        return "%d:%02d:%02d" % (hours, minutes, seconds)
+
+quantity_pattern = re.compile(ur"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
+def clean_quantity_field(value, units):
+    if not value:
+        return ""
+    value = unicode(value).replace(",", ".").replace(u"μ", u"µ")
+    match = quantity_pattern.match(value)
+    if not match:
+        raise ValidationError("Must be a physical quantity with number and unit.")
+    original_unit = match.group("unit").lower()
+    for unit in units:
+        if unit.lower() == original_unit.lower():
+            break
+    else:
+        raise ValidationError("The unit is invalid.")
+    return match.group("number") + " " + unit
     
 class LayerForm(ModelForm):
     chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
@@ -53,17 +73,22 @@ class LayerForm(ModelForm):
         return clean_time_field(self.cleaned_data["pre_heat"])
     def clean_gas_pre_heat_time(self):
         return clean_time_field(self.cleaned_data["gas_pre_heat_time"])
+    def clean_pressure(self):
+        return clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
+    def clean_gas_pre_heat_pressure(self):
+        return clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
     class Meta:
         model = SixChamberLayer
         exclude = ("deposition",)
 
 class ChannelForm(ModelForm):
+    gas_names = set([x[0] for x in models.six_chamber_gas_choices])
     def __init__(self, data=None, **keyw):
         super(ChannelForm, self).__init__(data, **keyw)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):
-        if self.cleaned_data["gas"] not in self.six_chamber_gas_choices:
+        if self.cleaned_data["gas"] not in self.gas_names:
             raise ValidationError("Gas type is unknown.")
         return self.cleaned_data["gas"]
     class Meta:
