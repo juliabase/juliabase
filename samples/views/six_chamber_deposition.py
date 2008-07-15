@@ -5,27 +5,54 @@ import re
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.newforms import ModelForm
-from django.newforms.util import ErrorList
+from django.newforms.util import ErrorList, ValidationError
 import django.newforms as forms
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
+import chantal.samples.models as models
 
 class DepositionForm(ModelForm):
     class Meta:
         model = SixChamberDeposition
         exclude = ("process_ptr",)
 
+time_pattern = re.compile(r"^\s*(?P<H>\d{1,3}):(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
+def clean_time_field(value):
+    if not value:
+        return ""
+    match = time_pattern.match(value)
+    if not match:
+        raise ValidationError("Time must be given in the form HH:MM:SS.")
+    hours, minutes, seconds = int(match.group("H")), int(match.group("M")), int(match.group("S"))
+    if minutes >= 60 or seconds >= 60:
+        raise ValidationError("Minutes and seconds must be smaller than 60.")
+    return "%d:%02d:%02d" % (hours, minutes, seconds)
+    
 class LayerForm(ModelForm):
+    chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
     def __init__(self, data=None, **keyw):
         super(LayerForm, self).__init__(data, **keyw)
         self.fields["number"].widget = \
             forms.TextInput(attrs={"size": "2", "style": "text-align: center; font-size: xx-large"})
-        self.fields["chamber"].widget = forms.TextInput(attrs={"size": "3"})
         self.fields["comments"].widget = forms.Textarea(attrs={"cols": "30"})
         for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
                           "transfer_out_of_chamber", "plasma_start_power",
                           "deposition_frequency", "deposition_power", "base_pressure"]:
             self.fields[fieldname].widget = forms.TextInput(attrs={"size": "10"})
+        for fieldname, min_value, max_value in [("deposition_frequency", 13, 150), ("plasma_start_power", 0, 1000),
+                                                ("deposition_power", 0, 1000)]:
+            self.fields[fieldname].min_value = min_value
+            self.fields[fieldname].max_value = max_value
+    def clean_chamber(self):
+        if self.cleaned_data["chamber"] not in self.chamber_names:
+            raise ValidationError("Name is unknown.")
+        return self.cleaned_data["chamber"]
+    def clean_time(self):
+        return clean_time_field(self.cleaned_data["time"])
+    def clean_pre_heat(self):
+        return clean_time_field(self.cleaned_data["pre_heat"])
+    def clean_gas_pre_heat_time(self):
+        return clean_time_field(self.cleaned_data["gas_pre_heat_time"])
     class Meta:
         model = SixChamberLayer
         exclude = ("deposition",)
@@ -34,8 +61,11 @@ class ChannelForm(ModelForm):
     def __init__(self, data=None, **keyw):
         super(ChannelForm, self).__init__(data, **keyw)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
-        self.fields["gas"].widget = forms.TextInput(attrs={"size": "25"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
+    def clean_gas(self):
+        if self.cleaned_data["gas"] not in self.six_chamber_gas_choices:
+            raise ValidationError("Gas type is unknown.")
+        return self.cleaned_data["gas"]
     class Meta:
         model = SixChamberChannel
         exclude = ("layer",)
@@ -123,21 +153,20 @@ def append_error(form, fieldname, error_message):
 def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
     referencially_valid = True
     if not layer_forms:
-        append_error(deposition_form, "__all__", "No layers given")
+        append_error(deposition_form, "__all__", "No layers given.")
         referencially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                append_error(layer_form, "__all__", "Number is a duplicate")
+                append_error(layer_form, "__all__", "Number is a duplicate.")
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
-                print channel_form.cleaned_data["number"]
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    append_error(channel_form, "__all__", "Number is a duplicate")
+                    append_error(channel_form, "__all__", "Number is a duplicate.")
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
