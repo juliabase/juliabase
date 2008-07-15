@@ -4,7 +4,7 @@
 import string
 from django.template import Context, loader
 from django.shortcuts import render_to_response, get_object_or_404
-from chantal.samples.models import Sample
+from chantal.samples.models import Sample, all_labels
 
 def camel_case_to_underscores(name):
     result = []
@@ -20,7 +20,7 @@ def camel_case_to_underscores(name):
 def digest_process(process):
     process = process.find_actual_process()
     template = loader.get_template("show_"+camel_case_to_underscores(process.__class__.__name__)+".html")
-    return process, process._meta.verbose_name, template.render(Context({"process": process}))
+    return process, process._meta.verbose_name, template.render(Context({"process": process, "all_labels": all_labels}))
 
 def show(request, sample_name):
     sample = get_object_or_404(Sample, pk=sample_name)
