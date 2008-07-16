@@ -137,12 +137,4 @@ class SampleSplit(Process):
 import copy, inspect
 _globals = copy.copy(globals())
 process_types = [cls.__name__.lower() for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, Process)]
-
-all_labels = {}
-for cls in [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]:
-    local_labels = {}
-    for field in cls._meta.local_fields:
-        local_labels[field.name] = field.verbose_name.capitalize()
-    all_labels[cls.__name__] = local_labels
-
 del _globals, cls

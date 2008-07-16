@@ -3,11 +3,12 @@
 
 import string, re
 from django.template.defaultfilters import stringfilter
-from django.template import Library
+from django import template
 from django.utils.html import conditional_escape
 import django.utils.safestring
+import chantal.samples.models
 
-register = Library()
+register = template.Library()
 
 @register.filter
 @stringfilter
@@ -64,3 +65,16 @@ chem_markup.needs_autoescape = True
 def fancy_bool(boolean):
     result = u"Yes" if boolean else u"No"
     return django.utils.safestring.mark_safe(result)
+
+class VerboseNameNode(template.Node):
+    def __init__(self, model, field):
+        self.model, self.field = model, field
+    def render(self, context):
+        model = chantal.samples.models.__dict__[self.model]
+        return model._meta.get_field(self.field).verbose_name.capitalize()
+
+@register.tag
+def verbose_name(parser, token):
+    tag_name, var = token.split_contents()
+    model, field = var.split('.')
+    return VerboseNameNode(model, field)
