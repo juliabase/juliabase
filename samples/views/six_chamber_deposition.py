@@ -5,48 +5,17 @@ import re
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.newforms import ModelForm
-from django.newforms.util import ErrorList, ValidationError
+from django.newforms.util import ValidationError
 import django.newforms as forms
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 import chantal.samples.models as models
+from . import utils
 
 class DepositionForm(ModelForm):
     class Meta:
         model = SixChamberDeposition
         exclude = ("process_ptr",)
 
-time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
-def clean_time_field(value):
-    if not value:
-        return ""
-    match = time_pattern.match(value)
-    if not match:
-        raise ValidationError("Time must be given in the form HH:MM:SS.")
-    hours, minutes, seconds = match.group("H"), int(match.group("M")), int(match.group("S"))
-    hours = int(hours) if hours is not None else 0
-    if minutes >= 60 or seconds >= 60:
-        raise ValidationError("Minutes and seconds must be smaller than 60.")
-    if not hours:
-        return "%d:%02d" % (minutes, seconds)
-    else:
-        return "%d:%02d:%02d" % (hours, minutes, seconds)
-
-quantity_pattern = re.compile(ur"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
-def clean_quantity_field(value, units):
-    if not value:
-        return ""
-    value = unicode(value).replace(",", ".").replace(u"μ", u"µ")
-    match = quantity_pattern.match(value)
-    if not match:
-        raise ValidationError("Must be a physical quantity with number and unit.")
-    original_unit = match.group("unit").lower()
-    for unit in units:
-        if unit.lower() == original_unit.lower():
-            break
-    else:
-        raise ValidationError("The unit is invalid.")
-    return match.group("number") + " " + unit
-    
 class LayerForm(ModelForm):
     chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
     def __init__(self, data=None, **keyw):
@@ -68,15 +37,15 @@ class LayerForm(ModelForm):
             raise ValidationError("Name is unknown.")
         return self.cleaned_data["chamber"]
     def clean_time(self):
-        return clean_time_field(self.cleaned_data["time"])
+        return utils.clean_time_field(self.cleaned_data["time"])
     def clean_pre_heat(self):
-        return clean_time_field(self.cleaned_data["pre_heat"])
+        return utils.clean_time_field(self.cleaned_data["pre_heat"])
     def clean_gas_pre_heat_time(self):
-        return clean_time_field(self.cleaned_data["gas_pre_heat_time"])
+        return utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
     def clean_pressure(self):
-        return clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
+        return utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
     def clean_gas_pre_heat_pressure(self):
-        return clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
+        return utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
     class Meta:
         model = SixChamberLayer
         exclude = ("deposition",)
@@ -102,19 +71,10 @@ def is_all_valid(deposition_form, layer_forms, channel_forms):
         valid = valid and all([channel_form.is_valid() for channel_form in forms])
     return valid
 
-def int_or_zero(number):
-    try:
-        return int(number)
-    except ValueError:
-        return 0
-
-def prefix_dict(dictionary, prefix):
-    return dict([(prefix+"-"+key, dictionary[key]) for key in dictionary])
-
 def change_structure(layer_forms, channel_form_lists, post_data):
     structure_changed = False
     change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
-    biggest_layer_number = max([int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms] + [0])
+    biggest_layer_number = max([utils.int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms] + [0])
     new_layers = []
     new_channel_lists = []
     
@@ -127,15 +87,15 @@ def change_structure(layer_forms, channel_form_lists, post_data):
             layer_data["number"] = biggest_layer_number + 1
             biggest_layer_number += 1
             layer_index = len(layer_forms) + len(new_layers)
-            layer_data = prefix_dict(layer_data, str(layer_index))
+            layer_data = utils.prefix_dict(layer_data, str(layer_index))
             new_layers.append(LayerForm(layer_data, prefix=str(layer_index)))
             new_channel_lists.append(
-                    [ChannelForm(prefix_dict(channel.cleaned_data, "%d_%d"%(layer_index, channel_index)),
+                    [ChannelForm(utils.prefix_dict(channel.cleaned_data, "%d_%d"%(layer_index, channel_index)),
                                            prefix="%d_%d"%(layer_index, channel_index))
                      for channel_index, channel in enumerate(channel_form_lists[i])])
 
     # Second step: Add layers
-    to_be_added_layers = int_or_zero(change_params["structural-change-add-layers"])
+    to_be_added_layers = utils.int_or_zero(change_params["structural-change-add-layers"])
     structure_changed = structure_changed or to_be_added_layers
     for i in range(to_be_added_layers):
         layer_index = len(layer_forms) + len(new_layers)
@@ -146,7 +106,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     # Third and forth steps: Add and delete channels
     for layer_index, channels in enumerate(channel_form_lists):
         # Add channels
-        to_be_added_channels = int_or_zero(change_params.get(
+        to_be_added_channels = utils.int_or_zero(change_params.get(
                 "structural-change-add-channels-for-layerindex-%d" % layer_index))
         structure_changed = structure_changed or to_be_added_channels
         number_of_channels = len(channels)
@@ -172,26 +132,23 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     channel_form_lists.extend(new_channel_lists)
     return structure_changed
 
-def append_error(form, fieldname, error_message):
-    form._errors.setdefault(fieldname, ErrorList()).append(error_message)
-
 def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
     referencially_valid = True
     if not layer_forms:
-        append_error(deposition_form, "__all__", "No layers given.")
+        utils.append_error(deposition_form, "__all__", "No layers given.")
         referencially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                append_error(layer_form, "__all__", "Number is a duplicate.")
+                utils.append_error(layer_form, "__all__", "Number is a duplicate.")
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    append_error(channel_form, "__all__", "Number is a duplicate.")
+                    utils.append_error(channel_form, "__all__", "Number is a duplicate.")
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
