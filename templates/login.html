@@ -7,16 +7,16 @@
 {% block content %}
 
 {% if form.has_errors %}
-<p>Your username and password didn't match. Please try again.</p>
+<p>{% trans "Your username and password didn't match. Please try again." %}</p>
 {% endif %}
 
 <form method="post" action=".">
   <table>
-    <tr><td><label for="id_username">Username:</label></td><td>{{ form.username }}</td></tr>
-    <tr><td><label for="id_password">Password:</label></td><td>{{ form.password }}</td></tr>
+    <tr><td><label for="id_username">{% trans 'Username' %}:</label></td><td>{{ form.username }}</td></tr>
+    <tr><td><label for="id_password">{% trans 'Password' %}:</label></td><td>{{ form.password }}</td></tr>
   </table>
 
-  <input type="submit" value="login" />
+  <input type="submit" value="{% trans 'login' %}" />
   <input type="hidden" name="next" value="{{ next }}" />
 </form>
 

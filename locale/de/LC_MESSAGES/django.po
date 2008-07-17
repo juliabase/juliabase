@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-17 19:38+0200\n"
-"PO-Revision-Date: 2008-07-17 19:39+0200\n"
+"POT-Creation-Date: 2008-07-17 20:01+0200\n"
+"PO-Revision-Date: 2008-07-17 20:01+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -388,6 +388,24 @@ msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 #: templates/login.html:5 templates/login.html.py:6
 msgid "Chantal login"
 msgstr "Chantal-Login"
+
+#: templates/login.html:10
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+"Ihr Benutzername und Ihr Passwort passen nicht zusammen. Bitte versuchen Sie "
+"es noch einmal."
+
+#: templates/login.html:15
+msgid "Username"
+msgstr "Benutzername"
+
+#: templates/login.html:16
+msgid "Password"
+msgstr "Passwort"
+
+#: templates/login.html:19
+msgid "login"
+msgstr "Anmelden"
 
 #: templates/logout.html:6
 msgid "Thanks for spending some quality time with the Web site today."
