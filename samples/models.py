@@ -3,19 +3,23 @@
 
 from django.db import models
 import django.contrib.auth.models
+from django.utils.translation import ugettext_lazy as _, string_concat
 
 class Operator(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(primary_key=True)
-    phone = models.CharField(max_length=20)
+    name = models.CharField(_("name"), max_length=50)
+    email = models.EmailField(_("email"), primary_key=True)
+    phone = models.CharField(_("phone"), max_length=20)
     def __unicode__(self):
         return self.name
+    class Meta:
+        verbose_name = _("operator")
+        verbose_name_plural = _("operators")
     class Admin:
         pass
 
 class Process(models.Model):
-    timestamp = models.DateTimeField()
-    operator = models.ForeignKey(Operator)
+    timestamp = models.DateTimeField(_("timestamp"), )
+    operator = models.ForeignKey(Operator, verbose_name=_("operator"))
     def find_actual_process(self):
         for process_type in process_types:
             if hasattr(self, process_type):
@@ -26,24 +30,27 @@ class Process(models.Model):
         return unicode(self.find_actual_process())
     class Meta:
         ordering = ['timestamp']
-        verbose_name_plural = "processes"
-    class Admin:
-        pass
+        verbose_name = _("process")
+        verbose_name_plural = _("processes")
 
 class SixChamberDeposition(Process):
-    deposition_number = models.CharField(max_length=15, unique=True)
-    carrier = models.CharField(max_length=10)
-    comments = models.TextField(blank=True)
+    deposition_number = models.CharField(_("deposition number"), max_length=15, unique=True)
+    carrier = models.CharField(_("carrier"), max_length=10)
+    comments = models.TextField(_("comments"), blank=True)
     def __unicode__(self):
-        return "6-chamber deposition " + self.deposition_number
+        return unicode(_("6-chamber deposition ")) + self.deposition_number
     class Meta:
-        verbose_name = "6-chamber deposition"
+        verbose_name = _("6-chamber deposition")
+        verbose_name_plural = _("6-chamber depositions")
     class Admin:
         pass
 
 class HallMeasurement(Process):
     def __unicode__(self):
         return "%s" % (self.name)
+    class Meta:
+        verbose_name = _("Hall measurement")
+        verbose_name_plural = _("Hall measurements")
     class Admin:
         pass
 
@@ -59,30 +66,37 @@ six_chamber_chamber_choices = (
     ("TL2", "TL2"))
 
 class SixChamberLayer(models.Model):
-    number = models.IntegerField("layer number")
-    chamber = models.CharField(max_length=5, choices=six_chamber_chamber_choices)
-    deposition = models.ForeignKey(SixChamberDeposition)
-    pressure = models.CharField("deposition pressure", max_length=15, help_text="with unit", blank=True)
-    time = models.CharField("deposition time", max_length=9, help_text="format HH:MM:SS", blank=True)
-    substrate_electrode_distance = models.DecimalField("substrate–electrode distance", null=True, blank=True, max_digits=4,
-                                                       decimal_places=1, help_text=u"in mm")
-    comments = models.TextField(blank=True)
-    transfer_in_chamber = models.CharField("transfer in the chamber", max_length=10, default="Ar", blank=True)
-    pre_heat = models.CharField("pre-heat", max_length=9, null=True, blank=True, help_text="format HH:MM:SS")
-    gas_pre_heat_gas = models.CharField("gas of gas pre-heat", max_length=10, blank=True)
-    gas_pre_heat_pressure = models.CharField("pressure of gas pre-heat", max_length=15, blank=True, help_text="with unit")
-    gas_pre_heat_time = models.CharField("time of gas pre-heat", max_length=15, blank=True, help_text="format HH:MM:SS")
-    heating_temperature = models.IntegerField(help_text=u"in ℃", null=True, blank=True)
-    transfer_out_of_chamber = models.CharField("transfer out of the chamber", max_length=10, default="Ar", blank=True)
-    plasma_start_power = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, help_text=u"in W")
-    plasma_start_with_carrier = models.BooleanField(default=False, null=True, blank=True)
-    deposition_frequency = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text=u"in MHz")
-    deposition_power = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True, help_text=u"in W")
-    base_pressure = models.FloatField(help_text=u"in Torr", null=True, blank=True)
+    number = models.IntegerField(_("layer number"))
+    chamber = models.CharField(_("chamber"), max_length=5, choices=six_chamber_chamber_choices)
+    deposition = models.ForeignKey(SixChamberDeposition, verbose_name=_("deposition"))
+    pressure = models.CharField(_("deposition pressure"), max_length=15, help_text=_("with unit"), blank=True)
+    time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
+    substrate_electrode_distance = \
+        models.DecimalField(_(u"substrate–electrode distance"), null=True, blank=True, max_digits=4,
+                            decimal_places=1, help_text=_(u"in mm"))
+    comments = models.TextField(_("comments"), blank=True)
+    transfer_in_chamber = models.CharField(_("transfer in the chamber"), max_length=10, default="Ar", blank=True)
+    pre_heat = models.CharField(_("pre-heat"), max_length=9, null=True, blank=True, help_text=_("format HH:MM:SS"))
+    gas_pre_heat_gas = models.CharField(_("gas of gas pre-heat"), max_length=10, blank=True)
+    gas_pre_heat_pressure = models.CharField(_("pressure of gas pre-heat"), max_length=15, blank=True,
+                                             help_text=_("with unit"))
+    gas_pre_heat_time = models.CharField(_("time of gas pre-heat"), max_length=15, blank=True,
+                                         help_text=_("format HH:MM:SS"))
+    heating_temperature = models.IntegerField(_("heating temperature"), help_text=_(u"in ℃"), null=True, blank=True)
+    transfer_out_of_chamber = models.CharField(_("transfer out of the chamber"), max_length=10, default="Ar", blank=True)
+    plasma_start_power = models.DecimalField(_("plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                             help_text=_(u"in W"))
+    plasma_start_with_carrier = models.BooleanField(_("plasma start with carrier"), default=False, null=True, blank=True)
+    deposition_frequency = models.DecimalField(_("deposition frequency"), max_digits=5, decimal_places=2,
+                                               null=True, blank=True, help_text=_(u"in MHz"))
+    deposition_power = models.DecimalField(_("deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                           help_text=_(u"in W"))
+    base_pressure = models.FloatField(_("base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
     def __unicode__(self):
-        return u"layer %d of %s" % (self.number, self.deposition)
+        return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
     class Meta:
-        verbose_name = "6-chamber layer"
+        verbose_name = _("6-chamber layer")
+        verbose_name_plural = _("6-chamber layers")
         unique_together = ("deposition", "number")
         ordering = ['number']
     class Admin:
@@ -91,45 +105,53 @@ class SixChamberLayer(models.Model):
 six_chamber_gas_choices = (
     ("SiH4", "SiH4"),
     ("H2", "H2"),
-    ("PH3+SiH4", "PH3 in 2% SiH4"),
-    ("TMB", "TMB in 1% He"),
-    ("B2H6", "B2H6 in 5ppm H2"),
+    ("PH3+SiH4", _("PH3 in 2% SiH4")),
+    ("TMB", _("TMB in 1% He")),
+    ("B2H6", _("B2H6 in 5ppm H2")),
     ("CH4", "CH4"),
     ("CO2", "CO2"),
     ("GeH4", "GeH4"),
     ("Ar", "Ar"),
     ("Si2H6", "Si2H6"),
-    ("PH3", "PH3 in 10 ppm H2"))
+    ("PH3", _("PH3 in 10 ppm H2")))
     
 class SixChamberChannel(models.Model):
-    number = models.IntegerField("channel")
-    layer = models.ForeignKey(SixChamberLayer)
-    gas = models.CharField("gas and dilution", max_length=30, choices=six_chamber_gas_choices)
-    flow_rate = models.DecimalField(max_digits=4, decimal_places=1, help_text="in sccm")
+    number = models.IntegerField(_("channel"))
+    layer = models.ForeignKey(SixChamberLayer, verbose_name=_("layer"))
+    gas = models.CharField(_("gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
+    flow_rate = models.DecimalField(_("flow rate"), max_digits=4, decimal_places=1, help_text=_("in sccm"))
     def __unicode__(self):
-        return u"channel %d of %s" % (self.number, self.layer)
+        return _(u"channel %(number)d of %(layer)s") % {"number": self.number, "layer": self.layer}
     class Meta:
-        verbose_name = "6-chamber channel"
+        verbose_name = _("6-chamber channel")
+        verbose_name_plural = _("6-chamber channels")
         unique_together = ("layer", "number")
         ordering = ['number']
     class Admin:
         pass
 
 class Sample(models.Model):
-    name = models.SlugField(max_length=30, primary_key=True)
-    current_location = models.CharField(max_length=50)
-    currently_responsible_person = models.ForeignKey(Operator)
-    tags = models.CharField(max_length=255, blank=True, help_text="separated with commas, no whitespace")
-    aliases = models.CharField(max_length=64, blank=True, help_text="separated with commas, no whitespace")
-    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="split_origin")
-    processes = models.ManyToManyField(Process, null=True, blank=True)
+    name = models.SlugField(_("name"), max_length=30, primary_key=True)
+    current_location = models.CharField(_("current location"), max_length=50)
+    currently_responsible_person = models.ForeignKey(Operator, verbose_name=_("currently responsible person"))
+    tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
+    aliases = models.CharField(_("aliases"), max_length=64, blank=True, help_text=_("separated with commas, no whitespace"))
+    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="split_origin",
+                                     verbose_name=_("split origin"))
+    processes = models.ManyToManyField(Process, null=True, blank=True, verbose_name=_("processes"))
     def __unicode__(self):
         return self.name
+    class Meta:
+        verbose_name = _("sample")
+        verbose_name_plural = _("samples")
     class Admin:
         pass
 
 class SampleSplit(Process):
-    parent = models.ForeignKey(Sample)  # for a fast lookup
+    parent = models.ForeignKey(Sample, verbose_name=_("parent"))  # for a fast lookup
+    class Meta:
+        verbose_name = _("sample split")
+        verbose_name_plural = _("sample splits")
     class Admin:
         pass
 
@@ -138,10 +160,13 @@ languages = (
     ("en", "English"),
     )
 class UserDetails(models.Model):
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True)
-    language = models.CharField(max_length=10, choices=languages)
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"))
+    language = models.CharField(_("language"), max_length=10, choices=languages)
     def __unicode__(self):
         return unicode(self.user)
+    class Meta:
+        verbose_name = _("user details")
+        verbose_name_plural = _("user details")
     class Admin:
         pass
 
