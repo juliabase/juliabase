@@ -1,11 +1,15 @@
 body { 
     background-color: white; 
     font-family: Frutiger,Trebuchet MS,DejaVu Sans,Bitstream Vera Sans,Verdana,sans-serif;
-    margin: 10px 25px 20px;
+    margin: 0pt; padding: 0pt;
 }
 p.logo-text { margin:0pt; font-size: 50px; color: #888888; font-weight: bold }
 p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #888888; font-weight: normal }
 img.logo { float: right }
+
+div.main {
+    margin: 20px 25px 20px;
+}
 
 div.outer-frame {
     clear: both;
@@ -16,7 +20,7 @@ div.outer-frame {
     border-style: solid;
 }
 
-div.main {
+div.inner-frame {
     margin: 1px;
     padding: 10px;
     border-color: black;
@@ -25,6 +29,16 @@ div.main {
     -moz-border-radius: 10px;
     background-color: #e6e6e6;
 }
+
+div.headbar {
+    text-align: right;
+    font-size: small;
+    color: white;
+    background-color: #045078;
+    padding: 0.3ex 25px 0.5ex;
+}
+
+div.headbar a { color: white }
 
 h1 { margin-top: 0pt }
 
@@ -40,5 +54,5 @@ span.help { font-size: small }
 td.error-messages { text-align: left; font-size: x-small }
 td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
 		      color:white; background-color: maroon; font-weight: bold }
-td ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon }
+ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon }
 .errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }

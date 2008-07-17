@@ -2,6 +2,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans 'Chantal login' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'Chantal login' %}</h1>{% endblock %}
 {% block content %}
 
 {% if form.has_errors %}
@@ -9,13 +11,13 @@
 {% endif %}
 
 <form method="post" action=".">
-<table>
-<tr><td><label for="id_username">Username:</label></td><td>{{ form.username }}</td></tr>
-<tr><td><label for="id_password">Password:</label></td><td>{{ form.password }}</td></tr>
-</table>
+  <table>
+    <tr><td><label for="id_username">Username:</label></td><td>{{ form.username }}</td></tr>
+    <tr><td><label for="id_password">Password:</label></td><td>{{ form.password }}</td></tr>
+  </table>
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+  <input type="submit" value="login" />
+  <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
 {% endblock %}
