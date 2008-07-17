@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+import django.contrib.auth.models
 
 class Operator(models.Model):
     name = models.CharField(max_length=50)
@@ -129,8 +130,18 @@ class Sample(models.Model):
 
 class SampleSplit(Process):
     parent = models.ForeignKey(Sample)  # for a fast lookup
+    class Admin:
+        pass
+
+languages = (
+    ("de", "Deutsch"),
+    ("en", "English"),
+    )
+class UserDetails(models.Model):
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True)
+    language = models.CharField(max_length=10, choices=languages)
     def __unicode__(self):
-        return "%s" % (self.name)
+        return unicode(self.user)
     class Admin:
         pass
 
