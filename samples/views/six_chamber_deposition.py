@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import re
+from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.newforms import ModelForm
 from django.newforms.util import ValidationError
 import django.newforms as forms
+from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 import chantal.samples.models as models
 from . import utils
@@ -196,6 +198,7 @@ def forms_from_database(deposition):
              for channel_index, channel in enumerate(layer.sixchamberchannel_set.all())])
     return layer_forms, channel_form_lists
 
+@login_required
 def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number)
     if request.method == "POST":
@@ -213,4 +216,5 @@ def edit(request, deposition_number):
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": deposition_number,
                                "deposition": deposition_form,
-                               "layers_and_channels": zip(layer_forms, channel_form_lists)})
+                               "layers_and_channels": zip(layer_forms, channel_form_lists)},
+                              context_instance=RequestContext(request))
