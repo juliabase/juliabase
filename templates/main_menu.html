@@ -1,0 +1,15 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  {{ session.last_db_time_in_ms }}
+  {% for process in processes %}
+    <p class="operator_and_timestamp">
+      {{ process.operator }},
+      {{ process.timestamp }}
+    </p>
+    <h2>{{ process.title }}</h2>
+    {{ process.body }}
+  {% endfor %}
+{% endblock %}

@@ -3,7 +3,7 @@
 
 from django.db import models
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, string_concat
+from django.utils.translation import ugettext_lazy as _
 
 class Operator(models.Model):
     name = models.CharField(_("name"), max_length=50)
