@@ -14,7 +14,7 @@
 
 {% block content %}
 <form method="post" action="">
-  {% if not deposition.is_valid or deposition.non_field_errors %}
+  {% if deposition.errors or deposition.non_field_errors %}
     <table width="100%"><tr><td class="error-messages">
       {% for field in deposition %}
         {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
@@ -53,216 +53,218 @@
        ><br />{{ deposition.comments }}
   </p>
 
-  <table width="100%">
-    {% for layer, channels in layers_and_channels %}
-      <tr>
-        <td style="border-style: solid; border-color: black; border-width: thin">
-          <table width="100%">
-            <tr>
-              <td>
-                <table width="100%">
-                  {% if not layer.is_valid or layer.non_field_errors %}
+  {% if layers_and_channels %}
+    <table width="100%">
+      {% for layer, channels in layers_and_channels %}
+        <tr>
+          <td style="border-style: solid; border-color: black; border-width: thin">
+            <table width="100%">
+              <tr>
+                <td>
+                  <table width="100%">
+                    {% if not layer.is_valid or layer.non_field_errors %}
+                      <tr>
+                        <td colspan="0" class="error-messages">
+                          {% for field in layer %}
+                            {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+                          {% endfor %}
+                          {% if layer.non_field_errors %}
+                            <p>{% trans 'Layer error' %}</p>{{ layer.non_field_errors }}
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endif %}
                     <tr>
-                      <td colspan="0" class="error-messages">
-                        {% for field in layer %}
-                          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-                        {% endfor %}
-                        {% if layer.non_field_errors %}
-                          <p>{% trans 'Layer error' %}</p>{{ layer.non_field_errors }}
+                      <td colspan="2" rowspan="3" style="vertical-align: top">
+                        <table>
+                          <tr>
+                            <td style="vertical-align: top; text-align: right">
+                              <div><label for="id_{{ layer.number.html_name }}">{{ layer.number.label }}:</label></div>
+                              <div 
+                                style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                       margin-left: 0.3em">{{ layer.number }}</div>
+                            </td>
+                            <td style="vertical-align: top; padding-left: 2em">
+                              <label for="id_{{ layer.chamber.html_name }}">{{ layer.chamber.label }}:</label><span 
+                                class="value">{{ layer.chamber }}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colspan="2">
+                              <p><input type="checkbox"
+                                        id="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
+                                        name="structural-change-duplicate-layerindex-{{ forloop.counter0 }}" />
+                                <label for="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
+                                       >{% trans 'duplicate this layer' %}</label><br />
+                              <input type="checkbox"
+                                        id="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
+                                        name="structural-change-delete-layerindex-{{ forloop.counter0 }}" />
+                                <label for="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
+                                       >{% trans 'delete this layer' %}</label></p>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td class="label">
+                        <label for="id_{{ layer.transfer_in_chamber.html_name }}"
+                               >{{ layer.transfer_in_chamber.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.transfer_in_chamber }}</td>
+                      <td class="label">
+                        <label for="id_{{ layer.plasma_start_power.html_name }}"
+                               >{{ layer.plasma_start_power.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.plasma_start_power }}<br />
+                        <span class="help">({{ layer.plasma_start_power.help_text }})</td>
+                    </tr>
+                    <tr>
+                      <td class="label">
+                        <label for="id_{{ layer.pre_heat.html_name }}"
+                               >{{ layer.pre_heat.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.pre_heat }}<br />
+                        <span class="help">({{ layer.pre_heat.help_text }})</span></td>
+                      <td class="label">
+                        <label for="id_{{ layer.plasma_start_with_carrier.html_name }}"
+                               >{{ layer.plasma_start_with_carrier.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.plasma_start_with_carrier }}</td>
+                    </tr>
+                    <tr>
+                      <td class="label">
+                        <label for="id_{{ layer.heating_temperature.html_name }}"
+                               >{{ layer.heating_temperature.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.heating_temperature }}<br />
+                        <span class="help">({{ layer.heating_temperature.help_text }})</td>
+                      <td class="label">
+                        <label for="id_{{ layer.deposition_frequency.html_name }}"
+                               >{{ layer.deposition_frequency.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.deposition_frequency }}<br />
+                        <span class="help">({{ layer.deposition_frequency.help_text }})</td>
+                    </tr>
+                    <tr>
+                      <td class="label">
+                        <label for="id_{{ layer.gas_pre_heat_gas.html_name }}"
+                               >{{ layer.gas_pre_heat_gas.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.gas_pre_heat_gas }}</td>
+                      <td class="label">
+                        <label for="id_{{ layer.gas_pre_heat_pressure.html_name }}"
+                               >{{ layer.gas_pre_heat_pressure.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.gas_pre_heat_pressure }}<br />
+                        <span class="help">({{ layer.gas_pre_heat_pressure.help_text }})</span></td>
+                      <td class="label">
+                        <label for="id_{{ layer.gas_pre_heat_time.html_name }}"
+                               >{{ layer.gas_pre_heat_time.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.gas_pre_heat_time }}<br />
+                        <span class="help">({{ layer.gas_pre_heat_time.help_text }})</span></td>
+                    </tr>
+                    <tr>
+                      <td class="label">
+                        <label for="id_{{ layer.pressure.html_name }}"
+                               >{{ layer.pressure.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.pressure }}<br />
+                        <span class="help">({{ layer.pressure.help_text }})</span></td>
+                      <td class="label">
+                        <label for="id_{{ layer.transfer_out_of_chamber.html_name }}"
+                               >{{ layer.transfer_out_of_chamber.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.transfer_out_of_chamber }}</td>
+                      <td class="label">
+                        <label for="id_{{ layer.deposition_power.html_name }}"
+                               >{{ layer.deposition_power.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.deposition_power }}<br />
+                        <span class="help">({{ layer.deposition_power.help_text }})</td>
+                    </tr>
+                    <tr>
+                      <td class="label">
+                        <label for="id_{{ layer.time.html_name }}"
+                               >{{ layer.time.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.time }}<br /><span class="help">({{ layer.time.help_text }})</td>
+                      <td class="label">
+                        <label for="id_{{ layer.substrate_electrode_distance.html_name }}"
+                               >{{ layer.substrate_electrode_distance.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.substrate_electrode_distance }}<br />
+                        <span class="help">({{ layer.substrate_electrode_distance.help_text }})</td>
+                      <td class="label">
+                        <label for="id_{{ layer.base_pressure.html_name }}"
+                               >{{ layer.base_pressure.label }}:</label>
+                      </td>
+                      <td class="value">{{ layer.base_pressure }}<br />
+                        <span class="help">({{ layer.base_pressure.help_text }})</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <table width="100%">
+                    <tr>
+                      {% if layer.comments %}
+                      <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                        <div><label for="id_{{ layer.comments.html_name }}">{{ layer.comments.label }}:</label></div>
+                          {{ layer.comments }}
+                      </td>
+                      {% else %}
+                      <td>&nbsp;</td>
+                      {% endif %}
+                      <td style="vertical-align: top; padding: 1ex">
+                        {% if channels %}
+                          <table width="100%" style="text-align: center">
+                            <tr>
+                              <th>{{ channels.0.number.label }}</th>
+                              <th>{{ channels.0.gas.label }}</th>
+                              <th>{{ channels.0.flow_rate.label }}<br /><span class="help"
+                                                                              >({{ channels.0.flow_rate.help_text }})</th>
+                              <th>delete</th>
+                            </tr>
+                            {% for channel in channels %}
+                              {% if not channel.is_valid or channel.non_field_errors %}
+                                <tr>
+                                  <td colspan="0" class="error-messages">
+                                    {% for field in channel %}
+                                      {% if field.errors %}<p>{{ field.label }}:</p>{{ field.errors }}{% endif %}
+                                    {% endfor %}
+                                    {% if channel.non_field_errors %}
+                                      <p>{% trans 'Channel error' %}</p>{{ channel.non_field_errors }}
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              {% endif %}
+                              <tr>
+                                <td>{{ channel.number }}</td>
+                                <td>{{ channel.gas }}</td>
+                                <td>{{ channel.flow_rate }}</td>
+                                <td><input type="checkbox" 
+        name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" />
+                              </tr>
+                            {% endfor %}
+                          </table>
                         {% endif %}
+                        <p><label for="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
+                                  >{% trans 'Number of channels to be added:' %}</label>&nbsp;<input
+                          id="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
+                          name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
+                          type="text" size="3" /></p>
                       </td>
                     </tr>
-                  {% endif %}
-                  <tr>
-                    <td colspan="2" rowspan="3" style="vertical-align: top">
-                      <table>
-                        <tr>
-                          <td style="vertical-align: top; text-align: right">
-                            <div><label for="id_{{ layer.number.html_name }}">{{ layer.number.label }}:</label></div>
-                            <div 
-                              style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
-                                     margin-left: 0.3em">{{ layer.number }}</div>
-                          </td>
-                          <td style="vertical-align: top; padding-left: 2em">
-                            <label for="id_{{ layer.chamber.html_name }}">{{ layer.chamber.label }}:</label><span 
-                              class="value">{{ layer.chamber }}</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2">
-                            <p><input type="checkbox"
-                                      id="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
-                                      name="structural-change-duplicate-layerindex-{{ forloop.counter0 }}" />
-                              <label for="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
-                                     >{% trans 'duplicate this layer' %}</label><br />
-                            <input type="checkbox"
-                                      id="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
-                                      name="structural-change-delete-layerindex-{{ forloop.counter0 }}" />
-                              <label for="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
-                                     >{% trans 'delete this layer' %}</label></p>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td class="label">
-                      <label for="id_{{ layer.transfer_in_chamber.html_name }}"
-                             >{{ layer.transfer_in_chamber.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.transfer_in_chamber }}</td>
-                    <td class="label">
-                      <label for="id_{{ layer.plasma_start_power.html_name }}"
-                             >{{ layer.plasma_start_power.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.plasma_start_power }}<br />
-                      <span class="help">({{ layer.plasma_start_power.help_text }})</td>
-                  </tr>
-                  <tr>
-                    <td class="label">
-                      <label for="id_{{ layer.pre_heat.html_name }}"
-                             >{{ layer.pre_heat.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.pre_heat }}<br />
-                      <span class="help">({{ layer.pre_heat.help_text }})</span></td>
-                    <td class="label">
-                      <label for="id_{{ layer.plasma_start_with_carrier.html_name }}"
-                             >{{ layer.plasma_start_with_carrier.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.plasma_start_with_carrier }}</td>
-                  </tr>
-                  <tr>
-                    <td class="label">
-                      <label for="id_{{ layer.heating_temperature.html_name }}"
-                             >{{ layer.heating_temperature.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.heating_temperature }}<br />
-                      <span class="help">({{ layer.heating_temperature.help_text }})</td>
-                    <td class="label">
-                      <label for="id_{{ layer.deposition_frequency.html_name }}"
-                             >{{ layer.deposition_frequency.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.deposition_frequency }}<br />
-                      <span class="help">({{ layer.deposition_frequency.help_text }})</td>
-                  </tr>
-                  <tr>
-                    <td class="label">
-                      <label for="id_{{ layer.gas_pre_heat_gas.html_name }}"
-                             >{{ layer.gas_pre_heat_gas.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.gas_pre_heat_gas }}</td>
-                    <td class="label">
-                      <label for="id_{{ layer.gas_pre_heat_pressure.html_name }}"
-                             >{{ layer.gas_pre_heat_pressure.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.gas_pre_heat_pressure }}<br />
-                      <span class="help">({{ layer.gas_pre_heat_pressure.help_text }})</span></td>
-                    <td class="label">
-                      <label for="id_{{ layer.gas_pre_heat_time.html_name }}"
-                             >{{ layer.gas_pre_heat_time.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.gas_pre_heat_time }}<br />
-                      <span class="help">({{ layer.gas_pre_heat_time.help_text }})</span></td>
-                  </tr>
-                  <tr>
-                    <td class="label">
-                      <label for="id_{{ layer.pressure.html_name }}"
-                             >{{ layer.pressure.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.pressure }}<br />
-                      <span class="help">({{ layer.pressure.help_text }})</span></td>
-                    <td class="label">
-                      <label for="id_{{ layer.transfer_out_of_chamber.html_name }}"
-                             >{{ layer.transfer_out_of_chamber.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.transfer_out_of_chamber }}</td>
-                    <td class="label">
-                      <label for="id_{{ layer.deposition_power.html_name }}"
-                             >{{ layer.deposition_power.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.deposition_power }}<br />
-                      <span class="help">({{ layer.deposition_power.help_text }})</td>
-                  </tr>
-                  <tr>
-                    <td class="label">
-                      <label for="id_{{ layer.time.html_name }}"
-                             >{{ layer.time.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.time }}<br /><span class="help">({{ layer.time.help_text }})</td>
-                    <td class="label">
-                      <label for="id_{{ layer.substrate_electrode_distance.html_name }}"
-                             >{{ layer.substrate_electrode_distance.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.substrate_electrode_distance }}<br />
-                      <span class="help">({{ layer.substrate_electrode_distance.help_text }})</td>
-                    <td class="label">
-                      <label for="id_{{ layer.base_pressure.html_name }}"
-                             >{{ layer.base_pressure.label }}:</label>
-                    </td>
-                    <td class="value">{{ layer.base_pressure }}<br />
-                      <span class="help">({{ layer.base_pressure.help_text }})</td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <table width="100%">
-                  <tr>
-                    {% if layer.comments %}
-                    <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
-                      <div><label for="id_{{ layer.comments.html_name }}">{{ layer.comments.label }}:</label></div>
-                        {{ layer.comments }}
-                    </td>
-                    {% else %}
-                    <td>&nbsp;</td>
-                    {% endif %}
-                    <td style="vertical-align: top; padding: 1ex">
-                      {% if channels %}
-                        <table width="100%" style="text-align: center">
-                          <tr>
-                            <th>{{ channels.0.number.label }}</th>
-                            <th>{{ channels.0.gas.label }}</th>
-                            <th>{{ channels.0.flow_rate.label }}<br /><span class="help"
-                                                                            >({{ channels.0.flow_rate.help_text }})</th>
-                            <th>delete</th>
-                          </tr>
-                          {% for channel in channels %}
-                            {% if not channel.is_valid or channel.non_field_errors %}
-                              <tr>
-                                <td colspan="0" class="error-messages">
-                                  {% for field in channel %}
-                                    {% if field.errors %}<p>{{ field.label }}:</p>{{ field.errors }}{% endif %}
-                                  {% endfor %}
-                                  {% if channel.non_field_errors %}
-                                    <p>{% trans 'Channel error' %}</p>{{ channel.non_field_errors }}
-                                  {% endif %}
-                                </td>
-                              </tr>
-                            {% endif %}
-                            <tr>
-                              <td>{{ channel.number }}</td>
-                              <td>{{ channel.gas }}</td>
-                              <td>{{ channel.flow_rate }}</td>
-                              <td><input type="checkbox" 
-      name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" />
-                            </tr>
-                          {% endfor %}
-                        </table>
-                      {% endif %}
-                      <p><label for="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                                >{% trans 'Number of channels to be added:' %}</label>&nbsp;<input
-                        id="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                        name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                        type="text" size="3" /></p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
   <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
     >&nbsp;<input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
   <p><input type="submit" /></p>
