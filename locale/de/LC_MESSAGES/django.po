@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-17 20:01+0200\n"
-"PO-Revision-Date: 2008-07-17 20:01+0200\n"
+"POT-Creation-Date: 2008-07-18 11:38+0200\n"
+"PO-Revision-Date: 2008-07-18 11:39+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -253,13 +253,13 @@ msgstr "Aktuell Verantwortlicher"
 msgid "tags"
 msgstr "Tags"
 
-#: samples/models.py:137 samples/models.py:138
+#: samples/models.py:137
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
 #: samples/models.py:138
-msgid "aliases"
-msgstr "Aliase"
+msgid "alias for"
+msgstr "Alias von"
 
 #: samples/models.py:140
 msgid "split origin"
@@ -297,23 +297,61 @@ msgstr "Sprache"
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: templates/base.html:16
+#: samples/views/six_chamber_deposition.py:40
+msgid "Name is unknown."
+msgstr "Dieser Name ist unbekannt."
+
+#: samples/views/six_chamber_deposition.py:64
+msgid "Gas type is unknown."
+msgstr "Dieser Gastyp ist unbekannt."
+
+#: samples/views/six_chamber_deposition.py:141
+msgid "No layers given."
+msgstr "Keine Schichten angebeben."
+
+#: samples/views/six_chamber_deposition.py:147
+#: samples/views/six_chamber_deposition.py:154
+msgid "Number is a duplicate."
+msgstr "Die Nummer ist ein Duplikat."
+
+#: samples/views/utils.py:14
+msgid "Time must be given in the form HH:MM:SS."
+msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
+
+#: samples/views/utils.py:18
+msgid "Minutes and seconds must be smaller than 60."
+msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
+
+#: samples/views/utils.py:31
+msgid "Must be a physical quantity with number and unit."
+msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
+
+#: samples/views/utils.py:37
+#, python-format
+msgid "The unit is invalid.  Valid units are: %s"
+msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
+
+#: templates/base.html:18
+msgid "DB access time:"
+msgstr "DB-Zugriffszeit"
+
+#: templates/base.html:26
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/base.html:18
+#: templates/base.html:28
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/base.html:19
+#: templates/base.html:29
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/base.html:20
+#: templates/base.html:30
 msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/base.html:29
+#: templates/base.html:41
 msgid "The samples database"
 msgstr "Die Probendatenbank"
 
@@ -361,27 +399,27 @@ msgstr "“"
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
-#: templates/edit_six_chamber_deposition.html:71
+#: templates/edit_six_chamber_deposition.html:72
 msgid "Layer error"
 msgstr "Fehler in Schicht"
 
-#: templates/edit_six_chamber_deposition.html:97
+#: templates/edit_six_chamber_deposition.html:98
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: templates/edit_six_chamber_deposition.html:102
+#: templates/edit_six_chamber_deposition.html:103
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
-#: templates/edit_six_chamber_deposition.html:236
+#: templates/edit_six_chamber_deposition.html:237
 msgid "Channel error"
 msgstr "Fehler in Channel"
 
-#: templates/edit_six_chamber_deposition.html:252
+#: templates/edit_six_chamber_deposition.html:253
 msgid "Number of channels to be added:"
 msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
-#: templates/edit_six_chamber_deposition.html:266
+#: templates/edit_six_chamber_deposition.html:268
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 

@@ -3,6 +3,7 @@
 
 import re
 from django.newforms.util import ErrorList, ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):
@@ -10,11 +11,11 @@ def clean_time_field(value):
         return ""
     match = time_pattern.match(value)
     if not match:
-        raise ValidationError("Time must be given in the form HH:MM:SS.")
+        raise ValidationError(_("Time must be given in the form HH:MM:SS."))
     hours, minutes, seconds = match.group("H"), int(match.group("M")), int(match.group("S"))
     hours = int(hours) if hours is not None else 0
     if minutes >= 60 or seconds >= 60:
-        raise ValidationError("Minutes and seconds must be smaller than 60.")
+        raise ValidationError(_("Minutes and seconds must be smaller than 60."))
     if not hours:
         return "%d:%02d" % (minutes, seconds)
     else:
@@ -27,13 +28,13 @@ def clean_quantity_field(value, units):
     value = unicode(value).replace(",", ".").replace(u"μ", u"µ")
     match = quantity_pattern.match(value)
     if not match:
-        raise ValidationError("Must be a physical quantity with number and unit.")
+        raise ValidationError(_("Must be a physical quantity with number and unit."))
     original_unit = match.group("unit").lower()
     for unit in units:
         if unit.lower() == original_unit.lower():
             break
     else:
-        raise ValidationError("The unit is invalid.")
+        raise ValidationError(_("The unit is invalid.  Valid units are: %s")%", ".join(units))
     return match.group("number") + " " + unit
     
 def int_or_zero(number):
