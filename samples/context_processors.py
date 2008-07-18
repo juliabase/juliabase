@@ -22,8 +22,8 @@ def db_access_time(request):
     django.contrib.auth).
     """
     if "db_access_time_in_ms" in request.session:
-        db_access_time_in_ms = session["db_access_time_in_ms"]
-        del session["db_access_time_in_ms"]
+        db_access_time_in_ms = request.session["db_access_time_in_ms"]
+        del request.session["db_access_time_in_ms"]
         return {"db_access_time_in_ms": db_access_time_in_ms}
     else:
         return {}

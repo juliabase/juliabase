@@ -33,7 +33,7 @@ def show(request, sample_name):
         process, title, body = digest_process(process)
         processes.append({"timestamp": process.timestamp, "title": title, "operator": process.operator,
                           "body": body})
-    request.session["last_db_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
+    request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     return render_to_response("show_sample.html", {"name": sample.name, "processes": processes},
                               context_instance=RequestContext(request))
 
