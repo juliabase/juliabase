@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-18 11:38+0200\n"
-"PO-Revision-Date: 2008-07-18 11:39+0200\n"
+"POT-Creation-Date: 2008-07-18 15:25+0200\n"
+"PO-Revision-Date: 2008-07-18 15:25+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -297,6 +297,11 @@ msgstr "Sprache"
 msgid "user details"
 msgstr "Benutzerdetails"
 
+#: samples/views/sample.py:38
+#, python-format
+msgid "History of sample “%s”"
+msgstr "Geschichte der Probe „%s“"
+
 #: samples/views/six_chamber_deposition.py:40
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
@@ -390,8 +395,8 @@ msgid "6-chamber deposition “"
 msgstr "6-Kammer-Deposition „"
 
 #: templates/edit_six_chamber_deposition.html:5
-#: templates/edit_six_chamber_deposition.html:6 templates/show_sample.html:4
-#: templates/show_sample.html.py:5
+#: templates/edit_six_chamber_deposition.html:6 templates/main_menu.html:5
+#: templates/main_menu.html.py:6
 msgid "”"
 msgstr "“"
 
@@ -453,6 +458,10 @@ msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
+#: templates/main_menu.html:5 templates/main_menu.html.py:6
+msgid "History of sample “"
+msgstr "Geschichte der Probe „"
+
 #: templates/password_changed.html:4
 msgid "Password change successful"
 msgstr "Das Passwort wurde erfolgreich geändert"
@@ -460,7 +469,3 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 #: templates/password_changed.html:10
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
-
-#: templates/show_sample.html:4 templates/show_sample.html.py:5
-msgid "History of sample “"
-msgstr "Geschichte der Probe „"

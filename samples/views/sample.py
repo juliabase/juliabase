@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
 import time
+from django.utils.translation import ugettext_lazy as _
 
 def camel_case_to_underscores(name):
     result = []
@@ -34,6 +35,7 @@ def show(request, sample_name):
         processes.append({"timestamp": process.timestamp, "title": title, "operator": process.operator,
                           "body": body})
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
-    return render_to_response("show_sample.html", {"name": sample.name, "processes": processes},
+    title = _(u"History of sample “%s”") % sample.name
+    return render_to_response("show_sample.html", {"title": title, "processes": processes},
                               context_instance=RequestContext(request))
 
