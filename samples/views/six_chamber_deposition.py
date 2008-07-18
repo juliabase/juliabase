@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 import chantal.samples.models as models
 from . import utils
+from django.utils.translation import ugettext_lazy as _
 
 class DepositionForm(ModelForm):
     class Meta:
@@ -36,7 +37,7 @@ class LayerForm(ModelForm):
             self.fields[fieldname].max_value = max_value
     def clean_chamber(self):
         if self.cleaned_data["chamber"] not in self.chamber_names:
-            raise ValidationError("Name is unknown.")
+            raise ValidationError(_("Name is unknown."))
         return self.cleaned_data["chamber"]
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
@@ -60,7 +61,7 @@ class ChannelForm(ModelForm):
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):
         if self.cleaned_data["gas"] not in self.gas_names:
-            raise ValidationError("Gas type is unknown.")
+            raise ValidationError(_("Gas type is unknown."))
         return self.cleaned_data["gas"]
     class Meta:
         model = SixChamberChannel
@@ -118,14 +119,14 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         to_be_deleted_channels = [channel_index for channel_index in range(number_of_channels)
                                   if "structural-change-delete-channelindex-%d-for-layerindex-%d" %
                                   (channel_index, layer_index) in change_params]
-        structure_changed = structure_changed or to_be_deleted_channels > 0
+        structure_changed = structure_changed or bool(to_be_deleted_channels)
         for channel_index in reversed(to_be_deleted_channels):
             del channels[channel_index]
 
     # Fifth step: Delete layers
     to_be_deleted_layers = [layer_index for layer_index in range(len(layer_forms))
                             if "structural-change-delete-layerindex-%d" % layer_index in change_params]
-    structure_changed = structure_changed or to_be_deleted_layers > 0
+    structure_changed = structure_changed or bool(to_be_deleted_layers)
     for layer_index in reversed(to_be_deleted_layers):
         del layer_forms[layer_index]
 
@@ -137,20 +138,20 @@ def change_structure(layer_forms, channel_form_lists, post_data):
 def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
     referencially_valid = True
     if not layer_forms:
-        utils.append_error(deposition_form, "__all__", "No layers given.")
+        utils.append_error(deposition_form, "__all__", _("No layers given."))
         referencially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                utils.append_error(layer_form, "__all__", "Number is a duplicate.")
+                utils.append_error(layer_form, "__all__", _("Number is a duplicate."))
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    utils.append_error(channel_form, "__all__", "Number is a duplicate.")
+                    utils.append_error(channel_form, "__all__", _("Number is a duplicate."))
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
