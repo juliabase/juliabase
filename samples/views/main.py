@@ -33,7 +33,7 @@ def login(request, redirect_field_name=REDIRECT_FIELD_NAME):
             user = manipulator.get_user()
             login(request, user)
             try:
-                request.session["django_language"] = user.userdetails.language
+                request.session["django_language"] = user.get_profile().language
             except chantal.samples.models.UserDetails.DoesNotExist:
                 pass
             if request.session.test_cookie_worked():

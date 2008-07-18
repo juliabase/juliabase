@@ -93,3 +93,5 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.media",
                                "chantal.samples.context_processors.db_access_time",
                                )
+
+AUTH_PROFILE_MODULE = 'samples.userdetails'
