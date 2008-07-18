@@ -62,7 +62,7 @@
               <tr>
                 <td>
                   <table width="100%">
-                    {% if not layer.is_valid or layer.non_field_errors %}
+                    {% if layer.errors or layer.non_field_errors %}
                       <tr>
                         <td colspan="0" class="error-messages">
                           {% for field in layer %}
@@ -227,7 +227,7 @@
                               <th>delete</th>
                             </tr>
                             {% for channel in channels %}
-                              {% if not channel.is_valid or channel.non_field_errors %}
+                              {% if channel.errors or channel.non_field_errors %}
                                 <tr>
                                   <td colspan="0" class="error-messages">
                                     {% for field in channel %}
