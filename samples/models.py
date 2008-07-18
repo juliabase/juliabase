@@ -131,11 +131,11 @@ class SixChamberChannel(models.Model):
         pass
 
 class Sample(models.Model):
-    name = models.SlugField(_("name"), max_length=30, primary_key=True)
+    name = models.CharField(_("name"), max_length=30, primary_key=True)
     current_location = models.CharField(_("current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(Operator, verbose_name=_("currently responsible person"))
     tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
-    aliases = models.CharField(_("aliases"), max_length=64, blank=True, help_text=_("separated with commas, no whitespace"))
+    alias_for = models.ForeignKey("self", blank=True, null=True, related_name="alias_set", verbose_name=_("alias for"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="split_origin",
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, null=True, blank=True, verbose_name=_("processes"))
