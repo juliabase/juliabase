@@ -101,18 +101,22 @@
                     <td style="width: 50%; vertical-align: top; padding: 1ex">
                       {% if channels %}
                         <table width="100%" style="text-align: center">
-                          <tr>
-                            <th>{% verbose_name SixChamberChannel.number %}</th>
-                            <th>{% verbose_name SixChamberChannel.gas %}</th>
-                            <th>{% verbose_name SixChamberChannel.flow_rate %}</th>
-                          </tr>
-                          {% for channel in channels %}
-                          <tr>
-                            <td>{{ channel.number }}</td>
-                            <td>{{ channel.get_gas_display|chem_markup }}</td>
-                            <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
-                          </tr>
-                          {% endfor %}
+                          <thead>
+                            <tr>
+                              <th>{% verbose_name SixChamberChannel.number %}</th>
+                              <th>{% verbose_name SixChamberChannel.gas %}</th>
+                              <th>{% verbose_name SixChamberChannel.flow_rate %}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for channel in channels %}
+                            <tr>
+                              <td>{{ channel.number }}</td>
+                              <td>{{ channel.get_gas_display|chem_markup }}</td>
+                              <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
                         </table>
                       {% else %}
                         &nbsp;
