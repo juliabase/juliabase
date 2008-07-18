@@ -35,7 +35,7 @@ def show(request, sample_name):
         processes.append({"timestamp": process.timestamp, "title": title, "operator": process.operator,
                           "body": body})
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
-    title = _(u"History of sample “%s”") % sample.name
-    return render_to_response("show_sample.html", {"title": title, "processes": processes},
+    return render_to_response("show_sample.html",
+                              {"title": _(u"History of sample “%s”") % sample.name, "processes": processes},
                               context_instance=RequestContext(request))
 

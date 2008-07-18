@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-18 15:25+0200\n"
-"PO-Revision-Date: 2008-07-18 15:25+0200\n"
+"POT-Creation-Date: 2008-07-18 15:30+0200\n"
+"PO-Revision-Date: 2008-07-18 15:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -297,7 +297,7 @@ msgstr "Sprache"
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: samples/views/sample.py:38
+#: samples/views/sample.py:39
 #, python-format
 msgid "History of sample “%s”"
 msgstr "Geschichte der Probe „%s“"
@@ -318,6 +318,11 @@ msgstr "Keine Schichten angebeben."
 #: samples/views/six_chamber_deposition.py:154
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
+
+#: samples/views/six_chamber_deposition.py:218
+#, python-format
+msgid "6-chamber deposition “%s”"
+msgstr "6-Kammer-Deposition „%s“"
 
 #: samples/views/utils.py:14
 msgid "Time must be given in the form HH:MM:SS."

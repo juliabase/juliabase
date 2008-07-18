@@ -215,7 +215,7 @@ def edit(request, deposition_number):
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists = forms_from_database(deposition)
     return render_to_response("edit_six_chamber_deposition.html",
-                              {"title": deposition_number,
+                              {"title": _(u"6-chamber deposition “%s”") % deposition_number,
                                "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists)},
                               context_instance=RequestContext(request))
