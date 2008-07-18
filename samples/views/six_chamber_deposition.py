@@ -98,7 +98,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
 
     # Second step: Add layers
     to_be_added_layers = utils.int_or_zero(change_params["structural-change-add-layers"])
-    structure_changed = structure_changed or to_be_added_layers
+    structure_changed = structure_changed or to_be_added_layers > 0
     for i in range(to_be_added_layers):
         layer_index = len(layer_forms) + len(new_layers)
         new_layers.append(LayerForm({"%d-number"%layer_index: biggest_layer_number+1}, prefix=str(layer_index)))
@@ -110,7 +110,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         # Add channels
         to_be_added_channels = utils.int_or_zero(change_params.get(
                 "structural-change-add-channels-for-layerindex-%d" % layer_index))
-        structure_changed = structure_changed or to_be_added_channels
+        structure_changed = structure_changed or to_be_added_channels > 0
         number_of_channels = len(channels)
         for channel_index in range(number_of_channels, number_of_channels+to_be_added_channels):
             channels.append(ChannelForm(prefix="%d_%d"%(layer_index, channel_index)))
@@ -118,14 +118,14 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         to_be_deleted_channels = [channel_index for channel_index in range(number_of_channels)
                                   if "structural-change-delete-channelindex-%d-for-layerindex-%d" %
                                   (channel_index, layer_index) in change_params]
-        structure_changed = structure_changed or to_be_deleted_channels
+        structure_changed = structure_changed or to_be_deleted_channels > 0
         for channel_index in reversed(to_be_deleted_channels):
             del channels[channel_index]
 
     # Fifth step: Delete layers
     to_be_deleted_layers = [layer_index for layer_index in range(len(layer_forms))
                             if "structural-change-delete-layerindex-%d" % layer_index in change_params]
-    structure_changed = structure_changed or to_be_deleted_layers
+    structure_changed = structure_changed or to_be_deleted_layers > 0
     for layer_index in reversed(to_be_deleted_layers):
         del layer_forms[layer_index]
 
