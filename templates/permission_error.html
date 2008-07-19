@@ -1,0 +1,13 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <p>
+    {% blocktrans %}
+    Sorry, you don't have permission to do that action, probably because you
+    are not in the specific group that is allowed to do it.  Please contact the
+    administrator to add you to that group.
+    {% endblocktrans %}
+  </p>
+{% endblock %}

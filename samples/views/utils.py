@@ -3,7 +3,9 @@
 
 import re
 from django.newforms.util import ErrorList, ValidationError
+from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
+from functools import update_wrapper
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):
@@ -49,3 +51,16 @@ def prefix_dict(dictionary, prefix):
 def append_error(form, fieldname, error_message):
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
+class _PermissionCheck(object):
+    def __init__(self, original_view_function, permission):
+        self.original_view_function, self.permission = original_view_function, "samples."+permission
+        update_wrapper(self, original_view_function)
+    def __call__(self, request, *args, **kwargs):
+        if self.permission not in request.user.get_all_permissions():
+            return HttpResponseRedirect("permission_error")
+        return self.original_view_function(request, *args, **kwargs)
+    
+def check_permission(permission):
+    def decorate(original_view_function):
+        return _PermissionCheck(original_view_function, permission)
+    return decorate

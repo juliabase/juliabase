@@ -12,10 +12,15 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import Site
 from django import oldforms
 from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
 
 @login_required
 def main_menu(request):
-    return render_to_response("main_menu.html", {"title": _u("Main menu")},
+    return render_to_response("main_menu.html", {"title": _("Main menu")},
+                              context_instance=RequestContext(request))
+
+def permission_error(request, failed_action):
+    return render_to_response("permission_error.html", {"title": _("Access denied")},
                               context_instance=RequestContext(request))
 
 def login(request, redirect_field_name=REDIRECT_FIELD_NAME):

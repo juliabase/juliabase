@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 import chantal.samples.models as models
 from . import utils
+from .utils import check_permission
 from django.utils.translation import ugettext_lazy as _
 
 class DepositionForm(ModelForm):
@@ -200,6 +201,7 @@ def forms_from_database(deposition):
     return layer_forms, channel_form_lists
 
 @login_required
+@check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number)
     if request.method == "POST":

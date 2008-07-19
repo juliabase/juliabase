@@ -3,6 +3,7 @@ from django.conf import settings
 
 urlpatterns = patterns("",
                        (r"^$", "samples.views.main.main_menu"),
+                       (r"^(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
                        (r"^samples/(?P<sample_name>.+)", "samples.views.sample.show"),
                        (r"^edit/6-chamber_deposition/(?P<deposition_number>.+)",
                         "samples.views.six_chamber_deposition.edit"),
