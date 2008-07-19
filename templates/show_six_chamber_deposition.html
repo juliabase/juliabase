@@ -15,7 +15,7 @@
 {% endif %}
 
 <table width="100%">
-  {% for layer in process.sixchamberlayer_set.all %}
+  {% for layer in process.layers.all %}
   <tr>
     <td style="border-style: solid; border-color: black; border-width: thin">
       <table width="100%">
@@ -85,7 +85,7 @@
             </table>
           </td>
         </tr>
-        {% with layer.sixchamberchannel_set.all as channels %}
+        {% with layer.channels.all as channels %}
           {% if layer.comments or channels %}
             <tr>
               <td>

@@ -158,7 +158,7 @@ def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
     
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
     deposition = deposition_form.save()
-    deposition.sixchamberlayer_set.all().delete()  # deletes channels, too
+    deposition.layers.all().delete()  # deletes channels, too
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         layer = layer_form.save(commit=False)
         layer.deposition = deposition
@@ -190,13 +190,13 @@ def forms_from_post_data(post_data):
     return layer_forms, channel_form_lists
 
 def forms_from_database(deposition):
-    layers = deposition.sixchamberlayer_set.all()
+    layers = deposition.layers.all()
     layer_forms = [LayerForm(prefix=str(layer_index), instance=layer) for layer_index, layer in enumerate(layers)]
     channel_form_lists = []
     for layer_index, layer in enumerate(layers):
         channel_form_lists.append(
             [ChannelForm(prefix="%d_%d"%(layer_index, channel_index), instance=channel)
-             for channel_index, channel in enumerate(layer.sixchamberchannel_set.all())])
+             for channel_index, channel in enumerate(layer.channels.all())])
     return layer_forms, channel_form_lists
 
 @login_required

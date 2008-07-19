@@ -68,7 +68,7 @@ six_chamber_chamber_choices = (
 class SixChamberLayer(models.Model):
     number = models.IntegerField(_("layer number"))
     chamber = models.CharField(_("chamber"), max_length=5, choices=six_chamber_chamber_choices)
-    deposition = models.ForeignKey(SixChamberDeposition, verbose_name=_("deposition"))
+    deposition = models.ForeignKey(SixChamberDeposition, related_name="layers", verbose_name=_("deposition"))
     pressure = models.CharField(_("deposition pressure"), max_length=15, help_text=_("with unit"), blank=True)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     substrate_electrode_distance = \
@@ -117,7 +117,7 @@ six_chamber_gas_choices = (
     
 class SixChamberChannel(models.Model):
     number = models.IntegerField(_("channel"))
-    layer = models.ForeignKey(SixChamberLayer, verbose_name=_("layer"))
+    layer = models.ForeignKey(SixChamberLayer, related_name="channels", verbose_name=_("layer"))
     gas = models.CharField(_("gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
     flow_rate = models.DecimalField(_("flow rate"), max_digits=4, decimal_places=1, help_text=_("in sccm"))
     def __unicode__(self):
@@ -133,11 +133,14 @@ class SixChamberChannel(models.Model):
 class Sample(models.Model):
     name = models.CharField(_("name"), max_length=30, unique=True)
     current_location = models.CharField(_("current location"), max_length=50)
-    currently_responsible_person = models.ForeignKey(Operator, verbose_name=_("currently responsible person"))
+    currently_responsible_person = models.ForeignKey(Operator, related_name="samples",
+                                                     verbose_name=_("currently responsible person"))
     tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
-    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, verbose_name=_("split origin"))
-    processes = models.ManyToManyField(Process, blank=True, verbose_name=_("processes"))
-    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_("group"))
+    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
+                                     verbose_name=_("split origin"))
+    processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, related_name="samples",
+                              verbose_name=_("group"))
     def __unicode__(self):
         return self.name
     class Meta:
@@ -158,7 +161,10 @@ class SampleAlias(models.Model):
         pass
 
 class SampleSplit(Process):
-    parent = models.ForeignKey(Sample, verbose_name=_("parent"))  # for a fast lookup
+    # for a fast lookup; actually a violation of the non-redundancy rule
+    # because one could find the parent via the samples attribute every process
+    # has, too.
+    parent = models.ForeignKey(Sample, verbose_name=_("parent"))
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
