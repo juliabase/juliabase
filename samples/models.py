@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Operator(models.Model):
     name = models.CharField(_("name"), max_length=50)
-    email = models.EmailField(_("email"), primary_key=True)
+    email = models.EmailField(_("email"), unique=True)
     phone = models.CharField(_("phone"), max_length=20)
     def __unicode__(self):
         return self.name
@@ -131,14 +131,13 @@ class SixChamberChannel(models.Model):
         pass
 
 class Sample(models.Model):
-    name = models.CharField(_("name"), max_length=30, primary_key=True)
+    name = models.CharField(_("name"), max_length=30, unique=True)
     current_location = models.CharField(_("current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(Operator, verbose_name=_("currently responsible person"))
     tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
-    alias_for = models.ForeignKey("self", blank=True, null=True, related_name="alias_set", verbose_name=_("alias for"))
-    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="split_origin",
-                                     verbose_name=_("split origin"))
-    processes = models.ManyToManyField(Process, null=True, blank=True, verbose_name=_("processes"))
+    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, verbose_name=_("split origin"))
+    processes = models.ManyToManyField(Process, blank=True, verbose_name=_("processes"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_("group"))
     def __unicode__(self):
         return self.name
     class Meta:
@@ -147,11 +146,33 @@ class Sample(models.Model):
     class Admin:
         pass
 
+class SampleAlias(models.Model):
+    name = models.CharField(_("name"), max_length=30, primary_key=True)
+    sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="aliases")
+    def __unicode__(self):
+        return self.name
+    class Meta:
+        verbose_name = _("name alias")
+        verbose_name_plural = _("name aliases")
+    class Admin:
+        pass
+
 class SampleSplit(Process):
     parent = models.ForeignKey(Sample, verbose_name=_("parent"))  # for a fast lookup
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
+    class Admin:
+        pass
+
+class SampleSeries(models.Model):
+    name = models.CharField(_("name"), max_length=255)
+    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"))
+    def __unicode__(self):
+        return self.name
+    class Meta:
+        verbose_name = _("sample series")
+        verbose_name_plural = _("sample serieses")
     class Admin:
         pass
 
