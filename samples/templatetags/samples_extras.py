@@ -7,6 +7,7 @@ from django import template
 from django.utils.html import conditional_escape
 import django.utils.safestring
 import chantal.samples.models
+from django.utils.translation import ugettext_lazy as _
 
 register = template.Library()
 
@@ -63,7 +64,7 @@ chem_markup.needs_autoescape = True
 
 @register.filter
 def fancy_bool(boolean):
-    result = u"Yes" if boolean else u"No"
+    result = _(u"Yes") if boolean else _(u"No")
     return django.utils.safestring.mark_safe(result)
 
 class VerboseNameNode(template.Node):
@@ -71,7 +72,10 @@ class VerboseNameNode(template.Node):
         self.model, self.field = model, field
     def render(self, context):
         model = chantal.samples.models.__dict__[self.model]
-        return model._meta.get_field(self.field).verbose_name.capitalize()
+        verbose_name = unicode(model._meta.get_field(self.field).verbose_name)
+        if verbose_name:
+            verbose_name = verbose_name[0].upper() + verbose_name[1:]
+        return verbose_name
 
 @register.tag
 def verbose_name(parser, token):
