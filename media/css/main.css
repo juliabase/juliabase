@@ -1,11 +1,17 @@
 body { 
-    background-color: white; 
+    background-color: grey; 
     font-family: Frutiger,Trebuchet MS,DejaVu Sans,Bitstream Vera Sans,Verdana,sans-serif;
     margin: 0pt; padding: 0pt;
 }
-p.logo-text { margin:0pt; font-size: 50px; color: #888888; font-weight: bold }
-p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #888888; font-weight: normal }
-img.logo { float: right }
+p.logo-text {
+    margin: 0pt;
+    font-size: 50px;
+    color: #333333;
+    font-weight: bold;
+}
+
+p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; font-weight: normal }
+img.logo-fz { float: right }
 
 div.main {
     margin: 20px 25px 20px;
