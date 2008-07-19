@@ -15,7 +15,7 @@ from django.http import HttpResponseRedirect
 
 @login_required
 def main_menu(request):
-    return render_to_response("show_sample.html", {"name": None, "processes": None},
+    return render_to_response("main_menu.html", {"title": _u("Main menu")},
                               context_instance=RequestContext(request))
 
 def login(request, redirect_field_name=REDIRECT_FIELD_NAME):
