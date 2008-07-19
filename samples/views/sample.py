@@ -28,7 +28,7 @@ def digest_process(process):
 @login_required
 def show(request, sample_name):
     start = time.time()
-    sample = get_object_or_404(Sample, pk=sample_name)
+    sample = get_object_or_404(Sample, name=sample_name)
     processes = []
     for process in sample.processes.all():
         process, title, body = digest_process(process)
