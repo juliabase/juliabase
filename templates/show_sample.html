@@ -6,7 +6,7 @@
   {{ session.last_db_time_in_ms }}
   {% for process in processes %}
     <p class="operator_and_timestamp">
-      {{ process.operator }},
+      {{ process.operator.get_full_name }},
       {{ process.timestamp }}
     </p>
     <h2>{{ process.title }}</h2>

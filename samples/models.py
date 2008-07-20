@@ -5,21 +5,9 @@ from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 
-class Operator(models.Model):
-    name = models.CharField(_("name"), max_length=50)
-    email = models.EmailField(_("email"), unique=True)
-    phone = models.CharField(_("phone"), max_length=20)
-    def __unicode__(self):
-        return self.name
-    class Meta:
-        verbose_name = _("operator")
-        verbose_name_plural = _("operators")
-    class Admin:
-        pass
-
 class Process(models.Model):
     timestamp = models.DateTimeField(_("timestamp"), )
-    operator = models.ForeignKey(Operator, verbose_name=_("operator"))
+    operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("operator"))
     def find_actual_process(self):
         for process_type in process_types:
             if hasattr(self, process_type):
@@ -133,7 +121,7 @@ class SixChamberChannel(models.Model):
 class Sample(models.Model):
     name = models.CharField(_("name"), max_length=30, unique=True)
     current_location = models.CharField(_("current location"), max_length=50)
-    currently_responsible_person = models.ForeignKey(Operator, related_name="samples",
+    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_("currently responsible person"))
     tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
@@ -189,6 +177,7 @@ languages = (
 class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"))
     language = models.CharField(_("language"), max_length=10, choices=languages)
+    phone = models.CharField(_("phone"), max_length=20)
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
