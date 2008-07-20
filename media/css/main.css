@@ -63,3 +63,9 @@ td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
 		      color:white; background-color: maroon; font-weight: bold }
 ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon }
 .errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }
+
+table.about { font-size: large; margin-top: 2ex; margin-bottom: 4ex }
+table.about th { text-align: right; width: 40%; vertical-align: top }
+table.about td { text-align: left; width: 60%; vertical-align: top; text-indent: -3em; padding-left: 3em }
+
+span.uptime { font-size: small }

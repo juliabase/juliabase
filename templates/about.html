@@ -1,0 +1,32 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<table class="about" width="100%" cellpadding="10">
+  <tr>
+    <th>{% trans 'Operating system' %}:</th>
+    <td><a href="http://www.ubuntu.com">Ubuntu</a> 8.04
+      <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a
+         >{% trans ', ' %}<span class="uptime">{{ os_uptime }}</span></td>
+  </tr>
+  <tr>
+    <th>{% trans 'Web server' %}:</th>
+    <td><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
+      {{ web_server_version }}{% trans ', ' %}<span class="uptime">{{ web_server_uptime }}</span></td>
+  </tr>
+  <tr>
+    <th>{% trans 'Database' %}:</th>
+    <td><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}">MySQL</a> {{ db_version }}</td>
+  </tr>
+  <tr>
+    <th>{% trans 'Programming runtime' %}:</th>
+    <td><a href="{% trans 'http://en.wikipedia.org/wiki/Python_(programming_language)' %}">Python</a>
+      {{ language_version }}</td>
+  </tr>
+  <tr>
+    <th>{% trans 'Programming framework' %}:</th>
+    <td><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a> {{ framework_version }}</td>
+  </tr>
+</table>
+{% endblock %}
