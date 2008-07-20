@@ -1,23 +1,26 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 
+prefix = "^" + settings.URL_PREFIX[1:]
+
 urlpatterns = patterns("",
-                       (r"^$", "samples.views.main.main_menu"),
-                       (r"^(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
-                       (r"^samples/(?P<sample_name>.+)", "samples.views.sample.show"),
-                       (r"^edit/6-chamber_deposition/(?P<deposition_number>.+)",
+                       (prefix+r"$", "samples.views.main.main_menu"),
+                       (prefix+r"(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
+                       (prefix+r"samples/(?P<sample_name>.+)", "samples.views.sample.show"),
+                       (prefix+r"edit/6-chamber_deposition/(?P<deposition_number>.+)",
                         "samples.views.six_chamber_deposition.edit"),
-                       (r"^login/$", "samples.views.main.login"),
-                       (r"^logout/$", "django.contrib.auth.views.logout", {"template_name": "logout.html"}),
-                       (r"^change_password/$", "django.contrib.auth.views.password_change",
+                       (prefix+r"login/$", "samples.views.main.login"),
+                       (prefix+r"logout/$", "django.contrib.auth.views.logout", {"template_name": "logout.html"}),
+                       (prefix+r"about/$", "samples.views.main.about"),
+                       (prefix+r"change_password/$", "django.contrib.auth.views.password_change",
                         {"template_name": "change_password.html"}),
-                       (r"^change_password/done/$", "django.contrib.auth.views.password_change_done",
+                       (prefix+r"change_password/done/$", "django.contrib.auth.views.password_change_done",
                         {"template_name": "password_changed.html"}),
-                       (r"^admin/", include("django.contrib.admin.urls")),
+                       (prefix+r"admin/", include("django.contrib.admin.urls")),
                        )
 
 if settings.DEBUG:
     urlpatterns += patterns("",
-                            (r"^static_media/(?P<path>.*)$", "django.views.static.serve",
+                            (r"^media/(?P<path>.*)$", "django.views.static.serve",
                              {"document_root": "/home/bronger/src/chantal/media/"}),
                             )

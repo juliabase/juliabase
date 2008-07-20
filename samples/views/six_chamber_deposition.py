@@ -212,7 +212,7 @@ def edit(request, deposition_number):
         referencially_valid = is_referencially_valid(deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
             save_to_database(deposition_form, layer_forms, channel_form_lists)
-            return HttpResponseRedirect("/admin")
+            return HttpResponseRedirect("../../admin")
     else:
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists = forms_from_database(deposition)

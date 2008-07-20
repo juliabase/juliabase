@@ -40,12 +40,12 @@ MEDIA_ROOT = '/home/bronger/src/chantal/media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/media_admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ')bd!vw1dukz!f((*e+r6k!^9#y4z+f2-kyi$2ao1=+c&i24mmm'
@@ -84,8 +84,11 @@ INSTALLED_APPS = (
     'chantal.samples',
 )
 
-LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/"
+testserver = True
+URL_PREFIX = "/" if testserver else "/chantal/"
+
+LOGIN_URL = URL_PREFIX + "login/"
+LOGIN_REDIRECT_URL = URL_PREFIX
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",
@@ -95,3 +98,13 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                )
 
 AUTH_PROFILE_MODULE = 'samples.userdetails'
+
+import subprocess, re, time
+def _scan_version(package):
+    dpgk = subprocess.Popen(["dpkg-query", "--show", package], stdout=subprocess.PIPE)
+    match = re.match(re.escape(package)+r"\t(?P<version>.+?)-", dpgk.communicate()[0].strip())
+    return match.group("version") if match else None
+APACHE_VERSION = _scan_version("apache2")
+APACHE_STARTUP_TIME = time.time()
+MYSQL_VERSION = _scan_version("mysql-server")
+PYTHON_VERSION = _scan_version("python")

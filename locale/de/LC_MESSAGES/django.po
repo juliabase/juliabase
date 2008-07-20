@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-19 14:38+0200\n"
-"PO-Revision-Date: 2008-07-19 14:40+0200\n"
+"POT-Creation-Date: 2008-07-20 11:12+0200\n"
+"PO-Revision-Date: 2008-07-20 11:12+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -322,57 +322,159 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: samples/views/main.py:19 templates/base.html:28
+#: samples/views/main.py:22 templates/base.html:28
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: samples/views/main.py:23
+#: samples/views/main.py:26
 msgid "Access denied"
 msgstr "Zugriff verweigert"
+
+#: samples/views/main.py:75
+#, python-format
+msgid "%(count)d year"
+msgid_plural "%(count)d years"
+msgstr[0] "%(count)d Jahr"
+msgstr[1] "%(count)d Jahren"
+
+#: samples/views/main.py:76
+#, python-format
+msgid "%(count)d month"
+msgid_plural "%(count)d months"
+msgstr[0] "%(count)d Monat"
+msgstr[1] "%(count)d Monaten"
+
+#: samples/views/main.py:77
+#, python-format
+msgid "%(count)d week"
+msgid_plural "%(count)d weeks"
+msgstr[0] "%(count)d Woche"
+msgstr[1] "%(count)d Wochen"
+
+#: samples/views/main.py:78
+#, python-format
+msgid "%(count)d day"
+msgid_plural "%(count)d days"
+msgstr[0] "%(count)d Tag"
+msgstr[1] "%(count)d Tagen"
+
+#: samples/views/main.py:79
+#, python-format
+msgid "%(count)d hour"
+msgid_plural "%(count)d hours"
+msgstr[0] "%(count)d Stunde"
+msgstr[1] "%(count)d Stunden"
+
+#: samples/views/main.py:80
+#, python-format
+msgid "%(count)d minute"
+msgid_plural "%(count)d minutes"
+msgstr[0] "%(count)d Minute"
+msgstr[1] "%(count)d Minuten"
+
+#: samples/views/main.py:81 samples/views/main.py:87
+#, python-format
+msgid "%(count)d second"
+msgid_plural "%(count)d seconds"
+msgstr[0] "%(count)d Sekunde"
+msgstr[1] "%(count)d Sekunden"
+
+#: samples/views/main.py:92 templates/about.html:15
+msgid ", "
+msgstr ", "
+
+#: samples/views/main.py:92
+msgid ", and "
+msgstr " und "
+
+#: samples/views/main.py:96
+#, python-format
+msgid "up and running for %(time)s"
+msgstr "up and running seit %(time)s"
+
+#: samples/views/main.py:97
+msgid "Chantal is presented to you by …"
+msgstr "Chantal wird Ihnen präsentiert von …"
 
 #: samples/views/sample.py:39
 #, python-format
 msgid "History of sample “%s”"
 msgstr "Geschichte der Probe „%s“"
 
-#: samples/views/six_chamber_deposition.py:40
+#: samples/views/six_chamber_deposition.py:41
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:64
+#: samples/views/six_chamber_deposition.py:65
 msgid "Gas type is unknown."
 msgstr "Dieser Gastyp ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:141
+#: samples/views/six_chamber_deposition.py:142
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: samples/views/six_chamber_deposition.py:147
-#: samples/views/six_chamber_deposition.py:154
+#: samples/views/six_chamber_deposition.py:148
+#: samples/views/six_chamber_deposition.py:155
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:221
+#: samples/views/six_chamber_deposition.py:220
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/utils.py:15
+#: samples/views/utils.py:16
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/utils.py:19
+#: samples/views/utils.py:20
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/utils.py:32
+#: samples/views/utils.py:33
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/utils.py:38
+#: samples/views/utils.py:39
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
+
+#: templates/about.html:8
+msgid "Operating system"
+msgstr "Betriebssystem"
+
+#: templates/about.html:13
+msgid "Web server"
+msgstr "Webserver"
+
+#: templates/about.html:14
+msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
+msgstr "http://de.wikipedia.org/wiki/Apache_HTTP_Server"
+
+#: templates/about.html:18
+msgid "Database"
+msgstr "Datenbank"
+
+#: templates/about.html:19
+msgid "http://en.wikipedia.org/wiki/MySQL"
+msgstr "http://de.wikipedia.org/wiki/MySQL"
+
+#: templates/about.html:22
+msgid "Programming runtime"
+msgstr "Programm-Laufzeitsystem"
+
+#: templates/about.html:23
+msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
+msgstr "http://de.wikipedia.org/wiki/Python_(Programmiersprache)"
+
+#: templates/about.html:27
+msgid "Programming framework"
+msgstr "Programmier-Framework"
+
+#: templates/about.html:28
+msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
+msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
 
 #: templates/base.html:18
 msgid "DB access time:"
@@ -506,7 +608,33 @@ msgid ""
 "the\n"
 "    administrator to add you to that group.\n"
 "    "
-msgstr "\nLeider haben Sie nicht die erforderlichen Zugriffsrechte, um diese Aktion durchzuführen, vermutlich, weil Sie nicht einer bestimmten Gruppe angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener Gruppe hinzufügt."
+msgstr ""
+"\n"
+"Leider haben Sie nicht die erforderlichen Zugriffsrechte, um diese Aktion "
+"durchzuführen, vermutlich, weil Sie nicht einer bestimmten Gruppe "
+"angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener "
+"Gruppe hinzufügt."
+
+#~ msgid "%(count)d years"
+#~ msgstr "%(count)d Jahre"
+
+#~ msgid "%(count)d months"
+#~ msgstr "%(count)d Monate"
+
+#~ msgid "%(count)d weeks"
+#~ msgstr "%(count)d Wochen"
+
+#~ msgid "%(count)d days"
+#~ msgstr "%(count)d Tage"
+
+#~ msgid "%(count)d hours"
+#~ msgstr "%(count)d Stunden"
+
+#~ msgid "%(count)d minutes"
+#~ msgstr "%(count)d Minuten"
+
+#~ msgid "%(count)d seconds"
+#~ msgstr "%(count)d Sekunden"
 
 #~ msgid "alias for"
 #~ msgstr "Alias von"
