@@ -72,19 +72,19 @@ def breakup_time(seconds):
     current_timeunit_list = []
     seconds = int(round(seconds))
 
-    chunks = ((365.2425*24*3600, lambda n: ungettext("%(count)d year", "%(count)d years", n)),
-              (30.436875*24*3600, lambda n: ungettext("%(count)d month", "%(count)d months", n)),
-              (7*24*3600, lambda n: ungettext("%(count)d week", "%(count)d weeks", n)),
-              (24*3600, lambda n: ungettext("%(count)d day", "%(count)d days", n)),
-              (3600, lambda n: ungettext("%(count)d hour", "%(count)d hours", n)),
-              (60, lambda n: ungettext("%(count)d minute", "%(count)d minutes", n)),
-              (1, lambda n: ungettext("%(count)d second", "%(count)d seconds", n)),
+    chunks = ((365.2425*24*3600, lambda n: ungettext(u"%(count)d year", u"%(count)d years", n)),
+              (30.436875*24*3600, lambda n: ungettext(u"%(count)d month", u"%(count)d months", n)),
+              (7*24*3600, lambda n: ungettext(u"%(count)d week", u"%(count)d weeks", n)),
+              (24*3600, lambda n: ungettext(u"%(count)d day", u"%(count)d days", n)),
+              (3600, lambda n: ungettext(u"%(count)d hour", u"%(count)d hours", n)),
+              (60, lambda n: ungettext(u"%(count)d minute", u"%(count)d minutes", n)),
+              (1, lambda n: ungettext(u"%(count)d second", u"%(count)d seconds", n)),
               )
     for duration, translation_function in chunks:
         seconds -= test_timeunit(seconds, duration, translation_function, current_timeunit_list)
     assert not seconds
     if not current_timeunit_list:
-        current_timeunit_list = [ungettext("%(count)d second", "%(count)d seconds", 0) % {"count": 0 }]
+        current_timeunit_list = [ungettext(u"%(count)d second", u"%(count)d seconds", 0) % {"count": 0 }]
     if len(current_timeunit_list) == 1:
         return current_timeunit_list[0]
     else:

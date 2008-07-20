@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-20 11:12+0200\n"
-"PO-Revision-Date: 2008-07-20 11:12+0200\n"
+"POT-Creation-Date: 2008-07-20 12:49+0200\n"
+"PO-Revision-Date: 2008-07-20 12:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -332,54 +332,54 @@ msgstr "Zugriff verweigert"
 
 #: samples/views/main.py:75
 #, python-format
-msgid "%(count)d year"
-msgid_plural "%(count)d years"
-msgstr[0] "%(count)d Jahr"
-msgstr[1] "%(count)d Jahren"
+msgid "%(count)d year"
+msgid_plural "%(count)d years"
+msgstr[0] "%(count)d Jahr"
+msgstr[1] "%(count)d Jahren"
 
 #: samples/views/main.py:76
 #, python-format
-msgid "%(count)d month"
-msgid_plural "%(count)d months"
-msgstr[0] "%(count)d Monat"
-msgstr[1] "%(count)d Monaten"
+msgid "%(count)d month"
+msgid_plural "%(count)d months"
+msgstr[0] "%(count)d Monat"
+msgstr[1] "%(count)d Monaten"
 
 #: samples/views/main.py:77
 #, python-format
-msgid "%(count)d week"
-msgid_plural "%(count)d weeks"
-msgstr[0] "%(count)d Woche"
-msgstr[1] "%(count)d Wochen"
+msgid "%(count)d week"
+msgid_plural "%(count)d weeks"
+msgstr[0] "%(count)d Woche"
+msgstr[1] "%(count)d Wochen"
 
 #: samples/views/main.py:78
 #, python-format
-msgid "%(count)d day"
-msgid_plural "%(count)d days"
-msgstr[0] "%(count)d Tag"
-msgstr[1] "%(count)d Tagen"
+msgid "%(count)d day"
+msgid_plural "%(count)d days"
+msgstr[0] "%(count)d Tag"
+msgstr[1] "%(count)d Tagen"
 
 #: samples/views/main.py:79
 #, python-format
-msgid "%(count)d hour"
-msgid_plural "%(count)d hours"
-msgstr[0] "%(count)d Stunde"
-msgstr[1] "%(count)d Stunden"
+msgid "%(count)d hour"
+msgid_plural "%(count)d hours"
+msgstr[0] "%(count)d Stunde"
+msgstr[1] "%(count)d Stunden"
 
 #: samples/views/main.py:80
 #, python-format
-msgid "%(count)d minute"
-msgid_plural "%(count)d minutes"
-msgstr[0] "%(count)d Minute"
-msgstr[1] "%(count)d Minuten"
+msgid "%(count)d minute"
+msgid_plural "%(count)d minutes"
+msgstr[0] "%(count)d Minute"
+msgstr[1] "%(count)d Minuten"
 
 #: samples/views/main.py:81 samples/views/main.py:87
 #, python-format
-msgid "%(count)d second"
-msgid_plural "%(count)d seconds"
-msgstr[0] "%(count)d Sekunde"
-msgstr[1] "%(count)d Sekunden"
+msgid "%(count)d second"
+msgid_plural "%(count)d seconds"
+msgstr[0] "%(count)d Sekunde"
+msgstr[1] "%(count)d Sekunden"
 
-#: samples/views/main.py:92 templates/about.html:15
+#: samples/views/main.py:92
 msgid ", "
 msgstr ", "
 
@@ -387,12 +387,12 @@ msgstr ", "
 msgid ", and "
 msgstr " und "
 
-#: samples/views/main.py:96
+#: samples/views/main.py:96 samples/views/main.py:98
 #, python-format
 msgid "up and running for %(time)s"
 msgstr "up and running seit %(time)s"
 
-#: samples/views/main.py:97
+#: samples/views/main.py:99
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
 
@@ -444,35 +444,39 @@ msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 msgid "Operating system"
 msgstr "Betriebssystem"
 
-#: templates/about.html:13
+#: templates/about.html:10 templates/about.html.py:16
+msgid ","
+msgstr ","
+
+#: templates/about.html:14
 msgid "Web server"
 msgstr "Webserver"
 
-#: templates/about.html:14
+#: templates/about.html:15
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
 msgstr "http://de.wikipedia.org/wiki/Apache_HTTP_Server"
 
-#: templates/about.html:18
+#: templates/about.html:20
 msgid "Database"
 msgstr "Datenbank"
 
-#: templates/about.html:19
+#: templates/about.html:21
 msgid "http://en.wikipedia.org/wiki/MySQL"
 msgstr "http://de.wikipedia.org/wiki/MySQL"
 
-#: templates/about.html:22
+#: templates/about.html:25
 msgid "Programming runtime"
 msgstr "Programm-Laufzeitsystem"
 
-#: templates/about.html:23
+#: templates/about.html:26
 msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
 msgstr "http://de.wikipedia.org/wiki/Python_(Programmiersprache)"
 
-#: templates/about.html:27
+#: templates/about.html:30
 msgid "Programming framework"
 msgstr "Programmier-Framework"
 
-#: templates/about.html:28
+#: templates/about.html:31
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
 
