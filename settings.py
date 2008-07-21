@@ -84,8 +84,8 @@ INSTALLED_APPS = (
     'chantal.samples',
 )
 
-testserver = True
-URL_PREFIX = "/" if testserver else "/chantal/"
+IS_TESTSERVER = True
+URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login/"
 LOGIN_REDIRECT_URL = URL_PREFIX
@@ -108,3 +108,5 @@ APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time()
 MYSQL_VERSION = _scan_version("mysql-server")
 PYTHON_VERSION = _scan_version("python")
+CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", "/home/bronger/src/chantal"],
+                                 stdout=subprocess.PIPE).communicate()[0].strip()
