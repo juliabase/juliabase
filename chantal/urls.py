@@ -24,5 +24,5 @@ urlpatterns = patterns("",
 if settings.DEBUG:
     urlpatterns += patterns("",
                             (r"^media/(?P<path>.*)$", "django.views.static.serve",
-                             {"document_root": "/home/bronger/src/chantal/media/"}),
+                             {"document_root": os.path.join(settings.ROOTDIR, "media/")}),
                             )

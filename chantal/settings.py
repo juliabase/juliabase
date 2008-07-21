@@ -3,6 +3,9 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+import os.path
+ROOTDIR = os.path.dirname(os.path.abspath(__file__))
+
 ADMINS = (
     ('Torsten Bronger', 'bronger@physik.rwth-aachen.de'),
 )
@@ -35,7 +38,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/bronger/src/chantal/media/'
+MEDIA_ROOT = os.path.join(ROOTDIR, 'media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -72,7 +75,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/bronger/src/chantal/templates"
+    os.path.join(ROOTDIR, "templates")
 )
 
 INSTALLED_APPS = (
@@ -108,5 +111,5 @@ APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time()
 MYSQL_VERSION = _scan_version("mysql-server")
 PYTHON_VERSION = _scan_version("python")
-CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", "/home/bronger/src/chantal"],
+CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR],
                                  stdout=subprocess.PIPE).communicate()[0].strip()
