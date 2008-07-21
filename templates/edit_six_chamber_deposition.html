@@ -9,15 +9,8 @@
   td.label { text-align: right; vertical-align: middle }
   a img { border: none }
   th { text-align: right; vertical-align: top; padding-right: 1em }
+  table.channels * th { text-align: center; padding: 0pt }
   td { right; vertical-align: top }
-  /* Calendar widgets */
-  td * td, td * th { 
-      font-size:11px;
-      line-height:13px;
-      vertical-align:top;
-      padding:5px;
-      font-family:"Lucida Grande", Verdana, Arial, sans-serif
-  }
   input.vTimeField { margin-left: 2em }
 </style>
 {% endblock %}
@@ -236,7 +229,7 @@
                       {% endif %}
                       <td style="vertical-align: top; padding: 1ex">
                         {% if channels %}
-                          <table width="100%" style="text-align: center">
+                          <table width="100%" style="text-align: center" class="channels">
                             <tr>
                               <th>{{ channels.0.number.label }}</th>
                               <th>{{ channels.0.gas.label }}</th>
