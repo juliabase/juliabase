@@ -2,11 +2,25 @@
 # -*- coding: utf-8 -*-
 
 from mechanize import Browser
+import datetime
 
 chantal_url = "http://127.0.0.1:8000/"
 
 browser = Browser()
 browser.set_handle_robots(False)
+
+class SixChamberDeposition(object):
+    def __init__(self, number, carrier, operator, timestamp=None):
+        self.number = deposition_number
+        self.carrier = carrier
+        self.operator = operator
+        self.timestamp = timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.comments = u""
+
+class SixChamberLayer(object):
+    def __init__(self, number, chamber):
+        self.number, self.chamber = number, chamber
+        self.
 
 def login(name, password):
     browser.open(chantal_url+"login/")
