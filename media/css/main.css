@@ -1,5 +1,7 @@
+@import url('widgets.css');
+
 body { 
-    background-color: grey; 
+    background-color: gray;
     font-family: Frutiger,Trebuchet MS,DejaVu Sans,Bitstream Vera Sans,Verdana,sans-serif;
     margin: 0pt; padding: 0pt;
 }
@@ -70,3 +72,5 @@ table.about td { text-align: left; width: 60%; vertical-align: top; text-indent:
 
 span.uptime { font-size: small }
 span.version { font-size: small }
+
+div.short-messages { text-align: center }
