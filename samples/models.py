@@ -6,7 +6,7 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 
 class Process(models.Model):
-    timestamp = models.DateTimeField(_("timestamp"), )
+    timestamp = models.DateTimeField(_("timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("operator"))
     def find_actual_process(self):
         for process_type in process_types:
