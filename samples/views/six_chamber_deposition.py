@@ -14,8 +14,15 @@ import chantal.samples.models as models
 from . import utils
 from .utils import check_permission
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 class DepositionForm(ModelForm):
+    def __init__(self, data=None, **keyw):
+        super(DepositionForm, self).__init__(data, **keyw)
+        split_widget = forms.SplitDateTimeWidget()
+        split_widget.widgets[0].attrs = {'class': 'vDateField'}
+        split_widget.widgets[1].attrs = {'class': 'vTimeField'}
+        self.fields["timestamp"].widget = split_widget
     class Meta:
         model = SixChamberDeposition
         exclude = ("process_ptr",)
@@ -136,8 +143,14 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     channel_form_lists.extend(new_channel_lists)
     return structure_changed
 
-def is_referencially_valid(deposition_form, layer_forms, channel_form_lists):
+def is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
     referencially_valid = True
+    if deposition_form.is_valid() and (
+        not deposition or deposition.deposition_number != deposition_form.cleaned_data["deposition_number"]):
+        if models.SixChamberDeposition.objects.filter(deposition_number=
+                                                      deposition_form.cleaned_data["deposition_number"]).count():
+            utils.append_error(deposition_form, "__all__", _("This deposition number exists already."))
+            referencially_valid = False
     if not layer_forms:
         utils.append_error(deposition_form, "__all__", _("No layers given."))
         referencially_valid = False
@@ -191,6 +204,8 @@ def forms_from_post_data(post_data):
     return layer_forms, channel_form_lists
 
 def forms_from_database(deposition):
+    if not deposition:
+        return [], []
     layers = deposition.layers.all()
     layer_forms = [LayerForm(prefix=str(layer_index), instance=layer) for layer_index, layer in enumerate(layers)]
     channel_form_lists = []
@@ -203,21 +218,21 @@ def forms_from_database(deposition):
 @login_required
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
-    deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number)
+    deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number) if deposition_number else None
     if request.method == "POST":
         deposition_form = DepositionForm(request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
-        referencially_valid = is_referencially_valid(deposition_form, layer_forms, channel_form_lists)
+        referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
             save_to_database(deposition_form, layer_forms, channel_form_lists)
             return HttpResponseRedirect("../../admin")
     else:
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists = forms_from_database(deposition)
+    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition else _("New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
-                              {"title": _(u"6-chamber deposition “%s”") % deposition_number,
-                               "deposition": deposition_form,
+                              {"title": title, "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists)},
                               context_instance=RequestContext(request))

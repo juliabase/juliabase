@@ -1,12 +1,33 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load adminmedia %}
 
 {% block css %}
 <style type="text/css">
   td.value { text-align: left; vertical-align: middle; font-weight: normal }
   td.label { text-align: right; vertical-align: middle }
+  a img { border: none }
+  th { text-align: right; vertical-align: top; padding-right: 1em }
+  td { right; vertical-align: top }
+  /* Calendar widgets */
+  td * td, td * th { 
+      font-size:11px;
+      line-height:13px;
+      vertical-align:top;
+      padding:5px;
+      font-family:"Lucida Grande", Verdana, Arial, sans-serif
+  }
+  input.vTimeField { margin-left: 2em }
 </style>
+{% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript" src="../../admin/jsi18n/"></script>
+<script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script>
+<script type="text/javascript" src="{% admin_media_prefix %}js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{% admin_media_prefix %}js/calendar.js"></script>
+<script type="text/javascript" src="{% admin_media_prefix %}js/admin/DateTimeShortcuts.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -37,7 +58,7 @@
         <td class="value">{{ deposition.operator }}</td>
       </tr>
       <tr>
-        <td class="label">
+        <td class="label" style="vertical-align: top">
           <label for="id_{{ deposition.timestamp.html_name }}">{{ deposition.timestamp.label }}:</label>
         </td>
         <td class="value">{{ deposition.timestamp }}</td>
