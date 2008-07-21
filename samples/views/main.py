@@ -85,23 +85,28 @@ def breakup_time(seconds):
     assert not seconds
     if not current_timeunit_list:
         current_timeunit_list = [ungettext(u"%(count)d second", u"%(count)d seconds", 0) % {"count": 0 }]
+    _ = ugettext
     if len(current_timeunit_list) == 1:
         return current_timeunit_list[0]
+    elif len(current_timeunit_list) == 2:
+        return current_timeunit_list[0] + _(" and ") + current_timeunit_list[1]
     else:
-        _ = ugettext
         return _(", ").join(current_timeunit_list[:-1]) + _(", and ") + current_timeunit_list[-1]
 
 def about(request):
     web_server_uptime = \
-        _("up and running for %(time)s") % { "time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
+        _("up and running for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
     os_uptime = float(open("/proc/uptime").read().split()[0])
-    os_uptime = _("up and running for %(time)s") % { "time": breakup_time(os_uptime)}
+    os_uptime = _("up and running for %(time)s") % {"time": breakup_time(os_uptime)}
+    short_messages = [_("Chantal revision %s") % settings.CHANTAL_REVNO]
     return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
                                              "os_uptime": os_uptime,
                                              "web_server_version": settings.APACHE_VERSION,
                                              "web_server_uptime": web_server_uptime,
+                                             "is_testserver": settings.IS_TESTSERVER,
                                              "db_version": settings.MYSQL_VERSION,
                                              "language_version": settings.PYTHON_VERSION,
                                              "framework_version": django.get_version(),
+                                             "short_messages": short_messages
                                              },
                               context_instance=RequestContext(request))

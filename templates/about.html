@@ -7,14 +7,19 @@
   <tr>
     <th>{% trans 'Operating system' %}:</th>
     <td><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">8.04
-      <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a></span>{% trans ',' %} 
-      <span class="uptime">{{ os_uptime }}</span></td>
+      <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a>{% trans ',' %} 
+      </span><span class="uptime">{{ os_uptime }}</span></td>
   </tr>
   <tr>
     <th>{% trans 'Web server' %}:</th>
+    {% if is_testserver %}
+    <td>{% trans 'Django testserver' %}{% trans ',' %}
+      </span><span class="uptime">{{ web_server_uptime }}</span></td>
+    {% else %}
     <td><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
-      <span class="version">{{ web_server_version }}{% trans ',' %}</span>
-      <span class="uptime">{{ web_server_uptime }}</span></td>
+      <span class="version">{{ web_server_version }}{% trans ',' %}
+      </span><span class="uptime">{{ web_server_uptime }}</span></td>
+    {% endif %}
   </tr>
   <tr>
     <th>{% trans 'Database' %}:</th>
@@ -32,4 +37,16 @@
       <span class="version">{{ framework_version }}</span></td>
   </tr>
 </table>
+
+{% if short_messages %}
+  <div class="short-messages">
+  {% for short_message in short_messages %}
+    {{ short_message }}
+    {% if not forloop.last %}
+    •
+    {% endif %}
+  {% endfor %}
+  </div>
+{% endif %}
+
 {% endblock %}
