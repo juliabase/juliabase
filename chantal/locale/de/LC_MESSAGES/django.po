@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-22 04:45+0200\n"
-"PO-Revision-Date: 2008-07-22 14:19+0200\n"
+"POT-Creation-Date: 2008-07-22 22:55+0200\n"
+"PO-Revision-Date: 2008-07-22 22:57+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -409,54 +409,76 @@ msgstr "Dieser Name ist unbekannt."
 msgid "Gas type is unknown."
 msgstr "Dieser Gastyp ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:152
+#: samples/views/six_chamber_deposition.py:79
+msgid "Sample list"
+msgstr "Probenliste"
+
+#: samples/views/six_chamber_deposition.py:80
+msgid "if more than one sample, separate them with commas"
+msgstr "mehr als eine Probe durch Kommatas trennen"
+
+#: samples/views/six_chamber_deposition.py:95
+#, python-format
+msgid "I don't know %s."
+msgstr "Ich kenne %s nicht."
+
+#: samples/views/six_chamber_deposition.py:97
+#, python-format
+msgid "Multiple occurences of %s."
+msgstr "Mehrfachnennung von %s."
+
+#: samples/views/six_chamber_deposition.py:99
+msgid "You must give at least one valid sample name."
+msgstr "Sie müssen mindestens eine gültige Probe angeben."
+
+#: samples/views/six_chamber_deposition.py:175
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-#: samples/views/six_chamber_deposition.py:155
+#: samples/views/six_chamber_deposition.py:178
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: samples/views/six_chamber_deposition.py:161
-#: samples/views/six_chamber_deposition.py:168
+#: samples/views/six_chamber_deposition.py:184
+#: samples/views/six_chamber_deposition.py:191
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:234
+#: samples/views/six_chamber_deposition.py:262
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/six_chamber_deposition.py:234
+#: samples/views/six_chamber_deposition.py:262
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
-#: samples/views/utils.py:16
+#: samples/views/utils.py:17
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/utils.py:20
+#: samples/views/utils.py:21
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/utils.py:33
+#: samples/views/utils.py:34
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/utils.py:39
+#: samples/views/utils.py:40
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 
-#: templates/404.html:11 templates/404.html.py:14
-msgid "Resource not found"
-msgstr "Ressource nicht gefunden"
-
-#: templates/404.html:13
+#: templates/404.html:12
 msgid "woman with binoculars"
 msgstr "Frau mit Fernglas"
 
-#: templates/404.html:17
+#: templates/404.html:15 templates/404.html.py:16
+msgid "Resource not found"
+msgstr "Ressource nicht gefunden"
+
+#: templates/404.html:19
 #, python-format
 msgid ""
 "\n"
@@ -471,19 +493,19 @@ msgstr ""
 "Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
 "der angegebene Prozess etc. schon in der Datenbank existiert.\n"
 
-#: templates/500.html:11
-msgid "Internal Chantal error"
-msgstr "Interner Chantal-Fehler"
-
-#: templates/500.html:13
+#: templates/500.html:6
 msgid "ancient human dispatcher"
 msgstr "Fräulein vom Amt"
 
-#: templates/500.html:14
+#: templates/500.html:9
+msgid "Internal Chantal error"
+msgstr "Interner Chantal-Fehler"
+
+#: templates/500.html:10
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: templates/500.html:17
+#: templates/500.html:13
 msgid ""
 "\n"
 "You experienced an internal error in the Chantal server software.  The\n"
@@ -491,49 +513,58 @@ msgid ""
 "eliminating the bug.  Typically, they will contact you as soon as the "
 "problem\n"
 "is tackled.\n"
-msgstr "\nSie sind auf einen internen Fehler der Chantal-Serversoftware gestoßen.  Die Administatoren wurden bereits benachrichtigt und werden ihr bestes tun, den Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald der Fehler behoben ist.\n"
+msgstr ""
+"\n"
+"Sie sind auf einen internen Fehler der Chantal-Serversoftware gestoßen.  Die "
+"Administatoren wurden bereits benachrichtigt und werden ihr bestes tun, den "
+"Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald "
+"der Fehler behoben ist.\n"
 
-#: templates/about.html:8
+#: templates/about.html:6
+msgid "stewardess"
+msgstr "Stewardess"
+
+#: templates/about.html:12
 msgid "Operating system"
 msgstr "Betriebssystem"
 
-#: templates/about.html:10 templates/about.html.py:16 templates/about.html:20
+#: templates/about.html:14 templates/about.html.py:20 templates/about.html:24
 msgid ","
 msgstr ","
 
-#: templates/about.html:14
+#: templates/about.html:18
 msgid "Web server"
 msgstr "Webserver"
 
-#: templates/about.html:16
+#: templates/about.html:20
 msgid "Django testserver"
 msgstr "Django Testserver"
 
-#: templates/about.html:19
+#: templates/about.html:23
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
 msgstr "http://de.wikipedia.org/wiki/Apache_HTTP_Server"
 
-#: templates/about.html:25
+#: templates/about.html:29
 msgid "Database"
 msgstr "Datenbank"
 
-#: templates/about.html:26
+#: templates/about.html:30
 msgid "http://en.wikipedia.org/wiki/MySQL"
 msgstr "http://de.wikipedia.org/wiki/MySQL"
 
-#: templates/about.html:30
+#: templates/about.html:34
 msgid "Programming runtime"
 msgstr "Programm-Laufzeitsystem"
 
-#: templates/about.html:31
+#: templates/about.html:36
 msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
 msgstr "http://de.wikipedia.org/wiki/Python_(Programmiersprache)"
 
-#: templates/about.html:35
+#: templates/about.html:41
 msgid "Programming framework"
 msgstr "Programmier-Framework"
 
-#: templates/about.html:36
+#: templates/about.html:42
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
 
@@ -618,7 +649,7 @@ msgstr "Fehler in Channel"
 msgid "Number of channels to be added:"
 msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
-#: templates/edit_six_chamber_deposition.html:279
+#: templates/edit_six_chamber_deposition.html:280
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 
@@ -660,7 +691,11 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templates/permission_error.html:7
+#: templates/permission_error.html:6
+msgid "woman with lock"
+msgstr "Frau mit Schloss"
+
+#: templates/permission_error.html:11
 msgid ""
 "\n"
 "    Sorry, you don't have permission to do that action, probably because "
