@@ -6,14 +6,14 @@ body {
     margin: 0pt; padding: 0pt;
 }
 p.logo-text {
-    margin: 0pt;
+    margin: 0pt 0pt 0pt -0.05em;
     font-size: 50px;
     color: #333333;
     font-weight: bold;
 }
 
 p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; font-weight: normal }
-img.logo-fz { float: right }
+img.logo-fz { float: right; margin-right: 0.1em }
 
 div.main {
     margin: 20px 25px 20px;
