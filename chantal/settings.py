@@ -3,7 +3,7 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-import os.path
+import os.path, sys
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
 
 ADMINS = (
@@ -87,7 +87,7 @@ INSTALLED_APPS = (
     'chantal.samples',
 )
 
-IS_TESTSERVER = True
+IS_TESTSERVER = len(sys.argv) == 2
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login/"
@@ -111,5 +111,4 @@ APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time()
 MYSQL_VERSION = _scan_version("mysql-server")
 PYTHON_VERSION = _scan_version("python")
-CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR],
-                                 stdout=subprocess.PIPE).communicate()[0].strip()
+CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
