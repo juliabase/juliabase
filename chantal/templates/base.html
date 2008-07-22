@@ -4,6 +4,7 @@
   xml:lang='{{ LANGUAGE_CODE|default:"en" }}' {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{{ title|escape }}{% endblock %}</title>
+<link rel="icon" type="image/png" href="/media/favicon.png" />
 <link rel="stylesheet" type="text/css" href="/media/css/main.css" />
 {% block css %}{% endblock %}
 {% block extrahead %}{% endblock %}
