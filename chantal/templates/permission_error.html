@@ -2,9 +2,8 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content_title %}
+{% block float_image %}
 <img style="float: right; margin-left: 2em" src="/media/lock_woman.jpg" alt="{% trans 'woman with lock' %}" />
-<h1>{{ title|escape }}</h1>
 {% endblock %}
 
 {% block content %}
@@ -15,5 +14,6 @@
     administrator to add you to that group.
     {% endblocktrans %}
   </p>
+<p style="margin: 0pt">&nbsp;</p> <!-- IE7 quirk -->
 <div style="clear: both" />
 {% endblock %}

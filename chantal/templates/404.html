@@ -8,10 +8,12 @@
 </style>
 {% endblock %}
 
-{% block title %}{% trans 'Resource not found' %}{% endblock %}
-{% block content_title %}
+{% block float_image %}
 <img style="float: right; margin-left: 2em" src="/media/binoculars.jpg" alt="{% trans 'woman with binoculars' %}" />
-<h1>{% trans 'Resource not found' %}</h1>{% endblock %}
+{% endblock %}
+
+{% block title %}{% trans 'Resource not found' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'Resource not found' %}</h1>{% endblock %}
 
 {% block content %}
 <p>{% blocktrans %}
@@ -19,5 +21,6 @@ The resource » <em>{{ request_path }}</em> « could not be found.  Please che
 is correct, and/or check that the denoted sample, process etc is already in the
 database.
 {% endblocktrans %}</p>
+<p style="margin: 0pt">&nbsp;</p> <!-- IE7 quirk -->
 <div style="clear: both" />
 {% endblock %}

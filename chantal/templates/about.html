@@ -2,13 +2,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content_title %}
+{% block float_image %}
 <img style="float: right; margin-left: 2em" src="/media/stewardess.jpg" alt="{% trans 'stewardess' %}" />
-<h1>{{ title|escape }}</h1>
 {% endblock %}
 
 {% block content %}
-<table class="about" cellpadding="10">
+<table class="about" cellpadding="10" style="margin-bottom: 0pt">
   <tr>
     <th>{% trans 'Operating system' %}:</th>
     <td><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">8.04
@@ -33,8 +32,10 @@
   </tr>
   <tr>
     <th>{% trans 'Programming runtime' %}:</th>
-    <td style="vertical-align: bottom"><a href="{% trans 'http://en.wikipedia.org/wiki/Python_(programming_language)' %}">Python</a>
-      <span class="version">{{ language_version }}</span></td>
+    <td style="vertical-align: bottom">
+      <a href="{% trans 'http://en.wikipedia.org/wiki/Python_(programming_language)' %}">Python</a>
+      <span class="version">{{ language_version }}</span>
+    </td>
   </tr>
   <tr>
     <th>{% trans 'Programming framework' %}:</th>
@@ -53,5 +54,4 @@
   {% endfor %}
   </div>
 {% endif %}
-
 {% endblock %}

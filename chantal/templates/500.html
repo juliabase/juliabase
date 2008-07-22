@@ -2,10 +2,12 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans 'Internal Chantal error' %}{% endblock %}
-{% block content_title %}
+{% block float_image %}
 <img style="float: right; margin-left: 2em" src="/media/fraeulein.jpg" alt="{% trans 'ancient human dispatcher' %}" />
-<h1>{% trans 'Internal server error' %}</h1>{% endblock %}
+{% endblock %}
+
+{% block title %}{% trans 'Internal Chantal error' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'Internal server error' %}</h1>{% endblock %}
 
 {% block content %}
 <p>{% blocktrans %}
@@ -14,5 +16,6 @@ administrators have been contacted already and will do their best in
 eliminating the bug.  Typically, they will contact you as soon as the problem
 is tackled.
 {% endblocktrans %}</p>
+<p style="margin: 0pt">&nbsp;</p> <!-- IE7 quirk -->
 <div style="clear: both" />
 {% endblock %}
