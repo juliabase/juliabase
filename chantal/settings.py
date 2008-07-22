@@ -110,7 +110,7 @@ def _scan_version(package):
     match = re.match(re.escape(package)+r"\t(?P<version>.+?)-", dpgk.communicate()[0].strip())
     return match.group("version") if match else None
 APACHE_VERSION = _scan_version("apache2")
-APACHE_STARTUP_TIME = time.time()
+APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER else os.stat("/var/run/apache2.pid")[9]
 MYSQL_VERSION = _scan_version("mysql-server")
 PYTHON_VERSION = _scan_version("python")
 CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
