@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-21 16:04+0200\n"
-"PO-Revision-Date: 2008-07-21 16:04+0200\n"
+"POT-Creation-Date: 2008-07-22 04:45+0200\n"
+"PO-Revision-Date: 2008-07-22 04:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -431,10 +431,6 @@ msgstr "6-Kammer-Deposition „%s“"
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
-#: samples/views/six_chamber_deposition.py:252
-msgid "Add 6-chamber deposition"
-msgstr "Neue 6-Kammer-Deposition"
-
 #: samples/views/utils.py:16
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
@@ -451,6 +447,51 @@ msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
+
+#: templates/404.html:11 templates/404.html.py:14
+msgid "Resource not found"
+msgstr "Ressource nicht gefunden"
+
+#: templates/404.html:13
+msgid "woman with binoculars"
+msgstr "Frau mit Fernglas"
+
+#: templates/404.html:17
+#, python-format
+msgid ""
+"\n"
+"The resource » <em>%(request_path)s</em> « could not be found.  Please check "
+"that the URL\n"
+"is correct, and/or check that the denoted sample, process etc is already in "
+"the\n"
+"database.\n"
+msgstr ""
+"\n"
+"Die Ressource » <em>%(request_path)s</em> « konnte nicht gefunden werden.  "
+"Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
+"der angegebene Prozess etc. schon in der Datenbank existiert.\n"
+
+#: templates/500.html:11
+msgid "Internal Chantal error"
+msgstr "Interner Chantal-Fehler"
+
+#: templates/500.html:13
+msgid "ancient human dispatcher"
+msgstr "Fräulein vom Amt"
+
+#: templates/500.html:14
+msgid "Internal server error"
+msgstr "Interner Server-Fehler"
+
+#: templates/500.html:17
+msgid ""
+"\n"
+"You experienced an internal error in the Chantal server software.  The\n"
+"administrators have been contacted already and will do their best in\n"
+"eliminating the bug.  Typically, they will contact you as soon as the "
+"problem\n"
+"is tackled.\n"
+msgstr "\nSie sind auf einen internen Fehler der Chantal-Serversoftware gestoßen.  Die Administatoren wurden bereits benachrichtigt und werden ihr bestes tun, den Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald der Fehler behoben ist.\n"
 
 #: templates/about.html:8
 msgid "Operating system"
@@ -553,31 +594,31 @@ msgstr "Passwort wiederholen:"
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
-#: templates/edit_six_chamber_deposition.html:41
+#: templates/edit_six_chamber_deposition.html:34
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
-#: templates/edit_six_chamber_deposition.html:90
+#: templates/edit_six_chamber_deposition.html:83
 msgid "Layer error"
 msgstr "Fehler in Schicht"
 
-#: templates/edit_six_chamber_deposition.html:116
+#: templates/edit_six_chamber_deposition.html:109
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: templates/edit_six_chamber_deposition.html:121
+#: templates/edit_six_chamber_deposition.html:114
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
-#: templates/edit_six_chamber_deposition.html:255
+#: templates/edit_six_chamber_deposition.html:248
 msgid "Channel error"
 msgstr "Fehler in Channel"
 
-#: templates/edit_six_chamber_deposition.html:271
+#: templates/edit_six_chamber_deposition.html:264
 msgid "Number of channels to be added:"
 msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
-#: templates/edit_six_chamber_deposition.html:286
+#: templates/edit_six_chamber_deposition.html:279
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 
@@ -634,6 +675,9 @@ msgstr ""
 "durchzuführen, vermutlich, weil Sie nicht einer bestimmten Gruppe "
 "angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener "
 "Gruppe hinzufügt."
+
+#~ msgid "Add 6-chamber deposition"
+#~ msgstr "Neue 6-Kammer-Deposition"
 
 #~ msgid "email"
 #~ msgstr "Email"
