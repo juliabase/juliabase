@@ -193,7 +193,7 @@ def is_referencially_valid(deposition, deposition_form, layer_forms, channel_for
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
     
-def save_to_database(deposition_form, layer_forms, channel_form_lists):
+def save_to_database(deposition_form, layer_forms, channel_form_lists, sample_list_form):
     deposition = deposition_form.save()
     deposition.layers.all().delete()  # deletes channels, too
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
@@ -204,6 +204,8 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
             channel = channel_form.save(commit=False)
             channel.layer = layer
             channel.save()
+    samples = [utils.get_sample(sample_name) for sample_name in sample_list_form.cleaned_data["sample_list"].split(",")]
+    deposition.samples = samples
 
 def forms_from_post_data(post_data):
     layer_indices = set()
@@ -249,11 +251,10 @@ def edit(request, deposition_number):
         deposition_form = DepositionForm(request.POST, instance=deposition)
         layer_forms, channel_form_lists, sample_list_form = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists, sample_list_form)
-        print sample_list_form.errors
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
         referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
-            save_to_database(deposition_form, layer_forms, channel_form_lists)
+            save_to_database(deposition_form, layer_forms, channel_form_lists, sample_list_form)
             return HttpResponseRedirect("../../admin")
     else:
         deposition_form = DepositionForm(instance=deposition)
