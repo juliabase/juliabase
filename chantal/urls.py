@@ -22,7 +22,7 @@ urlpatterns = patterns("",
                        (prefix+r"admin/", include("django.contrib.admin.urls")),
                        )
 
-if settings.DEBUG:
+if settings.IS_TESTSERVER:
     urlpatterns += patterns("",
                             (r"^media/(?P<path>.*)$", "django.views.static.serve",
                              {"document_root": os.path.join(settings.ROOTDIR, "media/")}),
