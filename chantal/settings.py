@@ -1,11 +1,13 @@
 # Django settings for chantal project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 import os.path, sys
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
 
+DEFAULT_FROM_EMAIL = "bronger@physik.rwth-aachen.de"
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
     ('Torsten Bronger', 'bronger@physik.rwth-aachen.de'),
 )
