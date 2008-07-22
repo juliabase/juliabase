@@ -1,0 +1,23 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block css %}
+<style type="text/css">
+  em { color: maroon }
+</style>
+{% endblock %}
+
+{% block title %}{% trans 'Resource not found' %}{% endblock %}
+{% block content_title %}
+<img style="float: right; margin-left: 2em" src="/media/binoculars.jpg" alt="{% trans 'woman with binoculars' %}" />
+<h1>{% trans 'Resource not found' %}</h1>{% endblock %}
+
+{% block content %}
+<p>{% blocktrans %}
+The resource » <em>{{ request_path }}</em> « could not be found.  Please check that the URL
+is correct, and/or check that the denoted sample, process etc is already in the
+database.
+{% endblocktrans %}</p>
+<div style="clear: both" />
+{% endblock %}
