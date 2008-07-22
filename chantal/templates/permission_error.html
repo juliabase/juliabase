@@ -2,6 +2,11 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block content_title %}
+<img style="float: right; margin-left: 2em" src="/media/lock_woman.jpg" alt="{% trans 'woman with lock' %}" />
+<h1>{{ title|escape }}</h1>
+{% endblock %}
+
 {% block content %}
   <p>
     {% blocktrans %}
@@ -10,4 +15,5 @@
     administrator to add you to that group.
     {% endblocktrans %}
   </p>
+<div style="clear: both" />
 {% endblock %}
