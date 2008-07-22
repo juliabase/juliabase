@@ -6,6 +6,7 @@ from django.newforms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from functools import update_wrapper
+from chantal.samples import models
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):
@@ -45,9 +46,6 @@ def int_or_zero(number):
     except ValueError:
         return 0
 
-def prefix_dict(dictionary, prefix):
-    return dict([(prefix+"-"+key, dictionary[key]) for key in dictionary])
-
 def append_error(form, fieldname, error_message):
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
@@ -64,3 +62,30 @@ def check_permission(permission):
     def decorate(original_view_function):
         return _PermissionCheck(original_view_function, permission)
     return decorate
+
+def get_sample(sample_name):
+    try:
+        sample = models.Sample.objects.get(name=sample_name)
+    except models.Sample.DoesNotExist:
+        try:
+            sample_alias = models.SampleAlias.objects.get(name=sample_name)
+        except models.SampleAlias.DoesNotExist:
+            return
+        else:
+            return sample_alias.sample
+    else:
+        return sample
+
+def does_sample_exist(sample_name):
+    return bool(models.Sample.objects.filter(name=sample_name).count() or
+                models.SampleAlias.objects.filter(name=sample_name).count())
+
+def normalize_sample_name(sample_name):
+    if models.Sample.objects.filter(name=sample_name).count():
+        return sample_name
+    try:
+        sample_alias = models.SampleAlias.objects.get(name=sample_name)
+    except models.SampleAlias.DoesNotExist:
+        return
+    else:
+        return sample_alias.sample.name
