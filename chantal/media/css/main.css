@@ -73,4 +73,4 @@ table.about td { text-align: left; width: 60%; vertical-align: top; text-indent:
 span.uptime { font-size: small }
 span.version { font-size: small }
 
-div.short-messages { text-align: center }
+div.short-messages { text-align: center; clear: both }
