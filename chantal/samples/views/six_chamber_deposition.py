@@ -206,6 +206,7 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists, sample_li
             channel.save()
     samples = [utils.get_sample(sample_name) for sample_name in sample_list_form.cleaned_data["sample_list"].split(",")]
     deposition.samples = samples
+    return deposition
 
 def forms_from_post_data(post_data):
     layer_indices = set()
@@ -254,12 +255,13 @@ def edit(request, deposition_number):
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
         referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
-            save_to_database(deposition_form, layer_forms, channel_form_lists, sample_list_form)
-            return HttpResponseRedirect("../../admin")
+            deposition = save_to_database(deposition_form, layer_forms, channel_form_lists, sample_list_form)
+            return HttpResponseRedirect("../../" if deposition_number
+                                        else "../../processes/split-and-rename-samples/%d" % deposition.id)
     else:
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists, sample_list_form = forms_from_database(deposition)
-    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition else _("New 6-chamber deposition")
+    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _("New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists),

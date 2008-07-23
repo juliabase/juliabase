@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-22 22:55+0200\n"
-"PO-Revision-Date: 2008-07-22 22:57+0200\n"
+"POT-Creation-Date: 2008-07-23 18:45+0200\n"
+"PO-Revision-Date: 2008-07-23 18:46+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -313,88 +313,93 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: samples/views/main.py:22 templates/base.html:28
+#: samples/views/main.py:21 templates/base.html:28
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: samples/views/main.py:26
+#: samples/views/main.py:25
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: samples/views/main.py:75
+#: samples/views/main.py:74
 #, python-format
 msgid "%(count)d year"
 msgid_plural "%(count)d years"
 msgstr[0] "%(count)d Jahr"
 msgstr[1] "%(count)d Jahren"
 
-#: samples/views/main.py:76
+#: samples/views/main.py:75
 #, python-format
 msgid "%(count)d month"
 msgid_plural "%(count)d months"
 msgstr[0] "%(count)d Monat"
 msgstr[1] "%(count)d Monaten"
 
-#: samples/views/main.py:77
+#: samples/views/main.py:76
 #, python-format
 msgid "%(count)d week"
 msgid_plural "%(count)d weeks"
 msgstr[0] "%(count)d Woche"
 msgstr[1] "%(count)d Wochen"
 
-#: samples/views/main.py:78
+#: samples/views/main.py:77
 #, python-format
 msgid "%(count)d day"
 msgid_plural "%(count)d days"
 msgstr[0] "%(count)d Tag"
 msgstr[1] "%(count)d Tagen"
 
-#: samples/views/main.py:79
+#: samples/views/main.py:78
 #, python-format
 msgid "%(count)d hour"
 msgid_plural "%(count)d hours"
 msgstr[0] "%(count)d Stunde"
 msgstr[1] "%(count)d Stunden"
 
-#: samples/views/main.py:80
+#: samples/views/main.py:79
 #, python-format
 msgid "%(count)d minute"
 msgid_plural "%(count)d minutes"
 msgstr[0] "%(count)d Minute"
 msgstr[1] "%(count)d Minuten"
 
-#: samples/views/main.py:81 samples/views/main.py:87
+#: samples/views/main.py:80 samples/views/main.py:86
 #, python-format
 msgid "%(count)d second"
 msgid_plural "%(count)d seconds"
 msgstr[0] "%(count)d Sekunde"
 msgstr[1] "%(count)d Sekunden"
 
-#: samples/views/main.py:92
+#: samples/views/main.py:91
 msgid " and "
 msgstr " und "
 
-#: samples/views/main.py:94
+#: samples/views/main.py:93
 msgid ", "
 msgstr ", "
 
-#: samples/views/main.py:94
+#: samples/views/main.py:93
 msgid ", and "
 msgstr " und "
 
-#: samples/views/main.py:98 samples/views/main.py:100
+#: samples/views/main.py:97 samples/views/main.py:99
 #, python-format
 msgid "up and running for %(time)s"
 msgstr "up and running seit %(time)s"
 
-#: samples/views/main.py:101
+#: samples/views/main.py:100
 #, python-format
 msgid "Chantal revision %s"
 msgstr "Chantal-Revision %s"
 
-#: samples/views/main.py:102
+#: samples/views/main.py:101
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
+
+#: samples/views/rename_and_split_samples.py:16
+#, python-format
+msgid "Bulk sample rename for %s"
+msgstr "Probenumbenennung für %s"
 
 #: samples/views/sample.py:39
 #, python-format
@@ -444,12 +449,12 @@ msgstr "Keine Schichten angebeben."
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:262
+#: samples/views/six_chamber_deposition.py:264
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/six_chamber_deposition.py:262
+#: samples/views/six_chamber_deposition.py:264
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
@@ -710,6 +715,18 @@ msgstr ""
 "durchzuführen, vermutlich, weil Sie nicht einer bestimmten Gruppe "
 "angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener "
 "Gruppe hinzufügt."
+
+#: templates/split_and_rename.html:8
+msgid "Old sample name"
+msgstr "Alter Probenname"
+
+#: templates/split_and_rename.html:9
+msgid "Pieces"
+msgstr "Stücke"
+
+#: templates/split_and_rename.html:10
+msgid "New sample name(s)"
+msgstr "Neue(r) Probenname(n)"
 
 #~ msgid "Add 6-chamber deposition"
 #~ msgstr "Neue 6-Kammer-Deposition"
