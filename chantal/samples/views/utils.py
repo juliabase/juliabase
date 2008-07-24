@@ -10,7 +10,7 @@ from chantal.samples import models
 from django.newforms import ModelForm
 
 class DataModelForm(ModelForm):
-    def uncleaned_data(fieldname):
+    def uncleaned_data(self, fieldname):
         return self.data.get(self.prefix + "-" + fieldname)
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")

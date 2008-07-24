@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models
 from . import utils
-from .utils import check_permission
+from .utils import check_permission, DataModelForm
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -58,7 +58,7 @@ class DepositionForm(ModelForm):
         model = SixChamberDeposition
         exclude = ("process_ptr",)
 
-class LayerForm(ModelForm):
+class LayerForm(DataModelForm):
     chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
     def __init__(self, data=None, **keyw):
         super(LayerForm, self).__init__(data, **keyw)
@@ -116,7 +116,7 @@ def is_all_valid(deposition_form, layer_forms, channel_forms):
 def change_structure(layer_forms, channel_form_lists, post_data):
     structure_changed = False
     change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
-    biggest_layer_number = max([utils.int_or_zero(layer.data[layer.prefix+"-number"]) for layer in layer_forms] + [0])
+    biggest_layer_number = max([utils.int_or_zero(layer.uncleaned_data("number")) for layer in layer_forms] + [0])
     new_layers = []
     new_channel_lists = []
     
