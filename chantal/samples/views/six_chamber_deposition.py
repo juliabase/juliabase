@@ -56,7 +56,6 @@ class DepositionForm(ModelForm):
         return deposition
     class Meta:
         model = SixChamberDeposition
-        exclude = ("process_ptr",)
 
 class LayerForm(DataModelForm):
     chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
@@ -90,7 +89,6 @@ class LayerForm(DataModelForm):
         return utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
     class Meta:
         model = SixChamberLayer
-        exclude = ("deposition",)
 
 class ChannelForm(ModelForm):
     gas_names = set([x[0] for x in models.six_chamber_gas_choices])
@@ -104,7 +102,6 @@ class ChannelForm(ModelForm):
         return self.cleaned_data["gas"]
     class Meta:
         model = SixChamberChannel
-        exclude = ("layer",)
 
 def is_all_valid(deposition_form, layer_forms, channel_forms):
     valid = deposition_form.is_valid()
