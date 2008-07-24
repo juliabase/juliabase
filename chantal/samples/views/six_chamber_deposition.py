@@ -5,12 +5,12 @@ import re
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.newforms import ModelForm
+from django.newforms import ModelForm, Form
 from django.newforms.util import ValidationError
 import django.newforms as forms
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
-import chantal.samples.models as models
+from chantal.samples import models
 from . import utils
 from .utils import check_permission
 from django.utils.translation import ugettext_lazy as _
@@ -75,11 +75,36 @@ class ChannelForm(ModelForm):
         model = SixChamberChannel
         exclude = ("layer",)
 
-def is_all_valid(deposition_form, layer_forms, channel_forms):
+class SampleListForm(Form):
+    sample_list = forms.CharField(label=_("Sample list"), widget=forms.TextInput(attrs={"size": "40"}),
+                                  help_text=_("if more than one sample, separate them with commas"))
+    def clean_sample_list(self):
+        sample_list = [name.strip() for name in self.cleaned_data["sample_list"].split(",")]
+        invalid_sample_names = set()
+        duplicate_sample_names = set()
+        normalized_sample_names = set()
+        for sample_name in [name for name in sample_list if name]:
+            normalized_sample_name = utils.normalize_sample_name(sample_name)
+            if not normalized_sample_name:
+                invalid_sample_names.add(sample_name)
+            elif normalized_sample_name in normalized_sample_names:
+                duplicate_sample_names.add(sample_name)
+            else:
+                normalized_sample_names.add(normalized_sample_name)
+        if invalid_sample_names:
+            raise ValidationError(_("I don't know %s.") % ", ".join(invalid_sample_names))
+        if duplicate_sample_names:
+            raise ValidationError(_("Multiple occurences of %s.") % ", ".join(duplicate_sample_names))
+        if not normalized_sample_names:
+            raise ValidationError(_("You must give at least one valid sample name."))
+        return ",".join(normalized_sample_names)
+
+def is_all_valid(deposition_form, layer_forms, channel_forms, sample_list_form):
     valid = deposition_form.is_valid()
     valid = valid and all([layer_form.is_valid() for layer_form in layer_forms])
     for forms in channel_forms:
         valid = valid and all([channel_form.is_valid() for channel_form in forms])
+    valid = valid and sample_list_form.is_valid()
     return valid
 
 def change_structure(layer_forms, channel_form_lists, post_data):
@@ -98,11 +123,9 @@ def change_structure(layer_forms, channel_form_lists, post_data):
             layer_data["number"] = biggest_layer_number + 1
             biggest_layer_number += 1
             layer_index = len(layer_forms) + len(new_layers)
-            layer_data = utils.prefix_dict(layer_data, str(layer_index))
-            new_layers.append(LayerForm(layer_data, prefix=str(layer_index)))
+            new_layers.append(LayerForm(initial=layer_data, prefix=str(layer_index)))
             new_channel_lists.append(
-                    [ChannelForm(utils.prefix_dict(channel.cleaned_data, "%d_%d"%(layer_index, channel_index)),
-                                           prefix="%d_%d"%(layer_index, channel_index))
+                    [ChannelForm(initial=channel.cleaned_data, prefix="%d_%d"%(layer_index, channel_index))
                      for channel_index, channel in enumerate(channel_form_lists[i])])
 
     # Second step: Add layers
@@ -110,7 +133,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     structure_changed = structure_changed or to_be_added_layers > 0
     for i in range(to_be_added_layers):
         layer_index = len(layer_forms) + len(new_layers)
-        new_layers.append(LayerForm({"%d-number"%layer_index: biggest_layer_number+1}, prefix=str(layer_index)))
+        new_layers.append(LayerForm(initial={"number": biggest_layer_number+1}, prefix=str(layer_index)))
         biggest_layer_number += 1
         new_channel_lists.append([])
 
@@ -170,7 +193,7 @@ def is_referencially_valid(deposition, deposition_form, layer_forms, channel_for
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
     
-def save_to_database(deposition_form, layer_forms, channel_form_lists):
+def save_to_database(deposition_form, layer_forms, channel_form_lists, sample_list_form):
     deposition = deposition_form.save()
     deposition.layers.all().delete()  # deletes channels, too
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
@@ -181,6 +204,8 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
             channel = channel_form.save(commit=False)
             channel.layer = layer
             channel.save()
+    samples = [utils.get_sample(sample_name) for sample_name in sample_list_form.cleaned_data["sample_list"].split(",")]
+    deposition.samples = samples
 
 def forms_from_post_data(post_data):
     layer_indices = set()
@@ -201,11 +226,12 @@ def forms_from_post_data(post_data):
         channel_form_lists.append(
             [ChannelForm(post_data, prefix="%d_%d"%(layer_index, channel_index))
              for channel_index in channel_indices[layer_index]])
-    return layer_forms, channel_form_lists
+    sample_list_form = SampleListForm(post_data)
+    return layer_forms, channel_form_lists, sample_list_form
 
 def forms_from_database(deposition):
     if not deposition:
-        return [], []
+        return [], [], SampleListForm()
     layers = deposition.layers.all()
     layer_forms = [LayerForm(prefix=str(layer_index), instance=layer) for layer_index, layer in enumerate(layers)]
     channel_form_lists = []
@@ -213,7 +239,9 @@ def forms_from_database(deposition):
         channel_form_lists.append(
             [ChannelForm(prefix="%d_%d"%(layer_index, channel_index), instance=channel)
              for channel_index, channel in enumerate(layer.channels.all())])
-    return layer_forms, channel_form_lists
+    sample_list = deposition.samples.all() if deposition else []
+    sample_list_form = SampleListForm(initial={"sample_list": ", ".join([sample.name for sample in sample_list])})
+    return layer_forms, channel_form_lists, sample_list_form
 
 @login_required
 @check_permission("change_sixchamberdeposition")
@@ -221,18 +249,19 @@ def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number) if deposition_number else None
     if request.method == "POST":
         deposition_form = DepositionForm(request.POST, instance=deposition)
-        layer_forms, channel_form_lists = forms_from_post_data(request.POST)
-        all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
+        layer_forms, channel_form_lists, sample_list_form = forms_from_post_data(request.POST)
+        all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists, sample_list_form)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
         referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
-            save_to_database(deposition_form, layer_forms, channel_form_lists)
+            save_to_database(deposition_form, layer_forms, channel_form_lists, sample_list_form)
             return HttpResponseRedirect("../../admin")
     else:
         deposition_form = DepositionForm(instance=deposition)
-        layer_forms, channel_form_lists = forms_from_database(deposition)
+        layer_forms, channel_form_lists, sample_list_form = forms_from_database(deposition)
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition else _("New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
-                               "layers_and_channels": zip(layer_forms, channel_form_lists)},
+                               "layers_and_channels": zip(layer_forms, channel_form_lists),
+                               "sample_list": sample_list_form},
                               context_instance=RequestContext(request))
