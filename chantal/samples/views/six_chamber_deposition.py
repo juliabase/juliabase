@@ -213,18 +213,7 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
     return deposition
 
 def forms_from_post_data(post_data):
-    layer_indices = set()
-    channel_indices = {}
-    for name in post_data:
-        match = re.match(ur"(?P<layer_index>\d+)-.+", name)
-        if match:
-            layer_index = int(match.group("layer_index"))
-            layer_indices.add(layer_index)
-            channel_indices.setdefault(layer_index, set())
-        match = re.match(ur"(?P<layer_index>\d+)_(?P<channel_index>\d+)-.+", name)
-        if match:
-            layer_index, channel_index = int(match.group("layer_index")), int(match.group("channel_index"))
-            channel_indices.setdefault(layer_index, set()).add(channel_index)
+    layer_indices, channel_indices = utils.find_two_level_prefixes(post_data)
     layer_forms = [LayerForm(post_data, prefix=str(layer_index)) for layer_index in layer_indices]
     channel_form_lists = []
     for layer_index in layer_indices:

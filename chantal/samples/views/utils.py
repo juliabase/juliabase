@@ -94,3 +94,18 @@ def normalize_sample_name(sample_name):
         return
     else:
         return sample_alias.sample.name
+
+def find_two_level_prefixes(post_data):
+    level0_indices = set()
+    level1_indices = {}
+    for name in post_data:
+        match = re.match(ur"(?P<level0_index>\d+)-.+", name)
+        if match:
+            level0_index = int(match.group("level0_index"))
+            level0_indices.add(level0_index)
+            level1_indices.setdefault(level0_index, set())
+        match = re.match(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-.+", name)
+        if match:
+            level0_index, level1_index = int(match.group("level0_index")), int(match.group("level1_index"))
+            level1_indices.setdefault(level0_index, set()).add(level1_index)
+    return level0_indices, level1_indices
