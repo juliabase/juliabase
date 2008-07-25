@@ -131,6 +131,10 @@ class Sample(models.Model):
                               verbose_name=_("group"))
     def __unicode__(self):
         return self.name
+    def duplicate(self):
+        return Sample(name=self.name, current_location=self.current_location,
+                      currently_responsible_person=self.currently_responsible_person, tags=self.tags,
+                      split_origin=self.split_origin, processes=self.processes, group=group)
     class Meta:
         verbose_name = _("sample")
         verbose_name_plural = _("samples")
