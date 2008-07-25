@@ -76,4 +76,4 @@ span.version { font-size: small }
 
 div.short-messages { text-align: center; clear: both }
 
-p.submit-button { text-align: right }
+p.submit-button { text-align: right; margin-bottom: 0px }
