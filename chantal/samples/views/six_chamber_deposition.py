@@ -247,7 +247,7 @@ def edit(request, deposition_number):
         if all_valid and referencially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
             return HttpResponseRedirect("../../" if deposition_number
-                                        else "../../processes/split-and-rename-samples/%d" % deposition.id)
+                                        else "../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists = forms_from_database(deposition)
