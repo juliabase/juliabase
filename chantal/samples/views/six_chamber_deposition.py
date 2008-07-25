@@ -106,10 +106,10 @@ class ChannelForm(ModelForm):
         model = SixChamberChannel
         exclude = ("layer",)
 
-def is_all_valid(deposition_form, layer_forms, channel_forms):
+def is_all_valid(deposition_form, layer_forms, channel_form_lists):
     valid = deposition_form.is_valid()
     valid = valid and all([layer_form.is_valid() for layer_form in layer_forms])
-    for forms in channel_forms:
+    for forms in channel_form_lists:
         valid = valid and all([channel_form.is_valid() for channel_form in forms])
     return valid
 
