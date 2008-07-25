@@ -108,12 +108,16 @@ class ChannelForm(ModelForm):
 
 def is_all_valid(deposition_form, layer_forms, channel_form_lists):
     valid = deposition_form.is_valid()
+    # Don't use a generator expression here because I want to call ``is_valid``
+    # for every form
     valid = valid and all([layer_form.is_valid() for layer_form in layer_forms])
     for forms in channel_form_lists:
         valid = valid and all([channel_form.is_valid() for channel_form in forms])
     return valid
 
 def change_structure(layer_forms, channel_form_lists, post_data):
+    # Attention: `post_data` doesn't contain the normalized prefixes, so it
+    # must not be used for anything except the `change_params`.
     structure_changed = False
     change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
     biggest_layer_number = max([utils.int_or_zero(layer.uncleaned_data("number")) for layer in layer_forms] + [0])
@@ -136,6 +140,8 @@ def change_structure(layer_forms, channel_form_lists, post_data):
 
     # Second step: Add layers
     to_be_added_layers = utils.int_or_zero(change_params["structural-change-add-layers"])
+    if to_be_added_layers < 0:
+        to_be_added_layers = 0
     structure_changed = structure_changed or to_be_added_layers > 0
     for i in range(to_be_added_layers):
         layer_index = len(layer_forms) + len(new_layers)
@@ -148,6 +154,8 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         # Add channels
         to_be_added_channels = utils.int_or_zero(change_params.get(
                 "structural-change-add-channels-for-layerindex-%d" % layer_index))
+        if to_be_added_channels < 0:
+            to_be_added_channels = 0
         structure_changed = structure_changed or to_be_added_channels > 0
         number_of_channels = len(channels)
         for channel_index in range(number_of_channels, number_of_channels+to_be_added_channels):
