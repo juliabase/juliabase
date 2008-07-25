@@ -3,7 +3,7 @@
 
 import re
 from django.newforms.util import ErrorList, ValidationError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, QueryDict
 from django.utils.translation import ugettext_lazy as _
 from functools import update_wrapper
 from chantal.samples import models
@@ -95,17 +95,35 @@ def normalize_sample_name(sample_name):
     else:
         return sample_alias.sample.name
 
-def find_two_level_prefixes(post_data):
+def normalize_prefixes(post_data):
     level0_indices = set()
     level1_indices = {}
-    for name in post_data:
-        match = re.match(ur"(?P<level0_index>\d+)-.+", name)
+    digested_post_data = {}
+    for key in post_data:
+        match = re.match(ur"(?P<level0_index>\d+)-(?P<id>.+)", key)
         if match:
             level0_index = int(match.group("level0_index"))
             level0_indices.add(level0_index)
             level1_indices.setdefault(level0_index, set())
-        match = re.match(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-.+", name)
-        if match:
-            level0_index, level1_index = int(match.group("level0_index")), int(match.group("level1_index"))
-            level1_indices.setdefault(level0_index, set()).add(level1_index)
-    return level0_indices, level1_indices
+            digested_post_data[(level0_index, match.group("id"))] = post_data.getlist(key)
+        else:
+            match = re.match(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)", key)
+            if match:
+                level0_index, level1_index = int(match.group("level0_index")), int(match.group("level1_index"))
+                level1_indices.setdefault(level0_index, set()).add(level1_index)
+                digested_post_data[(level1_index, level0_index, match.group("id"))] = post_data.getlist(key)
+            else:
+                digested_post_data[key] = post_data.getlist(key)
+    level0_indices = sorted(level0_indices)
+    for key, value in level1_indices.iteritems():
+        level1_indices[key] = sorted(value)
+    new_post_data = QueryDict("").copy()
+    for key, value in digested_post_data.iteritems():
+        if isinstance(key, basestring):
+            new_post_data.setlist(key, value)
+        elif len(key) == 2:
+            new_post_data.setlist("%d-%s" % (level0_indices.index(key[0]), key[1]), value)
+        else:
+            new_level0_index = level0_indices.index(key[1])
+            new_post_data.setlist("%d_%d-%s" % (new_level0_index, level1_indices[key[1]].index(key[0]), key[2]), value)
+    return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]

@@ -213,13 +213,13 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
     return deposition
 
 def forms_from_post_data(post_data):
-    layer_indices, channel_indices = utils.find_two_level_prefixes(post_data)
-    layer_forms = [LayerForm(post_data, prefix=str(layer_index)) for layer_index in layer_indices]
+    post_data, number_of_layers, list_of_number_of_channels = utils.normalize_prefixes(post_data)
+    layer_forms = [LayerForm(post_data, prefix=str(layer_index)) for layer_index in range(number_of_layers)]
     channel_form_lists = []
-    for layer_index in layer_indices:
+    for layer_index in range(number_of_layers):
         channel_form_lists.append(
             [ChannelForm(post_data, prefix="%d_%d"%(layer_index, channel_index))
-             for channel_index in channel_indices[layer_index]])
+             for channel_index in range(list_of_number_of_channels[layer_index])])
     return layer_forms, channel_form_lists
 
 def forms_from_database(deposition):
