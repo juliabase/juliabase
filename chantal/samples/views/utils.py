@@ -95,19 +95,21 @@ def normalize_sample_name(sample_name):
     else:
         return sample_alias.sample.name
 
+level0_pattern = re.compile(ur"(?P<level0_index>\d+)-(?P<id>.+)")
+level1_pattern = re.compile(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
 def normalize_prefixes(post_data):
     level0_indices = set()
     level1_indices = {}
     digested_post_data = {}
     for key in post_data:
-        match = re.match(ur"(?P<level0_index>\d+)-(?P<id>.+)", key)
+        match = level0_pattern.match(key)
         if match:
             level0_index = int(match.group("level0_index"))
             level0_indices.add(level0_index)
             level1_indices.setdefault(level0_index, set())
             digested_post_data[(level0_index, match.group("id"))] = post_data.getlist(key)
         else:
-            match = re.match(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)", key)
+            match = level1_pattern.match(key)
             if match:
                 level0_index, level1_index = int(match.group("level0_index")), int(match.group("level1_index"))
                 level1_indices.setdefault(level0_index, set()).add(level1_index)
@@ -115,15 +117,20 @@ def normalize_prefixes(post_data):
             else:
                 digested_post_data[key] = post_data.getlist(key)
     level0_indices = sorted(level0_indices)
+    normalization_necessary = level0_indices[-1] != len(level0_indices) - 1
     for key, value in level1_indices.iteritems():
         level1_indices[key] = sorted(value)
-    new_post_data = QueryDict("").copy()
-    for key, value in digested_post_data.iteritems():
-        if isinstance(key, basestring):
-            new_post_data.setlist(key, value)
-        elif len(key) == 2:
-            new_post_data.setlist("%d-%s" % (level0_indices.index(key[0]), key[1]), value)
-        else:
-            new_level0_index = level0_indices.index(key[1])
-            new_post_data.setlist("%d_%d-%s" % (new_level0_index, level1_indices[key[1]].index(key[0]), key[2]), value)
+        normalization_necessary = normalization_necessary or level1_indices[key][-1] != len(level1_indices[key]) - 1
+    if normalization_necessary:
+        new_post_data = QueryDict("").copy()
+        for key, value in digested_post_data.iteritems():
+            if isinstance(key, basestring):
+                new_post_data.setlist(key, value)
+            elif len(key) == 2:
+                new_post_data.setlist("%d-%s" % (level0_indices.index(key[0]), key[1]), value)
+            else:
+                new_level0_index = level0_indices.index(key[1])
+                new_post_data.setlist("%d_%d-%s" % (new_level0_index, level1_indices[key[1]].index(key[0]), key[2]), value)
+    else:
+        new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
