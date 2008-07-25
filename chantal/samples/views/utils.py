@@ -117,10 +117,11 @@ def normalize_prefixes(post_data):
             else:
                 digested_post_data[key] = post_data.getlist(key)
     level0_indices = sorted(level0_indices)
-    normalization_necessary = level0_indices[-1] != len(level0_indices) - 1
+    normalization_necessary = level0_indices and level0_indices[-1] != len(level0_indices) - 1
     for key, value in level1_indices.iteritems():
         level1_indices[key] = sorted(value)
-        normalization_necessary = normalization_necessary or level1_indices[key][-1] != len(level1_indices[key]) - 1
+        normalization_necessary = normalization_necessary or (
+            level1_indices[key] and level1_indices[key][-1] != len(level1_indices[key]) - 1)
     if normalization_necessary:
         new_post_data = QueryDict("").copy()
         for key, value in digested_post_data.iteritems():
