@@ -23,7 +23,7 @@ class Process(models.Model):
 
 class SixChamberDeposition(Process):
     deposition_number = models.CharField(_("deposition number"), max_length=15, unique=True)
-    carrier = models.CharField(_("carrier"), max_length=10)
+    carrier = models.CharField(_("carrier"), max_length=10, blank=True)
     comments = models.TextField(_("comments"), blank=True)
     def __unicode__(self):
         return unicode(_("6-chamber deposition ")) + self.deposition_number
