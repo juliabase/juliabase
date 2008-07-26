@@ -63,10 +63,9 @@ class _PermissionCheck(object):
             self.permissions = set(["samples." + permissions])
         update_wrapper(self, original_view_function)
     def __call__(self, request, *args, **kwargs):
-        all_permissions = request.user.get_all_permissions()
-        if any(permission not in all_permissions for permission in self.permissions):
-            return HttpResponseRedirect("permission_error")
-        return self.original_view_function(request, *args, **kwargs)
+        if any(request.user.has_perm(permission) for permission in self.permissions):
+            return self.original_view_function(request, *args, **kwargs)
+        return HttpResponseRedirect("permission_error")
     
 def check_permission(permissions):
     # If more than one permission is given, any of them would unlock the view.
