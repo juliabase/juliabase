@@ -132,9 +132,11 @@ class Sample(models.Model):
     def __unicode__(self):
         return self.name
     def duplicate(self):
+        # Note that `processes` is not set because many-to-many fields can only
+        # be set after the object was saved.
         return Sample(name=self.name, current_location=self.current_location,
-                      currently_responsible_person=self.currently_responsible_person, tags=self.tags,
-                      split_origin=self.split_origin, processes=self.processes, group=group)
+                            currently_responsible_person=self.currently_responsible_person, tags=self.tags,
+                            split_origin=self.split_origin, group=self.group)
     class Meta:
         verbose_name = _("sample")
         verbose_name_plural = _("samples")
@@ -157,6 +159,8 @@ class SampleSplit(Process):
     # because one could find the parent via the samples attribute every process
     # has, too.
     parent = models.ForeignKey(Sample, verbose_name=_("parent"))
+    def __unicode__(self):
+        return self.parent.name
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
