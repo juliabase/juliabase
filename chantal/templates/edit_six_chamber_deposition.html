@@ -42,6 +42,10 @@
            >{{ deposition.carrier.label }}:</label><span class="value">{{ deposition.carrier }}</span>
   </p>
 
+  <p><label for="id_{{ deposition.sample_list.html_name }}" style="margin-right: 0.5em"
+           >{{ deposition.sample_list.label }}:</label>{{ deposition.sample_list }}
+    ({{ deposition.sample_list.help_text }})</p>
+
   <div style="float: right">
     <table>
       <tr>
@@ -280,16 +284,7 @@
   <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
     >&nbsp;<input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
 
-  {% if sample_list.errors %}
-    <table width="100%"><tr><td class="error-messages">
-      <p>{{ sample_list.sample_list.label }}</p>{{ sample_list.sample_list.errors }}
-    </td></tr></table>
-  {% endif %}
-  <p><label for="id_{{ sample_list.sample_list.html_name }}" style="margin-right: 0.5em"
-           >{{ sample_list.sample_list.label }}:</label>{{ sample_list.sample_list }}
-    ({{ sample_list.sample_list.help_text }})
-
-  <p><input type="submit" /></p>
+  <p class="submit-button"><input type="submit" /></p>
 </form>
 
 

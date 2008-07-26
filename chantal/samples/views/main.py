@@ -4,8 +4,7 @@
 import string, time
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from chantal.samples.models import Sample
-import chantal.samples.models
+from chantal.samples import models
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm

@@ -75,3 +75,5 @@ span.uptime { font-size: small }
 span.version { font-size: small }
 
 div.short-messages { text-align: center; clear: both }
+
+p.submit-button { text-align: right; margin-bottom: 0px }

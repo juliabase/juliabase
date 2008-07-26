@@ -23,7 +23,7 @@ class Process(models.Model):
 
 class SixChamberDeposition(Process):
     deposition_number = models.CharField(_("deposition number"), max_length=15, unique=True)
-    carrier = models.CharField(_("carrier"), max_length=10)
+    carrier = models.CharField(_("carrier"), max_length=10, blank=True)
     comments = models.TextField(_("comments"), blank=True)
     def __unicode__(self):
         return unicode(_("6-chamber deposition ")) + self.deposition_number
@@ -131,6 +131,12 @@ class Sample(models.Model):
                               verbose_name=_("group"))
     def __unicode__(self):
         return self.name
+    def duplicate(self):
+        # Note that `processes` is not set because many-to-many fields can only
+        # be set after the object was saved.
+        return Sample(name=self.name, current_location=self.current_location,
+                            currently_responsible_person=self.currently_responsible_person, tags=self.tags,
+                            split_origin=self.split_origin, group=self.group)
     class Meta:
         verbose_name = _("sample")
         verbose_name_plural = _("samples")
@@ -153,6 +159,8 @@ class SampleSplit(Process):
     # because one could find the parent via the samples attribute every process
     # has, too.
     parent = models.ForeignKey(Sample, verbose_name=_("parent"))
+    def __unicode__(self):
+        return self.parent.name
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")

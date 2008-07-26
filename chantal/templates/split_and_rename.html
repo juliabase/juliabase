@@ -1,0 +1,61 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form method="post" action="">
+  <table style="margin-left: auto; margin-right: auto" cellpadding="10" border="1">
+    <tr>
+      <th>{% trans 'Old sample name' %}</th>
+      <th>{% trans 'Pieces' %}</th>
+      <th>{% trans 'New sample name(s)' %}</th>
+    </tr>
+    {% for sample, new_names in samples %}
+      {% if sample.errors or sample.non_field_errors %}
+        <tr>
+          <td colspan="0" class="error-messages">
+            {% for field in sample %}
+              {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+            {% endfor %}
+            {% if sample.non_field_errors %}
+              <p>{% trans 'Sample name error' %}</p>{{ sample.non_field_errors }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endif %}
+      <tr>
+        <td style="vertical-align: top">
+          {{ sample.name }}
+        </td>
+        <td style="text-align: center; vertical-align: top">
+          {{ sample.number_of_pieces }}
+        </td>
+        <td style="vertical-align: top">
+          <table cellspacing="0" cellpadding="0">
+            {% for new_name in new_names %}
+              {% if new_name.errors or new_name.non_field_errors %}
+                <tr>
+                  <td colspan="0" class="error-messages">
+                    {% for field in new_name %}
+                      {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+                    {% endfor %}
+                    {% if new_name.non_field_errors %}
+                      <p>{% trans 'Sample name error' %}</p>{{ new_name.non_field_errors }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endif %}
+              <tr>
+                <td>
+                  {{ new_name.new_name }}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p class="submit-button"><input type="submit" /></p>
+</form>
+{% endblock %}
