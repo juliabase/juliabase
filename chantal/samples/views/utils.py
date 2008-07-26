@@ -69,6 +69,7 @@ class _PermissionCheck(object):
         return self.original_view_function(request, *args, **kwargs)
     
 def check_permission(permissions):
+    # If more than one permission is given, any of them would unlock the view.
     def decorate(original_view_function):
         return _PermissionCheck(original_view_function, permissions)
     return decorate
