@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import string
+import string, time
 from django.template import Context, loader, RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
+from django.http import Http404, HttpResponseRedirect
 from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
-import time
+from . import utils
+
 from django.utils.translation import ugettext_lazy as _
 
 def camel_case_to_underscores(name):
@@ -28,7 +30,12 @@ def digest_process(process):
 @login_required
 def show(request, sample_name):
     start = time.time()
-    sample = get_object_or_404(Sample, name=sample_name)
+    sample = utils.get_sample(sample_name)
+    if not sample:
+        raise Http404(_("Sample %s could not be found (neither as an alias).") % sample_name)
+    if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
+            and sample.currently_responsible_person != request.user:
+        return HttpResponseRedirect("permission_error")
     processes = []
     for process in sample.processes.all():
         process, title, body = digest_process(process)
