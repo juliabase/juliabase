@@ -42,17 +42,12 @@ def change_structure(sample_forms, new_name_form_lists):
         if sample_form.is_valid():
             number_of_pieces = sample_form.cleaned_data["number_of_pieces"]
             if number_of_pieces < len(new_name_forms):
-                print "Weiger!", number_of_pieces, len(new_name_forms)
                 del new_name_forms[number_of_pieces:]
                 structure_changed = True
             elif number_of_pieces > len(new_name_forms):
-                print "Mehr", len(new_name_forms)
                 for new_name_index in range(len(new_name_forms), number_of_pieces):
                     new_name_forms.append(NewNameForm(prefix="%d_%d"%(sample_index, new_name_index)))
                 structure_changed = True
-                print len(new_name_forms)
-            else:
-                print number_of_pieces, len(new_name_forms)
     return structure_changed
 
 def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
@@ -61,13 +56,12 @@ def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
         # forged.
         sample = utils.get_sample(old_name)
         if sample_form.cleaned_data["number_of_pieces"] > 1:
-            sample = utils.get_sample()
             sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=operator, parent=sample)
             sample_split.save()
+            sample.processes.add(sample_split)
             for new_name_form in new_name_forms:
                 child_sample = sample.duplicate()
                 child_sample.name = new_name_form.cleaned_data["new_name"]
-                child_sample.processes = []
                 child_sample.split_origin = sample_split
                 child_sample.save()
         else:
