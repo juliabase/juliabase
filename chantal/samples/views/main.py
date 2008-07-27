@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import Site
+import django.contrib.auth.models
 from django import oldforms
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
@@ -72,4 +73,13 @@ def about(request):
                                              "framework_version": django.get_version(),
                                              "short_messages": short_messages
                                              },
+                              context_instance=RequestContext(request))
+
+def show_user(request, login_name):
+    user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
+    username = user.get_full_name()
+    print username
+    if not username:
+        username = user.username
+    return render_to_response("show_user.html", {"title": username},
                               context_instance=RequestContext(request))
