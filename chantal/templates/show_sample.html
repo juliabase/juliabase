@@ -2,14 +2,24 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block title %}{% trans 'History of sample “' %}{{ sample.name }}{% trans '”' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'History of sample “' %}{{ sample.name }}{% trans '”' %}
+  <span class="aliases">{% for alias in sample.aliases.all %}
+    alias <strong>{{ alias }}</strong> {% endfor %}</span></h1>{% endblock %}
+
 {% block content %}
   {{ session.last_db_time_in_ms }}
   {% for process in processes %}
-    <p class="operator_and_timestamp">
-      {{ process.operator.get_full_name }},
-      {{ process.timestamp }}
-    </p>
-    <h2>{{ process.title }}</h2>
-    {{ process.body }}
+    <div class="process">
+      <p class="operator_and_timestamp">
+        {% with process.operator.get_full_name as full_name %}
+          <a href="../users/{{ process.operator.username}} "
+             >{% if full_name %}{{ full_name }}{% else %}{{ process.operator }}{% endif %}</a>,
+        {% endwith %}
+        {{ process.timestamp }}
+      </p>
+      <h2>{{ process.title }}</h2>
+      {{ process.body }}
+    </div
   {% endfor %}
 {% endblock %}

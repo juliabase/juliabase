@@ -5,7 +5,7 @@
 <p>
   <span class="label">{% verbose_name SixChamberDeposition.deposition_number %}:</span><span class="value"
     style="margin-right: 4em">{{ process.deposition_number }}</span>
-  <span class="label">{% verbose_name SixChamberDeposition.carrier %}:</span><span class="value">{{ process.carrier }}</span>
+  <span class="label">{% verbose_name SixChamberDeposition.carrier %}:</span><span class="value">{{ process.carrier|default:"—" }}</span>
 </p>
 
 {% if process.comments %}
@@ -27,12 +27,12 @@
                   <table>
                     <tr>
                       <td style="vertical-align: top; text-align: right">
+                        <div style="float: left">{% verbose_name SixChamberLayer.number %}:</div>
                         <div 
                           style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
                                  margin-left: 0.3em;
                                  border-style: solid; border-width: thin;
-                                 border-color: black; float:right">{{ layer.number }}</div>
-                        <div>{% verbose_name SixChamberLayer.number %}:</div>
+                                 border-color: black; float: right; clear: left">{{ layer.number }}</div>
                       </td>
                       <td style="vertical-align: top; padding-left: 2em">
                         <span class="label">{% verbose_name SixChamberLayer.chamber %}:</span

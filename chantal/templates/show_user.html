@@ -1,0 +1,29 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load samples_extras %}
+
+{% block css %}
+<style type="text/css">
+  th { text-align: right }
+</style>
+{% endblock %}
+
+{% block content %}
+<table cellpadding="10" style="margin-bottom: 2ex">
+  <tr>
+    <th>{% verbose_name django.contrib.auth.models.User.username %}:</th>
+    <td>{{ user.username }}</td>
+  </tr>
+  <tr>
+    <th>{% verbose_name django.contrib.auth.models.User.email %}:</th>
+    <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+  </tr>
+  {% if userdetails %}
+    <tr>
+      <th>{% verbose_name UserDetails.phone %}:</th>
+      <td>{{ userdetails.phone }}</td>
+    </tr>
+  {% endif %}
+</table>
+{% endblock %}

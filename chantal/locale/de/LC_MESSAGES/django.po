@@ -1,14 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-23 18:45+0200\n"
-"PO-Revision-Date: 2008-07-23 18:46+0200\n"
+"POT-Creation-Date: 2008-07-27 19:36+0200\n"
+"PO-Revision-Date: 2008-07-27 19:37+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -225,7 +224,7 @@ msgstr "6-Kammer-Channel"
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
 
-#: samples/models.py:122 samples/models.py:141 samples/models.py:163
+#: samples/models.py:122 samples/models.py:148 samples/models.py:172
 msgid "name"
 msgstr "Name"
 
@@ -253,55 +252,55 @@ msgstr "Split-Ursprung"
 msgid "group"
 msgstr "Gruppe"
 
-#: samples/models.py:135 samples/models.py:142
+#: samples/models.py:141 samples/models.py:149
 msgid "sample"
 msgstr "Probe"
 
-#: samples/models.py:136 samples/models.py:164
+#: samples/models.py:142 samples/models.py:173
 msgid "samples"
 msgstr "Proben"
 
-#: samples/models.py:146
+#: samples/models.py:153
 msgid "name alias"
 msgstr "Alternativname"
 
-#: samples/models.py:147
+#: samples/models.py:154
 msgid "name aliases"
 msgstr "Alternativnamen"
 
-#: samples/models.py:155
+#: samples/models.py:162
 msgid "parent"
 msgstr "Elter"
 
-#: samples/models.py:157
+#: samples/models.py:166
 msgid "sample split"
-msgstr "Problenspaltung"
+msgstr "Probenspaltung"
 
-#: samples/models.py:158
+#: samples/models.py:167
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: samples/models.py:168
+#: samples/models.py:177
 msgid "sample series"
 msgstr "Probenserie"
 
-#: samples/models.py:169
+#: samples/models.py:178
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: samples/models.py:178
+#: samples/models.py:187
 msgid "user"
 msgstr "Benutzer"
 
-#: samples/models.py:179
+#: samples/models.py:188
 msgid "language"
 msgstr "Sprache"
 
-#: samples/models.py:180
+#: samples/models.py:189
 msgid "phone"
 msgstr "Telefon"
 
-#: samples/models.py:184 samples/models.py:185
+#: samples/models.py:193 samples/models.py:194
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -313,164 +312,186 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: samples/views/main.py:21 templates/base.html:28
+#: samples/views/main.py:22 templates/base.html:28
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: samples/views/main.py:25
+#: samples/views/main.py:26
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: samples/views/main.py:74
+#: samples/views/main.py:39
 #, python-format
 msgid "%(count)d year"
 msgid_plural "%(count)d years"
 msgstr[0] "%(count)d Jahr"
 msgstr[1] "%(count)d Jahren"
 
-#: samples/views/main.py:75
+#: samples/views/main.py:40
 #, python-format
 msgid "%(count)d month"
 msgid_plural "%(count)d months"
 msgstr[0] "%(count)d Monat"
 msgstr[1] "%(count)d Monaten"
 
-#: samples/views/main.py:76
+#: samples/views/main.py:41
 #, python-format
 msgid "%(count)d week"
 msgid_plural "%(count)d weeks"
 msgstr[0] "%(count)d Woche"
 msgstr[1] "%(count)d Wochen"
 
-#: samples/views/main.py:77
+#: samples/views/main.py:42
 #, python-format
 msgid "%(count)d day"
 msgid_plural "%(count)d days"
 msgstr[0] "%(count)d Tag"
 msgstr[1] "%(count)d Tagen"
 
-#: samples/views/main.py:78
+#: samples/views/main.py:43
 #, python-format
 msgid "%(count)d hour"
 msgid_plural "%(count)d hours"
 msgstr[0] "%(count)d Stunde"
 msgstr[1] "%(count)d Stunden"
 
-#: samples/views/main.py:79
+#: samples/views/main.py:44
 #, python-format
 msgid "%(count)d minute"
 msgid_plural "%(count)d minutes"
 msgstr[0] "%(count)d Minute"
 msgstr[1] "%(count)d Minuten"
 
-#: samples/views/main.py:80 samples/views/main.py:86
+#: samples/views/main.py:45 samples/views/main.py:51
 #, python-format
 msgid "%(count)d second"
 msgid_plural "%(count)d seconds"
 msgstr[0] "%(count)d Sekunde"
 msgstr[1] "%(count)d Sekunden"
 
-#: samples/views/main.py:91
+#: samples/views/main.py:56
 msgid " and "
 msgstr " und "
 
-#: samples/views/main.py:93
+#: samples/views/main.py:58
 msgid ", "
 msgstr ", "
 
-#: samples/views/main.py:93
+#: samples/views/main.py:58
 msgid ", and "
 msgstr " und "
 
-#: samples/views/main.py:97 samples/views/main.py:99
+#: samples/views/main.py:62 samples/views/main.py:64
 #, python-format
 msgid "up and running for %(time)s"
 msgstr "up and running seit %(time)s"
 
-#: samples/views/main.py:100
+#: samples/views/main.py:65
 #, python-format
 msgid "Chantal revision %s"
 msgstr "Chantal-Revision %s"
 
-#: samples/views/main.py:101
+#: samples/views/main.py:66
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
 
-#: samples/views/rename_and_split_samples.py:16
+#: samples/views/rename_and_split_samples.py:19
+#: templates/split_and_rename.html:10
+msgid "Pieces"
+msgstr "Stücke"
+
+#: samples/views/rename_and_split_samples.py:23
+msgid "Must be at least 1."
+msgstr "Muss mindestens 1 sein."
+
+#: samples/views/rename_and_split_samples.py:27
+#: templates/split_and_rename.html:9
+msgid "Old sample name"
+msgstr "Alter Probenname"
+
+#: samples/views/rename_and_split_samples.py:80
+msgid "This sample name has been used already on this page."
+msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
+
+#: samples/views/rename_and_split_samples.py:84
+msgid "This sample name exists already."
+msgstr "Dieser Probenname ist schon vergeben."
+
+#: samples/views/rename_and_split_samples.py:123
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
 
-#: samples/views/sample.py:39
+#: samples/views/sample.py:52
 #, python-format
-msgid "History of sample “%s”"
-msgstr "Geschichte der Probe „%s“"
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: samples/views/six_chamber_deposition.py:48
-msgid "Name is unknown."
-msgstr "Dieser Name ist unbekannt."
-
-#: samples/views/six_chamber_deposition.py:72
-msgid "Gas type is unknown."
-msgstr "Dieser Gastyp ist unbekannt."
-
-#: samples/views/six_chamber_deposition.py:79
+#: samples/views/six_chamber_deposition.py:20
 msgid "Sample list"
 msgstr "Probenliste"
 
-#: samples/views/six_chamber_deposition.py:80
+#: samples/views/six_chamber_deposition.py:21
 msgid "if more than one sample, separate them with commas"
 msgstr "mehr als eine Probe durch Kommatas trennen"
 
-#: samples/views/six_chamber_deposition.py:95
+#: samples/views/six_chamber_deposition.py:46
 #, python-format
 msgid "I don't know %s."
 msgstr "Ich kenne %s nicht."
 
-#: samples/views/six_chamber_deposition.py:97
+#: samples/views/six_chamber_deposition.py:48
 #, python-format
 msgid "Multiple occurences of %s."
 msgstr "Mehrfachnennung von %s."
 
-#: samples/views/six_chamber_deposition.py:99
+#: samples/views/six_chamber_deposition.py:50
 msgid "You must give at least one valid sample name."
 msgstr "Sie müssen mindestens eine gültige Probe angeben."
 
-#: samples/views/six_chamber_deposition.py:175
+#: samples/views/six_chamber_deposition.py:79
+msgid "Name is unknown."
+msgstr "Dieser Name ist unbekannt."
+
+#: samples/views/six_chamber_deposition.py:103
+msgid "Gas type is unknown."
+msgstr "Dieser Gastyp ist unbekannt."
+
+#: samples/views/six_chamber_deposition.py:189
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-#: samples/views/six_chamber_deposition.py:178
+#: samples/views/six_chamber_deposition.py:192
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: samples/views/six_chamber_deposition.py:184
-#: samples/views/six_chamber_deposition.py:191
+#: samples/views/six_chamber_deposition.py:198
+#: samples/views/six_chamber_deposition.py:205
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:264
+#: samples/views/six_chamber_deposition.py:262
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/six_chamber_deposition.py:264
+#: samples/views/six_chamber_deposition.py:262
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
-#: samples/views/utils.py:17
+#: samples/views/utils.py:22
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/utils.py:21
+#: samples/views/utils.py:26
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/utils.py:34
+#: samples/views/utils.py:39
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/utils.py:40
+#: samples/views/utils.py:45
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
@@ -634,27 +655,27 @@ msgstr "Mein Passwort ändern"
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
-#: templates/edit_six_chamber_deposition.html:83
+#: templates/edit_six_chamber_deposition.html:87
 msgid "Layer error"
 msgstr "Fehler in Schicht"
 
-#: templates/edit_six_chamber_deposition.html:109
+#: templates/edit_six_chamber_deposition.html:113
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: templates/edit_six_chamber_deposition.html:114
+#: templates/edit_six_chamber_deposition.html:118
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
-#: templates/edit_six_chamber_deposition.html:248
+#: templates/edit_six_chamber_deposition.html:252
 msgid "Channel error"
 msgstr "Fehler in Channel"
 
-#: templates/edit_six_chamber_deposition.html:264
+#: templates/edit_six_chamber_deposition.html:268
 msgid "Number of channels to be added:"
 msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
-#: templates/edit_six_chamber_deposition.html:280
+#: templates/edit_six_chamber_deposition.html:284
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 
@@ -716,17 +737,30 @@ msgstr ""
 "angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener "
 "Gruppe hinzufügt."
 
-#: templates/split_and_rename.html:8
-msgid "Old sample name"
-msgstr "Alter Probenname"
+#: templates/show_sample.html:5 templates/show_sample.html.py:6
+msgid "History of sample “"
+msgstr "Geschichte der Probe „"
 
-#: templates/split_and_rename.html:9
-msgid "Pieces"
-msgstr "Stücke"
+#: templates/show_sample.html:5 templates/show_sample.html.py:6
+msgid "”"
+msgstr "”"
 
-#: templates/split_and_rename.html:10
+#: templates/split_and_rename.html:11
 msgid "New sample name(s)"
 msgstr "Neue(r) Probenname(n)"
+
+#: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
+msgid "Sample name error"
+msgstr "Fehler im Probennamen"
+
+#~ msgid "Login name:"
+#~ msgstr "Loginname:"
+
+#~ msgid "Email address:"
+#~ msgstr "Email-Adresse:"
+
+#~ msgid "Phone:"
+#~ msgstr "Telefon:"
 
 #~ msgid "Add 6-chamber deposition"
 #~ msgstr "Neue 6-Kammer-Deposition"
@@ -763,9 +797,3 @@ msgstr "Neue(r) Probenname(n)"
 
 #~ msgid "6-chamber deposition “"
 #~ msgstr "6-Kammer-Deposition „"
-
-#~ msgid "”"
-#~ msgstr "“"
-
-#~ msgid "History of sample “"
-#~ msgstr "Geschichte der Probe „"

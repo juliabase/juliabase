@@ -140,6 +140,7 @@ class Sample(models.Model):
     class Meta:
         verbose_name = _("sample")
         verbose_name_plural = _("samples")
+        permissions = (("view_sample", "Can view all samples"),)
     class Admin:
         pass
 
