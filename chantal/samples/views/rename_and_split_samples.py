@@ -27,7 +27,7 @@ class NewNameForm(Form):
     new_name = forms.CharField(label=_("Old sample name"), max_length=30)
 
 def has_permission_for_process(user, process):
-    return "samples.change_" + process.__class__.__name__.lower() in user.get_all_permissions()
+    return user.has_perm("samples.change_" + process.__class__.__name__.lower())
 
 def is_all_valid(sample_forms, new_name_form_lists):
     valid = all([sample_form.is_valid() for sample_form in sample_forms])

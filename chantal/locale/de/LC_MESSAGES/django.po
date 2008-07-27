@@ -1,14 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-27 16:27+0200\n"
-"PO-Revision-Date: 2008-07-27 16:28+0200\n"
+"POT-Creation-Date: 2008-07-27 19:36+0200\n"
+"PO-Revision-Date: 2008-07-27 19:37+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -225,7 +224,7 @@ msgstr "6-Kammer-Channel"
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
 
-#: samples/models.py:122 samples/models.py:147 samples/models.py:171
+#: samples/models.py:122 samples/models.py:148 samples/models.py:172
 msgid "name"
 msgstr "Name"
 
@@ -253,55 +252,55 @@ msgstr "Split-Ursprung"
 msgid "group"
 msgstr "Gruppe"
 
-#: samples/models.py:141 samples/models.py:148
+#: samples/models.py:141 samples/models.py:149
 msgid "sample"
 msgstr "Probe"
 
-#: samples/models.py:142 samples/models.py:172
+#: samples/models.py:142 samples/models.py:173
 msgid "samples"
 msgstr "Proben"
 
-#: samples/models.py:152
+#: samples/models.py:153
 msgid "name alias"
 msgstr "Alternativname"
 
-#: samples/models.py:153
+#: samples/models.py:154
 msgid "name aliases"
 msgstr "Alternativnamen"
 
-#: samples/models.py:161
+#: samples/models.py:162
 msgid "parent"
 msgstr "Elter"
 
-#: samples/models.py:165
-msgid "sample split"
-msgstr "Problenspaltung"
-
 #: samples/models.py:166
+msgid "sample split"
+msgstr "Probenspaltung"
+
+#: samples/models.py:167
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: samples/models.py:176
+#: samples/models.py:177
 msgid "sample series"
 msgstr "Probenserie"
 
-#: samples/models.py:177
+#: samples/models.py:178
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: samples/models.py:186
+#: samples/models.py:187
 msgid "user"
 msgstr "Benutzer"
 
-#: samples/models.py:187
+#: samples/models.py:188
 msgid "language"
 msgstr "Sprache"
 
-#: samples/models.py:188
+#: samples/models.py:189
 msgid "phone"
 msgstr "Telefon"
 
-#: samples/models.py:192 samples/models.py:193
+#: samples/models.py:193 samples/models.py:194
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -403,7 +402,7 @@ msgstr "Stücke"
 
 #: samples/views/rename_and_split_samples.py:23
 msgid "Must be at least 1."
-msgstr ""
+msgstr "Muss mindestens 1 sein."
 
 #: samples/views/rename_and_split_samples.py:27
 #: templates/split_and_rename.html:9
@@ -412,22 +411,21 @@ msgstr "Alter Probenname"
 
 #: samples/views/rename_and_split_samples.py:80
 msgid "This sample name has been used already on this page."
-msgstr ""
+msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
 #: samples/views/rename_and_split_samples.py:84
-#, fuzzy
 msgid "This sample name exists already."
-msgstr "Diese Depositionsnummer ist schon vergeben."
+msgstr "Dieser Probenname ist schon vergeben."
 
 #: samples/views/rename_and_split_samples.py:123
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
 
-#: samples/views/sample.py:39
+#: samples/views/sample.py:52
 #, python-format
-msgid "History of sample “%s”"
-msgstr "Geschichte der Probe „%s“"
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
 #: samples/views/six_chamber_deposition.py:20
 msgid "Sample list"
@@ -739,26 +737,30 @@ msgstr ""
 "angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener "
 "Gruppe hinzufügt."
 
-#: templates/show_user.html:14
-msgid "Login name:"
-msgstr "Loginname:"
+#: templates/show_sample.html:5 templates/show_sample.html.py:6
+msgid "History of sample “"
+msgstr "Geschichte der Probe „"
 
-#: templates/show_user.html:18
-msgid "Email address:"
-msgstr "Email-Adresse:"
-
-#: templates/show_user.html:23
-msgid "Phone:"
-msgstr "Telefon:"
+#: templates/show_sample.html:5 templates/show_sample.html.py:6
+msgid "”"
+msgstr "”"
 
 #: templates/split_and_rename.html:11
 msgid "New sample name(s)"
 msgstr "Neue(r) Probenname(n)"
 
 #: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
-#, fuzzy
 msgid "Sample name error"
-msgstr "Alter Probenname"
+msgstr "Fehler im Probennamen"
+
+#~ msgid "Login name:"
+#~ msgstr "Loginname:"
+
+#~ msgid "Email address:"
+#~ msgstr "Email-Adresse:"
+
+#~ msgid "Phone:"
+#~ msgstr "Telefon:"
 
 #~ msgid "Add 6-chamber deposition"
 #~ msgstr "Neue 6-Kammer-Deposition"
@@ -795,9 +797,3 @@ msgstr "Alter Probenname"
 
 #~ msgid "6-chamber deposition “"
 #~ msgstr "6-Kammer-Deposition „"
-
-#~ msgid "”"
-#~ msgstr "“"
-
-#~ msgid "History of sample “"
-#~ msgstr "Geschichte der Probe „"

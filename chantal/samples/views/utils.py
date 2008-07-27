@@ -55,17 +55,22 @@ def append_error(form, fieldname, error_message):
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
 class _PermissionCheck(object):
-    def __init__(self, original_view_function, permission):
-        self.original_view_function, self.permission = original_view_function, "samples."+permission
+    def __init__(self, original_view_function, permissions):
+        self.original_view_function = original_view_function
+        try:
+            self.permissions = set("samples." + permission for permission in permissions)
+        except TypeError:
+            self.permissions = set(["samples." + permissions])
         update_wrapper(self, original_view_function)
     def __call__(self, request, *args, **kwargs):
-        if self.permission not in request.user.get_all_permissions():
-            return HttpResponseRedirect("permission_error")
-        return self.original_view_function(request, *args, **kwargs)
+        if any(request.user.has_perm(permission) for permission in self.permissions):
+            return self.original_view_function(request, *args, **kwargs)
+        return HttpResponseRedirect("permission_error")
     
-def check_permission(permission):
+def check_permission(permissions):
+    # If more than one permission is given, any of them would unlock the view.
     def decorate(original_view_function):
-        return _PermissionCheck(original_view_function, permission)
+        return _PermissionCheck(original_view_function, permissions)
     return decorate
 
 def get_sample(sample_name):
