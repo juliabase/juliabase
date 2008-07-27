@@ -27,6 +27,23 @@ def digest_process(process):
     template = loader.get_template("show_"+camel_case_to_underscores(process.__class__.__name__)+".html")
     return process, process._meta.verbose_name, template.render(Context({"process": process}))
 
+def collect_processes(sample, cutoff_timestamp=None):
+    processes = []
+    split_origin = sample.split_origin
+    if split_origin:
+        processes.extend(collect_processes(split_origin.parent, split_origin.timestamp))
+    if cutoff_timestamp:
+        processes_query = sample.processes.filter(timestamp__lte=cutoff_timestamp)
+    else:
+        processes_query = sample.processes.all()
+    for process in processes_query:
+        process, title, body = digest_process(process)
+        title = unicode(title)
+        title = title[0].upper() + title[1:]
+        processes.append({"timestamp": process.timestamp, "title": title, "operator": process.operator,
+                          "body": body})
+    return processes
+    
 @login_required
 def show(request, sample_name):
     start = time.time()
@@ -36,13 +53,9 @@ def show(request, sample_name):
     if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
             and sample.currently_responsible_person != request.user:
         return HttpResponseRedirect("permission_error")
-    processes = []
-    for process in sample.processes.all():
-        process, title, body = digest_process(process)
-        processes.append({"timestamp": process.timestamp, "title": title, "operator": process.operator,
-                          "body": body})
+    processes = collect_processes(sample)
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     return render_to_response("show_sample.html",
-                              {"title": _(u"History of sample “%s”") % sample.name, "processes": processes},
+                              {"processes": processes, "sample": sample},
                               context_instance=RequestContext(request))
 
