@@ -77,9 +77,12 @@ def about(request):
 
 def show_user(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
+    try:
+        userdetails = user.get_profile()
+    except models.UserDetails.DoesNotExist:
+        userdetails = None
     username = user.get_full_name()
-    print username
     if not username:
         username = user.username
-    return render_to_response("show_user.html", {"title": username},
+    return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
