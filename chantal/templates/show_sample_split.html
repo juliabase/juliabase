@@ -1,0 +1,15 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  {% blocktrans %}
+    The sample was split into the following pieces:
+  {% endblocktrans %}
+</p>
+
+<ul>
+  {% for piece in process.pieces.all %}
+    <li><a href="{{ piece.name }}">{{ piece.name }}</a></li>
+  {% endfor %}
+</ul>

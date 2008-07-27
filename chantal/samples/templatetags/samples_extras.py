@@ -6,7 +6,7 @@ from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import conditional_escape
 import django.utils.safestring
-import chantal.samples.models
+import chantal.samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 
 register = template.Library()
@@ -71,7 +71,10 @@ class VerboseNameNode(template.Node):
     def __init__(self, model, field):
         self.model, self.field = model, field
     def render(self, context):
-        model = chantal.samples.models.__dict__[self.model]
+        if self.model == "django.contrib.auth.models.User":
+            model = django.contrib.auth.models.User
+        else:
+            model = chantal.samples.models.__dict__[self.model]
         verbose_name = unicode(model._meta.get_field(self.field).verbose_name)
         if verbose_name:
             verbose_name = verbose_name[0].upper() + verbose_name[1:]
@@ -80,5 +83,5 @@ class VerboseNameNode(template.Node):
 @register.tag
 def verbose_name(parser, token):
     tag_name, var = token.split_contents()
-    model, field = var.split('.')
+    model, field = var.rsplit('.', 1)
     return VerboseNameNode(model, field)
