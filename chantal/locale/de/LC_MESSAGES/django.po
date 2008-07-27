@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-07-27 19:36+0200\n"
-"PO-Revision-Date: 2008-07-27 19:37+0200\n"
+"PO-Revision-Date: 2008-07-27 22:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -743,7 +743,7 @@ msgstr "Geschichte der Probe „"
 
 #: templates/show_sample.html:5 templates/show_sample.html.py:6
 msgid "”"
-msgstr "”"
+msgstr "“"
 
 #: templates/split_and_rename.html:11
 msgid "New sample name(s)"
