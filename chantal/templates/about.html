@@ -6,41 +6,61 @@
 <img style="float: right; margin-left: 2em" src="/media/stewardess.jpg" alt="{% trans 'stewardess' %}" />
 {% endblock %}
 
+{% block css %}
+<style type="text/css">
+  p { margin: 0pt }
+  img { border: 0pt }
+</style>
+{% endblock %}
+
 {% block content %}
-<table class="about" cellpadding="10" style="margin-bottom: 0pt">
+<table class="about" style="margin-bottom: 0pt">
   <tr>
     <th>{% trans 'Operating system' %}:</th>
-    <td><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">8.04
+    <td><p><a href="http://www.ubuntu.com"><img src="/media/ubuntu.png" alt="{% trans 'Ubuntu logo' %}"
+                                                style="margin-top: -19px"/></a></p>
+      <p><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">8.04
       <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a>{% trans ',' %} 
-      </span><span class="uptime">{{ os_uptime }}</span></td>
+        </span><span class="uptime">{{ os_uptime }}</span></p></td>
   </tr>
   <tr>
     <th>{% trans 'Web server' %}:</th>
-    {% if is_testserver %}
+    {% if not is_testserver %}
     <td>{% trans 'Django testserver' %}{% trans ',' %}
       </span><span class="uptime">{{ web_server_uptime }}</span></td>
     {% else %}
-    <td><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
+    <td><p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}"
+              ><img src="/media/apache.png" alt="{% trans 'Apache logo' %}"/></a></p>
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
       <span class="version">{{ web_server_version }}{% trans ',' %}
-      </span><span class="uptime">{{ web_server_uptime }}</span></td>
+      </span><span class="uptime">{{ web_server_uptime }}</span></p></td>
     {% endif %}
   </tr>
   <tr>
     <th>{% trans 'Database' %}:</th>
-    <td style="vertical-align: bottom"><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}">MySQL</a>
-      <span class="version">{{ db_version }}</span></td>
+    <td style="vertical-align: bottom">
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}"
+            ><img src="/media/mysql.png" alt="{% trans 'MySQL logo' %}"
+                  style="margin-top: -20px"/></a></p>
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}">MySQL</a>
+        <span class="version">{{ db_version }}</span></p></td>
   </tr>
   <tr>
     <th>{% trans 'Programming runtime' %}:</th>
     <td style="vertical-align: bottom">
-      <a href="{% trans 'http://en.wikipedia.org/wiki/Python_(programming_language)' %}">Python</a>
-      <span class="version">{{ language_version }}</span>
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Python_(programming_language)' %}"
+            ><img src="/media/python.png" alt="{% trans 'Python logo' %}"/></a></p>
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Python_(programming_language)' %}">Python</a>
+        <span class="version">{{ language_version }}</span></p>
     </td>
   </tr>
   <tr>
     <th>{% trans 'Programming framework' %}:</th>
-    <td style="vertical-align: bottom"><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a>
-      <span class="version">{{ framework_version }}</span></td>
+    <td style="vertical-align: bottom">
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}"
+            ><img src="/media/django.png" alt="{% trans 'Django logo' %}"/></a></p>
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a>
+        <span class="version">{{ framework_version }}</span></p></td>
   </tr>
 </table>
 

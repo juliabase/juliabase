@@ -68,8 +68,9 @@ ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; backg
 .errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }
 
 table.about { font-size: large; margin-top: 2ex; margin-bottom: 4ex }
-table.about th { text-align: right; width: 40%; vertical-align: top }
-table.about td { text-align: left; width: 60%; vertical-align: top; text-indent: -3em; padding-left: 3em }
+table.about th { border-bottom: solid gray 1px; text-align: right; width: 40%; vertical-align: top }
+table.about td { text-align: left; width: 60%; vertical-align: top; text-indent: -3em; padding-left: 3.5em;
+		 padding-bottom: 2ex }
 
 span.uptime { font-size: small }
 span.version { font-size: small }
