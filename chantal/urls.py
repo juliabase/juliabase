@@ -1,6 +1,9 @@
 import os.path
 from django.conf.urls.defaults import *
 from django.conf import settings
+from django.contrib import admin
+
+admin.autodiscover()
 
 prefix = "^" + settings.URL_PREFIX[1:]
 
@@ -22,7 +25,7 @@ urlpatterns = patterns("",
                         {"template_name": "change_password.html"}),
                        (prefix+r"change_password/done/$", "django.contrib.auth.views.password_change_done",
                         {"template_name": "password_changed.html"}),
-                       (prefix+r"admin/", include("django.contrib.admin.urls")),
+                       (prefix+r"admin/(.*)", admin.site.root),
                        )
 
 if settings.IS_TESTSERVER:
