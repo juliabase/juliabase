@@ -3,9 +3,15 @@
 {% load samples_extras %}
 
 <p>
-  {% blocktrans %}
-    The sample was split into the following pieces:
-  {% endblocktrans %}
+  {% if parent %}
+    {% trans 'The parental sample' %}
+    {{ parent.name }}
+    {% trans 'was split into the following pieces:' %}
+  {% else %}
+    {% blocktrans %}
+      The sample was split into the following pieces:
+    {% endblocktrans %}
+  {% endif %}
 </p>
 
 <ul>

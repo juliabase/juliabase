@@ -162,6 +162,9 @@ class SampleSplit(Process):
     parent = models.ForeignKey(Sample, verbose_name=_("parent"))
     def __unicode__(self):
         return self.parent.name
+    def get_additional_template_context(self, process_context):
+        has_parent = process_context.current_sample != process_context.original_sample
+        return {"parent": has_parent}
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
