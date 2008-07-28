@@ -8,8 +8,8 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-from django.newforms import Form
-import django.newforms as forms
+from django.forms import Form
+from django import forms
 from django.newforms.util import ValidationError
 from . import utils
 

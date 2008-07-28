@@ -5,9 +5,9 @@ import re
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.newforms import ModelForm
-from django.newforms.util import ValidationError
-import django.newforms as forms
+from django.forms import ModelForm
+from django.forms.util import ValidationError
+from django import forms
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models
