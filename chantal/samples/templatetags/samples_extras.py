@@ -68,14 +68,18 @@ def fancy_bool(boolean):
     return django.utils.safestring.mark_safe(result)
 
 class VerboseNameNode(template.Node):
-    def __init__(self, model, field):
-        self.model, self.field = model, field
+    def __init__(self, var):
+        self.var = var
     def render(self, context):
-        if self.model == "django.contrib.auth.models.User":
-            model = django.contrib.auth.models.User
+        if "." not in self.var:
+            verbose_name = unicode(context[self.var]._meta.verbose_name)
         else:
-            model = chantal.samples.models.__dict__[self.model]
-        verbose_name = unicode(model._meta.get_field(self.field).verbose_name)
+            model, field = self.var.rsplit(".", 1)
+            if model == "django.contrib.auth.models.User":
+                model = django.contrib.auth.models.User
+            else:
+                model = chantal.samples.models.__dict__[model]
+            verbose_name = unicode(model._meta.get_field(field).verbose_name)
         if verbose_name:
             verbose_name = verbose_name[0].upper() + verbose_name[1:]
         return verbose_name
@@ -83,5 +87,4 @@ class VerboseNameNode(template.Node):
 @register.tag
 def verbose_name(parser, token):
     tag_name, var = token.split_contents()
-    model, field = var.rsplit('.', 1)
-    return VerboseNameNode(model, field)
+    return VerboseNameNode(var)
