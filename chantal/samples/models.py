@@ -163,8 +163,12 @@ class SampleSplit(Process):
     def __unicode__(self):
         return self.parent.name
     def get_additional_template_context(self, process_context):
-        has_parent = process_context.current_sample != process_context.original_sample
-        return {"parent": has_parent}
+        if process_context.current_sample != process_context.original_sample:
+            parent = process_context.current_sample
+        else:
+            parent = None
+        return {"parent": parent, "original_sample": process_context.original_sample,
+                "current_sample": process_context.current_sample}
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
