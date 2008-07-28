@@ -61,7 +61,7 @@ def about(request):
         _("up and running for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
     os_uptime = float(open("/proc/uptime").read().split()[0])
     os_uptime = _("up and running for %(time)s") % {"time": breakup_time(os_uptime)}
-    short_messages = [_("Chantal revision %s") % settings.CHANTAL_REVNO.replace("-SVN-unknown", "")]
+    short_messages = [_("Chantal revision %s") % settings.CHANTAL_REVNO]
     return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
                                              "os_uptime": os_uptime,
                                              "web_server_version": settings.APACHE_VERSION,
@@ -69,7 +69,7 @@ def about(request):
                                              "is_testserver": settings.IS_TESTSERVER,
                                              "db_version": settings.MYSQL_VERSION,
                                              "language_version": settings.PYTHON_VERSION,
-                                             "framework_version": django.get_version(),
+                                             "framework_version": django.get_version().replace("-SVN-unknown", ""),
                                              "short_messages": short_messages
                                              },
                               context_instance=RequestContext(request))
