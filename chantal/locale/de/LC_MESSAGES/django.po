@@ -2,10 +2,25 @@
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2008-07-29 01:03+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#~ # SOME DESCRIPTIVE TITLE.
+#~ # Copyright (C) YEAR Free Software Foundation, Inc.
+#~ # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#~ #
+#~ msgid ""
+#~ msgstr ""
+#~ "Project-Id-Version: PACKAGE VERSION\n"
+#~ "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-07-27 19:36+0200\n"
 "PO-Revision-Date: 2008-07-27 19:37+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -550,49 +565,69 @@ msgstr ""
 msgid "stewardess"
 msgstr "Stewardess"
 
-#: templates/about.html:12
+#: templates/about.html:19
 msgid "Operating system"
 msgstr "Betriebssystem"
 
-#: templates/about.html:14 templates/about.html.py:20 templates/about.html:24
+#: templates/about.html:20
+msgid "Ubuntu logo"
+msgstr "Ubuntu-Logo"
+
+#: templates/about.html:23 templates/about.html.py:29 templates/about.html:35
 msgid ","
 msgstr ","
 
-#: templates/about.html:18
+#: templates/about.html:27
 msgid "Web server"
 msgstr "Webserver"
 
-#: templates/about.html:20
+#: templates/about.html:29
 msgid "Django testserver"
 msgstr "Django Testserver"
 
-#: templates/about.html:23
+#: templates/about.html:32 templates/about.html.py:34
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
 msgstr "http://de.wikipedia.org/wiki/Apache_HTTP_Server"
 
-#: templates/about.html:29
+#: templates/about.html:33
+msgid "Apache logo"
+msgstr "Apache-Logo"
+
+#: templates/about.html:40
 msgid "Database"
 msgstr "Datenbank"
 
-#: templates/about.html:30
+#: templates/about.html:42 templates/about.html.py:45
 msgid "http://en.wikipedia.org/wiki/MySQL"
 msgstr "http://de.wikipedia.org/wiki/MySQL"
 
-#: templates/about.html:34
+#: templates/about.html:43
+msgid "MySQL logo"
+msgstr "MySQL-Logo"
+
+#: templates/about.html:49
 msgid "Programming runtime"
 msgstr "Programm-Laufzeitsystem"
 
-#: templates/about.html:36
+#: templates/about.html:51 templates/about.html.py:53
 msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
 msgstr "http://de.wikipedia.org/wiki/Python_(Programmiersprache)"
 
-#: templates/about.html:41
+#: templates/about.html:52
+msgid "Python logo"
+msgstr "Python-Logo"
+
+#: templates/about.html:58
 msgid "Programming framework"
 msgstr "Programmier-Framework"
 
-#: templates/about.html:42
+#: templates/about.html:60 templates/about.html.py:62
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
+
+#: templates/about.html:61
+msgid "Django logo"
+msgstr "Django-Logo"
 
 #: templates/base.html:18
 msgid "DB access time:"

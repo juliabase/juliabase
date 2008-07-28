@@ -70,7 +70,7 @@ def about(request):
                                              "is_testserver": settings.IS_TESTSERVER,
                                              "db_version": settings.MYSQL_VERSION,
                                              "language_version": settings.PYTHON_VERSION,
-                                             "framework_version": django.get_version(),
+                                             "framework_version": django.get_version().replace("-SVN-unknown", ""),
                                              "short_messages": short_messages
                                              },
                               context_instance=RequestContext(request))
