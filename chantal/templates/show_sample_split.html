@@ -3,13 +3,26 @@
 {% load samples_extras %}
 
 <p>
-  {% blocktrans %}
-    The sample was split into the following pieces:
-  {% endblocktrans %}
+  {% if parent %}
+    {% trans 'The parental sample' %}
+      <a href="{{ parent.name }}">{{ parent.name }}</a>
+    {% trans 'was split into the following pieces:' %}
+  {% else %}
+    {% blocktrans %}
+      The sample was split into the following pieces:
+    {% endblocktrans %}
+  {% endif %}
 </p>
 
 <ul>
   {% for piece in process.pieces.all %}
-    <li><a href="{{ piece.name }}">{{ piece.name }}</a></li>
+    {% ifnotequal piece original_sample %}
+      <li>
+        <a href="{{ piece.name }}">{{ piece.name }}</a>
+      </li>
+    {% endifnotequal %}
   {% endfor %}
+  {% ifnotequal current_sample original_sample %}
+    <li>{% trans 'this one' %}</li>
+  {% endifnotequal %}
 </ul>

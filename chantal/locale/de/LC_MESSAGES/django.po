@@ -763,7 +763,7 @@ msgstr "Geschichte der Probe „"
 
 #: templates/show_sample.html:5 templates/show_sample.html.py:6
 msgid "”"
-msgstr "”"
+msgstr "“"
 
 #: templates/split_and_rename.html:11
 msgid "New sample name(s)"
