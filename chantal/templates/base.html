@@ -36,6 +36,10 @@
     </tr>
   </table>
 
+  {% if success_report %}
+    <div class="success-report">{{ success_report }}</div>
+  {% endif %}
+
   <div class="main">
     <p style="margin:0pt"><img class="logo-fz" src="/media/juelich.png"
                                alt="{% trans 'Jülich Forschungszentrum logo' %}"/></p>

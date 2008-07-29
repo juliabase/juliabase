@@ -116,6 +116,7 @@ def split_and_rename(request, process_id):
         referencially_valid = is_referencially_valid(new_name_form_lists)
         if all_valid and referencially_valid and not structure_changed:
             save_to_database(sample_forms, new_name_form_lists, process.operator, sample_names)
+            request.session["success_report"] = _("Samples were successfully split and/or renamed.")
             return HttpResponseRedirect("../../")
     else:
         sample_forms, new_name_form_lists = forms_from_database(process.samples, process.deposition_number)

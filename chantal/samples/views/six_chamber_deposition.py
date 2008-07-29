@@ -254,8 +254,14 @@ def edit(request, deposition_number):
         referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
-            return HttpResponseRedirect("../../" if deposition_number
-                                        else "../../processes/split_and_rename_samples/%d" % deposition.id)
+            if deposition_number:
+                request.session["success_report"] = \
+                    _("Deposition %s was successfully changed in the database.") % deposition.deposition_number
+                return HttpResponseRedirect("../../")
+            else:
+                request.session["success_report"] = \
+                    _("Deposition %s was successfully added to the database.") % deposition.deposition_number
+                return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists = forms_from_database(deposition)
