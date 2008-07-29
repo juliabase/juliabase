@@ -16,8 +16,10 @@
     <tr><td><label for="id_password">{% trans 'Password' %}:</label></td><td>{{ form.password }}</td></tr>
   </table>
 
-  <input type="submit" value="{% trans 'login' %}" />
-  <input type="hidden" name="next" value="{{ next }}" />
+  <p>
+    <input type="submit" value="{% trans 'login' %}" />
+    <input type="hidden" name="next" value="{{ next }}" />
+  </p>
 </form>
 
 {% endblock %}
