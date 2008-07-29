@@ -29,6 +29,11 @@ class SixChamberDeposition(Process):
     comments = models.TextField(_("comments"), blank=True)
     def __unicode__(self):
         return unicode(_("6-chamber deposition ")) + self.deposition_number
+    def get_additional_template_context(self, process_context):
+        if process_context.user.has_perm("change_sixchamberdeposition"):
+            return {"edit_url": "6-chamber_deposition/edit/"+self.deposition_number}
+        else:
+            return {}
     class Meta:
         verbose_name = _("6-chamber deposition")
         verbose_name_plural = _("6-chamber depositions")
