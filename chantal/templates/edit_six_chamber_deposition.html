@@ -239,7 +239,7 @@
                               <th>{{ channels.0.gas.label }}</th>
                               <th>{{ channels.0.flow_rate.label }}<br /><span class="help"
                                                                               >({{ channels.0.flow_rate.help_text }})</th>
-                              <th>delete</th>
+                              <th>{% trans 'delete' %}</th>
                             </tr>
                             {% for channel in channels %}
                               {% if channel.errors or channel.non_field_errors %}

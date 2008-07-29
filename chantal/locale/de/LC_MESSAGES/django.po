@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-29 03:28+0200\n"
-"PO-Revision-Date: 2008-07-29 03:30+0200\n"
+"POT-Creation-Date: 2008-07-29 08:38+0200\n"
+"PO-Revision-Date: 2008-07-29 08:38+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -686,6 +686,10 @@ msgstr "diese Schicht duplizieren"
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
+#: templates/edit_six_chamber_deposition.html:242
+msgid "delete"
+msgstr "löschen"
+
 #: templates/edit_six_chamber_deposition.html:252
 msgid "Channel error"
 msgstr "Fehler in Channel"
@@ -781,7 +785,9 @@ msgid ""
 "\n"
 "      The sample was split into the following pieces:\n"
 "    "
-msgstr "\nDie Probe wurde in die folgenden Stücke zerlegt:"
+msgstr ""
+"\n"
+"Die Probe wurde in die folgenden Stücke zerlegt:"
 
 #: templates/show_sample_split.html:26
 msgid "this one"

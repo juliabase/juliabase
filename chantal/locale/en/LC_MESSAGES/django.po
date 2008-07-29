@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-29 03:28+0200\n"
+"POT-Creation-Date: 2008-07-29 08:38+0200\n"
 "PO-Revision-Date: 2008-07-27 12:00 +2\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -673,6 +673,10 @@ msgstr ""
 
 #: templates/edit_six_chamber_deposition.html:118
 msgid "delete this layer"
+msgstr ""
+
+#: templates/edit_six_chamber_deposition.html:242
+msgid "delete"
 msgstr ""
 
 #: templates/edit_six_chamber_deposition.html:252
