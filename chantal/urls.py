@@ -5,27 +5,25 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-prefix = "^" + settings.URL_PREFIX[1:]
-
 urlpatterns = patterns("",
-                       (prefix+r"$", "samples.views.main.main_menu"),
-                       (prefix+r"(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
-                       (prefix+r"samples/(?P<sample_name>.+)", "samples.views.sample.show"),
-                       (prefix+r"6-chamber_deposition/edit/(?P<deposition_number>.+)",
+                       (r"^$", "samples.views.main.main_menu"),
+                       (r"^(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
+                       (r"^samples/(?P<sample_name>.+)", "samples.views.sample.show"),
+                       (r"^6-chamber_deposition/edit/(?P<deposition_number>.+)",
                         "samples.views.six_chamber_deposition.edit"),
-                       (prefix+r"6-chamber_deposition/add/$", "samples.views.six_chamber_deposition.edit",
+                       (r"^6-chamber_deposition/add/$", "samples.views.six_chamber_deposition.edit",
                         {"deposition_number": None}),
-                       (prefix+r"processes/split_and_rename_samples/(?P<process_id>.+)",
+                       (r"^processes/split_and_rename_samples/(?P<process_id>.+)",
                         "samples.views.rename_and_split_samples.split_and_rename"),
-                       (prefix+r"login/$", "django.contrib.auth.views.login", {"template_name": "login.html"}),
-                       (prefix+r"logout/$", "django.contrib.auth.views.logout", {"template_name": "logout.html"}),
-                       (prefix+r"about/$", "samples.views.main.about"),
-                       (prefix+r"users/(?P<login_name>.+)$", "samples.views.main.show_user"),
-                       (prefix+r"change_password/$", "django.contrib.auth.views.password_change",
+                       (r"^login/$", "django.contrib.auth.views.login", {"template_name": "login.html"}),
+                       (r"^logout/$", "django.contrib.auth.views.logout", {"template_name": "logout.html"}),
+                       (r"^about/$", "samples.views.main.about"),
+                       (r"^users/(?P<login_name>.+)$", "samples.views.main.show_user"),
+                       (r"^change_password/$", "django.contrib.auth.views.password_change",
                         {"template_name": "change_password.html"}),
-                       (prefix+r"change_password/done/$", "django.contrib.auth.views.password_change_done",
+                       (r"^change_password/done/$", "django.contrib.auth.views.password_change_done",
                         {"template_name": "password_changed.html"}),
-                       (prefix+r"admin/(.*)", admin.site.root),
+                       (r"^admin/(.*)", admin.site.root),
                        )
 
 if settings.IS_TESTSERVER:
