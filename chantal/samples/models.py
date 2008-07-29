@@ -4,6 +4,8 @@
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib import admin
+
 
 class Process(models.Model):
     timestamp = models.DateTimeField(_("timestamp"))
@@ -30,8 +32,6 @@ class SixChamberDeposition(Process):
     class Meta:
         verbose_name = _("6-chamber deposition")
         verbose_name_plural = _("6-chamber depositions")
-    class Admin:
-        pass
 
 class HallMeasurement(Process):
     def __unicode__(self):
@@ -39,8 +39,6 @@ class HallMeasurement(Process):
     class Meta:
         verbose_name = _("Hall measurement")
         verbose_name_plural = _("Hall measurements")
-    class Admin:
-        pass
 
 six_chamber_chamber_choices = (
     ("#1", "#1"),
@@ -87,8 +85,6 @@ class SixChamberLayer(models.Model):
         verbose_name_plural = _("6-chamber layers")
         unique_together = ("deposition", "number")
         ordering = ['number']
-    class Admin:
-        pass
 
 six_chamber_gas_choices = (
     ("SiH4", "SiH4"),
@@ -115,8 +111,6 @@ class SixChamberChannel(models.Model):
         verbose_name_plural = _("6-chamber channels")
         unique_together = ("layer", "number")
         ordering = ['number']
-    class Admin:
-        pass
 
 class Sample(models.Model):
     name = models.CharField(_("name"), max_length=30, unique=True)
@@ -141,8 +135,6 @@ class Sample(models.Model):
         verbose_name = _("sample")
         verbose_name_plural = _("samples")
         permissions = (("view_sample", "Can view all samples"),)
-    class Admin:
-        pass
 
 class SampleAlias(models.Model):
     name = models.CharField(_("name"), max_length=30, primary_key=True)
@@ -152,8 +144,6 @@ class SampleAlias(models.Model):
     class Meta:
         verbose_name = _("name alias")
         verbose_name_plural = _("name aliases")
-    class Admin:
-        pass
 
 class SampleSplit(Process):
     # for a fast lookup; actually a violation of the non-redundancy rule
@@ -172,8 +162,6 @@ class SampleSplit(Process):
     class Meta:
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
-    class Admin:
-        pass
 
 class SampleSeries(models.Model):
     name = models.CharField(_("name"), max_length=255)
@@ -183,8 +171,6 @@ class SampleSeries(models.Model):
     class Meta:
         verbose_name = _("sample series")
         verbose_name_plural = _("sample serieses")
-    class Admin:
-        pass
 
 languages = (
     ("de", "Deutsch"),
@@ -199,8 +185,16 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _("user details")
         verbose_name_plural = _("user details")
-    class Admin:
-        pass
+
+admin.site.register(SixChamberDeposition)
+admin.site.register(HallMeasurement)
+admin.site.register(SixChamberLayer)
+admin.site.register(SixChamberChannel)
+admin.site.register(Sample)
+admin.site.register(SampleAlias)
+admin.site.register(SampleSplit)
+admin.site.register(SampleSeries)
+admin.site.register(UserDetails)
 
 import copy, inspect
 _globals = copy.copy(globals())
