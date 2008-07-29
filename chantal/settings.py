@@ -71,6 +71,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
 )
+APPEND_SLASH = False
 
 ROOT_URLCONF = 'chantal.urls'
 
