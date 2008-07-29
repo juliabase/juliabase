@@ -50,6 +50,8 @@ table.headbar a { color: white }
 table.headbar td.login-data { text-align: right }
 table.headbar td.info { text-align: left }
 
+div.success-report { background-color: green; color: white; padding: 0.3ex 25px 0.5ex; text-align: right; font-size: small }
+
 h1 { margin-top: 0pt }
 
 p.operator_and_timestamp { float: right; font-size: small }
