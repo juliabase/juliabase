@@ -18,7 +18,7 @@
   {% for piece in process.pieces.all %}
     {% ifnotequal piece original_sample %}
       <li>
-        <a href="{{ piece.name }}">{{ piece.name }}</a>
+        <a href="{{ piece.name|name2url }}">{{ piece.name }}</a>
       </li>
     {% endifnotequal %}
   {% endfor %}
