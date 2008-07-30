@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-30 16:18+0200\n"
-"PO-Revision-Date: 2008-07-30 16:21+0200\n"
+"POT-Creation-Date: 2008-07-30 16:22+0200\n"
+"PO-Revision-Date: 2008-07-30 16:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -430,7 +430,7 @@ msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
 
 #: samples/views/sample.py:64
-msgid "is amongst my samples"
+msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
 #: samples/views/sample.py:70

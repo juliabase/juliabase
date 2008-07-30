@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-30 16:18+0200\n"
+"POT-Creation-Date: 2008-07-30 16:23+0200\n"
 "PO-Revision-Date: 2008-07-27 12:00 +2\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -430,7 +430,7 @@ msgid "Bulk sample rename for %s"
 msgstr ""
 
 #: samples/views/sample.py:64
-msgid "is amongst my samples"
+msgid "is amongst My Samples"
 msgstr ""
 
 #: samples/views/sample.py:70
