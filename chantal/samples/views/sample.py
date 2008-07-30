@@ -8,8 +8,7 @@ from django.http import Http404, HttpResponseRedirect
 from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
 from . import utils
-
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 
 def camel_case_to_underscores(name):
     result = []
@@ -65,7 +64,7 @@ def show(request, sample_name):
     start = time.time()
     sample = utils.get_sample(sample_name)
     if not sample:
-        raise Http404(_("Sample %s could not be found (neither as an alias).") % sample_name)
+        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
             and sample.currently_responsible_person != request.user:
         return HttpResponseRedirect("permission_error")

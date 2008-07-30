@@ -6,7 +6,7 @@ from chantal.samples import models
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.forms import Form
 from django import forms
@@ -14,17 +14,19 @@ from django.newforms.util import ValidationError
 from . import utils
 
 class SampleForm(Form):
+    _ = ugettext_lazy
     name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"readonly": "readonly",
                                                                         "style": "text-align: center"}))
-    number_of_pieces = forms.IntegerField(label=_("Pieces"), initial="1",
+    number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
-            raise ValidationError(_("Must be at least 1."))
+            raise ValidationError(_(u"Must be at least 1."))
         return self.cleaned_data["number_of_pieces"]
 
 class NewNameForm(Form):
-    new_name = forms.CharField(label=_("Old sample name"), max_length=30)
+    _ = ugettext_lazy
+    new_name = forms.CharField(label=_(u"Old sample name"), max_length=30)
 
 def has_permission_for_process(user, process):
     return user.has_perm("samples.change_" + process.__class__.__name__.lower())
@@ -77,11 +79,11 @@ def is_referencially_valid(new_name_form_lists):
             if new_name_form.is_valid():
                 new_name = new_name_form.cleaned_data["new_name"]
                 if new_name in new_names:
-                    utils.append_error(new_name_form, "__all__", _("This sample name has been used already on this page."))
+                    utils.append_error(new_name_form, "__all__", _(u"This sample name has been used already on this page."))
                     referentially_valid = False
                 new_names.add(new_name)
                 if utils.does_sample_exist(new_name):
-                    utils.append_error(new_name_form, "__all__", _("This sample name exists already."))
+                    utils.append_error(new_name_form, "__all__", _(u"This sample name exists already."))
                     referentially_valid = False
     return referencially_valid
 
@@ -116,11 +118,11 @@ def split_and_rename(request, process_id):
         referencially_valid = is_referencially_valid(new_name_form_lists)
         if all_valid and referencially_valid and not structure_changed:
             save_to_database(sample_forms, new_name_form_lists, process.operator, sample_names)
-            request.session["success_report"] = _("Samples were successfully split and/or renamed.")
+            request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
             return HttpResponseRedirect("../../")
     else:
         sample_forms, new_name_form_lists = forms_from_database(process.samples, process.deposition_number)
     return render_to_response("split_and_rename.html",
-                              {"title": _("Bulk sample rename for %s") % process_name,
+                              {"title": _(u"Bulk sample rename for %s") % process_name,
                                "samples": zip(sample_forms, new_name_form_lists)},
                               context_instance=RequestContext(request))

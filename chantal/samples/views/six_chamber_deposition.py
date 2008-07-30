@@ -13,12 +13,13 @@ from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixCha
 from chantal.samples import models
 from . import utils
 from .utils import check_permission, DataModelForm
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 
 class DepositionForm(ModelForm):
-    sample_list = forms.CharField(label=_("Sample list"), widget=forms.TextInput(attrs={"size": "40"}),
-                                  help_text=_("if more than one sample, separate them with commas"))
+    _ = ugettext_lazy
+    sample_list = forms.CharField(label=_(u"Sample list"), widget=forms.TextInput(attrs={"size": "40"}),
+                                  help_text=_(u"if more than one sample, separate them with commas"))
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
         initial = keyw.get("initial", {})
@@ -43,11 +44,11 @@ class DepositionForm(ModelForm):
             else:
                 normalized_sample_names.add(normalized_sample_name)
         if invalid_sample_names:
-            raise ValidationError(_("I don't know %s.") % ", ".join(invalid_sample_names))
+            raise ValidationError(_(u"I don't know %s.") % ", ".join(invalid_sample_names))
         if duplicate_sample_names:
-            raise ValidationError(_("Multiple occurences of %s.") % ", ".join(duplicate_sample_names))
+            raise ValidationError(_(u"Multiple occurences of %s.") % ", ".join(duplicate_sample_names))
         if not normalized_sample_names:
-            raise ValidationError(_("You must give at least one valid sample name."))
+            raise ValidationError(_(u"You must give at least one valid sample name."))
         return ",".join(normalized_sample_names)
     def save(self, *args, **keyw):
         deposition = super(DepositionForm, self).save(*args, **keyw)
@@ -76,7 +77,7 @@ class LayerForm(DataModelForm):
             self.fields[fieldname].max_value = max_value
     def clean_chamber(self):
         if self.cleaned_data["chamber"] not in self.chamber_names:
-            raise ValidationError(_("Name is unknown."))
+            raise ValidationError(_(u"Name is unknown."))
         return self.cleaned_data["chamber"]
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
@@ -100,7 +101,7 @@ class ChannelForm(ModelForm):
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):
         if self.cleaned_data["gas"] not in self.gas_names:
-            raise ValidationError(_("Gas type is unknown."))
+            raise ValidationError(_(u"Gas type is unknown."))
         return self.cleaned_data["gas"]
     class Meta:
         model = SixChamberChannel
@@ -186,23 +187,23 @@ def is_referencially_valid(deposition, deposition_form, layer_forms, channel_for
         not deposition or deposition.deposition_number != deposition_form.cleaned_data["deposition_number"]):
         if models.SixChamberDeposition.objects.filter(deposition_number=
                                                       deposition_form.cleaned_data["deposition_number"]).count():
-            utils.append_error(deposition_form, "__all__", _("This deposition number exists already."))
+            utils.append_error(deposition_form, "__all__", _(u"This deposition number exists already."))
             referencially_valid = False
     if not layer_forms:
-        utils.append_error(deposition_form, "__all__", _("No layers given."))
+        utils.append_error(deposition_form, "__all__", _(u"No layers given."))
         referencially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                utils.append_error(layer_form, "__all__", _("Number is a duplicate."))
+                utils.append_error(layer_form, "__all__", _(u"Number is a duplicate."))
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    utils.append_error(channel_form, "__all__", _("Number is a duplicate."))
+                    utils.append_error(channel_form, "__all__", _(u"Number is a duplicate."))
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
@@ -256,16 +257,16 @@ def edit(request, deposition_number):
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
             if deposition_number:
                 request.session["success_report"] = \
-                    _("Deposition %s was successfully changed in the database.") % deposition.deposition_number
+                    _(u"Deposition %s was successfully changed in the database.") % deposition.deposition_number
                 return HttpResponseRedirect("../../")
             else:
                 request.session["success_report"] = \
-                    _("Deposition %s was successfully added to the database.") % deposition.deposition_number
+                    _(u"Deposition %s was successfully added to the database.") % deposition.deposition_number
                 return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
         deposition_form = DepositionForm(instance=deposition)
         layer_forms, channel_form_lists = forms_from_database(deposition)
-    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _("New 6-chamber deposition")
+    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists)},
