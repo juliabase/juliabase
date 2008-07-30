@@ -15,16 +15,23 @@ from . import utils
 from .utils import check_permission, DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
+import django.contrib.auth.models
+
+class OperatorChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, operator):
+        return operator.get_full_name() or unicode(operator)
 
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
+    operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
         user_details = keyw.pop("user_details")
         initial = keyw.get("initial", {})
         keyw["initial"] = initial
         self.sample_list.queryset = user_details.my_samples
+        self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
