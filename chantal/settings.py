@@ -90,7 +90,7 @@ INSTALLED_APPS = (
     'chantal.samples',
 )
 
-IS_TESTSERVER = len(sys.argv) == 2
+IS_TESTSERVER = len(sys.argv) >= 2
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login/"
