@@ -8,8 +8,7 @@ from django.http import Http404, HttpResponseRedirect
 from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
 from . import utils
-
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 
 def camel_case_to_underscores(name):
     result = []

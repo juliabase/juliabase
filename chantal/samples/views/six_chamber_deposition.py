@@ -13,11 +13,11 @@ from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixCha
 from chantal.samples import models
 from . import utils
 from .utils import check_permission, DataModelForm
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 
 class DepositionForm(ModelForm):
+    _ = ugettext_lazy
     sample_list = forms.CharField(label=_(u"Sample list"), widget=forms.TextInput(attrs={"size": "40"}),
                                   help_text=_(u"if more than one sample, separate them with commas"))
     def __init__(self, data=None, **keyw):
@@ -246,7 +246,6 @@ def forms_from_database(deposition):
 @login_required
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
-    _ = ugettext
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number) if deposition_number else None
     if request.method == "POST":
         deposition_form = DepositionForm(request.POST, instance=deposition)

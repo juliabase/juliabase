@@ -12,8 +12,7 @@ from django.contrib.sites.models import Site
 import django.contrib.auth.models
 from django import oldforms
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext, ungettext
+from django.utils.translation import ugettext as _, ungettext
 import django
 from django.conf import settings
 
@@ -49,7 +48,6 @@ def breakup_time(seconds):
     assert not seconds
     if not current_timeunit_list:
         current_timeunit_list = [ungettext(u"%(count)d second", u"%(count)d seconds", 0) % {"count": 0 }]
-    _ = ugettext
     if len(current_timeunit_list) == 1:
         return current_timeunit_list[0]
     elif len(current_timeunit_list) == 2:

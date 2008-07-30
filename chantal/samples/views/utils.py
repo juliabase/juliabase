@@ -4,7 +4,7 @@
 import re
 from django.forms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect, QueryDict
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm

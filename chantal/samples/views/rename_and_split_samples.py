@@ -6,8 +6,7 @@ from chantal.samples import models
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.forms import Form
 from django import forms
@@ -15,6 +14,7 @@ from django.newforms.util import ValidationError
 from . import utils
 
 class SampleForm(Form):
+    _ = ugettext_lazy
     name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"readonly": "readonly",
                                                                         "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
@@ -25,6 +25,7 @@ class SampleForm(Form):
         return self.cleaned_data["number_of_pieces"]
 
 class NewNameForm(Form):
+    _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"Old sample name"), max_length=30)
 
 def has_permission_for_process(user, process):
@@ -102,7 +103,6 @@ def forms_from_database(samples, deposition_number):
 
 @login_required
 def split_and_rename(request, process_id):
-    _ = ugettext
     process = get_object_or_404(models.Process, pk=process_id)
     process = process.find_actual_process()
     if not isinstance(process, (models.SixChamberDeposition,)):
