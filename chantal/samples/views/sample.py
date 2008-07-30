@@ -71,20 +71,20 @@ def show(request, sample_name):
     if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
             and sample.currently_responsible_person != request.user:
         return HttpResponseRedirect("permission_error")
-    user_profile = request.user.get_profile()
+    user_details = request.user.get_profile()
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)
         if is_my_sample_form.is_valid():
             if is_my_sample_form.cleaned_data["is_my_sample"]:
-                user_profile.my_samples.add(sample)
+                user_details.my_samples.add(sample)
                 request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample_name
             else:
-                user_profile.my_samples.remove(sample)
+                user_details.my_samples.remove(sample)
                 request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample_name
     else:
         # FixMe: DB access is probably not efficient
         start = time.time()
-        is_my_sample_form = IsMySampleForm(initial={"is_my_sample": sample in user_profile.my_samples.all()})
+        is_my_sample_form = IsMySampleForm(initial={"is_my_sample": sample in user_details.my_samples.all()})
         request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     processes = collect_processes(ProcessContext(sample))
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
