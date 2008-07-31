@@ -18,7 +18,8 @@
         {% endwith %}
         {{ process.timestamp }}
       </p>
-      <h2>{{ process.name }}</h2>
+      <h2>{{ process.name }}{% if process.edit_url %}
+            <a class="edit-button" href="../{{ process.edit_url }}">{% trans 'edit' %}</a>{% endif %}</h2>
       {{ process.html_body }}
     </div>
   {% endfor %}

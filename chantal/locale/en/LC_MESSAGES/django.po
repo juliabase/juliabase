@@ -1,3 +1,18 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2008-07-31 14:47+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 # Chantal English translations
 # Copyright (C) 2008 Free Software Foundation, Inc.
 # Torsten Bronger <bronger@physik.rwth-aachen.de>, 2008
@@ -244,7 +259,11 @@ msgstr ""
 msgid "6-chamber channels"
 msgstr ""
 
-#: samples/models.py:124
+#: samples/models.py:121 samples/models.py:145 samples/models.py:172
+msgid "name"
+msgstr ""
+
+#: samples/models.py:122
 msgid "current location"
 msgstr ""
 
@@ -280,11 +299,11 @@ msgstr ""
 msgid "name alias"
 msgstr ""
 
-#: samples/models.py:153
+#: samples/models.py:151
 msgid "name aliases"
 msgstr ""
 
-#: samples/models.py:159
+#: samples/models.py:157
 msgid "parent"
 msgstr ""
 
@@ -312,7 +331,11 @@ msgstr ""
 msgid "language"
 msgstr ""
 
-#: samples/models.py:193 samples/models.py:194
+#: samples/models.py:187
+msgid "phone"
+msgstr ""
+
+#: samples/models.py:191 samples/models.py:192
 msgid "user details"
 msgstr ""
 
@@ -700,6 +723,10 @@ msgstr ""
 
 #: templates/edit_six_chamber_deposition.html:118
 msgid "delete this layer"
+msgstr ""
+
+#: templates/edit_six_chamber_deposition.html:242
+msgid "delete"
 msgstr ""
 
 #: templates/edit_six_chamber_deposition.html:252

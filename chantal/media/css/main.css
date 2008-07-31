@@ -55,6 +55,7 @@ div.success-report { background-color: green; color: white; padding: 0.3ex 25px 
 h1 { margin-top: 0pt }
 
 p.operator_and_timestamp { float: right; font-size: small }
+a.edit-button { margin-left: 0.5em; font-size: small }
 
 div.process { margin-top: 3ex }
 span.aliases { font-size: x-small; font-weight: normal }

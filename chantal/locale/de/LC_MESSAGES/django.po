@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-07-31 13:40+0200\n"
-"PO-Revision-Date: 2008-07-31 13:41+0200\n"
+"PO-Revision-Date: 2008-07-31 14:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -304,15 +304,19 @@ msgstr "Probenserie"
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: samples/models.py:187
+#: samples/models.py:185
 msgid "user"
 msgstr "Benutzer"
 
-#: samples/models.py:188
+#: samples/models.py:186
 msgid "language"
 msgstr "Sprache"
 
-#: samples/models.py:193 samples/models.py:194
+#: samples/models.py:187
+msgid "phone"
+msgstr "Telefon"
+
+#: samples/models.py:191 samples/models.py:192
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -713,6 +717,10 @@ msgstr "diese Schicht duplizieren"
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
+#: templates/edit_six_chamber_deposition.html:242
+msgid "delete"
+msgstr "löschen"
+
 #: templates/edit_six_chamber_deposition.html:252
 msgid "Channel error"
 msgstr "Fehler in Channel"
@@ -791,13 +799,17 @@ msgstr "Geschichte der Probe „"
 msgid "”"
 msgstr "“"
 
+#: templates/show_sample.html:22
+msgid "edit"
+msgstr "ändern"
+
 #: templates/show_sample_split.html:7
 msgid "The parental sample"
-msgstr ""
+msgstr "Die elterliche Probe"
 
 #: templates/show_sample_split.html:9
 msgid "was split into the following pieces:"
-msgstr ""
+msgstr "wurde in die folgenden Stücke zerlegt:"
 
 #: templates/show_sample_split.html:11
 msgid ""
@@ -805,11 +817,12 @@ msgid ""
 "      The sample was split into the following pieces:\n"
 "    "
 msgstr ""
+"\n"
+"Die Probe wurde in die folgenden Stücke zerlegt:"
 
 #: templates/show_sample_split.html:26
-#, fuzzy
 msgid "this one"
-msgstr "Telefon"
+msgstr "diese hier"
 
 #: templates/split_and_rename.html:11
 msgid "New sample name(s)"
