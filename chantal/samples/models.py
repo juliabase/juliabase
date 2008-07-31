@@ -144,7 +144,7 @@ class Sample(models.Model):
         permissions = (("view_sample", "Can view all samples"),)
 
 class SampleAlias(models.Model):
-    name = models.CharField(_(u"name"), max_length=30, primary_key=True)
+    name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
     def __unicode__(self):
         return self.name
