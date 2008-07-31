@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-07-31 16:09+0200\n"
-"PO-Revision-Date: 2008-07-31 16:09+0200\n"
+"PO-Revision-Date: 2008-07-31 23:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "process"
 msgstr ""
 
-#: samples/models.py:31 samples/models.py:135
+#: samples/models.py:135
 msgid "processes"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 msgid "carrier"
 msgstr ""
 
-#: samples/models.py:36 samples/models.py:75
+#: samples/models.py:75
 msgid "comments"
 msgstr ""
 
@@ -74,11 +74,11 @@ msgstr ""
 msgid "6-chamber depositions"
 msgstr ""
 
-#: samples/models.py:52
+#: samples/models.py:40
 msgid "Hall measurement"
 msgstr ""
 
-#: samples/models.py:53
+#: samples/models.py:41
 msgid "Hall measurements"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgstr ""
 msgid "deposition pressure"
 msgstr ""
 
-#: samples/models.py:70 samples/models.py:80
+#: samples/models.py:80
 msgid "with unit"
 msgstr ""
 
@@ -106,7 +106,7 @@ msgstr ""
 msgid "deposition time"
 msgstr ""
 
-#: samples/models.py:71 samples/models.py:77 samples/models.py:82
+#: samples/models.py:82
 msgid "format HH:MM:SS"
 msgstr ""
 
@@ -154,7 +154,7 @@ msgstr ""
 msgid "plasma start power"
 msgstr ""
 
-#: samples/models.py:86 samples/models.py:91
+#: samples/models.py:91
 msgid "in W"
 msgstr ""
 
@@ -268,11 +268,11 @@ msgstr ""
 msgid "group"
 msgstr ""
 
-#: samples/models.py:147 samples/models.py:153
+#: samples/models.py:153
 msgid "sample"
 msgstr ""
 
-#: samples/models.py:148 samples/models.py:180
+#: samples/models.py:180
 msgid "samples"
 msgstr ""
 

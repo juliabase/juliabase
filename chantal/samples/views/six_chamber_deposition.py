@@ -15,45 +15,37 @@ from . import utils
 from .utils import check_permission, DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
+import django.contrib.auth.models
+
+class OperatorChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, operator):
+        return operator.get_full_name() or unicode(operator)
 
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
-    sample_list = forms.CharField(label=_(u"Sample list"), widget=forms.TextInput(attrs={"size": "40"}),
-                                  help_text=_(u"if more than one sample, separate them with commas"))
+    sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
+    operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
+        user_details = keyw.pop("user_details")
         initial = keyw.get("initial", {})
-        initial["sample_list"] = ", ".join([sample.name for sample in deposition.samples.all()]) if deposition else ""
         keyw["initial"] = initial
+        self.sample_list.queryset = user_details.my_samples
+        self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
         self.fields["timestamp"].widget = split_widget
+        self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
     def clean_sample_list(self):
-        sample_list = [name.strip() for name in self.cleaned_data["sample_list"].split(",")]
-        invalid_sample_names = set()
-        duplicate_sample_names = set()
-        normalized_sample_names = set()
-        for sample_name in [name for name in sample_list if name]:
-            normalized_sample_name = utils.normalize_sample_name(sample_name)
-            if not normalized_sample_name:
-                invalid_sample_names.add(sample_name)
-            elif normalized_sample_name in normalized_sample_names:
-                duplicate_sample_names.add(sample_name)
-            else:
-                normalized_sample_names.add(normalized_sample_name)
-        if invalid_sample_names:
-            raise ValidationError(_(u"I don't know %s.") % ", ".join(invalid_sample_names))
-        if duplicate_sample_names:
-            raise ValidationError(_(u"Multiple occurences of %s.") % ", ".join(duplicate_sample_names))
-        if not normalized_sample_names:
-            raise ValidationError(_(u"You must give at least one valid sample name."))
-        return ",".join(normalized_sample_names)
+        sample_list = list(set(self.cleaned_data["sample_list"]))
+        if not sample_list:
+            raise ValidationError(_(u"You must mark at least one sample."))
+        return sample_list
     def save(self, *args, **keyw):
         deposition = super(DepositionForm, self).save(*args, **keyw)
-        samples = [utils.get_sample(sample_name) for sample_name in self.cleaned_data["sample_list"].split(",")]
-        deposition.samples = samples
+        deposition.samples = self.cleaned_data["sample_list"]
         return deposition
     class Meta:
         model = SixChamberDeposition
@@ -247,8 +239,9 @@ def forms_from_database(deposition):
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number) if deposition_number else None
+    user_details = request.user.get_profile()
     if request.method == "POST":
-        deposition_form = DepositionForm(request.POST, instance=deposition)
+        deposition_form = DepositionForm(request.POST, instance=deposition, user_details=user_details)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
@@ -264,7 +257,7 @@ def edit(request, deposition_number):
                     _(u"Deposition %s was successfully added to the database.") % deposition.deposition_number
                 return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
-        deposition_form = DepositionForm(instance=deposition)
+        deposition_form = DepositionForm(instance=deposition, user_details=user_details)
         layer_forms, channel_form_lists = forms_from_database(deposition)
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",

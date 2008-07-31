@@ -192,6 +192,7 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
     language = models.CharField(_(u"language"), max_length=10, choices=languages)
     phone = models.CharField(_(u"phone"), max_length=20)
+    my_samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"my samples"))
     def __unicode__(self):
         return unicode(self.user)
     class Meta:

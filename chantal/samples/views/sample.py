@@ -5,6 +5,7 @@ import string, time, copy
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
+import django.forms as forms
 from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
 from . import utils
@@ -64,7 +65,10 @@ def collect_processes(process_context):
     for process in process_context.get_processes():
         processes.append(process_context.digest_process(process))
     return processes
-    
+
+class IsMySampleForm(forms.Form):
+    is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+
 @login_required
 def show(request, sample_name):
     sample_name = sample_name.replace("_", "/")

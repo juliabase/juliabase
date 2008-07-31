@@ -46,7 +46,7 @@ msgstr "externer Operator"
 msgid "process"
 msgstr "Prozess"
 
-#: samples/models.py:31 samples/models.py:135
+#: samples/models.py:135
 msgid "processes"
 msgstr "Prozesse"
 
@@ -58,7 +58,7 @@ msgstr "Depositionsnummer"
 msgid "carrier"
 msgstr "Carrier"
 
-#: samples/models.py:36 samples/models.py:75
+#: samples/models.py:75
 msgid "comments"
 msgstr "Kommentare"
 
@@ -98,7 +98,7 @@ msgstr "Deposition"
 msgid "deposition pressure"
 msgstr "Depositionsdruck"
 
-#: samples/models.py:70 samples/models.py:80
+#: samples/models.py:80
 msgid "with unit"
 msgstr "mit Einheit"
 
@@ -106,7 +106,7 @@ msgstr "mit Einheit"
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: samples/models.py:71 samples/models.py:77 samples/models.py:82
+#: samples/models.py:82
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
@@ -154,7 +154,7 @@ msgstr "Transfer aus der Kammer"
 msgid "plasma start power"
 msgstr "Startleistung Plasma"
 
-#: samples/models.py:86 samples/models.py:91
+#: samples/models.py:91
 msgid "in W"
 msgstr "in W"
 
@@ -268,11 +268,11 @@ msgstr "Split-Ursprung"
 msgid "group"
 msgstr "Gruppe"
 
-#: samples/models.py:147 samples/models.py:153
+#: samples/models.py:153
 msgid "sample"
 msgstr "Probe"
 
-#: samples/models.py:148 samples/models.py:180
+#: samples/models.py:180
 msgid "samples"
 msgstr "Proben"
 
@@ -312,7 +312,11 @@ msgstr "Benutzer"
 msgid "language"
 msgstr "Sprache"
 
-#: samples/models.py:198 samples/models.py:199
+#: samples/models.py:183
+msgid "my samples"
+msgstr "meine Proben"
+
+#: samples/models.py:187 samples/models.py:188
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -438,34 +442,38 @@ msgstr ""
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
 
-#: samples/views/sample.py:74
+#: samples/views/sample.py:64
+msgid "is amongst My Samples"
+msgstr "gehört zu Meinen Proben"
+
+#: samples/views/sample.py:70
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: samples/views/six_chamber_deposition.py:21
-msgid "Sample list"
-msgstr "Probenliste"
-
-#: samples/views/six_chamber_deposition.py:22
-msgid "if more than one sample, separate them with commas"
-msgstr "mehr als eine Probe durch Kommatas trennen"
-
-#: samples/views/six_chamber_deposition.py:47
+#: samples/views/sample.py:80
 #, python-format
-msgid "I don't know %s."
-msgstr "Ich kenne %s nicht."
+msgid "Sample %s was added to Your Samples."
+msgstr "Probe %s wurde zu Meinen Proben hinzugefügt."
 
-#: samples/views/six_chamber_deposition.py:49
+#: samples/views/sample.py:83
 #, python-format
-msgid "Multiple occurences of %s."
-msgstr "Mehrfachnennung von %s."
+msgid "Sample %s was removed from Your Samples."
+msgstr "Probe %s wurde von Meinen Proben entfernt."
 
-#: samples/views/six_chamber_deposition.py:51
-msgid "You must give at least one valid sample name."
-msgstr "Sie müssen mindestens eine gültige Probe angeben."
+#: samples/views/six_chamber_deposition.py:26
+msgid "Samples"
+msgstr "Proben"
 
-#: samples/views/six_chamber_deposition.py:80
+#: samples/views/six_chamber_deposition.py:27
+msgid "Operator"
+msgstr "Operator"
+
+#: samples/views/six_chamber_deposition.py:44
+msgid "You must mark at least one sample."
+msgstr "Sie müssen mindestens eine Probe markieren."
+
+#: samples/views/six_chamber_deposition.py:72
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
@@ -709,15 +717,15 @@ msgstr "\nDer Name %(alias)s ist ein Alias für die folgenden Proben:"
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
-#: templates/edit_six_chamber_deposition.html:87
+#: templates/edit_six_chamber_deposition.html:84
 msgid "Layer error"
 msgstr "Fehler in Schicht"
 
-#: templates/edit_six_chamber_deposition.html:113
+#: templates/edit_six_chamber_deposition.html:110
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: templates/edit_six_chamber_deposition.html:118
+#: templates/edit_six_chamber_deposition.html:115
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
@@ -729,11 +737,11 @@ msgstr "löschen"
 msgid "Channel error"
 msgstr "Fehler in Channel"
 
-#: templates/edit_six_chamber_deposition.html:268
+#: templates/edit_six_chamber_deposition.html:265
 msgid "Number of channels to be added:"
 msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
-#: templates/edit_six_chamber_deposition.html:284
+#: templates/edit_six_chamber_deposition.html:281
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 
@@ -835,6 +843,18 @@ msgstr "Neue(r) Probenname(n)"
 #: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
 msgid "Sample name error"
 msgstr "Fehler im Probennamen"
+
+#~ msgid "Sample list"
+#~ msgstr "Probenliste"
+
+#~ msgid "if more than one sample, separate them with commas"
+#~ msgstr "mehr als eine Probe durch Kommatas trennen"
+
+#~ msgid "I don't know %s."
+#~ msgstr "Ich kenne %s nicht."
+
+#~ msgid "Multiple occurences of %s."
+#~ msgstr "Mehrfachnennung von %s."
 
 #~ msgid "Login name:"
 #~ msgstr "Loginname:"
