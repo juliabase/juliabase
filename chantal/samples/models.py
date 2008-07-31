@@ -7,9 +7,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 
 
+class ExternalOperator(models.Model):
+    name = models.CharField(_(u"name"), max_length=30)
+    email = models.EmailField(_(u"email"))
+    alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
+    phone = models.CharField(_(u"phone"), max_length=30, null=True, blank=True)
+
 class Process(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
+    external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
     def find_actual_process(self):
         for process_type in process_types:
             if hasattr(self, process_type):
