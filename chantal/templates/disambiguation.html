@@ -1,0 +1,16 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <p>
+    {% blocktrans %}
+      The name {{ alias }} is an alias for the following samples:
+    {% endblocktrans %}
+  </p>
+  <ul>
+    {% for sample in samples %}
+      <li><a href="{{ sample.name }}">{{ sample.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
