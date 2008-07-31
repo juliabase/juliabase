@@ -8,6 +8,7 @@ from django.utils.html import conditional_escape
 import django.utils.safestring
 import chantal.samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
+import chantal.samples.views.utils
 
 register = template.Library()
 
@@ -38,7 +39,7 @@ chem_markup.needs_autoescape = True
 def name2url(name, autoescape=False):
     if autoescape:
         name = conditional_escape(name)
-    return django.utils.safestring.mark_safe(name.replace("/", "_"))
+    return django.utils.safestring.mark_safe(chantal.samples.views.utils.name2url(name))
 name2url.needs_autoescape = True
 
 @register.filter

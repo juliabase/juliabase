@@ -140,3 +140,9 @@ def normalize_prefixes(post_data):
     else:
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
+
+def name2url(name):
+    return name.replace("/", "_")
+
+def url2name(url):
+    return url.replace("_", "/")

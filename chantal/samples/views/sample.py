@@ -68,7 +68,7 @@ def collect_processes(process_context):
     
 @login_required
 def show(request, sample_name):
-    sample_name = sample_name.replace("_", "/")
+    sample_name = utils.url2name(sample_name)
     start = time.time()
     sample = utils.get_sample(sample_name)
     if not sample:
