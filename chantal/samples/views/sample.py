@@ -72,6 +72,10 @@ def show(request, sample_name):
     sample = utils.get_sample(sample_name)
     if not sample:
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+    if isinstance(sample, list):
+        return render_to_response("diambiguation.html",
+                                  {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
+                                  context_instance=RequestContext(request))
     if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
             and sample.currently_responsible_person != request.user:
         return HttpResponseRedirect("permission_error")
