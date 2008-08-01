@@ -5,6 +5,7 @@ import string, time, copy
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
+import django.forms as forms
 from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
 from . import utils
@@ -22,8 +23,9 @@ def camel_case_to_underscores(name):
     return "".join(result)
 
 class ProcessContext(object):
-    def __init__(self, original_sample):
+    def __init__(self, original_sample, user):
         self.original_sample = self.current_sample = original_sample
+        self.user = user
         self.__process = self.cutoff_timestamp = self.html_body = None
     def __set_process(self, process):
         self.__process = process.find_actual_process()
@@ -37,7 +39,7 @@ class ProcessContext(object):
         context_dict = {"process": self.__process}
         if hasattr(self.__process, "get_additional_template_context"):
             context_dict.update(self.__process.get_additional_template_context(self))
-        return Context(context_dict)
+        return context_dict
     def get_processes(self):
         if self.cutoff_timestamp is None:
             return self.current_sample.processes.all()
@@ -47,8 +49,13 @@ class ProcessContext(object):
         self.process = process
         template = loader.get_template("show_" + camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
         name = unicode(self.__process._meta.verbose_name)
-        return {"name": name[0].upper()+name[1:], "operator": self.__process.operator,
-                "timestamp": self.__process.timestamp, "html_body": template.render(self.get_template_context())}
+        template_context = self.get_template_context()
+        context_dict = {"name": name[0].upper()+name[1:], "operator": self.__process.operator,
+                        "timestamp": self.__process.timestamp,
+                        "html_body": template.render(Context(template_context))}
+        if "edit_url" in template_context:
+            context_dict["edit_url"] = template_context["edit_url"]
+        return context_dict
 
 def collect_processes(process_context):
     processes = []
@@ -58,17 +65,25 @@ def collect_processes(process_context):
     for process in process_context.get_processes():
         processes.append(process_context.digest_process(process))
     return processes
-    
+
+class IsMySampleForm(forms.Form):
+    is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+
 @login_required
 def show(request, sample_name):
+    sample_name = sample_name.replace("_", "/")
     start = time.time()
     sample = utils.get_sample(sample_name)
     if not sample:
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+    if isinstance(sample, list):
+        return render_to_response("disambiguation.html",
+                                  {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
+                                  context_instance=RequestContext(request))
     if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
             and sample.currently_responsible_person != request.user:
         return HttpResponseRedirect("permission_error")
-    processes = collect_processes(ProcessContext(sample))
+    processes = collect_processes(ProcessContext(sample, request.user))
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample},
                               context_instance=RequestContext(request))

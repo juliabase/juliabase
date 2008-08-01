@@ -5,376 +5,658 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
-"PO-Revision-Date: 2008-07-27 12:00 +2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-07-31 16:09+0200\n"
+"PO-Revision-Date: 2008-07-31 23:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: samples/models.py:9 samples/models.py:134 samples/models.py:151
-#: samples/models.py:170
+#: samples/models.py:11 samples/models.py:128 samples/models.py:152
+#: samples/models.py:179
 msgid "name"
 msgstr ""
 
-#: samples/models.py:10
+#: samples/models.py:12
 msgid "email"
 msgstr ""
 
-#: samples/models.py:11
+#: samples/models.py:13
+msgid "alternative email"
+msgstr ""
+
+#: samples/models.py:14 samples/models.py:194
 msgid "phone"
 msgstr ""
 
-#: samples/models.py:15 samples/models.py:22
-msgid "operator"
-msgstr ""
-
-#: samples/models.py:16
-msgid "operators"
-msgstr ""
-
-#: samples/models.py:21
+#: samples/models.py:17
 msgid "timestamp"
 msgstr ""
 
-#: samples/models.py:33
+#: samples/models.py:18
+msgid "operator"
+msgstr ""
+
+#: samples/models.py:19
+msgid "external operator"
+msgstr ""
+
+#: samples/models.py:30
 msgid "process"
 msgstr ""
 
-#: samples/models.py:34 samples/models.py:140
+#: samples/models.py:135
 msgid "processes"
 msgstr ""
 
-#: samples/models.py:37
+#: samples/models.py:34
 msgid "deposition number"
 msgstr ""
 
-#: samples/models.py:38
+#: samples/models.py:35
 msgid "carrier"
 msgstr ""
 
-#: samples/models.py:39 samples/models.py:77
+#: samples/models.py:75
 msgid "comments"
 msgstr ""
 
-#: samples/models.py:41
+#: samples/models.py:38
 msgid "6-chamber deposition "
 msgstr ""
 
-#: samples/models.py:43
+#: samples/models.py:45
 msgid "6-chamber deposition"
 msgstr ""
 
-#: samples/models.py:44
+#: samples/models.py:46
 msgid "6-chamber depositions"
 msgstr ""
 
-#: samples/models.py:52
+#: samples/models.py:40
 msgid "Hall measurement"
 msgstr ""
 
-#: samples/models.py:53
+#: samples/models.py:41
 msgid "Hall measurements"
 msgstr ""
 
-#: samples/models.py:69
+#: samples/models.py:67
 msgid "layer number"
 msgstr ""
 
-#: samples/models.py:70
+#: samples/models.py:68
 msgid "chamber"
 msgstr ""
 
-#: samples/models.py:71
+#: samples/models.py:69
 msgid "deposition"
 msgstr ""
 
-#: samples/models.py:72
+#: samples/models.py:70
 msgid "deposition pressure"
 msgstr ""
 
-#: samples/models.py:72 samples/models.py:82
+#: samples/models.py:80
 msgid "with unit"
 msgstr ""
 
-#: samples/models.py:73
+#: samples/models.py:71
 msgid "deposition time"
 msgstr ""
 
-#: samples/models.py:73 samples/models.py:79 samples/models.py:84
+#: samples/models.py:82
 msgid "format HH:MM:SS"
 msgstr ""
 
-#: samples/models.py:75
+#: samples/models.py:73
 msgid "substrate–electrode distance"
 msgstr ""
 
-#: samples/models.py:76
+#: samples/models.py:74
 msgid "in mm"
 msgstr ""
 
-#: samples/models.py:78
+#: samples/models.py:76
 msgid "transfer in the chamber"
 msgstr ""
 
-#: samples/models.py:79
+#: samples/models.py:77
 msgid "pre-heat"
 msgstr ""
 
-#: samples/models.py:80
+#: samples/models.py:78
 msgid "gas of gas pre-heat"
 msgstr ""
 
-#: samples/models.py:81
+#: samples/models.py:79
 msgid "pressure of gas pre-heat"
 msgstr ""
 
-#: samples/models.py:83
+#: samples/models.py:81
 msgid "time of gas pre-heat"
 msgstr ""
 
-#: samples/models.py:85
+#: samples/models.py:83
 msgid "heating temperature"
 msgstr ""
 
-#: samples/models.py:85
+#: samples/models.py:83
 msgid "in ℃"
 msgstr ""
 
-#: samples/models.py:86
+#: samples/models.py:84
 msgid "transfer out of the chamber"
 msgstr ""
 
-#: samples/models.py:87
+#: samples/models.py:85
 msgid "plasma start power"
 msgstr ""
 
-#: samples/models.py:88 samples/models.py:93
+#: samples/models.py:91
 msgid "in W"
 msgstr ""
 
-#: samples/models.py:89
+#: samples/models.py:87
 msgid "plasma start with carrier"
 msgstr ""
 
-#: samples/models.py:90
+#: samples/models.py:88
 msgid "deposition frequency"
 msgstr ""
 
-#: samples/models.py:91
+#: samples/models.py:89
 msgid "in MHz"
 msgstr ""
 
-#: samples/models.py:92
+#: samples/models.py:90
 msgid "deposition power"
 msgstr ""
 
-#: samples/models.py:94
+#: samples/models.py:92
 msgid "base pressure"
 msgstr ""
 
-#: samples/models.py:94
+#: samples/models.py:92
 msgid "in Torr"
 msgstr ""
 
-#: samples/models.py:96
+#: samples/models.py:94
 #, python-format
 msgid "layer %(number)d of %(deposition)s"
 msgstr ""
 
-#: samples/models.py:98
+#: samples/models.py:96
 msgid "6-chamber layer"
 msgstr ""
 
-#: samples/models.py:99
+#: samples/models.py:97
 msgid "6-chamber layers"
 msgstr ""
 
-#: samples/models.py:108
+#: samples/models.py:104
 msgid "PH3 in 2% SiH4"
 msgstr ""
 
-#: samples/models.py:109
+#: samples/models.py:105
 msgid "TMB in 1% He"
 msgstr ""
 
-#: samples/models.py:110
+#: samples/models.py:106
 msgid "B2H6 in 5ppm H2"
 msgstr ""
 
-#: samples/models.py:116
+#: samples/models.py:112
 msgid "PH3 in 10 ppm H2"
 msgstr ""
 
-#: samples/models.py:119
+#: samples/models.py:115
 msgid "channel"
 msgstr ""
 
-#: samples/models.py:120
+#: samples/models.py:116
 msgid "layer"
 msgstr ""
 
-#: samples/models.py:121
+#: samples/models.py:117
 msgid "gas and dilution"
 msgstr ""
 
-#: samples/models.py:122
+#: samples/models.py:118
 msgid "flow rate"
 msgstr ""
 
-#: samples/models.py:122
+#: samples/models.py:118
 msgid "in sccm"
 msgstr ""
 
-#: samples/models.py:124
+#: samples/models.py:120
 #, python-format
 msgid "channel %(number)d of %(layer)s"
 msgstr ""
 
-#: samples/models.py:126
+#: samples/models.py:122
 msgid "6-chamber channel"
 msgstr ""
 
-#: samples/models.py:127
+#: samples/models.py:123
 msgid "6-chamber channels"
 msgstr ""
 
-#: samples/models.py:135
+#: samples/models.py:129
 msgid "current location"
 msgstr ""
 
-#: samples/models.py:136
+#: samples/models.py:131
 msgid "currently responsible person"
 msgstr ""
 
-#: samples/models.py:137
+#: samples/models.py:132
 msgid "tags"
 msgstr ""
 
-#: samples/models.py:137
+#: samples/models.py:132
 msgid "separated with commas, no whitespace"
 msgstr ""
 
-#: samples/models.py:139
+#: samples/models.py:134
 msgid "split origin"
 msgstr ""
 
-#: samples/models.py:141
+#: samples/models.py:137
 msgid "group"
 msgstr ""
 
-#: samples/models.py:145 samples/models.py:152
+#: samples/models.py:153
 msgid "sample"
 msgstr ""
 
-#: samples/models.py:146 samples/models.py:171
+#: samples/models.py:180
 msgid "samples"
 msgstr ""
 
-#: samples/models.py:156
+#: samples/models.py:157
 msgid "name alias"
 msgstr ""
 
-#: samples/models.py:157
+#: samples/models.py:158
 msgid "name aliases"
 msgstr ""
 
-#: samples/models.py:162
+#: samples/models.py:164
 msgid "parent"
 msgstr ""
 
-#: samples/models.py:164
+#: samples/models.py:175
 msgid "sample split"
 msgstr ""
 
-#: samples/models.py:165
+#: samples/models.py:176
 msgid "sample splits"
 msgstr ""
 
-#: samples/models.py:175
+#: samples/models.py:184
 msgid "sample series"
 msgstr ""
 
-#: samples/models.py:176
+#: samples/models.py:185
 msgid "sample serieses"
 msgstr "sample series"
 
-#: samples/models.py:185
+#: samples/models.py:192
 msgid "user"
 msgstr ""
 
-#: samples/models.py:186
+#: samples/models.py:193
 msgid "language"
 msgstr ""
 
-#: samples/models.py:190 samples/models.py:191
+#: samples/models.py:198 samples/models.py:199
 msgid "user details"
 msgstr ""
 
-#: samples/views/sample.py:39
-#, python-format
-msgid "History of sample “%s”"
+#: samples/templatetags/samples_extras.py:75
+msgid "Yes"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:40
+#: samples/templatetags/samples_extras.py:75
+msgid "No"
+msgstr ""
+
+#: samples/views/main.py:21 templates/base.html:30
+msgid "Main menu"
+msgstr ""
+
+#: samples/views/main.py:25
+msgid "Access denied"
+msgstr ""
+
+#: samples/views/main.py:38
+#, python-format
+msgid "%(count)d year"
+msgid_plural "%(count)d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:39
+#, python-format
+msgid "%(count)d month"
+msgid_plural "%(count)d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:40
+#, python-format
+msgid "%(count)d week"
+msgid_plural "%(count)d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:41
+#, python-format
+msgid "%(count)d day"
+msgid_plural "%(count)d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:42
+#, python-format
+msgid "%(count)d hour"
+msgid_plural "%(count)d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:43
+#, python-format
+msgid "%(count)d minute"
+msgid_plural "%(count)d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:44 samples/views/main.py:50
+#, python-format
+msgid "%(count)d second"
+msgid_plural "%(count)d seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: samples/views/main.py:54
+msgid " and "
+msgstr ""
+
+#: samples/views/main.py:56
+msgid ", "
+msgstr ""
+
+#: samples/views/main.py:56
+msgid ", and "
+msgstr ""
+
+#: samples/views/main.py:60 samples/views/main.py:62
+#, python-format
+msgid "up and running for %(time)s"
+msgstr ""
+
+#: samples/views/main.py:63
+#, python-format
+msgid "Chantal revision %s"
+msgstr ""
+
+#: samples/views/main.py:64
+msgid "Chantal is presented to you by …"
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:20
+#: templates/split_and_rename.html:10
+msgid "Pieces"
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:24
+msgid "Must be at least 1."
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:29
+#: templates/split_and_rename.html:9
+msgid "Old sample name"
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:82
+msgid "This sample name has been used already on this page."
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:86
+msgid "This sample name exists already."
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:121
+msgid "Samples were successfully split and/or renamed."
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:126
+#, python-format
+msgid "Bulk sample rename for %s"
+msgstr ""
+
+#: samples/views/sample.py:74
+#, python-format
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:21
+#, fuzzy
+msgid "Sample list"
+msgstr "sample series"
+
+#: samples/views/six_chamber_deposition.py:22
+msgid "if more than one sample, separate them with commas"
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:47
+#, python-format
+msgid "I don't know %s."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:49
+#, python-format
+msgid "Multiple occurences of %s."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:51
+msgid "You must give at least one valid sample name."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:80
 msgid "Name is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:64
+#: samples/views/six_chamber_deposition.py:104
 msgid "Gas type is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:141
+#: samples/views/six_chamber_deposition.py:190
+msgid "This deposition number exists already."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:193
 msgid "No layers given."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:147
-#: samples/views/six_chamber_deposition.py:154
+#: samples/views/six_chamber_deposition.py:199
+#: samples/views/six_chamber_deposition.py:206
 msgid "Number is a duplicate."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:218
+#: samples/views/six_chamber_deposition.py:260
+#, python-format
+msgid "Deposition %s was successfully changed in the database."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:264
+#, python-format
+msgid "Deposition %s was successfully added to the database."
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:269
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr ""
 
-#: samples/views/utils.py:14
+#: samples/views/six_chamber_deposition.py:269
+msgid "New 6-chamber deposition"
+msgstr ""
+
+#: samples/views/utils.py:22
 msgid "Time must be given in the form HH:MM:SS."
 msgstr ""
 
-#: samples/views/utils.py:18
+#: samples/views/utils.py:26
 msgid "Minutes and seconds must be smaller than 60."
 msgstr ""
 
-#: samples/views/utils.py:31
+#: samples/views/utils.py:39
 msgid "Must be a physical quantity with number and unit."
 msgstr ""
 
-#: samples/views/utils.py:37
+#: samples/views/utils.py:45
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr ""
 
-#: templates/base.html:18
+#: templates/404.html:12
+msgid "woman with binoculars"
+msgstr ""
+
+#: templates/404.html:15 templates/404.html.py:16
+msgid "Resource not found"
+msgstr ""
+
+#: templates/404.html:19
+#, python-format
+msgid ""
+"\n"
+"The resource » <em>%(request_path)s</em> « could not be found.  Please check "
+"that the URL\n"
+"is correct, and/or check that the denoted sample, process etc is already in "
+"the\n"
+"database.\n"
+msgstr ""
+
+#: templates/500.html:6
+msgid "ancient human dispatcher"
+msgstr ""
+
+#: templates/500.html:9
+msgid "Internal Chantal error"
+msgstr ""
+
+#: templates/500.html:10
+msgid "Internal server error"
+msgstr ""
+
+#: templates/500.html:13
+msgid ""
+"\n"
+"You experienced an internal error in the Chantal server software.  The\n"
+"administrators have been contacted already and will do their best in\n"
+"eliminating the bug.  Typically, they will contact you as soon as the "
+"problem\n"
+"is tackled.\n"
+msgstr ""
+
+#: templates/about.html:6
+msgid "stewardess"
+msgstr ""
+
+#: templates/about.html:20
+msgid "Operating system"
+msgstr ""
+
+#: templates/about.html:22
+msgid "Ubuntu logo"
+msgstr ""
+
+#: templates/about.html:24 templates/about.html.py:30 templates/about.html:36
+msgid ","
+msgstr ""
+
+#: templates/about.html:28
+msgid "Web server"
+msgstr ""
+
+#: templates/about.html:30
+msgid "Django testserver"
+msgstr ""
+
+#: templates/about.html:33 templates/about.html.py:35
+msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
+msgstr ""
+
+#: templates/about.html:34
+msgid "Apache logo"
+msgstr ""
+
+#: templates/about.html:41
+msgid "Database"
+msgstr ""
+
+#: templates/about.html:43 templates/about.html.py:45
+msgid "http://en.wikipedia.org/wiki/MySQL"
+msgstr ""
+
+#: templates/about.html:44
+msgid "MySQL logo"
+msgstr ""
+
+#: templates/about.html:49
+msgid "Programming runtime"
+msgstr ""
+
+#: templates/about.html:51 templates/about.html.py:53
+msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
+msgstr ""
+
+#: templates/about.html:52
+msgid "Python logo"
+msgstr ""
+
+#: templates/about.html:58
+msgid "Programming framework"
+msgstr ""
+
+#: templates/about.html:60 templates/about.html.py:62
+msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
+msgstr ""
+
+#: templates/about.html:61
+msgid "Django logo"
+msgstr ""
+
+#: templates/base.html:20
 msgid "DB access time:"
 msgstr ""
 
-#: templates/base.html:26
+#: templates/base.html:28
 msgid "Welcome,"
 msgstr ""
 
-#: templates/base.html:28
-msgid "Main menu"
-msgstr ""
-
-#: templates/base.html:29
+#: templates/base.html:31
 msgid "Change password"
 msgstr ""
 
-#: templates/base.html:30
+#: templates/base.html:32
 msgid "Log out"
 msgstr ""
 
-#: templates/base.html:41
+#: templates/base.html:46
+msgid "Jülich Forschungszentrum logo"
+msgstr ""
+
+#: templates/base.html:48
+msgid "IEF-5 logo"
+msgstr ""
+
+#: templates/base.html:50
 msgid "The samples database"
 msgstr ""
 
@@ -404,31 +686,43 @@ msgstr ""
 msgid "Change my password"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:20
+#: templates/disambiguation.html:7
+#, python-format
+msgid ""
+"\n"
+"      The name %(alias)s is an alias for the following samples:\n"
+"    "
+msgstr ""
+
+#: templates/edit_six_chamber_deposition.html:34
 msgid "Deposition error"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:69
+#: templates/edit_six_chamber_deposition.html:87
 msgid "Layer error"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:95
+#: templates/edit_six_chamber_deposition.html:113
 msgid "duplicate this layer"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:100
+#: templates/edit_six_chamber_deposition.html:118
 msgid "delete this layer"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:234
+#: templates/edit_six_chamber_deposition.html:242
+msgid "delete"
+msgstr ""
+
+#: templates/edit_six_chamber_deposition.html:252
 msgid "Channel error"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:250
+#: templates/edit_six_chamber_deposition.html:268
 msgid "Number of channels to be added:"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:265
+#: templates/edit_six_chamber_deposition.html:284
 msgid "Number of layers to be added:"
 msgstr ""
 
@@ -448,7 +742,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: templates/login.html:19
+#: templates/login.html:20
 msgid "login"
 msgstr ""
 
@@ -466,4 +760,58 @@ msgstr ""
 
 #: templates/password_changed.html:10
 msgid "Your password was changed."
+msgstr ""
+
+#: templates/permission_error.html:6
+msgid "woman with lock"
+msgstr ""
+
+#: templates/permission_error.html:11
+msgid ""
+"\n"
+"    Sorry, you don't have permission to do that action, probably because "
+"you\n"
+"    are not in the specific group that is allowed to do it.  Please contact "
+"the\n"
+"    administrator to add you to that group.\n"
+"    "
+msgstr ""
+
+#: templates/show_sample.html:5 templates/show_sample.html.py:6
+msgid "History of sample “"
+msgstr ""
+
+#: templates/show_sample.html:5 templates/show_sample.html.py:6
+msgid "”"
+msgstr ""
+
+#: templates/show_sample.html:22
+msgid "edit"
+msgstr ""
+
+#: templates/show_sample_split.html:7
+msgid "The parental sample"
+msgstr ""
+
+#: templates/show_sample_split.html:9
+msgid "was split into the following pieces:"
+msgstr ""
+
+#: templates/show_sample_split.html:11
+msgid ""
+"\n"
+"      The sample was split into the following pieces:\n"
+"    "
+msgstr ""
+
+#: templates/show_sample_split.html:26
+msgid "this one"
+msgstr ""
+
+#: templates/split_and_rename.html:11
+msgid "New sample name(s)"
+msgstr ""
+
+#: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
+msgid "Sample name error"
 msgstr ""

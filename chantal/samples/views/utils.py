@@ -77,18 +77,14 @@ def get_sample(sample_name):
     try:
         sample = models.Sample.objects.get(name=sample_name)
     except models.Sample.DoesNotExist:
-        try:
-            sample_alias = models.SampleAlias.objects.get(name=sample_name)
-        except models.SampleAlias.DoesNotExist:
-            return
-        else:
-            return sample_alias.sample
+        aliases = [alias.sample for alias in models.SampleAlias.objects.filter(name=sample_name)]
+        return aliases or None
     else:
         return sample
 
 def does_sample_exist(sample_name):
-    return bool(models.Sample.objects.filter(name=sample_name).count() or
-                models.SampleAlias.objects.filter(name=sample_name).count())
+    return (models.Sample.objects.filter(name=sample_name).count() or
+            models.SampleAlias.objects.filter(name=sample_name).count())
 
 def normalize_sample_name(sample_name):
     if models.Sample.objects.filter(name=sample_name).count():

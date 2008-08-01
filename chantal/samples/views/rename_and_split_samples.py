@@ -56,7 +56,7 @@ def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
     for sample_form, new_name_forms, old_name in zip(sample_forms, new_name_form_lists, sample_names):
         # I don't take the old name from `sample_form` because it may be
         # forged.
-        sample = utils.get_sample(old_name)
+        sample = models.Sample.objects.get(name=old_name)
         if sample_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=operator, parent=sample)
             sample_split.save()
