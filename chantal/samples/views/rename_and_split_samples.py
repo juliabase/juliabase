@@ -104,7 +104,7 @@ def forms_from_database(samples, deposition_number):
 @login_required
 def split_and_rename(request, process_id):
     process = get_object_or_404(models.Process, pk=process_id)
-    process = process.find_actual_process()
+    process = process.find_actual_instance()
     if not isinstance(process, (models.SixChamberDeposition,)):
         raise Http404
     if not has_permission_for_process(request.user, process):

@@ -17,25 +17,37 @@ class Process(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
-    def find_actual_process(self):
+    def find_actual_instance(self):
         for process_type in process_types:
             if hasattr(self, process_type):
-                return getattr(self, process_type)
+                process = getattr(self, process_type)
+                if hasattr(process, "find_actual_instance"):
+                    return process.find_actual_instance()
         else:
             raise Exception("internal error: process not found")
     def __unicode__(self):
-        return unicode(self.find_actual_process())
+        return unicode(self.find_actual_instance())
     class Meta:
         ordering = ['timestamp']
         verbose_name = _(u"process")
         verbose_name_plural = _(u"processes")
 
-class SixChamberDeposition(Process):
-    deposition_number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+class Deposition(Process):
+    number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+    def find_actual_instance(self):
+        for deposition_type in deposition_types:
+            if hasattr(self, deposition_type):
+                return getattr(self, deposition_type)
+        else:
+            raise Exception("internal error: deposition not found")
+    def __unicode__(self):
+        return unicode(self.number)
+
+class SixChamberDeposition(Deposition):
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return unicode(_(u"6-chamber deposition ")) + self.deposition_number
+        return unicode(_(u"6-chamber deposition ")) + super(SixChamberDeposition, self).__unicode__()
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
             return {"edit_url": "6-chamber_deposition/edit/"+self.deposition_number}
@@ -213,4 +225,6 @@ admin.site.register(UserDetails)
 import copy, inspect
 _globals = copy.copy(globals())
 process_types = [cls.__name__.lower() for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, Process)]
+deposition_types = [cls.__name__.lower() for cls in _globals.values()
+                    if inspect.isclass(cls) and issubclass(cls, Deposition)]
 del _globals, cls
