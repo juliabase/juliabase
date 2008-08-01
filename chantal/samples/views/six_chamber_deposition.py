@@ -49,7 +49,6 @@ class DepositionForm(ModelForm):
         return deposition
     class Meta:
         model = SixChamberDeposition
-        exclude = ("process_ptr",)
 
 class LayerForm(DataModelForm):
     chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
@@ -177,8 +176,7 @@ def is_referencially_valid(deposition, deposition_form, layer_forms, channel_for
     referencially_valid = True
     if deposition_form.is_valid() and (
         not deposition or deposition.number != deposition_form.cleaned_data["number"]):
-        if models.SixChamberDeposition.objects.filter(number=
-                                                      deposition_form.cleaned_data["number"]).count():
+        if models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
             utils.append_error(deposition_form, "__all__", _(u"This deposition number exists already."))
             referencially_valid = False
     if not layer_forms:
