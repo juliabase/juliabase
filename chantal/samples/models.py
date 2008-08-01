@@ -7,9 +7,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 
 
+class ExternalOperator(models.Model):
+    name = models.CharField(_(u"name"), max_length=30)
+    email = models.EmailField(_(u"email"))
+    alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
+    phone = models.CharField(_(u"phone"), max_length=30, null=True, blank=True)
+
 class Process(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
+    external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
     def find_actual_process(self):
         for process_type in process_types:
             if hasattr(self, process_type):
@@ -29,6 +36,11 @@ class SixChamberDeposition(Process):
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
         return unicode(_(u"6-chamber deposition ")) + self.deposition_number
+    def get_additional_template_context(self, process_context):
+        if process_context.user.has_perm("change_sixchamberdeposition"):
+            return {"edit_url": "6-chamber_deposition/edit/"+self.deposition_number}
+        else:
+            return {}
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
@@ -137,7 +149,7 @@ class Sample(models.Model):
         permissions = (("view_sample", "Can view all samples"),)
 
 class SampleAlias(models.Model):
-    name = models.CharField(_(u"name"), max_length=30, primary_key=True)
+    name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
     def __unicode__(self):
         return self.name

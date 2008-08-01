@@ -6,298 +6,311 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-30 16:22+0200\n"
-"PO-Revision-Date: 2008-07-30 16:23+0200\n"
+"POT-Creation-Date: 2008-07-31 16:09+0200\n"
+"PO-Revision-Date: 2008-07-31 16:10+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: samples/models.py:11
+#: samples/models.py:11 samples/models.py:128 samples/models.py:152
+#: samples/models.py:179
+msgid "name"
+msgstr "Name"
+
+#: samples/models.py:12
+msgid "email"
+msgstr "Email"
+
+#: samples/models.py:13
+msgid "alternative email"
+msgstr "alternative Email"
+
+#: samples/models.py:14 samples/models.py:194
+msgid "phone"
+msgstr "Telefon"
+
+#: samples/models.py:17
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: samples/models.py:12
+#: samples/models.py:18
 msgid "operator"
 msgstr "Operator"
 
-#: samples/models.py:23
+#: samples/models.py:19
+msgid "external operator"
+msgstr "externer Operator"
+
+#: samples/models.py:30
 msgid "process"
 msgstr "Prozess"
 
-#: samples/models.py:24 samples/models.py:123
+#: samples/models.py:135
 msgid "processes"
 msgstr "Prozesse"
 
-#: samples/models.py:27
+#: samples/models.py:34
 msgid "deposition number"
 msgstr "Depositionsnummer"
 
-#: samples/models.py:28
+#: samples/models.py:35
 msgid "carrier"
 msgstr "Carrier"
 
-#: samples/models.py:29 samples/models.py:63
+#: samples/models.py:75
 msgid "comments"
 msgstr "Kommentare"
 
-#: samples/models.py:31
+#: samples/models.py:38
 msgid "6-chamber deposition "
 msgstr "6-Kammer-Deposition "
 
-#: samples/models.py:33
+#: samples/models.py:45
 msgid "6-chamber deposition"
 msgstr "6-Kammer-Deposition"
 
-#: samples/models.py:34
+#: samples/models.py:46
 msgid "6-chamber depositions"
 msgstr "6-Kammer-Depositionen"
 
-#: samples/models.py:40
+#: samples/models.py:52
 msgid "Hall measurement"
 msgstr "Hall-Messung"
 
-#: samples/models.py:41
+#: samples/models.py:53
 msgid "Hall measurements"
 msgstr "Hall-Messungen"
 
-#: samples/models.py:55
+#: samples/models.py:67
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: samples/models.py:56
+#: samples/models.py:68
 msgid "chamber"
 msgstr "Kammer"
 
-#: samples/models.py:57
+#: samples/models.py:69
 msgid "deposition"
 msgstr "Deposition"
 
-#: samples/models.py:58
+#: samples/models.py:70
 msgid "deposition pressure"
 msgstr "Depositionsdruck"
 
-#: samples/models.py:58 samples/models.py:68
+#: samples/models.py:80
 msgid "with unit"
 msgstr "mit Einheit"
 
-#: samples/models.py:59
+#: samples/models.py:71
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: samples/models.py:59 samples/models.py:65 samples/models.py:70
+#: samples/models.py:82
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: samples/models.py:61
+#: samples/models.py:73
 msgid "substrate–electrode distance"
 msgstr "Abstand Substrat–Elektrode"
 
-#: samples/models.py:62
+#: samples/models.py:74
 msgid "in mm"
 msgstr "in mm"
 
-#: samples/models.py:64
+#: samples/models.py:76
 msgid "transfer in the chamber"
 msgstr "Transfer in die Kammer"
 
-#: samples/models.py:65
+#: samples/models.py:77
 msgid "pre-heat"
 msgstr "Pre-Heat"
 
-#: samples/models.py:66
+#: samples/models.py:78
 msgid "gas of gas pre-heat"
 msgstr "Gas im Gas-Pre-Heat"
 
-#: samples/models.py:67
+#: samples/models.py:79
 msgid "pressure of gas pre-heat"
 msgstr "Druck im Gas-Pre-Heat"
 
-#: samples/models.py:69
+#: samples/models.py:81
 msgid "time of gas pre-heat"
 msgstr "Zeit des Gas-Pre-Heats"
 
-#: samples/models.py:71
+#: samples/models.py:83
 msgid "heating temperature"
 msgstr "Heiztemperatur"
 
-#: samples/models.py:71
+#: samples/models.py:83
 msgid "in ℃"
 msgstr "in ℃"
 
-#: samples/models.py:72
+#: samples/models.py:84
 msgid "transfer out of the chamber"
 msgstr "Transfer aus der Kammer"
 
-#: samples/models.py:73
+#: samples/models.py:85
 msgid "plasma start power"
 msgstr "Startleistung Plasma"
 
-#: samples/models.py:74 samples/models.py:79
+#: samples/models.py:91
 msgid "in W"
 msgstr "in W"
 
-#: samples/models.py:75
+#: samples/models.py:87
 msgid "plasma start with carrier"
 msgstr "Plasma startet mit Carrier"
 
-#: samples/models.py:76
+#: samples/models.py:88
 msgid "deposition frequency"
 msgstr "Depositionsfrequenz"
 
-#: samples/models.py:77
+#: samples/models.py:89
 msgid "in MHz"
 msgstr "in MHz"
 
-#: samples/models.py:78
+#: samples/models.py:90
 msgid "deposition power"
 msgstr "Depositionsleistung"
 
-#: samples/models.py:80
+#: samples/models.py:92
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: samples/models.py:80
+#: samples/models.py:92
 msgid "in Torr"
 msgstr "in Torr"
 
-#: samples/models.py:82
+#: samples/models.py:94
 #, python-format
 msgid "layer %(number)d of %(deposition)s"
 msgstr "Schicht %(number)d von %(deposition)s"
 
-#: samples/models.py:84
+#: samples/models.py:96
 msgid "6-chamber layer"
 msgstr "6-Kammer-Deposition"
 
-#: samples/models.py:85
+#: samples/models.py:97
 msgid "6-chamber layers"
 msgstr "6-Kammer-Schichten"
 
-#: samples/models.py:92
+#: samples/models.py:104
 msgid "PH3 in 2% SiH4"
 msgstr "PH3 in 2% SiH4"
 
-#: samples/models.py:93
+#: samples/models.py:105
 msgid "TMB in 1% He"
 msgstr "TMB in 1% He"
 
-#: samples/models.py:94
+#: samples/models.py:106
 msgid "B2H6 in 5ppm H2"
 msgstr "B2H6 in 5ppm H2"
 
-#: samples/models.py:100
+#: samples/models.py:112
 msgid "PH3 in 10 ppm H2"
 msgstr "PH3 in 10 ppm H2"
 
-#: samples/models.py:103
+#: samples/models.py:115
 msgid "channel"
 msgstr "Channel"
 
-#: samples/models.py:104
+#: samples/models.py:116
 msgid "layer"
 msgstr "Schicht"
 
-#: samples/models.py:105
+#: samples/models.py:117
 msgid "gas and dilution"
 msgstr "Gas und Verdünnung"
 
-#: samples/models.py:106
+#: samples/models.py:118
 msgid "flow rate"
 msgstr "Flussrate"
 
-#: samples/models.py:106
+#: samples/models.py:118
 msgid "in sccm"
 msgstr "in sccm"
 
-#: samples/models.py:108
+#: samples/models.py:120
 #, python-format
 msgid "channel %(number)d of %(layer)s"
 msgstr "Channel %(number)d von %(layer)s"
 
-#: samples/models.py:110
+#: samples/models.py:122
 msgid "6-chamber channel"
 msgstr "6-Kammer-Channel"
 
-#: samples/models.py:111
+#: samples/models.py:123
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
 
-#: samples/models.py:116 samples/models.py:140 samples/models.py:167
-msgid "name"
-msgstr "Name"
-
-#: samples/models.py:117
+#: samples/models.py:129
 msgid "current location"
 msgstr "Aktueller Probenort"
 
-#: samples/models.py:119
+#: samples/models.py:131
 msgid "currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
-#: samples/models.py:120
+#: samples/models.py:132
 msgid "tags"
 msgstr "Tags"
 
-#: samples/models.py:120
+#: samples/models.py:132
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
-#: samples/models.py:122
+#: samples/models.py:134
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: samples/models.py:125
+#: samples/models.py:137
 msgid "group"
 msgstr "Gruppe"
 
-#: samples/models.py:135 samples/models.py:141
+#: samples/models.py:153
 msgid "sample"
 msgstr "Probe"
 
-#: samples/models.py:136 samples/models.py:168
+#: samples/models.py:180
 msgid "samples"
 msgstr "Proben"
 
-#: samples/models.py:145
+#: samples/models.py:157
 msgid "name alias"
 msgstr "Alternativname"
 
-#: samples/models.py:146
+#: samples/models.py:158
 msgid "name aliases"
 msgstr "Alternativnamen"
 
-#: samples/models.py:152
+#: samples/models.py:164
 msgid "parent"
 msgstr "Elter"
 
-#: samples/models.py:163
+#: samples/models.py:175
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: samples/models.py:164
+#: samples/models.py:176
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: samples/models.py:172
+#: samples/models.py:184
 msgid "sample series"
 msgstr "Probenserie"
 
-#: samples/models.py:173
+#: samples/models.py:185
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: samples/models.py:180
+#: samples/models.py:192
 msgid "user"
 msgstr "Benutzer"
 
-#: samples/models.py:181
+#: samples/models.py:193
 msgid "language"
 msgstr "Sprache"
-
-#: samples/models.py:182
-msgid "phone"
-msgstr "Telefon"
 
 #: samples/models.py:183
 msgid "my samples"
@@ -307,11 +320,11 @@ msgstr "meine Proben"
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: samples/templatetags/samples_extras.py:67
+#: samples/templatetags/samples_extras.py:75
 msgid "Yes"
 msgstr "Ja"
 
-#: samples/templatetags/samples_extras.py:67
+#: samples/templatetags/samples_extras.py:75
 msgid "No"
 msgstr "Nein"
 
@@ -464,39 +477,39 @@ msgstr "Sie müssen mindestens eine Probe markieren."
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:96
+#: samples/views/six_chamber_deposition.py:104
 msgid "Gas type is unknown."
 msgstr "Dieser Gastyp ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:182
+#: samples/views/six_chamber_deposition.py:190
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-#: samples/views/six_chamber_deposition.py:185
+#: samples/views/six_chamber_deposition.py:193
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: samples/views/six_chamber_deposition.py:191
-#: samples/views/six_chamber_deposition.py:198
+#: samples/views/six_chamber_deposition.py:199
+#: samples/views/six_chamber_deposition.py:206
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:253
+#: samples/views/six_chamber_deposition.py:260
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:257
+#: samples/views/six_chamber_deposition.py:264
 #, python-format
 msgid "Deposition %s was successfully added to the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:262
+#: samples/views/six_chamber_deposition.py:269
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/six_chamber_deposition.py:262
+#: samples/views/six_chamber_deposition.py:269
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
@@ -692,7 +705,15 @@ msgstr "Passwort wiederholen:"
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
-#: templates/edit_six_chamber_deposition.html:33
+#: templates/disambiguation.html:7
+#, fuzzy, python-format
+msgid ""
+"\n"
+"      The name %(alias)s is an alias for the following samples:\n"
+"    "
+msgstr "\nDer Name %(alias)s ist ein Alias für die folgenden Proben:"
+
+#: templates/edit_six_chamber_deposition.html:34
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
@@ -708,7 +729,11 @@ msgstr "diese Schicht duplizieren"
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
-#: templates/edit_six_chamber_deposition.html:249
+#: templates/edit_six_chamber_deposition.html:242
+msgid "delete"
+msgstr "löschen"
+
+#: templates/edit_six_chamber_deposition.html:252
 msgid "Channel error"
 msgstr "Fehler in Channel"
 
@@ -786,13 +811,17 @@ msgstr "Geschichte der Probe „"
 msgid "”"
 msgstr "“"
 
+#: templates/show_sample.html:22
+msgid "edit"
+msgstr "ändern"
+
 #: templates/show_sample_split.html:7
 msgid "The parental sample"
-msgstr ""
+msgstr "Die elterliche Probe"
 
 #: templates/show_sample_split.html:9
 msgid "was split into the following pieces:"
-msgstr ""
+msgstr "wurde in die folgenden Stücke zerlegt:"
 
 #: templates/show_sample_split.html:11
 msgid ""
@@ -800,11 +829,12 @@ msgid ""
 "      The sample was split into the following pieces:\n"
 "    "
 msgstr ""
+"\n"
+"Die Probe wurde in die folgenden Stücke zerlegt:"
 
 #: templates/show_sample_split.html:26
-#, fuzzy
 msgid "this one"
-msgstr "Telefon"
+msgstr "diese hier"
 
 #: templates/split_and_rename.html:11
 msgid "New sample name(s)"
@@ -837,9 +867,6 @@ msgstr "Fehler im Probennamen"
 
 #~ msgid "Add 6-chamber deposition"
 #~ msgstr "Neue 6-Kammer-Deposition"
-
-#~ msgid "email"
-#~ msgstr "Email"
 
 #~ msgid "operators"
 #~ msgstr "Operatoren"
