@@ -7,6 +7,12 @@
   <span class="aliases">{% for alias in sample.aliases.all %}
     alias <strong>{{ alias }}</strong> {% endfor %}</span></h1>{% endblock %}
 
+{% block css %}
+<style type="text/css">
+  form p { text-align: right; margin-bottom: 0pt }
+</style>
+{% endblock %}
+
 {% block content %}
   {{ session.last_db_time_in_ms }}
   {% for process in processes %}
@@ -18,8 +24,13 @@
         {% endwith %}
         {{ process.timestamp }}
       </p>
-      <h2>{{ process.name }}</h2>
+      <h2>{{ process.name }}{% if process.edit_url %}
+            <a class="edit-button" href="../{{ process.edit_url }}">{% trans 'edit' %}</a>{% endif %}</h2>
       {{ process.html_body }}
     </div>
   {% endfor %}
+  <form method="post" action="">
+    {{ is_my_sample_form.as_p }}
+    <p class="submit-button" style="margin-top: 0pt"><input type="submit" /></p>
+  </form>
 {% endblock %}
