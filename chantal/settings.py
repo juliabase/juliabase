@@ -91,7 +91,7 @@ INSTALLED_APPS = (
     'chantal.samples',
 )
 
-IS_TESTSERVER = len(sys.argv) == 2
+IS_TESTSERVER = len(sys.argv) >= 2
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login/"
@@ -101,7 +101,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
-                               "chantal.samples.context_processors.db_access_time",
+                               "chantal.samples.context_processors.parse_session_data",
                                )
 
 AUTH_PROFILE_MODULE = 'samples.userdetails'

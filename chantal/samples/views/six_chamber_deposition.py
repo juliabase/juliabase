@@ -13,46 +13,39 @@ from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixCha
 from chantal.samples import models
 from . import utils
 from .utils import check_permission, DataModelForm
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
+import django.contrib.auth.models
+
+class OperatorChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, operator):
+        return operator.get_full_name() or unicode(operator)
 
 class DepositionForm(ModelForm):
-    sample_list = forms.CharField(label=_("Sample list"), widget=forms.TextInput(attrs={"size": "40"}),
-                                  help_text=_("if more than one sample, separate them with commas"))
+    _ = ugettext_lazy
+    sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
+    operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
+        user_details = keyw.pop("user_details")
         initial = keyw.get("initial", {})
-        initial["sample_list"] = ", ".join([sample.name for sample in deposition.samples.all()]) if deposition else ""
         keyw["initial"] = initial
+        self.sample_list.queryset = user_details.my_samples
+        self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
         self.fields["timestamp"].widget = split_widget
+        self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
     def clean_sample_list(self):
-        sample_list = [name.strip() for name in self.cleaned_data["sample_list"].split(",")]
-        invalid_sample_names = set()
-        duplicate_sample_names = set()
-        normalized_sample_names = set()
-        for sample_name in [name for name in sample_list if name]:
-            normalized_sample_name = utils.normalize_sample_name(sample_name)
-            if not normalized_sample_name:
-                invalid_sample_names.add(sample_name)
-            elif normalized_sample_name in normalized_sample_names:
-                duplicate_sample_names.add(sample_name)
-            else:
-                normalized_sample_names.add(normalized_sample_name)
-        if invalid_sample_names:
-            raise ValidationError(_("I don't know %s.") % ", ".join(invalid_sample_names))
-        if duplicate_sample_names:
-            raise ValidationError(_("Multiple occurences of %s.") % ", ".join(duplicate_sample_names))
-        if not normalized_sample_names:
-            raise ValidationError(_("You must give at least one valid sample name."))
-        return ",".join(normalized_sample_names)
+        sample_list = list(set(self.cleaned_data["sample_list"]))
+        if not sample_list:
+            raise ValidationError(_(u"You must mark at least one sample."))
+        return sample_list
     def save(self, *args, **keyw):
         deposition = super(DepositionForm, self).save(*args, **keyw)
-        samples = [utils.get_sample(sample_name) for sample_name in self.cleaned_data["sample_list"].split(",")]
-        deposition.samples = samples
+        deposition.samples = self.cleaned_data["sample_list"]
         return deposition
     class Meta:
         model = SixChamberDeposition
@@ -76,7 +69,7 @@ class LayerForm(DataModelForm):
             self.fields[fieldname].max_value = max_value
     def clean_chamber(self):
         if self.cleaned_data["chamber"] not in self.chamber_names:
-            raise ValidationError(_("Name is unknown."))
+            raise ValidationError(_(u"Name is unknown."))
         return self.cleaned_data["chamber"]
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
@@ -100,7 +93,7 @@ class ChannelForm(ModelForm):
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):
         if self.cleaned_data["gas"] not in self.gas_names:
-            raise ValidationError(_("Gas type is unknown."))
+            raise ValidationError(_(u"Gas type is unknown."))
         return self.cleaned_data["gas"]
     class Meta:
         model = SixChamberChannel
@@ -186,23 +179,23 @@ def is_referencially_valid(deposition, deposition_form, layer_forms, channel_for
         not deposition or deposition.deposition_number != deposition_form.cleaned_data["deposition_number"]):
         if models.SixChamberDeposition.objects.filter(deposition_number=
                                                       deposition_form.cleaned_data["deposition_number"]).count():
-            utils.append_error(deposition_form, "__all__", _("This deposition number exists already."))
+            utils.append_error(deposition_form, "__all__", _(u"This deposition number exists already."))
             referencially_valid = False
     if not layer_forms:
-        utils.append_error(deposition_form, "__all__", _("No layers given."))
+        utils.append_error(deposition_form, "__all__", _(u"No layers given."))
         referencially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                utils.append_error(layer_form, "__all__", _("Number is a duplicate."))
+                utils.append_error(layer_form, "__all__", _(u"Number is a duplicate."))
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    utils.append_error(channel_form, "__all__", _("Number is a duplicate."))
+                    utils.append_error(channel_form, "__all__", _(u"Number is a duplicate."))
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referencially_valid
@@ -246,20 +239,27 @@ def forms_from_database(deposition):
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number) if deposition_number else None
+    user_details = request.user.get_profile()
     if request.method == "POST":
-        deposition_form = DepositionForm(request.POST, instance=deposition)
+        deposition_form = DepositionForm(request.POST, instance=deposition, user_details=user_details)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
         referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referencially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
-            return HttpResponseRedirect("../../" if deposition_number
-                                        else "../../processes/split_and_rename_samples/%d" % deposition.id)
+            if deposition_number:
+                request.session["success_report"] = \
+                    _(u"Deposition %s was successfully changed in the database.") % deposition.deposition_number
+                return HttpResponseRedirect("../../")
+            else:
+                request.session["success_report"] = \
+                    _(u"Deposition %s was successfully added to the database.") % deposition.deposition_number
+                return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
-        deposition_form = DepositionForm(instance=deposition)
+        deposition_form = DepositionForm(instance=deposition, user_details=user_details)
         layer_forms, channel_form_lists = forms_from_database(deposition)
-    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _("New 6-chamber deposition")
+    title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists)},

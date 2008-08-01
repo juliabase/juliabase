@@ -4,7 +4,7 @@
 import re
 from django.forms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect, QueryDict
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm
@@ -19,11 +19,11 @@ def clean_time_field(value):
         return ""
     match = time_pattern.match(value)
     if not match:
-        raise ValidationError(_("Time must be given in the form HH:MM:SS."))
+        raise ValidationError(_(u"Time must be given in the form HH:MM:SS."))
     hours, minutes, seconds = match.group("H"), int(match.group("M")), int(match.group("S"))
     hours = int(hours) if hours is not None else 0
     if minutes >= 60 or seconds >= 60:
-        raise ValidationError(_("Minutes and seconds must be smaller than 60."))
+        raise ValidationError(_(u"Minutes and seconds must be smaller than 60."))
     if not hours:
         return "%d:%02d" % (minutes, seconds)
     else:
@@ -36,13 +36,13 @@ def clean_quantity_field(value, units):
     value = unicode(value).replace(",", ".").replace(u"μ", u"µ")
     match = quantity_pattern.match(value)
     if not match:
-        raise ValidationError(_("Must be a physical quantity with number and unit."))
+        raise ValidationError(_(u"Must be a physical quantity with number and unit."))
     original_unit = match.group("unit").lower()
     for unit in units:
         if unit.lower() == original_unit.lower():
             break
     else:
-        raise ValidationError(_("The unit is invalid.  Valid units are: %s")%", ".join(units))
+        raise ValidationError(_(u"The unit is invalid.  Valid units are: %s")%", ".join(units))
     return match.group("number") + " " + unit
     
 def int_or_zero(number):
@@ -77,18 +77,14 @@ def get_sample(sample_name):
     try:
         sample = models.Sample.objects.get(name=sample_name)
     except models.Sample.DoesNotExist:
-        try:
-            sample_alias = models.SampleAlias.objects.get(name=sample_name)
-        except models.SampleAlias.DoesNotExist:
-            return
-        else:
-            return sample_alias.sample
+        aliases = [alias.sample for alias in models.SampleAlias.objects.filter(name=sample_name)]
+        return aliases or None
     else:
         return sample
 
 def does_sample_exist(sample_name):
-    return bool(models.Sample.objects.filter(name=sample_name).count() or
-                models.SampleAlias.objects.filter(name=sample_name).count())
+    return (models.Sample.objects.filter(name=sample_name).count() or
+            models.SampleAlias.objects.filter(name=sample_name).count())
 
 def normalize_sample_name(sample_name):
     if models.Sample.objects.filter(name=sample_name).count():

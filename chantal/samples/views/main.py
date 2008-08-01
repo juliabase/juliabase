@@ -12,18 +12,17 @@ from django.contrib.sites.models import Site
 import django.contrib.auth.models
 from django import oldforms
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext, ungettext
+from django.utils.translation import ugettext as _, ungettext
 import django
 from django.conf import settings
 
 @login_required
 def main_menu(request):
-    return render_to_response("main_menu.html", {"title": _("Main menu")},
+    return render_to_response("main_menu.html", {"title": _(u"Main menu")},
                               context_instance=RequestContext(request))
 
 def permission_error(request, failed_action):
-    return render_to_response("permission_error.html", {"title": _("Access denied")},
+    return render_to_response("permission_error.html", {"title": _(u"Access denied")},
                               context_instance=RequestContext(request))
 
 def breakup_time(seconds):
@@ -49,20 +48,19 @@ def breakup_time(seconds):
     assert not seconds
     if not current_timeunit_list:
         current_timeunit_list = [ungettext(u"%(count)d second", u"%(count)d seconds", 0) % {"count": 0 }]
-    _ = ugettext
     if len(current_timeunit_list) == 1:
         return current_timeunit_list[0]
     elif len(current_timeunit_list) == 2:
-        return current_timeunit_list[0] + _(" and ") + current_timeunit_list[1]
+        return current_timeunit_list[0] + _(u" and ") + current_timeunit_list[1]
     else:
-        return _(", ").join(current_timeunit_list[:-1]) + _(", and ") + current_timeunit_list[-1]
+        return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
 
 def about(request):
     web_server_uptime = \
-        _("up and running for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
+        _(u"up and running for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
     os_uptime = float(open("/proc/uptime").read().split()[0])
-    os_uptime = _("up and running for %(time)s") % {"time": breakup_time(os_uptime)}
-    short_messages = [_("Chantal revision %s") % settings.CHANTAL_REVNO]
+    os_uptime = _(u"up and running for %(time)s") % {"time": breakup_time(os_uptime)}
+    short_messages = [_(u"Chantal revision %s") % settings.CHANTAL_REVNO]
     return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
                                              "os_uptime": os_uptime,
                                              "web_server_version": settings.APACHE_VERSION,

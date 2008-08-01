@@ -13,17 +13,10 @@ from django.contrib.sites.models import Site
 from django import oldforms
 from django.http import HttpResponseRedirect
 
-def db_access_time(request):
-    """
-    Returns context variables required by apps that use Django's authentication
-    system.
-
-    If there is no 'user' attribute in the request, uses AnonymousUser (from
-    django.contrib.auth).
-    """
-    if "db_access_time_in_ms" in request.session:
-        db_access_time_in_ms = request.session["db_access_time_in_ms"]
-        del request.session["db_access_time_in_ms"]
-        return {"db_access_time_in_ms": db_access_time_in_ms}
-    else:
-        return {}
+def parse_session_data(request):
+    result = {}
+    for key in ["db_access_time_in_ms", "success_report"]:
+        if key in request.session:
+            result[key] = request.session[key]
+            del request.session[key]
+    return result
