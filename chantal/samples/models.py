@@ -42,6 +42,9 @@ class Deposition(Process):
             raise Exception("internal error: deposition not found")
     def __unicode__(self):
         return unicode(self.number)
+    class Meta:
+        verbose_name = _(u"deposition")
+        verbose_name_plural = _(u"depositions")
 
 class SixChamberDeposition(Deposition):
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
@@ -50,7 +53,7 @@ class SixChamberDeposition(Deposition):
         return unicode(_(u"6-chamber deposition ")) + super(SixChamberDeposition, self).__unicode__()
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
-            return {"edit_url": "6-chamber_deposition/edit/"+self.deposition_number}
+            return {"edit_url": "6-chamber_deposition/edit/"+self.number}
         else:
             return {}
     class Meta:

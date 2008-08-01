@@ -11,7 +11,7 @@ browser.set_handle_robots(False)
 
 class SixChamberDeposition(object):
     def __init__(self, number, carrier, operator, timestamp=None):
-        self.number = deposition_number
+        self.number = number
         self.carrier = carrier
         self.operator = operator
         self.timestamp = timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
