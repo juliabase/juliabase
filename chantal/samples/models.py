@@ -199,6 +199,7 @@ class UserDetails(models.Model):
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
 
+admin.site.register(ExternalOperator)
 admin.site.register(SixChamberDeposition)
 admin.site.register(HallMeasurement)
 admin.site.register(SixChamberLayer)
