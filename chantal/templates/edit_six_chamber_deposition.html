@@ -11,7 +11,6 @@
   th { text-align: right; vertical-align: top; padding-right: 1em }
   table.channels * th { text-align: center; padding: 0pt }
   td { right; vertical-align: top }
-  input.vTimeField { margin-left: 2em }
 </style>
 {% endblock %}
 
@@ -35,33 +34,31 @@
       {% endif %}
     </td></tr></table>
   {% endif %}
-  <p>
-    <label for="id_{{ deposition.deposition_number.html_name }}" style="margin-right: 0.5em"
-           >{{ deposition.deposition_number.label }}:</label>{{ deposition.deposition_number }}
-    <label for="id_{{ deposition.carrier.html_name }}" style="margin-left: 2em; margin-right: 0.5em"
-           >{{ deposition.carrier.label }}:</label><span class="value">{{ deposition.carrier }}</span>
-  </p>
-
-  <p><label for="id_{{ deposition.sample_list.html_name }}" style="margin-right: 0.5em"
-           >{{ deposition.sample_list.label }}:</label>{{ deposition.sample_list }}
-    ({{ deposition.sample_list.help_text }})</p>
-
-  <div style="float: right">
-    <table>
-      <tr>
-        <td class="label">
-          <label for="id_{{ deposition.operator.html_name }}">{{ deposition.operator.label }}:</label>
-        </td>
-        <td class="value">{{ deposition.operator }}</td>
-      </tr>
-      <tr>
-        <td class="label" style="vertical-align: top">
-          <label for="id_{{ deposition.timestamp.html_name }}">{{ deposition.timestamp.label }}:</label>
-        </td>
-        <td class="value">{{ deposition.timestamp }}</td>
-      </tr>
-    </table>
-  </div>
+  <table cellpadding="5">
+    <tr>
+      <td style="text-align: right"><label for="id_{{ deposition.deposition_number.html_name }}"
+           >{{ deposition.deposition_number.label }}:</label></td>
+      <td>{{ deposition.deposition_number }}</td>
+      <td rowspan="4" style="padding-left: 2em">
+        <label for="id_{{ deposition.sample_list.html_name }}" style="margin-right: 0.5em"
+                             >{{ deposition.sample_list.label }}:</label>{{ deposition.sample_list }}</td>
+    </tr>
+    <tr>
+      <td style="text-align: right"><label for="id_{{ deposition.carrier.html_name }}"
+                                           >{{ deposition.carrier.label }}:</label></td>
+      <td>{{ deposition.carrier }}</td>
+    </tr>
+    <tr>
+      <td style="text-align: right"><label for="id_{{ deposition.timestamp.html_name }}"
+                 >{{ deposition.timestamp.label }}:</label></td>
+      <td style="width: 0pt">{{ deposition.timestamp }}</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">
+        <label for="id_{{ deposition.operator.html_name }}">{{ deposition.operator.label }}:</label></td>
+      <td>{{ deposition.operator }}</td>
+    </tr>
+  </table>
 
   <p>
     <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:</label
@@ -239,7 +236,7 @@
                               <th>{{ channels.0.gas.label }}</th>
                               <th>{{ channels.0.flow_rate.label }}<br /><span class="help"
                                                                               >({{ channels.0.flow_rate.help_text }})</th>
-                              <th>delete</th>
+                              <th>{% trans 'delete' %}</th>
                             </tr>
                             {% for channel in channels %}
                               {% if channel.errors or channel.non_field_errors %}
