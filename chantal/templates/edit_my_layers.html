@@ -1,0 +1,23 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form method="post" action="">
+  <table>
+    <tr>
+      <th>{{ my_layers.0.nickname.label }}</th>
+      <th>{{ my_layers.0.deposition_and_layer.label }}</th>
+      <th>{{ my_layers.0.delete.label }}</th>
+    </tr>
+    {% for layer in my_layers %}
+      <tr>
+        <td>{{ layer.nickname }}</td>
+        <td>{{ layer.deposition_and_layer }}</td>
+        <td>{{ layer.delete }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p class="submit-button"><input type="submit" /></p>
+</form>
+{% endblock %}

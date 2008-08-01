@@ -96,6 +96,14 @@ def normalize_sample_name(sample_name):
     else:
         return sample_alias.sample.name
 
+def get_deposition(deposition_number):
+    depositions = []
+    for deposition_type in [models.SixChamberDeposition]:
+        depositions.extend(deposition_type.objects.filter(deposition_number=deposition_number))
+    if len(depositions) == 1:
+        return depositions[0]
+    return depositions or None
+
 level0_pattern = re.compile(ur"(?P<level0_index>\d+)-(?P<id>.+)")
 level1_pattern = re.compile(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
 def normalize_prefixes(post_data):
