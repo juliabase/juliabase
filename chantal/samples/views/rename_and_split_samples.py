@@ -15,7 +15,7 @@ from . import utils
 
 class SampleForm(Form):
     _ = ugettext_lazy
-    name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"readonly": "readonly",
+    name = forms.CharField(label=_(u"Name"), max_length=30, widget=forms.TextInput(attrs={"readonly": "readonly",
                                                                         "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
