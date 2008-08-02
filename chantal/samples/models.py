@@ -64,10 +64,21 @@ six_chamber_chamber_choices = (
     ("TL1", "TL1"),
     ("TL2", "TL2"))
 
-class SixChamberLayer(models.Model):
+class Layer(models.Model):
     number = models.IntegerField(_(u"layer number"))
-    chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)
+    # Validity constraint:  There must be a ForeignField called "deposition" to
+    # the actual deposition Model, with related_name="layers".  (Otherwise,
+    # duck typing doesn't work.)
+    class Meta:
+        abstract = True
+        ordering = ['number']
+        unique_together = ("deposition", "number")
+        verbose_name = _(u"layer")
+        verbose_name_plural = _(u"layers")
+
+class SixChamberLayer(Layer):
     deposition = models.ForeignKey(SixChamberDeposition, related_name="layers", verbose_name=_(u"deposition"))
+    chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)
     pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
     time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
     substrate_electrode_distance = \
@@ -93,11 +104,9 @@ class SixChamberLayer(models.Model):
     base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
     def __unicode__(self):
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
-    class Meta:
+    class Meta(Layer.Meta):
         verbose_name = _(u"6-chamber layer")
         verbose_name_plural = _(u"6-chamber layers")
-        unique_together = ("deposition", "number")
-        ordering = ['number']
 
 six_chamber_gas_choices = (
     ("SiH4", "SiH4"),
