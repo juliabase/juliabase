@@ -203,6 +203,7 @@ class UserDetails(models.Model):
     language = models.CharField(_(u"language"), max_length=10, choices=languages)
     phone = models.CharField(_(u"phone"), max_length=20)
     my_samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"my samples"))
+    my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
