@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.forms import Form
 from django import forms
-from django.newforms.util import ValidationError
+from django.forms.util import ValidationError
 from . import utils
 
 class SampleForm(Form):
