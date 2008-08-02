@@ -11,6 +11,18 @@
       <th>{{ my_layers.0.delete.label }}</th>
     </tr>
     {% for layer in my_layers %}
+      {% if layer.errors %}
+        <tr>
+          <td colspan="0" class="error-messages">
+            {% for field in layer %}
+              {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+            {% endfor %}
+            {% if layer.non_field_errors %}
+              <p>{% trans 'My Layer error' %}</p>{{ layer.non_field_errors }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endif %}
       <tr>
         <td>{{ layer.nickname }}</td>
         <td>{{ layer.deposition_and_layer }}</td>
