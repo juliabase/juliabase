@@ -28,7 +28,7 @@ class ProcessContext(object):
         self.user = user
         self.__process = self.cutoff_timestamp = self.html_body = None
     def __set_process(self, process):
-        self.__process = process.find_actual_process()
+        self.__process = process.find_actual_instance()
     process = property(lambda self: self.__process, __set_process)
     def split(self, split):
         result = copy.copy(self)
