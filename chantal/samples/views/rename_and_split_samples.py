@@ -104,8 +104,8 @@ def forms_from_database(samples, deposition_number):
 @login_required
 def split_and_rename(request, process_id):
     process = get_object_or_404(models.Process, pk=process_id)
-    process = process.find_actual_process()
-    if not isinstance(process, (models.SixChamberDeposition,)):
+    process = process.find_actual_instance()
+    if not isinstance(process, models.Deposition):
         raise Http404
     if not has_permission_for_process(request.user, process):
         return HttpResponseRedirect("permission_error")
@@ -121,7 +121,7 @@ def split_and_rename(request, process_id):
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
             return HttpResponseRedirect("../../")
     else:
-        sample_forms, new_name_form_lists = forms_from_database(process.samples, process.deposition_number)
+        sample_forms, new_name_form_lists = forms_from_database(process.samples, process.number)
     return render_to_response("split_and_rename.html",
                               {"title": _(u"Bulk sample rename for %s") % process_name,
                                "samples": zip(sample_forms, new_name_form_lists)},
