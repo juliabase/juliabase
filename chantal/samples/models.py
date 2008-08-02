@@ -17,14 +17,6 @@ class Process(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
-    def find_actual_instance(self):
-        for process_type in process_types:
-            if hasattr(self, process_type):
-                process = getattr(self, process_type)
-                if hasattr(process, "find_actual_instance"):
-                    return process.find_actual_instance()
-        else:
-            raise Exception("internal error: process not found")
     def __unicode__(self):
         return unicode(self.find_actual_instance())
     class Meta:
@@ -34,12 +26,6 @@ class Process(models.Model):
 
 class Deposition(Process):
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
-    def find_actual_instance(self):
-        for deposition_type in deposition_types:
-            if hasattr(self, deposition_type):
-                return getattr(self, deposition_type)
-        else:
-            raise Exception("internal error: deposition not found")
     def __unicode__(self):
         return unicode(self.number)
     class Meta:
@@ -227,7 +213,29 @@ admin.site.register(UserDetails)
 
 import copy, inspect
 _globals = copy.copy(globals())
-process_types = [cls.__name__.lower() for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, Process)]
-deposition_types = [cls.__name__.lower() for cls in _globals.values()
-                    if inspect.isclass(cls) and issubclass(cls, Deposition)]
+all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
+class_hierarchy = inspect.getclasstree(all_models)
+def find_actual_instance(self):
+    if not self.direct_subclasses:
+        return self
+    for cls in self.direct_subclasses:
+        name = cls.__name__.lower()
+        if hasattr(self, name):
+            instance = getattr(self, name)
+            return instance.find_actual_instance()
+    else:
+        raise Exception("internal error: instance not found")
+models.Model.find_actual_instance = find_actual_instance
+def inject_direct_subclasses(parent, hierarchy):
+    i = 0
+    while i < len(hierarchy):
+        hierarchy[i][0].direct_subclasses = []
+        if parent:
+            parent.direct_subclasses.append(hierarchy[i][0])
+        if i + 1 < len(hierarchy) and isinstance(hierarchy[i+1], list):
+            inject_direct_subclasses(hierarchy[i][0], hierarchy[i+1])
+            i += 2
+        else:
+            i += 1
+inject_direct_subclasses(None, class_hierarchy)
 del _globals, cls
