@@ -29,6 +29,7 @@ class DepositionForm(ModelForm):
         deposition = keyw.get("instance")
         user_details = keyw.pop("user_details")
         initial = keyw.get("initial", {})
+        initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
         self.sample_list.queryset = user_details.my_samples
         self.operator.queryset = django.contrib.auth.models.User.objects.all()
