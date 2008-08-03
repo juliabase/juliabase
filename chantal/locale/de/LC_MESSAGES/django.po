@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-02 22:58+0200\n"
-"PO-Revision-Date: 2008-08-02 23:03+0200\n"
+"POT-Creation-Date: 2008-08-03 09:58+0200\n"
+"PO-Revision-Date: 2008-08-03 10:01+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -487,7 +487,7 @@ msgstr "Dieser Probenname ist schon vergeben."
 
 #: samples/views/rename_and_split_samples.py:121
 msgid "Samples were successfully split and/or renamed."
-msgstr ""
+msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
 #: samples/views/rename_and_split_samples.py:126
 #, python-format
@@ -504,59 +504,58 @@ msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
 #: samples/views/sample.py:81
-#, fuzzy
 msgid "Ambiguous sample name"
-msgstr "Alter Probenname"
+msgstr "Mehrdeutiger Probenname"
 
-#: samples/views/six_chamber_deposition.py:26
+#: samples/views/six_chamber_deposition.py:27
 msgid "Samples"
 msgstr "Proben"
 
-#: samples/views/six_chamber_deposition.py:27
+#: samples/views/six_chamber_deposition.py:28
 msgid "Operator"
 msgstr "Operator"
 
-#: samples/views/six_chamber_deposition.py:44
+#: samples/views/six_chamber_deposition.py:46
 msgid "You must mark at least one sample."
 msgstr "Sie müssen mindestens eine Probe markieren."
 
-#: samples/views/six_chamber_deposition.py:71
+#: samples/views/six_chamber_deposition.py:73
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:95
+#: samples/views/six_chamber_deposition.py:97
 msgid "Gas type is unknown."
 msgstr "Dieser Gastyp ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:180
+#: samples/views/six_chamber_deposition.py:182
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-#: samples/views/six_chamber_deposition.py:183
+#: samples/views/six_chamber_deposition.py:185
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: samples/views/six_chamber_deposition.py:189
-#: samples/views/six_chamber_deposition.py:196
+#: samples/views/six_chamber_deposition.py:191
+#: samples/views/six_chamber_deposition.py:198
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:251
+#: samples/views/six_chamber_deposition.py:253
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
-msgstr ""
+msgstr "Die Deposition %s wurde erfolgreich in der Datenbank geändert."
 
-#: samples/views/six_chamber_deposition.py:255
+#: samples/views/six_chamber_deposition.py:257
 #, python-format
 msgid "Deposition %s was successfully added to the database."
-msgstr ""
+msgstr "Die Deposition %s wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/views/six_chamber_deposition.py:260
+#: samples/views/six_chamber_deposition.py:262
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/six_chamber_deposition.py:260
+#: samples/views/six_chamber_deposition.py:262
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
@@ -753,7 +752,7 @@ msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
 #: templates/disambiguation.html:8
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "      The name %(alias)s is an alias for the following samples:\n"
@@ -797,6 +796,10 @@ msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 #: templates/edit_six_chamber_deposition.html:281
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
+
+#: templates/edit_six_chamber_deposition.html:283
+msgid "Nickname of My Layer to be added:"
+msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll:"
 
 #: templates/login.html:5 templates/login.html.py:6
 msgid "Chantal login"
