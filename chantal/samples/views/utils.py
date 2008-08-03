@@ -136,3 +136,20 @@ def normalize_prefixes(post_data):
     else:
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
+
+def get_my_layers(user_details, deposition_model, required=True):
+    items = [item.split(":", 1) for item in user_details.my_layers.split(",")]
+    items = [(item[0].strip(),) + tuple(item[1].rsplit("-", 1)) for item in items]
+    items = [(item[0], int(item[1]), int(item[2])) for item in items]
+    fitting_items = [] if required else [(u"", u"---------")]
+    for nickname, deposition_id, layer_number in items:
+        try:
+            deposition = deposition_model.objects.get(pk=deposition_id)
+        except deposition_model.DoesNotExist:
+            continue
+        try:
+            layer = deposition.layers.get(number=layer_number)
+        except:
+            continue
+        fitting_items.append((u"%d-%d" % (deposition_id, layer_number), nickname))
+    return fitting_items

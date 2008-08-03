@@ -25,14 +25,19 @@ class OperatorChoiceField(forms.ModelChoiceField):
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
+    my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
     operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
         user_details = keyw.pop("user_details")
         initial = keyw.get("initial", {})
-        initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
+        if deposition:
+            initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
-        self.sample_list.queryset = models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details))
+        self.sample_list.queryset = \
+            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)) if deposition \
+            else user_details.my_samples
+        self.my_layer_to_be_added.choices = utils.get_my_layers(user_details, SixChamberDeposition, required=False)
         self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
