@@ -16,6 +16,7 @@ from .utils import check_permission, DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 import django.contrib.auth.models
+from django.db.models import Q
 
 class OperatorChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, operator):
@@ -31,7 +32,7 @@ class DepositionForm(ModelForm):
         initial = keyw.get("initial", {})
         initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
-        self.sample_list.queryset = user_details.my_samples
+        self.sample_list.queryset = models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details))
         self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
