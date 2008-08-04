@@ -280,8 +280,7 @@
 
   <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
     >&nbsp;<input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
-  <p><label for="id_{{ deposition.my_layer_to_be_added.html_name }}">{{ deposition.my_layer_to_be_added.label }}:</label
-    >&nbsp;{{ deposition.my_layer_to_be_added }}</p>
+  {{ add_my_layer.as_p }}
 
   <p class="submit-button"><input type="submit" /></p>
 </form>

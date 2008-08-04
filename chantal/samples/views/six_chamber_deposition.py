@@ -5,7 +5,7 @@ import re
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.forms import ModelForm
+from django.forms import ModelForm, Form
 from django.forms.util import ValidationError
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -22,10 +22,17 @@ class OperatorChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, operator):
         return operator.get_full_name() or unicode(operator)
 
+class AddMyLayerForm(Form):
+    _ = ugettext_lazy
+    my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
+    def __init__(self, data=None, **keyw):
+        user_details = keyw.pop("user_details")
+        super(AddMyLayerForm, self).__init__(data, **keyw)
+        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, SixChamberDeposition, required=False)
+
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
     operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
@@ -34,10 +41,12 @@ class DepositionForm(ModelForm):
         if deposition:
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
+        # Configuring the fields before the call to the parental constructor
+        # works only in ModelForm, not in Form.  Maybe is should be default
+        # here, too.  (See fields["..."] below.)
         self.sample_list.queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)) if deposition \
             else user_details.my_samples
-        self.my_layer_to_be_added.choices = utils.get_my_layers(user_details, SixChamberDeposition, required=False)
         self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
@@ -115,8 +124,9 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists):
     return valid
 
 def change_structure(layer_forms, channel_form_lists, post_data):
-    # Attention: `post_data` doesn't contain the normalized prefixes, so it
-    # must not be used for anything except the `change_params`.
+    # Attention: `post_data` doesn't contain the normalised prefixes, so it
+    # must not be used for anything except the `change_params`.  (The
+    # structural-change prefixes are normalised always!)
     structure_changed = False
     change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
     biggest_layer_number = max([utils.int_or_zero(layer.uncleaned_data("number")) for layer in layer_forms] + [0])
@@ -134,8 +144,8 @@ def change_structure(layer_forms, channel_form_lists, post_data):
             layer_index = len(layer_forms) + len(new_layers)
             new_layers.append(LayerForm(initial=layer_data, prefix=str(layer_index)))
             new_channel_lists.append(
-                    [ChannelForm(initial=channel.cleaned_data, prefix="%d_%d"%(layer_index, channel_index))
-                     for channel_index, channel in enumerate(channel_form_lists[i])])
+                [ChannelForm(initial=channel.cleaned_data, prefix="%d_%d"%(layer_index, channel_index))
+                 for channel_index, channel in enumerate(channel_form_lists[i])])
 
     # Second step: Add layers
     to_be_added_layers = utils.int_or_zero(change_params["structural-change-add-layers"])
@@ -147,8 +157,31 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         new_layers.append(LayerForm(initial={"number": biggest_layer_number+1}, prefix=str(layer_index)))
         biggest_layer_number += 1
         new_channel_lists.append([])
+    # Third step: Add My Layer
+    my_layer = change_params["structural-change-my_layer_to_be_added"]
+    if my_layer:
+        structure_changed = True
+        deposition_id, layer_number = my_layer.split("-")
+        deposition_id, layer_number = int(deposition_id), int(layer_number)
+        try:
+            deposition = models.Deposition.objects.get(pk=deposition_id).find_actual_instance()
+        except models.Deposition.DoesNotExist:
+            pass
+        else:
+            layer_query = deposition.layers.filter(number=layer_number)
+            if layer_query.count() == 1:
+                layer = layer_query[0]
+                layer_data = layer_query.values()[0]
+                layer_data["number"] = biggest_layer_number + 1
+                biggest_layer_number += 1
+                layer_index = len(layer_forms) + len(new_layers)
+                new_layers.append(LayerForm(initial=layer_data, prefix=str(layer_index)))
+                new_channels = []
+                for channel_index, channel_data in enumerate(layer.channels.values()):
+                    new_channels.append(ChannelForm(initial=channel_data, prefix="%d_%d"%(layer_index, channel_index)))
+                new_channel_lists.append(new_channels)
 
-    # Third and forth steps: Add and delete channels
+    # Forth and fifth steps: Add and delete channels
     for layer_index, channels in enumerate(channel_form_lists):
         # Add channels
         to_be_added_channels = utils.int_or_zero(change_params.get(
@@ -167,7 +200,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         for channel_index in reversed(to_be_deleted_channels):
             del channels[channel_index]
 
-    # Fifth step: Delete layers
+    # Sixth step: Delete layers
     to_be_deleted_layers = [layer_index for layer_index in range(len(layer_forms))
                             if "structural-change-delete-layerindex-%d" % layer_index in change_params]
     structure_changed = structure_changed or bool(to_be_deleted_layers)
@@ -264,8 +297,10 @@ def edit(request, deposition_number):
     else:
         deposition_form = DepositionForm(instance=deposition, user_details=user_details)
         layer_forms, channel_form_lists = forms_from_database(deposition)
+    add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
-                               "layers_and_channels": zip(layer_forms, channel_form_lists)},
+                               "layers_and_channels": zip(layer_forms, channel_form_lists),
+                               "add_my_layer": add_my_layer_form},
                               context_instance=RequestContext(request))
