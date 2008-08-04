@@ -80,8 +80,7 @@ def show(request, sample_name):
         return render_to_response("disambiguation.html",
                                   {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
                                   context_instance=RequestContext(request))
-    if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
-            and sample.currently_responsible_person != request.user:
+    if not utils.has_permission_for_sample(request.user, sample):
         return HttpResponseRedirect("permission_error")
     processes = collect_processes(ProcessContext(sample, request.user))
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)

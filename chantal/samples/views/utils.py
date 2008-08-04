@@ -153,3 +153,7 @@ def get_my_layers(user_details, deposition_model, required=True):
             continue
         fitting_items.append((u"%d-%d" % (deposition_id, layer_number), nickname))
     return fitting_items
+
+def has_permission_for_sample(user, sample):
+    return user.has_perm("samples.view_sample") or sample.group in user.groups.all() \
+        or sample.currently_responsible_person = request.user:
