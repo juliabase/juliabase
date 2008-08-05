@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from django.template import RequestContext
+from django.template import Context, loader, RequestContext
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import ModelForm, Form
@@ -303,4 +303,18 @@ def edit(request, deposition_number):
                               {"title": title, "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists),
                                "add_my_layer": add_my_layer_form},
+                              context_instance=RequestContext(request))
+
+@login_required
+def show(request, deposition_number):
+    deposition = get_object_or_404(SixChamberDeposition, number=deposition_number)
+    samples = deposition.samples
+    if all(not utils.has_permission_for_sample(request.user, sample) for sample in samples.all()) \
+            and not request.user.has_perm("change_sixchamberdeposition"):
+        return HttpResponseRedirect("permission_error")
+    template = loader.get_template("show_six_chamber_deposition.html")
+    html_body = template.render(Context({"process": deposition}))
+    return render_to_response("show_process.html",
+                              {"title": _(u"6-chamber deposition “%s”") % deposition.number, "process": deposition,
+                               "html_body": html_body},
                               context_instance=RequestContext(request))
