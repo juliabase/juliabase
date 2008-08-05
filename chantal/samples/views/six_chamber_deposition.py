@@ -314,7 +314,8 @@ def show(request, deposition_number):
         return HttpResponseRedirect("permission_error")
     template = loader.get_template("show_six_chamber_deposition.html")
     html_body = template.render(Context({"process": deposition}))
+    sample_names = [sample.name for sample in samples.all()]
     return render_to_response("show_process.html",
                               {"title": _(u"6-chamber deposition “%s”") % deposition.number, "process": deposition,
-                               "html_body": html_body},
+                               "html_body": html_body, "sample_names": sample_names },
                               context_instance=RequestContext(request))

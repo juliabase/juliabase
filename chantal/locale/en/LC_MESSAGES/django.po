@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-03 09:58+0200\n"
+"POT-Creation-Date: 2008-08-06 00:37+0200\n"
 "PO-Revision-Date: 2008-07-31 23:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -508,55 +508,60 @@ msgid "Ambiguous sample name"
 msgstr ""
 
 #: samples/views/six_chamber_deposition.py:27
+msgid "Nickname of My Layer to be added"
+msgstr ""
+
+#: samples/views/six_chamber_deposition.py:35
 #, fuzzy
 msgid "Samples"
 msgstr "sample series"
 
-#: samples/views/six_chamber_deposition.py:28
+#: samples/views/six_chamber_deposition.py:36
 msgid "Operator"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:46
+#: samples/views/six_chamber_deposition.py:60
 msgid "You must mark at least one sample."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:73
+#: samples/views/six_chamber_deposition.py:87
 msgid "Name is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:97
+#: samples/views/six_chamber_deposition.py:111
 msgid "Gas type is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:182
+#: samples/views/six_chamber_deposition.py:220
 msgid "This deposition number exists already."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:185
+#: samples/views/six_chamber_deposition.py:223
 msgid "No layers given."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:191
-#: samples/views/six_chamber_deposition.py:198
+#: samples/views/six_chamber_deposition.py:229
+#: samples/views/six_chamber_deposition.py:236
 msgid "Number is a duplicate."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:253
+#: samples/views/six_chamber_deposition.py:291
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:257
+#: samples/views/six_chamber_deposition.py:295
 #, python-format
 msgid "Deposition %s was successfully added to the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:262
+#: samples/views/six_chamber_deposition.py:301
+#: samples/views/six_chamber_deposition.py:319
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:262
+#: samples/views/six_chamber_deposition.py:301
 msgid "New 6-chamber deposition"
 msgstr ""
 
@@ -784,10 +789,6 @@ msgstr ""
 msgid "Number of layers to be added:"
 msgstr ""
 
-#: templates/edit_six_chamber_deposition.html:283
-msgid "Nickname of My Layer to be added:"
-msgstr ""
-
 #: templates/login.html:5 templates/login.html.py:6
 msgid "Chantal login"
 msgstr ""
@@ -837,6 +838,28 @@ msgid ""
 "the\n"
 "    administrator to add you to that group.\n"
 "    "
+msgstr ""
+
+#: templates/show_process.html:17
+#, python-format
+msgid ""
+"\n"
+"            This %(process)s was applied to the sample %(first_name)s.\n"
+"          "
+msgid_plural ""
+"\n"
+"            This %(process)s was applied to the following samples: %"
+"(first_name)s\n"
+"          "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/show_process.html:33
+msgid "Edit this process"
+msgstr ""
+
+#: templates/show_process.html:35
+msgid "Duplicate this process"
 msgstr ""
 
 #: templates/show_sample.html:5 templates/show_sample.html.py:6
