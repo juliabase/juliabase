@@ -17,28 +17,29 @@ class Process(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
-    def find_actual_process(self):
-        for process_type in process_types:
-            if hasattr(self, process_type):
-                return getattr(self, process_type)
-        else:
-            raise Exception("internal error: process not found")
     def __unicode__(self):
-        return unicode(self.find_actual_process())
+        return unicode(self.find_actual_instance())
     class Meta:
         ordering = ['timestamp']
         verbose_name = _(u"process")
         verbose_name_plural = _(u"processes")
 
-class SixChamberDeposition(Process):
-    deposition_number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+class Deposition(Process):
+    number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+    def __unicode__(self):
+        return unicode(self.number)
+    class Meta:
+        verbose_name = _(u"deposition")
+        verbose_name_plural = _(u"depositions")
+
+class SixChamberDeposition(Deposition):
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return unicode(_(u"6-chamber deposition ")) + self.deposition_number
+        return unicode(_(u"6-chamber deposition ")) + super(SixChamberDeposition, self).__unicode__()
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
-            return {"edit_url": "6-chamber_deposition/edit/"+self.deposition_number}
+            return {"edit_url": "6-chamber_deposition/edit/"+self.number}
         else:
             return {}
     class Meta:
@@ -63,10 +64,21 @@ six_chamber_chamber_choices = (
     ("TL1", "TL1"),
     ("TL2", "TL2"))
 
-class SixChamberLayer(models.Model):
+class Layer(models.Model):
     number = models.IntegerField(_(u"layer number"))
-    chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)
+    # Validity constraint:  There must be a ForeignField called "deposition" to
+    # the actual deposition Model, with related_name="layers".  (Otherwise,
+    # duck typing doesn't work.)
+    class Meta:
+        abstract = True
+        ordering = ['number']
+        unique_together = ("deposition", "number")
+        verbose_name = _(u"layer")
+        verbose_name_plural = _(u"layers")
+
+class SixChamberLayer(Layer):
     deposition = models.ForeignKey(SixChamberDeposition, related_name="layers", verbose_name=_(u"deposition"))
+    chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)
     pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
     time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
     substrate_electrode_distance = \
@@ -92,11 +104,9 @@ class SixChamberLayer(models.Model):
     base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
     def __unicode__(self):
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
-    class Meta:
+    class Meta(Layer.Meta):
         verbose_name = _(u"6-chamber layer")
         verbose_name_plural = _(u"6-chamber layers")
-        unique_together = ("deposition", "number")
-        ordering = ['number']
 
 six_chamber_gas_choices = (
     ("SiH4", "SiH4"),
@@ -193,12 +203,14 @@ class UserDetails(models.Model):
     language = models.CharField(_(u"language"), max_length=10, choices=languages)
     phone = models.CharField(_(u"phone"), max_length=20)
     my_samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"my samples"))
+    my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
 
+admin.site.register(ExternalOperator)
 admin.site.register(SixChamberDeposition)
 admin.site.register(HallMeasurement)
 admin.site.register(SixChamberLayer)
@@ -211,5 +223,29 @@ admin.site.register(UserDetails)
 
 import copy, inspect
 _globals = copy.copy(globals())
-process_types = [cls.__name__.lower() for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, Process)]
+all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
+class_hierarchy = inspect.getclasstree(all_models)
+def find_actual_instance(self):
+    if not self.direct_subclasses:
+        return self
+    for cls in self.direct_subclasses:
+        name = cls.__name__.lower()
+        if hasattr(self, name):
+            instance = getattr(self, name)
+            return instance.find_actual_instance()
+    else:
+        raise Exception("internal error: instance not found")
+models.Model.find_actual_instance = find_actual_instance
+def inject_direct_subclasses(parent, hierarchy):
+    i = 0
+    while i < len(hierarchy):
+        hierarchy[i][0].direct_subclasses = []
+        if parent:
+            parent.direct_subclasses.append(hierarchy[i][0])
+        if i + 1 < len(hierarchy) and isinstance(hierarchy[i+1], list):
+            inject_direct_subclasses(hierarchy[i][0], hierarchy[i+1])
+            i += 2
+        else:
+            i += 1
+inject_direct_subclasses(None, class_hierarchy)
 del _globals, cls
