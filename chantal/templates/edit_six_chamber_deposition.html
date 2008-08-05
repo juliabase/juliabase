@@ -36,9 +36,9 @@
   {% endif %}
   <table cellpadding="5">
     <tr>
-      <td style="text-align: right"><label for="id_{{ deposition.deposition_number.html_name }}"
-           >{{ deposition.deposition_number.label }}:</label></td>
-      <td>{{ deposition.deposition_number }}</td>
+      <td style="text-align: right"><label for="id_{{ deposition.number.html_name }}"
+           >{{ deposition.number.label }}:</label></td>
+      <td>{{ deposition.number }}</td>
       <td rowspan="4" style="padding-left: 2em">
         <label for="id_{{ deposition.sample_list.html_name }}" style="margin-right: 0.5em"
                              >{{ deposition.sample_list.label }}:</label>{{ deposition.sample_list }}</td>

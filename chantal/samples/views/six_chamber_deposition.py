@@ -49,7 +49,6 @@ class DepositionForm(ModelForm):
         return deposition
     class Meta:
         model = SixChamberDeposition
-        exclude = ("process_ptr",)
 
 class LayerForm(DataModelForm):
     chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
@@ -176,9 +175,8 @@ def change_structure(layer_forms, channel_form_lists, post_data):
 def is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
     referencially_valid = True
     if deposition_form.is_valid() and (
-        not deposition or deposition.deposition_number != deposition_form.cleaned_data["deposition_number"]):
-        if models.SixChamberDeposition.objects.filter(deposition_number=
-                                                      deposition_form.cleaned_data["deposition_number"]).count():
+        not deposition or deposition.number != deposition_form.cleaned_data["number"]):
+        if models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
             utils.append_error(deposition_form, "__all__", _(u"This deposition number exists already."))
             referencially_valid = False
     if not layer_forms:
@@ -238,7 +236,7 @@ def forms_from_database(deposition):
 @login_required
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
-    deposition = get_object_or_404(SixChamberDeposition, deposition_number=deposition_number) if deposition_number else None
+    deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
     user_details = request.user.get_profile()
     if request.method == "POST":
         deposition_form = DepositionForm(request.POST, instance=deposition, user_details=user_details)
@@ -250,11 +248,11 @@ def edit(request, deposition_number):
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
             if deposition_number:
                 request.session["success_report"] = \
-                    _(u"Deposition %s was successfully changed in the database.") % deposition.deposition_number
+                    _(u"Deposition %s was successfully changed in the database.") % deposition.number
                 return HttpResponseRedirect("../../")
             else:
                 request.session["success_report"] = \
-                    _(u"Deposition %s was successfully added to the database.") % deposition.deposition_number
+                    _(u"Deposition %s was successfully added to the database.") % deposition.number
                 return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
         deposition_form = DepositionForm(instance=deposition, user_details=user_details)
