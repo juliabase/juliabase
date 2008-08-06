@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
+import re, string, copy
 from django.forms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect, QueryDict
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm
+from django.template import Context, loader, RequestContext
 
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
@@ -200,8 +201,9 @@ class ProcessContext(object):
             else:
                 result.append(character)
         return "".join(result)
-    def digest_process(self, process):
-        self.process = process
+    def digest_process(self, process=None):
+        if process:
+            self.process = process
         template = loader.get_template("show_" + self.camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
         name = unicode(self.__process._meta.verbose_name)
         template_context = self.get_template_context()
