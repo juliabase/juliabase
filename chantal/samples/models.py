@@ -39,7 +39,8 @@ class SixChamberDeposition(Deposition):
         return unicode(_(u"6-chamber deposition ")) + super(SixChamberDeposition, self).__unicode__()
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
-            return {"edit_url": "6-chamber_deposition/edit/"+self.number}
+            return {"edit_url": "6-chamber_deposition/edit/"+self.number,
+                    "duplicate_url": "6-chamber_deposition/add/?copy_from="+self.number}
         else:
             return {}
     class Meta:

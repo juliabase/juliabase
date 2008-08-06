@@ -273,6 +273,11 @@ def forms_from_database(deposition):
              for channel_index, channel in enumerate(layer.channels.all())])
     return layer_forms, channel_form_lists
 
+def get_next_deposition_number():
+    return "01B411"
+
+query_string_pattern = re.compile(r"^copy_from=(?P<copy_from>.+)$")
+
 @login_required
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
@@ -295,8 +300,20 @@ def edit(request, deposition_number):
                     _(u"Deposition %s was successfully added to the database.") % deposition.number
                 return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
-        deposition_form = DepositionForm(instance=deposition, user_details=user_details)
-        layer_forms, channel_form_lists = forms_from_database(deposition)
+        deposition_form = None
+        match = query_string_pattern.match(request.META["QUERY_STRING"])
+        if not deposition and match:
+            # Duplication of a deposition
+            copy_from_query = models.SixChamberDeposition.objects.filter(number=match.group("copy_from"))
+            if copy_from_query.count() == 1:
+                deposition_data = copy_from_query.values()[0]
+                del deposition_data["number"], deposition_data["timestamp"]
+                deposition_form = DepositionForm(initial=deposition_data, user_details=user_details)
+                layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
+        if not deposition_form:
+            # Normal edit of existing deposition, or new deposition, or duplication has failed
+            deposition_form = DepositionForm(instance=deposition, user_details=user_details)
+            layer_forms, channel_form_lists = forms_from_database(deposition)
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
