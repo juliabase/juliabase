@@ -163,3 +163,52 @@ def name2url(name):
 
 def url2name(url):
     return url.replace("_", "/")
+
+class ProcessContext(object):
+    def __init__(self, user, original_sample=None, process=None):
+        self.original_sample = self.current_sample = original_sample
+        self.user = user
+        self.__process = self.cutoff_timestamp = self.html_body = None
+        if process:
+            self.process = process
+    def __set_process(self, process):
+        self.__process = process.find_actual_instance()
+    process = property(lambda self: self.__process, __set_process)
+    def split(self, split):
+        result = copy.copy(self)
+        result.current_sample = split.parent
+        result.cutoff_timestamp = split.timestamp
+        return result
+    def get_template_context(self):
+        context_dict = {"process": self.__process}
+        if hasattr(self.__process, "get_additional_template_context"):
+            context_dict.update(self.__process.get_additional_template_context(self))
+        return context_dict
+    def get_processes(self):
+        if self.cutoff_timestamp is None:
+            return self.current_sample.processes.all()
+        else:
+            return self.current_sample.processes.filter(timestamp__lte=self.cutoff_timestamp)
+    @staticmethod
+    def camel_case_to_underscores(name):
+        result = []
+        for i, character in enumerate(name):
+            if i == 0:
+                result.append(character.lower())
+            elif character in string.ascii_uppercase:
+                result.extend(("_", character.lower()))
+            else:
+                result.append(character)
+        return "".join(result)
+    def digest_process(self, process):
+        self.process = process
+        template = loader.get_template("show_" + self.camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
+        name = unicode(self.__process._meta.verbose_name)
+        template_context = self.get_template_context()
+        context_dict = {"name": name[0].upper()+name[1:], "operator": self.__process.operator,
+                        "timestamp": self.__process.timestamp,
+                        "html_body": template.render(Context(template_context))}
+        for key in ["edit_url", "duplicate_url"]:
+            if key in template_context:
+                context_dict[key] = template_context[key]
+        return context_dict

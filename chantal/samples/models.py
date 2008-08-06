@@ -175,6 +175,7 @@ class SampleSplit(Process):
     def __unicode__(self):
         return self.parent.name
     def get_additional_template_context(self, process_context):
+        assert process_context.current_sample
         if process_context.current_sample != process_context.original_sample:
             parent = process_context.current_sample
         else:
