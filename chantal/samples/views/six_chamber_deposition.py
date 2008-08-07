@@ -273,9 +273,6 @@ def forms_from_database(deposition):
              for channel_index, channel in enumerate(layer.channels.all())])
     return layer_forms, channel_form_lists
 
-def get_next_deposition_number():
-    return "01B411"
-
 query_string_pattern = re.compile(r"^copy_from=(?P<copy_from>.+)$")
 
 @login_required
@@ -307,12 +304,14 @@ def edit(request, deposition_number):
             copy_from_query = models.SixChamberDeposition.objects.filter(number=match.group("copy_from"))
             if copy_from_query.count() == 1:
                 deposition_data = copy_from_query.values()[0]
-                del deposition_data["number"], deposition_data["timestamp"]
+                del deposition_data["timestamp"]
+                deposition_data["number"] = utils.get_next_deposition_number("B")
                 deposition_form = DepositionForm(initial=deposition_data, user_details=user_details)
                 layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
         if not deposition_form:
             # Normal edit of existing deposition, or new deposition, or duplication has failed
-            deposition_form = DepositionForm(instance=deposition, user_details=user_details)
+            initial = {"number": utils.get_next_deposition_number("B")} if not deposition else {}
+            deposition_form = DepositionForm(initial=initial, instance=deposition, user_details=user_details)
             layer_forms, channel_form_lists = forms_from_database(deposition)
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")

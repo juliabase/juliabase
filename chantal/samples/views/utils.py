@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re, string, copy
+import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect, QueryDict
 from django.utils.translation import ugettext as _
@@ -214,3 +214,12 @@ class ProcessContext(object):
             if key in template_context:
                 context_dict[key] = template_context[key]
         return context_dict
+
+deposition_number_pattern = re.compile(ur"\d{3,4}")
+def get_next_deposition_number(letter):
+    prefix = ur"%02d%s" % (datetime.date.today().year % 100, letter)
+    pattern_string = ur"^%s[0-9]{3,4}" % prefix
+    deposition_dicts = models.Deposition.objects.filter(number__regex=pattern_string).values("number")
+    numbers = [int(deposition_number_pattern.match(deposition_dict["number"][3:]).group(0))
+               for deposition_dict in deposition_dicts]
+    return prefix + u"%03d" % (max(numbers + [0]) + 1)
