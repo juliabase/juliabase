@@ -68,7 +68,8 @@ def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
                 child_sample.split_origin = sample_split
                 child_sample.save()
         else:
-            models.SampleAlias(name=old_name, sample=sample).save()
+            if not old_name.startswith("*"):
+                models.SampleAlias(name=old_name, sample=sample).save()
             sample.name = new_name_forms[0].cleaned_data["new_name"]
             sample.save()
 
