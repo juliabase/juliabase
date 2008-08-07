@@ -71,8 +71,8 @@ def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
             sample.name = new_name_forms[0].cleaned_data["new_name"]
             sample.save()
 
-def is_referencially_valid(new_name_form_lists):
-    referencially_valid = True
+def is_referentially_valid(new_name_form_lists):
+    referentially_valid = True
     new_names = set()
     for new_name_forms in new_name_form_lists:
         for new_name_form in new_name_forms:
@@ -85,7 +85,7 @@ def is_referencially_valid(new_name_form_lists):
                 if utils.does_sample_exist(new_name):
                     utils.append_error(new_name_form, "__all__", _(u"This sample name exists already."))
                     referentially_valid = False
-    return referencially_valid
+    return referentially_valid
 
 def forms_from_post_data(post_data):
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
@@ -115,8 +115,8 @@ def split_and_rename_after_process(request, process_id):
         sample_forms, new_name_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(sample_forms, new_name_form_lists)
         structure_changed = change_structure(sample_forms, new_name_form_lists)
-        referencially_valid = is_referencially_valid(new_name_form_lists)
-        if all_valid and referencially_valid and not structure_changed:
+        referentially_valid = is_referentially_valid(new_name_form_lists)
+        if all_valid and referentially_valid and not structure_changed:
             save_to_database(sample_forms, new_name_form_lists, process.operator, sample_names)
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
             return HttpResponseRedirect("../../")
