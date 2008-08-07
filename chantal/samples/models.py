@@ -187,7 +187,7 @@ class SampleSplit(Process):
 
 class SampleSeries(models.Model):
     name = models.CharField(_(u"name"), max_length=255)
-    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"))
+    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     def __unicode__(self):
         return self.name
     class Meta:
