@@ -15,8 +15,8 @@ from . import utils
 
 class SampleForm(Form):
     _ = ugettext_lazy
-    name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={"readonly": "readonly",
-                                                                        "style": "text-align: center"}))
+    name = forms.CharField(label=_(u"Old sample name"), max_length=30,
+                           widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
     def clean_number_of_pieces(self):
@@ -26,7 +26,7 @@ class SampleForm(Form):
 
 class NewNameForm(Form):
     _ = ugettext_lazy
-    new_name = forms.CharField(label=_(u"Old sample name"), max_length=30)
+    new_name = forms.CharField(label=_(u"New sample name(s)"), max_length=30)
 
 def has_permission_for_process(user, process):
     return user.has_perm("samples.change_" + process.__class__.__name__.lower())

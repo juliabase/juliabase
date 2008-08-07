@@ -6,9 +6,9 @@
 <form method="post" action="">
   <table style="margin-left: auto; margin-right: auto" cellpadding="10" border="1">
     <tr>
-      <th>{% trans 'Old sample name' %}</th>
-      <th>{% trans 'Pieces' %}</th>
-      <th>{% trans 'New sample name(s)' %}</th>
+      <th>{{ samples.0.0.name.label }}</th>
+      <th>{{ samples.0.0.number_of_pieces.label }}</th>
+      <th>{{ samples.0.1.0.new_name.label }}</th>
     </tr>
     {% for sample, new_names in samples %}
       {% if sample.errors or sample.non_field_errors %}
