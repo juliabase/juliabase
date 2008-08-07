@@ -37,7 +37,7 @@ def is_all_valid(sample_forms, new_name_form_lists):
         valid = valid and all([new_name_form.is_valid() for new_name_form in forms])
     return valid
 
-def change_structure(sample_forms, new_name_form_lists):
+def change_structure(sample_forms, new_name_form_lists, process_number):
     structure_changed = False
     for sample_index in range(len(sample_forms)):
         sample_form, new_name_forms = sample_forms[sample_index], new_name_form_lists[sample_index]
@@ -48,7 +48,8 @@ def change_structure(sample_forms, new_name_form_lists):
                 structure_changed = True
             elif number_of_pieces > len(new_name_forms):
                 for new_name_index in range(len(new_name_forms), number_of_pieces):
-                    new_name_forms.append(NewNameForm(prefix="%d_%d"%(sample_index, new_name_index)))
+                    new_name_forms.append(NewNameForm(initial={"new_name": process_number},
+                                                      prefix="%d_%d"%(sample_index, new_name_index)))
                 structure_changed = True
     return structure_changed
 
@@ -114,7 +115,7 @@ def split_and_rename_after_process(request, process_id):
         sample_names = [sample.name for sample in process.samples.all()]
         sample_forms, new_name_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(sample_forms, new_name_form_lists)
-        structure_changed = change_structure(sample_forms, new_name_form_lists)
+        structure_changed = change_structure(sample_forms, new_name_form_lists, process.number)
         referentially_valid = is_referentially_valid(new_name_form_lists)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(sample_forms, new_name_form_lists, process.operator, sample_names)
