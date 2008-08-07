@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-07 02:53+0200\n"
-"PO-Revision-Date: 2008-08-07 02:55+0200\n"
+"POT-Creation-Date: 2008-08-07 10:23+0200\n"
+"PO-Revision-Date: 2008-08-07 10:24+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -463,8 +463,11 @@ msgstr "Dieser Spitzname ist schon vergeben."
 msgid "My Layers"
 msgstr "Meine Schichten"
 
+#: samples/views/rename_and_split_samples.py:18
+msgid "Old sample name"
+msgstr "Alter Probenname"
+
 #: samples/views/rename_and_split_samples.py:20
-#: templates/split_and_rename.html:10
 msgid "Pieces"
 msgstr "Stücke"
 
@@ -473,23 +476,28 @@ msgid "Must be at least 1."
 msgstr "Muss mindestens 1 sein."
 
 #: samples/views/rename_and_split_samples.py:29
-#: templates/split_and_rename.html:9
-msgid "Old sample name"
-msgstr "Alter Probenname"
+msgid "New sample name(s)"
+msgstr "Neue(r) Probenname(n)"
 
-#: samples/views/rename_and_split_samples.py:82
+#: samples/views/rename_and_split_samples.py:84
+msgid ""
+"Since there is more than one piece, the new name must not be exactly the "
+"deposition's name."
+msgstr "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der Depositionsname sein."
+
+#: samples/views/rename_and_split_samples.py:88
 msgid "This sample name has been used already on this page."
 msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
-#: samples/views/rename_and_split_samples.py:86
+#: samples/views/rename_and_split_samples.py:92
 msgid "This sample name exists already."
 msgstr "Dieser Probenname ist schon vergeben."
 
-#: samples/views/rename_and_split_samples.py:121
+#: samples/views/rename_and_split_samples.py:127
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
-#: samples/views/rename_and_split_samples.py:126
+#: samples/views/rename_and_split_samples.py:132
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
@@ -886,8 +894,14 @@ msgid_plural ""
 "          This process was applied to the following samples: <!--%"
 "(first_name)s%(first_name_url)s-->\n"
 "        "
-msgstr[0] "\nDieser Prozess wurde auf die Probe <a href=\"../samples/%(first_name_url)s\">%(first_name)s</a> angewandt."
-msgstr[1] "\nDieser Prozess wurde auf die folgenden Proben angewandt: <!--%(first_name)s%(first_name_url)s-->"
+msgstr[0] ""
+"\n"
+"Dieser Prozess wurde auf die Probe <a href=\"../samples/%(first_name_url)s\">"
+"%(first_name)s</a> angewandt."
+msgstr[1] ""
+"\n"
+"Dieser Prozess wurde auf die folgenden Proben angewandt: <!--%(first_name)s%"
+"(first_name_url)s-->"
 
 #: templates/show_process.html:34
 msgid "Edit this process"
@@ -929,10 +943,6 @@ msgstr ""
 #: templates/show_sample_split.html:26
 msgid "this one"
 msgstr "diese hier"
-
-#: templates/split_and_rename.html:11
-msgid "New sample name(s)"
-msgstr "Neue(r) Probenname(n)"
 
 #: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
 msgid "Sample name error"

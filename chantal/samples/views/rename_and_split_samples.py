@@ -72,13 +72,18 @@ def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
             sample.name = new_name_forms[0].cleaned_data["new_name"]
             sample.save()
 
-def is_referentially_valid(new_name_form_lists):
+def is_referentially_valid(new_name_form_lists, process_name):
     referentially_valid = True
     new_names = set()
+    more_than_one_piece = sum(len(new_name_forms) for new_name_forms in new_name_form_lists) > 1
     for new_name_forms in new_name_form_lists:
         for new_name_form in new_name_forms:
             if new_name_form.is_valid():
                 new_name = new_name_form.cleaned_data["new_name"]
+                if more_than_one_piece and new_name == process_name:
+                    utils.append_error(new_name_form, "__all__", _(u"Since there is more than one piece, the new name "
+                                                                   u"must not be exactly the deposition's name."))
+                    referentially_valid = False
                 if new_name in new_names:
                     utils.append_error(new_name_form, "__all__", _(u"This sample name has been used already on this page."))
                     referentially_valid = False
@@ -116,7 +121,7 @@ def split_and_rename_after_process(request, process_id):
         sample_forms, new_name_form_lists = forms_from_post_data(request.POST)
         all_valid = is_all_valid(sample_forms, new_name_form_lists)
         structure_changed = change_structure(sample_forms, new_name_form_lists, process.number)
-        referentially_valid = is_referentially_valid(new_name_form_lists)
+        referentially_valid = is_referentially_valid(new_name_form_lists, process.number)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(sample_forms, new_name_form_lists, process.operator, sample_names)
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")

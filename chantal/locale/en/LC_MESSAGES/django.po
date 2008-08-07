@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-07 02:53+0200\n"
+"POT-Creation-Date: 2008-08-07 10:23+0200\n"
 "PO-Revision-Date: 2008-07-31 23:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -463,8 +463,11 @@ msgstr ""
 msgid "My Layers"
 msgstr ""
 
+#: samples/views/rename_and_split_samples.py:18
+msgid "Old sample name"
+msgstr ""
+
 #: samples/views/rename_and_split_samples.py:20
-#: templates/split_and_rename.html:10
 msgid "Pieces"
 msgstr ""
 
@@ -473,23 +476,28 @@ msgid "Must be at least 1."
 msgstr ""
 
 #: samples/views/rename_and_split_samples.py:29
-#: templates/split_and_rename.html:9
-msgid "Old sample name"
+msgid "New sample name(s)"
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:82
+#: samples/views/rename_and_split_samples.py:84
+msgid ""
+"Since there is more than one piece, the new name must not be exactly the "
+"deposition's name."
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:88
 msgid "This sample name has been used already on this page."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:86
+#: samples/views/rename_and_split_samples.py:92
 msgid "This sample name exists already."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:121
+#: samples/views/rename_and_split_samples.py:127
 msgid "Samples were successfully split and/or renamed."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:126
+#: samples/views/rename_and_split_samples.py:132
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr ""
@@ -906,10 +914,6 @@ msgstr ""
 
 #: templates/show_sample_split.html:26
 msgid "this one"
-msgstr ""
-
-#: templates/split_and_rename.html:11
-msgid "New sample name(s)"
 msgstr ""
 
 #: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
