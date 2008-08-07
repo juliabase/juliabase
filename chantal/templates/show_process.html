@@ -1,0 +1,38 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load samples_extras %}
+
+{% block content %}
+  <div class="process">
+    <p class="operator_and_timestamp">
+      {% with process.operator.get_full_name as full_name %}
+        <a href="../users/{{ process.operator.username}} "
+           >{% if full_name %}{{ full_name }}{% else %}{{ process.operator }}{% endif %}</a>,
+      {% endwith %}
+      {{ process.timestamp }}
+    </p>
+    {% if sample_names %}
+      <p>
+        {% blocktrans count sample_names|length as counter and sample_names.0 as first_name and sample_names.0|name2url as first_name_url %}
+          This process was applied to the sample <a href="../samples/{{ first_name_url }}">{{ first_name }}</a>.
+        {% plural %}
+          This process was applied to the following samples: <!--{{ first_name }}{{ first_name_url }}-->
+        {% endblocktrans %}
+        {% if not sample_names|length_is:"1" %}
+          <ul>
+            {% for sample_name in sample_names %}
+              <li><a href="../samples/{{ sample_name|name2url }}">{{ sample_name }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </p>
+    {% endif %}
+              
+    {{ html_body }}
+
+    {% if edit_url %}<p><a class="edit-button" href="../{{ edit_url }}">{% trans 'Edit this process' %}</a></p>{% endif %}
+    {% if duplicate_url %}<p><a class="duplicate-button" href="../{{ duplicate_url }}"
+                                >{% trans 'Duplicate this process' %}</a></p>{% endif %}
+  </div>
+{% endblock %}

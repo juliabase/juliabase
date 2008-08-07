@@ -39,7 +39,8 @@ class SixChamberDeposition(Deposition):
         return unicode(_(u"6-chamber deposition ")) + super(SixChamberDeposition, self).__unicode__()
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
-            return {"edit_url": "6-chamber_deposition/edit/"+self.number}
+            return {"edit_url": "6-chamber_deposition/edit/"+self.number,
+                    "duplicate_url": "6-chamber_deposition/add/?copy_from="+self.number}
         else:
             return {}
     class Meta:
@@ -175,6 +176,7 @@ class SampleSplit(Process):
     def __unicode__(self):
         return self.parent.name
     def get_additional_template_context(self, process_context):
+        assert process_context.current_sample
         if process_context.current_sample != process_context.original_sample:
             parent = process_context.current_sample
         else:
@@ -202,7 +204,7 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
     language = models.CharField(_(u"language"), max_length=10, choices=languages)
     phone = models.CharField(_(u"phone"), max_length=20)
-    my_samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"my samples"))
+    my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     def __unicode__(self):
         return unicode(self.user)

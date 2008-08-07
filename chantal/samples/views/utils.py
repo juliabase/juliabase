@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
+import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect, QueryDict
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm
+from django.template import Context, loader, RequestContext
 
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
@@ -136,3 +137,89 @@ def normalize_prefixes(post_data):
     else:
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
+
+def get_my_layers(user_details, deposition_model, required=True):
+    items = [item.split(":", 1) for item in user_details.my_layers.split(",")]
+    items = [(item[0].strip(),) + tuple(item[1].rsplit("-", 1)) for item in items]
+    items = [(item[0], int(item[1]), int(item[2])) for item in items]
+    fitting_items = [] if required else [(u"", u"---------")]
+    for nickname, deposition_id, layer_number in items:
+        try:
+            deposition = deposition_model.objects.get(pk=deposition_id)
+        except deposition_model.DoesNotExist:
+            continue
+        try:
+            layer = deposition.layers.get(number=layer_number)
+        except:
+            continue
+        fitting_items.append((u"%d-%d" % (deposition_id, layer_number), nickname))
+    return fitting_items
+
+def has_permission_for_sample(user, sample):
+    return user.has_perm("samples.view_sample") or sample.group in user.groups.all() \
+        or sample.currently_responsible_person == request.user
+
+def name2url(name):
+    return name.replace("/", "_")
+
+def url2name(url):
+    return url.replace("_", "/")
+
+class ProcessContext(object):
+    def __init__(self, user, original_sample=None, process=None):
+        self.original_sample = self.current_sample = original_sample
+        self.user = user
+        self.__process = self.cutoff_timestamp = self.html_body = None
+        if process:
+            self.process = process
+    def __set_process(self, process):
+        self.__process = process.find_actual_instance()
+    process = property(lambda self: self.__process, __set_process)
+    def split(self, split):
+        result = copy.copy(self)
+        result.current_sample = split.parent
+        result.cutoff_timestamp = split.timestamp
+        return result
+    def get_template_context(self):
+        context_dict = {"process": self.__process}
+        if hasattr(self.__process, "get_additional_template_context"):
+            context_dict.update(self.__process.get_additional_template_context(self))
+        return context_dict
+    def get_processes(self):
+        if self.cutoff_timestamp is None:
+            return self.current_sample.processes.all()
+        else:
+            return self.current_sample.processes.filter(timestamp__lte=self.cutoff_timestamp)
+    @staticmethod
+    def camel_case_to_underscores(name):
+        result = []
+        for i, character in enumerate(name):
+            if i == 0:
+                result.append(character.lower())
+            elif character in string.ascii_uppercase:
+                result.extend(("_", character.lower()))
+            else:
+                result.append(character)
+        return "".join(result)
+    def digest_process(self, process=None):
+        if process:
+            self.process = process
+        template = loader.get_template("show_" + self.camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
+        name = unicode(self.__process._meta.verbose_name)
+        template_context = self.get_template_context()
+        context_dict = {"name": name[0].upper()+name[1:], "operator": self.__process.operator,
+                        "timestamp": self.__process.timestamp,
+                        "html_body": template.render(Context(template_context))}
+        for key in ["edit_url", "duplicate_url"]:
+            if key in template_context:
+                context_dict[key] = template_context[key]
+        return context_dict
+
+deposition_number_pattern = re.compile(ur"\d{3,4}")
+def get_next_deposition_number(letter):
+    prefix = ur"%02d%s" % (datetime.date.today().year % 100, letter)
+    pattern_string = ur"^%s[0-9]{3,4}" % prefix
+    deposition_dicts = models.Deposition.objects.filter(number__regex=pattern_string).values("number")
+    numbers = [int(deposition_number_pattern.match(deposition_dict["number"][3:]).group(0))
+               for deposition_dict in deposition_dicts]
+    return prefix + u"%03d" % (max(numbers + [0]) + 1)

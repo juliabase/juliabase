@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import string, time, copy
-from django.template import Context, loader, RequestContext
+import time
+from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
 import django.forms as forms
@@ -10,52 +10,6 @@ from chantal.samples.models import Sample
 from django.contrib.auth.decorators import login_required
 from . import utils
 from django.utils.translation import ugettext as _, ugettext_lazy
-
-def camel_case_to_underscores(name):
-    result = []
-    for i, character in enumerate(name):
-        if i == 0:
-            result.append(character.lower())
-        elif character in string.ascii_uppercase:
-            result.extend(("_", character.lower()))
-        else:
-            result.append(character)
-    return "".join(result)
-
-class ProcessContext(object):
-    def __init__(self, original_sample, user):
-        self.original_sample = self.current_sample = original_sample
-        self.user = user
-        self.__process = self.cutoff_timestamp = self.html_body = None
-    def __set_process(self, process):
-        self.__process = process.find_actual_instance()
-    process = property(lambda self: self.__process, __set_process)
-    def split(self, split):
-        result = copy.copy(self)
-        result.current_sample = split.parent
-        result.cutoff_timestamp = split.timestamp
-        return result
-    def get_template_context(self):
-        context_dict = {"process": self.__process}
-        if hasattr(self.__process, "get_additional_template_context"):
-            context_dict.update(self.__process.get_additional_template_context(self))
-        return context_dict
-    def get_processes(self):
-        if self.cutoff_timestamp is None:
-            return self.current_sample.processes.all()
-        else:
-            return self.current_sample.processes.filter(timestamp__lte=self.cutoff_timestamp)
-    def digest_process(self, process):
-        self.process = process
-        template = loader.get_template("show_" + camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
-        name = unicode(self.__process._meta.verbose_name)
-        template_context = self.get_template_context()
-        context_dict = {"name": name[0].upper()+name[1:], "operator": self.__process.operator,
-                        "timestamp": self.__process.timestamp,
-                        "html_body": template.render(Context(template_context))}
-        if "edit_url" in template_context:
-            context_dict["edit_url"] = template_context["edit_url"]
-        return context_dict
 
 def collect_processes(process_context):
     processes = []
@@ -67,11 +21,11 @@ def collect_processes(process_context):
     return processes
 
 class IsMySampleForm(forms.Form):
-    is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+    is_my_samplex = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
 @login_required
 def show(request, sample_name):
-    sample_name = sample_name.replace("_", "/")
+    sample_name = utils.url2name(sample_name)
     start = time.time()
     sample = utils.get_sample(sample_name)
     if not sample:
@@ -80,11 +34,25 @@ def show(request, sample_name):
         return render_to_response("disambiguation.html",
                                   {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
                                   context_instance=RequestContext(request))
-    if not request.user.has_perm("samples.view_sample") and sample.group not in request.user.groups.all() \
-            and sample.currently_responsible_person != request.user:
+    if not utils.has_permission_for_sample(request.user, sample):
         return HttpResponseRedirect("permission_error")
-    processes = collect_processes(ProcessContext(sample, request.user))
+    user_details = request.user.get_profile()
+    if request.method == "POST":
+        is_my_sample_form = IsMySampleForm(request.POST)
+        if is_my_sample_form.is_valid():
+            if is_my_sample_form.cleaned_data["is_my_sample"]:
+                user_details.my_samples.add(sample)
+                request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample_name
+            else:
+                user_details.my_samples.remove(sample)
+                request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample_name
+    else:
+        # FixMe: DB access is probably not efficient
+        start = time.time()
+        is_my_sample_form = IsMySampleForm(initial={"is_my_sample": sample in user_details.my_samples.all()})
+        request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
+    processes = collect_processes(utils.ProcessContext(request.user, sample))
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
-    return render_to_response("show_sample.html", {"processes": processes, "sample": sample},
+    return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
+                                                   "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))
-
