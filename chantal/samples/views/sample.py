@@ -21,7 +21,7 @@ def collect_processes(process_context):
     return processes
 
 class IsMySampleForm(forms.Form):
-    is_my_samplex = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+    is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
 @login_required
 def show(request, sample_name):
