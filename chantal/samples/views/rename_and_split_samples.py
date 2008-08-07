@@ -102,7 +102,7 @@ def forms_from_database(samples, deposition_number):
     return sample_forms, new_name_form_lists
 
 @login_required
-def split_and_rename(request, process_id):
+def split_and_rename_after_process(request, process_id):
     process = get_object_or_404(models.Process, pk=process_id)
     process = process.find_actual_instance()
     if not isinstance(process, models.Deposition):
