@@ -52,10 +52,11 @@ class NewSampleDataForm(Form):
 def has_permission_for_process(user, process):
     return user.has_perm("samples.change_" + process.__class__.__name__.lower())
 
-def is_all_valid(sample_forms, new_name_form_lists):
+def is_all_valid(sample_forms, new_name_form_lists, new_sample_data_form):
     valid = all([sample_form.is_valid() for sample_form in sample_forms])
     for forms in new_name_form_lists:
         valid = valid and all([new_name_form.is_valid() for new_name_form in forms])
+    valid = valid and new_sample_data_form.is_valid()
     return valid
 
 def change_structure(sample_forms, new_name_form_lists, process_number):
@@ -78,7 +79,9 @@ def change_structure(sample_forms, new_name_form_lists, process_number):
                 structure_changed = True
     return structure_changed
 
-def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
+def save_to_database(sample_forms, new_name_form_lists, new_sample_data_form, operator, sample_names):
+    global_new_location = new_sample_data_form.cleaned_data["new_location"]
+    global_new_responsible_person = new_sample_data_form.cleaned_data["new_responsible_person"]
     for sample_form, new_name_forms, old_name in zip(sample_forms, new_name_form_lists, sample_names):
         # I don't take the old name from `sample_form` because it may be
         # forged.
@@ -91,12 +94,22 @@ def save_to_database(sample_forms, new_name_form_lists, operator, sample_names):
                 child_sample = sample.duplicate()
                 child_sample.name = new_name_form.cleaned_data["new_name"]
                 child_sample.split_origin = sample_split
+                if global_new_location:
+                    child_sample.current_location = global_new_location
+                child_sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
+                    else new_name_form.cleaned_data["new_responsible_person"]
                 child_sample.save()
+                child_sample.currently_responsible_person.get_profile().my_samples.add(child_sample)
         else:
             if not old_name.startswith("*"):
                 models.SampleAlias(name=old_name, sample=sample).save()
             sample.name = new_name_forms[0].cleaned_data["new_name"]
+            if global_new_location:
+                sample.current_location = global_new_location
+            sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
+                else new_name_forms[0].cleaned_data["new_responsible_person"]
             sample.save()
+            sample.currently_responsible_person.get_profile().my_samples.add(sample)
 
 def is_referentially_valid(new_name_form_lists, process_name):
     referentially_valid = True
@@ -149,11 +162,11 @@ def split_and_rename_after_process(request, process_id):
     if request.POST:
         sample_names = [sample.name for sample in process.samples.all()]
         sample_forms, new_name_form_lists, new_sample_data_form = forms_from_post_data(request.POST, process)
-        all_valid = is_all_valid(sample_forms, new_name_form_lists)
+        all_valid = is_all_valid(sample_forms, new_name_form_lists, new_sample_data_form)
         structure_changed = change_structure(sample_forms, new_name_form_lists, process.number)
         referentially_valid = is_referentially_valid(new_name_form_lists, process.number)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(sample_forms, new_name_form_lists, process.operator, sample_names)
+            save_to_database(sample_forms, new_name_form_lists, new_sample_data_form, process.operator, sample_names)
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
             return HttpResponseRedirect("../../")
     else:
