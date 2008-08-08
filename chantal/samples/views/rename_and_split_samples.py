@@ -27,12 +27,18 @@ class SampleForm(Form):
 
 class NewNameForm(Form):
     _ = ugettext_lazy
-    new_name = forms.CharField(label=_(u"New sample name(s)"), max_length=30)
+    new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
+    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None,
+                                                       help_text=_(u"(for all samples)"))
+    def __init__(self, data=None, **keyw):
+        super(NewNameForm, self).__init__(data, **keyw)
+        self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
+        self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
 
 class NewSampleDataForm(Form):
     _ = ugettext_lazy
-    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None,
-                                                       help_text=_(u"(for all samples)"))
+    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), required=False, queryset=None,
+                                                       help_text=_(u"(for all samples)"), empty_label=_(u"(no change)"))
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples)"))
     def __init__(self, data=None, **keyw):
@@ -121,8 +127,9 @@ def forms_from_post_data(post_data, process):
 def forms_from_database(process):
     samples = process.samples
     sample_forms = [SampleForm(initial={"name": sample.name}, prefix=str(i)) for i, sample in enumerate(samples.all())]
-    new_name_form_lists = [[NewNameForm(initial={"new_name": process.number}, prefix="%d_0"%i)]
-                           for i in range(samples.count())]
+    new_name_form_lists = [[NewNameForm(
+                initial={"new_name": process.number, "new_responsible_person": sample.currently_responsible_person.pk},
+                prefix="%d_0"%i)] for i, sample in enumerate(samples.all())]
     new_sample_data_form = NewSampleDataForm(process_instance=process)
     return sample_forms, new_name_form_lists, new_sample_data_form
 
