@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
+import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.newforms.util import ValidationError
@@ -27,6 +28,20 @@ class SampleForm(Form):
 class NewNameForm(Form):
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name(s)"), max_length=30)
+
+class NewSampleDataForm(Form):
+    _ = ugettext_lazy
+    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None,
+                                                       help_text=_(u"(for all samples)"))
+    new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
+                                   help_text=_(u"(for all samples)"))
+    def __init__(self, data=None, **keyw):
+        process_instance = keyw.pop("process_instance")
+        super(NewSampleDataForm, self).__init__(data, **keyw)
+        self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
+        self.fields["new_location"].initial = \
+            models.default_location_of_processed_samples.get(process_instance.__class__, u"")
+        self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
 
 def has_permission_for_process(user, process):
     return user.has_perm("samples.change_" + process.__class__.__name__.lower())
@@ -94,19 +109,22 @@ def is_referentially_valid(new_name_form_lists, process_name):
                     referentially_valid = False
     return referentially_valid
 
-def forms_from_post_data(post_data):
+def forms_from_post_data(post_data, process):
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
     sample_forms = [SampleForm(post_data, prefix=str(i)) for i in range(number_of_samples)]
     new_name_form_lists = [[NewNameForm(post_data, prefix="%d_%d" % (sample_index, new_name_index))
                             for new_name_index in range(list_of_number_of_new_names[sample_index])]
                            for sample_index in range(number_of_samples)]
-    return sample_forms, new_name_form_lists
+    new_sample_data_form = NewSampleDataForm(post_data, process_instance=process)
+    return sample_forms, new_name_form_lists, new_sample_data_form
 
-def forms_from_database(samples, deposition_number):
+def forms_from_database(process):
+    samples = process.samples
     sample_forms = [SampleForm(initial={"name": sample.name}, prefix=str(i)) for i, sample in enumerate(samples.all())]
-    new_name_form_lists = [[NewNameForm(initial={"new_name": deposition_number}, prefix="%d_0"%i)]
+    new_name_form_lists = [[NewNameForm(initial={"new_name": process.number}, prefix="%d_0"%i)]
                            for i in range(samples.count())]
-    return sample_forms, new_name_form_lists
+    new_sample_data_form = NewSampleDataForm(process_instance=process)
+    return sample_forms, new_name_form_lists, new_sample_data_form
 
 @login_required
 def split_and_rename_after_process(request, process_id):
@@ -119,7 +137,7 @@ def split_and_rename_after_process(request, process_id):
     process_name = unicode(process)
     if request.POST:
         sample_names = [sample.name for sample in process.samples.all()]
-        sample_forms, new_name_form_lists = forms_from_post_data(request.POST)
+        sample_forms, new_name_form_lists, new_sample_data_form = forms_from_post_data(request.POST, process)
         all_valid = is_all_valid(sample_forms, new_name_form_lists)
         structure_changed = change_structure(sample_forms, new_name_form_lists, process.number)
         referentially_valid = is_referentially_valid(new_name_form_lists, process.number)
@@ -128,8 +146,9 @@ def split_and_rename_after_process(request, process_id):
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
             return HttpResponseRedirect("../../")
     else:
-        sample_forms, new_name_form_lists = forms_from_database(process.samples, process.number)
+        sample_forms, new_name_form_lists, new_sample_data_form = forms_from_database(process)
     return render_to_response("split_and_rename.html",
                               {"title": _(u"Bulk sample rename for %s") % process_name,
-                               "samples": zip(sample_forms, new_name_form_lists)},
+                               "samples": zip(sample_forms, new_name_form_lists),
+                               "new_sample_data": new_sample_data_form},
                               context_instance=RequestContext(request))

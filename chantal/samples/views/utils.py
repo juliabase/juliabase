@@ -7,12 +7,16 @@ from django.http import HttpResponseRedirect, QueryDict
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField
 from django.template import Context, loader, RequestContext
 
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
         return self.data.get(self.prefix + "-" + fieldname)
+
+class OperatorChoiceField(ModelChoiceField):
+    def label_from_instance(self, operator):
+        return operator.get_full_name() or unicode(operator)
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):

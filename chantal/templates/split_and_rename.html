@@ -4,7 +4,7 @@
 
 {% block content %}
 <form method="post" action="">
-  <table style="margin-left: auto; margin-right: auto" cellpadding="10" border="1">
+  <table style="margin-left: auto; margin-right: auto; margin-bottom: 3ex" cellpadding="10" border="1">
     <tr>
       <th>{{ samples.0.0.name.label }}</th>
       <th>{{ samples.0.0.number_of_pieces.label }}</th>
@@ -56,6 +56,7 @@
       </tr>
     {% endfor %}
   </table>
+  {{ new_sample_data.as_p }}
   <p class="submit-button"><input type="submit" /></p>
 </form>
 {% endblock %}

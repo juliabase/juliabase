@@ -22,10 +22,6 @@ class RemoveFromMySamples(Form):
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
-    
-class OperatorChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, operator):
-        return operator.get_full_name() or unicode(operator)
 
 class AddMyLayerForm(Form):
     _ = ugettext_lazy
@@ -38,7 +34,7 @@ class AddMyLayerForm(Form):
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
+    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
         user_details = keyw.pop("user_details")
@@ -47,7 +43,7 @@ class DepositionForm(ModelForm):
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
         # Configuring the fields before the call to the parental constructor
-        # works only in ModelForm, not in Form.  Maybe is should be default
+        # works only in ModelForm, not in Form.  Maybe it should be delayed
         # here, too.  (See fields["..."] below.)
         self.sample_list.queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
