@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.forms import Form
 from django import forms
-from django.newforms.util import ValidationError
+from django.forms.util import ValidationError
 from . import utils
 
 class SampleForm(Form):
@@ -38,7 +38,8 @@ class NewNameForm(Form):
 class NewSampleDataForm(Form):
     _ = ugettext_lazy
     new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), required=False, queryset=None,
-                                                       help_text=_(u"(for all samples)"), empty_label=_(u"(no change)"))
+                                                       help_text=_(u"(for all samples)"),
+                                                       empty_label=_(u"(no global change)"))
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples)"))
     def __init__(self, data=None, **keyw):
@@ -69,7 +70,11 @@ def change_structure(sample_forms, new_name_form_lists, process_number):
                 structure_changed = True
             elif number_of_pieces > len(new_name_forms):
                 for new_name_index in range(len(new_name_forms), number_of_pieces):
-                    new_name_forms.append(NewNameForm(initial={"new_name": process_number},
+                    default_new_responsible_person = None
+                    if new_name_forms[-1].is_valid():
+                        default_new_responsible_person = new_name_forms[-1].cleaned_data["new_responsible_person"].pk
+                    new_name_forms.append(NewNameForm(initial={"new_name": process_number,
+                                                               "new_responsible_person": default_new_responsible_person},
                                                       prefix="%d_%d"%(sample_index, new_name_index)))
                 structure_changed = True
     return structure_changed
