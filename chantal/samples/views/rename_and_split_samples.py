@@ -28,8 +28,7 @@ class SampleForm(Form):
 class NewNameForm(Form):
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
-    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None,
-                                                       help_text=_(u"(for all samples)"))
+    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None)
     def __init__(self, data=None, **keyw):
         super(NewNameForm, self).__init__(data, **keyw)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
@@ -37,11 +36,11 @@ class NewNameForm(Form):
 
 class NewSampleDataForm(Form):
     _ = ugettext_lazy
-    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), required=False, queryset=None,
-                                                       help_text=_(u"(for all samples)"),
-                                                       empty_label=_(u"(no global change)"))
+    new_responsible_person = utils.OperatorChoiceField(
+        label=_(u"New responsible person"), required=False, queryset=None,
+        help_text=_(u"(for all samples; overrides individual settings above)"), empty_label=_(u"(no global change)"))
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
-                                   help_text=_(u"(for all samples)"))
+                                   help_text=_(u"(for all samples; leave empty for no change)"))
     def __init__(self, data=None, **keyw):
         process_instance = keyw.pop("process_instance")
         super(NewSampleDataForm, self).__init__(data, **keyw)

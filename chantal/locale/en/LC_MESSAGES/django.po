@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-08 17:15+0200\n"
+"POT-Creation-Date: 2008-08-08 23:17+0200\n"
 "PO-Revision-Date: 2008-07-31 23:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -488,39 +488,41 @@ msgstr ""
 msgid "New responsible person"
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:32
 #: samples/views/rename_and_split_samples.py:41
-#: samples/views/rename_and_split_samples.py:44
-msgid "(for all samples)"
+msgid "(for all samples; overrides individual settings above)"
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:42
+#: samples/views/rename_and_split_samples.py:41
 msgid "(no global change)"
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:43
+#: samples/views/rename_and_split_samples.py:42
 msgid "New current location"
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:107
+#: samples/views/rename_and_split_samples.py:43
+msgid "(for all samples; leave empty for no change)"
+msgstr ""
+
+#: samples/views/rename_and_split_samples.py:110
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:111
+#: samples/views/rename_and_split_samples.py:114
 msgid "This sample name has been used already on this page."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:115
+#: samples/views/rename_and_split_samples.py:118
 msgid "This sample name exists already."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:154
+#: samples/views/rename_and_split_samples.py:157
 msgid "Samples were successfully split and/or renamed."
 msgstr ""
 
-#: samples/views/rename_and_split_samples.py:159
+#: samples/views/rename_and_split_samples.py:162
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr ""

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-08 17:15+0200\n"
-"PO-Revision-Date: 2008-08-08 17:16+0200\n"
+"POT-Creation-Date: 2008-08-08 23:17+0200\n"
+"PO-Revision-Date: 2008-08-08 23:17+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -488,21 +488,23 @@ msgstr "Neuer Probenname"
 msgid "New responsible person"
 msgstr "Neuer Proben-Verantwortlicher"
 
-#: samples/views/rename_and_split_samples.py:32
 #: samples/views/rename_and_split_samples.py:41
-#: samples/views/rename_and_split_samples.py:44
-msgid "(for all samples)"
-msgstr "(für alle Proben)"
+msgid "(for all samples; overrides individual settings above)"
+msgstr "(für alle Proben; überschreibt einzelne obige Einstellungen)"
 
-#: samples/views/rename_and_split_samples.py:42
+#: samples/views/rename_and_split_samples.py:41
 msgid "(no global change)"
 msgstr "(keine globale Änderung)"
 
-#: samples/views/rename_and_split_samples.py:43
+#: samples/views/rename_and_split_samples.py:42
 msgid "New current location"
 msgstr "Neuer Probenort"
 
-#: samples/views/rename_and_split_samples.py:107
+#: samples/views/rename_and_split_samples.py:43
+msgid "(for all samples; leave empty for no change)"
+msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
+
+#: samples/views/rename_and_split_samples.py:110
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
@@ -510,19 +512,19 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-#: samples/views/rename_and_split_samples.py:111
+#: samples/views/rename_and_split_samples.py:114
 msgid "This sample name has been used already on this page."
 msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
-#: samples/views/rename_and_split_samples.py:115
+#: samples/views/rename_and_split_samples.py:118
 msgid "This sample name exists already."
 msgstr "Dieser Probenname ist schon vergeben."
 
-#: samples/views/rename_and_split_samples.py:154
+#: samples/views/rename_and_split_samples.py:157
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
-#: samples/views/rename_and_split_samples.py:159
+#: samples/views/rename_and_split_samples.py:162
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
@@ -972,6 +974,9 @@ msgstr "diese hier"
 #: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
 msgid "Sample name error"
 msgstr "Fehler im Probennamen"
+
+#~ msgid "(for all samples)"
+#~ msgstr "(für alle Proben)"
 
 #~ msgid "Sample list"
 #~ msgstr "Probenliste"
