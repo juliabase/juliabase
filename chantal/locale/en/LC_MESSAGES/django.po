@@ -1,13 +1,13 @@
-# Chantal English translations
-# Copyright (C) 2008 Free Software Foundation, Inc.
-# Torsten Bronger <bronger@physik.rwth-aachen.de>, 2008
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-08 23:17+0200\n"
-"PO-Revision-Date: 2008-07-31 23:50+0200\n"
+"POT-Creation-Date: 2008-08-09 17:46+0200\n"
+"PO-Revision-Date: 2008-08-09 17:49+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -427,125 +427,56 @@ msgstr ""
 msgid "Chantal is presented to you by …"
 msgstr ""
 
-#: samples/views/my_layers.py:16
+#: samples/views/my_layers.py:17
 msgid "Nickname"
 msgstr ""
 
-#: samples/views/my_layers.py:17
+#: samples/views/my_layers.py:18
 msgid "Layer identifier"
 msgstr ""
 
-#: samples/views/my_layers.py:18
+#: samples/views/my_layers.py:19
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr ""
 
-#: samples/views/my_layers.py:19
+#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:17
 msgid "Delete"
 msgstr ""
 
-#: samples/views/my_layers.py:22
+#: samples/views/my_layers.py:23
 msgid "Deposition and layer number must be separated by \"-\"."
 msgstr ""
 
-#: samples/views/my_layers.py:27
+#: samples/views/my_layers.py:28
 msgid "Deposition number doesn't exist."
 msgstr ""
 
-#: samples/views/my_layers.py:31
+#: samples/views/my_layers.py:32
 msgid "Layer number isn't a number."
 msgstr ""
 
-#: samples/views/my_layers.py:33
+#: samples/views/my_layers.py:34
 msgid "This layer does not exist in this deposition."
 msgstr ""
 
-#: samples/views/my_layers.py:77
-msgid "Nickname already given."
+#: samples/views/my_layers.py:78
+msgid "Nickname is already given."
 msgstr ""
 
-#: samples/views/my_layers.py:102
+#: samples/views/my_layers.py:103
 msgid "My Layers"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:19
-msgid "Old sample name"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:21
-msgid "Pieces"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:25
-msgid "Must be at least 1."
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:30
-msgid "New sample name"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:31
-#: samples/views/rename_and_split_samples.py:40
-msgid "New responsible person"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:41
-msgid "(for all samples; overrides individual settings above)"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:41
-msgid "(no global change)"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:42
-msgid "New current location"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:43
-msgid "(for all samples; leave empty for no change)"
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:110
-msgid ""
-"Since there is more than one piece, the new name must not be exactly the "
-"deposition's name."
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:114
-msgid "This sample name has been used already on this page."
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:118
-msgid "This sample name exists already."
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:157
-msgid "Samples were successfully split and/or renamed."
-msgstr ""
-
-#: samples/views/rename_and_split_samples.py:162
-#, python-format
-msgid "Bulk sample rename for %s"
 msgstr ""
 
 #: samples/views/sample.py:24
 msgid "is amongst My Samples"
 msgstr ""
 
-#: samples/views/sample.py:32
-#, python-format
-msgid "Sample %s could not be found (neither as an alias)."
-msgstr ""
-
-#: samples/views/sample.py:35
-msgid "Ambiguous sample name"
-msgstr ""
-
-#: samples/views/sample.py:45
+#: samples/views/sample.py:38
 #, python-format
 msgid "Sample %s was added to Your Samples."
 msgstr ""
 
-#: samples/views/sample.py:48
+#: samples/views/sample.py:41
 #, python-format
 msgid "Sample %s was removed from Your Samples."
 msgstr ""
@@ -612,6 +543,84 @@ msgstr ""
 msgid "New 6-chamber deposition"
 msgstr ""
 
+#: samples/views/split_after_process.py:19
+msgid "Old sample name"
+msgstr ""
+
+#: samples/views/split_after_process.py:21
+msgid "Pieces"
+msgstr ""
+
+#: samples/views/split_after_process.py:25
+msgid "Must be at least 1."
+msgstr ""
+
+#: samples/views/split_after_process.py:30
+#: samples/views/split_and_rename.py:16 samples/views/split_and_rename.py:25
+msgid "New sample name"
+msgstr ""
+
+#: samples/views/split_after_process.py:31
+#: samples/views/split_after_process.py:40
+msgid "New responsible person"
+msgstr ""
+
+#: samples/views/split_after_process.py:41
+msgid "(for all samples; overrides individual settings above)"
+msgstr ""
+
+#: samples/views/split_after_process.py:41
+msgid "(no global change)"
+msgstr ""
+
+#: samples/views/split_after_process.py:42
+msgid "New current location"
+msgstr ""
+
+#: samples/views/split_after_process.py:43
+msgid "(for all samples; leave empty for no change)"
+msgstr ""
+
+#: samples/views/split_after_process.py:124
+msgid ""
+"Since there is more than one piece, the new name must not be exactly the "
+"deposition's name."
+msgstr ""
+
+#: samples/views/split_after_process.py:128
+msgid "This sample name has been used already on this page."
+msgstr ""
+
+#: samples/views/split_after_process.py:132
+msgid "This sample name exists already."
+msgstr ""
+
+#: samples/views/split_after_process.py:172
+msgid "Samples were successfully split and/or renamed."
+msgstr ""
+
+#: samples/views/split_after_process.py:177
+#, python-format
+msgid "Bulk sample rename for %s"
+msgstr ""
+
+#: samples/views/split_and_rename.py:20
+msgid "Name does already exist in database."
+msgstr ""
+
+#: samples/views/split_and_rename.py:48
+msgid "You must split into at least one piece."
+msgstr ""
+
+#: samples/views/split_and_rename.py:56
+msgid "Name is already given."
+msgstr ""
+
+#: samples/views/split_and_rename.py:78
+#, python-format
+msgid "Split sample “%s”"
+msgstr ""
+
 #: samples/views/utils.py:27
 msgid "Time must be given in the form HH:MM:SS."
 msgstr ""
@@ -627,6 +636,15 @@ msgstr ""
 #: samples/views/utils.py:50
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
+msgstr ""
+
+#: samples/views/utils.py:235
+#, python-format
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr ""
+
+#: samples/views/utils.py:238
+msgid "Ambiguous sample name"
 msgstr ""
 
 #: templates/404.html:12
@@ -941,6 +959,26 @@ msgstr ""
 msgid "this one"
 msgstr ""
 
-#: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
+#: templates/split_after_process.html:21 templates/split_after_process.html:43
 msgid "Sample name error"
+msgstr ""
+
+#: templates/split_and_rename.html:8
+msgid "General error"
+msgstr ""
+
+#: templates/split_and_rename.html:13
+msgid "Piece number"
+msgstr ""
+
+#: templates/split_and_rename.html:25
+msgid "New name error"
+msgstr ""
+
+#: templates/split_and_rename.html:34
+msgid ""
+"\n"
+"                (you must change this last name in order to create an\n"
+"                additional piece)\n"
+"              "
 msgstr ""

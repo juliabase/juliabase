@@ -35,7 +35,7 @@ def forms_from_post_data(post_data, sample_name):
         else:
             new_name_forms.append(NewNameForm(post_data, prefix=str(index)))
         index += 1
-    if index > 0 and (not post_data["%d-new_name"%(index-1)] or post_data["%d-new_name"%(index-1)] == sample_name):
+    if new_name_forms and (not post_data["%d-new_name"%(index-1)] or post_data["%d-new_name"%(index-1)] == sample_name):
         del new_name_forms[-1]
     else:
         structure_changed = True

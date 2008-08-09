@@ -1,13 +1,13 @@
-# Chantal German translations
-# Copyright (C) 2008 Free Software Foundation, Inc.
-# Torsten Bronger <bronger@physik.rwth-aachen.de>, 2008
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-08 23:17+0200\n"
-"PO-Revision-Date: 2008-08-08 23:17+0200\n"
+"POT-Creation-Date: 2008-08-09 17:46+0200\n"
+"PO-Revision-Date: 2008-08-09 17:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -427,127 +427,56 @@ msgstr "Chantal-Revision %s"
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
 
-#: samples/views/my_layers.py:16
+#: samples/views/my_layers.py:17
 msgid "Nickname"
 msgstr "Spitzname"
 
-#: samples/views/my_layers.py:17
+#: samples/views/my_layers.py:18
 msgid "Layer identifier"
 msgstr "Schicht-Bezeichnung"
 
-#: samples/views/my_layers.py:18
+#: samples/views/my_layers.py:19
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
 
-#: samples/views/my_layers.py:19
+#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:17
 msgid "Delete"
 msgstr "Löschen"
 
-#: samples/views/my_layers.py:22
+#: samples/views/my_layers.py:23
 msgid "Deposition and layer number must be separated by \"-\"."
 msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
 
-#: samples/views/my_layers.py:27
+#: samples/views/my_layers.py:28
 msgid "Deposition number doesn't exist."
 msgstr "Diese Deposition gibt es nicht."
 
-#: samples/views/my_layers.py:31
+#: samples/views/my_layers.py:32
 msgid "Layer number isn't a number."
 msgstr "Die Schichtnummer ist keine Zahl."
 
-#: samples/views/my_layers.py:33
+#: samples/views/my_layers.py:34
 msgid "This layer does not exist in this deposition."
 msgstr "In dieser Deposition gibt es diesen Layer nicht."
 
-#: samples/views/my_layers.py:77
-msgid "Nickname already given."
+#: samples/views/my_layers.py:78
+msgid "Nickname is already given."
 msgstr "Dieser Spitzname ist schon vergeben."
 
-#: samples/views/my_layers.py:102
+#: samples/views/my_layers.py:103
 msgid "My Layers"
 msgstr "Meine Schichten"
-
-#: samples/views/rename_and_split_samples.py:19
-msgid "Old sample name"
-msgstr "Alter Probenname"
-
-#: samples/views/rename_and_split_samples.py:21
-msgid "Pieces"
-msgstr "Stücke"
-
-#: samples/views/rename_and_split_samples.py:25
-msgid "Must be at least 1."
-msgstr "Muss mindestens 1 sein."
-
-#: samples/views/rename_and_split_samples.py:30
-msgid "New sample name"
-msgstr "Neuer Probenname"
-
-#: samples/views/rename_and_split_samples.py:31
-#: samples/views/rename_and_split_samples.py:40
-msgid "New responsible person"
-msgstr "Neuer Proben-Verantwortlicher"
-
-#: samples/views/rename_and_split_samples.py:41
-msgid "(for all samples; overrides individual settings above)"
-msgstr "(für alle Proben; überschreibt einzelne obige Einstellungen)"
-
-#: samples/views/rename_and_split_samples.py:41
-msgid "(no global change)"
-msgstr "(keine globale Änderung)"
-
-#: samples/views/rename_and_split_samples.py:42
-msgid "New current location"
-msgstr "Neuer Probenort"
-
-#: samples/views/rename_and_split_samples.py:43
-msgid "(for all samples; leave empty for no change)"
-msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
-
-#: samples/views/rename_and_split_samples.py:110
-msgid ""
-"Since there is more than one piece, the new name must not be exactly the "
-"deposition's name."
-msgstr ""
-"Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
-"Depositionsname sein."
-
-#: samples/views/rename_and_split_samples.py:114
-msgid "This sample name has been used already on this page."
-msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
-
-#: samples/views/rename_and_split_samples.py:118
-msgid "This sample name exists already."
-msgstr "Dieser Probenname ist schon vergeben."
-
-#: samples/views/rename_and_split_samples.py:157
-msgid "Samples were successfully split and/or renamed."
-msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
-
-#: samples/views/rename_and_split_samples.py:162
-#, python-format
-msgid "Bulk sample rename for %s"
-msgstr "Probenumbenennung für %s"
 
 #: samples/views/sample.py:24
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
-#: samples/views/sample.py:32
-#, python-format
-msgid "Sample %s could not be found (neither as an alias)."
-msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
-
-#: samples/views/sample.py:35
-msgid "Ambiguous sample name"
-msgstr "Mehrdeutiger Probenname"
-
-#: samples/views/sample.py:45
+#: samples/views/sample.py:38
 #, python-format
 msgid "Sample %s was added to Your Samples."
 msgstr "Probe %s wurde zu Meinen Proben hinzugefügt."
 
-#: samples/views/sample.py:48
+#: samples/views/sample.py:41
 #, python-format
 msgid "Sample %s was removed from Your Samples."
 msgstr "Probe %s wurde von Meinen Proben entfernt."
@@ -613,6 +542,86 @@ msgstr "6-Kammer-Deposition „%s“"
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
+#: samples/views/split_after_process.py:19
+msgid "Old sample name"
+msgstr "Alter Probenname"
+
+#: samples/views/split_after_process.py:21
+msgid "Pieces"
+msgstr "Stücke"
+
+#: samples/views/split_after_process.py:25
+msgid "Must be at least 1."
+msgstr "Muss mindestens 1 sein."
+
+#: samples/views/split_after_process.py:30
+#: samples/views/split_and_rename.py:16 samples/views/split_and_rename.py:25
+msgid "New sample name"
+msgstr "Neuer Probenname"
+
+#: samples/views/split_after_process.py:31
+#: samples/views/split_after_process.py:40
+msgid "New responsible person"
+msgstr "Neuer Proben-Verantwortlicher"
+
+#: samples/views/split_after_process.py:41
+msgid "(for all samples; overrides individual settings above)"
+msgstr "(für alle Proben; überschreibt einzelne obige Einstellungen)"
+
+#: samples/views/split_after_process.py:41
+msgid "(no global change)"
+msgstr "(keine globale Änderung)"
+
+#: samples/views/split_after_process.py:42
+msgid "New current location"
+msgstr "Neuer Probenort"
+
+#: samples/views/split_after_process.py:43
+msgid "(for all samples; leave empty for no change)"
+msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
+
+#: samples/views/split_after_process.py:124
+msgid ""
+"Since there is more than one piece, the new name must not be exactly the "
+"deposition's name."
+msgstr ""
+"Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
+"Depositionsname sein."
+
+#: samples/views/split_after_process.py:128
+msgid "This sample name has been used already on this page."
+msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
+
+#: samples/views/split_after_process.py:132
+msgid "This sample name exists already."
+msgstr "Dieser Probenname ist schon vergeben."
+
+#: samples/views/split_after_process.py:172
+msgid "Samples were successfully split and/or renamed."
+msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
+
+#: samples/views/split_after_process.py:177
+#, python-format
+msgid "Bulk sample rename for %s"
+msgstr "Probenumbenennung für %s"
+
+#: samples/views/split_and_rename.py:20
+msgid "Name does already exist in database."
+msgstr "Name existiert schon in der Datenbank."
+
+#: samples/views/split_and_rename.py:48
+msgid "You must split into at least one piece."
+msgstr "Sie müssen mindestens in ein Stück spalten."
+
+#: samples/views/split_and_rename.py:56
+msgid "Name is already given."
+msgstr "Dieser Name ist schon vergeben."
+
+#: samples/views/split_and_rename.py:78
+#, python-format
+msgid "Split sample “%s”"
+msgstr "Spalten der Probe „%s“"
+
 #: samples/views/utils.py:27
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
@@ -629,6 +638,15 @@ msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
+
+#: samples/views/utils.py:235
+#, python-format
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
+
+#: samples/views/utils.py:238
+msgid "Ambiguous sample name"
+msgstr "Mehrdeutiger Probenname"
 
 #: templates/404.html:12
 msgid "woman with binoculars"
@@ -971,9 +989,29 @@ msgstr ""
 msgid "this one"
 msgstr "diese hier"
 
-#: templates/split_and_rename.html:21 templates/split_and_rename.html.py:43
+#: templates/split_after_process.html:21 templates/split_after_process.html:43
 msgid "Sample name error"
 msgstr "Fehler im Probennamen"
+
+#: templates/split_and_rename.html:8
+msgid "General error"
+msgstr "Allgemeiner Fehler"
+
+#: templates/split_and_rename.html:13
+msgid "Piece number"
+msgstr "Stück-Nr."
+
+#: templates/split_and_rename.html:25
+msgid "New name error"
+msgstr "Fehler im neuen Namen"
+
+#: templates/split_and_rename.html:34
+msgid ""
+"\n"
+"                (you must change this last name in order to create an\n"
+"                additional piece)\n"
+"              "
+msgstr "\n(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück anzulegen.)"
 
 #~ msgid "(for all samples)"
 #~ msgstr "(für alle Proben)"

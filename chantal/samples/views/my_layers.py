@@ -62,7 +62,7 @@ def forms_from_post_data(post_data):
         else:
             my_layer_forms.append(MyLayerForm(post_data, prefix=str(index)))
         index += 1
-    if index > 0 and not post_data["%d-nickname"%(index-1)]:
+    if my_layer_forms and not post_data["%d-nickname"%(index-1)]:
         del my_layer_forms[-1]
     else:
         structure_changed = True
