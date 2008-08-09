@@ -176,3 +176,9 @@ def split_and_rename_after_process(request, process_id):
                                "samples": zip(sample_forms, new_name_form_lists),
                                "new_sample_data": new_sample_data_form},
                               context_instance=RequestContext(request))
+
+@login_required
+def split_and_rename_sample(request, sample_name):
+    lookup_result = utils.lookup_sample(sample_name)
+    if lookup_result:
+        return lookup_result

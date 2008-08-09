@@ -25,17 +25,10 @@ class IsMySampleForm(forms.Form):
 
 @login_required
 def show(request, sample_name):
-    sample_name = utils.url2name(sample_name)
     start = time.time()
-    sample = utils.get_sample(sample_name)
-    if not sample:
-        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
-    if isinstance(sample, list):
-        return render_to_response("disambiguation.html",
-                                  {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
-                                  context_instance=RequestContext(request))
-    if not utils.has_permission_for_sample(request.user, sample):
-        return HttpResponseRedirect("permission_error")
+    lookup_result = utils.lookup_sample(sample_name)
+    if lookup_result:
+        return lookup_result
     user_details = request.user.get_profile()
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)

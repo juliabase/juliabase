@@ -227,3 +227,15 @@ def get_next_deposition_number(letter):
     numbers = [int(deposition_number_pattern.match(deposition_dict["number"][3:]).group(0))
                for deposition_dict in deposition_dicts]
     return prefix + u"%03d" % (max(numbers + [0]) + 1)
+
+def lookup_sample(sample_name):
+    sample_name = url2name(sample_name)
+    sample = get_sample(sample_name)
+    if not sample:
+        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+    if isinstance(sample, list):
+        return render_to_response("disambiguation.html",
+                                  {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
+                                  context_instance=RequestContext(request))
+    if not has_permission_for_sample(request.user, sample):
+        return HttpResponseRedirect("permission_error")
