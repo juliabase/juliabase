@@ -26,7 +26,7 @@ class IsMySampleForm(forms.Form):
 @login_required
 def show(request, sample_name):
     start = time.time()
-    lookup_result = utils.lookup_sample(sample_name)
+    lookup_result = utils.lookup_sample(sample_name, request)
     if lookup_result:
         return lookup_result
     user_details = request.user.get_profile()

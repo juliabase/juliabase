@@ -3,7 +3,7 @@
 
 import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
-from django.http import HttpResponseRedirect, QueryDict
+from django.http import HttpResponseRedirect, QueryDict, Http404
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
@@ -228,7 +228,7 @@ def get_next_deposition_number(letter):
                for deposition_dict in deposition_dicts]
     return prefix + u"%03d" % (max(numbers + [0]) + 1)
 
-def lookup_sample(sample_name):
+def lookup_sample(sample_name, request):
     sample_name = url2name(sample_name)
     sample = get_sample(sample_name)
     if not sample:

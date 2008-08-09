@@ -13,6 +13,7 @@ from chantal.samples import models
 from . import utils
 
 class MyLayerForm(forms.Form):
+    _ = ugettext_lazy
     nickname = forms.CharField(label=_(u"Nickname"))
     deposition_and_layer = forms.CharField(label=_(u"Layer identifier"),
                                            help_text=_(u"in the form \"deposition number\"-\"layer number\""))
@@ -74,7 +75,7 @@ def is_referentially_valid(my_layer_forms):
         if my_layer_form.is_valid():
             nickname = my_layer_form.cleaned_data["nickname"]
             if nickname in nicknames:
-                utils.append_error(my_layer_form, "__all__", _(u"Nickname already given."))
+                utils.append_error(my_layer_form, "__all__", _(u"Nickname is already given."))
                 referentially_valid = False
             else:
                 nicknames.add(nickname)
