@@ -21,21 +21,25 @@ class NewNameForm(forms.Form):
         return self.cleaned_data["new_name"]
 
 class GlobalDataForm(forms.Form):
-    pass
+    _ = ugettext_lazy
 
 def forms_from_post_data(post_data, sample_name):
     new_name_forms = []
     structure_changed = False
     index = 0
+    last_deleted = False
     while True:
         if "%d-new_name" % index not in post_data:
             break
         if "%d-delete" % index in post_data:
             structure_changed = True
+            last_deleted = True
         else:
             new_name_forms.append(NewNameForm(post_data, prefix=str(index)))
+            last_deleted = False
         index += 1
-    if new_name_forms and (not post_data["%d-new_name"%(index-1)] or post_data["%d-new_name"%(index-1)] == sample_name):
+    print index
+    if not last_deleted and post_data.get("%d-new_name" % (index-1), sample_name) == sample_name:
         del new_name_forms[-1]
     else:
         structure_changed = True
