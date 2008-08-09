@@ -147,6 +147,7 @@ class Sample(models.Model):
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
+    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
                                      verbose_name=_(u"split origin"))
@@ -199,10 +200,13 @@ admin.site.register(SampleSplit)
 
 class SampleSeries(models.Model):
     name = models.CharField(_(u"name"), max_length=255)
-    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"))
+    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
+    group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
+    comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return self.name
+        return self.group.name + "-" + self.name
     class Meta:
+        unique_together = ("name", "group")
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
 admin.site.register(SampleSeries)
