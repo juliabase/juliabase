@@ -139,6 +139,7 @@ class Sample(models.Model):
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
+    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
                                      verbose_name=_(u"split origin"))
