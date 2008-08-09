@@ -173,15 +173,8 @@ def split_and_rename_after_process(request, process_id):
             return HttpResponseRedirect("../../")
     else:
         original_data_forms, new_data_form_lists, global_new_data_form = forms_from_database(process)
-    return render_to_response("split_and_rename.html",
+    return render_to_response("split_after_process.html",
                               {"title": _(u"Bulk sample rename for %s") % process_name,
                                "samples": zip(original_data_forms, new_data_form_lists),
                                "new_sample_data": global_new_data_form},
                               context_instance=RequestContext(request))
-
-@login_required
-def split_and_rename_sample(request, sample_name):
-    lookup_result = utils.lookup_sample(sample_name)
-    if lookup_result:
-        return lookup_result
-    
