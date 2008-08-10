@@ -189,13 +189,15 @@ class SampleSplit(Process):
 
 class SampleSeries(models.Model):
     name = models.CharField(_(u"name"), max_length=50)
+    originator = models.ForeignKey(django.contrib.auth.models.User, related_name="samples", verbose_name=_(u"originator"))
+    year = models.IntegerField(_(u"year"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return self.group.name + "-" + self.name
+        return u"%02d-%s-%s" % (self.year % 100, self.originator.username, self.name)
     class Meta:
-        unique_together = ("name", "group")
+        unique_together = ("name", "originator", "year")
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
 
