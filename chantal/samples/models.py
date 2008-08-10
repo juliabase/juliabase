@@ -173,6 +173,7 @@ class SampleSplit(Process):
     # because one could find the parent via the samples attribute every process
     # has, too.
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
+    complete = models.BooleanField(_(u"sample was completely split"), default=True, null=True, blank=True)
     def __unicode__(self):
         return self.parent.name
     def get_additional_template_context(self, process_context):
