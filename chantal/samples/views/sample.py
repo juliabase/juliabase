@@ -26,9 +26,9 @@ class IsMySampleForm(forms.Form):
 @login_required
 def show(request, sample_name):
     start = time.time()
-    lookup_result = utils.lookup_sample(sample_name, request)
-    if lookup_result:
-        return lookup_result
+    sample, sample_name, redirect = utils.lookup_sample(sample_name, request)
+    if redirect:
+        return redirect
     user_details = request.user.get_profile()
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)

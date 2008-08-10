@@ -143,6 +143,8 @@ def normalize_prefixes(post_data):
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
 
 def get_my_layers(user_details, deposition_model, required=True):
+    if not user_details.my_layers:
+        return []
     items = [item.split(":", 1) for item in user_details.my_layers.split(",")]
     items = [(item[0].strip(),) + tuple(item[1].rsplit("-", 1)) for item in items]
     items = [(item[0], int(item[1]), int(item[2])) for item in items]
@@ -234,8 +236,9 @@ def lookup_sample(sample_name, request):
     if not sample:
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if isinstance(sample, list):
-        return render_to_response("disambiguation.html",
-                                  {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
-                                  context_instance=RequestContext(request))
+        return None, sample_name, render_to_response(
+            "disambiguation.html", {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
+            context_instance=RequestContext(request))
     if not has_permission_for_sample(request.user, sample):
-        return HttpResponseRedirect("permission_error")
+        return None, sample_name, HttpResponseRedirect("permission_error")
+    return sample, sample_name, None

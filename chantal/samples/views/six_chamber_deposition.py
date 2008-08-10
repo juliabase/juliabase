@@ -159,7 +159,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         biggest_layer_number += 1
         new_channel_lists.append([])
     # Third step: Add My Layer
-    my_layer = change_params["structural-change-my_layer_to_be_added"]
+    my_layer = change_params.get("structural-change-my_layer_to_be_added")
     if my_layer:
         structure_changed = True
         deposition_id, layer_number = my_layer.split("-")

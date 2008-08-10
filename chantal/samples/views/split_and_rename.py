@@ -38,12 +38,11 @@ def forms_from_post_data(post_data, sample_name):
             new_name_forms.append(NewNameForm(post_data, prefix=str(index)))
             last_deleted = False
         index += 1
-    print index
     if not last_deleted and post_data.get("%d-new_name" % (index-1), sample_name) == sample_name:
         del new_name_forms[-1]
     else:
         structure_changed = True
-    global_data_form = GlobalDataForm(request.POST)
+    global_data_form = GlobalDataForm(post_data)
     return new_name_forms, global_data_form, structure_changed
 
 def forms_from_database(sample_name):
@@ -60,7 +59,6 @@ def is_referentially_valid(new_name_forms, global_data_form):
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
-            print new_name, new_names
             if new_name in new_names or utils.does_sample_exist(new_name):
                 utils.append_error(new_name_form, "__all__", _(u"Name is already given."))
                 referentially_valid = False
@@ -72,9 +70,9 @@ def save_to_database(new_name_forms, global_data_form):
         
 @login_required
 def split_and_rename(request, sample_name):
-    lookup_result = utils.lookup_sample(sample_name, request)
-    if lookup_result:
-        return lookup_result
+    sample, sample_name, redirect = utils.lookup_sample(sample_name, request)
+    if redirect:
+        return redirect
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, sample_name)
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
