@@ -188,7 +188,7 @@ class SampleSplit(Process):
         verbose_name_plural = _(u"sample splits")
 
 class SampleSeries(models.Model):
-    name = models.CharField(_(u"name"), max_length=255)
+    name = models.CharField(_(u"name"), max_length=50)
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     comments = models.TextField(_(u"comments"), blank=True)
