@@ -203,12 +203,12 @@ class SampleSeries(models.Model):
     name = models.CharField(_(u"name"), max_length=50)
     originator = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
                                    verbose_name=_(u"originator"))
-    year = models.IntegerField(_(u"year"))
+    timestamp = models.DateTimeField(_(u"timestamp"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return u"%02d-%s-%s" % (self.year % 100, self.originator.username, self.name)
+        return u"%02d-%s-%s" % (self.timestamp.year % 100, self.originator.username, self.name)
     class Meta:
         unique_together = ("name", "originator", "year")
         verbose_name = _(u"sample series")
@@ -225,6 +225,7 @@ class UserDetails(models.Model):
     phone = models.CharField(_(u"phone"), max_length=20)
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
+    my_series = models.ManyToManyField(SampleSeries, blank=True, verbose_name=_(u"my series"))
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
