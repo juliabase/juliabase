@@ -24,7 +24,10 @@ class GlobalDataForm(forms.Form):
     _ = ugettext_lazy
     finished = forms.BooleanField(label=_(u"Ready for saving"), required=False)
     sample_completely_split = forms.BooleanField(label=_(u"Sample completely split"), initial=True, required=False)
-    new_name = forms.CharField(label=_(u"Sample series for pieces"), max_length=50)
+    sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None)
+    def __init__(self, data=None, **keyw):
+        user_details = keyw.pop("user_details")
+        super(GlobalDataForm, self).__init__(data, **keyw)
 
 def forms_from_post_data(post_data, sample_name):
     new_name_forms = []
