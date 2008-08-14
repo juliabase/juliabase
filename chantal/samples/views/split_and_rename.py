@@ -27,7 +27,10 @@ class GlobalDataForm(forms.Form):
     sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None)
     def __init__(self, data=None, **keyw):
         user_details = keyw.pop("user_details")
+        parent = keyw.pop("parent")
         super(GlobalDataForm, self).__init__(data, **keyw)
+        self.fields["sample_series"].queryset = \
+            models.SampleSeries.objects.filter(Q(samples=parent) | Q(watchers=user_details)).distinct()
 
 def forms_from_post_data(post_data, sample_name):
     new_name_forms = []
