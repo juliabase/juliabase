@@ -310,7 +310,7 @@ def edit(request, deposition_number):
                 return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
         deposition_form = None
-        match = query_string_pattern.match(request.META["QUERY_STRING"])
+        match = query_string_pattern.match(request.META["QUERY_STRING"] or "")
         if not deposition and match:
             # Duplication of a deposition
             copy_from_query = models.SixChamberDeposition.objects.filter(number=match.group("copy_from"))
