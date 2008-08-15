@@ -39,9 +39,8 @@ class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
     operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
-    def __init__(self, data=None, **keyw):
+    def __init__(self, user_details, data=None, **keyw):
         deposition = keyw.get("instance")
-        user_details = keyw.pop("user_details")
         initial = keyw.get("initial", {})
         if deposition:
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
@@ -290,7 +289,7 @@ def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
     user_details = request.user.get_profile()
     if request.method == "POST":
-        deposition_form = DepositionForm(request.POST, instance=deposition, user_details=user_details)
+        deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         remove_from_my_samples_form = RemoveFromMySamples(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form)
@@ -318,12 +317,12 @@ def edit(request, deposition_number):
                 deposition_data = copy_from_query.values()[0]
                 del deposition_data["timestamp"]
                 deposition_data["number"] = utils.get_next_deposition_number("B")
-                deposition_form = DepositionForm(initial=deposition_data, user_details=user_details)
+                deposition_form = DepositionForm(user_details, initial=deposition_data)
                 layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
         if not deposition_form:
             # Normal edit of existing deposition, or new deposition, or duplication has failed
             initial = {"number": utils.get_next_deposition_number("B")} if not deposition else {}
-            deposition_form = DepositionForm(initial=initial, instance=deposition, user_details=user_details)
+            deposition_form = DepositionForm(user_details, initial=initial, instance=deposition)
             layer_forms, channel_form_lists = forms_from_database(deposition)
         remove_from_my_samples_form = RemoveFromMySamples(initial={"remove_deposited_from_my_samples": not deposition})
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
