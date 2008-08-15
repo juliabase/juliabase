@@ -4,10 +4,7 @@
 
 {% block content %}
 <form method="post" action="">
-  {% if global_data.non_field_errors %}
-    <div class="errorlist">{% trans 'General error' %}
-      {{ global_data.non_field_errors }}</div>
-  {% endif %}
+  {{ global_data.as_p }}
   <table style="margin-left: auto; margin-right: auto; margin-bottom: 3ex" cellpadding="10" border="1">
     <tr>
       <th>{% trans 'Piece number' %}</th>

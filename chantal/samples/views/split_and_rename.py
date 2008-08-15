@@ -8,6 +8,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
+from django.db.models import Q
 from chantal.samples import models
 from . import utils
 
@@ -25,14 +26,12 @@ class GlobalDataForm(forms.Form):
     finished = forms.BooleanField(label=_(u"Ready for saving"), required=False)
     sample_completely_split = forms.BooleanField(label=_(u"Sample completely split"), initial=True, required=False)
     sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None)
-    def __init__(self, data=None, **keyw):
-        user_details = keyw.pop("user_details")
-        parent = keyw.pop("parent")
+    def __init__(self, parent, user_details, data=None, **keyw):
         super(GlobalDataForm, self).__init__(data, **keyw)
         self.fields["sample_series"].queryset = \
             models.SampleSeries.objects.filter(Q(samples=parent) | Q(watchers=user_details)).distinct()
 
-def forms_from_post_data(post_data, parent):
+def forms_from_post_data(post_data, parent, user_details):
     new_name_forms = []
     structure_changed = False
     index = 0
@@ -51,12 +50,12 @@ def forms_from_post_data(post_data, parent):
         del new_name_forms[-1]
     else:
         structure_changed = True
-    global_data_form = GlobalDataForm(post_data, user_details, parent)
+    global_data_form = GlobalDataForm(parent, user_details, post_data)
     return new_name_forms, global_data_form, structure_changed
 
-def forms_from_database(parent):
+def forms_from_database(parent, user_details):
     new_name_forms = []
-    global_data_form = GlobalDataForm()  # FixMe: Must read series name from parent.name
+    global_data_form = GlobalDataForm(parent, user_details)
     return new_name_forms, global_data_form
     
 def is_referentially_valid(new_name_forms, global_data_form):
@@ -82,15 +81,16 @@ def split_and_rename(request, parent_name):
     parent, redirect = utils.lookup_sample(parent_name, request)
     if redirect:
         return redirect
+    user_details = request.user.get_profile()
     if request.method == "POST":
-        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent)
+        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form)
             return HttpResponseRedirect("../")
     else:
-        new_name_forms, global_data_form = forms_from_database(parent)
+        new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name}, prefix=str(len(new_name_forms))))
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
                                                         "new_names": new_name_forms, "global_data": global_data_form},
