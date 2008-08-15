@@ -140,6 +140,7 @@ class Sample(models.Model):
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
+    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
                                      verbose_name=_(u"split origin"))
@@ -173,6 +174,7 @@ class SampleSplit(Process):
     # because one could find the parent via the samples attribute every process
     # has, too.
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
+    complete = models.BooleanField(_(u"sample was completely split"), default=True, null=True, blank=True)
     def __unicode__(self):
         return self.parent.name
     def get_additional_template_context(self, process_context):
@@ -188,11 +190,19 @@ class SampleSplit(Process):
         verbose_name_plural = _(u"sample splits")
 
 class SampleSeries(models.Model):
-    name = models.CharField(_(u"name"), max_length=255)
-    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"))
+    name = models.CharField(_(u"name"), max_length=50)
+    originator = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
+                                   verbose_name=_(u"originator"))
+    timestamp = models.DateTimeField(_(u"timestamp"))
+    # Redundant to timestamp, but necessary for "unique_together" below
+    year = models.CharField(_(u"year"), max_length=2)
+    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
+    group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
+    comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return self.name
+        return u"%s-%s-%s" % (self.year, self.originator.username, self.name)
     class Meta:
+        unique_together = ("name", "originator", "year")
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
 
@@ -206,6 +216,7 @@ class UserDetails(models.Model):
     phone = models.CharField(_(u"phone"), max_length=20)
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
+    my_series = models.ManyToManyField(SampleSeries, blank=True, related_name="watchers", verbose_name=_(u"my series"))
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
