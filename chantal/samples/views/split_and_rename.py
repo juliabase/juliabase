@@ -32,7 +32,7 @@ class GlobalDataForm(forms.Form):
         self.fields["sample_series"].queryset = \
             models.SampleSeries.objects.filter(Q(samples=parent) | Q(watchers=user_details)).distinct()
 
-def forms_from_post_data(post_data, sample_name):
+def forms_from_post_data(post_data, parent):
     new_name_forms = []
     structure_changed = False
     index = 0
@@ -47,16 +47,16 @@ def forms_from_post_data(post_data, sample_name):
             new_name_forms.append(NewNameForm(post_data, prefix=str(index)))
             last_deleted = False
         index += 1
-    if not last_deleted and post_data.get("%d-new_name" % (index-1), sample_name) == sample_name:
+    if not last_deleted and post_data.get("%d-new_name" % (index-1), parent.name) == parent.name:
         del new_name_forms[-1]
     else:
         structure_changed = True
-    global_data_form = GlobalDataForm(post_data)
+    global_data_form = GlobalDataForm(post_data, user_details, parent)
     return new_name_forms, global_data_form, structure_changed
 
-def forms_from_database(sample_name):
+def forms_from_database(parent):
     new_name_forms = []
-    global_data_form = GlobalDataForm()  # FixMe: Must read series name from sample_name
+    global_data_form = GlobalDataForm()  # FixMe: Must read series name from parent.name
     return new_name_forms, global_data_form
     
 def is_referentially_valid(new_name_forms, global_data_form):
@@ -78,21 +78,21 @@ def save_to_database(new_name_forms, global_data_form):
     pass
         
 @login_required
-def split_and_rename(request, sample_name):
-    sample, sample_name, redirect = utils.lookup_sample(sample_name, request)
+def split_and_rename(request, parent_name):
+    sample, parent_name, redirect = utils.lookup_sample(parent_name, request)
     if redirect:
         return redirect
     if request.method == "POST":
-        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, sample_name)
+        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent_name)
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form)
             return HttpResponseRedirect("../")
     else:
-        new_name_forms, global_data_form = forms_from_database(sample_name)
-    new_name_forms.append(NewNameForm(initial={"new_name": sample_name}, prefix=str(len(new_name_forms))))
-    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % sample_name,
+        new_name_forms, global_data_form = forms_from_database(parent_name)
+    new_name_forms.append(NewNameForm(initial={"new_name": parent_name}, prefix=str(len(new_name_forms))))
+    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent_name,
                                                         "new_names": new_name_forms, "global_data": global_data_form},
                               context_instance=RequestContext(request))
 
