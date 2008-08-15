@@ -26,7 +26,7 @@ class IsMySampleForm(forms.Form):
 @login_required
 def show(request, sample_name):
     start = time.time()
-    sample, sample_name, redirect = utils.lookup_sample(sample_name, request)
+    sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
         return redirect
     user_details = request.user.get_profile()
@@ -35,10 +35,10 @@ def show(request, sample_name):
         if is_my_sample_form.is_valid():
             if is_my_sample_form.cleaned_data["is_my_sample"]:
                 user_details.my_samples.add(sample)
-                request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample_name
+                request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample.name
             else:
                 user_details.my_samples.remove(sample)
-                request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample_name
+                request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
     else:
         # FixMe: DB access is probably not efficient
         start = time.time()

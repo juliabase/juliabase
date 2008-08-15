@@ -79,20 +79,20 @@ def save_to_database(new_name_forms, global_data_form):
         
 @login_required
 def split_and_rename(request, parent_name):
-    sample, parent_name, redirect = utils.lookup_sample(parent_name, request)
+    parent, redirect = utils.lookup_sample(parent_name, request)
     if redirect:
         return redirect
     if request.method == "POST":
-        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent_name)
+        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent)
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form)
             return HttpResponseRedirect("../")
     else:
-        new_name_forms, global_data_form = forms_from_database(parent_name)
-    new_name_forms.append(NewNameForm(initial={"new_name": parent_name}, prefix=str(len(new_name_forms))))
-    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent_name,
+        new_name_forms, global_data_form = forms_from_database(parent)
+    new_name_forms.append(NewNameForm(initial={"new_name": parent.name}, prefix=str(len(new_name_forms))))
+    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
                                                         "new_names": new_name_forms, "global_data": global_data_form},
                               context_instance=RequestContext(request))
 

@@ -236,9 +236,9 @@ def lookup_sample(sample_name, request):
     if not sample:
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if isinstance(sample, list):
-        return None, sample_name, render_to_response(
+        return None, render_to_response(
             "disambiguation.html", {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
             context_instance=RequestContext(request))
     if not has_permission_for_sample(request.user, sample):
-        return None, sample_name, HttpResponseRedirect("permission_error")
-    return sample, sample_name, None
+        return None, HttpResponseRedirect("permission_error")
+    return sample, None
