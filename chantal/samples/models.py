@@ -173,7 +173,6 @@ class SampleSplit(Process):
     # because one could find the parent via the samples attribute every process
     # has, too.
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
-    complete = models.BooleanField(_(u"sample was completely split"), default=True, null=True, blank=True)
     def __unicode__(self):
         return self.parent.name
     def get_additional_template_context(self, process_context):
@@ -186,6 +185,20 @@ class SampleSplit(Process):
     class Meta:
         verbose_name = _(u"sample split")
         verbose_name_plural = _(u"sample splits")
+
+sample_death_reasons = (
+    ("split", _(u"completely split")),
+    ("lost", _(u"lost and unfindable")),
+    ("destroyed", _(u"completely destroyed")),
+    )
+
+class SampleDeath(Process):
+    reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
+    def __unicode__(self):
+        return self.reason
+    class Meta:
+        verbose_name = _(u"cease of existence")
+        verbose_name_plural = _(u"ceases of existence")
 
 class SampleSeries(models.Model):
     name = models.CharField(_(u"name"), max_length=50)
