@@ -210,7 +210,10 @@ class SampleSeries(models.Model):
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
-        return u"%s-%s-%s" % (self.year, self.originator.username, self.name)
+        return _(u"%(name)s (%(originator)s %(year)s)") % {"name": self.name,
+                                                           "originator": self.originator.get_full_name() or \
+                                                               unicode(self.originator),
+                                                           "year": self.year}
     class Meta:
         unique_together = ("name", "originator", "year")
         verbose_name = _(u"sample series")
