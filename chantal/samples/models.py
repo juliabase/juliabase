@@ -195,8 +195,8 @@ class SampleSeries(models.Model):
     # Redundant to timestamp, but necessary for "unique_together" below
     year = models.IntegerField(_(u"year"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
+    results = models.ManyToManyField(Process, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
-    comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
         return u"%s-%s-%s" % (self.year, self.originator.username, self.name)
     class Meta:
