@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-16 11:05+0200\n"
-"PO-Revision-Date: 2008-08-16 11:07+0200\n"
+"POT-Creation-Date: 2008-08-17 01:31+0200\n"
+"PO-Revision-Date: 2008-08-17 01:33+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: samples/models.py:12 samples/models.py:146 samples/models.py:172
-#: samples/models.py:203
+#: samples/models.py:216
 msgid "name"
 msgstr "Name"
 
@@ -26,11 +26,11 @@ msgstr "Email"
 msgid "alternative email"
 msgstr "alternative Email"
 
-#: samples/models.py:15 samples/models.py:230
+#: samples/models.py:15 samples/models.py:243
 msgid "phone"
 msgstr "Telefon"
 
-#: samples/models.py:19 samples/models.py:206
+#: samples/models.py:19 samples/models.py:219
 msgid "timestamp"
 msgstr "Zeitstempel"
 
@@ -280,7 +280,7 @@ msgstr "mit Kommas getrennt, keine Leerzeichen"
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: samples/models.py:156 samples/models.py:211
+#: samples/models.py:156 samples/models.py:224
 msgid "group"
 msgstr "Gruppe"
 
@@ -288,7 +288,7 @@ msgstr "Gruppe"
 msgid "sample"
 msgstr "Probe"
 
-#: samples/models.py:167 samples/models.py:209
+#: samples/models.py:167 samples/models.py:222
 msgid "samples"
 msgstr "Proben"
 
@@ -304,64 +304,80 @@ msgstr "Alternativnamen"
 msgid "parent"
 msgstr "Elter"
 
-#: samples/models.py:186
-msgid "sample was completely split"
-msgstr "Probe wurde vollständig gespalten"
-
-#: samples/models.py:198
+#: samples/models.py:197
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: samples/models.py:199
+#: samples/models.py:198
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: samples/models.py:205
+#: samples/models.py:202
+msgid "completely split"
+msgstr "vollständig gespalten"
+
+#: samples/models.py:203
+msgid "lost and unfindable"
+msgstr "unauffindbar verlorengegangen"
+
+#: samples/models.py:204
+msgid "completely destroyed"
+msgstr "vollständig vernichtet"
+
+#: samples/models.py:208
+msgid "cause of death"
+msgstr "Todesursache"
+
+#: samples/models.py:212
+msgid "cease of existence"
+msgstr "Beendigung der Existenz"
+
+#: samples/models.py:213
+msgid "ceases of existence"
+msgstr "Beendigungen der Existenz"
+
+#: samples/models.py:218
 msgid "originator"
 msgstr "Ersteller"
 
-#: samples/models.py:208
+#: samples/models.py:221
 msgid "year"
 msgstr "Jahr"
 
-#: samples/models.py:210
+#: samples/models.py:223
 msgid "results"
 msgstr "Ergebnisse"
 
-#: samples/models.py:213
+#: samples/models.py:226
 #, python-format
 msgid "%(name)s (%(originator)s %(year)s)"
 msgstr "%(name)s (%(originator)s %(year)s)"
 
-#: samples/models.py:219
+#: samples/models.py:232
 msgid "sample series"
 msgstr "Probenserie"
 
-#: samples/models.py:220
+#: samples/models.py:233
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: samples/models.py:228
+#: samples/models.py:241
 msgid "user"
 msgstr "Benutzer"
 
-#: samples/models.py:229
+#: samples/models.py:242
 msgid "language"
 msgstr "Sprache"
 
-#: samples/models.py:231
+#: samples/models.py:244
 msgid "my samples"
 msgstr "meine Proben"
 
-#: samples/models.py:232
+#: samples/models.py:245
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: samples/models.py:233
-msgid "my series"
-msgstr "meine Serien"
-
-#: samples/models.py:237 samples/models.py:238
+#: samples/models.py:249 samples/models.py:250
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -468,7 +484,7 @@ msgstr "Schicht-Bezeichnung"
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
 
-#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:18
+#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:19
 msgid "Delete"
 msgstr "Löschen"
 
@@ -584,7 +600,7 @@ msgid "Must be at least 1."
 msgstr "Muss mindestens 1 sein."
 
 #: samples/views/split_after_process.py:30
-#: samples/views/split_and_rename.py:17
+#: samples/views/split_and_rename.py:18
 msgid "New sample name"
 msgstr "Neuer Probenname"
 
@@ -634,31 +650,31 @@ msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
 
-#: samples/views/split_and_rename.py:21
+#: samples/views/split_and_rename.py:22
 msgid "Name does already exist in database."
 msgstr "Name existiert schon in der Datenbank."
 
-#: samples/views/split_and_rename.py:26
+#: samples/views/split_and_rename.py:27
 msgid "All pieces completely entered"
 msgstr "Alle Stücke vollständig eingegeben"
 
-#: samples/views/split_and_rename.py:27
+#: samples/views/split_and_rename.py:28
 msgid "Sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
 
-#: samples/views/split_and_rename.py:28
+#: samples/views/split_and_rename.py:29
 msgid "Sample series"
 msgstr "Probenserie"
 
-#: samples/views/split_and_rename.py:69
+#: samples/views/split_and_rename.py:70
 msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
 
-#: samples/views/split_and_rename.py:76
+#: samples/views/split_and_rename.py:77
 msgid "Name is already given."
 msgstr "Dieser Name ist schon vergeben."
 
-#: samples/views/split_and_rename.py:100
+#: samples/views/split_and_rename.py:120
 #, python-format
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
@@ -1056,6 +1072,9 @@ msgstr ""
 "\n"
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
+
+#~ msgid "sample was completely split"
+#~ msgstr "Probe wurde vollständig gespalten"
 
 #~ msgid "(for all samples)"
 #~ msgstr "(für alle Proben)"
