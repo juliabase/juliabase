@@ -1,20 +1,20 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# English translations for Chantal
+# Copyright (C) 2008 Jülich Forschungszentrum
+# Torsten Bronger <bronger@physik.rwth-aachen.de>, 2008.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-09 17:46+0200\n"
-"PO-Revision-Date: 2008-08-09 17:49+0200\n"
+"POT-Creation-Date: 2008-08-16 11:05+0200\n"
+"PO-Revision-Date: 2008-08-16 11:10+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: samples/models.py:12 samples/models.py:146 samples/models.py:171
-#: samples/models.py:201
+#: samples/models.py:12 samples/models.py:146 samples/models.py:172
+#: samples/models.py:203
 msgid "name"
 msgstr ""
 
@@ -26,11 +26,11 @@ msgstr ""
 msgid "alternative email"
 msgstr ""
 
-#: samples/models.py:15 samples/models.py:217
+#: samples/models.py:15 samples/models.py:230
 msgid "phone"
 msgstr ""
 
-#: samples/models.py:19
+#: samples/models.py:19 samples/models.py:206
 msgid "timestamp"
 msgstr ""
 
@@ -46,7 +46,7 @@ msgstr ""
 msgid "process"
 msgstr ""
 
-#: samples/models.py:27 samples/models.py:153
+#: samples/models.py:27 samples/models.py:154
 msgid "processes"
 msgstr ""
 
@@ -265,74 +265,104 @@ msgid "currently responsible person"
 msgstr ""
 
 #: samples/models.py:150
+msgid "purpose"
+msgstr ""
+
+#: samples/models.py:151
 msgid "tags"
 msgstr ""
 
-#: samples/models.py:150
+#: samples/models.py:151
 msgid "separated with commas, no whitespace"
 msgstr ""
 
-#: samples/models.py:152
+#: samples/models.py:153
 msgid "split origin"
 msgstr ""
 
-#: samples/models.py:155
+#: samples/models.py:156 samples/models.py:211
 msgid "group"
 msgstr ""
 
-#: samples/models.py:165 samples/models.py:172
+#: samples/models.py:166 samples/models.py:173
 msgid "sample"
 msgstr ""
 
-#: samples/models.py:166 samples/models.py:202
+#: samples/models.py:167 samples/models.py:209
 msgid "samples"
 msgstr ""
 
-#: samples/models.py:176
+#: samples/models.py:177
 msgid "name alias"
 msgstr ""
 
-#: samples/models.py:177
+#: samples/models.py:178
 msgid "name aliases"
 msgstr ""
 
-#: samples/models.py:184
+#: samples/models.py:185
 msgid "parent"
 msgstr ""
 
-#: samples/models.py:196
+#: samples/models.py:186
+msgid "sample was completely split"
+msgstr ""
+
+#: samples/models.py:198
 msgid "sample split"
 msgstr ""
 
-#: samples/models.py:197
+#: samples/models.py:199
 msgid "sample splits"
 msgstr ""
 
-#: samples/models.py:206
-msgid "sample series"
+#: samples/models.py:205
+msgid "originator"
 msgstr ""
 
-#: samples/models.py:207
-msgid "sample serieses"
-msgstr "sample series"
-
-#: samples/models.py:215
-msgid "user"
+#: samples/models.py:208
+msgid "year"
 msgstr ""
 
-#: samples/models.py:216
-msgid "language"
+#: samples/models.py:210
+msgid "results"
 msgstr ""
 
-#: samples/models.py:218
-msgid "my samples"
+#: samples/models.py:213
+#, python-format
+msgid "%(name)s (%(originator)s %(year)s)"
 msgstr ""
 
 #: samples/models.py:219
+msgid "sample series"
+msgstr ""
+
+#: samples/models.py:220
+msgid "sample serieses"
+msgstr "sample series"
+
+#: samples/models.py:228
+msgid "user"
+msgstr ""
+
+#: samples/models.py:229
+msgid "language"
+msgstr ""
+
+#: samples/models.py:231
+msgid "my samples"
+msgstr ""
+
+#: samples/models.py:232
 msgid "my layers"
 msgstr ""
 
-#: samples/models.py:223 samples/models.py:224
+#: samples/models.py:233
+#, fuzzy
+msgid "my series"
+msgstr "sample series"
+
+#: samples/models.py:237 samples/models.py:238
 msgid "user details"
 msgstr ""
 
@@ -439,7 +469,7 @@ msgstr ""
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr ""
 
-#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:17
+#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:18
 msgid "Delete"
 msgstr ""
 
@@ -556,7 +586,7 @@ msgid "Must be at least 1."
 msgstr ""
 
 #: samples/views/split_after_process.py:30
-#: samples/views/split_and_rename.py:16 samples/views/split_and_rename.py:25
+#: samples/views/split_and_rename.py:17
 msgid "New sample name"
 msgstr ""
 
@@ -604,19 +634,32 @@ msgstr ""
 msgid "Bulk sample rename for %s"
 msgstr ""
 
-#: samples/views/split_and_rename.py:20
+#: samples/views/split_and_rename.py:21
 msgid "Name does already exist in database."
 msgstr ""
 
-#: samples/views/split_and_rename.py:48
+#: samples/views/split_and_rename.py:26
+msgid "All pieces completely entered"
+msgstr ""
+
+#: samples/views/split_and_rename.py:27
+msgid "Sample was completely split"
+msgstr ""
+
+#: samples/views/split_and_rename.py:28
+#, fuzzy
+msgid "Sample series"
+msgstr "sample series"
+
+#: samples/views/split_and_rename.py:69
 msgid "You must split into at least one piece."
 msgstr ""
 
-#: samples/views/split_and_rename.py:56
+#: samples/views/split_and_rename.py:76
 msgid "Name is already given."
 msgstr ""
 
-#: samples/views/split_and_rename.py:78
+#: samples/views/split_and_rename.py:100
 #, python-format
 msgid "Split sample “%s”"
 msgstr ""
@@ -638,12 +681,12 @@ msgstr ""
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr ""
 
-#: samples/views/utils.py:235
+#: samples/views/utils.py:237
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr ""
 
-#: samples/views/utils.py:238
+#: samples/views/utils.py:240
 msgid "Ambiguous sample name"
 msgstr ""
 
