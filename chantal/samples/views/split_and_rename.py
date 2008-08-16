@@ -80,14 +80,17 @@ def is_referentially_valid(new_name_forms, global_data_form):
     return referentially_valid
 
 def save_to_database(new_name_forms, global_data_form, parent, user):
-    sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=user, parent=parent,
-                                      complete=global_data_form.cleaned_data["sample_completely_split"])
+    now = timestamp=datetime.datetime.now()
+    sample_split = models.SampleSplit(now, operator=user, parent=parent)
     sample_split.save()
     parent.processes.add(sample_split)
     sample_series = global_data_form.cleaned_data["sample_series"]
-    if sample_split.complete:
+    if global_data_form.cleaned_data["sample_completely_split"]:
         for watcher in parent.watchers.all():
             watcher.my_samples.remove(parent)
+        death = models.SampleDeath(timestamp=now+datetime.timedelta(seconds=5), operator=user, reason="split")
+        death.save()
+        parent.processes.add(death)
     for new_name_form in new_name_forms:
         child = models.Sample(name=new_name_form.cleaned_data["new_name"],
                               current_location=parent.current_location,
