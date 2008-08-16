@@ -214,7 +214,6 @@ class UserDetails(models.Model):
     phone = models.CharField(_(u"phone"), max_length=20)
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
-    my_series = models.ManyToManyField(SampleSeries, blank=True, related_name="watchers", verbose_name=_(u"my series"))
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
