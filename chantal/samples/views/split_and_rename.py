@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import datetime
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
@@ -64,7 +65,7 @@ def is_all_valid(new_name_forms, global_data_form):
     return all_valid
 
 def is_referentially_valid(new_name_forms, global_data_form):
-    referentially_valid = True
+    referentially_valid = global_data_form.cleaned_data["finished"]
     if not new_name_forms:
         utils.append_error(global_data_form, "__all__", _(u"You must split into at least one piece."))
         referentially_valid = False
@@ -78,8 +79,27 @@ def is_referentially_valid(new_name_forms, global_data_form):
             new_names.add(new_name)
     return referentially_valid
 
-def save_to_database(new_name_forms, global_data_form):
-    pass
+def save_to_database(new_name_forms, global_data_form, parent, user):
+    sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=user, parent=parent,
+                                      complete=global_data_form.cleaned_data["sample_completely_split"])
+    sample_split.save()
+    parent.processes.add(sample_split)
+    sample_series = global_data_form.cleaned_data["sample_series"]
+    if sample_split.complete:
+        for watcher in parent.watchers.all():
+            watcher.my_samples.remove(parent)
+    for new_name_form in new_name_forms:
+        child = models.Sample(name=new_name_form.cleaned_data["new_name"],
+                              current_location=parent.current_location,
+                              currently_responsible_person=user,
+                              purpose=parent.purpose, tags=parent.tags,
+                              split_origin=sample_split,
+                              group=parent.group)
+        child.save()
+        for watcher in parent.watchers.all():
+            watcher.my_samples.add(child)
+        if sample_series:
+            sample_series.samples.add(child)
         
 @login_required
 def split_and_rename(request, parent_name):
@@ -92,7 +112,7 @@ def split_and_rename(request, parent_name):
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(new_name_forms, global_data_form)
+            save_to_database(new_name_forms, global_data_form, request.user)
             return HttpResponseRedirect("../")
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
