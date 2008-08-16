@@ -23,9 +23,9 @@ class NewNameForm(forms.Form):
 
 class GlobalDataForm(forms.Form):
     _ = ugettext_lazy
-    finished = forms.BooleanField(label=_(u"Ready for saving"), required=False)
-    sample_completely_split = forms.BooleanField(label=_(u"Sample completely split"), initial=True, required=False)
-    sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None)
+    finished = forms.BooleanField(label=_(u"All pieces completely entered"), required=False)
+    sample_completely_split = forms.BooleanField(label=_(u"Sample was completely split"), initial=True, required=False)
+    sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None, required=False)
     def __init__(self, parent, user_details, data=None, **keyw):
         super(GlobalDataForm, self).__init__(data, **keyw)
         self.fields["sample_series"].queryset = \
@@ -57,7 +57,12 @@ def forms_from_database(parent, user_details):
     new_name_forms = []
     global_data_form = GlobalDataForm(parent, user_details)
     return new_name_forms, global_data_form
-    
+
+def is_all_valid(new_name_forms, global_data_form):
+    all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
+    all_valid = global_data_form.is_valid() and all_valid  # Ordering important: .is_valid() must be called
+    return all_valid
+
 def is_referentially_valid(new_name_forms, global_data_form):
     referentially_valid = True
     if not new_name_forms:
@@ -84,7 +89,7 @@ def split_and_rename(request, parent_name):
     user_details = request.user.get_profile()
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
-        all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
+        all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form)
