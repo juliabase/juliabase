@@ -199,6 +199,7 @@ class SampleDeath(Process):
     class Meta:
         verbose_name = _(u"cease of existence")
         verbose_name_plural = _(u"ceases of existence")
+admin.site.register(SampleDeath)
 
 class SampleSeries(models.Model):
     name = models.CharField(_(u"name"), max_length=50)
