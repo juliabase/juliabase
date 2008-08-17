@@ -49,7 +49,7 @@ class DepositionForm(ModelForm):
         # works only in ModelForm, not in Form.  Maybe is should be default
         # here, too.  (See fields["..."] below.)
         self.sample_list.queryset = \
-            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
+            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)) if deposition \
             else user_details.my_samples
         self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
