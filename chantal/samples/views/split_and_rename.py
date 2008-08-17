@@ -29,8 +29,11 @@ class GlobalDataForm(forms.Form):
     sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None, required=False)
     def __init__(self, parent, user_details, data=None, **keyw):
         super(GlobalDataForm, self).__init__(data, **keyw)
-        self.fields["sample_series"].queryset = \
-            models.SampleSeries.objects.filter(Q(samples=parent) | Q(watchers=user_details)).distinct()
+        now = datetime.datetime.now() + datetime.timedelta(seconds=5)
+        three_months_ago = now - datetime.timedelta(days=90)
+        self.fields["sample_series"].queryset = models.SampleSeries.objects.filter(
+            Q(samples__watchers=user_details) | ( Q(originator=user_details.user) &
+                                                  Q(timestamp__range=(three_months_ago, now))))
 
 def forms_from_post_data(post_data, parent, user_details):
     new_name_forms = []
