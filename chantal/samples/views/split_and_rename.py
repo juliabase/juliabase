@@ -21,6 +21,8 @@ class NewNameForm(forms.Form):
     def clean_new_name(self):
         if utils.does_sample_exist(self.cleaned_data["new_name"]):
             raise ValidationError(_(u"Name does already exist in database."))
+        if self.cleaned_data["new_name"].startswith("*"):
+            raise ValidationError(_(u"You must not give a provisional name, i.e., it must not start with “*”."))
         return self.cleaned_data["new_name"]
 
 class GlobalDataForm(forms.Form):

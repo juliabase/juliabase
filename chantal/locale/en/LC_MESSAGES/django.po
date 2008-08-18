@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-18 11:46+0200\n"
+"POT-Creation-Date: 2008-08-18 15:14+0200\n"
 "PO-Revision-Date: 2008-08-17 02:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -657,27 +657,31 @@ msgstr "sample series"
 msgid "Name does already exist in database."
 msgstr ""
 
-#: samples/views/split_and_rename.py:28
-msgid "All pieces completely entered"
-msgstr ""
-
-#: samples/views/split_and_rename.py:29
-msgid "Sample was completely split"
+#: samples/views/split_and_rename.py:25
+msgid "You must not give a provisional name, i.e., it must not start with “*”."
 msgstr ""
 
 #: samples/views/split_and_rename.py:30
+msgid "All pieces completely entered"
+msgstr ""
+
+#: samples/views/split_and_rename.py:31
+msgid "Sample was completely split"
+msgstr ""
+
+#: samples/views/split_and_rename.py:32
 msgid "Sample series"
 msgstr ""
 
-#: samples/views/split_and_rename.py:74
+#: samples/views/split_and_rename.py:76
 msgid "You must split into at least one piece."
 msgstr ""
 
-#: samples/views/split_and_rename.py:81
+#: samples/views/split_and_rename.py:83
 msgid "Name is already given."
 msgstr ""
 
-#: samples/views/split_and_rename.py:128
+#: samples/views/split_and_rename.py:130
 #, python-format
 msgid "Split sample “%s”"
 msgstr ""
