@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-17 01:31+0200\n"
+"POT-Creation-Date: 2008-08-18 11:46+0200\n"
 "PO-Revision-Date: 2008-08-17 02:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: samples/models.py:12 samples/models.py:146 samples/models.py:172
-#: samples/models.py:216
+#: samples/models.py:217
 msgid "name"
 msgstr ""
 
@@ -26,11 +26,11 @@ msgstr ""
 msgid "alternative email"
 msgstr ""
 
-#: samples/models.py:15 samples/models.py:243
+#: samples/models.py:15 samples/models.py:244
 msgid "phone"
 msgstr ""
 
-#: samples/models.py:19 samples/models.py:219
+#: samples/models.py:19 samples/models.py:220
 msgid "timestamp"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 msgid "split origin"
 msgstr ""
 
-#: samples/models.py:156 samples/models.py:224
+#: samples/models.py:156 samples/models.py:225
 msgid "group"
 msgstr ""
 
@@ -288,7 +288,7 @@ msgstr ""
 msgid "sample"
 msgstr ""
 
-#: samples/models.py:167 samples/models.py:222
+#: samples/models.py:167 samples/models.py:223
 msgid "samples"
 msgstr ""
 
@@ -336,48 +336,48 @@ msgstr ""
 msgid "ceases of existence"
 msgstr ""
 
-#: samples/models.py:218
+#: samples/models.py:219
 msgid "originator"
 msgstr ""
 
-#: samples/models.py:221
+#: samples/models.py:222
 msgid "year"
 msgstr ""
 
-#: samples/models.py:223
+#: samples/models.py:224
 msgid "results"
 msgstr ""
 
-#: samples/models.py:226
+#: samples/models.py:227
 #, python-format
 msgid "%(name)s (%(originator)s %(year)s)"
 msgstr ""
 
-#: samples/models.py:232
+#: samples/models.py:233
 msgid "sample series"
 msgstr ""
 
-#: samples/models.py:233
+#: samples/models.py:234
 msgid "sample serieses"
 msgstr "sample series"
 
-#: samples/models.py:241
+#: samples/models.py:242
 msgid "user"
 msgstr ""
 
-#: samples/models.py:242
+#: samples/models.py:243
 msgid "language"
 msgstr ""
 
-#: samples/models.py:244
+#: samples/models.py:245
 msgid "my samples"
 msgstr ""
 
-#: samples/models.py:245
+#: samples/models.py:246
 msgid "my layers"
 msgstr ""
 
-#: samples/models.py:249 samples/models.py:250
+#: samples/models.py:250 samples/models.py:251
 msgid "user details"
 msgstr ""
 
@@ -484,7 +484,7 @@ msgstr ""
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr ""
 
-#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:19
+#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:20
 msgid "Delete"
 msgstr ""
 
@@ -648,31 +648,36 @@ msgstr ""
 msgid "Bulk sample rename for %s"
 msgstr ""
 
-#: samples/views/split_and_rename.py:22
+#: samples/views/split_and_rename.py:19
+#, fuzzy
+msgid "New sample purpose"
+msgstr "sample series"
+
+#: samples/views/split_and_rename.py:23
 msgid "Name does already exist in database."
 msgstr ""
 
-#: samples/views/split_and_rename.py:27
+#: samples/views/split_and_rename.py:28
 msgid "All pieces completely entered"
 msgstr ""
 
-#: samples/views/split_and_rename.py:28
+#: samples/views/split_and_rename.py:29
 msgid "Sample was completely split"
 msgstr ""
 
-#: samples/views/split_and_rename.py:29
+#: samples/views/split_and_rename.py:30
 msgid "Sample series"
 msgstr ""
 
-#: samples/views/split_and_rename.py:70
+#: samples/views/split_and_rename.py:74
 msgid "You must split into at least one piece."
 msgstr ""
 
-#: samples/views/split_and_rename.py:77
+#: samples/views/split_and_rename.py:81
 msgid "Name is already given."
 msgstr ""
 
-#: samples/views/split_and_rename.py:120
+#: samples/views/split_and_rename.py:128
 #, python-format
 msgid "Split sample “%s”"
 msgstr ""
@@ -996,6 +1001,10 @@ msgstr ""
 msgid "edit"
 msgstr ""
 
+#: templates/show_sample_death.html:6
+msgid "The sample ceased their existence.  Reason:"
+msgstr ""
+
 #: templates/show_sample_split.html:7
 msgid "The parental sample"
 msgstr ""
@@ -1027,11 +1036,11 @@ msgstr ""
 msgid "Piece number"
 msgstr ""
 
-#: templates/split_and_rename.html:25
+#: templates/split_and_rename.html:26
 msgid "New name error"
 msgstr ""
 
-#: templates/split_and_rename.html:34
+#: templates/split_and_rename.html:35
 msgid ""
 "\n"
 "                (you must change this last name in order to create an\n"
