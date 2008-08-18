@@ -12,6 +12,7 @@
     <tr>
       <th>{% trans 'Piece number' %}</th>
       <th>{{ new_names.0.new_name.label }}</th>
+      <th>{{ new_names.0.new_purpose.label }}</th>
       <th>{{ new_names.0.delete.label }}</th>
     </tr>
     {% for new_name in new_names %}
@@ -27,7 +28,7 @@
           </td>
         </tr>
       {% endif %}
-      <tr>
+      <tr {% if forloop.last %}style="background-color: darkgray"{% endif %}>
         <td style="text-align: center">
           {% if forloop.last %}
             <div style="width: 15em; font-size: x-small">
@@ -42,6 +43,9 @@
         </td>
         <td style="text-align: center">
           {{ new_name.new_name }}
+        </td>
+        <td style="text-align: center">
+          {{ new_name.new_purpose }}
         </td>
         <td style="text-align: center">{{ new_name.delete }}</td>
       </tr>

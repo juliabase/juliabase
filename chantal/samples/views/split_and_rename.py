@@ -16,6 +16,7 @@ from . import utils
 class NewNameForm(forms.Form):
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
+    new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80)
     delete = forms.BooleanField(label=_(u"Delete"), required=False)
     def clean_new_name(self):
         if utils.does_sample_exist(self.cleaned_data["new_name"]):
@@ -83,8 +84,8 @@ def is_referentially_valid(new_name_forms, global_data_form):
     return referentially_valid
 
 def save_to_database(new_name_forms, global_data_form, parent, user):
-    now = timestamp=datetime.datetime.now()
-    sample_split = models.SampleSplit(now, operator=user, parent=parent)
+    now = datetime.datetime.now()
+    sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
     sample_split.save()
     parent.processes.add(sample_split)
     sample_series = global_data_form.cleaned_data["sample_series"]
@@ -98,7 +99,7 @@ def save_to_database(new_name_forms, global_data_form, parent, user):
         child = models.Sample(name=new_name_form.cleaned_data["new_name"],
                               current_location=parent.current_location,
                               currently_responsible_person=user,
-                              purpose=parent.purpose, tags=parent.tags,
+                              purpose=new_name_form.cleaned_data["new_purpose"], tags=parent.tags,
                               split_origin=sample_split,
                               group=parent.group)
         child.save()
@@ -118,11 +119,12 @@ def split_and_rename(request, parent_name):
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(new_name_forms, global_data_form, request.user)
+            save_to_database(new_name_forms, global_data_form, parent, request.user)
             return HttpResponseRedirect("../")
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
-    new_name_forms.append(NewNameForm(initial={"new_name": parent.name}, prefix=str(len(new_name_forms))))
+    new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
+                                      prefix=str(len(new_name_forms))))
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
                                                         "new_names": new_name_forms, "global_data": global_data_form},
                               context_instance=RequestContext(request))
