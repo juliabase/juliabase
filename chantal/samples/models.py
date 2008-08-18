@@ -12,7 +12,7 @@ class ExternalOperator(models.Model):
     name = models.CharField(_(u"name"), max_length=30)
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
-    phone = models.CharField(_(u"phone"), max_length=30, null=True, blank=True)
+    phone = models.CharField(_(u"phone"), max_length=30, blank=True)
 admin.site.register(ExternalOperator)
 
 class Process(models.Model):
@@ -92,7 +92,7 @@ class SixChamberLayer(Layer):
                             decimal_places=1, help_text=_(u"in mm"))
     comments = models.TextField(_(u"comments"), blank=True)
     transfer_in_chamber = models.CharField(_(u"transfer in the chamber"), max_length=10, default="Ar", blank=True)
-    pre_heat = models.CharField(_(u"pre-heat"), max_length=9, null=True, blank=True, help_text=_(u"format HH:MM:SS"))
+    pre_heat = models.CharField(_(u"pre-heat"), max_length=9, blank=True, help_text=_(u"format HH:MM:SS"))
     gas_pre_heat_gas = models.CharField(_(u"gas of gas pre-heat"), max_length=10, blank=True)
     gas_pre_heat_pressure = models.CharField(_(u"pressure of gas pre-heat"), max_length=15, blank=True,
                                              help_text=_(u"with unit"))
