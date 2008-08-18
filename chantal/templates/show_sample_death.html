@@ -1,0 +1,8 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  {% trans 'The sample ceased their existence.  Reason:' %}
+  {{ process.get_reason_display }}
+</p>
