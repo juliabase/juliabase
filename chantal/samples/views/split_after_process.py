@@ -17,7 +17,7 @@ from . import utils
 class OriginalDataForm(Form):
     _ = ugettext_lazy
     name = forms.CharField(label=_(u"Old sample name"), max_length=30,
-                           widget=forms.TextInput(attrs={"disabled": "disabled", "style": "text-align: center"}))
+                           widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
     def clean_number_of_pieces(self):
@@ -85,8 +85,7 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
     for original_data_form, new_data_forms, old_name in zip(
         original_data_forms, new_data_form_lists, sample_names):
         # I don't take the old name from `original_data_form` because it may be
-        # forged.  Besides, the respective form field is "disabled", so a sane
-        # browser wouldn't send it.
+        # forged.
         sample = models.Sample.objects.get(name=old_name)
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=operator, parent=sample)
