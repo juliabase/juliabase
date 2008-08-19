@@ -166,10 +166,10 @@ def has_permission_for_sample(user, sample):
         or sample.currently_responsible_person == request.user
 
 def name2url(name):
-    return name.replace("/", "_")
+    return name.replace("/", "!")
 
 def url2name(url):
-    return url.replace("_", "/")
+    return url.replace("!", "/")
 
 class ProcessContext(object):
     def __init__(self, user, original_sample=None, process=None):
