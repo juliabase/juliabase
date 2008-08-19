@@ -4,7 +4,7 @@
 import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -142,8 +142,12 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
+    number_of_old_pieces = old_split.pieces.count()
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
-                                                        "new_names": new_name_forms, "global_data": global_data_form,
+                                                        "new_names": zip(range(number_of_old_pieces+1,
+                                                                               number_of_old_pieces+1+len(new_name_forms)),
+                                                                         new_name_forms),
+                                                        "global_data": global_data_form,
                                                         "old_split": old_split},
                               context_instance=RequestContext(request))
 
