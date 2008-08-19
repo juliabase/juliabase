@@ -713,15 +713,6 @@ msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 
-#: samples/views/utils.py:237
-#, python-format
-msgid "Sample %s could not be found (neither as an alias)."
-msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
-
-#: samples/views/utils.py:240
-msgid "Ambiguous sample name"
-msgstr "Mehrdeutiger Probenname"
-
 #: templates/404.html:12
 msgid "woman with binoculars"
 msgstr "Frau mit Fernglas"
