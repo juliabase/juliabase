@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django import forms
@@ -111,10 +111,17 @@ def save_to_database(new_name_forms, global_data_form, parent, user):
             sample_series.samples.add(child)
         
 @login_required
-def split_and_rename(request, parent_name):
-    parent, redirect = utils.lookup_sample(parent_name, request)
-    if redirect:
-        return redirect
+def split_and_rename(request, parent_name=None, old_split_id=None):
+    assert (parent_name or old_split_id) and not (parent_name and old_split_id)
+    if parent_name:
+        parent, redirect = utils.lookup_sample(parent_name, request)
+        if redirect:
+            return redirect
+    else:
+        old_split = get_object_or_404(models.SampleSplit, pk=old_split_id)
+        parent = old_split.parent
+        if parent.processes.filter(timestamp__gt=old_split.timestamp).count():
+            raise Http404(_(u"This split is not the last one in the sample's process list."))
     user_details = request.user.get_profile()
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
@@ -128,6 +135,7 @@ def split_and_rename(request, parent_name):
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
-                                                        "new_names": new_name_forms, "global_data": global_data_form},
+                                                        "new_names": new_name_forms, "global_data": global_data_form,
+                                                        "old_split": old_split},
                               context_instance=RequestContext(request))
 
