@@ -85,18 +85,23 @@ def is_referentially_valid(new_name_forms, global_data_form):
             new_names.add(new_name)
     return referentially_valid
 
-def save_to_database(new_name_forms, global_data_form, parent, user):
+def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
     now = datetime.datetime.now()
-    sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
-    sample_split.save()
-    parent.processes.add(sample_split)
-    sample_series = global_data_form.cleaned_data["sample_series"]
+    if not sample_split:
+        sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
+        sample_split.save()
+        parent.processes.add(sample_split)
+    else:
+        sample_split.timestamp = now
+        sample_split.operator = user
+        sample_split.save()
     if global_data_form.cleaned_data["sample_completely_split"]:
         for watcher in parent.watchers.all():
             watcher.my_samples.remove(parent)
         death = models.SampleDeath(timestamp=now+datetime.timedelta(seconds=5), operator=user, reason="split")
         death.save()
         parent.processes.add(death)
+    sample_series = global_data_form.cleaned_data["sample_series"]
     for new_name_form in new_name_forms:
         child = models.Sample(name=new_name_form.cleaned_data["new_name"],
                               current_location=parent.current_location,
@@ -117,6 +122,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         parent, redirect = utils.lookup_sample(parent_name, request)
         if redirect:
             return redirect
+        old_split = None
     else:
         old_split = get_object_or_404(models.SampleSplit, pk=old_split_id)
         parent = old_split.parent
@@ -130,7 +136,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(new_name_forms, global_data_form, parent, request.user)
+            save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
             return HttpResponseRedirect("../")
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
