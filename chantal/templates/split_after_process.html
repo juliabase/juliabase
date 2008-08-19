@@ -4,11 +4,11 @@
 
 {% block content %}
 <form method="post" action="">
-  <table style="margin-left: auto; margin-right: auto" cellpadding="10" border="1">
+  <table style="margin-left: auto; margin-right: auto; margin-bottom: 3ex" cellpadding="10" border="1">
     <tr>
-      <th>{% trans 'Old sample name' %}</th>
-      <th>{% trans 'Pieces' %}</th>
-      <th>{% trans 'New sample name(s)' %}</th>
+      <th>{{ samples.0.0.name.label }}</th>
+      <th>{{ samples.0.0.number_of_pieces.label }}</th>
+      <th>{{ samples.0.1.0.new_name.label }}<br/>{{ samples.0.1.0.new_responsible_person.label }}</th>
     </tr>
     {% for sample, new_names in samples %}
       {% if sample.errors or sample.non_field_errors %}
@@ -47,7 +47,7 @@
               {% endif %}
               <tr>
                 <td>
-                  {{ new_name.new_name }}
+                  {{ new_name.new_name }}{{ new_name.new_responsible_person }}
                 </td>
               </tr>
             {% endfor %}
@@ -56,6 +56,7 @@
       </tr>
     {% endfor %}
   </table>
+  {{ new_sample_data.as_p }}
   <p class="submit-button"><input type="submit" /></p>
 </form>
 {% endblock %}

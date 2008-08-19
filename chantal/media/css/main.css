@@ -67,11 +67,12 @@ td.label { text-align: right; vertical-align: bottom; padding-right: 0.3em }
 span.help { font-size: small }
 
 /* MESSAGES & ERRORS */
-td.error-messages { text-align: left; font-size: x-small }
-td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
-		      color:white; background-color: maroon; font-weight: bold }
-ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon }
+div.errorlist, td.error-messages { text-align: left; font-size: x-small }
+div.errorlist, td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
+				     color:white; background-color: maroon; font-weight: bold }
+ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon; font-weight: normal }
 .errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }
+div.errorlist li { padding-left: 0pt }
 
 table.about { font-size: large; margin-top: 2ex; margin-bottom: 4ex }
 table.about th { border-bottom: solid gray 1px; padding-right: 2em; text-align: right; width: 40%; vertical-align: top }

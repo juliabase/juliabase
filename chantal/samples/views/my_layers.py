@@ -13,6 +13,7 @@ from chantal.samples import models
 from . import utils
 
 class MyLayerForm(forms.Form):
+    _ = ugettext_lazy
     nickname = forms.CharField(label=_(u"Nickname"))
     deposition_and_layer = forms.CharField(label=_(u"Layer identifier"),
                                            help_text=_(u"in the form \"deposition number\"-\"layer number\""))
@@ -61,24 +62,24 @@ def forms_from_post_data(post_data):
         else:
             my_layer_forms.append(MyLayerForm(post_data, prefix=str(index)))
         index += 1
-    if index > 0 and not post_data["%d-nickname"%(index-1)]:
+    if my_layer_forms and not post_data["%d-nickname"%(index-1)]:
         del my_layer_forms[-1]
     else:
         structure_changed = True
     return my_layer_forms, structure_changed
 
-def is_referencially_valid(my_layer_forms):
-    referencially_valid = True
+def is_referentially_valid(my_layer_forms):
+    referentially_valid = True
     nicknames = set()
     for my_layer_form in my_layer_forms:
         if my_layer_form.is_valid():
             nickname = my_layer_form.cleaned_data["nickname"]
             if nickname in nicknames:
-                utils.append_error(my_layer_form, "__all__", _(u"Nickname already given."))
-                referencially_valid = False
+                utils.append_error(my_layer_form, "__all__", _(u"Nickname is already given."))
+                referentially_valid = False
             else:
                 nicknames.add(nickname)
-    return referencially_valid
+    return referentially_valid
 
 def save_to_database(my_layer_forms, user):
     user_details = user.get_profile()
@@ -92,8 +93,8 @@ def edit(request):
     if request.method == "POST":
         my_layer_forms, structure_changed = forms_from_post_data(request.POST)
         all_valid = all([my_layer_form.is_valid() for my_layer_form in my_layer_forms])
-        referencially_valid = is_referencially_valid(my_layer_forms)
-        if all_valid and referencially_valid and not structure_changed:
+        referentially_valid = is_referentially_valid(my_layer_forms)
+        if all_valid and referentially_valid and not structure_changed:
             save_to_database(my_layer_forms, request.user)
             return HttpResponseRedirect("../")
     else:

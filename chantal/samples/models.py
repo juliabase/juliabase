@@ -6,12 +6,14 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 
+default_location_of_processed_samples = {}
 
 class ExternalOperator(models.Model):
     name = models.CharField(_(u"name"), max_length=30)
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
-    phone = models.CharField(_(u"phone"), max_length=30, null=True, blank=True)
+    phone = models.CharField(_(u"phone"), max_length=30, blank=True)
+admin.site.register(ExternalOperator)
 
 class Process(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
@@ -46,6 +48,8 @@ class SixChamberDeposition(Deposition):
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
+default_location_of_processed_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
+admin.site.register(SixChamberDeposition)
 
 class HallMeasurement(Process):
     def __unicode__(self):
@@ -53,6 +57,7 @@ class HallMeasurement(Process):
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
+admin.site.register(HallMeasurement)
 
 six_chamber_chamber_choices = (
     ("#1", "#1"),
@@ -87,7 +92,7 @@ class SixChamberLayer(Layer):
                             decimal_places=1, help_text=_(u"in mm"))
     comments = models.TextField(_(u"comments"), blank=True)
     transfer_in_chamber = models.CharField(_(u"transfer in the chamber"), max_length=10, default="Ar", blank=True)
-    pre_heat = models.CharField(_(u"pre-heat"), max_length=9, null=True, blank=True, help_text=_(u"format HH:MM:SS"))
+    pre_heat = models.CharField(_(u"pre-heat"), max_length=9, blank=True, help_text=_(u"format HH:MM:SS"))
     gas_pre_heat_gas = models.CharField(_(u"gas of gas pre-heat"), max_length=10, blank=True)
     gas_pre_heat_pressure = models.CharField(_(u"pressure of gas pre-heat"), max_length=15, blank=True,
                                              help_text=_(u"with unit"))
@@ -108,6 +113,7 @@ class SixChamberLayer(Layer):
     class Meta(Layer.Meta):
         verbose_name = _(u"6-chamber layer")
         verbose_name_plural = _(u"6-chamber layers")
+admin.site.register(SixChamberLayer)
 
 six_chamber_gas_choices = (
     ("SiH4", "SiH4"),
@@ -134,12 +140,14 @@ class SixChamberChannel(models.Model):
         verbose_name_plural = _(u"6-chamber channels")
         unique_together = ("layer", "number")
         ordering = ['number']
+admin.site.register(SixChamberChannel)
 
 class Sample(models.Model):
     name = models.CharField(_(u"name"), max_length=30, unique=True)
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
+    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
                                      verbose_name=_(u"split origin"))
@@ -158,6 +166,7 @@ class Sample(models.Model):
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
         permissions = (("view_sample", "Can view all samples"),)
+admin.site.register(Sample)
 
 class SampleAlias(models.Model):
     name = models.CharField(_(u"name"), max_length=30)
@@ -167,6 +176,7 @@ class SampleAlias(models.Model):
     class Meta:
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
+admin.site.register(SampleAlias)
 
 class SampleSplit(Process):
     # for a fast lookup; actually a violation of the non-redundancy rule
@@ -186,15 +196,43 @@ class SampleSplit(Process):
     class Meta:
         verbose_name = _(u"sample split")
         verbose_name_plural = _(u"sample splits")
+admin.site.register(SampleSplit)
+
+sample_death_reasons = (
+    ("split", _(u"completely split")),
+    ("lost", _(u"lost and unfindable")),
+    ("destroyed", _(u"completely destroyed")),
+    )
+
+class SampleDeath(Process):
+    reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
+    def __unicode__(self):
+        return self.reason
+    class Meta:
+        verbose_name = _(u"cease of existence")
+        verbose_name_plural = _(u"ceases of existence")
+admin.site.register(SampleDeath)
 
 class SampleSeries(models.Model):
-    name = models.CharField(_(u"name"), max_length=255)
-    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"))
+    name = models.CharField(_(u"name"), max_length=50)
+    originator = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
+                                   verbose_name=_(u"originator"))
+    timestamp = models.DateTimeField(_(u"timestamp"))
+    # Redundant to timestamp, but necessary for "unique_together" below
+    year = models.IntegerField(_(u"year"))
+    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
+    results = models.ManyToManyField(Process, blank=True, related_name="sample_series", verbose_name=_(u"results"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     def __unicode__(self):
-        return self.name
+        return _(u"%(name)s (%(originator)s %(year)s)") % {"name": self.name,
+                                                           "originator": self.originator.get_full_name() or \
+                                                               unicode(self.originator),
+                                                           "year": self.year}
     class Meta:
+        unique_together = ("name", "originator", "year")
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
+admin.site.register(SampleSeries)
 
 languages = (
     ("de", "Deutsch"),
@@ -211,16 +249,6 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
-
-admin.site.register(ExternalOperator)
-admin.site.register(SixChamberDeposition)
-admin.site.register(HallMeasurement)
-admin.site.register(SixChamberLayer)
-admin.site.register(SixChamberChannel)
-admin.site.register(Sample)
-admin.site.register(SampleAlias)
-admin.site.register(SampleSplit)
-admin.site.register(SampleSeries)
 admin.site.register(UserDetails)
 
 import copy, inspect

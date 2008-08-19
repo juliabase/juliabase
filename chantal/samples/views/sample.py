@@ -21,31 +21,24 @@ def collect_processes(process_context):
     return processes
 
 class IsMySampleForm(forms.Form):
-    is_my_samplex = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+    is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
 @login_required
 def show(request, sample_name):
-    sample_name = utils.url2name(sample_name)
     start = time.time()
-    sample = utils.get_sample(sample_name)
-    if not sample:
-        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
-    if isinstance(sample, list):
-        return render_to_response("disambiguation.html",
-                                  {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
-                                  context_instance=RequestContext(request))
-    if not utils.has_permission_for_sample(request.user, sample):
-        return HttpResponseRedirect("permission_error")
+    sample, redirect = utils.lookup_sample(sample_name, request)
+    if redirect:
+        return redirect
     user_details = request.user.get_profile()
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)
         if is_my_sample_form.is_valid():
             if is_my_sample_form.cleaned_data["is_my_sample"]:
                 user_details.my_samples.add(sample)
-                request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample_name
+                request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample.name
             else:
                 user_details.my_samples.remove(sample)
-                request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample_name
+                request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
     else:
         # FixMe: DB access is probably not efficient
         start = time.time()

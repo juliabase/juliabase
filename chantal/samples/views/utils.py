@@ -3,16 +3,20 @@
 
 import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
-from django.http import HttpResponseRedirect, QueryDict
+from django.http import HttpResponseRedirect, QueryDict, Http404
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from chantal.samples import models
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField
 from django.template import Context, loader, RequestContext
 
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
         return self.data.get(self.prefix + "-" + fieldname)
+
+class OperatorChoiceField(ModelChoiceField):
+    def label_from_instance(self, operator):
+        return operator.get_full_name() or unicode(operator)
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):
@@ -139,6 +143,8 @@ def normalize_prefixes(post_data):
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
 
 def get_my_layers(user_details, deposition_model, required=True):
+    if not user_details.my_layers:
+        return []
     items = [item.split(":", 1) for item in user_details.my_layers.split(",")]
     items = [(item[0].strip(),) + tuple(item[1].rsplit("-", 1)) for item in items]
     items = [(item[0], int(item[1]), int(item[2])) for item in items]
@@ -223,3 +229,16 @@ def get_next_deposition_number(letter):
     numbers = [int(deposition_number_pattern.match(deposition_dict["number"][3:]).group(0))
                for deposition_dict in deposition_dicts]
     return prefix + u"%03d" % (max(numbers + [0]) + 1)
+
+def lookup_sample(sample_name, request):
+    sample_name = url2name(sample_name)
+    sample = get_sample(sample_name)
+    if not sample:
+        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+    if isinstance(sample, list):
+        return None, render_to_response(
+            "disambiguation.html", {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
+            context_instance=RequestContext(request))
+    if not has_permission_for_sample(request.user, sample):
+        return None, HttpResponseRedirect("permission_error")
+    return sample, None

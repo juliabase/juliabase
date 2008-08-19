@@ -22,10 +22,6 @@ class RemoveFromMySamples(Form):
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
-    
-class OperatorChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, operator):
-        return operator.get_full_name() or unicode(operator)
 
 class AddMyLayerForm(Form):
     _ = ugettext_lazy
@@ -38,7 +34,7 @@ class AddMyLayerForm(Form):
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    operator = OperatorChoiceField(label=_(u"Operator"), queryset=None)
+    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=None)
     def __init__(self, data=None, **keyw):
         deposition = keyw.get("instance")
         user_details = keyw.pop("user_details")
@@ -47,7 +43,7 @@ class DepositionForm(ModelForm):
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
         # Configuring the fields before the call to the parental constructor
-        # works only in ModelForm, not in Form.  Maybe is should be default
+        # works only in ModelForm, not in Form.  Maybe it should be delayed
         # here, too.  (See fields["..."] below.)
         self.sample_list.queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
@@ -163,7 +159,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         biggest_layer_number += 1
         new_channel_lists.append([])
     # Third step: Add My Layer
-    my_layer = change_params["structural-change-my_layer_to_be_added"]
+    my_layer = change_params.get("structural-change-my_layer_to_be_added")
     if my_layer:
         structure_changed = True
         deposition_id, layer_number = my_layer.split("-")
@@ -217,16 +213,16 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     channel_form_lists.extend(new_channel_lists)
     return structure_changed
 
-def is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
-    referencially_valid = True
+def is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
+    referentially_valid = True
     if deposition_form.is_valid() and (
         not deposition or deposition.number != deposition_form.cleaned_data["number"]):
         if models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
             utils.append_error(deposition_form, "__all__", _(u"This deposition number exists already."))
-            referencially_valid = False
+            referentially_valid = False
     if not layer_forms:
         utils.append_error(deposition_form, "__all__", _(u"No layers given."))
-        referencially_valid = False
+        referentially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
@@ -241,7 +237,7 @@ def is_referencially_valid(deposition, deposition_form, layer_forms, channel_for
                     utils.append_error(channel_form, "__all__", _(u"Number is a duplicate."))
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
-    return referencially_valid
+    return referentially_valid
     
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
     deposition = deposition_form.save()
@@ -295,8 +291,8 @@ def edit(request, deposition_number):
         remove_from_my_samples_form = RemoveFromMySamples(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
-        referencially_valid = is_referencially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
-        if all_valid and referencially_valid and not structure_changed:
+        referentially_valid = is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
+        if all_valid and referentially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
             if remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 remove_samples_from_my_samples(deposition.samples.all(), user_details)
