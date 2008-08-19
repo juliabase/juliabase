@@ -13,6 +13,11 @@ class ExternalOperator(models.Model):
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
+    def __unicode__(self):
+        return self.name
+    class Meta:
+        verbose_name = _(u"external operator")
+        verbose_name_plural = _(u"external operators")
 admin.site.register(ExternalOperator)
 
 class Process(models.Model):
