@@ -9,6 +9,7 @@ from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm, ModelChoiceField
 from django.template import Context, loader, RequestContext
+from django.shortcuts import render_to_response
 
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
@@ -83,6 +84,8 @@ def get_sample(sample_name):
         sample = models.Sample.objects.get(name=sample_name)
     except models.Sample.DoesNotExist:
         aliases = [alias.sample for alias in models.SampleAlias.objects.filter(name=sample_name)]
+        if len(aliases) == 1:
+            return aliases[0]
         return aliases or None
     else:
         return sample
