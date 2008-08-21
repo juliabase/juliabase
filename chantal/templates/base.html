@@ -28,7 +28,7 @@
           {% trans 'Welcome,' %} 
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
           <a href="{% url samples.views.main.main_menu %}">{% trans 'Main menu' %}</a>
-          / <a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a>
+          / <a href="/trac/chantal/newticket">{% trans 'Report feature wish or bug' %}</a>
           / <a href="{% url django.contrib.auth.views.logout %}">{% trans 'Log out' %}</a>
         {% else %}
           &nbsp;

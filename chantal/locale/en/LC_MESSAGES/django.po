@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-19 20:14+0200\n"
+"POT-Creation-Date: 2008-08-21 18:28+0200\n"
 "PO-Revision-Date: 2008-08-20 08:34+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -694,29 +694,29 @@ msgstr ""
 msgid "Split sample “%s”"
 msgstr ""
 
-#: samples/views/utils.py:27
+#: samples/views/utils.py:28
 msgid "Time must be given in the form HH:MM:SS."
 msgstr ""
 
-#: samples/views/utils.py:31
+#: samples/views/utils.py:32
 msgid "Minutes and seconds must be smaller than 60."
 msgstr ""
 
-#: samples/views/utils.py:44
+#: samples/views/utils.py:45
 msgid "Must be a physical quantity with number and unit."
 msgstr ""
 
-#: samples/views/utils.py:50
+#: samples/views/utils.py:51
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr ""
 
-#: samples/views/utils.py:237
+#: samples/views/utils.py:240
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr ""
 
-#: samples/views/utils.py:240
+#: samples/views/utils.py:243
 msgid "Ambiguous sample name"
 msgstr ""
 
@@ -838,7 +838,7 @@ msgid "Welcome,"
 msgstr ""
 
 #: templates/base.html:31
-msgid "Change password"
+msgid "Report feature wish or bug"
 msgstr ""
 
 #: templates/base.html:32

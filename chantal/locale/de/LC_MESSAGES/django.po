@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-19 20:14+0200\n"
-"PO-Revision-Date: 2008-08-19 20:15+0200\n"
+"POT-Creation-Date: 2008-08-21 18:28+0200\n"
+"PO-Revision-Date: 2008-08-21 18:29+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -699,29 +699,29 @@ msgstr ""
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
 
-#: samples/views/utils.py:27
+#: samples/views/utils.py:28
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/utils.py:31
+#: samples/views/utils.py:32
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/utils.py:44
+#: samples/views/utils.py:45
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/utils.py:50
+#: samples/views/utils.py:51
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 
-#: samples/views/utils.py:237
+#: samples/views/utils.py:240
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: samples/views/utils.py:240
+#: samples/views/utils.py:243
 msgid "Ambiguous sample name"
 msgstr "Mehrdeutiger Probenname"
 
@@ -852,8 +852,8 @@ msgid "Welcome,"
 msgstr "Willkommen,"
 
 #: templates/base.html:31
-msgid "Change password"
-msgstr "Ändere Passwort"
+msgid "Report feature wish or bug"
+msgstr "Bug oder Featurewunsch melden"
 
 #: templates/base.html:32
 msgid "Log out"
@@ -1096,6 +1096,9 @@ msgstr ""
 "\n"
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
+
+#~ msgid "Change password"
+#~ msgstr "Ändere Passwort"
 
 #~ msgid "sample was completely split"
 #~ msgstr "Probe wurde vollständig gespalten"
