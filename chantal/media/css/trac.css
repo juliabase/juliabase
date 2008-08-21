@@ -24,5 +24,8 @@ div.main {
     margin: 20px 25px 20px;
 }
 
-div[id="banner"], div[id="mainnav"], div[id="ctxtnav"], div[id="content"] { background-color: white }
+div[id="banner"], div[id="mainnav"], div[id="ctxtnav"], div[id="content"], div[id="footer"] { 
+    background-color: white; margin-left: 1em; margin-right: 1em }
 
+a.logo:visited, a.logo:link, a.logo:hover, a.logo:active { 
+    text-decoration: none; color: #333333; background-color: gray; border: none }
