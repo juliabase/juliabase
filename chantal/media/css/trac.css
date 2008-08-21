@@ -1,0 +1,28 @@
+body { 
+    background-color: gray;
+    font-family: Frutiger,Trebuchet MS,DejaVu Sans,Bitstream Vera Sans,Verdana,sans-serif;
+    margin: 0pt; padding: 0pt;
+}
+p.logo-text {
+    margin: 0pt 0pt 0pt -0.05em;
+    font-size: 50px;
+    color: #333333;
+    font-weight: bold;
+}
+
+p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; font-weight: normal }
+img.logo-fz { float: right; margin-right: 0.1em }
+
+table.headbar {
+    font-size: small;
+    color: white;
+    background-color: #045078;
+    padding: 0.3ex 25px 0.5ex;
+}
+
+div.main {
+    margin: 20px 25px 20px;
+}
+
+div[id="banner"], div[id="mainnav"], div[id="ctxtnav"], div[id="content"] { background-color: white }
+
