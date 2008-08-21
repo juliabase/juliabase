@@ -14,11 +14,13 @@ p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; 
 img.logo-fz { float: right; margin-right: 0.1em }
 
 table.headbar {
-    font-size: small;
+    font-size: inherited;
     color: white;
     background-color: #045078;
     padding: 0.3ex 25px 0.5ex;
 }
+
+table.headbar td { font-size: small }
 
 div.main {
     margin: 20px 25px 20px;
