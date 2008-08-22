@@ -219,22 +219,17 @@ class SampleDeath(Process):
 admin.site.register(SampleDeath)
 
 class SampleSeries(models.Model):
+    # name must be of the form "YY-originator-name"
     name = models.CharField(_(u"name"), max_length=50)
-    originator = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
-                                   verbose_name=_(u"originator"))
     timestamp = models.DateTimeField(_(u"timestamp"))
-    # Redundant to timestamp, but necessary for "unique_together" below
-    year = models.IntegerField(_(u"year"))
+    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
+                                                     verbose_name=_(u"currently responsible person"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Process, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     def __unicode__(self):
-        return _(u"%(name)s (%(originator)s %(year)s)") % {"name": self.name,
-                                                           "originator": self.originator.get_full_name() or \
-                                                               unicode(self.originator),
-                                                           "year": self.year}
+        return self.name
     class Meta:
-        unique_together = ("name", "originator", "year")
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
 admin.site.register(SampleSeries)
