@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 
 default_location_of_processed_samples = {}
+result_process_classes = set()
 
 class ExternalOperator(models.Model):
     name = models.CharField(_(u"name"), max_length=30)
@@ -229,6 +230,9 @@ class SampleSeries(models.Model):
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     def __unicode__(self):
         return self.name
+    def add_result_process(self, result_process):
+        assert result_process.__class__ in result_process_classes
+        self.results.add(result_process)
     class Meta:
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
