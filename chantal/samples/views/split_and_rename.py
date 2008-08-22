@@ -34,9 +34,8 @@ class GlobalDataForm(forms.Form):
         super(GlobalDataForm, self).__init__(data, **keyw)
         now = datetime.datetime.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
-        self.fields["sample_series"].queryset = models.SampleSeries.objects.filter(
-            Q(samples__watchers=user_details) | ( Q(originator=user_details.user) &
-                                                  Q(timestamp__range=(three_months_ago, now))))
+        self.fields["sample_series"].queryset = \
+            models.SampleSeries.objects.filter(currently_responsible_person=user_details.user)
 
 def forms_from_post_data(post_data, parent, user_details):
     new_name_forms = []
