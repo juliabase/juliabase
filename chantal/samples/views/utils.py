@@ -178,17 +178,11 @@ class ResultContext(object):
     def __init__(self, user, sample_series):
         self.sample_series = sample_series
         self.user = user
-        self.__process = self.html_body = None
-    def __set_process(self, process):
-        self.__process = process.find_actual_instance()
-    process = property(lambda self: self.__process, __set_process)
-    def get_template_context(self):
-        context_dict = {"process": self.__process}
-        if hasattr(self.__process, "get_additional_template_context"):
-            context_dict.update(self.__process.get_additional_template_context(self))
+    def get_template_context(self, process):
+        context_dict = {"process": process}
+        if hasattr(process, "get_additional_template_context"):
+            context_dict.update(process.get_additional_template_context(self))
         return context_dict
-    def get_processes(self):
-        return self.sample_series.results.all()
     @staticmethod
     def camel_case_to_underscores(name):
         result = []
@@ -201,12 +195,12 @@ class ResultContext(object):
                 result.append(character)
         return "".join(result)
     def digest_process(self, process):
-        self.process = process
-        template = loader.get_template("show_" + self.camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
-        name = unicode(self.__process._meta.verbose_name)
-        template_context = self.get_template_context()
-        context_dict = {"name": name[0].upper()+name[1:], "operator": self.__process.operator,
-                        "timestamp": self.__process.timestamp,
+        process = process.find_actual_instance()
+        template = loader.get_template("show_" + self.camel_case_to_underscores(process.__class__.__name__) + ".html")
+        name = unicode(process._meta.verbose_name)
+        template_context = self.get_template_context(process)
+        context_dict = {"name": name[0].upper()+name[1:], "operator": process.operator,
+                        "timestamp": process.timestamp,
                         "html_body": template.render(Context(template_context))}
         for key in ["edit_url", "duplicate_url"]:
             if key in template_context:
@@ -215,6 +209,7 @@ class ResultContext(object):
     def collect_processes(self):
         results = []
         for result in self.sample_series.results.all():
+            assert result.find_actual_instance().__class__ in models.result_process_classes
             results.append(self.digest_process(result))
         return results
 
@@ -222,7 +217,7 @@ class ProcessContext(ResultContext):
     def __init__(self, user, original_sample=None):
         self.original_sample = self.current_sample = original_sample
         self.user = user
-        self.__process = self.cutoff_timestamp = self.html_body = None
+        self.cutoff_timestamp = None
     def split(self, split):
         result = copy.copy(self)
         result.current_sample = split.parent
