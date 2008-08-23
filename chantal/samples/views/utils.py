@@ -174,31 +174,21 @@ def name2url(name):
 def url2name(url):
     return url.replace("!", "/")
 
-class ProcessContext(object):
-    def __init__(self, user, original_sample=None, process=None):
-        self.original_sample = self.current_sample = original_sample
+class ResultContext(object):
+    def __init__(self, user, sample_series):
+        self.sample_series = sample_series
         self.user = user
-        self.__process = self.cutoff_timestamp = self.html_body = None
-        if process:
-            self.process = process
+        self.__process = self.html_body = None
     def __set_process(self, process):
         self.__process = process.find_actual_instance()
     process = property(lambda self: self.__process, __set_process)
-    def split(self, split):
-        result = copy.copy(self)
-        result.current_sample = split.parent
-        result.cutoff_timestamp = split.timestamp
-        return result
     def get_template_context(self):
         context_dict = {"process": self.__process}
         if hasattr(self.__process, "get_additional_template_context"):
             context_dict.update(self.__process.get_additional_template_context(self))
         return context_dict
     def get_processes(self):
-        if self.cutoff_timestamp is None:
-            return self.current_sample.processes.all()
-        else:
-            return self.current_sample.processes.filter(timestamp__lte=self.cutoff_timestamp)
+        return self.sample_series.results.all()
     @staticmethod
     def camel_case_to_underscores(name):
         result = []
@@ -210,9 +200,8 @@ class ProcessContext(object):
             else:
                 result.append(character)
         return "".join(result)
-    def digest_process(self, process=None):
-        if process:
-            self.process = process
+    def digest_process(self, process):
+        self.process = process
         template = loader.get_template("show_" + self.camel_case_to_underscores(self.__process.__class__.__name__) + ".html")
         name = unicode(self.__process._meta.verbose_name)
         template_context = self.get_template_context()
@@ -223,6 +212,27 @@ class ProcessContext(object):
             if key in template_context:
                 context_dict[key] = template_context[key]
         return context_dict
+    def collect_processes(self):
+        results = []
+        for result in self.sample_series.results.all():
+            results.append(self.digest_process(result))
+        return results
+
+class ProcessContext(ResultContext):
+    def __init__(self, user, original_sample=None):
+        self.original_sample = self.current_sample = original_sample
+        self.user = user
+        self.__process = self.cutoff_timestamp = self.html_body = None
+    def split(self, split):
+        result = copy.copy(self)
+        result.current_sample = split.parent
+        result.cutoff_timestamp = split.timestamp
+        return result
+    def get_processes(self):
+        if self.cutoff_timestamp is None:
+            return self.current_sample.processes.all()
+        else:
+            return self.current_sample.processes.filter(timestamp__lte=self.cutoff_timestamp)
     def collect_processes(self):
         processes = []
         split_origin = self.current_sample.split_origin
