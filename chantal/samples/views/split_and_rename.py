@@ -16,7 +16,7 @@ from . import utils
 class NewNameForm(forms.Form):
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
-    new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80)
+    new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_(u"Delete"), required=False)
     def clean_new_name(self):
         if utils.does_sample_exist(self.cleaned_data["new_name"]):
@@ -141,7 +141,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
-    number_of_old_pieces = old_split.pieces.count()
+    number_of_old_pieces = old_split.pieces.count() if old_split else 0
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
                                                         "new_names": zip(range(number_of_old_pieces+1,
                                                                                number_of_old_pieces+1+len(new_name_forms)),
