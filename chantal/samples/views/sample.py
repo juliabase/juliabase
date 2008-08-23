@@ -11,15 +11,6 @@ from django.contrib.auth.decorators import login_required
 from . import utils
 from django.utils.translation import ugettext as _, ugettext_lazy
 
-def collect_processes(process_context):
-    processes = []
-    split_origin = process_context.current_sample.split_origin
-    if split_origin:
-        processes.extend(collect_processes(process_context.split(split_origin)))
-    for process in process_context.get_processes():
-        processes.append(process_context.digest_process(process))
-    return processes
-
 class IsMySampleForm(forms.Form):
     is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
@@ -44,7 +35,7 @@ def show(request, sample_name):
         start = time.time()
         is_my_sample_form = IsMySampleForm(initial={"is_my_sample": sample in user_details.my_samples.all()})
         request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
-    processes = collect_processes(utils.ProcessContext(request.user, sample))
+    processes = utils.ProcessContext(request.user, sample).collect_processes()
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
                                                    "is_my_sample_form": is_my_sample_form},

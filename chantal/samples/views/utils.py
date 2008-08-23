@@ -223,6 +223,14 @@ class ProcessContext(object):
             if key in template_context:
                 context_dict[key] = template_context[key]
         return context_dict
+    def collect_processes(self):
+        processes = []
+        split_origin = self.current_sample.split_origin
+        if split_origin:
+            processes.extend(self.split(split_origin).collect_processes())
+        for process in self.get_processes():
+            processes.append(self.digest_process(process))
+        return processes
 
 deposition_number_pattern = re.compile(ur"\d{3,4}")
 def get_next_deposition_number(letter):
