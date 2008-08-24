@@ -218,6 +218,7 @@ class SampleDeath(Process):
         verbose_name = _(u"cease of existence")
         verbose_name_plural = _(u"ceases of existence")
 admin.site.register(SampleDeath)
+result_process_classes.add(SampleDeath)  # FixMe: This is just for testing
 
 class SampleSeries(models.Model):
     # name must be of the form "YY-originator-name"
