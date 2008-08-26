@@ -1,30 +1,47 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-{% load adminmedia %}
+
+{% block css %}
+<style type="text/css">
+  td.value { text-align: left; vertical-align: middle; font-weight: normal }
+  td.label { text-align: right; vertical-align: middle }
+  a img { border: none }
+  th { text-align: right; vertical-align: top; padding-right: 1em }
+  table.channels * th { text-align: center; padding: 0pt }
+  td { vertical-align: top }
+</style>
+{% endblock %}
 
 {% block content %}
 <form method="post" action="">
-  <table>
-    {{ sample_series }}
+
+  <table cellpadding="5" style="float: left; margin-bottom: 3ex">
+    {% if is_new %}
+      <tr>
+        <td style="text-align: right"><label for="id_{{ sample_series.name.html_name }}"
+             >{{ sample_series.name.label }}:</label></td>
+        <td>{{name_prefix}}-{{ sample_series.name }}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td style="text-align: right"><label for="id_{{ sample_series.currently_responsible_person.html_name }}"
+                                           >{{ sample_series.currently_responsible_person.label }}:</label></td>
+      <td>{{ sample_series.currently_responsible_person }}</td>
+    </tr>
+    <tr>
+      <td style="text-align: right"><label for="id_{{ sample_series.group.html_name }}"
+                                           >{{ sample_series.group.label }}:</label></td>
+      <td>{{ sample_series.group }}</td>
+    </tr>
   </table>
 
-  {% for process in result_processes %}
-    <div class="process">
-      <p class="operator_and_timestamp">
-        {% with process.operator.get_full_name as full_name %}
-          <a href="../users/{{ process.operator.username}} "
-             >{% if full_name %}{{ full_name }}{% else %}{{ process.operator }}{% endif %}</a>,
-        {% endwith %}
-        {{ process.timestamp }}
-      </p>
-      <h2>{{ process.name }}{% if process.edit_url %}
-            <a class="edit-button" href="../{{ process.edit_url }}">{% trans 'edit' %}</a>{% endif %}</h2>
-      {{ process.html_body }}
-    </div>
-  {% endfor %}
+  <div style="float: left; margin-left: 5em; margin-bottom: 3ex">
+    <label for="id_{{ sample_series.samples.html_name }}" style="margin-right: 0.5em"
+           >{{ sample_series.samples.label }}:</label>{{ sample_series.samples }}
+  </div>
 
-  <p class="submit-button"><input type="submit" /></p>
+  <p class="submit-button" style="clear: both"><input type="submit" /></p>
 </form>
 
 
