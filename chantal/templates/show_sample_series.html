@@ -1,0 +1,43 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load samples_extras %}
+
+{% block content %}
+<form method="post" action="">
+  <table>
+    {{ sample_series }}
+  </table>
+
+  {% if samples %}
+    <p>{% trans 'This sample series contains the following samples:' %}</p>
+    <ul>
+      {% for sample in samples %}
+        <li><a href="../../samples/{{ sample.name|name2url }}">{{ sample.name }}</a>
+          {% if sample.purpose %}({{ sample.purpose }}){% endif %}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>{% trans "This sample series doesn't contain samples yet." %}</p>
+  {% endif %}
+
+  {% for process in result_processes %}
+    <div class="process">
+      <p class="operator_and_timestamp">
+        {% with process.operator.get_full_name as full_name %}
+          <a href="../users/{{ process.operator.username}} "
+             >{% if full_name %}{{ full_name }}{% else %}{{ process.operator }}{% endif %}</a>,
+        {% endwith %}
+        {{ process.timestamp }}
+      </p>
+      <h2>{{ process.name }}{% if process.edit_url %}
+            <a class="edit-button" href="../{{ process.edit_url }}">{% trans 'edit' %}</a>{% endif %}</h2>
+      {{ process.html_body }}
+    </div>
+  {% endfor %}
+
+  <p class="submit-button"><input type="submit" /></p>
+</form>
+
+
+{% endblock %}

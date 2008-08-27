@@ -222,7 +222,7 @@ result_process_classes.add(SampleDeath)  # FixMe: This is just for testing
 
 class SampleSeries(models.Model):
     # name must be of the form "YY-originator-name"
-    name = models.CharField(_(u"name"), max_length=50)
+    name = models.CharField(_(u"name"), max_length=50, primary_key=True)
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
                                                      verbose_name=_(u"currently responsible person"))

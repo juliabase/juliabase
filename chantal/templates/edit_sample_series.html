@@ -16,6 +16,17 @@
 {% block content %}
 <form method="post" action="">
 
+  {% if sample_series.errors or sample_series.non_field_errors %}
+    <table width="100%"><tr><td class="error-messages">
+      {% for field in sample_series %}
+        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+      {% endfor %}
+      {% if sample_series.non_field_errors %}
+        <p>{% trans 'Sample series error' %}</p>{{ sample_series.non_field_errors }}
+      {% endif %}
+    </td></tr></table>
+  {% endif %}
+
   <table cellpadding="5" style="float: left; margin-bottom: 3ex">
     {% if is_new %}
       <tr>
