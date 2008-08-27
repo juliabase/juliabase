@@ -220,6 +220,24 @@ class SampleDeath(Process):
         verbose_name_plural = _(u"ceases of existence")
 admin.site.register(SampleDeath)
 
+class Comment(Process):
+    comment = models.TextField(_(u"comment"))
+    def __unicode__(self):
+        try:
+            return unicode(self.samples.get())
+        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+            return unicode(self.id)
+    def get_additional_template_context(self, process_context):
+        if process_context.user == self.operator:
+            return {"edit_url": "comment/edit/%d" % self.id}
+        else:
+            return {}
+    class Meta:
+        verbose_name = _(u"comment")
+        verbose_name_plural = _(u"comments")
+admin.site.register(Comment)
+result_process_classes.add(Comment)
+
 class SampleSeries(models.Model):
     # name must be of the form "YY-originator-name"
     name = models.CharField(_(u"name"), max_length=50, primary_key=True)
