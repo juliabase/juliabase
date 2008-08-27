@@ -171,7 +171,7 @@ class Sample(models.Model):
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
-        permissions = (("view_sample", "Can view all samples"),)
+        permissions = (("can_view_all_samples", "Can view all samples"),)
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):

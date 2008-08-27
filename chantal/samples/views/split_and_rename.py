@@ -127,7 +127,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         parent = old_split.parent
         if parent.processes.filter(timestamp__gt=old_split.timestamp).count():
             raise Http404(_(u"This split is not the last one in the sample's process list."))
-        if not utils.has_permission_for_sample(request.user, parent):
+        if not utils.has_permission_for_sample_or_series(request.user, parent):
             return HttpResponseRedirect("permission_error")
     user_details = request.user.get_profile()
     if request.method == "POST":

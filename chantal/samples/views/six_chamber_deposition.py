@@ -334,7 +334,7 @@ def edit(request, deposition_number):
 def show(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number)
     samples = deposition.samples
-    if all(not utils.has_permission_for_sample(request.user, sample) for sample in samples.all()) \
+    if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
             and not request.user.has_perm("change_sixchamberdeposition"):
         return HttpResponseRedirect("permission_error")
     sample_names = [sample.name for sample in samples.all()]
