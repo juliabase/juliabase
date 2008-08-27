@@ -221,7 +221,7 @@ class SampleDeath(Process):
 admin.site.register(SampleDeath)
 
 class Comment(Process):
-    comment = models.TextField(_(u"comment"))
+    contents = models.TextField(_(u"contents"))
     def __unicode__(self):
         try:
             return unicode(self.samples.get())
