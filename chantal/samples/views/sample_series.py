@@ -32,11 +32,6 @@ class SampleSeriesForm(Form):
         if sample_series:
             self.fields["name"].required = False
 
-def is_referentially_valid(sample_series_form, username):
-    # Only to be called if we're creating a new sample series
-    if not sample_series_form.is_valid():
-        return False, None, None
-    
 @login_required
 def edit(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
