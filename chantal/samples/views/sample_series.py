@@ -72,7 +72,7 @@ def edit(request, name):
                                       "samples": [sample._get_pk_val() for sample in sample_series.samples.all()]})
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("edit_sample_series.html",
-                              {"title": _(u"Edit sample series “%s”" % sample_series.name),
+                              {"title": _(u"Edit sample series “%s”") % sample_series.name,
                                "sample_series": sample_series_form,
                                "is_new": False,
                                "result_processes": result_processes},
@@ -93,9 +93,9 @@ def new(request):
                 sample_series = models.SampleSeries(name=full_name, timestamp=timestamp,
                                                     currently_responsible_person= \
                                                         sample_series_form.cleaned_data["currently_responsible_person"],
-                                                    samples=sample_series_form.cleaned_data["samples"],
                                                     group=sample_series_form.cleaned_data["group"])
                 sample_series.save()
+                sample_series.samples=sample_series_form.cleaned_data["samples"]
                 request.session["success_report"] = \
                     _(u"Sample series %s was successfully added to the database.") % full_name
                 return HttpResponseRedirect("../../")
