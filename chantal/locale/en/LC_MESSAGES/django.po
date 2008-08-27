@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-27 09:47+0200\n"
+"POT-Creation-Date: 2008-08-27 10:34+0200\n"
 "PO-Revision-Date: 2008-08-27 09:48+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -265,6 +265,7 @@ msgid "current location"
 msgstr ""
 
 #: samples/models.py:155 samples/models.py:228
+#: templates/show_sample_series.html:24
 msgid "currently responsible person"
 msgstr ""
 
@@ -525,7 +526,7 @@ msgstr ""
 msgid "Currently responsible person"
 msgstr ""
 
-#: samples/views/sample_series.py:23
+#: samples/views/sample_series.py:23 templates/show_sample_series.html:23
 msgid "Group"
 msgstr ""
 
@@ -539,26 +540,26 @@ msgstr ""
 msgid "Sample series “%s”"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:62
+#: samples/views/sample_series.py:63
 #, python-format
 msgid "Sample series %s was successfully updated in the database."
 msgstr ""
 
-#: samples/views/sample_series.py:74
+#: samples/views/sample_series.py:75
 #, fuzzy, python-format
 msgid "Edit sample series “%s”"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:90
+#: samples/views/sample_series.py:91
 msgid "This sample series name is already given."
 msgstr ""
 
-#: samples/views/sample_series.py:99
+#: samples/views/sample_series.py:100
 #, python-format
 msgid "Sample series %s was successfully added to the database."
 msgstr ""
 
-#: samples/views/sample_series.py:104
+#: samples/views/sample_series.py:105
 #, fuzzy
 msgid "Create new sample series"
 msgstr "sample series"
@@ -1043,7 +1044,8 @@ msgstr ""
 msgid "”"
 msgstr ""
 
-#: templates/show_sample.html:28 templates/show_sample_series.html:29
+#: templates/show_sample.html:28 templates/show_sample_series.html:8
+#: templates/show_sample_series.html:41
 msgid "edit"
 msgstr ""
 
@@ -1051,11 +1053,11 @@ msgstr ""
 msgid "The sample ceased their existence.  Reason:"
 msgstr ""
 
-#: templates/show_sample_series.html:8
+#: templates/show_sample_series.html:12
 msgid "This sample series contains the following samples:"
 msgstr ""
 
-#: templates/show_sample_series.html:16
+#: templates/show_sample_series.html:20
 msgid "This sample series doesn't contain samples yet."
 msgstr ""
 

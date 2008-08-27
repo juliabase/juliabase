@@ -40,7 +40,8 @@ def show(request, name):
         return HttpResponseRedirect("permission_error")
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("show_sample_series.html",
-                              {"title": _(u"Sample series “%s”" % sample_series.name),
+                              {"title": _(u"Sample series “%s”") % sample_series.name,
+                               "can_edit": sample_series.currently_responsible_person == request.user,
                                "sample_series": sample_series,
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))

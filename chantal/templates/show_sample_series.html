@@ -3,6 +3,10 @@
 {% load i18n %}
 {% load samples_extras %}
 
+{% block content_title %}<h1>{{ title|escape }}
+  {% if can_edit %}<a class="edit-button" href="edit/{{ sample_series.name }}"
+                      >{% trans 'edit' %}</a>{% endif %}</h1>{% endblock %}
+
 {% block content %}
 {% if sample_series.samples.count %}
   <p>{% trans 'This sample series contains the following samples:' %}</p>
@@ -15,6 +19,14 @@
 {% else %}
   <p>{% trans "This sample series doesn't contain samples yet." %}</p>
 {% endif %}
+
+<p>{% trans 'Group' %}: <strong>{{ sample_series.group }}</strong>,
+  {% trans 'currently responsible person' %}:
+  {% with sample_series.currently_responsible_person.get_full_name as full_name %}
+  <a href="../users/{{ sample_series.currently_responsible_person.username}} "
+     >{% if full_name %}{{ full_name }}{% else %}{{ sample_series.currently_responsible_person }}{% endif %}</a>
+  {% endwith %}
+</p>
 
 {% for process in result_processes %}
   <div class="process">
