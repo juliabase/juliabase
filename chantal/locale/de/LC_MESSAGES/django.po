@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-26 19:22+0200\n"
-"PO-Revision-Date: 2008-08-26 19:24+0200\n"
+"POT-Creation-Date: 2008-08-27 09:47+0200\n"
+"PO-Revision-Date: 2008-08-27 09:48+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -534,14 +534,33 @@ msgstr "Gruppe"
 msgid "Samples"
 msgstr "Proben"
 
-#: samples/views/sample_series.py:59
-msgid "Create new sample series"
-msgstr "Neue Probenserie anlegen"
+#: samples/views/sample_series.py:43
+#, python-format
+msgid "Sample series “%s”"
+msgstr "Probenserie „%s“"
 
-#: samples/views/sample_series.py:59
+#: samples/views/sample_series.py:62
+#, python-format
+msgid "Sample series %s was successfully updated in the database."
+msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
+
+#: samples/views/sample_series.py:74
 #, python-format
 msgid "Edit sample series “%s”"
 msgstr "Ändern der Probenserie „%s“"
+
+#: samples/views/sample_series.py:90
+msgid "This sample series name is already given."
+msgstr "Dieser Probenserienname ist schon vergeben."
+
+#: samples/views/sample_series.py:99
+#, python-format
+msgid "Sample series %s was successfully added to the database."
+msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
+
+#: samples/views/sample_series.py:104
+msgid "Create new sample series"
+msgstr "Neue Probenserie anlegen"
 
 #: samples/views/six_chamber_deposition.py:23
 msgid "Remove deposited samples from My Samples"
@@ -1054,7 +1073,7 @@ msgstr "Geschichte der Probe „"
 msgid "”"
 msgstr "“"
 
-#: templates/show_sample.html:28 templates/show_sample_series.html:34
+#: templates/show_sample.html:28 templates/show_sample_series.html:29
 msgid "edit"
 msgstr "ändern"
 
@@ -1062,11 +1081,11 @@ msgstr "ändern"
 msgid "The sample ceased their existence.  Reason:"
 msgstr "Die Probe existiert nicht mehr. Grund:"
 
-#: templates/show_sample_series.html:13
+#: templates/show_sample_series.html:8
 msgid "This sample series contains the following samples:"
 msgstr "Diese Probenserie umfasst die folgenden Proben:"
 
-#: templates/show_sample_series.html:21
+#: templates/show_sample_series.html:16
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 

@@ -33,6 +33,19 @@ class SampleSeriesForm(Form):
             self.fields["name"].required = False
 
 @login_required
+def show(request, name):
+    sample_series = get_object_or_404(models.SampleSeries, name=name)
+    user_details = request.user.get_profile()
+    if not utils.has_permission_for_sample_or_series(request.user, sample_series):
+        return HttpResponseRedirect("permission_error")
+    result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
+    return render_to_response("show_sample_series.html",
+                              {"title": _(u"Sample series “%s”" % sample_series.name),
+                               "sample_series": sample_series,
+                               "result_processes": result_processes},
+                              context_instance=RequestContext(request))
+
+@login_required
 def edit(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
