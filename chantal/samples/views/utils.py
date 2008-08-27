@@ -166,7 +166,7 @@ def get_my_layers(user_details, deposition_model, required=True):
 
 def has_permission_for_sample_or_series(user, sample_or_series):
     return user.has_perm("samples.can_view_all_samples") or sample_or_series.group in user.groups.all() \
-        or sample_or_series.currently_responsible_person == request.user
+        or sample_or_series.currently_responsible_person == user
 
 def name2url(name):
     return name.replace("/", "!")
