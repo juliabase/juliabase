@@ -43,8 +43,6 @@ class Deposition(Process):
 class SixChamberDeposition(Deposition):
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
     comments = models.TextField(_(u"comments"), blank=True)
-    def __unicode__(self):
-        return unicode(_(u"6-chamber deposition ")) + super(SixChamberDeposition, self).__unicode__()
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
             return {"edit_url": "6-chamber_deposition/edit/"+self.number,
@@ -59,7 +57,7 @@ admin.site.register(SixChamberDeposition)
 
 class HallMeasurement(Process):
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.id)
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
@@ -213,12 +211,14 @@ sample_death_reasons = (
 class SampleDeath(Process):
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
     def __unicode__(self):
-        return self.reason
+        try:
+            return unicode(self.samples.get())
+        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+            return unicode(self.id)
     class Meta:
         verbose_name = _(u"cease of existence")
         verbose_name_plural = _(u"ceases of existence")
 admin.site.register(SampleDeath)
-result_process_classes.add(SampleDeath)  # FixMe: This is just for testing
 
 class SampleSeries(models.Model):
     # name must be of the form "YY-originator-name"
