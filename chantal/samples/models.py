@@ -35,7 +35,7 @@ class Process(models.Model):
 class Deposition(Process):
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
     def __unicode__(self):
-        return unicode(self.number)
+        return _(u"deposition %s") % self.number
     class Meta:
         verbose_name = _(u"deposition")
         verbose_name_plural = _(u"depositions")
@@ -57,7 +57,10 @@ admin.site.register(SixChamberDeposition)
 
 class HallMeasurement(Process):
     def __unicode__(self):
-        return unicode(self.id)
+        try:
+            _(u"hall measurement of %s") % self.samples.get()
+        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+            return _(u"hall measurement #%d") % self.id
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
@@ -188,7 +191,7 @@ class SampleSplit(Process):
     # has, too.
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
     def __unicode__(self):
-        return self.parent.name
+        return _(u"split of %s") % self.parent.name
     def get_additional_template_context(self, process_context):
         assert process_context.current_sample
         if process_context.current_sample != process_context.original_sample:
@@ -212,9 +215,9 @@ class SampleDeath(Process):
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
     def __unicode__(self):
         try:
-            return unicode(self.samples.get())
+            return _(u"cease of existence of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            return unicode(self.id)
+            return _(u"cease of existence #%d") % self.id
     class Meta:
         verbose_name = _(u"cease of existence")
         verbose_name_plural = _(u"ceases of existence")
@@ -224,9 +227,12 @@ class Comment(Process):
     contents = models.TextField(_(u"contents"))
     def __unicode__(self):
         try:
-            return unicode(self.samples.get())
+            return _(u"comment about %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            return unicode(self.id)
+            try:
+                return _(u"comment about %s") % self.sample_series.get()
+            except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
+                return _(u"comment #%d") % self.id
     def get_additional_template_context(self, process_context):
         if process_context.user == self.operator:
             return {"edit_url": "comment/edit/%d" % self.id}
