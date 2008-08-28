@@ -73,6 +73,7 @@ def edit(request, name):
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("edit_sample_series.html",
                               {"title": _(u"Edit sample series “%s”") % sample_series.name,
+                               "name": sample_series.name,
                                "sample_series": sample_series_form,
                                "is_new": False,
                                "result_processes": result_processes},

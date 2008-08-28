@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-28 16:30+0200\n"
-"PO-Revision-Date: 2008-08-28 16:32+0200\n"
+"POT-Creation-Date: 2008-08-28 18:07+0200\n"
+"PO-Revision-Date: 2008-08-28 18:07+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -446,7 +446,9 @@ msgstr "Probenserie"
 msgid ""
 "You don't have the permission to add the result to all selected samples/"
 "series."
-msgstr "Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/Serien zu ändern."
+msgstr ""
+"Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
+"Serien zu ändern."
 
 #: samples/views/comment.py:68
 msgid "You must select at least one samples/series."
@@ -620,16 +622,16 @@ msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
 msgid "Edit sample series “%s”"
 msgstr "Ändern der Probenserie „%s“"
 
-#: samples/views/sample_series.py:91
+#: samples/views/sample_series.py:92
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: samples/views/sample_series.py:100
+#: samples/views/sample_series.py:101
 #, python-format
 msgid "Sample series %s was successfully added to the database."
 msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/views/sample_series.py:105
+#: samples/views/sample_series.py:106
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
@@ -1013,6 +1015,16 @@ msgstr "Fehler in Meiner Schicht"
 msgid "Sample series error"
 msgstr "Fehler in der Probenserie"
 
+#: templates/edit_sample_series.html:50
+msgid ""
+"Warning: If you click on one of the links below, any changes on this page "
+"are not saved."
+msgstr "Achtung: Wenn Sie auf einen der unteren Links klicken, werden Änderungen auf dieser Seite nicht gespeichert."
+
+#: templates/edit_sample_series.html:52
+msgid "add comment"
+msgstr "Kommentar hinzufügen"
+
 #: templates/edit_six_chamber_deposition.html:33
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
@@ -1132,15 +1144,15 @@ msgstr "Diesen Prozess editieren"
 msgid "Duplicate this process"
 msgstr "diesen Prozess duplizieren"
 
-#: templates/show_sample.html:5 templates/show_sample.html.py:6
+#: templates/show_sample.html:6 templates/show_sample.html.py:7
 msgid "History of sample “"
 msgstr "Geschichte der Probe „"
 
-#: templates/show_sample.html:5 templates/show_sample.html.py:6
+#: templates/show_sample.html:6 templates/show_sample.html.py:7
 msgid "”"
 msgstr "“"
 
-#: templates/show_sample.html:28 templates/show_sample_series.html:8
+#: templates/show_sample.html:30 templates/show_sample_series.html:8
 #: templates/show_sample_series.html:42
 msgid "edit"
 msgstr "ändern"
