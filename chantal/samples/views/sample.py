@@ -30,13 +30,19 @@ def edit(request, sample_name):
     sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
         return redirect
+    old_group, old_responsible_person = sample.group, sample.currently_responsible_person
     if sample.currently_responsible_person != request.user:
         return HttpResponseRedirect("permission_error")
     user_details = request.user.get_profile()
     if request.method == "POST":
         sample_form = SampleForm(request.POST, instance=sample)
         if sample_form.is_valid():
-            sample_form.save()
+            sample = sample_form.save()
+            if sample.group and sample.group != old_group:
+                for user in sample.group.user_set.all():
+                    user.get_profile().my_samples.add(sample)
+            if sample.currently_responsible_person != old_responsible_person:
+                sample.currently_responsible_person.get_profile().my_samples.add(sample)
             request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
             return HttpResponseRedirect(
                 "../../" + utils.parse_query_string(request).get("next", "samples/%s" % utils.name2url(sample.name)))
