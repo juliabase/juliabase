@@ -154,6 +154,10 @@ def forms_from_database(process):
 
 @login_required
 def split_and_rename_after_process(request, process_id):
+    try:
+        process_id = int(process_id)
+    except ValueError:
+        raise Http404
     process = get_object_or_404(models.Process, pk=process_id)
     process = process.find_actual_instance()
     if not isinstance(process, models.Deposition):
