@@ -25,7 +25,7 @@ class SampleSeriesForm(Form):
     def __init__(self, user_details, sample_series, data=None, **keyw):
         super(SampleSeriesForm, self).__init__(data, **keyw)
         self.fields["samples"].queryset = \
-            models.Sample.objects.filter(Q(series=sample_series) | Q(watchers=user_details)) if sample_series \
+            models.Sample.objects.filter(Q(series=sample_series) | Q(watchers=user_details)).distinct() if sample_series \
             else user_details.my_samples
         self.fields["samples"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
         self.fields["name"].widget.attrs.update({"size": "50"})

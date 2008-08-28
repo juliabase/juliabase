@@ -41,7 +41,7 @@ class NewCommentForm(forms.Form):
     def __init__(self, user_details, query_string_dict, data=None, **keyw):
         super(NewCommentForm, self).__init__(data, **keyw)
         self.fields["samples"].queryset = \
-            models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample")))
+            models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample"))).distinct()
         if "sample" in query_string_dict:
             try:
                 self.fields["samples"].initial = models.Sample.objects.get(name=query_string_dict["sample"])._get_pk_val()
@@ -53,7 +53,7 @@ class NewCommentForm(forms.Form):
             models.SampleSeries.objects.filter(Q(samples__watchers=user_details) |
                                                ( Q(currently_responsible_person=user_details.user) &
                                                  Q(timestamp__range=(three_months_ago, now)))
-                                               | Q(name=query_string_dict.get("sample_series")))
+                                               | Q(name=query_string_dict.get("sample_series"))).distinct()
         self.fields["sample_series"].initial = query_string_dict.get("sample_series")
 
 def is_referentially_valid(comment_form, user):
