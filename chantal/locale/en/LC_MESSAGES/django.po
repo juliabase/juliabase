@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-27 15:16+0200\n"
+"POT-Creation-Date: 2008-08-28 16:30+0200\n"
 "PO-Revision-Date: 2008-08-27 15:18+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -425,6 +425,37 @@ msgstr ""
 msgid "No"
 msgstr ""
 
+#: samples/views/comment.py:17 samples/views/comment.py:38
+msgid "Contents"
+msgstr ""
+
+#: samples/views/comment.py:33
+msgid "Edit comment"
+msgstr ""
+
+#: samples/views/comment.py:39 samples/views/sample_series.py:24
+#: samples/views/six_chamber_deposition.py:36
+msgid "Samples"
+msgstr ""
+
+#: samples/views/comment.py:40 samples/views/split_and_rename.py:32
+msgid "Sample series"
+msgstr ""
+
+#: samples/views/comment.py:65
+msgid ""
+"You don't have the permission to add the result to all selected samples/"
+"series."
+msgstr ""
+
+#: samples/views/comment.py:68
+msgid "You must select at least one samples/series."
+msgstr ""
+
+#: samples/views/comment.py:86
+msgid "New comment"
+msgstr ""
+
 #: samples/views/main.py:21 templates/base.html:30
 msgid "Main menu"
 msgstr ""
@@ -548,16 +579,16 @@ msgstr ""
 msgid "My Layers"
 msgstr ""
 
-#: samples/views/sample.py:15
+#: samples/views/sample.py:16
 msgid "is amongst My Samples"
 msgstr ""
 
-#: samples/views/sample.py:29
+#: samples/views/sample.py:30
 #, python-format
 msgid "Sample %s was added to Your Samples."
 msgstr ""
 
-#: samples/views/sample.py:32
+#: samples/views/sample.py:33
 #, python-format
 msgid "Sample %s was removed from Your Samples."
 msgstr ""
@@ -572,11 +603,6 @@ msgstr ""
 
 #: samples/views/sample_series.py:23 templates/show_sample_series.html:23
 msgid "Group"
-msgstr ""
-
-#: samples/views/sample_series.py:24
-#: samples/views/six_chamber_deposition.py:36
-msgid "Samples"
 msgstr ""
 
 #: samples/views/sample_series.py:43
@@ -745,10 +771,6 @@ msgstr ""
 
 #: samples/views/split_and_rename.py:31
 msgid "Sample was completely split"
-msgstr ""
-
-#: samples/views/split_and_rename.py:32
-msgid "Sample series"
 msgstr ""
 
 #: samples/views/split_and_rename.py:75
@@ -1089,7 +1111,7 @@ msgid "”"
 msgstr ""
 
 #: templates/show_sample.html:28 templates/show_sample_series.html:8
-#: templates/show_sample_series.html:41
+#: templates/show_sample_series.html:42
 msgid "edit"
 msgstr ""
 

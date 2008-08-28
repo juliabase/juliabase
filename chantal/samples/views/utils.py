@@ -264,3 +264,27 @@ def convert_id_to_int(process_id):
         return int(process_id)
     except ValueError:
         raise Http404
+
+def can_edit_result_processes(user, samples, sample_series):
+    user_groups = user.groups.all()
+    for sample in samples:
+        if sample.currently_responsible_person != user and sample.group and sample.group not in user_groups:
+            return False
+    for sample_series in sample_series:
+        if sample_series.currently_responsible_person != user and sample_series.group not in user_groups:
+            return False
+    return True
+
+def parse_query_string(request):
+    def decode(string):
+        string = string.replace("+", " ")
+        string = re.sub('%(..)', lambda match: chr(int(match.group(1), 16)), string)
+        return string.decode("utf-8")
+    query_string = request.META["QUERY_STRING"] or u""
+    items = [item.split("=", 1) for item in query_string.split("&")]
+    result = []
+    for item in items:
+        if len(item) == 1:
+            item.append(u"")
+        result.append((decode(item[0]), decode(item[1])))
+    return dict(result)
