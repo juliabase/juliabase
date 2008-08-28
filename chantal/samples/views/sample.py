@@ -38,7 +38,8 @@ def edit(request, sample_name):
         if sample_form.is_valid():
             sample_form.save()
             request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
-            return HttpResponseRedirect("../../samples/%s" % utils.name2url(sample.name))
+            return HttpResponseRedirect(
+                "../../" + utils.parse_query_string(request).get("next", "samples/%s" % utils.name2url(sample.name)))
     else:
         sample_form = SampleForm(instance=sample)
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
