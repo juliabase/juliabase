@@ -258,3 +258,9 @@ def lookup_sample(sample_name, request):
     if not has_permission_for_sample_or_series(request.user, sample):
         return None, HttpResponseRedirect("permission_error")
     return sample, None
+
+def convert_id_to_int(process_id):
+    try:
+        return int(process_id)
+    except ValueError:
+        raise Http404
