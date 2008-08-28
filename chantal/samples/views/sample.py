@@ -12,6 +12,7 @@ from . import utils
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
+    _ = ugettext_lazy
     is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
 @login_required
