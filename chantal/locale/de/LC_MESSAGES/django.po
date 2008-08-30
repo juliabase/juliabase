@@ -5,9 +5,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
-"Report-Msgid-Bugs-To: bronger@physik.rwth-aachen.de\n"
-"POT-Creation-Date: 2008-08-30 11:42+0200\n"
-"PO-Revision-Date: 2008-08-30 11:50+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-08-30 12:57+0200\n"
+"PO-Revision-Date: 2008-08-30 12:58+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -599,15 +599,24 @@ msgstr "Die Probe %s wurde erfolgreich in der Datenbank geändert."
 msgid "Edit sample “%s”"
 msgstr "Ändern der Probe „%s“"
 
-#: samples/views/sample.py:67
+#: samples/views/sample.py:60
+msgid "split"
+msgstr "Spaltung"
+
+#: samples/views/sample.py:77
 #, python-format
 msgid "Sample %s was added to Your Samples."
 msgstr "Probe %s wurde zu Meinen Proben hinzugefügt."
 
-#: samples/views/sample.py:70
+#: samples/views/sample.py:80
 #, python-format
 msgid "Sample %s was removed from Your Samples."
 msgstr "Probe %s wurde von Meinen Proben entfernt."
+
+#: samples/views/sample.py:104
+#, python-format
+msgid "Add process to sample “%s”"
+msgstr "Prozess zu Probe „%s“ hinzufügen"
 
 #: samples/views/sample_series.py:20
 msgid "Name"
@@ -646,8 +655,9 @@ msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
 #: samples/views/sample_series.py:121
-msgid "Add result"
-msgstr "Ergebnis hinzufügen"
+#, python-format
+msgid "Add result to “%s”"
+msgstr "Ergebnis zu „%s“ hinzufügen"
 
 #: samples/views/six_chamber_deposition.py:23
 msgid "Remove deposited samples from My Samples"
@@ -1156,10 +1166,14 @@ msgstr "Geschichte der Probe „"
 msgid "”"
 msgstr "“"
 
-#: templates/show_sample.html:11 templates/show_sample.html.py:32
+#: templates/show_sample.html:11 templates/show_sample.html.py:34
 #: templates/show_sample_series.html:8 templates/show_sample_series.html:44
 msgid "edit"
 msgstr "ändern"
+
+#: templates/show_sample.html:13
+msgid "add process"
+msgstr "Prozess hinzufügen"
 
 #: templates/show_sample_death.html:6
 msgid "The sample ceased their existence.  Reason:"

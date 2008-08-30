@@ -52,6 +52,16 @@ def edit(request, sample_name):
                                                    "sample_name": sample.name, "sample": sample_form},
                               context_instance=RequestContext(request))
 
+def get_allowed_processes(user, sample):
+    processes = []
+    if utils.can_edit_result_processes(user, samples=[sample]):
+        processes.extend(utils.result_processes)
+    if sample.currently_responsible_person == user:
+        processes.append({"name": _(u"split"), "link": "split/%s" % utils.name2url(sample.name)})
+        # FixMe: Add sample death
+    # FixMe: Add other processes, deposition, measurements, if the user is allowed to do it
+    return processes
+
 @login_required
 def show(request, sample_name):
     start = time.time()
@@ -76,5 +86,22 @@ def show(request, sample_name):
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
                                                    "can_edit": request.user == sample.currently_responsible_person,
+                                                   # FixMe: calling get_allowed_processes is too expensive
+                                                   "can_add_process": bool(get_allowed_processes(request.user, sample)),
                                                    "is_my_sample_form": is_my_sample_form},
+                              context_instance=RequestContext(request))
+
+@login_required
+def add_process(request, sample_name):
+    sample, redirect = utils.lookup_sample(sample_name, request)
+    if redirect:
+        return redirect
+    user_details = request.user.get_profile()
+    processes = get_allowed_processes(request.user, sample)
+    if not processes:
+        return HttpResponseRedirect("permission_error")
+    return render_to_response("add_process.html",
+                              {"title": _(u"Add process to sample “%s”" % sample.name),
+                               "processes": processes,
+                               "query_string": "sample=%s&next=samples/%s" % (sample_name, utils.name2url(sample_name))},
                               context_instance=RequestContext(request))

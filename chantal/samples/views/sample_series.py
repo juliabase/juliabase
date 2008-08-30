@@ -118,7 +118,7 @@ def add_result_process(request, name):
     if not utils.can_edit_result_processes(request.user, sample_series=[sample_series]):
         return HttpResponseRedirect("permission_error")
     return render_to_response("add_process.html",
-                              {"title": _(u"Add result"),
+                              {"title": _(u"Add result to “%s”" % name),
                                "processes": utils.result_processes,
                                "query_string": "sample_series=%s&next=sample_series/%s" % (name, name)},
                               context_instance=RequestContext(request))
