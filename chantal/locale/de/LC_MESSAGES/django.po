@@ -5,9 +5,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-28 21:14+0200\n"
-"PO-Revision-Date: 2008-08-28 21:15+0200\n"
+"Report-Msgid-Bugs-To: bronger@physik.rwth-aachen.de\n"
+"POT-Creation-Date: 2008-08-30 11:42+0200\n"
+"PO-Revision-Date: 2008-08-30 11:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -276,7 +276,7 @@ msgid "current location"
 msgstr "Aktueller Probenort"
 
 #: samples/models.py:156 samples/models.py:252
-#: templates/show_sample_series.html:24
+#: templates/show_sample_series.html:26
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
@@ -381,7 +381,7 @@ msgstr "Kommentar über %s"
 msgid "comment #%d"
 msgstr "Kommentar #%d"
 
-#: samples/models.py:242
+#: samples/models.py:242 samples/views/utils.py:293
 msgid "comment"
 msgstr "Kommentar"
 
@@ -589,22 +589,22 @@ msgstr "gehört zu Meinen Proben"
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
-#: samples/views/sample.py:40
+#: samples/views/sample.py:46
 #, python-format
 msgid "Sample %s was successfully changed in the database."
 msgstr "Die Probe %s wurde erfolgreich in der Datenbank geändert."
 
-#: samples/views/sample.py:45
+#: samples/views/sample.py:51
 #, python-format
 msgid "Edit sample “%s”"
 msgstr "Ändern der Probe „%s“"
 
-#: samples/views/sample.py:61
+#: samples/views/sample.py:67
 #, python-format
 msgid "Sample %s was added to Your Samples."
 msgstr "Probe %s wurde zu Meinen Proben hinzugefügt."
 
-#: samples/views/sample.py:64
+#: samples/views/sample.py:70
 #, python-format
 msgid "Sample %s was removed from Your Samples."
 msgstr "Probe %s wurde von Meinen Proben entfernt."
@@ -613,7 +613,7 @@ msgstr "Probe %s wurde von Meinen Proben entfernt."
 msgid "Name"
 msgstr "Name"
 
-#: samples/views/sample_series.py:23 templates/show_sample_series.html:23
+#: samples/views/sample_series.py:23 templates/show_sample_series.html:25
 msgid "Group"
 msgstr "Gruppe"
 
@@ -622,28 +622,32 @@ msgstr "Gruppe"
 msgid "Sample series “%s”"
 msgstr "Probenserie „%s“"
 
-#: samples/views/sample_series.py:63
+#: samples/views/sample_series.py:65
 #, python-format
 msgid "Sample series %s was successfully updated in the database."
 msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
 
-#: samples/views/sample_series.py:75
+#: samples/views/sample_series.py:77
 #, python-format
 msgid "Edit sample series “%s”"
 msgstr "Ändern der Probenserie „%s“"
 
-#: samples/views/sample_series.py:92
+#: samples/views/sample_series.py:93
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: samples/views/sample_series.py:101
+#: samples/views/sample_series.py:102
 #, python-format
 msgid "Sample series %s was successfully added to the database."
 msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/views/sample_series.py:106
+#: samples/views/sample_series.py:107
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
+
+#: samples/views/sample_series.py:121
+msgid "Add result"
+msgstr "Ergebnis hinzufügen"
 
 #: samples/views/six_chamber_deposition.py:23
 msgid "Remove deposited samples from My Samples"
@@ -1025,18 +1029,6 @@ msgstr "Fehler in Meiner Schicht"
 msgid "Sample series error"
 msgstr "Fehler in der Probenserie"
 
-#: templates/edit_sample_series.html:50
-msgid ""
-"Warning: If you click on one of the links below, any changes on this page "
-"are not saved."
-msgstr ""
-"Achtung: Wenn Sie auf einen der unteren Links klicken, werden Änderungen auf "
-"dieser Seite nicht gespeichert."
-
-#: templates/edit_sample_series.html:52
-msgid "add comment"
-msgstr "Kommentar hinzufügen"
-
 #: templates/edit_six_chamber_deposition.html:33
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
@@ -1165,7 +1157,7 @@ msgid "”"
 msgstr "“"
 
 #: templates/show_sample.html:11 templates/show_sample.html.py:32
-#: templates/show_sample_series.html:8 templates/show_sample_series.html:42
+#: templates/show_sample_series.html:8 templates/show_sample_series.html:44
 msgid "edit"
 msgstr "ändern"
 
@@ -1173,11 +1165,15 @@ msgstr "ändern"
 msgid "The sample ceased their existence.  Reason:"
 msgstr "Die Probe existiert nicht mehr. Grund:"
 
-#: templates/show_sample_series.html:12
+#: templates/show_sample_series.html:10
+msgid "add result"
+msgstr "Ergebnis hinzufügen"
+
+#: templates/show_sample_series.html:14
 msgid "This sample series contains the following samples:"
 msgstr "Diese Probenserie umfasst die folgenden Proben:"
 
-#: templates/show_sample_series.html:20
+#: templates/show_sample_series.html:22
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
@@ -1228,6 +1224,16 @@ msgstr ""
 "\n"
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
+
+#~ msgid ""
+#~ "Warning: If you click on one of the links below, any changes on this page "
+#~ "are not saved."
+#~ msgstr ""
+#~ "Achtung: Wenn Sie auf einen der unteren Links klicken, werden Änderungen "
+#~ "auf dieser Seite nicht gespeichert."
+
+#~ msgid "add comment"
+#~ msgstr "Kommentar hinzufügen"
 
 #~ msgid "6-chamber deposition "
 #~ msgstr "6-Kammer-Deposition "

@@ -4,7 +4,7 @@
 import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
 from django.http import HttpResponseRedirect, QueryDict, Http404
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm, ModelChoiceField
@@ -265,7 +265,7 @@ def convert_id_to_int(process_id):
     except ValueError:
         raise Http404
 
-def can_edit_result_processes(user, samples, sample_series):
+def can_edit_result_processes(user, samples=[], sample_series=[]):
     user_groups = user.groups.all()
     for sample in samples:
         if sample.currently_responsible_person != user and sample.group and sample.group not in user_groups:
@@ -288,3 +288,6 @@ def parse_query_string(request):
             item.append(u"")
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
+
+_ = ugettext_lazy
+result_processes = [{"name": _(u"comment"), "link": "comment/add/"}]

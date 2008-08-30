@@ -42,6 +42,8 @@ def show(request, name):
     return render_to_response("show_sample_series.html",
                               {"title": _(u"Sample series “%s”") % sample_series.name,
                                "can_edit": sample_series.currently_responsible_person == request.user,
+                               "can_add_process":
+                                   utils.can_edit_result_processes(request.user, sample_series=[sample_series]),
                                "sample_series": sample_series,
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
@@ -73,7 +75,6 @@ def edit(request, name):
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("edit_sample_series.html",
                               {"title": _(u"Edit sample series “%s”") % sample_series.name,
-                               "name": sample_series.name,
                                "sample_series": sample_series_form,
                                "is_new": False,
                                "result_processes": result_processes},
@@ -109,3 +110,15 @@ def new(request):
                                "name_prefix": u"%02d-%s" % (datetime.datetime.today().year % 100, request.user.username)},
                               context_instance=RequestContext(request))
 
+
+@login_required
+def add_result_process(request, name):
+    sample_series = get_object_or_404(models.SampleSeries, name=name)
+    user_details = request.user.get_profile()
+    if not utils.can_edit_result_processes(request.user, sample_series=[sample_series]):
+        return HttpResponseRedirect("permission_error")
+    return render_to_response("add_process.html",
+                              {"title": _(u"Add result"),
+                               "processes": utils.result_processes,
+                               "query_string": "sample_series=%s&next=sample_series/%s" % (name, name)},
+                              context_instance=RequestContext(request))
