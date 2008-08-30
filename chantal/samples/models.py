@@ -28,7 +28,7 @@ class Process(models.Model):
     def __unicode__(self):
         return unicode(self.find_actual_instance())
     class Meta:
-        ordering = ['timestamp']
+        ordering = ["timestamp"]
         verbose_name = _(u"process")
         verbose_name_plural = _(u"processes")
 
@@ -85,7 +85,7 @@ class Layer(models.Model):
     # duck typing doesn't work.)
     class Meta:
         abstract = True
-        ordering = ['number']
+        ordering = ["number"]
         unique_together = ("deposition", "number")
         verbose_name = _(u"layer")
         verbose_name_plural = _(u"layers")
@@ -147,7 +147,7 @@ class SixChamberChannel(models.Model):
         verbose_name = _(u"6-chamber channel")
         verbose_name_plural = _(u"6-chamber channels")
         unique_together = ("layer", "number")
-        ordering = ['number']
+        ordering = ["number"]
 admin.site.register(SixChamberChannel)
 
 class Sample(models.Model):
@@ -173,6 +173,7 @@ class Sample(models.Model):
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
+        ordering = ["name"]
         permissions = (("can_view_all_samples", _("Can view all samples")),
                        ("can_add", _("Can add samples and edit substrates")),)
 admin.site.register(Sample)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import time
+import time, datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseRedirect
@@ -106,6 +106,34 @@ class AddSamplesForm(forms.Form):
         super(AddSamplesForm, self).__init__(data, **keyw)
         self.fields["currently_responsible_person"].initial = user_details.user.pk
 
+def add_samples_to_database(add_samples_form, user):
+    substrate = models.Substrate(operator=user, timestamp=datetime.datetime.now(),
+                                 material=add_samples_form.cleaned_data["substrate"])
+    substrate.save()
+    provisional_sample_names = \
+        models.Sample.objects.filter(name__startswith=u"*").values_list("name", flat=True)
+    occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
+    occupied_provisional_numbers.sort()
+    occupied_provisional_numbers.insert(0, 0)
+    number_of_samples = add_samples_form.cleaned_data["number_of_samples"]
+    for i in range(len(occupied_provisional_numbers) - 1):
+        if occupied_provisional_numbers[i+1] - occupied_provisional_numbers[i] - 1 >= number_of_samples:
+            starting_number = occupied_provisional_numbers[i] + 1
+            break
+    else:
+        starting_number = occupied_provisional_numbers[-1] + 1
+    user_details = add_samples_form.cleaned_data["currently_responsible_person"].get_profile()
+    for i in range(starting_number, starting_number + number_of_samples):
+        sample = models.Sample(name=u"*%d" % i,
+                               current_location=add_samples_form.cleaned_data["current_location"],
+                               currently_responsible_person=add_samples_form.cleaned_data["currently_responsible_person"],
+                               purpose=add_samples_form.cleaned_data["purpose"],
+                               tags=add_samples_form.cleaned_data["tags"],
+                               group=add_samples_form.cleaned_data["group"])
+        sample.save()
+        sample.processes.add(substrate)
+        user_details.my_samples.add(sample)
+
 @login_required
 @check_permission("add_sample")
 def add(request):
@@ -113,7 +141,10 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
         if add_samples_form.is_valid():
-            pass
+            if add_samples_form.cleaned_data["number_of_samples"] >= 100:
+                utils.append_error(add_samples_form, "number_of_samples", _(u"Must be smaller than 100."))
+            else:
+                add_samples_to_database(add_samples_form, request.user)
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",
