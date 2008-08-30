@@ -43,7 +43,7 @@ def show(request, name):
                               {"title": _(u"Sample series “%s”") % sample_series.name,
                                "can_edit": sample_series.currently_responsible_person == request.user,
                                "can_add_process":
-                                   utils.can_edit_result_processes(request.user, sample_series=[sample_series]),
+                                   bool(utils.get_allowed_result_processes(request.user, sample_series=[sample_series])),
                                "sample_series": sample_series,
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
@@ -115,10 +115,11 @@ def new(request):
 def add_result_process(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
-    if not utils.can_edit_result_processes(request.user, sample_series=[sample_series]):
+    processes = utils.get_allowed_result_processes(request.user, sample_series=[sample_series])
+    if not processes:
         return HttpResponseRedirect("permission_error")
     return render_to_response("add_process.html",
                               {"title": _(u"Add result to “%s”" % name),
-                               "processes": utils.result_processes,
+                               "processes": processes,
                                "query_string": "sample_series=%s&next=sample_series/%s" % (name, name)},
                               context_instance=RequestContext(request))

@@ -20,7 +20,7 @@ class EditCommentForm(forms.Form):
 def edit(request, process_id):
     comment = get_object_or_404(models.Comment, pk=utils.convert_id_to_int(process_id))
     if request.user != comment.operator or \
-            not utils.can_edit_result_processes(request.user, comment.samples.all(), comment.sample_series.all()):
+            not utils.get_allowed_result_processes(request.user, comment.samples.all(), comment.sample_series.all()):
         return HttpResponseRedirect("permission_error")
     if request.method == "POST":
         comment_form = EditCommentForm(request.POST)
@@ -58,8 +58,8 @@ class NewCommentForm(forms.Form):
 
 def is_referentially_valid(comment_form, user):
     referentially_valid = True
-    if not utils.can_edit_result_processes(user, comment_form.cleaned_data["samples"],
-                                           comment_form.cleaned_data["sample_series"]):
+    if not utils.get_allowed_result_processes(user, comment_form.cleaned_data["samples"],
+                                              comment_form.cleaned_data["sample_series"]):
         referentially_valid = False
         utils.append_error(comment_form, "__all__",
                            _(u"You don't have the permission to add the result to all selected samples/series."))

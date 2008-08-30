@@ -54,8 +54,7 @@ def edit(request, sample_name):
 
 def get_allowed_processes(user, sample):
     processes = []
-    if utils.can_edit_result_processes(user, samples=[sample]):
-        processes.extend(utils.result_processes)
+    processes.extend(utils.get_allowed_result_processes(user, samples=[sample]))
     if sample.currently_responsible_person == user:
         processes.append({"name": _(u"split"), "link": "split/%s" % utils.name2url(sample.name)})
         # FixMe: Add sample death
