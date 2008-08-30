@@ -123,7 +123,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
             return redirect
         old_split = None
     else:
-        old_split = get_object_or_404(models.SampleSplit, pk=convert_id_to_int(old_split_id))
+        old_split = get_object_or_404(models.SampleSplit, pk=utils.convert_id_to_int(old_split_id))
         parent = old_split.parent
         if parent.processes.filter(timestamp__gt=old_split.timestamp).count():
             raise Http404(_(u"This split is not the last one in the sample's process list."))

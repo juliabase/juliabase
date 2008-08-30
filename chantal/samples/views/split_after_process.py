@@ -110,7 +110,9 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
             sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
                 else new_data_forms[0].cleaned_data["new_responsible_person"]
             sample.save()
-            sample.currently_responsible_person.get_profile().my_samples.add(sample)
+            # Cheap heuristics to avoid re-adding samples that have been already removed from the operator's MySamples
+            if sample.currently_responsible_person != operator:
+                sample.currently_responsible_person.get_profile().my_samples.add(sample)
 
 def is_referentially_valid(new_data_form_lists, process_name):
     referentially_valid = True
@@ -154,7 +156,7 @@ def forms_from_database(process):
 
 @login_required
 def split_and_rename_after_process(request, process_id):
-    process = get_object_or_404(models.Process, pk=convert_id_to_int(process_id))
+    process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
     process = process.find_actual_instance()
     if not isinstance(process, models.Deposition):
         raise Http404
