@@ -52,7 +52,7 @@ class SixChamberDeposition(Deposition):
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
-        permissions = (("can_edit", _("Can create and edit 6-chamber depositions")),)
+        permissions = (("can_edit", "Can create and edit 6-chamber depositions"),)
 default_location_of_processed_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
 admin.site.register(SixChamberDeposition)
 
@@ -174,8 +174,8 @@ class Sample(models.Model):
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
-        permissions = (("can_view_all_samples", _("Can view all samples")),
-                       ("can_add", _("Can add samples and edit substrates")),)
+        permissions = (("can_view_all_samples", "Can view all samples"),
+                       ("can_add", "Can add samples and edit substrates"),)
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):
