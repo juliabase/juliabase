@@ -9,7 +9,7 @@
     alias <strong>{{ alias }}</strong> {% endfor %}</span>
   {% if can_edit %}<a class="edit-button" href="edit/{{ sample.name|name2url }}?next=samples/{{ sample.name|name2url }}"
                       >{% trans 'edit' %}</a>{% endif %}
-  {% if can_add_process %}<a class="edit-button" href="add_process/{{ sample.name }}"
+  {% if can_add_process %}<a class="edit-button" href="add_process/{{ sample.name|name2url }}"
                              >{% trans 'add process' %}</a>{% endif %}</h1>{% endblock %}
 
 {% block css %}
