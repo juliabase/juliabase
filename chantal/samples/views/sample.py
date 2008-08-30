@@ -11,6 +11,7 @@ from chantal.samples import models
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from . import utils
+from .utils import check_permission
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
@@ -88,6 +89,36 @@ def show(request, sample_name):
                                                    # FixMe: calling get_allowed_processes is too expensive
                                                    "can_add_process": bool(get_allowed_processes(request.user, sample)),
                                                    "is_my_sample_form": is_my_sample_form},
+                              context_instance=RequestContext(request))
+
+class AddSamplesForm(forms.Form):
+    _ = ugettext_lazy
+    number_of_samples = forms.IntegerField(label=_(u"Number of samples"))
+    substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
+    current_location = forms.CharField(label=_(u"Current location"), max_length=50)
+    currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
+                                                             queryset=django.contrib.auth.models.User.objects)
+    purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
+    tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
+                           help_text=_(u"separated with commas, no whitespace"))
+    group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects, required=False)
+    def __init__(self, user_details, data=None, **keyw):
+        super(AddSamplesForm, self).__init__(data, **keyw)
+        self.fields["currently_responsible_person"].initial = user_details.user.pk
+
+@login_required
+@check_permission("add_sample")
+def add(request):
+    user_details = request.user.get_profile()
+    if request.method == "POST":
+        add_samples_form = AddSamplesForm(user_details, request.POST)
+        if add_samples_form.is_valid():
+            pass
+    else:
+        add_samples_form = AddSamplesForm(user_details)
+    return render_to_response("add_samples.html",
+                              {"title": _(u"Add samples"),
+                               "add_samples": add_samples_form},
                               context_instance=RequestContext(request))
 
 @login_required

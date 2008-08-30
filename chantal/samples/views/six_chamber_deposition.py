@@ -34,7 +34,7 @@ class AddMyLayerForm(Form):
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=None)
+    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, user_details, data=None, **keyw):
         deposition = keyw.get("instance")
         initial = keyw.get("initial", {})
@@ -47,7 +47,6 @@ class DepositionForm(ModelForm):
         self.sample_list.queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
             else user_details.my_samples
-        self.operator.queryset = django.contrib.auth.models.User.objects.all()
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}

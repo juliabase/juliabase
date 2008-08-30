@@ -52,6 +52,7 @@ class SixChamberDeposition(Deposition):
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
+        permissions = (("can_edit", _("Can create and edit 6-chamber depositions")),)
 default_location_of_processed_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
 admin.site.register(SixChamberDeposition)
 
@@ -172,7 +173,8 @@ class Sample(models.Model):
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
-        permissions = (("can_view_all_samples", "Can view all samples"),)
+        permissions = (("can_view_all_samples", _("Can view all samples")),
+                       ("can_add", _("Can add samples and edit substrates")),)
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):
@@ -204,6 +206,19 @@ class SampleSplit(Process):
         verbose_name = _(u"sample split")
         verbose_name_plural = _(u"sample splits")
 admin.site.register(SampleSplit)
+
+substrate_materials = (
+    ("asaiu", _(u"ASAI-U")),
+    ("100-Si", _(u"silicon 100 wafer")),
+    )
+
+class Substrate(Process):
+    material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
+    def __unicode__(self):
+        return self.material
+    class Meta:
+        verbose_name = _(u"substrate")
+        verbose_name_plural = _(u"substrates")
 
 sample_death_reasons = (
     ("split", _(u"completely split")),

@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-30 12:57+0200\n"
-"PO-Revision-Date: 2008-08-30 12:58+0200\n"
+"POT-Creation-Date: 2008-08-30 15:04+0200\n"
+"PO-Revision-Date: 2008-08-30 15:25+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: samples/models.py:13 samples/models.py:153 samples/models.py:179
-#: samples/models.py:249
+#: samples/models.py:262
 msgid "name"
 msgstr ""
 
@@ -26,7 +26,7 @@ msgstr ""
 msgid "alternative email"
 msgstr ""
 
-#: samples/models.py:16 samples/models.py:273
+#: samples/models.py:16 samples/models.py:286
 msgid "phone"
 msgstr ""
 
@@ -38,7 +38,7 @@ msgstr ""
 msgid "external operators"
 msgstr ""
 
-#: samples/models.py:25 samples/models.py:250
+#: samples/models.py:25 samples/models.py:263
 msgid "timestamp"
 msgstr ""
 
@@ -75,7 +75,7 @@ msgstr ""
 msgid "carrier"
 msgstr ""
 
-#: samples/models.py:45 samples/models.py:100 samples/models.py:243
+#: samples/models.py:45 samples/models.py:100 samples/models.py:256
 msgid "comments"
 msgstr ""
 
@@ -275,7 +275,7 @@ msgstr ""
 msgid "current location"
 msgstr ""
 
-#: samples/models.py:156 samples/models.py:252
+#: samples/models.py:156 samples/models.py:265
 #: templates/show_sample_series.html:26
 msgid "currently responsible person"
 msgstr ""
@@ -288,7 +288,7 @@ msgstr ""
 msgid "tags"
 msgstr ""
 
-#: samples/models.py:158
+#: samples/models.py:158 samples/views/sample.py:102
 msgid "separated with commas, no whitespace"
 msgstr ""
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "split origin"
 msgstr ""
 
-#: samples/models.py:163 samples/models.py:255
+#: samples/models.py:163 samples/models.py:268
 msgid "group"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgstr ""
 msgid "sample"
 msgstr ""
 
-#: samples/models.py:174 samples/models.py:253
+#: samples/models.py:174 samples/models.py:266
 msgid "samples"
 msgstr ""
 
@@ -334,86 +334,106 @@ msgid "sample splits"
 msgstr ""
 
 #: samples/models.py:209
-msgid "completely split"
+msgid "ASAI-U"
 msgstr ""
 
 #: samples/models.py:210
-msgid "lost and unfindable"
+msgid "silicon 100 wafer"
 msgstr ""
 
-#: samples/models.py:211
-msgid "completely destroyed"
-msgstr ""
-
-#: samples/models.py:215
-msgid "cause of death"
+#: samples/models.py:214
+msgid "substrate material"
 msgstr ""
 
 #: samples/models.py:218
+msgid "substrate"
+msgstr ""
+
+#: samples/models.py:219
+msgid "substrates"
+msgstr ""
+
+#: samples/models.py:222
+msgid "completely split"
+msgstr ""
+
+#: samples/models.py:223
+msgid "lost and unfindable"
+msgstr ""
+
+#: samples/models.py:224
+msgid "completely destroyed"
+msgstr ""
+
+#: samples/models.py:228
+msgid "cause of death"
+msgstr ""
+
+#: samples/models.py:231
 #, python-format
 msgid "cease of existence of %s"
 msgstr ""
 
-#: samples/models.py:220
+#: samples/models.py:233
 #, python-format
 msgid "cease of existence #%d"
 msgstr ""
 
-#: samples/models.py:222
+#: samples/models.py:235
 msgid "cease of existence"
 msgstr ""
 
-#: samples/models.py:223
+#: samples/models.py:236
 msgid "ceases of existence"
 msgstr ""
 
-#: samples/models.py:227
+#: samples/models.py:240
 msgid "contents"
 msgstr ""
 
-#: samples/models.py:230 samples/models.py:233
+#: samples/models.py:243 samples/models.py:246
 #, python-format
 msgid "comment about %s"
 msgstr ""
 
-#: samples/models.py:235
+#: samples/models.py:248
 #, python-format
 msgid "comment #%d"
 msgstr ""
 
-#: samples/models.py:242 samples/views/utils.py:293
+#: samples/models.py:255 samples/views/utils.py:276
 msgid "comment"
 msgstr ""
 
-#: samples/models.py:254
+#: samples/models.py:267
 msgid "results"
 msgstr ""
 
-#: samples/models.py:262
+#: samples/models.py:275
 msgid "sample series"
 msgstr ""
 
-#: samples/models.py:263
+#: samples/models.py:276
 msgid "sample serieses"
 msgstr "sample series"
 
-#: samples/models.py:271
+#: samples/models.py:284
 msgid "user"
 msgstr ""
 
-#: samples/models.py:272
+#: samples/models.py:285
 msgid "language"
 msgstr ""
 
-#: samples/models.py:274
+#: samples/models.py:287
 msgid "my samples"
 msgstr ""
 
-#: samples/models.py:275
+#: samples/models.py:288
 msgid "my layers"
 msgstr ""
 
-#: samples/models.py:279 samples/models.py:280
+#: samples/models.py:292 samples/models.py:293
 msgid "user details"
 msgstr ""
 
@@ -583,7 +603,8 @@ msgstr ""
 msgid "is amongst My Samples"
 msgstr ""
 
-#: samples/views/sample.py:22 samples/views/sample_series.py:21
+#: samples/views/sample.py:22 samples/views/sample.py:98
+#: samples/views/sample_series.py:21
 msgid "Currently responsible person"
 msgstr ""
 
@@ -597,21 +618,45 @@ msgstr ""
 msgid "Edit sample “%s”"
 msgstr "sample series"
 
-#: samples/views/sample.py:60
+#: samples/views/sample.py:59
 msgid "split"
 msgstr ""
 
-#: samples/views/sample.py:77
+#: samples/views/sample.py:76
 #, python-format
 msgid "Sample %s was added to Your Samples."
 msgstr ""
 
-#: samples/views/sample.py:80
+#: samples/views/sample.py:79
 #, python-format
 msgid "Sample %s was removed from Your Samples."
 msgstr ""
 
-#: samples/views/sample.py:104
+#: samples/views/sample.py:95
+msgid "Number of samples"
+msgstr ""
+
+#: samples/views/sample.py:96
+msgid "Substrate"
+msgstr ""
+
+#: samples/views/sample.py:97
+msgid "Current location"
+msgstr ""
+
+#: samples/views/sample.py:100
+msgid "Purpose"
+msgstr ""
+
+#: samples/views/sample.py:101
+msgid "Tags"
+msgstr ""
+
+#: samples/views/sample.py:107
+msgid "Add samples"
+msgstr ""
+
+#: samples/views/sample.py:121
 #, fuzzy, python-format
 msgid "Add process to sample “%s”"
 msgstr "sample series"
@@ -653,7 +698,7 @@ msgstr ""
 msgid "Create new sample series"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:121
+#: samples/views/sample_series.py:122
 #, fuzzy, python-format
 msgid "Add result to “%s”"
 msgstr "sample series"
@@ -670,48 +715,48 @@ msgstr ""
 msgid "Operator"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:60
+#: samples/views/six_chamber_deposition.py:59
 msgid "You must mark at least one sample."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:87
+#: samples/views/six_chamber_deposition.py:86
 msgid "Name is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:111
+#: samples/views/six_chamber_deposition.py:110
 msgid "Gas type is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:220
+#: samples/views/six_chamber_deposition.py:219
 msgid "This deposition number exists already."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:223
+#: samples/views/six_chamber_deposition.py:222
 msgid "No layers given."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:229
-#: samples/views/six_chamber_deposition.py:236
+#: samples/views/six_chamber_deposition.py:228
+#: samples/views/six_chamber_deposition.py:235
 msgid "Number is a duplicate."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:300
+#: samples/views/six_chamber_deposition.py:299
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:304
+#: samples/views/six_chamber_deposition.py:303
 #, python-format
 msgid "Deposition %s was successfully added to the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:325
-#: samples/views/six_chamber_deposition.py:341
+#: samples/views/six_chamber_deposition.py:324
+#: samples/views/six_chamber_deposition.py:340
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:325
+#: samples/views/six_chamber_deposition.py:324
 msgid "New 6-chamber deposition"
 msgstr ""
 
