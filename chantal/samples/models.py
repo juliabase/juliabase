@@ -220,6 +220,7 @@ class Substrate(Process):
     class Meta:
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")
+admin.site.register(Substrate)
 
 sample_death_reasons = (
     ("split", _(u"completely split")),
