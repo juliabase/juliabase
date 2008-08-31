@@ -4,7 +4,7 @@
 import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -128,7 +128,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         if parent.processes.filter(timestamp__gt=old_split.timestamp).count():
             raise Http404(_(u"This split is not the last one in the sample's process list."))
         if not utils.has_permission_for_sample_or_series(request.user, parent):
-            return HttpResponseRedirect("permission_error")
+            return utils.HttpResponseSeeOther("permission_error")
     user_details = request.user.get_profile()
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
@@ -136,7 +136,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            return HttpResponseRedirect("../")
+            return utils.HttpResponseSeeOther("../")
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},

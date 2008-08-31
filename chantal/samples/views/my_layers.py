@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -96,7 +95,7 @@ def edit(request):
         referentially_valid = is_referentially_valid(my_layer_forms)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(my_layer_forms, request.user)
-            return HttpResponseRedirect("../")
+            return utils.HttpResponseSeeOther("../")
     else:
         my_layer_forms = forms_from_database(request.user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))

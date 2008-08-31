@@ -11,7 +11,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import Site
 import django.contrib.auth.models
 from django import oldforms
-from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _, ungettext
 import django
 from django.conf import settings

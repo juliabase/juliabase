@@ -3,7 +3,6 @@
 
 import re
 from django.template import Context, loader, RequestContext
-from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import ModelForm, Form
 from django.forms.util import ValidationError
@@ -297,11 +296,11 @@ def edit(request, deposition_number):
             if deposition_number:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully changed in the database.") % deposition.number
-                return HttpResponseRedirect("../../")
+                return utils.HttpResponseSeeOther("../../")
             else:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully added to the database.") % deposition.number
-                return HttpResponseRedirect("../../processes/split_and_rename_samples/%d" % deposition.id)
+                return utils.HttpResponseSeeOther("../../processes/split_and_rename_samples/%d" % deposition.id)
     else:
         deposition_form = None
         match = query_string_pattern.match(request.META["QUERY_STRING"] or "")
@@ -335,7 +334,7 @@ def show(request, deposition_number):
     samples = deposition.samples
     if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
             and not request.user.has_perm("change_sixchamberdeposition"):
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     sample_names = [sample.name for sample in samples.all()]
     template_context = {"title": _(u"6-chamber deposition “%s”") % deposition.number, "sample_names": sample_names}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))

@@ -4,7 +4,7 @@
 import datetime
 from chantal.samples import models
 from django.template import RequestContext
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
@@ -161,7 +161,7 @@ def split_and_rename_after_process(request, process_id):
     if not isinstance(process, models.Deposition):
         raise Http404
     if not has_permission_for_process(request.user, process):
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     process_name = unicode(process)
     if request.POST:
         sample_names = [sample.name for sample in process.samples.all()]
@@ -172,7 +172,7 @@ def split_and_rename_after_process(request, process_id):
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, process.operator, sample_names)
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
-            return HttpResponseRedirect("../../")
+            return utils.HttpResponseSeeOther("../../")
     else:
         original_data_forms, new_data_form_lists, global_new_data_form = forms_from_database(process)
     return render_to_response("split_after_process.html",

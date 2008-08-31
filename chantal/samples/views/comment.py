@@ -3,7 +3,7 @@
 
 import datetime
 from django.template import RequestContext
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 import django.forms as forms
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -21,13 +21,13 @@ def edit(request, process_id):
     comment = get_object_or_404(models.Comment, pk=utils.convert_id_to_int(process_id))
     if request.user != comment.operator or \
             not utils.get_allowed_result_processes(request.user, comment.samples.all(), comment.sample_series.all()):
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     if request.method == "POST":
         comment_form = EditCommentForm(request.POST)
         if comment_form.is_valid():
             comment.contents = comment_form.cleaned_data["contents"]
             comment.save()
-            return HttpResponseRedirect("../../"+utils.parse_query_string(request).get("next", ""))
+            return utils.HttpResponseSeeOther("../../"+utils.parse_query_string(request).get("next", ""))
     else:
         comment_form = EditCommentForm(initial={"contents": comment.contents})
     return render_to_response("edit_comment.html", {"title": _(u"Edit comment"), "is_new": False, "comment": comment_form},
@@ -80,7 +80,7 @@ def new(request):
             comment.save()
             comment.samples = comment_form.cleaned_data["samples"]
             comment.sample_series = comment_form.cleaned_data["sample_series"]
-            return HttpResponseRedirect("../../"+query_string_dict.get("next", ""))
+            return utils.HttpResponseSeeOther("../../"+query_string_dict.get("next", ""))
     else:
         comment_form = NewCommentForm(user_details, query_string_dict)
     return render_to_response("edit_comment.html", {"title": _(u"New comment"), "is_new": True, "comment": comment_form},

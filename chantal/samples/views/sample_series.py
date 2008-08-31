@@ -5,7 +5,6 @@ import datetime
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponseRedirect
 from chantal.samples import models
 from django.forms import Form, ModelChoiceField
 from django import forms
@@ -37,7 +36,7 @@ def show(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
     if not utils.has_permission_for_sample_or_series(request.user, sample_series):
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("show_sample_series.html",
                               {"title": _(u"Sample series “%s”") % sample_series.name,
@@ -53,7 +52,7 @@ def edit(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
     if sample_series.currently_responsible_person != request.user:
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(user_details, sample_series, request.POST)
         if sample_series_form.is_valid():
@@ -63,7 +62,7 @@ def edit(request, name):
             sample_series.samples = sample_series_form.cleaned_data["samples"]
             request.session["success_report"] = \
                 _(u"Sample series %s was successfully updated in the database.") % sample_series.name
-            return HttpResponseRedirect("../%s" % sample_series.name)
+            return utils.HttpResponseSeeOther("../%s" % sample_series.name)
     else:
         sample_series_form = \
             SampleSeriesForm(user_details, sample_series,
@@ -100,7 +99,7 @@ def new(request):
                 sample_series.samples=sample_series_form.cleaned_data["samples"]
                 request.session["success_report"] = \
                     _(u"Sample series %s was successfully added to the database.") % full_name
-                return HttpResponseRedirect("../../")
+                return utils.HttpResponseSeeOther("../../")
     else:
         sample_series_form = SampleSeriesForm(user_details, None)
     return render_to_response("edit_sample_series.html",
@@ -117,7 +116,7 @@ def add_result_process(request, name):
     user_details = request.user.get_profile()
     processes = utils.get_allowed_result_processes(request.user, sample_series=[sample_series])
     if not processes:
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     return render_to_response("add_process.html",
                               {"title": _(u"Add result to “%s”" % name),
                                "processes": processes,

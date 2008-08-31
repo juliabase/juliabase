@@ -4,7 +4,7 @@
 import time, datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 import django.forms as forms
 from chantal.samples.models import Sample
 from chantal.samples import models
@@ -33,7 +33,7 @@ def edit(request, sample_name):
         return redirect
     old_group, old_responsible_person = sample.group, sample.currently_responsible_person
     if sample.currently_responsible_person != request.user:
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     user_details = request.user.get_profile()
     if request.method == "POST":
         sample_form = SampleForm(request.POST, instance=sample)
@@ -45,7 +45,7 @@ def edit(request, sample_name):
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
             request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
-            return HttpResponseRedirect(
+            return utils.HttpResponseSeeOther(
                 "../../" + utils.parse_query_string(request).get("next", "samples/%s" % utils.name2url(sample.name)))
     else:
         sample_form = SampleForm(instance=sample)
@@ -168,7 +168,7 @@ def add_process(request, sample_name):
     user_details = request.user.get_profile()
     processes = get_allowed_processes(request.user, sample)
     if not processes:
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     return render_to_response("add_process.html",
                               {"title": _(u"Add process to sample “%s”" % sample.name),
                                "processes": processes,

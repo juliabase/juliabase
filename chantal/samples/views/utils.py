@@ -3,7 +3,7 @@
 
 import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
-from django.http import HttpResponseRedirect, QueryDict, Http404, HttpResponse
+from django.http import QueryDict, Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _, ugettext_lazy
 from functools import update_wrapper
@@ -78,7 +78,7 @@ class _PermissionCheck(object):
     def __call__(self, request, *args, **kwargs):
         if any(request.user.has_perm(permission) for permission in self.permissions):
             return self.original_view_function(request, *args, **kwargs)
-        return HttpResponseRedirect("permission_error")
+        return utils.HttpResponseSeeOther("permission_error")
     
 def check_permission(permissions):
     # If more than one permission is given, any of them would unlock the view.
@@ -263,7 +263,7 @@ def lookup_sample(sample_name, request):
             "disambiguation.html", {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
             context_instance=RequestContext(request))
     if not has_permission_for_sample_or_series(request.user, sample):
-        return None, HttpResponseRedirect("permission_error")
+        return None, utils.HttpResponseSeeOther("permission_error")
     return sample, None
 
 def convert_id_to_int(process_id):
