@@ -93,7 +93,7 @@ def show(request, sample_name):
 
 class AddSamplesForm(forms.Form):
     _ = ugettext_lazy
-    number_of_samples = forms.IntegerField(label=_(u"Number of samples"))
+    number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
     currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
@@ -143,15 +143,16 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
         if add_samples_form.is_valid():
-            if add_samples_form.cleaned_data["number_of_samples"] >= 100:
-                utils.append_error(add_samples_form, "number_of_samples", _(u"Must be smaller than 100."))
+            new_names = add_samples_to_database(add_samples_form, request.user)
+            if len(new_names) > 1:
+                request.session["success_report"] = \
+                    _(u"Your samples have the provisional names from %(first_name)s to "
+                      u"%(last_name)s.  They were added to “My Samples”.") % \
+                      {"first_name": new_names[0], "last_name": new_names[-1]}
             else:
-                new_names = add_samples_to_database(add_samples_form, request.user)
-                return render_to_response("acknowledge_new_samples.html",
-                                          {"title": _(u"Added %d samples to the database") %
-                                           add_samples_form.cleaned_data["number_of_samples"],
-                                           "new_names": new_names},
-                                          context_instance=RequestContext(request))
+                request.session["success_report"] = _(u"Your sample has the provisional name %s.  "
+                                                      u"It was added to “My Samples”.") % new_names[0]
+            return utils.HttpResponseSeeOther("../../")
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",
