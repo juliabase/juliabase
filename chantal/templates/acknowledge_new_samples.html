@@ -1,0 +1,16 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+<p>
+  {% blocktrans count new_names|length as counter and new_names|first as first_name and new_names|last as last_name %}
+    Your sample has the provisional name {{ first_name }}.  It was added to “My Samples”.
+  {% plural %}
+    Your samples have the provisional names from {{ first_name }} to {{ last_name}}.  They were added to “My Samples”.
+  {% endblocktrans %}
+</p>
+
+<p><a href="../../">back to main menu</a></p>
+{% endblock %}

@@ -123,8 +123,9 @@ def add_samples_to_database(add_samples_form, user):
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = add_samples_form.cleaned_data["currently_responsible_person"].get_profile()
-    for i in range(starting_number, starting_number + number_of_samples):
-        sample = models.Sample(name=u"*%d" % i,
+    new_names = [u"*%d" % i for i in range(starting_number, starting_number + number_of_samples)]
+    for new_name in new_names:
+        sample = models.Sample(name=new_name,
                                current_location=add_samples_form.cleaned_data["current_location"],
                                currently_responsible_person=add_samples_form.cleaned_data["currently_responsible_person"],
                                purpose=add_samples_form.cleaned_data["purpose"],
@@ -133,6 +134,7 @@ def add_samples_to_database(add_samples_form, user):
         sample.save()
         sample.processes.add(substrate)
         user_details.my_samples.add(sample)
+    return new_names
 
 @login_required
 @check_permission("add_sample")
@@ -144,7 +146,12 @@ def add(request):
             if add_samples_form.cleaned_data["number_of_samples"] >= 100:
                 utils.append_error(add_samples_form, "number_of_samples", _(u"Must be smaller than 100."))
             else:
-                add_samples_to_database(add_samples_form, request.user)
+                new_names = add_samples_to_database(add_samples_form, request.user)
+                return render_to_response("acknowledge_new_samples.html",
+                                          {"title": _(u"Added %d samples to the database") %
+                                           add_samples_form.cleaned_data["number_of_samples"],
+                                           "new_names": new_names},
+                                          context_instance=RequestContext(request))
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",
