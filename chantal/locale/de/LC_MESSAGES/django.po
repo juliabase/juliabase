@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-30 18:01+0200\n"
-"PO-Revision-Date: 2008-08-30 18:02+0200\n"
+"POT-Creation-Date: 2008-08-31 18:13+0200\n"
+"PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: samples/models.py:13 samples/models.py:154 samples/models.py:182
-#: samples/models.py:265
+#: samples/models.py:266
 msgid "name"
 msgstr "Name"
 
@@ -26,7 +26,7 @@ msgstr "Email"
 msgid "alternative email"
 msgstr "alternative Email"
 
-#: samples/models.py:16 samples/models.py:289
+#: samples/models.py:16 samples/models.py:290
 msgid "phone"
 msgstr "Telefon"
 
@@ -38,7 +38,7 @@ msgstr "externer Operator"
 msgid "external operators"
 msgstr "externe Operatoren"
 
-#: samples/models.py:25 samples/models.py:266
+#: samples/models.py:25 samples/models.py:267
 msgid "timestamp"
 msgstr "Zeitstempel"
 
@@ -75,7 +75,7 @@ msgstr "Depositionen"
 msgid "carrier"
 msgstr "Carrier"
 
-#: samples/models.py:45 samples/models.py:101 samples/models.py:259
+#: samples/models.py:45 samples/models.py:101 samples/models.py:260
 msgid "comments"
 msgstr "Kommentare"
 
@@ -86,10 +86,6 @@ msgstr "6-Kammer-Deposition"
 #: samples/models.py:54
 msgid "6-chamber depositions"
 msgstr "6-Kammer-Depositionen"
-
-#: samples/models.py:55
-msgid "Can create and edit 6-chamber depositions"
-msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"
 
 #: samples/models.py:56
 msgid "6-chamber deposition lab"
@@ -279,7 +275,7 @@ msgstr "6-Kammer-Channels"
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: samples/models.py:157 samples/models.py:268
+#: samples/models.py:157 samples/models.py:269
 #: templates/show_sample_series.html:26
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
@@ -300,7 +296,7 @@ msgstr "mit Kommas getrennt, keine Leerzeichen"
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: samples/models.py:164 samples/models.py:271
+#: samples/models.py:164 samples/models.py:272
 msgid "group"
 msgstr "Gruppe"
 
@@ -308,17 +304,9 @@ msgstr "Gruppe"
 msgid "sample"
 msgstr "Probe"
 
-#: samples/models.py:175 samples/models.py:269
+#: samples/models.py:175 samples/models.py:270
 msgid "samples"
 msgstr "Proben"
-
-#: samples/models.py:177
-msgid "Can view all samples"
-msgstr "Darf alle Proben sehen"
-
-#: samples/models.py:178
-msgid "Can add samples and edit substrates"
-msgstr ""
 
 #: samples/models.py:187
 msgid "name alias"
@@ -365,87 +353,87 @@ msgstr "Substrat"
 msgid "substrates"
 msgstr "Substrate"
 
-#: samples/models.py:225
+#: samples/models.py:226
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: samples/models.py:226
+#: samples/models.py:227
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: samples/models.py:227
+#: samples/models.py:228
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
-#: samples/models.py:231
+#: samples/models.py:232
 msgid "cause of death"
 msgstr "Todesursache"
 
-#: samples/models.py:234
+#: samples/models.py:235
 #, python-format
 msgid "cease of existence of %s"
 msgstr "Beendigung der Existenz von %s"
 
-#: samples/models.py:236
+#: samples/models.py:237
 #, python-format
 msgid "cease of existence #%d"
 msgstr "Beendigung der Existenz #%d"
 
-#: samples/models.py:238
+#: samples/models.py:239
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
-#: samples/models.py:239
+#: samples/models.py:240
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
-#: samples/models.py:243
+#: samples/models.py:244
 msgid "contents"
 msgstr "Inhalt"
 
-#: samples/models.py:246 samples/models.py:249
+#: samples/models.py:247 samples/models.py:250
 #, python-format
 msgid "comment about %s"
 msgstr "Kommentar über %s"
 
-#: samples/models.py:251
+#: samples/models.py:252
 #, python-format
 msgid "comment #%d"
 msgstr "Kommentar #%d"
 
-#: samples/models.py:258 samples/views/utils.py:276
+#: samples/models.py:259 samples/views/utils.py:276
 msgid "comment"
 msgstr "Kommentar"
 
-#: samples/models.py:270
+#: samples/models.py:271
 msgid "results"
 msgstr "Ergebnisse"
 
-#: samples/models.py:278
+#: samples/models.py:279
 msgid "sample series"
 msgstr "Probenserie"
 
-#: samples/models.py:279
+#: samples/models.py:280
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: samples/models.py:287
+#: samples/models.py:288
 msgid "user"
 msgstr "Benutzer"
 
-#: samples/models.py:288
+#: samples/models.py:289
 msgid "language"
 msgstr "Sprache"
 
-#: samples/models.py:290
+#: samples/models.py:291
 msgid "my samples"
 msgstr "meine Proben"
 
-#: samples/models.py:291
+#: samples/models.py:292
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: samples/models.py:295 samples/models.py:296
+#: samples/models.py:296 samples/models.py:297
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -671,15 +659,20 @@ msgstr "Tags"
 msgid "Group"
 msgstr "Gruppe"
 
-#: samples/views/sample.py:145
+#: samples/views/sample.py:147
 msgid "Must be smaller than 100."
 msgstr "Muss keiner als 100 sein."
 
 #: samples/views/sample.py:151
+#, python-format
+msgid "Added %d samples to the database"
+msgstr "Es wurden %d Proben zur Datenbank hinzugefügt"
+
+#: samples/views/sample.py:158
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: samples/views/sample.py:165
+#: samples/views/sample.py:172
 #, python-format
 msgid "Add process to sample “%s”"
 msgstr "Prozess zu Probe „%s“ hinzufügen"
@@ -816,7 +809,7 @@ msgstr "Neuer Probenort"
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
 
-#: samples/views/split_after_process.py:124
+#: samples/views/split_after_process.py:126
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
@@ -824,19 +817,19 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-#: samples/views/split_after_process.py:128
+#: samples/views/split_after_process.py:130
 msgid "This sample name has been used already on this page."
 msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
-#: samples/views/split_after_process.py:132
+#: samples/views/split_after_process.py:134
 msgid "This sample name exists already."
 msgstr "Dieser Probenname ist schon vergeben."
 
-#: samples/views/split_after_process.py:172
+#: samples/views/split_after_process.py:174
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
-#: samples/views/split_after_process.py:177
+#: samples/views/split_after_process.py:179
 #, python-format
 msgid "Bulk sample rename for %s"
 msgstr "Probenumbenennung für %s"
@@ -1025,6 +1018,31 @@ msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
 #: templates/about.html:61
 msgid "Django logo"
 msgstr "Django-Logo"
+
+#: templates/acknowledge_new_samples.html:8
+#, python-format
+msgid ""
+"\n"
+"    Your sample has the provisional name %(first_name)s.  It was added to "
+"“My Samples”.\n"
+"  "
+msgid_plural ""
+"\n"
+"    Your samples have the provisional names from %(first_name)s to %"
+"(last_name)s.  They were added to “My Samples”.\n"
+"  "
+msgstr[0] ""
+"\n"
+"Ihre Probe hat den provisorischen Namen %(first_name)s.  Sie wurde zu „Meine "
+"Proben“ hinzugefügt."
+msgstr[1] ""
+"\n"
+"Ihre Proben haben die provisorischen Namen %(first_name)s bis %(last_name)"
+"s.  Sie wurden zu „Meine Proben“ hinzugefügt."
+
+#: templates/acknowledge_new_samples.html:15
+msgid "back to main menu"
+msgstr "zurück zum Hauptmenü"
 
 #: templates/base.html:20
 msgid "DB access time:"
@@ -1304,6 +1322,12 @@ msgstr ""
 "\n"
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
+
+#~ msgid "Can create and edit 6-chamber depositions"
+#~ msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"
+
+#~ msgid "Can view all samples"
+#~ msgstr "Darf alle Proben sehen"
 
 #~ msgid ""
 #~ "Warning: If you click on one of the links below, any changes on this page "
