@@ -3,13 +3,20 @@
 
 import re, string, copy, datetime
 from django.forms.util import ErrorList, ValidationError
-from django.http import HttpResponseRedirect, QueryDict, Http404
+from django.http import HttpResponseRedirect, QueryDict, Http404, HttpResponse
+from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _, ugettext_lazy
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm, ModelChoiceField
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
+
+class HttpResponseSeeOther(HttpResponse):
+    status_code = 303
+    def __init__(self, redirect_to):
+        super(HttpResponseSeeOther, self).__init__()
+        self["Location"] = iri_to_uri(redirect_to)
 
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
