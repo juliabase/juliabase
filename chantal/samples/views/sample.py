@@ -183,6 +183,7 @@ max_results = 50
 @login_required
 def search(request):
     found_samples = []
+    too_many_results = False
     if request.method == "POST":
         search_samples_form = SearchSamplesForm(request.POST)
         if search_samples_form.is_valid():
