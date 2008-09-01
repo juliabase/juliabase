@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-31 18:13+0200\n"
+"POT-Creation-Date: 2008-09-01 19:07+0200\n"
 "PO-Revision-Date: 2008-09-01 09:17+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -401,7 +401,7 @@ msgstr ""
 msgid "comment #%d"
 msgstr ""
 
-#: samples/models.py:259 samples/views/utils.py:276
+#: samples/models.py:259 samples/views/utils.py:283
 msgid "comment"
 msgstr ""
 
@@ -453,8 +453,8 @@ msgstr ""
 msgid "Edit comment"
 msgstr ""
 
-#: samples/views/comment.py:39 samples/views/sample_series.py:24
-#: samples/views/six_chamber_deposition.py:36
+#: samples/views/comment.py:39 samples/views/sample_series.py:23
+#: samples/views/six_chamber_deposition.py:35
 msgid "Samples"
 msgstr ""
 
@@ -476,126 +476,126 @@ msgstr ""
 msgid "New comment"
 msgstr ""
 
-#: samples/views/main.py:21 templates/base.html:30
+#: samples/views/main.py:20 templates/base.html:30
 msgid "Main menu"
 msgstr ""
 
-#: samples/views/main.py:25
+#: samples/views/main.py:24
 msgid "Access denied"
 msgstr ""
 
-#: samples/views/main.py:38
+#: samples/views/main.py:37
 #, python-format
 msgid "%(count)d year"
 msgid_plural "%(count)d years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:39
+#: samples/views/main.py:38
 #, python-format
 msgid "%(count)d month"
 msgid_plural "%(count)d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:40
+#: samples/views/main.py:39
 #, python-format
 msgid "%(count)d week"
 msgid_plural "%(count)d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:41
+#: samples/views/main.py:40
 #, python-format
 msgid "%(count)d day"
 msgid_plural "%(count)d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:42
+#: samples/views/main.py:41
 #, python-format
 msgid "%(count)d hour"
 msgid_plural "%(count)d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:43
+#: samples/views/main.py:42
 #, python-format
 msgid "%(count)d minute"
 msgid_plural "%(count)d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:44 samples/views/main.py:50
+#: samples/views/main.py:43 samples/views/main.py:49
 #, python-format
 msgid "%(count)d second"
 msgid_plural "%(count)d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: samples/views/main.py:54
+#: samples/views/main.py:53
 msgid " and "
 msgstr ""
 
-#: samples/views/main.py:56
+#: samples/views/main.py:55
 msgid ", "
 msgstr ""
 
-#: samples/views/main.py:56
+#: samples/views/main.py:55
 msgid ", and "
 msgstr ""
 
-#: samples/views/main.py:60 samples/views/main.py:62
+#: samples/views/main.py:59 samples/views/main.py:61
 #, python-format
 msgid "up and running for %(time)s"
 msgstr ""
 
-#: samples/views/main.py:63
+#: samples/views/main.py:62
 #, python-format
 msgid "Chantal revision %s"
 msgstr ""
 
-#: samples/views/main.py:64
+#: samples/views/main.py:63
 msgid "Chantal is presented to you by …"
 msgstr ""
 
-#: samples/views/my_layers.py:17
+#: samples/views/my_layers.py:16
 msgid "Nickname"
 msgstr ""
 
-#: samples/views/my_layers.py:18
+#: samples/views/my_layers.py:17
 msgid "Layer identifier"
 msgstr ""
 
-#: samples/views/my_layers.py:19
+#: samples/views/my_layers.py:18
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr ""
 
-#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:20
+#: samples/views/my_layers.py:19 samples/views/split_and_rename.py:20
 msgid "Delete"
 msgstr ""
 
-#: samples/views/my_layers.py:23
+#: samples/views/my_layers.py:22
 msgid "Deposition and layer number must be separated by \"-\"."
 msgstr ""
 
-#: samples/views/my_layers.py:28
+#: samples/views/my_layers.py:27
 msgid "Deposition number doesn't exist."
 msgstr ""
 
-#: samples/views/my_layers.py:32
+#: samples/views/my_layers.py:31
 msgid "Layer number isn't a number."
 msgstr ""
 
-#: samples/views/my_layers.py:34
+#: samples/views/my_layers.py:33
 msgid "This layer does not exist in this deposition."
 msgstr ""
 
-#: samples/views/my_layers.py:78
+#: samples/views/my_layers.py:77
 msgid "Nickname is already given."
 msgstr ""
 
-#: samples/views/my_layers.py:103
+#: samples/views/my_layers.py:102
 msgid "My Layers"
 msgstr ""
 
@@ -604,7 +604,7 @@ msgid "is amongst My Samples"
 msgstr ""
 
 #: samples/views/sample.py:23 samples/views/sample.py:99
-#: samples/views/sample_series.py:21
+#: samples/views/sample_series.py:20
 msgid "Currently responsible person"
 msgstr ""
 
@@ -652,121 +652,132 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: samples/views/sample.py:104 samples/views/sample_series.py:23
+#: samples/views/sample.py:104 samples/views/sample_series.py:22
 #: templates/show_sample_series.html:25
 msgid "Group"
 msgstr ""
 
-#: samples/views/sample.py:147
-msgid "Must be smaller than 100."
-msgstr ""
-
-#: samples/views/sample.py:151
+#: samples/views/sample.py:149
 #, python-format
-msgid "Added %d samples to the database"
+msgid ""
+"Your samples have the provisional names from %(first_name)s to %(last_name)"
+"s.  They were added to “My Samples”."
 msgstr ""
 
-#: samples/views/sample.py:158
+#: samples/views/sample.py:153
+#, python-format
+msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
+msgstr ""
+
+#: samples/views/sample.py:159
 msgid "Add samples"
 msgstr ""
 
-#: samples/views/sample.py:172
+#: samples/views/sample.py:173
 #, fuzzy, python-format
 msgid "Add process to sample “%s”"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:20
+#: samples/views/sample.py:180
+msgid "Name pattern"
+msgstr ""
+
+#: samples/views/sample.py:195
+msgid "Search for sample"
+msgstr ""
+
+#: samples/views/sample_series.py:19
 msgid "Name"
 msgstr ""
 
-#: samples/views/sample_series.py:43
+#: samples/views/sample_series.py:42
 #, fuzzy, python-format
 msgid "Sample series “%s”"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:65
+#: samples/views/sample_series.py:64
 #, python-format
 msgid "Sample series %s was successfully updated in the database."
 msgstr ""
 
-#: samples/views/sample_series.py:77
+#: samples/views/sample_series.py:76
 #, fuzzy, python-format
 msgid "Edit sample series “%s”"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:93
+#: samples/views/sample_series.py:92
 msgid "This sample series name is already given."
 msgstr ""
 
-#: samples/views/sample_series.py:102
+#: samples/views/sample_series.py:101
 #, python-format
 msgid "Sample series %s was successfully added to the database."
 msgstr ""
 
-#: samples/views/sample_series.py:107
+#: samples/views/sample_series.py:106
 #, fuzzy
 msgid "Create new sample series"
 msgstr "sample series"
 
-#: samples/views/sample_series.py:122
+#: samples/views/sample_series.py:121
 #, fuzzy, python-format
 msgid "Add result to “%s”"
 msgstr "sample series"
 
-#: samples/views/six_chamber_deposition.py:23
+#: samples/views/six_chamber_deposition.py:22
 msgid "Remove deposited samples from My Samples"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:28
+#: samples/views/six_chamber_deposition.py:27
 msgid "Nickname of My Layer to be added"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:37
+#: samples/views/six_chamber_deposition.py:36
 msgid "Operator"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:59
+#: samples/views/six_chamber_deposition.py:58
 msgid "You must mark at least one sample."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:86
+#: samples/views/six_chamber_deposition.py:85
 msgid "Name is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:110
+#: samples/views/six_chamber_deposition.py:109
 msgid "Gas type is unknown."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:219
+#: samples/views/six_chamber_deposition.py:218
 msgid "This deposition number exists already."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:222
+#: samples/views/six_chamber_deposition.py:221
 msgid "No layers given."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:228
-#: samples/views/six_chamber_deposition.py:235
+#: samples/views/six_chamber_deposition.py:227
+#: samples/views/six_chamber_deposition.py:234
 msgid "Number is a duplicate."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:299
+#: samples/views/six_chamber_deposition.py:298
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:303
+#: samples/views/six_chamber_deposition.py:302
 #, python-format
 msgid "Deposition %s was successfully added to the database."
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:324
-#: samples/views/six_chamber_deposition.py:340
+#: samples/views/six_chamber_deposition.py:323
+#: samples/views/six_chamber_deposition.py:339
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr ""
 
-#: samples/views/six_chamber_deposition.py:324
+#: samples/views/six_chamber_deposition.py:323
 msgid "New 6-chamber deposition"
 msgstr ""
 
@@ -869,29 +880,29 @@ msgstr ""
 msgid "Split sample “%s”"
 msgstr ""
 
-#: samples/views/utils.py:28
+#: samples/views/utils.py:35
 msgid "Time must be given in the form HH:MM:SS."
 msgstr ""
 
-#: samples/views/utils.py:32
+#: samples/views/utils.py:39
 msgid "Minutes and seconds must be smaller than 60."
 msgstr ""
 
-#: samples/views/utils.py:45
+#: samples/views/utils.py:52
 msgid "Must be a physical quantity with number and unit."
 msgstr ""
 
-#: samples/views/utils.py:51
+#: samples/views/utils.py:58
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr ""
 
-#: samples/views/utils.py:253
+#: samples/views/utils.py:260
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr ""
 
-#: samples/views/utils.py:256
+#: samples/views/utils.py:263
 msgid "Ambiguous sample name"
 msgstr ""
 
@@ -1174,6 +1185,14 @@ msgid ""
 "    are not in the specific group that is allowed to do it.  Please contact "
 "the\n"
 "    administrator to add you to that group.\n"
+"    "
+msgstr ""
+
+#: templates/search_samples.html:16
+#, python-format
+msgid ""
+"\n"
+"      Too many matches were found.  I show only %(max_results)s or them.\n"
 "    "
 msgstr ""
 

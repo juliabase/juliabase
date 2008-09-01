@@ -1,2 +1,7 @@
 chantal/locale/de/LC_MESSAGES/django.mo
 chantal/locale/en/LC_MESSAGES/django.mo
+locale/fr/LC_MESSAGES/django.mo
+locale/nl/LC_MESSAGES/django.mo
+locale/ru/LC_MESSAGES/django.mo
+locale/uk/LC_MESSAGES/django.mo
+locale/zh_CN/LC_MESSAGES/django.mo

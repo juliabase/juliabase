@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-31 18:13+0200\n"
-"PO-Revision-Date: 2008-09-01 09:14+0200\n"
+"POT-Creation-Date: 2008-09-01 19:10+0200\n"
+"PO-Revision-Date: 2008-09-01 19:11+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -401,7 +401,7 @@ msgstr "Kommentar über %s"
 msgid "comment #%d"
 msgstr "Kommentar #%d"
 
-#: samples/models.py:259 samples/views/utils.py:276
+#: samples/models.py:259 samples/views/utils.py:283
 msgid "comment"
 msgstr "Kommentar"
 
@@ -453,8 +453,8 @@ msgstr "Inhalt"
 msgid "Edit comment"
 msgstr "Kommentar ändern"
 
-#: samples/views/comment.py:39 samples/views/sample_series.py:24
-#: samples/views/six_chamber_deposition.py:36
+#: samples/views/comment.py:39 samples/views/sample_series.py:23
+#: samples/views/six_chamber_deposition.py:35
 msgid "Samples"
 msgstr "Proben"
 
@@ -478,126 +478,126 @@ msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 msgid "New comment"
 msgstr "Neuer Kommentar"
 
-#: samples/views/main.py:21 templates/base.html:30
+#: samples/views/main.py:20 templates/base.html:30
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: samples/views/main.py:25
+#: samples/views/main.py:24
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: samples/views/main.py:38
+#: samples/views/main.py:37
 #, python-format
 msgid "%(count)d year"
 msgid_plural "%(count)d years"
 msgstr[0] "%(count)d Jahr"
 msgstr[1] "%(count)d Jahren"
 
-#: samples/views/main.py:39
+#: samples/views/main.py:38
 #, python-format
 msgid "%(count)d month"
 msgid_plural "%(count)d months"
 msgstr[0] "%(count)d Monat"
 msgstr[1] "%(count)d Monaten"
 
-#: samples/views/main.py:40
+#: samples/views/main.py:39
 #, python-format
 msgid "%(count)d week"
 msgid_plural "%(count)d weeks"
 msgstr[0] "%(count)d Woche"
 msgstr[1] "%(count)d Wochen"
 
-#: samples/views/main.py:41
+#: samples/views/main.py:40
 #, python-format
 msgid "%(count)d day"
 msgid_plural "%(count)d days"
 msgstr[0] "%(count)d Tag"
 msgstr[1] "%(count)d Tagen"
 
-#: samples/views/main.py:42
+#: samples/views/main.py:41
 #, python-format
 msgid "%(count)d hour"
 msgid_plural "%(count)d hours"
 msgstr[0] "%(count)d Stunde"
 msgstr[1] "%(count)d Stunden"
 
-#: samples/views/main.py:43
+#: samples/views/main.py:42
 #, python-format
 msgid "%(count)d minute"
 msgid_plural "%(count)d minutes"
 msgstr[0] "%(count)d Minute"
 msgstr[1] "%(count)d Minuten"
 
-#: samples/views/main.py:44 samples/views/main.py:50
+#: samples/views/main.py:43 samples/views/main.py:49
 #, python-format
 msgid "%(count)d second"
 msgid_plural "%(count)d seconds"
 msgstr[0] "%(count)d Sekunde"
 msgstr[1] "%(count)d Sekunden"
 
-#: samples/views/main.py:54
+#: samples/views/main.py:53
 msgid " and "
 msgstr " und "
 
-#: samples/views/main.py:56
+#: samples/views/main.py:55
 msgid ", "
 msgstr ", "
 
-#: samples/views/main.py:56
+#: samples/views/main.py:55
 msgid ", and "
 msgstr " und "
 
-#: samples/views/main.py:60 samples/views/main.py:62
+#: samples/views/main.py:59 samples/views/main.py:61
 #, python-format
 msgid "up and running for %(time)s"
 msgstr "up and running seit %(time)s"
 
-#: samples/views/main.py:63
+#: samples/views/main.py:62
 #, python-format
 msgid "Chantal revision %s"
 msgstr "Chantal-Revision %s"
 
-#: samples/views/main.py:64
+#: samples/views/main.py:63
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
 
-#: samples/views/my_layers.py:17
+#: samples/views/my_layers.py:16
 msgid "Nickname"
 msgstr "Spitzname"
 
-#: samples/views/my_layers.py:18
+#: samples/views/my_layers.py:17
 msgid "Layer identifier"
 msgstr "Schicht-Bezeichnung"
 
-#: samples/views/my_layers.py:19
+#: samples/views/my_layers.py:18
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
 
-#: samples/views/my_layers.py:20 samples/views/split_and_rename.py:20
+#: samples/views/my_layers.py:19 samples/views/split_and_rename.py:20
 msgid "Delete"
 msgstr "Löschen"
 
-#: samples/views/my_layers.py:23
+#: samples/views/my_layers.py:22
 msgid "Deposition and layer number must be separated by \"-\"."
 msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
 
-#: samples/views/my_layers.py:28
+#: samples/views/my_layers.py:27
 msgid "Deposition number doesn't exist."
 msgstr "Diese Deposition gibt es nicht."
 
-#: samples/views/my_layers.py:32
+#: samples/views/my_layers.py:31
 msgid "Layer number isn't a number."
 msgstr "Die Schichtnummer ist keine Zahl."
 
-#: samples/views/my_layers.py:34
+#: samples/views/my_layers.py:33
 msgid "This layer does not exist in this deposition."
 msgstr "In dieser Deposition gibt es diesen Layer nicht."
 
-#: samples/views/my_layers.py:78
+#: samples/views/my_layers.py:77
 msgid "Nickname is already given."
 msgstr "Dieser Spitzname ist schon vergeben."
 
-#: samples/views/my_layers.py:103
+#: samples/views/my_layers.py:102
 msgid "My Layers"
 msgstr "Meine Schichten"
 
@@ -606,7 +606,7 @@ msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
 #: samples/views/sample.py:23 samples/views/sample.py:99
-#: samples/views/sample_series.py:21
+#: samples/views/sample_series.py:20
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
@@ -654,120 +654,131 @@ msgstr "Zweck"
 msgid "Tags"
 msgstr "Tags"
 
-#: samples/views/sample.py:104 samples/views/sample_series.py:23
+#: samples/views/sample.py:104 samples/views/sample_series.py:22
 #: templates/show_sample_series.html:25
 msgid "Group"
 msgstr "Gruppe"
 
-#: samples/views/sample.py:147
-msgid "Must be smaller than 100."
-msgstr "Muss keiner als 100 sein."
-
-#: samples/views/sample.py:151
+#: samples/views/sample.py:149
 #, python-format
-msgid "Added %d samples to the database"
-msgstr "Es wurden %d Proben zur Datenbank hinzugefügt"
+msgid ""
+"Your samples have the provisional names from %(first_name)s to %(last_name)"
+"s.  They were added to “My Samples”."
+msgstr "Ihre Proben haben die provisorischen Namen von %(first_name)s bis %(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
 
-#: samples/views/sample.py:158
+#: samples/views/sample.py:153
+#, python-format
+msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
+msgstr "Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ hinzugefügt."
+
+#: samples/views/sample.py:159
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: samples/views/sample.py:172
+#: samples/views/sample.py:173
 #, python-format
 msgid "Add process to sample “%s”"
 msgstr "Prozess zu Probe „%s“ hinzufügen"
 
-#: samples/views/sample_series.py:20
+#: samples/views/sample.py:180
+msgid "Name pattern"
+msgstr "Namensmuster"
+
+#: samples/views/sample.py:195
+msgid "Search for sample"
+msgstr "Nach Proben suchen"
+
+#: samples/views/sample_series.py:19
 msgid "Name"
 msgstr "Name"
 
-#: samples/views/sample_series.py:43
+#: samples/views/sample_series.py:42
 #, python-format
 msgid "Sample series “%s”"
 msgstr "Probenserie „%s“"
 
-#: samples/views/sample_series.py:65
+#: samples/views/sample_series.py:64
 #, python-format
 msgid "Sample series %s was successfully updated in the database."
 msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
 
-#: samples/views/sample_series.py:77
+#: samples/views/sample_series.py:76
 #, python-format
 msgid "Edit sample series “%s”"
 msgstr "Ändern der Probenserie „%s“"
 
-#: samples/views/sample_series.py:93
+#: samples/views/sample_series.py:92
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: samples/views/sample_series.py:102
+#: samples/views/sample_series.py:101
 #, python-format
 msgid "Sample series %s was successfully added to the database."
 msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/views/sample_series.py:107
+#: samples/views/sample_series.py:106
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
-#: samples/views/sample_series.py:122
+#: samples/views/sample_series.py:121
 #, python-format
 msgid "Add result to “%s”"
 msgstr "Ergebnis zu „%s“ hinzufügen"
 
-#: samples/views/six_chamber_deposition.py:23
+#: samples/views/six_chamber_deposition.py:22
 msgid "Remove deposited samples from My Samples"
 msgstr "Entferne deponierte Proben von Meine Proben"
 
-#: samples/views/six_chamber_deposition.py:28
+#: samples/views/six_chamber_deposition.py:27
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: samples/views/six_chamber_deposition.py:37
+#: samples/views/six_chamber_deposition.py:36
 msgid "Operator"
 msgstr "Operator"
 
-#: samples/views/six_chamber_deposition.py:59
+#: samples/views/six_chamber_deposition.py:58
 msgid "You must mark at least one sample."
 msgstr "Sie müssen mindestens eine Probe markieren."
 
-#: samples/views/six_chamber_deposition.py:86
+#: samples/views/six_chamber_deposition.py:85
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:110
+#: samples/views/six_chamber_deposition.py:109
 msgid "Gas type is unknown."
 msgstr "Dieser Gastyp ist unbekannt."
 
-#: samples/views/six_chamber_deposition.py:219
+#: samples/views/six_chamber_deposition.py:218
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-#: samples/views/six_chamber_deposition.py:222
+#: samples/views/six_chamber_deposition.py:221
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: samples/views/six_chamber_deposition.py:228
-#: samples/views/six_chamber_deposition.py:235
+#: samples/views/six_chamber_deposition.py:227
+#: samples/views/six_chamber_deposition.py:234
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
 
-#: samples/views/six_chamber_deposition.py:299
+#: samples/views/six_chamber_deposition.py:298
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
 msgstr "Die Deposition %s wurde erfolgreich in der Datenbank geändert."
 
-#: samples/views/six_chamber_deposition.py:303
+#: samples/views/six_chamber_deposition.py:302
 #, python-format
 msgid "Deposition %s was successfully added to the database."
 msgstr "Die Deposition %s wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/views/six_chamber_deposition.py:324
-#: samples/views/six_chamber_deposition.py:340
+#: samples/views/six_chamber_deposition.py:323
+#: samples/views/six_chamber_deposition.py:339
 #, python-format
 msgid "6-chamber deposition “%s”"
 msgstr "6-Kammer-Deposition „%s“"
 
-#: samples/views/six_chamber_deposition.py:324
+#: samples/views/six_chamber_deposition.py:323
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
 
@@ -875,29 +886,29 @@ msgstr ""
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
 
-#: samples/views/utils.py:28
+#: samples/views/utils.py:35
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/utils.py:32
+#: samples/views/utils.py:39
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/utils.py:45
+#: samples/views/utils.py:52
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muß eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/utils.py:51
+#: samples/views/utils.py:58
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 
-#: samples/views/utils.py:253
+#: samples/views/utils.py:260
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: samples/views/utils.py:256
+#: samples/views/utils.py:263
 msgid "Ambiguous sample name"
 msgstr "Mehrdeutiger Probenname"
 
@@ -1209,6 +1220,14 @@ msgstr ""
 "angehören.  Bitte kontaktieren Sie den Administrator, daß er Sie jener "
 "Gruppe hinzufügt."
 
+#: templates/search_samples.html:16
+#, python-format
+msgid ""
+"\n"
+"      Too many matches were found.  I show only %(max_results)s of them.\n"
+"    "
+msgstr "\nZu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
+
 #: templates/show_process.html:17
 #, python-format
 msgid ""
@@ -1322,6 +1341,12 @@ msgstr ""
 "\n"
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
+
+#~ msgid "Must be smaller than 100."
+#~ msgstr "Muss keiner als 100 sein."
+
+#~ msgid "Added %d samples to the database"
+#~ msgstr "Es wurden %d Proben zur Datenbank hinzugefügt"
 
 #~ msgid "Can create and edit 6-chamber depositions"
 #~ msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"

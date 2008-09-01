@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-31 18:13+0200\n"
+"POT-Creation-Date: 2008-09-01 19:07+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -678,6 +678,14 @@ msgstr ""
 msgid "Add process to sample “%s”"
 msgstr ""
 
+#: samples/views/sample.py:180
+msgid "Name pattern"
+msgstr ""
+
+#: samples/views/sample.py:195
+msgid "Search for sample"
+msgstr ""
+
 #: samples/views/sample_series.py:19
 msgid "Name"
 msgstr ""
@@ -1174,6 +1182,14 @@ msgid ""
 "    are not in the specific group that is allowed to do it.  Please contact "
 "the\n"
 "    administrator to add you to that group.\n"
+"    "
+msgstr ""
+
+#: templates/search_samples.html:16
+#, python-format
+msgid ""
+"\n"
+"      Too many matches were found.  I show only %(max_results)s or them.\n"
 "    "
 msgstr ""
 

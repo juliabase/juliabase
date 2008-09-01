@@ -174,3 +174,27 @@ def add_process(request, sample_name):
                                "processes": processes,
                                "query_string": "sample=%s&next=samples/%s" % (sample_name, utils.name2url(sample_name))},
                               context_instance=RequestContext(request))
+
+class SearchSamplesForm(forms.Form):
+    _ = ugettext_lazy
+    name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30)
+
+max_results = 50
+@login_required
+def search(request):
+    found_samples = []
+    if request.method == "POST":
+        search_samples_form = SearchSamplesForm(request.POST)
+        if search_samples_form.is_valid():
+            found_samples = \
+                models.Sample.objects.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
+            too_many_results = found_samples.count() > max_results
+            found_samples = found_samples.all()[:max_results] if too_many_results else found_samples.all()
+    else:
+        search_samples_form = SearchSamplesForm()
+    return render_to_response("search_samples.html", {"title": _(u"Search for sample"),
+                                                      "search_samples": search_samples_form,
+                                                      "found_samples": found_samples,
+                                                      "too_many_results": too_many_results,
+                                                      "max_results": max_results},
+                              context_instance=RequestContext(request))
