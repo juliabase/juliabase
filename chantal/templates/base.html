@@ -31,7 +31,7 @@
           / <a href="/trac/chantal/newticket">{% trans 'Report feature wish or bug' %}</a>
           / <a href="{% url django.contrib.auth.views.logout %}">{% trans 'Log out' %}</a>
         {% else %}
-          &nbsp;
+          <a href="{% url samples.views.main.main_menu %}">{% trans 'Log in' %}</a>
         {% endif %}
       </td>
     </tr>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-01 19:10+0200\n"
-"PO-Revision-Date: 2008-09-01 19:11+0200\n"
+"POT-Creation-Date: 2008-09-01 20:30+0200\n"
+"PO-Revision-Date: 2008-09-01 20:30+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -664,12 +664,16 @@ msgstr "Gruppe"
 msgid ""
 "Your samples have the provisional names from %(first_name)s to %(last_name)"
 "s.  They were added to “My Samples”."
-msgstr "Ihre Proben haben die provisorischen Namen von %(first_name)s bis %(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
+msgstr ""
+"Ihre Proben haben die provisorischen Namen von %(first_name)s bis %"
+"(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
 
 #: samples/views/sample.py:153
 #, python-format
 msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
-msgstr "Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ hinzugefügt."
+msgstr ""
+"Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ "
+"hinzugefügt."
 
 #: samples/views/sample.py:159
 msgid "Add samples"
@@ -684,7 +688,7 @@ msgstr "Prozess zu Probe „%s“ hinzufügen"
 msgid "Name pattern"
 msgstr "Namensmuster"
 
-#: samples/views/sample.py:195
+#: samples/views/sample.py:196
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
@@ -1071,6 +1075,10 @@ msgstr "Bug oder Featurewunsch melden"
 msgid "Log out"
 msgstr "Abmelden"
 
+#: templates/base.html:34
+msgid "Log in"
+msgstr "Anmelden"
+
 #: templates/base.html:46
 msgid "Jülich Forschungszentrum logo"
 msgstr "Logo des Forschungszentrums Jülich"
@@ -1226,7 +1234,9 @@ msgid ""
 "\n"
 "      Too many matches were found.  I show only %(max_results)s of them.\n"
 "    "
-msgstr "\nZu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
+msgstr ""
+"\n"
+"Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
 
 #: templates/show_process.html:17
 #, python-format
