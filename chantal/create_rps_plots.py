@@ -83,4 +83,5 @@ pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
 pylab.xlim(0,24)
 pylab.ylabel(u"requests per second")
 pylab.xlabel(u"time")
-pylab.savefig(open("apache_load.png", "wb"), facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"))
+pylab.savefig(open("/home/bronger/repos/chantal/online/chantal/media/server_load.png", "wb"),
+              facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"))
