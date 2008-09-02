@@ -57,6 +57,7 @@ def breakup_time(seconds):
 def about(request):
     web_server_uptime = \
         _(u"up and running for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
+    db_uptime = _(u"up and running for %(time)s") % {"time": breakup_time(time.time()-settings.MYSQL_STARTUP_TIME)}
     os_uptime = float(open("/proc/uptime").read().split()[0])
     os_uptime = _(u"up and running for %(time)s") % {"time": breakup_time(os_uptime)}
     short_messages = [_(u"Chantal revision %s") % settings.CHANTAL_REVNO]
@@ -66,6 +67,7 @@ def about(request):
                                              "web_server_uptime": web_server_uptime,
                                              "is_testserver": settings.IS_TESTSERVER,
                                              "db_version": settings.MYSQL_VERSION,
+                                             "db_uptime": db_uptime,
                                              "language_version": settings.PYTHON_VERSION,
                                              "framework_version": django.get_version().replace("-SVN-unknown", ""),
                                              "short_messages": short_messages
@@ -83,3 +85,4 @@ def show_user(request, login_name):
         username = user.username
     return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
+

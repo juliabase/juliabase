@@ -43,7 +43,7 @@
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}"
             ><img class="helper-program-logo" src="/media/mysql.png" alt="{% trans 'MySQL logo' %}"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}">MySQL</a>
-        <span class="version">{{ db_version }}</span></p></td>
+        <span class="version">{{ db_version }}{% trans ',' %} </span><span class="uptime">{{ db_uptime }}</span></p></td>
   </tr>
   <tr>
     <th>{% trans 'Programming runtime' %}:</th>
