@@ -1,0 +1,20 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block float_image %}
+<img style="float: right; margin-left: 2em" src="/media/stewardess.jpg" alt="{% trans 'stewardess' %}" />
+{% endblock %}
+
+{% block css %}
+<style type="text/css">
+  p { margin: 0pt }
+  img { border: 0pt }
+  img.helper-program-logo { float: right; margin: 0pt 0pt 1ex 0.5em }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Server load</h2>
+<p><img src="/media/server_load.png" alt="{% trans 'server load statistics plots' %}"/></p>
+{% endblock %}

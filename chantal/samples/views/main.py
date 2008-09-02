@@ -74,6 +74,11 @@ def about(request):
                                              },
                               context_instance=RequestContext(request))
 
+def statistics(request):
+    return render_to_response("statistics.html", {"title": _(u"Chantal server statistics")},
+                              context_instance=RequestContext(request))
+
+@login_required
 def show_user(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     try:
