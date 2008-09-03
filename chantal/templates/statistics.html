@@ -3,17 +3,48 @@
 {% load i18n %}
 
 {% block float_image %}
-<img style="float: right; margin-left: 2em" src="/media/secretary.jpg" alt="{% trans 'secretary' %}" />
+<img style="float: right; margin-left: 2em" src="/media/secretary.jpg" alt="{% trans 'secretary' %}" 
+/>
 {% endblock %}
 
 {% block css %}
 <style type="text/css">
-  p { margin: 0pt }
   img { border: 0pt }
-  img.helper-program-logo { float: right; margin: 0pt 0pt 1ex 0.5em }
+  th { text-align: left }
+  td { vertical-align: top }
 </style>
 {% endblock %}
 
 {% block content %}
+<h2>{% trans 'Availability' %}</h2>
+
+<table cellspacing="10" style="large">
+  <tr>
+    <th>{% trans 'Component' %}</th>
+    <th>{% trans 'Name' %}</th>
+    <th>{% trans 'up and running …' %}</th>
+  </tr>
+  <tr>
+    <td>{% trans 'OS' %}</td>
+    <td>Ubuntu</td>
+    <td>{{ os_uptime }}</td>
+  </tr>
+  <tr>
+    <td>{% trans 'web server' %}</td>
+    <td>Apache</td>
+    <td>{{ web_server_uptime }}</td>
+  </tr>
+  <tr>
+    <td>{% trans 'database server' %}</td>
+    <td>MySQL</td>
+    <td>{{ db_uptime }}</td>
+  </tr>
+</table>
+
+
+<h2 style="clear:both">{% trans 'Work load' %}</h2>
+
+<p>{% trans '(Re-calculated every 10 minutes.)' %}</p>
+
 <p><img src="/media/server_load.png" alt="{% trans 'server load statistics plots' %}"/></p>
 {% endblock %}

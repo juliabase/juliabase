@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-01 19:07+0200\n"
+"POT-Creation-Date: 2008-09-03 10:00+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -545,18 +545,23 @@ msgstr ""
 msgid ", and "
 msgstr ""
 
-#: samples/views/main.py:59 samples/views/main.py:61
+#: samples/views/main.py:59 samples/views/main.py:60 samples/views/main.py:62
+#: samples/views/main.py:79 samples/views/main.py:80 samples/views/main.py:82
 #, python-format
-msgid "up and running for %(time)s"
+msgid "for %(time)s"
 msgstr ""
 
-#: samples/views/main.py:62
+#: samples/views/main.py:63
 #, python-format
 msgid "Chantal revision %s"
 msgstr ""
 
-#: samples/views/main.py:63
+#: samples/views/main.py:64
 msgid "Chantal is presented to you by …"
+msgstr ""
+
+#: samples/views/main.py:83
+msgid "Chantal server statistics"
 msgstr ""
 
 #: samples/views/my_layers.py:16
@@ -682,11 +687,11 @@ msgstr ""
 msgid "Name pattern"
 msgstr ""
 
-#: samples/views/sample.py:195
+#: samples/views/sample.py:196
 msgid "Search for sample"
 msgstr ""
 
-#: samples/views/sample_series.py:19
+#: samples/views/sample_series.py:19 templates/statistics.html:24
 msgid "Name"
 msgstr ""
 
@@ -958,6 +963,7 @@ msgid "Ubuntu logo"
 msgstr ""
 
 #: templates/about.html:24 templates/about.html.py:30 templates/about.html:36
+#: templates/about.html.py:46
 msgid ","
 msgstr ""
 
@@ -1046,6 +1052,10 @@ msgstr ""
 
 #: templates/base.html:32
 msgid "Log out"
+msgstr ""
+
+#: templates/base.html:34
+msgid "Log in"
 msgstr ""
 
 #: templates/base.html:46
@@ -1189,7 +1199,7 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"      Too many matches were found.  I show only %(max_results)s or them.\n"
+"      Too many matches were found.  I show only %(max_results)s of them.\n"
 "    "
 msgstr ""
 
@@ -1294,4 +1304,44 @@ msgid ""
 "                (you must change this last name in order to create an\n"
 "                additional piece)\n"
 "              "
+msgstr ""
+
+#: templates/statistics.html:6
+msgid "secretary"
+msgstr ""
+
+#: templates/statistics.html:19
+msgid "Availability"
+msgstr ""
+
+#: templates/statistics.html:23
+msgid "Component"
+msgstr ""
+
+#: templates/statistics.html:25
+msgid "up and running …"
+msgstr ""
+
+#: templates/statistics.html:28
+msgid "OS"
+msgstr ""
+
+#: templates/statistics.html:33
+msgid "web server"
+msgstr ""
+
+#: templates/statistics.html:38
+msgid "database server"
+msgstr ""
+
+#: templates/statistics.html:45
+msgid "Work load"
+msgstr ""
+
+#: templates/statistics.html:47
+msgid "(Re-calculated every 10 minutes.)"
+msgstr ""
+
+#: templates/statistics.html:49
+msgid "server load statistics plots"
 msgstr ""

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-01 20:30+0200\n"
+"POT-Creation-Date: 2008-09-03 09:59+0200\n"
 "PO-Revision-Date: 2008-09-01 20:30+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -547,19 +547,24 @@ msgstr ", "
 msgid ", and "
 msgstr " und "
 
-#: samples/views/main.py:59 samples/views/main.py:61
+#: samples/views/main.py:59 samples/views/main.py:60 samples/views/main.py:62
+#: samples/views/main.py:79 samples/views/main.py:80 samples/views/main.py:82
 #, python-format
-msgid "up and running for %(time)s"
-msgstr "up and running seit %(time)s"
+msgid "for %(time)s"
+msgstr "seit %(time)s"
 
-#: samples/views/main.py:62
+#: samples/views/main.py:63
 #, python-format
 msgid "Chantal revision %s"
 msgstr "Chantal-Revision %s"
 
-#: samples/views/main.py:63
+#: samples/views/main.py:64
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
+
+#: samples/views/main.py:83
+msgid "Chantal server statistics"
+msgstr "Chantal Server-Statistik"
 
 #: samples/views/my_layers.py:16
 msgid "Nickname"
@@ -692,7 +697,7 @@ msgstr "Namensmuster"
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
-#: samples/views/sample_series.py:19
+#: samples/views/sample_series.py:19 templates/statistics.html:24
 msgid "Name"
 msgstr "Name"
 
@@ -979,6 +984,7 @@ msgid "Ubuntu logo"
 msgstr "Ubuntu-Logo"
 
 #: templates/about.html:24 templates/about.html.py:30 templates/about.html:36
+#: templates/about.html.py:46
 msgid ","
 msgstr ","
 
@@ -1351,6 +1357,46 @@ msgstr ""
 "\n"
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
+
+#: templates/statistics.html:6
+msgid "secretary"
+msgstr "Sekretärin"
+
+#: templates/statistics.html:19
+msgid "Availability"
+msgstr "Verfügbarkeit"
+
+#: templates/statistics.html:23
+msgid "Component"
+msgstr "Komponente"
+
+#: templates/statistics.html:25
+msgid "up and running …"
+msgstr "up and running …"
+
+#: templates/statistics.html:28
+msgid "OS"
+msgstr "OS"
+
+#: templates/statistics.html:33
+msgid "web server"
+msgstr "Webserver"
+
+#: templates/statistics.html:38
+msgid "database server"
+msgstr "Datenbank-Server"
+
+#: templates/statistics.html:45
+msgid "Work load"
+msgstr "Arbeitslast"
+
+#: templates/statistics.html:47
+msgid "(Re-calculated every 10 minutes.)"
+msgstr "(Wird alle 10 Minuten neuberechnet.)"
+
+#: templates/statistics.html:49
+msgid "server load statistics plots"
+msgstr "Statistik-Plots der Serverlast"
 
 #~ msgid "Must be smaller than 100."
 #~ msgstr "Muss keiner als 100 sein."
