@@ -55,19 +55,11 @@ def breakup_time(seconds):
         return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
 
 def about(request):
-    web_server_uptime = \
-        _(u"up and running for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
-    db_uptime = _(u"up and running for %(time)s") % {"time": breakup_time(time.time()-settings.MYSQL_STARTUP_TIME)}
-    os_uptime = float(open("/proc/uptime").read().split()[0])
-    os_uptime = _(u"up and running for %(time)s") % {"time": breakup_time(os_uptime)}
     short_messages = [_(u"Chantal revision %s") % settings.CHANTAL_REVNO]
     return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
-                                             "os_uptime": os_uptime,
                                              "web_server_version": settings.APACHE_VERSION,
-                                             "web_server_uptime": web_server_uptime,
                                              "is_testserver": settings.IS_TESTSERVER,
                                              "db_version": settings.MYSQL_VERSION,
-                                             "db_uptime": db_uptime,
                                              "language_version": settings.PYTHON_VERSION,
                                              "framework_version": django.get_version().replace("-SVN-unknown", ""),
                                              "short_messages": short_messages
@@ -75,7 +67,15 @@ def about(request):
                               context_instance=RequestContext(request))
 
 def statistics(request):
-    return render_to_response("statistics.html", {"title": _(u"Chantal server statistics")},
+    web_server_uptime = \
+        _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
+    db_uptime = _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.MYSQL_STARTUP_TIME)}
+    os_uptime = float(open("/proc/uptime").read().split()[0])
+    os_uptime = _(u"for %(time)s") % {"time": breakup_time(os_uptime)}
+    return render_to_response("statistics.html", {"title": _(u"Chantal server statistics"),
+                                                  "os_uptime": os_uptime,
+                                                  "web_server_uptime": web_server_uptime,
+                                                  "db_uptime": db_uptime},
                               context_instance=RequestContext(request))
 
 @login_required

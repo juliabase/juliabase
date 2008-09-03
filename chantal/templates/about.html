@@ -21,8 +21,7 @@
     <td><p><a href="http://www.ubuntu.com"><img class="helper-program-logo" src="/media/ubuntu.png"
                                                 alt="{% trans 'Ubuntu logo' %}"/></a></p>
       <p><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">8.04
-      <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a>{% trans ',' %} 
-        </span><span class="uptime">{{ os_uptime }}</span></p></td>
+      <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a></p></td>
   </tr>
   <tr>
     <th>{% trans 'Web server' %}:</th>
@@ -33,8 +32,7 @@
     <td><p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}"
               ><img class="helper-program-logo" src="/media/apache.png" alt="{% trans 'Apache logo' %}"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
-      <span class="version">{{ web_server_version }}{% trans ',' %}
-      </span><span class="uptime">{{ web_server_uptime }}</span></p></td>
+      <span class="version">{{ web_server_version }}</span></p></td>
     {% endif %}
   </tr>
   <tr>
@@ -43,7 +41,7 @@
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}"
             ><img class="helper-program-logo" src="/media/mysql.png" alt="{% trans 'MySQL logo' %}"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/MySQL' %}">MySQL</a>
-        <span class="version">{{ db_version }}{% trans ',' %} </span><span class="uptime">{{ db_uptime }}</span></p></td>
+        <span class="version">{{ db_version }}</span></p></td>
   </tr>
   <tr>
     <th>{% trans 'Programming runtime' %}:</th>
