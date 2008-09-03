@@ -25,12 +25,12 @@ def read_times_apache():
             timestamp = datetime.datetime.strptime(date, "%d/%b/%Y:%H:%M:%S")
             timedelta = now - timestamp
             if datetime.timedelta(0) < timedelta < datetime.timedelta(1):
-                times[(24*3600 - timedelta.days*24*3600 - timedelta.seconds)//binning] += 1
+                times[(24*3600 - timedelta.seconds)//binning] += 1
         logfile.close()
     return times
 
-mysql_date_pattern = re.compile(ur"^\d{6} \d\d:\d\d:\d\d")
-db_hit_pattern = re.compile(ur"(\d{6} \d\d:\d\d:\d\d)?\s+\d+ Query\s+(SELECT|DELETE|INSERT)")
+mysql_date_pattern = re.compile(ur"^\d{6} (\d| )\d:\d\d:\d\d")
+db_hit_pattern = re.compile(ur"(\d{6} (\d| )\d:\d\d:\d\d)?\s+\d+ Query\s+(SELECT|DELETE|INSERT|ALTER|CREATE|UPDATE|SHOW)")
 def read_times_mysql():
     times = number_of_slots * [0]
     for filename in glob.glob("/var/log/mysql/mysql.log*"):
@@ -42,10 +42,13 @@ def read_times_mysql():
         for line in logfile:
             date_match = mysql_date_pattern.match(line)
             if date_match:
-                timestamp = datetime.datetime.strptime(date_match.group(), "%y%m%d %H:%M:%S")
+                date = date_match.group()
+                if date[7] == " ":
+                    date = date[:7] + "0" + date[8:]
+                timestamp = datetime.datetime.strptime(date, "%y%m%d %H:%M:%S")
                 timedelta = now - timestamp
             if datetime.timedelta(0) < timedelta < datetime.timedelta(1) and db_hit_pattern.match(line):
-                times[(24*3600 - timedelta.days*24*3600 - timedelta.seconds)//binning] += 1
+                times[(24*3600 - timedelta.seconds)//binning] += 1
         logfile.close()
     return times
 
