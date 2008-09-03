@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-03 09:59+0200\n"
-"PO-Revision-Date: 2008-09-01 20:30+0200\n"
+"POT-Creation-Date: 2008-09-03 13:41+0200\n"
+"PO-Revision-Date: 2008-09-03 13:41+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -547,22 +547,21 @@ msgstr ", "
 msgid ", and "
 msgstr " und "
 
-#: samples/views/main.py:59 samples/views/main.py:60 samples/views/main.py:62
-#: samples/views/main.py:79 samples/views/main.py:80 samples/views/main.py:82
-#, python-format
-msgid "for %(time)s"
-msgstr "seit %(time)s"
-
-#: samples/views/main.py:63
+#: samples/views/main.py:58
 #, python-format
 msgid "Chantal revision %s"
 msgstr "Chantal-Revision %s"
 
-#: samples/views/main.py:64
+#: samples/views/main.py:59
 msgid "Chantal is presented to you by …"
 msgstr "Chantal wird Ihnen präsentiert von …"
 
-#: samples/views/main.py:83
+#: samples/views/main.py:71 samples/views/main.py:72 samples/views/main.py:74
+#, python-format
+msgid "for %(time)s"
+msgstr "seit %(time)s"
+
+#: samples/views/main.py:75
 msgid "Chantal server statistics"
 msgstr "Chantal Server-Statistik"
 
@@ -983,60 +982,59 @@ msgstr "Betriebssystem"
 msgid "Ubuntu logo"
 msgstr "Ubuntu-Logo"
 
-#: templates/about.html:24 templates/about.html.py:30 templates/about.html:36
-#: templates/about.html.py:46
-msgid ","
-msgstr ","
-
-#: templates/about.html:28
+#: templates/about.html:27
 msgid "Web server"
 msgstr "Webserver"
 
-#: templates/about.html:30
+#: templates/about.html:29
 msgid "Django testserver"
 msgstr "Django Testserver"
 
-#: templates/about.html:33 templates/about.html.py:35
+#: templates/about.html:29
+msgid ","
+msgstr ","
+
+#: templates/about.html:32 templates/about.html.py:34
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
 msgstr "http://de.wikipedia.org/wiki/Apache_HTTP_Server"
 
-#: templates/about.html:34
+#: templates/about.html:33
 msgid "Apache logo"
 msgstr "Apache-Logo"
 
-#: templates/about.html:41
+#: templates/about.html:39
 msgid "Database"
 msgstr "Datenbank"
 
-#: templates/about.html:43 templates/about.html.py:45
+#: templates/about.html:41 templates/about.html.py:43
 msgid "http://en.wikipedia.org/wiki/MySQL"
 msgstr "http://de.wikipedia.org/wiki/MySQL"
 
-#: templates/about.html:44
+#: templates/about.html:42
 msgid "MySQL logo"
 msgstr "MySQL-Logo"
 
-#: templates/about.html:49
+#: templates/about.html:47
 msgid "Programming runtime"
 msgstr "Programm-Laufzeitsystem"
 
-#: templates/about.html:51 templates/about.html.py:53
+#: templates/about.html:49 templates/about.html.py:51
 msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
 msgstr "http://de.wikipedia.org/wiki/Python_(Programmiersprache)"
 
-#: templates/about.html:52
+#: templates/about.html:50
 msgid "Python logo"
 msgstr "Python-Logo"
 
-#: templates/about.html:58
+#: templates/about.html:56
 msgid "Programming framework"
 msgstr "Programmier-Framework"
 
-#: templates/about.html:60 templates/about.html.py:62
+#: templates/about.html:58 templates/about.html.py:60
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
 
-#: templates/about.html:61
+#: templates/about.html:59
 msgid "Django logo"
 msgstr "Django-Logo"
 
@@ -1371,8 +1369,8 @@ msgid "Component"
 msgstr "Komponente"
 
 #: templates/statistics.html:25
-msgid "up and running …"
-msgstr "up and running …"
+msgid "up and running …"
+msgstr "up and running …"
 
 #: templates/statistics.html:28
 msgid "OS"
