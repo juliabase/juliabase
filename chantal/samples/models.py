@@ -34,6 +34,8 @@ class Process(models.Model):
 
 class Deposition(Process):
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+    def get_show_url(self):
+        raise NotImplementedError
     def __unicode__(self):
         return _(u"deposition %s") % self.number
     class Meta:
@@ -49,6 +51,8 @@ class SixChamberDeposition(Deposition):
                     "duplicate_url": "6-chamber_deposition/add/?copy_from="+self.number}
         else:
             return {}
+    def get_show_url(self):
+        return "6-chamber_depositions/" + self.number
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")

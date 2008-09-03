@@ -5,13 +5,14 @@ import string, time
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
+from django.http import HttpResponsePermanentRedirect
+import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import Site
 import django.contrib.auth.models
-from django import oldforms
-from django.utils.translation import ugettext as _, ungettext
+from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
 
@@ -91,3 +92,33 @@ def show_user(request, login_name):
     return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
 
+class SearchDepositionsForm(forms.Form):
+    _ = ugettext_lazy
+    number_pattern = forms.CharField(label=_(u"Deposition number pattern"), max_length=30)
+
+max_results = 50
+@login_required
+def deposition_search(request):
+    found_depositions = []
+    too_many_results = False
+    if request.method == "POST":
+        search_depositions_form = SearchDepositionsForm(request.POST)
+        if search_depositions_form.is_valid():
+            found_depositions = \
+                models.Deposition.objects.filter(number__icontains=search_depositions_form.cleaned_data["number_pattern"])
+            too_many_results = found_depositions.count() > max_results
+            found_depositions = found_depositions.all()[:max_results] if too_many_results else found_depositions.all()
+            found_depositions = [deposition.find_actual_instance() for deposition in found_depositions]
+    else:
+        search_depositions_form = SearchDepositionsForm()
+    return render_to_response("search_depositions.html", {"title": _(u"Search for deposition"),
+                                                          "search_depositions": search_depositions_form,
+                                                          "found_depositions": found_depositions,
+                                                          "too_many_results": too_many_results,
+                                                          "max_results": max_results},
+                              context_instance=RequestContext(request))
+
+@login_required
+def show_deposition(request, deposition_number):
+    deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
+    return HttpResponsePermanentRedirect("../" + deposition.get_show_url())

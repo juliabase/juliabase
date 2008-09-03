@@ -8,6 +8,8 @@ admin.autodiscover()
 urlpatterns = patterns("",
                        (r"^$", "samples.views.main.main_menu"),
                        (r"^(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
+                       (r"^depositions/$", "samples.views.main.deposition_search"),
+                       (r"^depositions/(?P<deposition_number>.+)$", "samples.views.main.show_deposition"),
                        (r"^samples/$", "samples.views.sample.search"),
                        (r"^samples/add/$", "samples.views.sample.add"),
                        (r"^samples/add_process/(?P<sample_name>.+)", "samples.views.sample.add_process"),

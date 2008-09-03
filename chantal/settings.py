@@ -1,6 +1,6 @@
 # Django settings for chantal project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 import os.path, sys
