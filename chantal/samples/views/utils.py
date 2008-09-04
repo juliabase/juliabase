@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re, string, copy, datetime
+import re, string, copy, datetime, hashlib
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict, Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -11,6 +11,7 @@ from chantal.samples import models
 from django.forms import ModelForm, ModelChoiceField
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
+from django.conf import settings
 
 class HttpResponseSeeOther(HttpResponse):
     status_code = 303
@@ -295,3 +296,9 @@ def parse_query_string(request):
             item.append(u"")
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
+
+def get_user_hash(user):
+    user_hash = hashlib.sha1()
+    user_hash.update(settings.SECRET_KEY)
+    user_hash.update(user.username)
+    return user_hash.hexdigest()[:10]

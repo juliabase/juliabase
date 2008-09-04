@@ -5,7 +5,18 @@
 
 {% block content %}
   <h2>{% trans 'Add things' %}</h2>
+
+  <ul>
+    <li><a href="samples/add/">{% trans 'Add samples' %}</a></li>
+    <li><a href="sample_series/add/">{% trans 'Add sample series' %}</a></li>
+  </ul>
+
   <h2>{% trans 'Search things' %}</h2>
+  <ul>
+    <li><a href="samples/">{% trans 'Search for samples' %}</a></li>
+    <li><a href="depositions/">{% trans 'Search for depositions' %}</a></li>
+  </ul>
+
   <h2>{% trans 'My Samples' %}</h2>
   {% if seriesless_samples %}
     <ul>
@@ -31,5 +42,6 @@
     <li><a href="about/">{% trans 'About Chantal' %}</a></li>
     <li><a href="statistics/">{% trans 'Server statistics' %}</a></li>
     <li><a href="change_password/">{% trans 'Change password' %}</a></li>
+    <li><a href="news_feed/{{ username }}?hash={{ user_hash }}">{% trans 'Newsfeed' %}</a></li>
   </ul>
 {% endblock %}

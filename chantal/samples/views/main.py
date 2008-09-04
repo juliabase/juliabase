@@ -15,6 +15,7 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
+from . import utils
 
 class MySeries(object):
     def __init__(self, sample_series):
@@ -51,7 +52,9 @@ def main_menu(request):
     my_series = sorted(my_series.itervalues(), key=lambda series: series.timestamp, reverse=True)
     return render_to_response("main_menu.html", {"title": _(u"Main menu"),
                                                  "my_series": my_series,
-                                                 "seriesless_samples": seriesless_samples},
+                                                 "seriesless_samples": seriesless_samples,
+                                                 "username": request.user.username,
+                                                 "user_hash": utils.get_user_hash(request.user)},
                               context_instance=RequestContext(request))
 
 def permission_error(request, failed_action):
