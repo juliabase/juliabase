@@ -176,13 +176,9 @@ class Feed(django.contrib.syndication.feeds.Feed):
     def item_pubdate(self, item):
         return item.timestamp
 
-def feed(request, username):
-    try:
-        user_hash = utils.parse_query_string(request)["hash"]
-    except KeyError:
-        raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
+def feed(request, username, user_hash):
     if user_hash != utils.get_user_hash(request.user):
         return utils.HttpResponseSeeOther("permission_error")
     feed = Feed("latest_news", request)
-    feed.link = feed.feed_url = request.path + "?hash=" + user_hash
+    feed.link = feed.feed_url = request.path
     return HttpResponse(feed.get_feed().writeString("utf-8"), content_type="application/atom+xml; charset=utf-8")
