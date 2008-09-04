@@ -177,7 +177,8 @@ class Feed(django.contrib.syndication.feeds.Feed):
         return item.timestamp
 
 def feed(request, username, user_hash):
-    if user_hash != utils.get_user_hash(request.user):
+    user = get_object_or_404(django.contrib.auth.models.User, username=username)
+    if user_hash != utils.get_user_hash(user):
         return utils.HttpResponseSeeOther("permission_error")
     feed = Feed("latest_news", request)
     feed.link = feed.feed_url = request.path
