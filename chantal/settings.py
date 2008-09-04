@@ -91,10 +91,6 @@ INSTALLED_APPS = (
 )
 
 IS_TESTSERVER = len(sys.argv) >= 2
-URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
-
-LOGIN_URL = URL_PREFIX + "login/"
-LOGIN_REDIRECT_URL = URL_PREFIX
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",
