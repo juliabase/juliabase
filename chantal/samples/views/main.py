@@ -16,9 +16,42 @@ from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
 
+class MySeries(object):
+    def __init__(self, sample_series):
+        self.sample_series = sample_series
+        self.name = sample_series.name
+        self.timestamp = sample_series.timestamp
+        self.samples = []
+        self.__is_complete = None
+    def append(self, sample):
+        assert self.__is_complete is None
+        self.samples.append(sample)
+    @property
+    def is_complete(self):
+        if self.__is_complete is None:
+            sample_series_length = self.sample_series.samples.count()
+            assert sample_series_length >= len(self.samples)
+            self.__is_complete = sample_series_length == len(self.samples)
+        return self.__is_complete
+
 @login_required
 def main_menu(request):
-    return render_to_response("main_menu.html", {"title": _(u"Main menu")},
+    user_details = request.user.get_profile()
+    my_series = {}
+    seriesless_samples = []
+    for sample in user_details.my_samples.all():
+        containing_series = sample.series.all()
+        if not containing_series:
+            seriesless_samples.append(sample)
+        else:
+            for series in containing_series:
+                if series.name not in my_series:
+                    my_series[series.name] = MySeries(series)
+                my_series[series.name].append(sample)
+    my_series = sorted(my_series.itervalues(), key=lambda series: series.timestamp, reverse=True)
+    return render_to_response("main_menu.html", {"title": _(u"Main menu"),
+                                                 "my_series": my_series,
+                                                 "seriesless_samples": seriesless_samples},
                               context_instance=RequestContext(request))
 
 def permission_error(request, failed_action):

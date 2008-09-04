@@ -1,27 +1,26 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
   <table>
-    {{ search_samples }}
+    {{ search_depositions }}
   </table>
   <p class="submit-button" style="clear: both"><input type="submit" /></p>
 </form>
 
-<p>
-  {% if too_many_results %}
+{% if too_many_results %}
+  <p>
     {% blocktrans %}
       Too many matches were found.  I show only {{ max_results }} of them.
     {% endblocktrans %}
-  {% endif %}
-</p>
+  </p>
+{% endif %}
 
 <ul>
-  {% for sample in found_samples %}
-    <li><a href="{{ sample.name|name2url }}">{{ sample.name }}</a></li>
+  {% for deposition in found_depositions %}
+    <li><a href="../depositions/{{ deposition.number }}">{{ deposition.number }}</a></li>
   {% endfor %}
 </ul>
 

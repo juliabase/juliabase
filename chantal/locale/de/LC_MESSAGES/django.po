@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-03 18:40+0200\n"
-"PO-Revision-Date: 2008-09-03 18:41+0200\n"
+"POT-Creation-Date: 2008-09-04 03:13+0200\n"
+"PO-Revision-Date: 2008-09-04 03:15+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -936,6 +936,31 @@ msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
+msgid "Add things"
+msgstr "Dinge hinzufügen"
+
+msgid "Search things"
+msgstr "Nach Dingen suchen"
+
+msgid "My Samples"
+msgstr "Meine Proben"
+
+msgid ""
+"(This series contains further samples not part of your “My Samples” list.)"
+msgstr "(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste gehören.)"
+
+msgid "Miscellaneous"
+msgstr "Sonstiges"
+
+msgid "About Chantal"
+msgstr "Über Chantal"
+
+msgid "Server statistics"
+msgstr "Server-Statistik"
+
+msgid "Change password"
+msgstr "Ändere Passwort"
+
 msgid "Password change successful"
 msgstr "Das Passwort wurde erfolgreich geändert"
 
@@ -1124,9 +1149,6 @@ msgstr "Statistik-Plots der Serverlast"
 
 #~ msgid "%(name)s (%(originator)s %(year)s)"
 #~ msgstr "%(name)s (%(originator)s %(year)s)"
-
-#~ msgid "Change password"
-#~ msgstr "Ändere Passwort"
 
 #~ msgid "sample was completely split"
 #~ msgstr "Probe wurde vollständig gespalten"

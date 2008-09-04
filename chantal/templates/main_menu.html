@@ -1,15 +1,35 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block content %}
-  {{ session.last_db_time_in_ms }}
-  {% for process in processes %}
-    <p class="operator_and_timestamp">
-      {{ process.operator }},
-      {{ process.timestamp }}
-    </p>
-    <h2>{{ process.title }}</h2>
-    {{ process.body }}
+  <h2>{% trans 'Add things' %}</h2>
+  <h2>{% trans 'Search things' %}</h2>
+  <h2>{% trans 'My Samples' %}</h2>
+  {% if seriesless_samples %}
+    <ul>
+      {% for sample in seriesless_samples %}
+        <li><a href="samples/{{ sample.name|name2url }}">{{ sample.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% for series in my_series %}
+    <h3><a href="sample_series/{{ series.name }}">{{ series.name }}</a></h3>
+    {% if not series.is_complete %}
+      <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
+    {% endif %}
+    <ul>
+      {% for sample in series.samples %}
+        <li><a href="samples/{{ sample.name|name2url }}">{{ sample.name }}</a></li>
+      {% endfor %}
+    </ul>
   {% endfor %}
+
+  <h2>{% trans 'Miscellaneous' %}</h2>
+  <ul>
+    <li><a href="about/">{% trans 'About Chantal' %}</a></li>
+    <li><a href="statistics/">{% trans 'Server statistics' %}</a></li>
+    <li><a href="change_password/">{% trans 'Change password' %}</a></li>
+  </ul>
 {% endblock %}
