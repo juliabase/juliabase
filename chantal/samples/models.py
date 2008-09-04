@@ -27,6 +27,10 @@ class Process(models.Model):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
     def __unicode__(self):
         return unicode(self.find_actual_instance())
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.main.main_menu", (), {})
+#        return ('samples.views.main.show_process', [str(self.id)])
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")
@@ -36,6 +40,9 @@ class Deposition(Process):
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
     def get_show_url(self):
         raise NotImplementedError
+    @models.permalink
+    def get_absolute_url(self):
+        return ('samples.views.main.show_deposition', [self.number])
     def __unicode__(self):
         return _(u"deposition %s") % self.number
     class Meta:
@@ -51,6 +58,9 @@ class SixChamberDeposition(Deposition):
                     "duplicate_url": "6-chamber_deposition/add/?copy_from="+self.number}
         else:
             return {}
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.six_chamber_deposition.show", [self.number])
     def get_show_url(self):
         return "6-chamber_depositions/" + self.number
     class Meta:
@@ -213,7 +223,7 @@ class SampleSplit(Process):
 admin.site.register(SampleSplit)
 
 substrate_materials = (
-    ("asaiu", _(u"ASAI-U")),
+    ("asahi-u", _(u"ASAHI-U")),
     ("100-Si", _(u"silicon 100 wafer")),
     )
 
@@ -311,14 +321,15 @@ def find_actual_instance(self):
     except AttributeError:
         if not self.direct_subclasses:
             self.__actual_instance = self
-        for cls in self.direct_subclasses:
-            name = cls.__name__.lower()
-            if hasattr(self, name):
-                instance = getattr(self, name)
-                self.__actual_instance = instance.find_actual_instance()
-                break
         else:
-            raise Exception("internal error: instance not found")
+            for cls in self.direct_subclasses:
+                name = cls.__name__.lower()
+                if hasattr(self, name):
+                    instance = getattr(self, name)
+                    self.__actual_instance = instance.find_actual_instance()
+                    break
+            else:
+                raise Exception("internal error: instance not found")
         return self.__actual_instance
 models.Model.find_actual_instance = find_actual_instance
 def inject_direct_subclasses(parent, hierarchy):

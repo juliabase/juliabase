@@ -5,7 +5,7 @@ import string, time
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
-from django.http import HttpResponsePermanentRedirect, Http404
+from django.http import HttpResponsePermanentRedirect, HttpResponse, Http404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -15,6 +15,8 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
+import django.contrib.syndication.feeds
+from django.utils.feedgenerator import Atom1Feed
 from . import utils
 
 class MySeries(object):
@@ -159,6 +161,15 @@ def show_deposition(request, deposition_number):
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect("../" + deposition.get_show_url())
 
+class Feed(django.contrib.syndication.feeds.Feed):
+    feed_type = Atom1Feed
+    title = "Chantal news"
+    link = "/sitenews/"
+    description = "New processes."
+
+    def items(self):
+        return [process.find_actual_instance() for process in models.Process.objects.iterator()]
+
 def feed(request, username):
     try:
         user_hash = utils.parse_query_string(request)["hash"]
@@ -166,4 +177,5 @@ def feed(request, username):
         raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
     if user_hash != utils.get_user_hash(request.user):
         return utils.HttpResponseSeeOther("permission_error")
-    
+    return HttpResponse(Feed("feeds/", request).get_feed().writeString("utf-8"),
+                        content_type="application/atom+xml; charset=utf-8")
