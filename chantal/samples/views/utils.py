@@ -284,7 +284,7 @@ def get_allowed_result_processes(user, samples=[], sample_series=[]):
     for sample_series in sample_series:
         if sample_series.currently_responsible_person != user and sample_series.group not in user_groups:
             return []
-    return [{"name": _(u"comment"), "link": "comment/add/"}]
+    return [{"name": _(u"comment"), "link": "comments/add/"}]
 
 def parse_query_string(request):
     def decode(string):

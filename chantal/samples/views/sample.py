@@ -57,7 +57,7 @@ def get_allowed_processes(user, sample):
     processes = []
     processes.extend(utils.get_allowed_result_processes(user, samples=[sample]))
     if sample.currently_responsible_person == user:
-        processes.append({"name": _(u"split"), "link": "split/%s" % utils.name2url(sample.name)})
+        processes.append({"name": _(u"split"), "link": "splits/%s" % utils.name2url(sample.name)})
         # FixMe: Add sample death
     # FixMe: Add other processes, deposition, measurements, if the user is allowed to do it
     return processes

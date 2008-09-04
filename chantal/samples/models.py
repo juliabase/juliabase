@@ -55,8 +55,8 @@ class SixChamberDeposition(Deposition):
     comments = models.TextField(_(u"comments"), blank=True)
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
-            return {"edit_url": "6-chamber_deposition/edit/"+self.number,
-                    "duplicate_url": "6-chamber_deposition/add/?copy_from="+self.number}
+            return {"edit_url": "6-chamber_depositions/edit/"+self.number,
+                    "duplicate_url": "6-chamber_depositions/add/?copy_from="+self.number}
         else:
             return {}
     @models.permalink
@@ -270,7 +270,7 @@ class Comment(Process):
                 return _(u"comment #%d") % self.id
     def get_additional_template_context(self, process_context):
         if process_context.user == self.operator:
-            return {"edit_url": "comment/edit/%d" % self.id}
+            return {"edit_url": "comments/edit/%d" % self.id}
         else:
             return {}
     class Meta:
