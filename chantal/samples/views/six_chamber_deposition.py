@@ -40,17 +40,14 @@ class DepositionForm(ModelForm):
         if deposition:
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
-        # Configuring the fields before the call to the parental constructor
-        # works only in ModelForm, not in Form.  Maybe it should be delayed
-        # here, too.  (See fields["..."] below.)
-        self.sample_list.queryset = \
-            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
-            else user_details.my_samples
         super(DepositionForm, self).__init__(data, **keyw)
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
         self.fields["timestamp"].widget = split_widget
+        self.fields["sample_list"].queryset = \
+            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
+            else user_details.my_samples
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
     def clean_sample_list(self):
         sample_list = list(set(self.cleaned_data["sample_list"]))
