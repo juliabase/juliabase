@@ -21,7 +21,7 @@
 
 <ul>
   {% for sample in found_samples %}
-    <li><a href="{{ sample.name|name2url }}">{{ sample.name }}</a></li>
+    <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
   {% endfor %}
 </ul>
 

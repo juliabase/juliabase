@@ -4,6 +4,7 @@
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.http import urlquote
 from django.contrib import admin
 
 default_location_of_processed_samples = {}
@@ -30,7 +31,7 @@ class Process(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.main.main_menu", (), {})
-#        return ('samples.views.main.show_process', [str(self.id)])
+#        return ("samples.views.main.show_process", [str(self.id)])
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")
@@ -42,7 +43,7 @@ class Deposition(Process):
         raise NotImplementedError
     @models.permalink
     def get_absolute_url(self):
-        return ('samples.views.main.show_deposition', [self.number])
+        return ("samples.views.main.show_deposition", [urlquote(self.number, safe="")])
     def __unicode__(self):
         return _(u"deposition %s") % self.number
     class Meta:
@@ -60,7 +61,7 @@ class SixChamberDeposition(Deposition):
             return {}
     @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.six_chamber_deposition.show", [self.number])
+        return ("samples.views.six_chamber_deposition.show", [urlquote(self.number, safe="")])
     def get_show_url(self):
         return "6-chamber_depositions/" + self.number
     class Meta:
@@ -184,6 +185,9 @@ class Sample(models.Model):
         return Sample(name=self.name, current_location=self.current_location,
                             currently_responsible_person=self.currently_responsible_person, tags=self.tags,
                             split_origin=self.split_origin, group=self.group)
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.sample.show", [urlquote(self.name, safe="")])
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
@@ -289,6 +293,9 @@ class SampleSeries(models.Model):
     def add_result_process(self, result_process):
         assert result_process.__class__ in result_process_classes
         self.results.add(result_process)
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.sample_series.show", [urlquote(self.name, safe="")])
     class Meta:
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")

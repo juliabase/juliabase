@@ -12,17 +12,17 @@
       {% endwith %}
       {{ process.timestamp }}
     </p>
-    {% if sample_names %}
+    {% if samples %}
       <p>
-        {% blocktrans count sample_names|length as counter and sample_names.0 as first_name and sample_names.0|name2url as first_name_url %}
-          This process was applied to the sample <a href="../samples/{{ first_name_url }}">{{ first_name }}</a>.
+        {% blocktrans count samples|length as counter and samples.0 as first_sample %}
+          This process was applied to the sample <a href="{{ first_sample.get_absolute_url }}">{{ first_sample.name }}</a>.
         {% plural %}
-          This process was applied to the following samples: <!--{{ first_name }}{{ first_name_url }}-->
+          This process was applied to the following samples: <!--{{ first_name }}-->
         {% endblocktrans %}
-        {% if not sample_names|length_is:"1" %}
+        {% if not samples|length_is:"1" %}
           <ul>
-            {% for sample_name in sample_names %}
-              <li><a href="../samples/{{ sample_name|name2url }}">{{ sample_name }}</a></li>
+            {% for sample in samples %}
+              <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
             {% endfor %}
           </ul>
         {% endif %}

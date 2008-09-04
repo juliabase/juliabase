@@ -21,18 +21,18 @@
   {% if seriesless_samples %}
     <ul>
       {% for sample in seriesless_samples %}
-        <li><a href="samples/{{ sample.name|name2url }}">{{ sample.name }}</a></li>
+        <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
       {% endfor %}
     </ul>
   {% endif %}
   {% for series in my_series %}
-    <h3><a href="sample_series/{{ series.name }}">{{ series.name }}</a></h3>
+    <h3><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h3>
     {% if not series.is_complete %}
       <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
     {% endif %}
     <ul>
       {% for sample in series.samples %}
-        <li><a href="samples/{{ sample.name|name2url }}">{{ sample.name }}</a></li>
+        <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
       {% endfor %}
     </ul>
   {% endfor %}

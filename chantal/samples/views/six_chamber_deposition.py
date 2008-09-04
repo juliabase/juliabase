@@ -335,7 +335,6 @@ def show(request, deposition_number):
     if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
             and not request.user.has_perm("change_sixchamberdeposition"):
         return utils.HttpResponseSeeOther("permission_error")
-    sample_names = [sample.name for sample in samples.all()]
-    template_context = {"title": _(u"6-chamber deposition “%s”") % deposition.number, "sample_names": sample_names}
+    template_context = {"title": _(u"6-chamber deposition “%s”") % deposition.number, "samples": samples.all()}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
     return render_to_response("show_process.html", template_context, context_instance=RequestContext(request))
