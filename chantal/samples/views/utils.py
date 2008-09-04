@@ -19,6 +19,9 @@ class HttpResponseSeeOther(HttpResponse):
         super(HttpResponseSeeOther, self).__init__()
         self["Location"] = iri_to_uri(redirect_to)
 
+class HttpResponseUnauthorized(HttpResponse):
+    status_code = 401
+
 class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
         return self.data.get(self.prefix + "-" + fieldname)

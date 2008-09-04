@@ -5,7 +5,7 @@ import string, time
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponsePermanentRedirect, Http404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -58,8 +58,8 @@ def main_menu(request):
                               context_instance=RequestContext(request))
 
 def permission_error(request, failed_action):
-    return render_to_response("permission_error.html", {"title": _(u"Access denied")},
-                              context_instance=RequestContext(request))
+    return utils.HttpResponseUnauthorized(loader.render_to_string("permission_error.html", {"title": _(u"Access denied")},
+                                                                  context_instance=RequestContext(request)))
 
 def breakup_time(seconds):
     def test_timeunit(seconds, size_of_timeunit_in_seconds, translation_function, current_timeunit_list):
@@ -158,3 +158,12 @@ def deposition_search(request):
 def show_deposition(request, deposition_number):
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect("../" + deposition.get_show_url())
+
+def feed(request, username):
+    try:
+        user_hash = utils.parse_query_string(request)["hash"]
+    except KeyError:
+        raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
+    if user_hash != utils.get_user_hash(request.user):
+        return utils.HttpResponseSeeOther("permission_error")
+    
