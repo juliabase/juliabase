@@ -306,15 +306,20 @@ _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
 class_hierarchy = inspect.getclasstree(all_models)
 def find_actual_instance(self):
-    if not self.direct_subclasses:
-        return self
-    for cls in self.direct_subclasses:
-        name = cls.__name__.lower()
-        if hasattr(self, name):
-            instance = getattr(self, name)
-            return instance.find_actual_instance()
-    else:
-        raise Exception("internal error: instance not found")
+    try:
+        return self.__actual_instance
+    except AttributeError:
+        if not self.direct_subclasses:
+            self.__actual_instance = self
+        for cls in self.direct_subclasses:
+            name = cls.__name__.lower()
+            if hasattr(self, name):
+                instance = getattr(self, name)
+                self.__actual_instance = instance.find_actual_instance()
+                break
+        else:
+            raise Exception("internal error: instance not found")
+        return self.__actual_instance
 models.Model.find_actual_instance = find_actual_instance
 def inject_direct_subclasses(parent, hierarchy):
     i = 0
