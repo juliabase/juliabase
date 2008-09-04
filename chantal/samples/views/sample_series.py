@@ -118,7 +118,7 @@ def add_result_process(request, name):
     if not processes:
         return utils.HttpResponseSeeOther("permission_error")
     return render_to_response("add_process.html",
-                              {"title": _(u"Add result to “%s”" % name),
+                              {"title": _(u"Add result to “%s”") % name,
                                "processes": processes,
                                "query_string": "sample_series=%s&next=sample_series/%s" % (name, name)},
                               context_instance=RequestContext(request))
