@@ -1,0 +1,7 @@
+{% load i18n %}
+
+<p>
+{% blocktrans with obj.operator.get_full_name as operator_name %}
+{{ operator_name }} has created {{ obj }}.
+{% endblocktrans %}
+</p>

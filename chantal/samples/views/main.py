@@ -168,7 +168,13 @@ class Feed(django.contrib.syndication.feeds.Feed):
     description = "New processes."
 
     def items(self):
-        return [process.find_actual_instance() for process in models.Process.objects.iterator()]
+        return [process.find_actual_instance() for process in models.Deposition.objects.iterator()]
+    def item_author_name(self, item):
+        return item.operator.get_full_name() or unicode(item.operator)
+    def item_author_email(self, item):
+        return item.operator.email
+    def item_pubdate(self, item):
+        return item.timestamp
 
 def feed(request, username):
     try:
@@ -177,5 +183,6 @@ def feed(request, username):
         raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
     if user_hash != utils.get_user_hash(request.user):
         return utils.HttpResponseSeeOther("permission_error")
-    return HttpResponse(Feed("feeds/", request).get_feed().writeString("utf-8"),
-                        content_type="application/atom+xml; charset=utf-8")
+    feed = Feed("latest_news", request)
+    feed.link = feed.feed_url = request.path + "?hash=" + user_hash
+    return HttpResponse(feed.get_feed().writeString("utf-8"), content_type="application/atom+xml; charset=utf-8")
