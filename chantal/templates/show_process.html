@@ -17,7 +17,7 @@
         {% blocktrans count samples|length as counter and samples.0 as first_sample %}
           This process was applied to the sample <a href="{{ first_sample.get_absolute_url }}">{{ first_sample.name }}</a>.
         {% plural %}
-          This process was applied to the following samples: <!--{{ first_name }}-->
+          This process was applied to the following samples:
         {% endblocktrans %}
         {% if not samples|length_is:"1" %}
           <ul>
