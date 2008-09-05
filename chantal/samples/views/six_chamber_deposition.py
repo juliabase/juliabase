@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import ModelForm, Form
 from django.forms.util import ValidationError
 from django import forms
+import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models
@@ -293,11 +294,13 @@ def edit(request, deposition_number):
             if deposition_number:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully changed in the database.") % deposition.number
-                return utils.HttpResponseSeeOther("../../")
+                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
             else:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully added to the database.") % deposition.number
-                return utils.HttpResponseSeeOther("../../processes/split_and_rename_samples/%d" % deposition.id)
+                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
+                        "samples.views.split_after_process.split_and_rename_after_process",
+                        kwargs={"process_id": deposition.id}))
     else:
         deposition_form = None
         match = query_string_pattern.match(request.META["QUERY_STRING"] or "")

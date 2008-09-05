@@ -31,8 +31,8 @@
               
     {{ html_body }}
 
-    {% if edit_url %}<p><a class="edit-button" href="../{{ edit_url }}">{% trans 'Edit this process' %}</a></p>{% endif %}
-    {% if duplicate_url %}<p><a class="duplicate-button" href="../{{ duplicate_url }}"
+    {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% trans 'Edit this process' %}</a></p>{% endif %}
+    {% if duplicate_url %}<p><a class="duplicate-button" href="{{ duplicate_url }}"
                                 >{% trans 'Duplicate this process' %}</a></p>{% endif %}
   </div>
 {% endblock %}

@@ -11,6 +11,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from django.db.models import Q
 from chantal.samples import models
+import django.core.urlresolvers
 from . import utils
 
 class NewNameForm(forms.Form):
@@ -136,7 +137,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            return utils.HttpResponseSeeOther("../")
+            return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},

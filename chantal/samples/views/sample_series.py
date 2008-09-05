@@ -7,11 +7,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
 from django.forms import Form, ModelChoiceField
+import django.core.urlresolvers
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from django.db.models import Q
 import django.contrib.auth.models
+from django.utils.http import urlquote_plus
 from . import utils
 
 class SampleSeriesForm(Form):
@@ -62,7 +64,7 @@ def edit(request, name):
             sample_series.samples = sample_series_form.cleaned_data["samples"]
             request.session["success_report"] = \
                 _(u"Sample series %s was successfully updated in the database.") % sample_series.name
-            return utils.HttpResponseSeeOther("../%s" % sample_series.name)
+            return utils.HttpResponseSeeOther(sample_series.get_absolute_url())
     else:
         sample_series_form = \
             SampleSeriesForm(user_details, sample_series,
@@ -99,7 +101,7 @@ def new(request):
                 sample_series.samples=sample_series_form.cleaned_data["samples"]
                 request.session["success_report"] = \
                     _(u"Sample series %s was successfully added to the database.") % full_name
-                return utils.HttpResponseSeeOther("../../")
+                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     else:
         sample_series_form = SampleSeriesForm(user_details, None)
     return render_to_response("edit_sample_series.html",
@@ -120,5 +122,6 @@ def add_result_process(request, name):
     return render_to_response("add_process.html",
                               {"title": _(u"Add result to “%s”") % name,
                                "processes": processes,
-                               "query_string": "sample_series=%s&next=sample_series/%s" % (name, name)},
+                               "query_string": "sample_series=%s&next=%s" % (urlquote_plus(name),
+                                                                             sample_series.get_absolute_url())},
                               context_instance=RequestContext(request))

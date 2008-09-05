@@ -159,7 +159,7 @@ def deposition_search(request):
 @login_required
 def show_deposition(request, deposition_number):
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
-    return HttpResponsePermanentRedirect("../" + deposition.get_show_url())
+    return HttpResponsePermanentRedirect(deposition.get_absolute_url())
 
 class Feed(django.contrib.syndication.feeds.Feed):
     feed_type = Atom1Feed

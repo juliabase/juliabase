@@ -45,8 +45,7 @@ def edit(request, sample_name):
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
             request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
-            return utils.HttpResponseSeeOther(
-                "../../" + utils.parse_query_string(request).get("next", "samples/%s" % utils.name2url(sample.name)))
+            return utils.HttpResponseSeeOther(utils.parse_query_string(request).get("next", sample.get_absolute_url()))
     else:
         sample_form = SampleForm(instance=sample)
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
@@ -152,7 +151,7 @@ def add(request):
             else:
                 request.session["success_report"] = _(u"Your sample has the provisional name %s.  "
                                                       u"It was added to “My Samples”.") % new_names[0]
-            return utils.HttpResponseSeeOther("../../")
+            return utils.http_response_go_next(request)
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",

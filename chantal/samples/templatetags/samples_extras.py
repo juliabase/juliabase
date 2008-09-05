@@ -5,6 +5,7 @@ import string, re
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import conditional_escape
+import django.utils.http
 import django.utils.safestring
 import chantal.samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
@@ -97,3 +98,15 @@ class VerboseNameNode(template.Node):
 def verbose_name(parser, token):
     tag_name, var = token.split_contents()
     return VerboseNameNode(var)
+
+@register.filter
+@stringfilter
+def urlquote(value):
+    return django.utils.http.urlquote(value, safe="")
+urlquote.is_safe = False
+
+@register.filter
+@stringfilter
+def urlquote_plus(value):
+    return django.utils.http.urlquote_plus(value, safe="/")
+urlquote_plus.is_safe = False

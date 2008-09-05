@@ -4,9 +4,9 @@
 {% load samples_extras %}
 
 {% block content_title %}<h1>{{ title|escape }}
-  {% if can_edit %}<a class="edit-button" href="edit/{{ sample_series.name }}"
+  {% if can_edit %}<a class="edit-button" href="{{ sample_series.get_absolute_url }}/edit/"
                       >{% trans 'edit' %}</a>{% endif %}
-  {% if can_add_process %}<a class="edit-button" href="add_result/{{ sample_series.name }}"
+  {% if can_add_process %}<a class="edit-button" href="{{ sample_series.get_absolute_url }}/add_result/"
                       >{% trans 'add result' %}</a>{% endif %}</h1>{% endblock %}
 
 {% block content %}
@@ -40,7 +40,7 @@
       {{ process.timestamp }}
     </p>
     <h2>{{ process.name }}{% if process.edit_url %}
-          <a class="edit-button" href="../{{ process.edit_url }}?next=sample_series/{{ sample_series.name }}"
+          <a class="edit-button" href="{{ process.edit_url }}?next={{ sample_series.get_absolute_url|urlquote_plus }}"
              >{% trans 'edit' %}</a>{% endif %}</h2>
     {{ process.html_body }}
   </div>

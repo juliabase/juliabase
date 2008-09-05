@@ -4,7 +4,8 @@
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.http import urlquote
+from django.utils.http import urlquote, urlquote_plus
+import django.core.urlresolvers
 from django.contrib import admin
 
 default_location_of_processed_samples = {}
@@ -39,8 +40,6 @@ class Process(models.Model):
 
 class Deposition(Process):
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
-    def get_show_url(self):
-        raise NotImplementedError
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.main.show_deposition", [urlquote(self.number, safe="")])
@@ -55,15 +54,15 @@ class SixChamberDeposition(Deposition):
     comments = models.TextField(_(u"comments"), blank=True)
     def get_additional_template_context(self, process_context):
         if process_context.user.has_perm("change_sixchamberdeposition"):
-            return {"edit_url": "6-chamber_depositions/edit/"+self.number,
-                    "duplicate_url": "6-chamber_depositions/add/?copy_from="+self.number}
+            return {"edit_url": django.core.urlresolvers.reverse("edit_6-chamber_deposition",
+                                                                 kwargs={"deposition_number": self.number}),
+                    "duplicate_url": "%s?copy_from=%s" % (django.core.urlresolvers.reverse("add_6-chamber_deposition"),
+                                                          urlquote_plus(self.number))}
         else:
             return {}
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.six_chamber_deposition.show", [urlquote(self.number, safe="")])
-    def get_show_url(self):
-        return "6-chamber_depositions/" + self.number
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
@@ -270,9 +269,13 @@ class Comment(Process):
                 return _(u"comment #%d") % self.id
     def get_additional_template_context(self, process_context):
         if process_context.user == self.operator:
-            return {"edit_url": "comments/edit/%d" % self.id}
+            return {"edit_url":
+                        django.core.urlresolvers.reverse("samples.views.comment.edit", kwargs={"process_id": self.id})}
         else:
             return {}
+    @classmethod
+    def get_add_url(cls):
+        return django.core.urlresolvers.reverse("samples.views.comment.new")
     class Meta:
         verbose_name = _(u"comment")
         verbose_name_plural = _(u"comments")

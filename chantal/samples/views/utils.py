@@ -12,6 +12,8 @@ from django.forms import ModelForm, ModelChoiceField
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
+from django.utils.http import urlquote
+import django.core.urlresolvers
 
 class HttpResponseSeeOther(HttpResponse):
     status_code = 303
@@ -284,7 +286,7 @@ def get_allowed_result_processes(user, samples=[], sample_series=[]):
     for sample_series in sample_series:
         if sample_series.currently_responsible_person != user and sample_series.group not in user_groups:
             return []
-    return [{"name": _(u"comment"), "link": "comments/add/"}]
+    return [{"name": cls._meta.verbose_name, "link": cls.get_add_url()} for cls in models.result_process_classes]
 
 def parse_query_string(request):
     def decode(string):
@@ -292,6 +294,7 @@ def parse_query_string(request):
         string = re.sub('%(..)', lambda match: chr(int(match.group(1), 16)), string)
         return string.decode("utf-8")
     query_string = request.META["QUERY_STRING"] or u""
+    print "QUERY_STRING", query_string
     items = [item.split("=", 1) for item in query_string.split("&")]
     result = []
     for item in items:
@@ -305,3 +308,10 @@ def get_user_hash(user):
     user_hash.update(settings.SECRET_KEY)
     user_hash.update(user.username)
     return user_hash.hexdigest()[:10]
+
+def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={}):
+    next_url = parse_query_string(request).get("next")
+    if next_url is not None:
+        return HttpResponseSeeOther(next_url)
+    else:
+        return HttpResponseSeeOther(django.core.urlresolvers.reverse(view, kwargs=kwargs))

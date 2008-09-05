@@ -20,7 +20,7 @@
 
 <ul>
   {% for deposition in found_depositions %}
-    <li><a href="../depositions/{{ deposition.number }}">{{ deposition.number }}</a></li>
+    <li><a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a></li>
   {% endfor %}
 </ul>
 

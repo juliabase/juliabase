@@ -1,11 +1,13 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block content %}
   <ul>
     {% for process in processes %}
-      <li><a href="../../{{ process.link }}{% if query_string %}?{{ query_string }}{% endif %}">{{ process.name }}</a></li>
+      <li><a href="{{ process.link }}{% if query_string %}?{{ query_string }}{% endif %}"
+             >{{ process.name }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}
