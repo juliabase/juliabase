@@ -181,12 +181,6 @@ def has_permission_for_sample_or_series(user, sample_or_series):
     return user.has_perm("samples.can_view_all_samples") or sample_or_series.group in user.groups.all() \
         or sample_or_series.currently_responsible_person == user
 
-def name2url(name):
-    return name.replace("/", "!")
-
-def url2name(url):
-    return url.replace("!", "/")
-
 class ResultContext(object):
     def __init__(self, user, sample_series):
         self.sample_series = sample_series
@@ -260,7 +254,6 @@ def get_next_deposition_number(letter):
     return prefix + u"%03d" % (max(numbers + [0]) + 1)
 
 def lookup_sample(sample_name, request):
-    sample_name = url2name(sample_name)
     sample = get_sample(sample_name)
     if not sample:
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)

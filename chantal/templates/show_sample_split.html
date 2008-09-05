@@ -5,7 +5,7 @@
 <p>
   {% if parent %}
     {% trans 'The parental sample' %}
-      <a href="{{ parent.name|name2url }}">{{ parent.name }}</a>
+      <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
     {% trans 'was split into the following pieces:' %}
   {% else %}
     {% blocktrans %}
@@ -18,7 +18,7 @@
   {% for piece in process.pieces.all %}
     {% ifnotequal piece original_sample %}
       <li>
-        <a href="{{ piece.name|name2url }}">{{ piece.name }}</a>
+        <a href="{{ piece.get_absolute_url }}">{{ piece.name }}</a>
       </li>
     {% endifnotequal %}
   {% endfor %}

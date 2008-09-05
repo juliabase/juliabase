@@ -10,6 +10,7 @@ from chantal.samples.models import Sample
 from chantal.samples import models
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
+from django.utils.http import urlquote_plus
 from . import utils
 from .utils import check_permission
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -56,7 +57,7 @@ def get_allowed_processes(user, sample):
     processes = []
     processes.extend(utils.get_allowed_result_processes(user, samples=[sample]))
     if sample.currently_responsible_person == user:
-        processes.append({"name": _(u"split"), "link": "splits/%s" % utils.name2url(sample.name)})
+        processes.append({"name": _(u"split"), "link": sample.get_absolute_url() + "/split/"})
         # FixMe: Add sample death
     # FixMe: Add other processes, deposition, measurements, if the user is allowed to do it
     return processes
@@ -171,7 +172,8 @@ def add_process(request, sample_name):
     return render_to_response("add_process.html",
                               {"title": _(u"Add process to sample “%s”" % sample.name),
                                "processes": processes,
-                               "query_string": "sample=%s&next=samples/%s" % (sample_name, utils.name2url(sample_name))},
+                               "query_string": "sample=%s&next=%s" % (urlquote_plus(sample_name),
+                                                                      sample.get_absolute_url())},
                               context_instance=RequestContext(request))
 
 class SearchSamplesForm(forms.Form):

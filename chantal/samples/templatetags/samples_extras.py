@@ -36,14 +36,6 @@ def chem_markup(chemical_formula, autoescape=False):
 chem_markup.needs_autoescape = True
 
 @register.filter
-@stringfilter
-def name2url(name, autoescape=False):
-    if autoescape:
-        name = conditional_escape(name)
-    return django.utils.safestring.mark_safe(chantal.samples.views.utils.name2url(name))
-name2url.needs_autoescape = True
-
-@register.filter
 def quantity(value, unit=None, autoescape=False):
     if value is None:
         return None
