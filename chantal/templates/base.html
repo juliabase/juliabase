@@ -11,6 +11,7 @@
 {% block extrahead %}{% endblock %}
 </head>
 {% load i18n %}
+{% load samples_extras %}
 
 <body>
   <table class="headbar" width="100%" cellspacing="0" cellpadding="0">
@@ -28,7 +29,8 @@
           {% trans 'Welcome,' %} 
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
           <a href="{% url samples.views.main.main_menu %}">{% trans 'Main menu' %}</a>
-          / <a href="/trac/chantal/newticket">{% trans 'Report feature wish or bug' %}</a>
+          / <a href="/trac/chantal/newticket?reporter={{ user.email|urlquote_plus }}"
+               >{% trans 'Report feature wish or bug' %}</a>
           / <a href="{% url django.contrib.auth.views.logout %}">{% trans 'Log out' %}</a>
         {% else %}
           <a href="{% url samples.views.main.main_menu %}">{% trans 'Log in' %}</a>
