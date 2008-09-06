@@ -29,7 +29,7 @@ class DataModelForm(ModelForm):
         return self.data.get(self.prefix + "-" + fieldname)
 
 def get_really_full_name(user):
-    return operator.get_full_name() or unicode(operator)
+    return user.get_full_name() or unicode(user)
 
 class OperatorChoiceField(ModelChoiceField):
     def label_from_instance(self, operator):

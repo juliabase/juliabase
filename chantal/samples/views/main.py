@@ -15,8 +15,6 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
-import django.contrib.syndication.feeds
-from django.utils.feedgenerator import Atom1Feed
 from . import utils
 
 class MySeries(object):
@@ -194,30 +192,3 @@ def deposition_search(request):
 def show_deposition(request, deposition_number):
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
-
-class Feed(django.contrib.syndication.feeds.Feed):
-    feed_type = Atom1Feed
-    title = "Chantal news"
-    link = "/sitenews/"
-    description = "New processes."
-
-    def items(self):
-        return [process.find_actual_instance() for process in models.Deposition.objects.iterator()]
-    def item_author_name(self, item):
-        return item.operator.get_full_name() or unicode(item.operator)
-    def item_author_email(self, item):
-        return item.operator.email
-    def item_pubdate(self, item):
-        return item.timestamp
-
-def feed(request, username):
-    user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    try:
-        user_hash = utils.parse_query_string(request)["hash"]
-    except KeyError:
-        raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
-    if user_hash != utils.get_user_hash(user):
-        return utils.HttpResponseSeeOther("permission_error")
-    feed = Feed("latest_news", request)
-    feed.link = feed.feed_url = request.path
-    return HttpResponse(feed.get_feed().writeString("utf-8"), content_type="application/atom+xml; charset=utf-8")
