@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-04 18:18+0200\n"
+"POT-Creation-Date: 2008-09-06 09:59+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -425,6 +425,15 @@ msgstr ""
 msgid "Chantal is presented to you by …"
 msgstr ""
 
+msgid "today, %H:%M"
+msgstr ""
+
+msgid "yesterday, %H:%M"
+msgstr ""
+
+msgid "%A, %b %d, %Y, %H:%M"
+msgstr ""
+
 #, python-format
 msgid "for %(time)s"
 msgstr ""
@@ -786,23 +795,6 @@ msgstr ""
 msgid "Django logo"
 msgstr ""
 
-#, python-format
-msgid ""
-"\n"
-"    Your sample has the provisional name %(first_name)s.  It was added to "
-"“My Samples”.\n"
-"  "
-msgid_plural ""
-"\n"
-"    Your samples have the provisional names from %(first_name)s to %"
-"(last_name)s.  They were added to “My Samples”.\n"
-"  "
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "back to main menu"
-msgstr ""
-
 msgid "DB access time:"
 msgstr ""
 
@@ -971,13 +963,12 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"          This process was applied to the sample <a href=\"../samples/%"
-"(first_name_url)s\">%(first_name)s</a>.\n"
+"          This process was applied to the sample <a href=\"%(first_sample."
+"get_absolute_url)s\">%(first_sample.name)s</a>.\n"
 "        "
 msgid_plural ""
 "\n"
-"          This process was applied to the following samples: <!--%"
-"(first_name)s%(first_name_url)s-->\n"
+"          This process was applied to the following samples:\n"
 "        "
 msgstr[0] ""
 msgstr[1] ""
@@ -1077,6 +1068,27 @@ msgid "(Re-calculated every 10 minutes.)"
 msgstr ""
 
 msgid "server load statistics plots"
+msgstr ""
+
+msgid "Backups"
+msgstr ""
+
+msgid "Tivoli storage manager"
+msgstr ""
+
+msgid "Log file could not be accessed."
+msgstr ""
+
+msgid "last backup"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Objects inspected"
+msgstr ""
+
+msgid "Objects failed"
 msgstr ""
 
 #, python-format
