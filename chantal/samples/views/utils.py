@@ -28,9 +28,12 @@ class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
         return self.data.get(self.prefix + "-" + fieldname)
 
+def get_really_full_name(user):
+    return operator.get_full_name() or unicode(operator)
+
 class OperatorChoiceField(ModelChoiceField):
     def label_from_instance(self, operator):
-        return operator.get_full_name() or unicode(operator)
+        return get_really_full_name(operator)
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):

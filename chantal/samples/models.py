@@ -321,6 +321,29 @@ class UserDetails(models.Model):
         verbose_name_plural = _(u"user details")
 admin.site.register(UserDetails)
 
+class FeedEntry(models.Model):
+    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
+    link = models.URLField(_(u"link"))
+    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="feed_entries")
+    def __unicode__(self):
+        return _(u"feed entry #%d") % self.id
+    def description(self):
+        raise NotImplementedError
+    class Meta:
+        verbose_name = _(u"feed entry")
+        verbose_name_plural = _(u"feed entries")
+
+class FeedNewSample(models.Model):
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
+    originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
+    def description(self):
+        return _(u"")
+    class Meta:
+        verbose_name = _(u"new samples feed entry")
+        verbose_name_plural = _(u"new samples feed entries")
+    
+
 import copy, inspect
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
