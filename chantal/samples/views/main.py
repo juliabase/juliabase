@@ -114,7 +114,6 @@ def get_adsm_results():
     except IOError:
         result["log_file_error"] = True
         return result
-#    log_file.seek(-2000, os.SEEK_END)
     in_record = False
     for line in log_file:
         if "--- SCHEDULEREC STATUS BEGIN" in line:
@@ -138,6 +137,7 @@ def get_adsm_results():
             match = backup_failed_pattern.search(line)
             if match:
                 result["failed_objects"] = match.group(1).replace(",", "")
+    log_file.close()
     return result
 
 def statistics(request):
