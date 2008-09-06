@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import string, time
+import string, time, os, datetime, re
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
@@ -105,6 +105,32 @@ def about(request):
                                              },
                               context_instance=RequestContext(request))
 
+backup_inspected_pattern = re.compile(r"Total number of objects inspected: *([0-9\,]+)")
+backup_failed_pattern = re.compile(r"Total number of objects failed: *([0-9\,]+)")
+def get_adsm_results():
+    result = {"log_file_error": False, "ispected_objects": None, "failed_objects": None, "last_backup_timestamp": None}
+    try:
+        log_file = open("/tmp/adsm.sched.log")
+    except IOError:
+        result["log_file_error"] = True
+        return result
+#    log_file.seek(-2000, os.SEEK_END)
+    in_record = False
+    for line in log_file:
+        if "--- SCHEDULEREC STATUS BEGIN" in line:
+            result["last_backup_timestamp"] = datetime.datetime.strptime(line[:19], "%m/%d/%y   %H:%M:%S")
+            in_record = True
+        elif "--- SCHEDULEREC STATUS END" in line:
+            in_record = False
+        elif in_record:
+            match = backup_inspected_pattern.search(line)
+            if match:
+                result["ispected_objects"] = match.group(1)
+            match = backup_failed_pattern.search(line)
+            if match:
+                result["failed_objects"] = match.group(1)
+    return result
+
 def statistics(request):
     web_server_uptime = \
         _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
@@ -114,7 +140,8 @@ def statistics(request):
     return render_to_response("statistics.html", {"title": _(u"Chantal server statistics"),
                                                   "os_uptime": os_uptime,
                                                   "web_server_uptime": web_server_uptime,
-                                                  "db_uptime": db_uptime},
+                                                  "db_uptime": db_uptime,
+                                                  "adsm_results": get_adsm_results()},
                               context_instance=RequestContext(request))
 
 @login_required

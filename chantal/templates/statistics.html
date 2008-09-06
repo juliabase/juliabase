@@ -48,3 +48,28 @@
 
 <p><img src="/media/server_load.png" alt="{% trans 'server load statistics plots' %}"/></p>
 {% endblock %}
+
+
+<h2>{% trans 'Backups' %}</h2>
+
+<h3>{% trans 'Tivoli storage manager' %}</h3>
+
+{% if adsm_results.log_file_error %}
+  <p style="warning">{% trans 'Log file could not be accessed.' %}</p>
+{% else %}
+  <table cellpadding="10" style="large" border="1">
+    <caption>{% trans 'last backup' %}</caption>
+    <tr>
+      <th>{% trans 'Time' %}</th>
+      <td>{% adsm_results.timestamp %}</td>
+    </tr>
+    <tr>
+      <th>{% trans 'Objects inspected' %}</th>
+      <td>{% adsm_results.ispected_objects %}</td>
+    </tr>
+    <tr>
+      <th>{% trans 'Objects failed' %}</th>
+      <td>{% adsm_results.failed_objects %}</td>
+    </tr>
+  </table>
+{% endif %}
