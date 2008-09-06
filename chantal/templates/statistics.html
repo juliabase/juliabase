@@ -47,7 +47,6 @@
 <p>{% trans '(Re-calculated every 10 minutes.)' %}</p>
 
 <p><img src="/media/server_load.png" alt="{% trans 'server load statistics plots' %}"/></p>
-{% endblock %}
 
 
 <h2>{% trans 'Backups' %}</h2>
@@ -61,15 +60,17 @@
     <caption>{% trans 'last backup' %}</caption>
     <tr>
       <th>{% trans 'Time' %}</th>
-      <td>{% adsm_results.timestamp %}</td>
+      <td>{{ adsm_results.last_backup_timestamp }}</td>
     </tr>
     <tr>
       <th>{% trans 'Objects inspected' %}</th>
-      <td>{% adsm_results.ispected_objects %}</td>
+      <td>{{ adsm_results.ispected_objects }}</td>
     </tr>
     <tr>
       <th>{% trans 'Objects failed' %}</th>
-      <td>{% adsm_results.failed_objects %}</td>
+      <td>{{ adsm_results.failed_objects }}</td>
     </tr>
   </table>
 {% endif %}
+
+{% endblock %}

@@ -101,6 +101,8 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
 
 AUTH_PROFILE_MODULE = 'samples.userdetails'
 
+LOCALES_DICT = {"en": "en_US.utf8", "de": "de_DE.utf8"}
+
 import subprocess, re, time
 def _scan_version(package):
     dpgk = subprocess.Popen(["dpkg-query", "--show", package], stdout=subprocess.PIPE)

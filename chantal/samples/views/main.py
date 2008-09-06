@@ -118,17 +118,26 @@ def get_adsm_results():
     in_record = False
     for line in log_file:
         if "--- SCHEDULEREC STATUS BEGIN" in line:
-            result["last_backup_timestamp"] = datetime.datetime.strptime(line[:19], "%m/%d/%y   %H:%M:%S")
+            timestamp = datetime.datetime.strptime(line[:19], "%m/%d/%y   %H:%M:%S")
+            if timestamp.date() == datetime.date.today():
+                result["last_backup_timestamp"] = \
+                    timestamp.strftime(str(_("today, %H:%M")))
+            elif timestamp.date() == datetime.date.today() - datetime.timedelta(1):
+                result["last_backup_timestamp"] = \
+                    timestamp.strftime(str(_("yesterday, %H:%M")))
+            else:
+                result["last_backup_timestamp"] = \
+                    timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
             in_record = True
         elif "--- SCHEDULEREC STATUS END" in line:
             in_record = False
         elif in_record:
             match = backup_inspected_pattern.search(line)
             if match:
-                result["ispected_objects"] = match.group(1)
+                result["ispected_objects"] = match.group(1).replace(",", "")
             match = backup_failed_pattern.search(line)
             if match:
-                result["failed_objects"] = match.group(1)
+                result["failed_objects"] = match.group(1).replace(",", "")
     return result
 
 def statistics(request):
