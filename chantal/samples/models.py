@@ -337,8 +337,6 @@ class FeedNewSample(models.Model):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
-    def description(self):
-        return _(u"")
     class Meta:
         verbose_name = _(u"new samples feed entry")
         verbose_name_plural = _(u"new samples feed entries")

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-06 10:48+0200\n"
-"PO-Revision-Date: 2008-09-06 10:48+0200\n"
+"POT-Creation-Date: 2008-09-06 19:32+0200\n"
+"PO-Revision-Date: 2008-09-06 19:34+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -332,6 +332,28 @@ msgstr "meine Schichten"
 msgid "user details"
 msgstr "Benutzerdetails"
 
+msgid "link"
+msgstr "Link"
+
+#, python-format
+msgid "feed entry #%d"
+msgstr "Feed-Eintrag #%d"
+
+msgid "feed entry"
+msgstr "Feed-Eintrag"
+
+msgid "feed entries"
+msgstr "Feed-Einträge"
+
+msgid "originator"
+msgstr "Ersteller"
+
+msgid "new samples feed entry"
+msgstr "Feed-Eintrag für neue Proben"
+
+msgid "new samples feed entries"
+msgstr "Feed-Einträge für neue Proben"
+
 msgid "Yes"
 msgstr "Ja"
 
@@ -362,6 +384,9 @@ msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 
 msgid "New comment"
 msgstr "Neuer Kommentar"
+
+msgid "You must add a \"hash\" parameter to the query string."
+msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
 
 msgid "Main menu"
 msgstr "Hauptmenü"
@@ -448,9 +473,6 @@ msgstr "Muster für Depositionsnummer"
 
 msgid "Search for deposition"
 msgstr "Nach Deposition suchen"
-
-msgid "You must add a \"hash\" parameter to the query string."
-msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
 
 msgid "Nickname"
 msgstr "Spitzname"
@@ -997,7 +1019,7 @@ msgstr ""
 "\n"
 "Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
 
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "          This process was applied to the sample <a href=\"%(link)s\">%(name)"
@@ -1005,14 +1027,17 @@ msgid ""
 "        "
 msgid_plural ""
 "\n"
-"          This process was applied to the following samples:  <-- To please "
+"          This process was applied to the following samples:  <!-- To please "
 "compilemessages: %(link)s %(name)s -->\n"
 "        "
 msgstr[0] ""
 "\n"
 "Dieser Prozess wurde auf die Probe <a href=\"%(link)s\">%(name)s</a> "
 "angewandt."
-msgstr[1] "\nDieser Prozess wurde auf die folgenden Proben angewandt: <!-- %(link)s%(name)s -->"
+msgstr[1] ""
+"\n"
+"Dieser Prozess wurde auf die folgenden Proben angewandt: <!-- %(link)s%(name)"
+"s -->"
 
 msgid "Edit this process"
 msgstr "Diesen Prozess editieren"
@@ -1191,9 +1216,6 @@ msgstr ""
 
 #~ msgid "6-chamber deposition "
 #~ msgstr "6-Kammer-Deposition "
-
-#~ msgid "originator"
-#~ msgstr "Ersteller"
 
 #~ msgid "year"
 #~ msgstr "Jahr"

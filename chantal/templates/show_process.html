@@ -17,7 +17,7 @@
         {% blocktrans count samples|length as counter and samples.0.get_absolute_url as link and samples.0.name as name %}
           This process was applied to the sample <a href="{{ link }}">{{ name }}</a>.
         {% plural %}
-          This process was applied to the following samples:  <-- To please compilemessages: {{ link }} {{name }} -->
+          This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{name }} -->
         {% endblocktrans %}
         {% if not samples|length_is:"1" %}
           <ul>
