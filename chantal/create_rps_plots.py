@@ -96,7 +96,7 @@ def read_monitor_data():
             j += 1
         if j == len(monitor_data):
             memory_usage.append(monitor_data[-1][1])
-            memory_with_buffers_usage.append(monitor_data[-1][1])
+            memory_with_buffers_usage.append(monitor_data[-1][2])
             load_avgs.append(monitor_data[-1][3])
         elif j == 0:
             memory_usage.append(0)
