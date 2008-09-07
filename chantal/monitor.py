@@ -4,7 +4,7 @@
 from __future__ import division
 import subprocess, datetime, re, os, pickle, time
 
-filename = "/home/bronger/src/chantal/current/chantal/monitor.pickle"
+filename = "/home/bronger/repos/chantal/online/chantal/monitor.pickle"
 
 def get_free_memory():
     free = subprocess.Popen(["free", "-b"], stdout=subprocess.PIPE)
@@ -32,4 +32,4 @@ while True:
     while monitor_data and now - monitor_data[0][0] > datetime.timedelta(1.1):
         del monitor_data[0]
     pickle.dump(monitor_data, open(filename, "wb"))
-    time.sleep(1)
+    time.sleep(5*60)
