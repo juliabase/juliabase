@@ -30,7 +30,7 @@ def read_times_apache():
             timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
             index = (24*3600 - timedelta_seconds)//binning
             if 0 <= index < number_of_slots:
-                times[index] += 1
+                times[index] += 1/binning
         logfile.close()
     return times
 
@@ -55,7 +55,7 @@ def read_times_mysql():
                 timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
                 index = (24*3600 - timedelta_seconds)//binning
                 if 0 <= index < number_of_slots and db_hit_pattern.match(line):
-                    times[(24*3600 - timedelta.seconds)//binning] += 1
+                    times[(24*3600 - timedelta.seconds)//binning] += 1/binning
         logfile.close()
     return times
 
@@ -66,41 +66,39 @@ def mollifier(x):
     else:
         return 0
 
-def calculate_rps(times):
+def mollify(times):
     rps = []
     for i in range(number_of_slots):
         integral = 0
         for j in range(i-window_half_width, i+window_half_width+1):
             if 0 <= j < number_of_slots:
                 integral += times[j] * mollifier(i - j)
-        rps.append(integral/binning)
+        rps.append(integral)
     return rps
 
-def get_load_avgs(filename):
-    try:
-        load_avgs = pickle.load(open(filename, "rb"))
-    except IOError:
-        load_avgs = []
-    load_avgs.append((now, max(0,os.getloadavg()[2]-1)))
-    while load_avgs and now - load_avgs[0][0] > datetime.timedelta(1.1):
-        del load_avgs[0]
-    pickle.dump(load_avgs, open(filename, "wb"))
-    if len(load_avgs) <= 1:
-        return number_of_slots * [0]
-    y_values = []
+def read_monitor_data():
+    monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/chantal/monitor.pickle", "rb"))
+    memory_usage = []
+    load_avgs = []
     for i in range(number_of_slots):
         timestamp = now + datetime.timedelta(-1 + i/number_of_slots)
         j = 0
-        while j < len(load_avgs) and load_avgs[j][0] < timestamp:
+        while j < len(monitor_data) and monitor_data[j][0] < timestamp:
             j += 1
-        assert j < len(load_avgs)
-        if j == 0:
-            y_values.append(0)
+        if j == len(monitor_data):
+            memory_usage.append(monitor_data[-1][1])
+            load_avgs.append(monitor_data[-1][2])
+        elif j == 0:
+            memory_usage.append(0)
+            load_avgs.append(0)
         else:
-            y_values.append(timedelta_to_seconds(timestamp - load_avgs[j-1][0]) /
-                            timedelta_to_seconds(load_avgs[j][0] - load_avgs[j-1][0]) *
-                            (load_avgs[j][1] - load_avgs[j-1][1]) + load_avgs[j-1][1])
-    return y_values
+            memory_usage.append(timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
+                                timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
+                                (monitor_data[j][1] - monitor_data[j-1][1]) + monitor_data[j-1][1])
+            load_avgs.append(timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
+                             timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
+                             (monitor_data[j][2] - monitor_data[j-1][2]) + monitor_data[j-1][2])
+    return memory_usage, load_avgs
 
 def expand_array(array, with_nulls=True):
     if with_nulls:
@@ -108,34 +106,43 @@ def expand_array(array, with_nulls=True):
     else:
         return array[:1] + array + array[-1:]
     
-pylab.figure(figsize=(8, 8))
+pylab.figure(figsize=(8, 9))
 pylab.subplots_adjust(bottom=0.05, right=0.95, top=0.95, hspace=0.3)
 x_values = expand_array(list(matplotlib.numerix.arange(0, 24, 24/number_of_slots)), with_nulls=False)
 
-rps_apache = expand_array(calculate_rps(read_times_apache()))
-pylab.subplot(311)
+rps_apache = expand_array(mollify(read_times_apache()))
+pylab.subplot(411)
 pylab.fill(x_values, rps_apache, edgecolor="#800000", facecolor="#d0a2a2", closed=False)
 pylab.title(u"Apache server load")
 pylab.ylabel(u"requests/sec")
 pylab.xlim(0,24)
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
 
-pylab.subplot(312)
-rps_mysql = expand_array(calculate_rps(read_times_mysql()))
+pylab.subplot(412)
+rps_mysql = expand_array(mollify(read_times_mysql()))
 pylab.fill(x_values, rps_mysql, edgecolor="b", facecolor="#bbbbff", closed=False)
 pylab.title(u"MySQL server load")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
 pylab.xlim(0,24)
 pylab.ylabel(u"queries/sec")
 
-pylab.subplot(313)
-load_avgs = expand_array(get_load_avgs("/home/bronger/repos/chantal/online/load_avgs.pickle"))
+memory_usage, load_avgs = read_monitor_data()
+memory_usage, load_avgs = expand_array(mollify(memory_usage)), expand_array(mollify(load_avgs))
+
+pylab.subplot(413)
 pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
 pylab.title(u"CPU load")
+pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
+pylab.xlim(0,24)
+pylab.ylabel(u"load average 15")
+
+pylab.subplot(414)
+pylab.fill(x_values, memory_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
+pylab.title(u"Memory usage")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
              [str(i%24) for i in range((now.hour-23+(now.hour+1)%2)%24, 100, 2)])
 pylab.xlim(0,24)
-pylab.ylabel(u"load average 15")
+pylab.ylabel(u"usage %")
 pylab.xlabel(u"time")
 
 pylab.savefig(open("/home/bronger/repos/chantal/online/chantal/media/server_load.png", "wb"),
