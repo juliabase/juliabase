@@ -71,7 +71,11 @@ def mollify(times):
     for i in range(number_of_slots):
         integral = 0
         for j in range(i-window_half_width, i+window_half_width+1):
-            if 0 <= j < number_of_slots:
+            if j < 0:
+                integral += times[0] * mollifier(i - j)
+            elif j >= number_of_slots:
+                integral += times[-1] * mollifier(i - j)
+            else:
                 integral += times[j] * mollifier(i - j)
         rps.append(integral)
     return rps
@@ -105,25 +109,29 @@ def expand_array(array, with_nulls=True):
         return [0] + array + [0]
     else:
         return array[:1] + array + array[-1:]
-    
+
 pylab.figure(figsize=(8, 9))
 pylab.subplots_adjust(bottom=0.05, right=0.95, top=0.95, hspace=0.3)
 x_values = expand_array(list(matplotlib.numerix.arange(0, 24, 24/number_of_slots)), with_nulls=False)
+locations = list(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2))
+if locations[-1] > 24:
+    del locations[-1]
+labels = len(locations) * [u""]
 
 rps_apache = expand_array(mollify(read_times_apache()))
 pylab.subplot(411)
 pylab.fill(x_values, rps_apache, edgecolor="#800000", facecolor="#d0a2a2", closed=False)
 pylab.title(u"Apache server load")
+pylab.xlim(0, 24)
 pylab.ylabel(u"requests/sec")
-pylab.xlim(0,24)
-pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
+pylab.xticks(locations, labels)
 
 pylab.subplot(412)
 rps_mysql = expand_array(mollify(read_times_mysql()))
 pylab.fill(x_values, rps_mysql, edgecolor="b", facecolor="#bbbbff", closed=False)
 pylab.title(u"MySQL server load")
-pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
-pylab.xlim(0,24)
+pylab.xticks(locations, labels)
+pylab.xlim(0, 24)
 pylab.ylabel(u"queries/sec")
 
 memory_usage, load_avgs = read_monitor_data()
@@ -132,16 +140,16 @@ memory_usage, load_avgs = expand_array(mollify(memory_usage)), expand_array(moll
 pylab.subplot(413)
 pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
 pylab.title(u"CPU load")
-pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
-pylab.xlim(0,24)
-pylab.ylabel(u"load average 15")
+pylab.xticks(locations, labels)
+pylab.xlim(0, 24)
+pylab.ylabel(u"load average 5")
 
 pylab.subplot(414)
 pylab.fill(x_values, memory_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
 pylab.title(u"Memory usage")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
              [str(i%24) for i in range((now.hour-23+(now.hour+1)%2)%24, 100, 2)])
-pylab.xlim(0,24)
+pylab.xlim(0, 24)
 pylab.ylabel(u"usage %")
 pylab.xlabel(u"time")
 
