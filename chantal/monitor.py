@@ -27,7 +27,6 @@ used_pattern = re.compile(r"-/\+ buffers/cache:\s*(\d+)")
 while True:
     now = datetime.datetime.now()
     new_data = (now, get_free_memory(), max(0, os.getloadavg()[1] - 1))
-    print new_data
     monitor_data.append(new_data)
     while monitor_data and now - monitor_data[0][0] > datetime.timedelta(1.1):
         del monitor_data[0]
