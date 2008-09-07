@@ -12,6 +12,9 @@ number_of_slots = 24*3600//binning
 
 now = datetime.datetime.now()
 
+def timedelta_to_seconds(timedelta):
+    return timedelta.days*3600*24 + timedelta.seconds + timedelta.microseconds*1e-6
+
 apache_date_pattern = re.compile(ur".*\[(?P<date>[:/0-9a-zA-Z]+) [+0-9]+\]")
 def read_times_apache():
     times = number_of_slots * [0]
@@ -24,8 +27,10 @@ def read_times_apache():
             date = apache_date_pattern.match(line).group("date")
             timestamp = datetime.datetime.strptime(date, "%d/%b/%Y:%H:%M:%S")
             timedelta = now - timestamp
-            if datetime.timedelta(0) < timedelta < datetime.timedelta(1):
-                times[(24*3600 - timedelta.seconds)//binning] += 1
+            timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
+            index = (24*3600 - timedelta_seconds)//binning
+            if 0 <= index < number_of_slots:
+                times[index] += 1
         logfile.close()
     return times
 
@@ -47,8 +52,10 @@ def read_times_mysql():
                     date = date[:7] + "0" + date[8:]
                 timestamp = datetime.datetime.strptime(date, "%y%m%d %H:%M:%S")
                 timedelta = now - timestamp
-            if datetime.timedelta(0) < timedelta < datetime.timedelta(1) and db_hit_pattern.match(line):
-                times[(24*3600 - timedelta.seconds)//binning] += 1
+                timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
+                index = (24*3600 - timedelta_seconds)//binning
+                if 0 <= index < number_of_slots and db_hit_pattern.match(line):
+                    times[(24*3600 - timedelta.seconds)//binning] += 1
         logfile.close()
     return times
 
@@ -70,14 +77,12 @@ def calculate_rps(times):
     return rps
 
 def get_load_avgs(filename):
-    def timedelta_to_seconds(timedelta):
-        return timedelta.days*3600*24 + timedelta.seconds + timedelta.microseconds*1e-6
     try:
         load_avgs = pickle.load(open(filename, "rb"))
     except IOError:
         load_avgs = []
-    load_avgs.append((now, os.getloadavg()[2]))
-    while load_avgs and now - load_avgs[0][0] > datetime.timedelta(1):
+    load_avgs.append((now, max(0,os.getloadavg()[2]-1)))
+    while load_avgs and now - load_avgs[0][0] > datetime.timedelta(1.1):
         del load_avgs[0]
     pickle.dump(load_avgs, open(filename, "wb"))
     if len(load_avgs) <= 1:
@@ -97,27 +102,35 @@ def get_load_avgs(filename):
                             (load_avgs[j][1] - load_avgs[j-1][1]) + load_avgs[j-1][1])
     return y_values
 
-x_values = matplotlib.numerix.arange(0, 24, 24/number_of_slots)
+def expand_array(array, with_nulls=True):
+    if with_nulls:
+        return [0] + array + [0]
+    else:
+        return array[:1] + array + array[-1:]
+    
+pylab.figure(figsize=(8, 8))
+pylab.subplots_adjust(bottom=0.05, right=0.95, top=0.95, hspace=0.3)
+x_values = expand_array(list(matplotlib.numerix.arange(0, 24, 24/number_of_slots)), with_nulls=False)
 
-rps_apache = calculate_rps(read_times_apache())
+rps_apache = expand_array(calculate_rps(read_times_apache()))
 pylab.subplot(311)
-pylab.plot(x_values, rps_apache, color="#800000")
+pylab.fill(x_values, rps_apache, edgecolor="#800000", facecolor="#d0a2a2", closed=False)
 pylab.title(u"Apache server load")
 pylab.ylabel(u"requests/sec")
 pylab.xlim(0,24)
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
 
 pylab.subplot(312)
-rps_mysql = calculate_rps(read_times_mysql())
-pylab.plot(x_values, rps_mysql, color="b")
+rps_mysql = expand_array(calculate_rps(read_times_mysql()))
+pylab.fill(x_values, rps_mysql, edgecolor="b", facecolor="#bbbbff", closed=False)
 pylab.title(u"MySQL server load")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2), 100*[u""])
 pylab.xlim(0,24)
 pylab.ylabel(u"queries/sec")
 
 pylab.subplot(313)
-load_avgs = get_load_avgs("/home/bronger/repos/chantal/online/load_avgs.pickle")
-pylab.plot(x_values, load_avgs, color="k")
+load_avgs = expand_array(get_load_avgs("/home/bronger/repos/chantal/online/load_avgs.pickle"))
+pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
 pylab.title(u"CPU load")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
              [str(i%24) for i in range((now.hour-23+(now.hour+1)%2)%24, 100, 2)])
