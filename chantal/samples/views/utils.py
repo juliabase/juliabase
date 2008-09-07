@@ -95,6 +95,20 @@ def check_permission(permissions):
         return _PermissionCheck(original_view_function, permissions)
     return decorate
 
+class _AddHelpLink(object):
+    def __init__(self, original_view_function, help_link):
+        self.original_view_function = original_view_function
+        self.help_link = help_link
+        update_wrapper(self, original_view_function)
+    def __call__(self, request, *args, **kwargs):
+        request.session["help_link"] = self.help_link
+        return self.original_view_function(request, *args, **kwargs)
+    
+def help_link(link):
+    def decorate(original_view_function):
+        return _AddHelpLink(original_view_function, link)
+    return decorate
+
 def get_sample(sample_name):
     try:
         sample = models.Sample.objects.get(name=sample_name)
