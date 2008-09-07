@@ -34,6 +34,7 @@
           {% if help_link %}/ <a href="/trac/chantal/wiki/{{ help_link }}">{% trans 'Help' %}</a>{% endif %}
           / <a href="{% url django.contrib.auth.views.logout %}">{% trans 'Log out' %}</a>
         {% else %}
+          {% if help_link %}<a href="/trac/chantal/wiki/{{ help_link }}">{% trans 'Help' %}</a> /{% endif %}
           <a href="{% url samples.views.main.main_menu %}">{% trans 'Log in' %}</a>
         {% endif %}
       </td>
