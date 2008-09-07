@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
 from . import utils
+from .utils import help_link
 
 class MySeries(object):
     def __init__(self, sample_series):
@@ -35,6 +36,7 @@ class MySeries(object):
             self.__is_complete = sample_series_length == len(self.samples)
         return self.__is_complete
 
+@help_link(_(u"MainMenu"))
 @login_required
 def main_menu(request):
     user_details = request.user.get_profile()
