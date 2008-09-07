@@ -106,7 +106,7 @@ def read_monitor_data():
             memory_usage.append(interpolate(1))
             memory_with_buffers_usage.append(interpolate(2))
             load_avgs.append(interpolate(3))
-    return memory_usage, load_avgs
+    return memory_usage, memory_with_buffers_usage, load_avgs
 
 def expand_array(array, with_nulls=True):
     if with_nulls:
@@ -138,8 +138,9 @@ pylab.xticks(locations, labels)
 pylab.xlim(0, 24)
 pylab.ylabel(u"queries/sec")
 
-memory_usage, load_avgs = read_monitor_data()
-memory_usage, load_avgs = expand_array(mollify(memory_usage)), expand_array(mollify(load_avgs))
+memory_usage, memory_with_buffers_usage, load_avgs = read_monitor_data()
+memory_usage, memory_with_buffers_usage, load_avgs = \
+    expand_array(mollify(memory_usage)), expand_array(mollify(memory_with_buffers_usage)), expand_array(mollify(load_avgs))
 
 pylab.subplot(413)
 pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
@@ -149,7 +150,7 @@ pylab.xlim(0, 24)
 pylab.ylabel(u"load average 5")
 
 pylab.subplot(414)
-pylab.fill(x_values, memory_usage, x_values, memory_with_buffers_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
+pylab.fill(x_values, memory_with_buffers_usage, x_values, memory_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
 pylab.title(u"Memory usage")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
              [str(i%24) for i in range((now.hour-23+(now.hour+1)%2)%24, 100, 2)])
