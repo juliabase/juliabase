@@ -81,8 +81,13 @@ def mollify(times):
     return rps
 
 def read_monitor_data():
+    def interpolate(index):
+        return (timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
+                timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
+                (monitor_data[j][index] - monitor_data[j-1][index]) + monitor_data[j-1][index])
     monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/chantal/monitor.pickle", "rb"))
     memory_usage = []
+    memory_with_buffers_usage = []
     load_avgs = []
     for i in range(number_of_slots):
         timestamp = now + datetime.timedelta(-1 + i/number_of_slots)
@@ -91,17 +96,16 @@ def read_monitor_data():
             j += 1
         if j == len(monitor_data):
             memory_usage.append(monitor_data[-1][1])
-            load_avgs.append(monitor_data[-1][2])
+            memory_with_buffers_usage.append(monitor_data[-1][1])
+            load_avgs.append(monitor_data[-1][3])
         elif j == 0:
             memory_usage.append(0)
+            memory_with_buffers_usage.append(0)
             load_avgs.append(0)
         else:
-            memory_usage.append(timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
-                                timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
-                                (monitor_data[j][1] - monitor_data[j-1][1]) + monitor_data[j-1][1])
-            load_avgs.append(timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
-                             timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
-                             (monitor_data[j][2] - monitor_data[j-1][2]) + monitor_data[j-1][2])
+            memory_usage.append(interpolate(1))
+            memory_with_buffers_usage.append(interpolate(2))
+            load_avgs.append(interpolate(3))
     return memory_usage, load_avgs
 
 def expand_array(array, with_nulls=True):
@@ -145,7 +149,7 @@ pylab.xlim(0, 24)
 pylab.ylabel(u"load average 5")
 
 pylab.subplot(414)
-pylab.fill(x_values, memory_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
+pylab.fill(x_values, memory_usage, x_values, memory_with_buffers_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
 pylab.title(u"Memory usage")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
              [str(i%24) for i in range((now.hour-23+(now.hour+1)%2)%24, 100, 2)])
