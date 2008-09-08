@@ -6,11 +6,7 @@
 {% block content %}
   <div class="process">
     <p class="operator_and_timestamp">
-      {% with process.operator.get_full_name as full_name %}
-        <a href="../users/{{ process.operator.username}} "
-           >{% if full_name %}{{ full_name }}{% else %}{{ process.operator }}{% endif %}</a>,
-      {% endwith %}
-      {{ process.timestamp }}
+      {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
     </p>
     {% if samples %}
       <p>

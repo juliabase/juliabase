@@ -24,20 +24,13 @@
 
 <p>{% trans 'Group' %}: <strong>{{ sample_series.group }}</strong>,
   {% trans 'currently responsible person' %}:
-  {% with sample_series.currently_responsible_person.get_full_name as full_name %}
-  <a href="../users/{{ sample_series.currently_responsible_person.username}} "
-     >{% if full_name %}{{ full_name }}{% else %}{{ sample_series.currently_responsible_person }}{% endif %}</a>
-  {% endwith %}
+  {{ sample_series.currently_responsible_person|get_really_full_name }}
 </p>
 
 {% for process in result_processes %}
   <div class="process">
     <p class="operator_and_timestamp">
-      {% with process.operator.get_full_name as full_name %}
-        <a href="../users/{{ process.operator.username}} "
-           >{% if full_name %}{{ full_name }}{% else %}{{ process.operator }}{% endif %}</a>,
-      {% endwith %}
-      {{ process.timestamp }}
+      {{ with process.operator|get_really_full_name }}, {{ process.timestamp }}
     </p>
     <h2>{{ process.name }}{% if process.edit_url %}
           <a class="edit-button" href="{{ process.edit_url }}?next={{ sample_series.get_absolute_url|urlquote_plus }}"

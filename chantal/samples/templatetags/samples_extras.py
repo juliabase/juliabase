@@ -5,8 +5,9 @@ import string, re
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 import django.utils.http
-import django.utils.safestring
+import django.core.urlresolvers
 import chantal.samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 import chantal.samples.views.utils
@@ -32,7 +33,7 @@ def chem_markup(chemical_formula, autoescape=False):
         else:
             result += chemical_formula[i]
             i += 1
-    return django.utils.safestring.mark_safe(result)
+    return mark_safe(result)
 chem_markup.needs_autoescape = True
 
 @register.filter
@@ -61,13 +62,13 @@ def quantity(value, unit=None, autoescape=False):
     result += match_dict["trailing"]
     if unit:
         result += "&nbsp;" + unit
-    return django.utils.safestring.mark_safe(result)
+    return mark_safe(result)
 chem_markup.needs_autoescape = True
 
 @register.filter
 def fancy_bool(boolean):
     result = _(u"Yes") if boolean else _(u"No")
-    return django.utils.safestring.mark_safe(result)
+    return mark_safe(result)
 
 class VerboseNameNode(template.Node):
     def __init__(self, var):
@@ -102,3 +103,23 @@ urlquote.is_safe = False
 def urlquote_plus(value):
     return django.utils.http.urlquote_plus(value, safe="/")
 urlquote_plus.is_safe = False
+
+@register.filter
+def get_really_full_name(user, anchor_type="http", autoescape=False):
+    # anchor_type may be "http", "mailto", or "plain".
+    if not isinstance(user, django.contrib.auth.models.User):
+        return u""
+    full_name = chantal.samples.models.get_really_full_name(user)
+    if autoescape:
+        full_name = conditional_escape(full_name)
+    if anchor_type == "http":
+        return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse("samples.views.main.show_user",
+                                                                                    kwargs={"login_name": user.username}),
+                                                   full_name))
+    elif anchor_type == "mailto":
+        return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
+    elif anchor_type == "plain":
+        return mark_safe(full_name)
+    else:
+        return u""
+get_really_full_name.needs_autoescape = True

@@ -84,8 +84,8 @@ def show(request, username):
     ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
     ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url+"?hash="+user_hash)
     ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
-    ElementTree.SubElement(feed, "icon").text = "/media/sonne.png"
-    ElementTree.SubElement(feed, "logo").text = "/media/juelich.png"
+    ElementTree.SubElement(feed, "icon").text = "http://" + settings.DOMAIN_NAME + "/media/sonne.png"
+    ElementTree.SubElement(feed, "logo").text = "http://" + settings.DOMAIN_NAME + "/media/juelich.png"
     entries = [entry.find_actual_instance() for entry in models.FeedEntry.objects.filter(user=user).all()]
     for entry in entries:
         entry_element = ElementTree.SubElement(feed, "entry")
