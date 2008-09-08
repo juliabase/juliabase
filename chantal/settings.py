@@ -3,7 +3,7 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-import os.path, sys
+import socket, os.path, sys
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULT_FROM_EMAIL = "bronger@physik.rwth-aachen.de"
@@ -95,6 +95,7 @@ URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login"
 LOGIN_REDIRECT_URL = URL_PREFIX
+DOMAIN_NAME = "bob.ipv.kfa-juelich.de" if socket.gethostname() != "wilson" else "wilson.homeunix.com"
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",

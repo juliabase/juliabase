@@ -28,12 +28,9 @@ class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
         return self.data.get(self.prefix + "-" + fieldname)
 
-def get_really_full_name(user):
-    return user.get_full_name() or unicode(user)
-
 class OperatorChoiceField(ModelChoiceField):
     def label_from_instance(self, operator):
-        return get_really_full_name(operator)
+        return models.get_really_full_name(operator)
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 def clean_time_field(value):
@@ -198,6 +195,17 @@ def has_permission_for_sample_or_series(user, sample_or_series):
     return user.has_perm("samples.can_view_all_samples") or sample_or_series.group in user.groups.all() \
         or sample_or_series.currently_responsible_person == user
 
+def camel_case_to_underscores(name):
+    result = []
+    for i, character in enumerate(name):
+        if i == 0:
+            result.append(character.lower())
+        elif character in string.ascii_uppercase:
+            result.extend(("_", character.lower()))
+        else:
+            result.append(character)
+    return "".join(result)
+
 class ResultContext(object):
     def __init__(self, user, sample_series):
         self.sample_series = sample_series
@@ -207,20 +215,9 @@ class ResultContext(object):
         if hasattr(process, "get_additional_template_context"):
             context_dict.update(process.get_additional_template_context(self))
         return context_dict
-    @staticmethod
-    def camel_case_to_underscores(name):
-        result = []
-        for i, character in enumerate(name):
-            if i == 0:
-                result.append(character.lower())
-            elif character in string.ascii_uppercase:
-                result.extend(("_", character.lower()))
-            else:
-                result.append(character)
-        return "".join(result)
     def digest_process(self, process):
         process = process.find_actual_instance()
-        template = loader.get_template("show_" + self.camel_case_to_underscores(process.__class__.__name__) + ".html")
+        template = loader.get_template("show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
         name = unicode(process._meta.verbose_name)
         template_context = self.get_template_context(process)
         context_dict = {"name": name[0].upper()+name[1:], "operator": process.operator,

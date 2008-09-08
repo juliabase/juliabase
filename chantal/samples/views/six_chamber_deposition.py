@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from django.template import Context, loader, RequestContext
+from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import ModelForm, Form
 from django.forms.util import ValidationError
@@ -45,6 +45,8 @@ class DepositionForm(ModelForm):
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
+        # FixMe: Maybe removing ".fields" would also work.  Affects some other
+        # modules, too.
         self.fields["timestamp"].widget = split_widget
         self.fields["sample_list"].queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \

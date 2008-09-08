@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import hashlib
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.contrib import admin
+
+def get_really_full_name(user):
+    return user.get_full_name() or unicode(user)
 
 default_location_of_processed_samples = {}
 result_process_classes = set()
@@ -124,6 +128,7 @@ class SixChamberLayer(Layer):
     transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
     plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
                                              help_text=_(u"in W"))
+    # FixMe:  Maybe NullBooleanField?
     plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False, null=True, blank=True)
     deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
                                                null=True, blank=True, help_text=_(u"in MHz"))
@@ -323,24 +328,39 @@ admin.site.register(UserDetails)
 
 class FeedEntry(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
-    link = models.URLField(_(u"link"))
+    link = models.CharField(_(u"link"), max_length=128, help_text=_(u"without domain and the leading \"/\""), blank=True)
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="feed_entries")
+    sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
     def __unicode__(self):
         return _(u"feed entry #%d") % self.id
-    def description(self):
+    def get_title(self):
         raise NotImplementedError
+    def save(self, *args, **kwargs):
+        entry_hash = hashlib.sha1()
+        entry_hash.update(repr(self.timestamp))
+        entry_hash.update(repr(self.user))
+        entry_hash.update(repr(self.link))
+        self.sha1_hash = entry_hash.hexdigest()
+        super(FeedEntry, self).save(*args, **kwargs)
     class Meta:
         verbose_name = _(u"feed entry")
         verbose_name_plural = _(u"feed entries")
+        ordering = ["-timestamp"]
 
-class FeedNewSample(models.Model):
+class FeedNewSamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
+    def get_title(self):
+        if self.group:
+            return _(u"%(originator)s has added new samples in group %(group)s") % \
+                {"originator": get_really_full_name(self.originator), "group": self.group}
+        else:
+            return _(u"%s has added new samples") % get_really_full_name(self.originator)
     class Meta:
         verbose_name = _(u"new samples feed entry")
         verbose_name_plural = _(u"new samples feed entries")
-    
+admin.site.register(FeedNewSamples)
 
 import copy, inspect
 _globals = copy.copy(globals())

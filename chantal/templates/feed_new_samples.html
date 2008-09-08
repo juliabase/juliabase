@@ -1,0 +1,9 @@
+<p>{{ entry.originator.get_full_name }} has added the following samples to the
+  database:</p>
+
+<ul>
+  {% for sample in entry.samples.all %}
+    <li>{{ sample.name }}</li>
+  {% endfor %}
+</ul>
+
