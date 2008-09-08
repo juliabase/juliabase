@@ -26,7 +26,7 @@
   <tr>
     <th>{% trans 'Web server' %}:</th>
     {% if is_testserver %}
-    <td>{% trans 'Django testserver' %}{% trans ',' %}
+    <td>{% trans 'Django testserver' %}
       </span><span class="uptime">{{ web_server_uptime }}</span></td>
     {% else %}
     <td><p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}"
