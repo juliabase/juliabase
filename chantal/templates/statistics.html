@@ -44,7 +44,14 @@
 
 <h2 style="clear:both">{% trans 'Work load' %}</h2>
 
-<p>{% trans '(Re-calculated every 10 minutes.)' %}</p>
+<p>
+  {% blocktrans %}
+    These plots are re-calculated every 10&nbsp;minutes, the underlying
+    resolution being higher, though.  Note that “CPU load” is the pristine load
+    average <em>minus&nbsp;1</em> in order to eliminate a grid computing
+    process running with high niceness.
+  {% endblocktrans %}
+</p>
 
 <p><img src="/media/server_load.png" alt="{% trans 'server load statistics plots' %}"/></p>
 
