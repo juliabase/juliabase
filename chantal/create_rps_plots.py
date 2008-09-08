@@ -68,17 +68,12 @@ def mollifier(x):
 
 def mollify(times):
     rps = []
-    for i in range(number_of_slots):
+    for i in range(window_half_width, number_of_slots-window_half_width):
         integral = 0
         for j in range(i-window_half_width, i+window_half_width+1):
-            if j < 0:
-                integral += times[0] * mollifier(i - j)
-            elif j >= number_of_slots:
-                integral += times[-1] * mollifier(i - j)
-            else:
-                integral += times[j] * mollifier(i - j)
+            integral += times[j] * mollifier(i - j)
         rps.append(integral)
-    return rps
+    return window_half_width*[rps[0]] + rps + window_half_width*[rps[-1]]
 
 def read_monitor_data():
     def interpolate(index):
