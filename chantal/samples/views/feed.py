@@ -78,7 +78,11 @@ def show(request, username):
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % models.get_really_full_name(user)
-    ElementTree.SubElement(feed, "updated").text = format_timestamp(datetime.datetime.now())
+    entries = [entry.find_actual_instance() for entry in models.FeedEntry.objects.filter(user=user).all()]
+    if entries:
+        ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)
+    else:
+        ElementTree.SubElement(feed, "updated").text = format_timestamp(datetime.datetime.now())
     author = ElementTree.SubElement(feed, "author")
     ElementTree.SubElement(author, "name").text = "Torsten Bronger"
     ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
@@ -86,7 +90,6 @@ def show(request, username):
     ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
     ElementTree.SubElement(feed, "icon").text = "http://" + settings.DOMAIN_NAME + "/media/sonne.png"
     ElementTree.SubElement(feed, "logo").text = "http://" + settings.DOMAIN_NAME + "/media/juelich.png"
-    entries = [entry.find_actual_instance() for entry in models.FeedEntry.objects.filter(user=user).all()]
     for entry in entries:
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
