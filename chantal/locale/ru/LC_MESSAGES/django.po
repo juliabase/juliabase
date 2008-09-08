@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-08 11:06+0200\n"
+"POT-Creation-Date: 2008-09-08 21:35+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -335,6 +335,12 @@ msgstr ""
 msgid "link"
 msgstr ""
 
+msgid "without domain and the leading \"/\""
+msgstr ""
+
+msgid "SHA1 hex digest"
+msgstr ""
+
 #, python-format
 msgid "feed entry #%d"
 msgstr ""
@@ -346,6 +352,14 @@ msgid "feed entries"
 msgstr ""
 
 msgid "originator"
+msgstr ""
+
+#, python-format
+msgid "%(originator)s has added new samples in group %(group)s"
+msgstr ""
+
+#, python-format
+msgid "%s has added new samples"
 msgstr ""
 
 msgid "new samples feed entry"
@@ -786,9 +800,6 @@ msgid "Web server"
 msgstr ""
 
 msgid "Django testserver"
-msgstr ""
-
-msgid ","
 msgstr ""
 
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"

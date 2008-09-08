@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-08 11:06+0200\n"
-"PO-Revision-Date: 2008-09-08 11:07+0200\n"
+"POT-Creation-Date: 2008-09-08 21:35+0200\n"
+"PO-Revision-Date: 2008-09-08 21:39+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -335,6 +335,12 @@ msgstr "Benutzerdetails"
 msgid "link"
 msgstr "Link"
 
+msgid "without domain and the leading \"/\""
+msgstr "ohne die Domain und den \"/\" am Anfang."
+
+msgid "SHA1 hex digest"
+msgstr "SHA1 Hex-Digest"
+
 #, python-format
 msgid "feed entry #%d"
 msgstr "Feed-Eintrag #%d"
@@ -347,6 +353,14 @@ msgstr "Feed-Einträge"
 
 msgid "originator"
 msgstr "Ersteller"
+
+#, python-format
+msgid "%(originator)s has added new samples in group %(group)s"
+msgstr "%(originator)s hat neue Proben in der Gruppe %(group)s hinzugefügt."
+
+#, python-format
+msgid "%s has added new samples"
+msgstr "%s hat neue Proben hinzugefügt."
 
 msgid "new samples feed entry"
 msgstr "Feed-Eintrag für neue Proben"
@@ -809,9 +823,6 @@ msgstr "Webserver"
 msgid "Django testserver"
 msgstr "Django Testserver"
 
-msgid ","
-msgstr ","
-
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
 msgstr "http://de.wikipedia.org/wiki/Apache_HTTP_Server"
 
@@ -1201,6 +1212,9 @@ msgid ""
 msgstr ""
 "\n"
 "%(operator_name)s hat %(obj)s angelegt.\n"
+
+#~ msgid ","
+#~ msgstr ","
 
 #~ msgid "(Re-calculated every 10 minutes.)"
 #~ msgstr "(Wird alle 10 Minuten neuberechnet.)"
