@@ -20,7 +20,6 @@ class SixChamberDeposition(object):
 class SixChamberLayer(object):
     def __init__(self, number, chamber):
         self.number, self.chamber = number, chamber
-        self.
 
 def login(name, password):
     browser.open(chantal_url+"login/")
