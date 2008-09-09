@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'chantal.samples',
 )
 
+WITH_EPYDOC = 'epydoc' in sys.modules
 IS_TESTSERVER = len(sys.argv) >= 2
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
@@ -114,7 +115,7 @@ def _scan_version(package):
     match = re.match(re.escape(package)+r"\t(?P<version>.+?)-", dpgk.communicate()[0].strip())
     return match.group("version") if match else None
 APACHE_VERSION = _scan_version("apache2")
-APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER else os.stat("/var/run/apache2.pid")[9]
+APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER or WITH_EPYDOC else os.stat("/var/run/apache2.pid")[9]
 MYSQL_VERSION = _scan_version("mysql-server")
 MYSQL_STARTUP_TIME = os.stat("/var/run/mysqld/mysqld.pid")[9]
 PYTHON_VERSION = _scan_version("python")
