@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""This module is the connection to the database.  It contains the *models*,
+i.e. Python classes which represent the tables in the relational database.
+"""
 import hashlib
 from django.db import models
 import django.contrib.auth.models
