@@ -11,3 +11,6 @@ chantal/locale/ru/LC_MESSAGES/django.mo
 chantal/locale/uk/LC_MESSAGES/django.mo
 chantal/locale/zh_CN/LC_MESSAGES/django.mo
 epydoc
+monitor.pickle
+nohup.out
+chantal/media/server_load.png
