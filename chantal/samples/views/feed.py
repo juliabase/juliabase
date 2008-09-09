@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models
 from django.conf import settings
 import django.core.urlresolvers
-from . import utils
+from chantal.samples.views import utils
 
 def indent(elem, level=0):
     """Indent a given ElementTree in-place by added whitespace so that it looks

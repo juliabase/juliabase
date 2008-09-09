@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 from chantal.samples import models
-from . import utils
+from chantal.samples.views import utils
 
 class EditCommentForm(forms.Form):
     _ = ugettext_lazy

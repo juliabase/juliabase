@@ -15,8 +15,8 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
-from . import utils
-from .utils import help_link
+from chantal.samples.views import utils
+from chantal.samples.views.utils import help_link
 
 class MySeries(object):
     def __init__(self, sample_series):

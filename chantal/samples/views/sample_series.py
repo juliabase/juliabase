@@ -14,7 +14,7 @@ from django.forms.util import ValidationError
 from django.db.models import Q
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
-from . import utils
+from chantal.samples.views import utils
 
 class SampleSeriesForm(Form):
     _ = ugettext_lazy

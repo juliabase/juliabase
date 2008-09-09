@@ -11,8 +11,8 @@ import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models
-from . import utils
-from .utils import check_permission, DataModelForm
+from chantal.samples.views import utils
+from chantal.samples.views.utils import check_permission, DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 import django.contrib.auth.models
@@ -162,6 +162,8 @@ def change_structure(layer_forms, channel_form_lists, post_data):
         deposition_id, layer_number = my_layer.split("-")
         deposition_id, layer_number = int(deposition_id), int(layer_number)
         try:
+            # FixMe: "find_actual_instance()" should be "sixchamberdeposition".
+            # However, I don't know which exceptions are possible then.
             deposition = models.Deposition.objects.get(pk=deposition_id).find_actual_instance()
         except models.Deposition.DoesNotExist:
             pass

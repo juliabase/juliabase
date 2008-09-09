@@ -11,8 +11,8 @@ from chantal.samples import models
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
-from . import utils
-from .utils import check_permission
+from chantal.samples.views import utils
+from chantal.samples.views.utils import check_permission
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):

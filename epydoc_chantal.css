@@ -245,8 +245,11 @@ pre.py-doctest              { padding: .5em; margin: 1em;
                               border: 1px solid #708890; }
 table pre.py-doctest        { background: #dce4ec;
                               color: #000000; }
-pre.py-src                  { border: 2px solid #000000; 
-                              background: #f0f0f0; color: #000000; width: 82em }
+pre.py-src                  { font-size: x-small; border: 2px solid #000000; 
+                              background: #f0f0f0; color: #000000; width: 76em }
+pre.rst-literal-block       { padding: .5em; margin: 1em;
+                              background: #e8f0f8; color: #000000;
+                              border: 1px solid #708890; }
 .py-line                    { border-left: 2px solid #000000; 
                               margin-left: .2em; padding-left: .4em; }
 .py-lineno                  { font-style: italic; font-size: 90%;

@@ -12,7 +12,7 @@ from django.forms.util import ValidationError
 from django.db.models import Q
 from chantal.samples import models
 import django.core.urlresolvers
-from . import utils
+from chantal.samples.views import utils
 
 class NewNameForm(forms.Form):
     _ = ugettext_lazy

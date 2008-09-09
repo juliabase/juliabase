@@ -13,7 +13,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from . import utils
+from chantal.samples.views import utils
 
 class OriginalDataForm(Form):
     _ = ugettext_lazy
@@ -158,6 +158,7 @@ def forms_from_database(process):
 @login_required
 def split_and_rename_after_process(request, process_id):
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
+    # FixMe: "find_actual_instance()" can be replaced with "deposition".
     process = process.find_actual_instance()
     if not isinstance(process, models.Deposition):
         raise Http404

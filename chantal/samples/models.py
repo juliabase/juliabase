@@ -3,7 +3,23 @@
 
 u"""This module is the connection to the database.  It contains the *models*,
 i.e. Python classes which represent the tables in the relational database.
+Every class which inherits from ``models.Model`` is a MySQL table at the same
+time, unless it has ``abstract = True`` set in their ``Meta`` subclass.
+
+If you add fields here, and you have a MySQL database running which contains
+already valuable data, you have to add the fields manually with SQL commands to
+the database, too.  (There is a project called `“Django Evolution”`_ that tries
+to improve this situation.)
+
+.. _“Django Evolution”: http://code.google.com/p/django-evolution/
+
+However, if you add new *classes*, you can just run ``./manage.py syncdb`` and
+the new tables are automatically created.
+
+:type default_location_of_processed_samples: dict mapping `Process` to string.
+:type result_process_classes: set of `Process`
 """
+
 import hashlib
 from django.db import models
 import django.contrib.auth.models
@@ -13,12 +29,37 @@ import django.core.urlresolvers
 from django.contrib import admin
 
 def get_really_full_name(user):
+    """Unfortunately, Django's ``get_full_name`` method for users returns the
+    empty string if the user has no first and surname set.  However, it'd be
+    sensible to use the login name as a fallback then.  This is realised here.
+
+    :Parameters:
+      - `user`: the user instance
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      The full, human-friendly name of the user
+
+    :rtype: unicode
+    """
     return user.get_full_name() or unicode(user)
 
 default_location_of_processed_samples = {}
+"""Dictionary mapping process classes to strings which contain the default
+location where samples can be found after this process has been performed.
+This is used in `samples.views.split_after_process.GlobalNewDataForm.__init__`.
+"""
+
 result_process_classes = set()
+"""This set contains all process classes which may act as a *result*,
+i.e. being used as a process for a `SampleSeries`.
+"""
 
 class ExternalOperator(models.Model):
+    """Some samples and processes are not made in our institute but in external
+    institutions.  This is realised by setting the `Process.external_operator`
+    field, which in turn contains `ExternalOperator`.
+    """
     name = models.CharField(_(u"name"), max_length=30)
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
@@ -31,6 +72,22 @@ class ExternalOperator(models.Model):
 admin.site.register(ExternalOperator)
 
 class Process(models.Model):
+    """This is the parent class of all processes and measurements.  Actually,
+    it is an *abstract* base class, i.e. there are no processes in the database
+    that are *just* processes.  However, it is not marked as ``abstract=True``
+    in the ``Meta`` subclass because I must be able to link to it with
+    ``ForeignKey`` s.
+
+    If you retrieve a `Process`, you may call (injected) method
+    `find_actual_instance` to get the actual object, e.g. a
+    `SixChamberDeposition`::
+
+        process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
+        process = process.find_actual_instance()
+
+    FixMe: An open question is which `operator` should be filled in if
+    `external_operator` is given.  (Note that `operator` is mandatory.)
+    """
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
@@ -38,6 +95,21 @@ class Process(models.Model):
         return unicode(self.find_actual_instance())
     @models.permalink
     def get_absolute_url(self):
+        """Returns the relative URL (ie, without the domain name) of the
+        database object.  Django calls this method ``get_absolute_url`` to make
+        clear that *only* the domain part is missing.  Apart from that, it
+        includes the full URL path to where the object can be seen.
+
+        Note that Django itself uses this method in its built-in syndication
+        framework.  However currently, Chantal uses it only explicitly in
+        re-directions and links in templates.
+
+        :Return:
+          Relative URL, however, starting with a “/”, to the page where one can
+          view the object.
+
+        :rtype: str
+        """
         return ("samples.views.main.main_menu", (), {})
 #        return ("samples.views.main.show_process", [str(self.id)])
     class Meta:
@@ -46,6 +118,16 @@ class Process(models.Model):
         verbose_name_plural = _(u"processes")
 
 class Deposition(Process):
+    """The base class for deposition processes.  Note that, like `Process`,
+    this must never be instantiated.  Instead, derive the concrete deposition
+    class from it.
+    
+    Every derived class, if it has sub-objects which resemble layers, must
+    implement them as a class derived from `Layer`, with a ``ForeignKey`` field
+    pointing to the deposition class with ``relative_name="layers"``.  In other
+    words, ``instance.layers.all()`` must work if ``instance`` is an instance
+    of your deposition class.
+    """
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
     @models.permalink
     def get_absolute_url(self):
@@ -57,9 +139,39 @@ class Deposition(Process):
         verbose_name_plural = _(u"depositions")
 
 class SixChamberDeposition(Deposition):
+    """6-chamber depositions.
+
+    FixMe: Maybe the possibility to make comments should be avaiable to *all*
+    processes?
+    """
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
     comments = models.TextField(_(u"comments"), blank=True)
     def get_additional_template_context(self, process_context):
+        """This method is called e.g. when the process list for a sample is
+        being constructed.  It returns a dict with additional fields that are
+        supposed to be given to the templates.
+
+        ``"edit_url"`` and ``"duplicate_url"`` are somewhat special here
+        because they are processed by the *outer* template (the one rendering
+        the sample or sample series).  Other keys are just passed to the
+        process template itself.  See also
+        `samples.views.utils.ResultContext.digest_process` for further
+        information.
+
+        :Parameters:
+          - `process_context`: the context of this process is for example the
+            current sample, the requesting user, and maybe further info that is
+            needed by the process to know what further things must be passed to
+            the displaying templates (sample(-series) and process templates).
+
+        :type process_context: `views.utils.ProcessContext`
+
+        :Return:
+          dict with additional fields that are supposed to be given to the
+          templates.
+
+        :rtype: dict mapping str to arbitrary objects
+        """
         if process_context.user.has_perm("change_sixchamberdeposition"):
             return {"edit_url": django.core.urlresolvers.reverse("edit_6-chamber_deposition",
                                                                  kwargs={"deposition_number": self.number}),
@@ -78,6 +190,9 @@ default_location_of_processed_samples[SixChamberDeposition] = _(u"6-chamber depo
 admin.site.register(SixChamberDeposition)
 
 class HallMeasurement(Process):
+    """This model is intended to store Hall measurements.  So far, all just
+    fields here …
+    """
     def __unicode__(self):
         try:
             _(u"hall measurement of %s") % self.samples.get()
@@ -87,6 +202,25 @@ class HallMeasurement(Process):
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
 admin.site.register(HallMeasurement)
+
+class Layer(models.Model):
+    """This is an abstract base model for deposition layers.  Now, this is the
+    first *real* abstract model here.  It is abstract because it can never
+    occur in a model relationship.  It just ensures that every layer has a
+    number, because at least the MyLayers infrastructure relies on this.  (See
+    for example `views.six_chamber_deposition.change_structure`, after ``if
+    my_layer:``.)
+
+    Every class derived from this model must point to their deposition with
+    ``related_name="layers"``.  See also `Deposition`.
+    """
+    number = models.IntegerField(_(u"layer number"))
+    class Meta:
+        abstract = True
+        ordering = ["number"]
+        unique_together = ("deposition", "number")
+        verbose_name = _(u"layer")
+        verbose_name_plural = _(u"layers")
 
 six_chamber_chamber_choices = (
     ("#1", "#1"),
@@ -98,20 +232,14 @@ six_chamber_chamber_choices = (
     ("LL", "LL"),
     ("TL1", "TL1"),
     ("TL2", "TL2"))
-
-class Layer(models.Model):
-    number = models.IntegerField(_(u"layer number"))
-    # Validity constraint:  There must be a ForeignField called "deposition" to
-    # the actual deposition Model, with related_name="layers".  (Otherwise,
-    # duck typing doesn't work.)
-    class Meta:
-        abstract = True
-        ordering = ["number"]
-        unique_together = ("deposition", "number")
-        verbose_name = _(u"layer")
-        verbose_name_plural = _(u"layers")
+"""Contains all possible choices for `SixChamberLayer.chamber`.
+"""
 
 class SixChamberLayer(Layer):
+    """One layer in a 6-chamber deposition.
+
+    FixMe: Maybe `chamber` should become optional, too?
+    """
     deposition = models.ForeignKey(SixChamberDeposition, related_name="layers", verbose_name=_(u"deposition"))
     chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)
     pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
@@ -157,8 +285,12 @@ six_chamber_gas_choices = (
     ("Ar", "Ar"),
     ("Si2H6", "Si2H6"),
     ("PH3", _(u"PH3 in 10 ppm H2")))
+"""Contains all possible choices for `SixChamberChannel.gas`.
+"""
     
 class SixChamberChannel(models.Model):
+    """One channel of a certain layer in a 6-chamber deposition.
+    """
     number = models.IntegerField(_(u"channel"))
     layer = models.ForeignKey(SixChamberLayer, related_name="channels", verbose_name=_(u"layer"))
     gas = models.CharField(_(u"gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
@@ -173,6 +305,8 @@ class SixChamberChannel(models.Model):
 admin.site.register(SixChamberChannel)
 
 class Sample(models.Model):
+    """The model for samples.
+    """
     name = models.CharField(_(u"name"), max_length=30, unique=True)
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
@@ -187,11 +321,18 @@ class Sample(models.Model):
     def __unicode__(self):
         return self.name
     def duplicate(self):
-        # Note that `processes` is not set because many-to-many fields can only
-        # be set after the object was saved.
+        """This is used to create a new `Sample` instance with the same data as
+        the current one.  Note that the `processes` field is not set because
+        many-to-many fields can only be set after the object was saved.
+
+        :Return:
+          A new sample with the same data as the current.
+
+        :rtype: `Sample`
+        """
         return Sample(name=self.name, current_location=self.current_location,
-                            currently_responsible_person=self.currently_responsible_person, tags=self.tags,
-                            split_origin=self.split_origin, group=self.group)
+                      currently_responsible_person=self.currently_responsible_person, tags=self.tags,
+                      split_origin=self.split_origin, group=self.group)
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.sample.show", [urlquote(self.name, safe="")])
@@ -204,6 +345,11 @@ class Sample(models.Model):
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):
+    """Model for former names of samples.  If a sample gets renamed (for
+    example, because it was deposited), its old name is moved here.  Note that
+    aliases needn't be unique.  Two old names may be the same.  However, they
+    must not be equal to a `Sample.name`.
+    """
     name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
     def __unicode__(self):
@@ -214,13 +360,35 @@ class SampleAlias(models.Model):
 admin.site.register(SampleAlias)
 
 class SampleSplit(Process):
-    # for a fast lookup; actually a violation of the non-redundancy rule
-    # because one could find the parent via the samples attribute every process
-    # has, too.
+    """A process where a sample is split into many child samples.  The sample
+    split itself is a process of the *parent*, whereas the children point to it
+    through `Sample.split_origin`.  This way one can walk though the path of
+    relationship in both directions.
+    """
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
+    """This field exists just for a fast lookup.  Its existence is actually a
+    violation of the non-redundancy rule in database models because one could
+    find the parent via the samples attribute every process has, too."""
     def __unicode__(self):
         return _(u"split of %s") % self.parent.name
     def get_additional_template_context(self, process_context):
+        """See `SixChamberDeposition.get_additional_template_context` for
+        general information.
+
+        :Parameters:
+          - `process_context`: context information for this process.  This
+            routine needs ``current_sample`` and ``original_sample`` from the
+            process context.
+
+        :type process_context: `views.utils.ProcessContext`
+
+        :Return:
+          dict with additional fields that are supposed to be given to the
+          sample split template: ``"parent"``, ``"original_sample"``,  and
+          ``"current_sample"``.
+
+        :rtype: dict mapping string to arbitrary objects
+        """
         assert process_context.current_sample
         if process_context.current_sample != process_context.original_sample:
             parent = process_context.current_sample
@@ -237,6 +405,8 @@ substrate_materials = (
     ("asahi-u", _(u"ASAHI-U")),
     ("100-Si", _(u"silicon 100 wafer")),
     )
+"""Contains all possible choices for `Substrate.material`.
+"""
 
 class Substrate(Process):
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)

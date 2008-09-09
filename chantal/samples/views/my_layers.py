@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.forms.util import ValidationError
 from chantal.samples import models
-from . import utils
+from chantal.samples.views import utils
 
 class MyLayerForm(forms.Form):
     _ = ugettext_lazy
@@ -29,6 +29,7 @@ class MyLayerForm(forms.Form):
             layer_number = int(layer_number)
         except ValueError:
             raise ValidationError(_(u"Layer number isn't a number."))
+        # FixMe: Handle the case when there is no "layers" attribute
         if not deposition.layers.filter(number=layer_number).count():
             raise ValidationError(_(u"This layer does not exist in this deposition."))
         return u"%d-%s" % (deposition.id, layer_number)
