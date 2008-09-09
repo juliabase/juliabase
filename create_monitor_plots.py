@@ -80,7 +80,7 @@ def read_monitor_data():
         return (timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
                 timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
                 (monitor_data[j][index] - monitor_data[j-1][index]) + monitor_data[j-1][index])
-    monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/chantal/monitor.pickle", "rb"))
+    monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/monitor.pickle", "rb"))
     memory_usage = []
     memory_with_buffers_usage = []
     load_avgs = []

@@ -4,7 +4,7 @@
 from __future__ import division
 import subprocess, datetime, re, os, pickle, time
 
-filename = "/home/bronger/repos/chantal/online/chantal/monitor.pickle"
+filename = "/home/bronger/repos/chantal/online/monitor.pickle"
 
 total_pattern = re.compile(r"Mem:\s*(\d+)\s+(\d+)")
 used_pattern = re.compile(r"-/\+ buffers/cache:\s*(\d+)")
