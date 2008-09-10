@@ -91,7 +91,7 @@ def new(request):
             full_name = \
                 u"%02d-%s-%s" % (timestamp.year % 100, request.user.username, sample_series_form.cleaned_data["name"])
             if models.SampleSeries.objects.filter(name=full_name).count():
-                utils.append_error(sample_series_form, "name", _("This sample series name is already given."))
+                utils.append_error(sample_series_form, _("This sample series name is already given."), "name")
             else:
                 sample_series = models.SampleSeries(name=full_name, timestamp=timestamp,
                                                     currently_responsible_person= \

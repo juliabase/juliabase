@@ -73,14 +73,14 @@ def is_all_valid(new_name_forms, global_data_form):
 def is_referentially_valid(new_name_forms, global_data_form):
     referentially_valid = global_data_form.cleaned_data["finished"]
     if not new_name_forms:
-        utils.append_error(global_data_form, "__all__", _(u"You must split into at least one piece."))
+        utils.append_error(global_data_form, _(u"You must split into at least one piece."))
         referentially_valid = False
     new_names = set()
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
             if new_name in new_names or utils.does_sample_exist(new_name):
-                utils.append_error(new_name_form, "__all__", _(u"Name is already given."))
+                utils.append_error(new_name_form, _(u"Name is already given."))
                 referentially_valid = False
             new_names.add(new_name)
     return referentially_valid

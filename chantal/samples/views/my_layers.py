@@ -75,7 +75,7 @@ def is_referentially_valid(my_layer_forms):
         if my_layer_form.is_valid():
             nickname = my_layer_form.cleaned_data["nickname"]
             if nickname in nicknames:
-                utils.append_error(my_layer_form, "__all__", _(u"Nickname is already given."))
+                utils.append_error(my_layer_form, _(u"Nickname is already given."))
                 referentially_valid = False
             else:
                 nicknames.add(nickname)

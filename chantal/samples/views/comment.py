@@ -61,11 +61,11 @@ def is_referentially_valid(comment_form, user):
     if not utils.get_allowed_result_processes(user, comment_form.cleaned_data["samples"],
                                               comment_form.cleaned_data["sample_series"]):
         referentially_valid = False
-        utils.append_error(comment_form, "__all__",
+        utils.append_error(comment_form,
                            _(u"You don't have the permission to add the result to all selected samples/series."))
     if not comment_form.cleaned_data["samples"] and not comment_form.cleaned_data["sample_series"]:
         referentially_valid = False
-        utils.append_error(comment_form, "__all__", _(u"You must select at least one samples/series."))
+        utils.append_error(comment_form, _(u"You must select at least one samples/series."))
     return referentially_valid
             
 @login_required

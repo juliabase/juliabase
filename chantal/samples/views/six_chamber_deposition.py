@@ -217,23 +217,23 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     if deposition_form.is_valid() and (
         not deposition or deposition.number != deposition_form.cleaned_data["number"]):
         if models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
-            utils.append_error(deposition_form, "__all__", _(u"This deposition number exists already."))
+            utils.append_error(deposition_form, _(u"This deposition number exists already."))
             referentially_valid = False
     if not layer_forms:
-        utils.append_error(deposition_form, "__all__", _(u"No layers given."))
+        utils.append_error(deposition_form, _(u"No layers given."))
         referentially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                utils.append_error(layer_form, "__all__", _(u"Number is a duplicate."))
+                utils.append_error(layer_form, _(u"Number is a duplicate."))
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
         for channel_form in channel_forms:
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    utils.append_error(channel_form, "__all__", _(u"Number is a duplicate."))
+                    utils.append_error(channel_form, _(u"Number is a duplicate."))
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referentially_valid

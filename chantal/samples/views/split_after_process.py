@@ -124,15 +124,15 @@ def is_referentially_valid(new_data_form_lists, process_name):
             if new_data_form.is_valid():
                 new_name = new_data_form.cleaned_data["new_name"]
                 if more_than_one_piece and new_name == process_name:
-                    utils.append_error(new_data_form, "__all__", _(u"Since there is more than one piece, the new name "
+                    utils.append_error(new_data_form, _(u"Since there is more than one piece, the new name "
                                                                    u"must not be exactly the deposition's name."))
                     referentially_valid = False
                 if new_name in new_names:
-                    utils.append_error(new_data_form, "__all__", _(u"This sample name has been used already on this page."))
+                    utils.append_error(new_data_form, _(u"This sample name has been used already on this page."))
                     referentially_valid = False
                 new_names.add(new_name)
                 if utils.does_sample_exist(new_name):
-                    utils.append_error(new_data_form, "__all__", _(u"This sample name exists already."))
+                    utils.append_error(new_data_form, _(u"This sample name exists already."))
                     referentially_valid = False
     return referentially_valid
 
