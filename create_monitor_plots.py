@@ -7,6 +7,11 @@ import matplotlib, matplotlib.numerix
 matplotlib.use("Agg")
 import pylab
 
+class SystemInfo(object):
+    def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5):
+        self.timestamp, self.used_mem, self.used_mem_with_buffers, self.used_swap, self.load_avg_5 = \
+            timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5
+
 binning = 60
 number_of_slots = 24*3600//binning
 
