@@ -81,32 +81,39 @@ def mollify(times):
     return window_half_width*[rps[0]] + rps + window_half_width*[rps[-1]]
 
 def read_monitor_data():
-    def interpolate(index):
-        return (timedelta_to_seconds(timestamp - monitor_data[j-1][0]) /
-                timedelta_to_seconds(monitor_data[j][0] - monitor_data[j-1][0]) *
-                (monitor_data[j][index] - monitor_data[j-1][index]) + monitor_data[j-1][index])
+    def interpolate(attribute):
+        return (timedelta_to_seconds(timestamp - monitor_data[j-1].timestamp) /
+                timedelta_to_seconds(monitor_data[j].timestamp - monitor_data[j-1].timestamp) *
+                (getattr(monitor_data[j], attribute) - getattr(monitor_data[j-1], attribute)) +
+                getattr(monitor_data[j-1], attribute))
     monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/monitor.pickle", "rb"))
+    for data in monitor_data:
+        data.load_avg_5 -= 1
     memory_usage = []
     memory_with_buffers_usage = []
+    swap_usage = []
     load_avgs = []
     for i in range(number_of_slots):
         timestamp = now + datetime.timedelta(-1 + i/number_of_slots)
         j = 0
-        while j < len(monitor_data) and monitor_data[j][0] < timestamp:
+        while j < len(monitor_data) and monitor_data[j].timestamp < timestamp:
             j += 1
         if j == len(monitor_data):
-            memory_usage.append(monitor_data[-1][1])
-            memory_with_buffers_usage.append(monitor_data[-1][2])
-            load_avgs.append(monitor_data[-1][3])
+            memory_usage.append(monitor_data[-1].used_mem)
+            memory_with_buffers_usage.append(monitor_data[-1].used_mem_with_buffers)
+            swap_usage.append(monitor_data[-1].used_swap)
+            load_avgs.append(monitor_data[-1].load_avg_5)
         elif j == 0:
             memory_usage.append(0)
             memory_with_buffers_usage.append(0)
+            swap_usage.append(0)
             load_avgs.append(0)
         else:
-            memory_usage.append(interpolate(1))
-            memory_with_buffers_usage.append(interpolate(2))
-            load_avgs.append(interpolate(3))
-    return memory_usage, memory_with_buffers_usage, load_avgs
+            memory_usage.append(interpolate("used_mem"))
+            memory_with_buffers_usage.append(interpolate("used_mem_with_buffers"))
+            swap_usage.append(interpolate("used_swap"))
+            load_avgs.append(interpolate("load_avg_5"))
+    return memory_usage, memory_with_buffers_usage, swap_usage, load_avgs
 
 def expand_array(array, with_nulls=True):
     if with_nulls:
@@ -138,9 +145,10 @@ pylab.xticks(locations, labels)
 pylab.xlim(0, 24)
 pylab.ylabel(u"queries/sec")
 
-memory_usage, memory_with_buffers_usage, load_avgs = read_monitor_data()
-memory_usage, memory_with_buffers_usage, load_avgs = \
-    expand_array(mollify(memory_usage)), expand_array(mollify(memory_with_buffers_usage)), expand_array(mollify(load_avgs))
+memory_usage, memory_with_buffers_usage, swap_usage, load_avgs = read_monitor_data()
+memory_usage, memory_with_buffers_usage, swap_usage, load_avgs = \
+    expand_array(mollify(memory_usage)), expand_array(mollify(memory_with_buffers_usage)), \
+    expand_array(mollify(swap_usage)), expand_array(mollify(load_avgs))
 
 pylab.subplot(413)
 pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
@@ -151,6 +159,7 @@ pylab.ylabel(u"load average 5")
 
 pylab.subplot(414)
 pylab.fill(x_values, memory_with_buffers_usage, x_values, memory_usage, edgecolor="g", facecolor="#bbffbb", closed=False)
+pylab.plot(x_values, swap_usage, "r")
 pylab.title(u"Memory usage")
 pylab.xticks(matplotlib.numerix.arange(1-now.minute/60 + (now.hour+1)%2, 25, 2),
              [str(i%24) for i in range((now.hour-23+(now.hour+1)%2)%24, 100, 2)])
