@@ -29,7 +29,7 @@ import django.core.urlresolvers
 from django.contrib import admin
 
 def get_really_full_name(user):
-    """Unfortunately, Django's ``get_full_name`` method for users returns the
+    u"""Unfortunately, Django's ``get_full_name`` method for users returns the
     empty string if the user has no first and surname set.  However, it'd be
     sensible to use the login name as a fallback then.  This is realised here.
 
@@ -45,18 +45,18 @@ def get_really_full_name(user):
     return user.get_full_name() or unicode(user)
 
 default_location_of_processed_samples = {}
-"""Dictionary mapping process classes to strings which contain the default
+u"""Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
 This is used in `samples.views.split_after_process.GlobalNewDataForm.__init__`.
 """
 
 result_process_classes = set()
-"""This set contains all process classes which may act as a *result*,
+u"""This set contains all process classes which may act as a *result*,
 i.e. being used as a process for a `SampleSeries`.
 """
 
 class ExternalOperator(models.Model):
-    """Some samples and processes are not made in our institute but in external
+    u"""Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
     field, which in turn contains `ExternalOperator`.
     """
@@ -72,7 +72,7 @@ class ExternalOperator(models.Model):
 admin.site.register(ExternalOperator)
 
 class Process(models.Model):
-    """This is the parent class of all processes and measurements.  Actually,
+    u"""This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
     in the ``Meta`` subclass because I must be able to link to it with
@@ -95,7 +95,7 @@ class Process(models.Model):
         return unicode(self.find_actual_instance())
     @models.permalink
     def get_absolute_url(self):
-        """Returns the relative URL (ie, without the domain name) of the
+        u"""Returns the relative URL (ie, without the domain name) of the
         database object.  Django calls this method ``get_absolute_url`` to make
         clear that *only* the domain part is missing.  Apart from that, it
         includes the full URL path to where the object can be seen.
@@ -118,7 +118,7 @@ class Process(models.Model):
         verbose_name_plural = _(u"processes")
 
 class Deposition(Process):
-    """The base class for deposition processes.  Note that, like `Process`,
+    u"""The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
     class from it.
     
@@ -139,7 +139,7 @@ class Deposition(Process):
         verbose_name_plural = _(u"depositions")
 
 class SixChamberDeposition(Deposition):
-    """6-chamber depositions.
+    u"""6-chamber depositions.
 
     FixMe: Maybe the possibility to make comments should be avaiable to *all*
     processes?
@@ -147,7 +147,7 @@ class SixChamberDeposition(Deposition):
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
     comments = models.TextField(_(u"comments"), blank=True)
     def get_additional_template_context(self, process_context):
-        """This method is called e.g. when the process list for a sample is
+        u"""This method is called e.g. when the process list for a sample is
         being constructed.  It returns a dict with additional fields that are
         supposed to be given to the templates.
 
@@ -190,7 +190,7 @@ default_location_of_processed_samples[SixChamberDeposition] = _(u"6-chamber depo
 admin.site.register(SixChamberDeposition)
 
 class HallMeasurement(Process):
-    """This model is intended to store Hall measurements.  So far, all just
+    u"""This model is intended to store Hall measurements.  So far, all just
     fields here …
     """
     def __unicode__(self):
@@ -204,7 +204,7 @@ class HallMeasurement(Process):
 admin.site.register(HallMeasurement)
 
 class Layer(models.Model):
-    """This is an abstract base model for deposition layers.  Now, this is the
+    u"""This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a
     number, because at least the MyLayers infrastructure relies on this.  (See
@@ -232,11 +232,11 @@ six_chamber_chamber_choices = (
     ("LL", "LL"),
     ("TL1", "TL1"),
     ("TL2", "TL2"))
-"""Contains all possible choices for `SixChamberLayer.chamber`.
+u"""Contains all possible choices for `SixChamberLayer.chamber`.
 """
 
 class SixChamberLayer(Layer):
-    """One layer in a 6-chamber deposition.
+    u"""One layer in a 6-chamber deposition.
 
     FixMe: Maybe `chamber` should become optional, too?
     """
@@ -285,11 +285,11 @@ six_chamber_gas_choices = (
     ("Ar", "Ar"),
     ("Si2H6", "Si2H6"),
     ("PH3", _(u"PH3 in 10 ppm H2")))
-"""Contains all possible choices for `SixChamberChannel.gas`.
+u"""Contains all possible choices for `SixChamberChannel.gas`.
 """
     
 class SixChamberChannel(models.Model):
-    """One channel of a certain layer in a 6-chamber deposition.
+    u"""One channel of a certain layer in a 6-chamber deposition.
     """
     number = models.IntegerField(_(u"channel"))
     layer = models.ForeignKey(SixChamberLayer, related_name="channels", verbose_name=_(u"layer"))
@@ -305,7 +305,7 @@ class SixChamberChannel(models.Model):
 admin.site.register(SixChamberChannel)
 
 class Sample(models.Model):
-    """The model for samples.
+    u"""The model for samples.
     """
     name = models.CharField(_(u"name"), max_length=30, unique=True)
     current_location = models.CharField(_(u"current location"), max_length=50)
@@ -321,7 +321,7 @@ class Sample(models.Model):
     def __unicode__(self):
         return self.name
     def duplicate(self):
-        """This is used to create a new `Sample` instance with the same data as
+        u"""This is used to create a new `Sample` instance with the same data as
         the current one.  Note that the `processes` field is not set because
         many-to-many fields can only be set after the object was saved.
 
@@ -345,7 +345,7 @@ class Sample(models.Model):
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):
-    """Model for former names of samples.  If a sample gets renamed (for
+    u"""Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
     aliases needn't be unique.  Two old names may be the same.  However, they
     must not be equal to a `Sample.name`.
@@ -360,19 +360,19 @@ class SampleAlias(models.Model):
 admin.site.register(SampleAlias)
 
 class SampleSplit(Process):
-    """A process where a sample is split into many child samples.  The sample
+    u"""A process where a sample is split into many child samples.  The sample
     split itself is a process of the *parent*, whereas the children point to it
     through `Sample.split_origin`.  This way one can walk though the path of
     relationship in both directions.
     """
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
-    """This field exists just for a fast lookup.  Its existence is actually a
+    u"""This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
     def __unicode__(self):
         return _(u"split of %s") % self.parent.name
     def get_additional_template_context(self, process_context):
-        """See `SixChamberDeposition.get_additional_template_context` for
+        u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
 
         :Parameters:
@@ -405,10 +405,16 @@ substrate_materials = (
     ("asahi-u", _(u"ASAHI-U")),
     ("100-Si", _(u"silicon 100 wafer")),
     )
-"""Contains all possible choices for `Substrate.material`.
+u"""Contains all possible choices for `Substrate.material`.
 """
 
 class Substrate(Process):
+    u"""Model for substrates.  It is very senseful, though not mandatory, that
+    the very first process of a sample is a substrate process.  It is some sort
+    of birth certificale of the sample.  If it doesn't exist, we don't know
+    when the sample was actually created.  If the substrate process has an
+    `Process.external_operator`, it is an external sample.
+    """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
     def __unicode__(self):
         return self.material
@@ -422,8 +428,15 @@ sample_death_reasons = (
     ("lost", _(u"lost and unfindable")),
     ("destroyed", _(u"completely destroyed")),
     )
+u"""Contains all possible choices for `SampleDeath.reason`.
+"""
 
 class SampleDeath(Process):
+    u"""This special process marks the end of the sample.  It can have various
+    reasons accoring to `sample_death_reasons`.  It is impossible to add
+    processes to a sample if it has a `SampleDeath` process, and its timestamp
+    must be the last.
+    """
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
     def __unicode__(self):
         try:
@@ -436,6 +449,10 @@ class SampleDeath(Process):
 admin.site.register(SampleDeath)
 
 class Comment(Process):
+    u"""Adds a comment to the history of a sample.  This is also a so-called
+    result process, i.e. it is allowed for being connected with a
+    `SampleSeries`.
+    """
     contents = models.TextField(_(u"contents"))
     def __unicode__(self):
         try:
@@ -446,6 +463,21 @@ class Comment(Process):
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
                 return _(u"comment #%d") % self.id
     def get_additional_template_context(self, process_context):
+        u"""See `SixChamberDeposition.get_additional_template_context` for
+        general information.
+
+        :Parameters:
+          - `process_context`: context information for this process.  This
+            routine needs only ``user`` from the process context.
+
+        :type process_context: `views.utils.ProcessContext`
+
+        :Return:
+          dict with one additional fields that is supposed to be given to the
+          sample split template, namely ``"edit_url"``.
+
+        :rtype: dict mapping str to str
+        """
         if process_context.user == self.operator:
             return {"edit_url":
                         django.core.urlresolvers.reverse("samples.views.comment.edit", kwargs={"process_id": self.id})}
@@ -453,6 +485,15 @@ class Comment(Process):
             return {}
     @classmethod
     def get_add_url(cls):
+        u"""Yields the URL to the “add new” page for this process class.  This
+        method must be defined for all result processes.
+
+        :Return:
+          Full but relative URL to the resource where you can add new `Comment`
+          instances.
+
+        :rtype: str
+        """
         return django.core.urlresolvers.reverse("samples.views.comment.new")
     class Meta:
         verbose_name = _(u"comment")
@@ -461,8 +502,16 @@ admin.site.register(Comment)
 result_process_classes.add(Comment)
 
 class SampleSeries(models.Model):
-    # name must be of the form "YY-originator-name"
-    name = models.CharField(_(u"name"), max_length=50, primary_key=True)
+    u"""A sample series groups together zero or more `Sample`.  It must belong
+    to a group, and it may contain processes, however, only *result processes*
+    (see `result_process_classes`).  The `name` and the `timestamp` of a sample
+    series can never change after it has been created.
+
+    FixMe: *Maybe* it's better to have result processes with its own common
+    parent class.
+    """
+    name = models.CharField(_(u"name"), max_length=50, primary_key=True,
+                            help_text=_(u"must be of the form “YY-originator-name”"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
                                                      verbose_name=_(u"currently responsible person"))
@@ -472,6 +521,16 @@ class SampleSeries(models.Model):
     def __unicode__(self):
         return self.name
     def add_result_process(self, result_process):
+        u"""Adds a new result process to the sample series.  The main purpose of
+        this method is that it tests whether the given process really is a
+        *result* process.
+
+        :Parameters:
+          - `result_process`: the result process to be added
+
+        :type result_process: `Process`, however it must be in
+          `result_process_classes`
+        """
         assert result_process.__class__ in result_process_classes
         self.results.add(result_process)
     @models.permalink
@@ -486,12 +545,33 @@ languages = (
     ("de", "Deutsch"),
     ("en", "English"),
     )
+u"""Contains all possible choices for `UserDetails.language`.
+"""
+
 class UserDetails(models.Model):
+    u"""Model for further details about a user, beyond
+    ``django.contrib.auth.models.User``.  Here, you have all data about a
+    registered user that is not stored by Django's user model itself.
+
+    Warning and FixMe: Currently, you run into server errors if you try to surf
+    on Chantal without `UserDetails` because they are frequently used.
+    Normally, there is no fallback if `UserDetails` are not avaibale (with the
+    notable exception being
+    `chantal.middleware.locale.LocaleMiddleware.get_language_for_user`).  There
+    should be a central point for getting it – possibly as a static method of
+    this class – with a decent fallback.
+    """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
     language = models.CharField(_(u"language"), max_length=10, choices=languages)
     phone = models.CharField(_(u"phone"), max_length=20)
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
+    u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
+    deposition2-layer2, ..."``, where “nickname” can be chosen freely except
+    that it mustn't contain “:” or “,” or whitespace.  “deposition” is the
+    *process id* (``Process.id``, not the deposition number!) of the
+    deposition, and “layer” is the layer number (`Layer.number`).
+    """
     def __unicode__(self):
         return unicode(self.user)
     class Meta:
@@ -500,15 +580,36 @@ class UserDetails(models.Model):
 admin.site.register(UserDetails)
 
 class FeedEntry(models.Model):
+    u"""Abstract base model for newsfeed entries.  This is also not really
+    abstract as it has a table in the database, however, it is never
+    instantiated itself.  Instead, see `find_actual_instance` which is also
+    injected into this class.
+    """
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
     link = models.CharField(_(u"link"), max_length=128, help_text=_(u"without domain and the leading \"/\""), blank=True)
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="feed_entries")
     sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
+    u"""You'll never calculate the SHA-1 hash yourself.  It is done in
+    `save`."""
     def __unicode__(self):
         return _(u"feed entry #%d") % self.id
     def get_title(self):
+        u"""Return the title of this feed entry, as a plain string (no HTML).
+
+        :Return:
+          The title of this feed entry without any markup.
+
+        :rtype: unicode
+        """
         raise NotImplementedError
     def save(self, *args, **kwargs):
+        u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
+        the timestamp, the username, and the link (if given).  It is used for
+        the GUID of this entry.
+
+        :Return:
+          ``None``
+        """
         entry_hash = hashlib.sha1()
         entry_hash.update(repr(self.timestamp))
         entry_hash.update(repr(self.user))
@@ -521,10 +622,14 @@ class FeedEntry(models.Model):
         ordering = ["-timestamp"]
 
 class FeedNewSamples(FeedEntry):
+    u"""Model for feed entries about new samples having been added to the database.
+    """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
+    u"""The person who added the sample(s)."""
     def get_title(self):
+        # FixMe: Must distinguish between one or more samples.
         if self.group:
             return _(u"%(originator)s has added new samples in group %(group)s") % \
                 {"originator": get_really_full_name(self.originator), "group": self.group}
@@ -539,7 +644,22 @@ import copy, inspect
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
 class_hierarchy = inspect.getclasstree(all_models)
+u"""Rather complicated list structure that represents the class hierarchy of
+models in this module.  Nobody needs to understand it as long as the internal
+`inject_direct_subclasses` is working."""
 def find_actual_instance(self):
+    u"""This is a module function but is is injected into ``Models.model`` to
+    become a class method for all models of Chantal.  If you call this method
+    on a database instance, you get the leaf class instance of this model.  For
+    example, if you retrieved a `Process` from the database, you get the
+    `SixChamberDeposition` (if it is one).  This way, polymorphism actually
+    works with the relational database.
+
+    :Return:
+      an instance of the actual model class for this database entry.
+
+    :rtype: ``models.Model``.
+    """
     try:
         return self.__actual_instance
     except AttributeError:
@@ -557,6 +677,21 @@ def find_actual_instance(self):
         return self.__actual_instance
 models.Model.find_actual_instance = find_actual_instance
 def inject_direct_subclasses(parent, hierarchy):
+    u"""This is a mere helper function which injects a list with all subclasses
+    into the class itself, under the name ``direct_subclasses``.  It is only
+    for use by `find_actual_instance`.
+
+    This is basically a tree walker through the qeird nested data structure
+    returned by ``inspect.getclasstree`` and stored in `class_hierarchy`.
+
+    :Parameters:
+      - `parent`: the class to which the subclasses should be added
+      - `hierarchy`: the remaining class inheritance hierarchy that has to be
+        processed.
+
+    :type parent: class, descendant of ``models.Model``
+    :type hierarchy: list as returned by ``inspect.getclasstree``
+    """
     i = 0
     while i < len(hierarchy):
         hierarchy[i][0].direct_subclasses = []
