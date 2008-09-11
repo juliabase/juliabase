@@ -2,6 +2,10 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block extrahead %}
+<meta http-equiv="refresh" content="600">
+{% endblock %}
+
 {% block float_image %}
 <img style="float: right; margin-left: 2em" src="/media/secretary.jpg" alt="{% trans 'secretary' %}" 
 />
