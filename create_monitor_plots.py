@@ -148,7 +148,7 @@ pylab.ylabel(u"queries/sec")
 memory_usage, memory_with_buffers_usage, swap_usage, load_avgs = read_monitor_data()
 memory_usage, memory_with_buffers_usage, swap_usage, load_avgs = \
     expand_array(mollify(memory_usage)), expand_array(mollify(memory_with_buffers_usage)), \
-    expand_array(mollify(swap_usage)), expand_array(mollify(load_avgs))
+    expand_array(mollify(swap_usage), with_nulls=False), expand_array(mollify(load_avgs))
 
 pylab.subplot(413)
 pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
