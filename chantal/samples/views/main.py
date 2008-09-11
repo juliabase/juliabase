@@ -308,8 +308,10 @@ def show_user(request, login_name):
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `login_name`: the login name of the user to be shown
 
     :type request: ``HttpRequest``
+    :type login_name: str
 
     :Returns:
       the HTTP response object
@@ -326,12 +328,35 @@ def show_user(request, login_name):
                               context_instance=RequestContext(request))
 
 class SearchDepositionsForm(forms.Form):
+    u"""Tiny form class that just allows to enter a pattern for the deposition
+    search.  Currently, the search is case-insensitive, and arbitrary parts of
+    the deposition number are matched.
+    """
     _ = ugettext_lazy
     number_pattern = forms.CharField(label=_(u"Deposition number pattern"), max_length=30)
 
 max_results = 50
+u"""Maximal number of search results to be displayed."""
 @login_required
 def deposition_search(request):
+    u"""View for search for depositions.  Currently, this search is very
+    rudimentary: It is only possible to search for substrings in deposition
+    numbers.  Sometime this should be expanded for a more fine-grained search,
+    possibly with logical operators between the search criteria.
+
+    Note this this view is used for both getting the search request from the
+    user *and* displaying the search results.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     found_depositions = []
     too_many_results = False
     if request.method == "POST":
@@ -353,5 +378,23 @@ def deposition_search(request):
 
 @login_required
 def show_deposition(request, deposition_number):
+    u"""View for showing depositions by deposition number, no matter which type
+    of deposition they are.  It is some sort of dispatch view, which
+    immediately redirecty to the actual deposition view.  Possibly it is
+    superfluous, or at least only sensible to users who enter URL addresses
+    directly.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `deposition_number`: the number of the deposition to be displayed
+
+    :type request: ``HttpRequest``
+    :type deposition_number: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
