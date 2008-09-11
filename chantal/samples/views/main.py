@@ -205,7 +205,11 @@ def breakup_time(seconds):
         return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
 
 def about(request):
-    u"""
+    u"""The “about” view.  It displays general superficial information about
+    Chantal.  This view is more or less static – it shows only the components
+    of Chantal and versioning information.
+
+    Note that you needn't be logged in for accessing this.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -231,6 +235,14 @@ def about(request):
 backup_inspected_pattern = re.compile(r"Total number of objects inspected: *([0-9\,]+)")
 backup_failed_pattern = re.compile(r"Total number of objects failed: *([0-9\,]+)")
 def get_adsm_results():
+    u"""Scans the logfile of the ADSM Tivoli client for the most recent
+    successfull backup.
+
+    :Return:
+      dictionary with general information about the most recent Tivoli backup.
+
+    :rtype: dict mapping str to unicode
+    """
     result = {"log_file_error": False, "ispected_objects": None, "failed_objects": None, "last_backup_timestamp": None}
     try:
         log_file = open("/tmp/adsm.sched.log")
@@ -264,6 +276,19 @@ def get_adsm_results():
     return result
 
 def statistics(request):
+    u"""View for various internal server statistics and plots.  Note that you
+    needn't be logged in for accessing this.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     web_server_uptime = \
         _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
     db_uptime = _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.MYSQL_STARTUP_TIME)}
@@ -278,6 +303,19 @@ def statistics(request):
 
 @login_required
 def show_user(request, login_name):
+    u"""View for showing basic information about a user, like phone number or
+    email address.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     try:
         userdetails = user.get_profile()
