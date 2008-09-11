@@ -29,7 +29,7 @@ class AddMyLayerForm(Form):
     def __init__(self, data=None, **keyw):
         user_details = keyw.pop("user_details")
         super(AddMyLayerForm, self).__init__(data, **keyw)
-        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, SixChamberDeposition, required=False)
+        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, SixChamberDeposition)
 
 class DepositionForm(ModelForm):
     _ = ugettext_lazy
