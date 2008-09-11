@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Model for the main menu view and some miscellaneous views that don't have a
+better place to be (yet).
+"""
+
 import string, time, os, datetime, re
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -19,6 +23,28 @@ from chantal.samples.views import utils
 from chantal.samples.views.utils import help_link
 
 class MySeries(object):
+    u"""Helper class to pass sample series data to the main menu template.  It
+    is used in `main_menu`.  This is *not* a data strcuture for sample series.
+    It just stores all data needed to display a certain sample series to a
+    certain user, besing on his groups an “My Samples”.
+
+    :ivar sample_series: the sample series for which data should be collected
+      in this object
+    :ivar name: the name of the sample series
+    :ivar timestamp: the creation timestamp of the sample series
+    :ivar samples: all samples belonging to this sample series, *and* being
+      part of “My Samples” of the current user
+    :ivar is_complete: a read-only property.  If ``False``, there are samples
+      in the sample series not included into the list because they were missing
+      on “My Samples”.  In other words, the user deliberately gets an
+      incomplete list of samples and should be informed about it.
+
+    :type sample_series: `models.SampleSeries`
+    :type name: unicode
+    :type timestamp: ``datetime.datetime``
+    :type samples: list of `models.Sample`
+    :type is_complete: bool
+    """
     def __init__(self, sample_series):
         self.sample_series = sample_series
         self.name = sample_series.name
@@ -26,6 +52,13 @@ class MySeries(object):
         self.samples = []
         self.__is_complete = None
     def append(self, sample):
+        u"""Adds a sample to this sample series view.
+
+        :Parameters:
+          - `sample`: the sample
+
+        :type sample: `models.Sample`
+        """
         assert self.__is_complete is None
         self.samples.append(sample)
     @property
@@ -39,6 +72,22 @@ class MySeries(object):
 @help_link(_(u"MainMenu"))
 @login_required
 def main_menu(request):
+    u"""The main menu view.  So far, it displays only the sample series in a
+    dynamic way.  The rest is served static, which must be changed: The
+    processes that are offered to you “for addition” must be according to your
+    permissions for processes.  The same is true for “add samples” – this also
+    is not allowed for everyone.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user_details = request.user.get_profile()
     my_series = {}
     seriesless_samples = []
@@ -60,11 +109,73 @@ def main_menu(request):
                               context_instance=RequestContext(request))
 
 def permission_error(request, failed_action):
+    u"""This view is displayed if the user tries to request a URL for which he
+    has no permission.  Typically, it is redirected to this view with a HTTP
+    status 303 redirect, see for example `utils.lookup_sample`.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `failed_action`: the URL to the request that failed
+
+    :type request: ``HttpRequest``
+    :type failed_action: unicode
+
+    :Returns:
+      the HTTP response object with error 401 (not authorised).
+
+    :rtype: `utils.HttpResponseUnauthorized`
+    """
     return utils.HttpResponseUnauthorized(loader.render_to_string("permission_error.html", {"title": _(u"Access denied")},
                                                                   context_instance=RequestContext(request)))
 
 def breakup_time(seconds):
+    u"""Local helper routine for the `statistics` view.  It is used to
+    calculate the uptime of Chantal components.
+
+    :Parameters:
+      - `seconds`: the number of seconds that should be expressed as a
+        human-friendly string
+
+    :type seconds: int
+
+    :Return:
+      a human-friendly string extressing the seconds in years, months, …, and
+      seconds.
+
+    :rtype: unicode
+    """
     def test_timeunit(seconds, size_of_timeunit_in_seconds, translation_function, current_timeunit_list):
+        u"""Calculates the number of time units that fit into the remaining
+        seconds and generates a human-readable string for it.  For example,
+        this function may be called for "weeks", and the seconds given
+        correspond to 4 weeks and some more.  Then, the routine will append the
+        string ``"4 weeks"`` to the output and return the remaining seconds
+        (for becoming expressed in days, hours, minutes, and seconds).
+
+        :Parameters:
+          - `seconds`: the number of remaining seconds that should be expressed
+            in a string
+          - `size_of_timeunit_in_seconds`: in case of weeks, this would be
+            3600·24·7.
+          - `translation_function`: function to be called to generate the
+            human-friendly string.  Typically, this is a wrapper around
+            ``gettext.ungettext``.  This function must take exactly one
+            parameter, namely an ``int`` containing the number of time units to
+            be expressed.
+          - `current_timeunit_list`: list with the so-far text snippets which,
+            once neatly concatenated, form the final string.  This is the
+            datastructure thatis created by subsequent calls of this function.
+
+        :type seconds: int
+        :type size_of_timeunit_in_seconds: int
+        :type translation_function: func(int)
+        :type current_timeunit_list: list of unicode
+
+        :Return:
+          the number of seconds that were “consumed” by this routine.
+
+        :rtype: int
+        """
         size_of_timeunit_in_seconds = int(round(size_of_timeunit_in_seconds))
         number_of_timeunits = seconds // size_of_timeunit_in_seconds
         if number_of_timeunits:
@@ -94,6 +205,18 @@ def breakup_time(seconds):
         return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
 
 def about(request):
+    u"""
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     short_messages = [_(u"Chantal revision %s") % settings.CHANTAL_REVNO]
     return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
                                              "web_server_version": settings.APACHE_VERSION,
