@@ -690,8 +690,8 @@ def lookup_sample(sample_name, request):
 
     :rtype: `models.Sample`, ``HttpResponse``
 
-    :Excpetions:
-      - ``Http404``: of the sample name could not be found.
+    :Exceptions:
+      - `Http404`: of the sample name could not be found.
     """
     sample = get_sample(sample_name)
     if not sample:
@@ -725,7 +725,7 @@ def convert_id_to_int(process_id):
     :rtype: int
 
     :Exceptions:
-      - ``Http404``: if the process_id didn't represent an integer number. 
+      - `Http404`: if the process_id didn't represent an integer number. 
     """
     try:
         return int(process_id)
@@ -809,7 +809,7 @@ def get_user_hash(user):
     :Parameters:
       - `user`: the current user
 
-    :type user: `django.contrib.auth.models.User`
+    :type user: ``django.contrib.auth.models.User``
 
     :Return:
       The user's secret hash
