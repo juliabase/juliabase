@@ -1,3 +1,38 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+u"""Mapping URL patterns to function calls.  This is the central dispatch for
+browser requests.  It takes the URL that the user chose, and converts it to a
+function call – possibly with parameters.
+
+The most important thing here is to enforce some URL guidelines:
+
+    * Use plural forms.  For example, for accessing a sample, the proper URL is
+      ``/samples/01B410`` instead of ``/sample/01B410``.
+
+    * *Functions* should end in a slash, whereas objects should not.  For
+      example, adding new samples is a function, so its URL is
+      ``/samples/add/``.  But the sample 01B410 is a concrete object, so it's
+      ``/sample/01B410``.  Function are generally add, edit, split etc.
+      Objects are samples, processes, feeds, and special resources like main
+      menu or login view.
+
+    * Everything you can do with a certain object must start with the same
+      prefix.  For example, everything you can do with sample 01B410 must start
+      with ``/samples/01B410``.  If you just want to see it, nothing is
+      appended; if you want to edit it, ``/edit/`` is appended etc.  The reason
+      is that this way, it is simple to construct links by calling
+      ``xxx.get_absolute_url()`` and appending something.
+
+
+:var urlpatterns: the actual mapping.  See the `Django documentation`_ for
+  details.
+
+.. _Django documentation:
+    http://docs.djangoproject.com/en/dev/topics/http/urls/
+
+"""
+
 import os.path
 from django.conf.urls.defaults import *
 from django.conf import settings
