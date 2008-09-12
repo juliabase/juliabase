@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Collection of tags and filters that I found useful for Chantal.
+"""
+
 import string, re
 from django.template.defaultfilters import stringfilter
 from django import template
@@ -17,6 +20,9 @@ register = template.Library()
 @register.filter
 @stringfilter
 def chem_markup(chemical_formula, autoescape=False):
+    u"""Filter for pretty-printing of chemical formula.  It just puts numbers
+    in subscripts.  Thus, H2O becoms H₂O.
+    """
     if autoescape:
         chemical_formula = conditional_escape(chemical_formula)
     result = u""
@@ -38,6 +44,13 @@ chem_markup.needs_autoescape = True
 
 @register.filter
 def quantity(value, unit=None, autoescape=False):
+    u"""Filter for pretty-printing a physical quantity.  It converts 3.4e-3
+    into 3.4·10⁻³.  The number is the part that is actually filtered, while the
+    unit is the optional argument of this filter.  So, you may write::
+
+        {{ deposition.pressure|quantity:"mbar" }}
+
+    """
     if value is None:
         return None
     value_string = u"%g" % value
@@ -67,10 +80,15 @@ chem_markup.needs_autoescape = True
 
 @register.filter
 def fancy_bool(boolean):
+    u"""Filter for coverting a bool into a translated “Yes” or “No”.
+    """
     result = _(u"Yes") if boolean else _(u"No")
     return mark_safe(result)
 
 class VerboseNameNode(template.Node):
+    u"""Helper class for the tag `verbose_name`.  While `verbose_name` does the
+    parsing, this class does the actual processing.
+    """
     def __init__(self, var):
         self.var = var
     def render(self, context):
@@ -89,23 +107,63 @@ class VerboseNameNode(template.Node):
 
 @register.tag
 def verbose_name(parser, token):
+    u"""Tag for retrieving the descriptive name for an instance attribute.  For
+    example::
+
+        {% verbose_name deposition.pressure %}
+
+    will print “pressure”.  Note that it will be translated for a non-English
+    user.  It is useful for creating labels.
+
+    Currently, this tag supports all Chantal models as well as
+    ``django.contrib.auth.models.User``.  Other models could be added
+    manually.
+    """
     tag_name, var = token.split_contents()
     return VerboseNameNode(var)
 
 @register.filter
 @stringfilter
 def urlquote(value):
+    u"""Filter for quoting strings so that they can be used as parts of URLs.
+    Note that also slashs »/« are escaped.
+    """
     return django.utils.http.urlquote(value, safe="")
 urlquote.is_safe = False
 
 @register.filter
 @stringfilter
 def urlquote_plus(value):
+    u"""Filter for quoting URLs so that they can be used within other URLs.
+    This is useful for added “next” URLs in query strings, for example::
+
+        <a href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+               >{% trans 'edit' %}</a>
+    """
     return django.utils.http.urlquote_plus(value, safe="/")
 urlquote_plus.is_safe = False
 
 @register.filter
 def get_really_full_name(user, anchor_type="http", autoescape=False):
+    u"""Unfortunately, Django's get_full_name method for users returns the
+    empty string if the user has no first and surname set. However, it'd be
+    sensible to use the login name as a fallback then. This is realised here.
+    See also `models.get_really_full_name`.
+
+    The optional parameter to this filter determines whether the name should be
+    linked or not, and if so, how.  There are three possible parameter values:
+
+    ``"http"`` (default)
+        The user's name should be linked with his web page on Chantal
+
+    ``"mailto"``
+        The user's name should be linked with his email address
+
+    ``"plain"``
+        There should be no link, the name is just printed as plain unformatted
+        text.
+
+    """
     # anchor_type may be "http", "mailto", or "plain".
     if not isinstance(user, django.contrib.auth.models.User):
         return u""
