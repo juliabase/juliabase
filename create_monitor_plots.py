@@ -99,7 +99,7 @@ def read_monitor_data():
                 getattr(monitor_data[j-1], attribute))
     monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/monitor.pickle", "rb"))
     for data in monitor_data:
-        data.load_avg_5 -= 1
+        data.load_avg_5 = max(0, data.load_avg_5 - 1)
     memory_usage = []
     memory_with_buffers_usage = []
     swap_usage = []
