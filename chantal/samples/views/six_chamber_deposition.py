@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""All views and helper routines directly connected with the 6-chamber
+deposition.  This includes adding, editing, and viewing such processes.
+
+In principle, you can copy the code here to iplement other deposition systems,
+however, this is not implemented perfectly: If done again, *all* form data
+should be organised in a real form instead of being hard-coded in the template.
+Additionally, `DataModelForm` was a sub-optimal idea: Instead, their data
+should be exported into forms of their own, so that I needn't rely on the
+validity of the main forms.
+"""
+
 import re
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -19,11 +30,17 @@ import django.contrib.auth.models
 from django.db.models import Q
 
 class RemoveFromMySamples(Form):
+    u"""Form class for one single checkbox for removing deposited samples from
+    “My Samples”.
+    """
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
 
 class AddMyLayerForm(Form):
+    u"""Form class for a choice field for appending nicknamed layers from “My
+    Layers” to the current deposition.
+    """
     _ = ugettext_lazy
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
     def __init__(self, data=None, **keyw):
@@ -32,16 +49,24 @@ class AddMyLayerForm(Form):
         self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, SixChamberDeposition)
 
 class DepositionForm(ModelForm):
+    u"""Model form for the basic deposition data.
+    """
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, user_details, data=None, **keyw):
+        u"""Form constructor.  I have to initialise a couple of things here in
+        a non-trivial way, especially those that I have added myself
+        (``sample_list`` and ``operator``).
+        """
         deposition = keyw.get("instance")
         initial = keyw.get("initial", {})
         if deposition:
+            # Mark the samples of the deposition in the choise field
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
         super(DepositionForm, self).__init__(data, **keyw)
+        # Connect the date/time fields with the JavaScript
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
@@ -58,6 +83,8 @@ class DepositionForm(ModelForm):
             raise ValidationError(_(u"You must mark at least one sample."))
         return sample_list
     def save(self, *args, **keyw):
+        u"""Additionally to the deposition itself, I must store the list of
+        samples connected with the deposition."""
         deposition = super(DepositionForm, self).save(*args, **keyw)
         deposition.samples = self.cleaned_data["sample_list"]
         return deposition
@@ -65,8 +92,11 @@ class DepositionForm(ModelForm):
         model = SixChamberDeposition
 
 class LayerForm(DataModelForm):
-    chamber_names = set([x[0] for x in models.six_chamber_chamber_choices])
+    u"""Model form for a 6-chamber layer."""
     def __init__(self, data=None, **keyw):
+        u"""Model form constructor.  I do additional initialisation here, but
+        very harmless: It's only about visual appearance and numerical limits.
+        """
         super(LayerForm, self).__init__(data, **keyw)
         self.fields["number"].widget = \
             forms.TextInput(attrs={"size": "2", "style": "text-align: center; font-size: xx-large"})
@@ -81,7 +111,8 @@ class LayerForm(DataModelForm):
             self.fields[fieldname].min_value = min_value
             self.fields[fieldname].max_value = max_value
     def clean_chamber(self):
-        if self.cleaned_data["chamber"] not in self.chamber_names:
+        # FixMe: Isn't this already tested by Django itself?
+        if self.cleaned_data["chamber"] not in set([x[0] for x in models.six_chamber_chamber_choices]):
             raise ValidationError(_(u"Name is unknown."))
         return self.cleaned_data["chamber"]
     def clean_time(self):
@@ -99,13 +130,17 @@ class LayerForm(DataModelForm):
         exclude = ("deposition",)
 
 class ChannelForm(ModelForm):
-    gas_names = set([x[0] for x in models.six_chamber_gas_choices])
+    u"""Model form for channels in 6-chamber depositions."""
     def __init__(self, data=None, **keyw):
+        u"""Model form constructor.  I do additional initialisation here, but
+        very harmless: It's only about visual appearance.
+        """
         super(ChannelForm, self).__init__(data, **keyw)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):
-        if self.cleaned_data["gas"] not in self.gas_names:
+        # FixMe: Isn't this already tested by Django itself?
+        if self.cleaned_data["gas"] not in set([x[0] for x in models.six_chamber_gas_choices]):
             raise ValidationError(_(u"Gas type is unknown."))
         return self.cleaned_data["gas"]
     class Meta:
@@ -113,6 +148,30 @@ class ChannelForm(ModelForm):
         exclude = ("layer",)
 
 def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form):
+    u"""Tests the “inner” validity of all forms belonging to this view.  This
+    function calls the ``is_valid()`` method of all forms, even if one of them
+    returns ``False`` (and makes the return value clear prematurely).
+
+    Note that the validity of the ``add_my_layer_form`` is not checked – its
+    contents is tested and used directly in `change_structure`.
+
+    :Parameters:
+      - `deposition_form`: a bound deposition form
+      - `layer_forms`: the list with all bound layer forms of the deposition
+      - `channel_form_lists`: all bound channel forms of this deposition.  It
+        is a list, and every item is again a list containing all the channels
+        of the layer with the same index in ``layer forms``.
+
+    :type deposition_form: `DepositionForm`
+    :type layer_forms: list of `LayerForm`
+    :type channel_form_lists: list of lists of `ChannelForm`
+
+    :Return:
+      whether all forms are valid, i.e. their ``is_valid`` method returns
+      ``True``.
+
+    :rtype: bool
+    """
     valid = deposition_form.is_valid() and remove_from_my_samples_form.is_valid()
     # Don't use a generator expression here because I want to call ``is_valid``
     # for every form
@@ -122,9 +181,30 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
     return valid
 
 def change_structure(layer_forms, channel_form_lists, post_data):
+    u"""Add or delete layers and channels in the form.  While changes in form
+    fields are performs by the form objects themselves, they can't change the
+    *structure* of the view.  This is performed here.
+    
+    :Parameters:
+      - `layer_forms`: the list with all bound layer forms of the deposition
+      - `channel_form_lists`: all bound channel forms of this deposition.  It
+        is a list, and every item is again a list containing all the channels
+        of the layer with the same index in ``layer forms``.
+      - `post_data`: the result of ``request.POST``
+
+    :type layer_forms: list of `LayerForm`
+    :type channel_form_lists: list of lists of `ChannelForm`
+    :type post_data: ``QueryDict``
+
+    :Return:
+      whether the structure was changed, i.e. whether layers/channels were
+      add or deleted
+
+    :rtype: bool
+    """
     # Attention: `post_data` doesn't contain the normalised prefixes, so it
     # must not be used for anything except the `change_params`.  (The
-    # structural-change prefixes are normalised always!)
+    # structural-change prefixes needn't be normalised!)
     structure_changed = False
     change_params = dict([(key, post_data[key]) for key in post_data if key.startswith("structural-change-")])
     biggest_layer_number = max([utils.int_or_zero(layer.uncleaned_data("number")) for layer in layer_forms] + [0])
@@ -213,6 +293,24 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     return structure_changed
 
 def is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
+    u"""Test whether all forms are consistent with each other and with the
+    database.  For example, no layer number must occur twice, and the
+    deposition number must not exist within the database.
+
+    :Parameters:
+      - `deposition`: the currently edited deposition, or ``None`` if we create
+        a new one
+      - `deposition_form`: a bound deposition form
+      - `layer_forms`: the list with all bound layer forms of the deposition
+      - `channel_form_lists`: all bound channel forms of this deposition.  It
+        is a list, and every item is again a list containing all the channels
+        of the layer with the same index in ``layer forms``.
+
+    :type deposition: `models.SixChamberDeposition` or ``NoneType``
+    :type deposition_form: `DepositionForm`
+    :type layer_forms: list of `LayerForm`
+    :type channel_form_lists: list of lists of `ChannelForm`
+    """
     referentially_valid = True
     if deposition_form.is_valid() and (
         not deposition or deposition.number != deposition_form.cleaned_data["number"]):
@@ -239,6 +337,26 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     return referentially_valid
     
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
+    u"""Save the forms to the database.  Only the deposition is just update if
+    it already existed.  However, layers and channels are completely deleted
+    and re-constructed from scratch.
+
+    :Parameters:
+      - `deposition_form`: a bound deposition form
+      - `layer_forms`: the list with all bound layer forms of the deposition
+      - `channel_form_lists`: all bound channel forms of this deposition.  It
+        is a list, and every item is again a list containing all the channels
+        of the layer with the same index in ``layer forms``.
+
+    :type deposition_form: `DepositionForm`
+    :type layer_forms: list of `LayerForm`
+    :type channel_form_lists: list of lists of `ChannelForm`
+
+    :Return:
+      The daved deposition object
+
+    :rtype: `models.SixChamberDeposition`
+    """
     deposition = deposition_form.save()
     deposition.layers.all().delete()  # deletes channels, too
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
@@ -252,10 +370,35 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
     return deposition
 
 def remove_samples_from_my_samples(samples, user_details):
+    u"""Remove the given samples from the user's MySamples list
+
+    :Parameters:
+      - `samples`: the samples to be removed.  FixMe: How does it react if a
+        sample hasn't been in ``my_samples``?
+      - `user_details`: details of the user whose MySamples list is affected
+
+    :type samples: list of `models.Sample`
+    :type user_details: `models.UserDetails`
+    """
+    # FixMe: Should be moved to utils.py
     for sample in samples:
         user_details.my_samples.remove(sample)
 
 def forms_from_post_data(post_data):
+    u"""Intepret the POST data and create bound forms for layers and channels
+    from it.  The top-level channel list has the same number of elements as the
+    layer list because they correspond to each other.
+
+    :Parameters:
+      - `post_data`: the result from ``request.POST``
+
+    :type post_data: ``QueryDict``
+
+    :Return:
+      list of layer forms, list of lists of channel forms
+
+    :rtype: list of `LayerForm`, list of lists of `ChannelForm`
+    """
     post_data, number_of_layers, list_of_number_of_channels = utils.normalize_prefixes(post_data)
     layer_forms = [LayerForm(post_data, prefix=str(layer_index)) for layer_index in range(number_of_layers)]
     channel_form_lists = []
@@ -266,8 +409,20 @@ def forms_from_post_data(post_data):
     return layer_forms, channel_form_lists
 
 def forms_from_database(deposition):
-    if not deposition:
-        return [], []
+    u"""Take a deposition instance and construct forms from it for its layers
+    and their channels.  The top-level channel list has the same number of
+    elements as the layer list because they correspond to each other.
+
+    :Parameters:
+      - `deposition`: the deposition to be converted to forms.
+
+    :type deposition: `models.Deposition`
+
+    :Return:
+      list of layer forms, list of lists of channel forms
+
+    :rtype: list of `LayerForm`, list of lists of `ChannelForm`
+    """
     layers = deposition.layers.all()
     layer_forms = [LayerForm(prefix=str(layer_index), instance=layer) for layer_index, layer in enumerate(layers)]
     channel_form_lists = []
@@ -282,6 +437,22 @@ query_string_pattern = re.compile(r"^copy_from=(?P<copy_from>.+)$")
 @login_required
 @check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
+    u"""Central view for editing, creating, and duplicating 6-chamber
+    depositions.  If `deposition_number` is ``None``, a new depositon is
+    created (possibly by duplicating another one).
+
+    :Parameters:
+      - `request`: the HTTP request object
+      - `deposition_number`: the number (=name) or the deposition
+
+    :type request: ``QueryDict``
+    :type deposition_number: unicode or ``NoneType``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
     user_details = request.user.get_profile()
     if request.method == "POST":
@@ -307,6 +478,7 @@ def edit(request, deposition_number):
                         kwargs={"process_id": deposition.id}))
     else:
         deposition_form = None
+        # FixMe: Must make use of utils.parse_query_string
         match = query_string_pattern.match(request.META["QUERY_STRING"] or "")
         if not deposition and match:
             # Duplication of a deposition
@@ -318,10 +490,14 @@ def edit(request, deposition_number):
                 deposition_form = DepositionForm(user_details, initial=deposition_data)
                 layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
         if not deposition_form:
-            # Normal edit of existing deposition, or new deposition, or duplication has failed
-            initial = {"number": utils.get_next_deposition_number("B")} if not deposition else {}
-            deposition_form = DepositionForm(user_details, initial=initial, instance=deposition)
-            layer_forms, channel_form_lists = forms_from_database(deposition)
+            if deposition:
+                # Normal edit of existing deposition
+                deposition_form = DepositionForm(user_details, instance=deposition)
+                layer_forms, channel_form_lists = forms_from_database(deposition)
+            else:
+                # New deposition, or duplication has failed
+                deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B")})
+                layer_forms, channel_form_lists = [], []
         remove_from_my_samples_form = RemoveFromMySamples(initial={"remove_deposited_from_my_samples": not deposition})
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
@@ -334,6 +510,22 @@ def edit(request, deposition_number):
 
 @login_required
 def show(request, deposition_number):
+    u"""Show an existing 6-chamber_deposision.  You must be a 6-chamber
+    operator *or* be able to view one of the samples affected by this
+    deposition in order to be allowed to view it.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `deposition_number`: the number (=name) or the deposition
+
+    :type request: ``HttpRequest``
+    :type deposition_number: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number)
     samples = deposition.samples
     if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
