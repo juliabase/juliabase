@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""All views and helper routines directly connected with samples themselves
+(no processes!).  This includes adding, editing, and viewing samples.
+"""
+
 import time, datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -16,11 +20,19 @@ from chantal.samples.views.utils import check_permission
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
+    u"""Form class just for the checkbox marking that the current sample is
+    amongst “My Samples”.
+    """
     _ = ugettext_lazy
     is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
 class SampleForm(forms.ModelForm):
+    u"""Model form class for a sample.  All unusual I do here is overwiring
+    `models.Sample.currently_responsible_person` in oder to be able to see
+    *full* person names (not just the login name).
+    """
     _ = ugettext_lazy
+    # FixMe: What about inactive users?
     currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
                                                              queryset=django.contrib.auth.models.User.objects.all())
     class Meta:
@@ -29,6 +41,20 @@ class SampleForm(forms.ModelForm):
 
 @login_required
 def edit(request, sample_name):
+    u"""View for editing existing samples.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
         return redirect
@@ -54,6 +80,23 @@ def edit(request, sample_name):
                               context_instance=RequestContext(request))
 
 def get_allowed_processes(user, sample):
+    u"""Return a list with processes the user is allowed to add to the sample.
+
+    :Parameters:
+      - `user`: the current user
+      - `sample`: the sample to be edit or displayed
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample: `models.Sample`
+
+    :Return:
+      a list with the allowed processes.  Every process is returned as a dict
+      with two keys: ``"name"`` and ``"link"``.  ``"name"`` is the
+      human-friendly descriptive name of the process, ``"link"`` is the URL to
+      the process (processing `sample`!).
+
+    :rtype: list of dict mapping str to unicode/str
+    """
     processes = []
     processes.extend(utils.get_allowed_result_processes(user, samples=[sample]))
     if sample.currently_responsible_person == user:
@@ -64,6 +107,20 @@ def get_allowed_processes(user, sample):
 
 @login_required
 def show(request, sample_name):
+    u"""A view for showing existing samples.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     start = time.time()
     sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
@@ -92,6 +149,13 @@ def show(request, sample_name):
                               context_instance=RequestContext(request))
 
 class AddSamplesForm(forms.Form):
+    u"""Form for adding new samples.
+
+    FixMe: Although this form can never represent *one* sample but allows the
+    user to add abritrary samples with the same properties (except for the name
+    of course), this should be converted to a *model* form in order to satisfy
+    the dont-repeat-yourself principle.
+    """
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
@@ -107,6 +171,21 @@ class AddSamplesForm(forms.Form):
         self.fields["currently_responsible_person"].initial = user_details.user.pk
 
 def add_samples_to_database(add_samples_form, user):
+    u"""Create the new samples and add them to the database.
+
+    :Parameters:
+      - `add_samples_form`: the form with the samples' common data, including
+        the substrate
+      - `user`: the current user
+
+    :type add_samples_form: `AddSamplesForm`
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      the names of the new samples
+
+    :rtype: list of unicode
+    """
     substrate = models.Substrate(operator=user, timestamp=datetime.datetime.now(),
                                  material=add_samples_form.cleaned_data["substrate"])
     substrate.save()
@@ -139,6 +218,18 @@ def add_samples_to_database(add_samples_form, user):
 @login_required
 @check_permission("add_sample")
 def add(request):
+    u"""View for adding new samples.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user_details = request.user.get_profile()
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
@@ -162,6 +253,20 @@ def add(request):
 
 @login_required
 def add_process(request, sample_name):
+    u"""View for appending a new process to the process list of a sample.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the sample of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
         return redirect
@@ -177,12 +282,27 @@ def add_process(request, sample_name):
                               context_instance=RequestContext(request))
 
 class SearchSamplesForm(forms.Form):
+    u"""Form for searching for samples.  So far, you can only enter a name
+    substring for looking for samples.
+    """
     _ = ugettext_lazy
     name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30)
 
 max_results = 50
 @login_required
 def search(request):
+    u"""View for searching for samples.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     found_samples = []
     too_many_results = False
     if request.method == "POST":
