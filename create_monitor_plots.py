@@ -23,12 +23,13 @@ def timedelta_to_seconds(timedelta):
 apache_date_pattern = re.compile(ur".*\[(?P<date>[:/0-9a-zA-Z]+) [+0-9]+\]")
 def read_times_apache():
     times = number_of_slots * [0]
-    for filename in glob.glob("/var/log/apache2/access.log*"):
+    read_further = True
+    for filename in sorted(glob.glob("/var/log/apache2/access.log*")):
         if filename.endswith(".gz"):
             logfile = gzip.open(filename)
         else:
             logfile = open(filename)
-        for line in logfile:
+        for linenumber, line in enumerate(logfile):
             date = apache_date_pattern.match(line).group("date")
             timestamp = datetime.datetime.strptime(date, "%d/%b/%Y:%H:%M:%S")
             timedelta = now - timestamp
@@ -36,21 +37,26 @@ def read_times_apache():
             index = (24*3600 - timedelta_seconds)//binning
             if 0 <= index < number_of_slots:
                 times[index] += 1/binning
+            elif linenumber == 0:
+                read_further = False
         logfile.close()
+        if not read_further:
+            break
     return times
 
 mysql_date_pattern = re.compile(ur"^\d{6} (\d| )\d:\d\d:\d\d")
 db_hit_pattern = re.compile(ur"(\d{6} (\d| )\d:\d\d:\d\d)?\s+\d+ Query\s+(SELECT|DELETE|INSERT|ALTER|CREATE|UPDATE|SHOW)")
 def read_times_mysql():
     times = number_of_slots * [0]
-    for filename in glob.glob("/var/log/mysql/mysql.log*"):
+    read_further = True
+    for filename in sorted(glob.glob("/var/log/mysql/mysql.log*")):
         if filename.endswith(".gz"):
             logfile = gzip.open(filename)
         else:
             logfile = open(filename)
         timedelta = datetime.timedelta(0)
         index = -1
-        for line in logfile:
+        for linenumber, line in enumerate(logfile):
             date_match = mysql_date_pattern.match(line)
             if date_match:
                 date = date_match.group()
@@ -62,7 +68,11 @@ def read_times_mysql():
                 index = (24*3600 - timedelta_seconds)//binning
             if 0 <= index < number_of_slots and db_hit_pattern.match(line):
                 times[(24*3600 - timedelta.seconds)//binning] += 1/binning
+            elif linenumber == 0:
+                read_further = False
         logfile.close()
+        if not read_further:
+            break
     return times
 
 window_half_width = 5*60//binning
