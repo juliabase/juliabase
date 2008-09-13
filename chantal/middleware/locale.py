@@ -7,11 +7,16 @@ from django.contrib.auth.models import SiteProfileNotAvailable
 from chantal.samples.models import UserDetails
 from django.conf import settings
 
+u"""Middleware for setting the current language to what can be found in
+`models.UserDetails`.
+"""
+
 class LocaleMiddleware(object):
-    """This is a very simple middleware that parses a request and decides what
-    translation object to install in the current thread context depending on the
-    user's profile. This allows pages to be dynamically translated to the
-    language the user desires (if the language is available, of course).
+    u"""This is a very simple middleware that parses a request and decides what
+    translation object to install in the current thread context depending on
+    what's found in `models.UserDetails`. This allows pages to be dynamically
+    translated to the language the user desires (if the language is available,
+    of course).
     """
     def get_language_for_user(self, request):
         if request.user.is_authenticated():
