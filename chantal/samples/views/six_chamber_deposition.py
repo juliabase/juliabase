@@ -390,7 +390,7 @@ def remove_samples_from_my_samples(samples, user_details):
         user_details.my_samples.remove(sample)
 
 def forms_from_post_data(post_data):
-    u"""Intepret the POST data and create bound forms for layers and channels
+    u"""Interpret the POST data and create bound forms for layers and channels
     from it.  The top-level channel list has the same number of elements as the
     layer list because they correspond to each other.
 
