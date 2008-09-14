@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Generating an Atom 1.0 feed with the user's news.
+"""
+
 import datetime, time
 import xml.etree.ElementTree as ElementTree
 import django.contrib.auth.models
@@ -46,7 +49,28 @@ def indent(elem, level=0):
             elem.tail = i
 
 def get_timezone_string(timestamp=None):
-    # timestamp must be local time
+    u"""Claculate the timezone string (e.g. ``"+02:00"``) for a given point in
+    time for the local machine.  Believe it or not, Python makes it really hard
+    to deal with dates timezone-independently.  Thus, the given timestamp must
+    refer to the local machine's timezone.  If you omit it, the routine assumes
+    the current time.  The routine takes into account the summer time.
+
+    It returns a string that can be used directly in timestamp string, like
+    ``"+02:00"`` or ``"Z"``.  It can also deal with timezones with a difference
+    to GMT which is not only whole hours.
+
+    :Parameters:
+      - `timestamp`: the point in time for which the timezome should be
+        calculated
+
+    :type timestamp: ``datetime.datetime`` or ``NoneType``
+
+    :Return:
+      the timezone information string, ready for being appended to a timestamp
+      string
+
+    :rtype: str
+    """
     if not timestamp:
         timestamp = time.mktime(time.localtime())
     elif isinstance(timestamp, datetime.datetime):
@@ -62,9 +86,43 @@ def get_timezone_string(timestamp=None):
     return "%s%02d:%02d" % (sign, hours, minutes)
 
 def format_timestamp(timestamp):
+    u"""Convert a timestamp to an Atom-1.0-compatible string.
+
+    :Parameters:
+      - `timestamp`: the timestamp to be converted
+
+    :type timestamp: ``datetime.datetime``
+
+    :Return:
+      the timestamp string, ready for use in an Atom feed
+
+    :rtype: str
+    """
     return timestamp.strftime("%Y-%m-%dT%H:%M:%S") + get_timezone_string(timestamp)
 
 def show(request, username):
+    u"""View which doesn't generate an HTML page but an Atom 1.0 feed with
+    current news for the user.
+
+    The problem we have to deal with here is that the feed-reading program
+    cannot login.  Therefore, it must be possible to fetch the feed without
+    being logged-in.  The username is no problem, it is part of the path.
+    Additionally, a secret hash (see `utils.get_user_hash`) is appended to the
+    URL in the query string.  This should be enough security for this purpose.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `username`: the login name of the user for whic the news should be
+        delivered
+
+    :type request: ``HttpRequest``
+    :type username: str
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     try:
         user_hash = utils.parse_query_string(request)["hash"]

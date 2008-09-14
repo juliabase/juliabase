@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Views for editing and creating comments (a result process).
+"""
+
 import datetime
 from django.template import RequestContext
 from django.http import Http404
@@ -13,11 +16,27 @@ from chantal.samples import models
 from chantal.samples.views import utils
 
 class EditCommentForm(forms.Form):
+    u"""Form for editing the contents of a comment.
+    """
     _ = ugettext_lazy
     contents = forms.CharField(label=_(u"Contents"), widget=forms.Textarea)
 
 @login_required
 def edit(request, process_id):
+    u"""View for editing existing comments.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the ID of the comment process
+
+    :type request: ``HttpRequest``
+    :type process_id: str
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     comment = get_object_or_404(models.Comment, pk=utils.convert_id_to_int(process_id))
     if request.user != comment.operator or \
             not utils.get_allowed_result_processes(request.user, comment.samples.all(), comment.sample_series.all()):
@@ -34,11 +53,23 @@ def edit(request, process_id):
                               context_instance=RequestContext(request))
 
 class NewCommentForm(forms.Form):
+    u"""Form for adding a new comment.  It is more complicated than the form
+    for editing existing comments because the samples and sample series a
+    comment is connected with can't be changed anymore.
+    """
     _ = ugettext_lazy
     contents = forms.CharField(label=_(u"Contents"), widget=forms.Textarea)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample series"), queryset=None, required=False)
     def __init__(self, user_details, query_string_dict, data=None, **keyw):
+        u"""Form constructor.  I have to initialise a couple of things here in
+        a non-trivial way.
+
+        The most complicated thing is to find all sample series electable for
+        the comment.  Note that the current query will probably find to many
+        electable sample series, but unallowed series will be rejected by
+        `is_referencially_valid` anyway.
+        """
         super(NewCommentForm, self).__init__(data, **keyw)
         self.fields["samples"].queryset = \
             models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample"))).distinct()
@@ -57,6 +88,15 @@ class NewCommentForm(forms.Form):
         self.fields["sample_series"].initial = [query_string_dict.get("sample_series")]
 
 def is_referentially_valid(comment_form, user):
+    u"""Test whether the comment form is consistent with the database.  In
+    particular, it tests whether the user is allowed to add the comment to all
+    selected samples and sample series.
+
+    :Return:
+      whether all forms are consistent with each other and the database
+
+    :rtype: bool
+    """
     referentially_valid = True
     if not utils.get_allowed_result_processes(user, comment_form.cleaned_data["samples"],
                                               comment_form.cleaned_data["sample_series"]):
@@ -70,6 +110,20 @@ def is_referentially_valid(comment_form, user):
             
 @login_required
 def new(request):
+    u"""View for adding a new comment.  This routine also contains the full
+    code for creating the forms, checking validity with ``is_valid``, and
+    saving it to the database (bcause it's just so trivial for comments).
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user_details = request.user.get_profile()
     query_string_dict = utils.parse_query_string(request)
     if request.method == "POST":
