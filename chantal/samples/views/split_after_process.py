@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Here are the views for a split immediately after a deposition.  In contrast
+to the actual split view, you see all samples of the deposition at once, and
+you can rename and/or split them.
+
+FixMe: Everything here is called “process” rather than “deposition” (even the
+filename), however, it may be wise to reduce everything to “deposition”.  I
+don't think that operators of arbitrary processes should be allowed to split
+and rename samples.  We should trust depositeurs most.  Besides, the current
+permission check and the ``name`` attribute lookup will only work for
+depositions anyway.
+"""
+
 import datetime
 from chantal.samples import models
 from django.template import RequestContext
@@ -16,6 +28,9 @@ from django.forms.util import ValidationError
 from chantal.samples.views import utils
 
 class OriginalDataForm(Form):
+    u"""Form holding the old name of a sample and the number of pieces it is
+    about to be split into.
+    """
     _ = ugettext_lazy
     name = forms.CharField(label=_(u"Old sample name"), max_length=30,
                            widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
@@ -27,6 +42,9 @@ class OriginalDataForm(Form):
         return self.cleaned_data["number_of_pieces"]
 
 class NewDataForm(Form):
+    u"""Form holding the newly given name of a sample and the new person
+    responsible for it.
+    """
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None)
@@ -36,6 +54,9 @@ class NewDataForm(Form):
         self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
 
 class GlobalNewDataForm(Form):
+    u"""Form for holding new data which applies to all samples and overrides
+    local settings.
+    """
     _ = ugettext_lazy
     new_responsible_person = utils.OperatorChoiceField(
         label=_(u"New responsible person"), required=False, queryset=None,
@@ -43,6 +64,9 @@ class GlobalNewDataForm(Form):
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples; leave empty for no change)"))
     def __init__(self, data=None, **keyw):
+        u"""Form constructor.  I have to initialise the field here, both heir
+        value and their layout.
+        """
         process_instance = keyw.pop("process_instance")
         super(GlobalNewDataForm, self).__init__(data, **keyw)
         self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
@@ -50,10 +74,25 @@ class GlobalNewDataForm(Form):
             models.default_location_of_processed_samples.get(process_instance.__class__, u"")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
 
-def has_permission_for_process(user, process):
-    return user.has_perm("samples.change_" + process.__class__.__name__.lower())
-
 def is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form):
+    u"""Tests the “inner” validity of all forms belonging to this view.  This
+    function calls the ``is_valid()`` method of all forms, even if one of them
+    returns ``False`` (and makes the return value clear prematurely).
+
+    :Parameters:
+      - `original_data_forms`: all old names and pieces numbers
+      - `new_data_form_lists`: new names for all pieces
+      - `global_new_data_form`: the global, overriding settings
+
+    :type original_data_forms: list of `OriginalDataForm`
+    :type new_data_form_lists: list of list of `NewDataForm`
+    :type global_new_data_form: `GlobalNewDataForm`
+
+    :Return:
+      whether all forms are valid according to their ``is_valid()`` method
+
+    :rtype: bool
+    """
     valid = all([original_data_form.is_valid() for original_data_form in original_data_forms])
     for forms in new_data_form_lists:
         valid = valid and all([new_data_form.is_valid() for new_data_form in forms])
@@ -61,6 +100,26 @@ def is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
     return valid
 
 def change_structure(original_data_forms, new_data_form_lists, process_number):
+    u"""Add or delete new data form according to the new number of pieces
+    entered by the user.  While changes in form fields are performs by the form
+    objects themselves, they can't change the *structure* of the view.  This is
+    performed here.
+    
+    :Parameters:
+      - `original_data_forms`: all old names and pieces numbers
+      - `new_data_form_lists`: new names for all pieces
+      - `process_number`: the process number, i.e. the deposition number
+
+    :type original_data_forms: list of `OriginalDataForm`
+    :type new_data_form_lists: list of list of `NewDataForm`
+    :type process_number: unicode
+
+    :Return:
+      whether the structure was changed, i.e. whether the number of pieces of
+      one sample has been changed by the user
+
+    :rtype: bool
+    """
     structure_changed = False
     for sample_index in range(len(original_data_forms)):
         original_data_form, new_data_forms = original_data_forms[sample_index], new_data_form_lists[sample_index]
@@ -81,6 +140,24 @@ def change_structure(original_data_forms, new_data_form_lists, process_number):
     return structure_changed
 
 def save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, operator, sample_names):
+    u"""Performs all splits – if any – and renames the samples according to
+    what was input by the user.
+
+    :Parameters:
+      - `original_data_forms`: all old names and pieces numbers
+      - `new_data_form_lists`: new names for all pieces
+      - `global_new_data_form`: the global, overriding settings
+      - `operator`: the user who performed the split
+      - `sample_names`: the original names of the samples involved in the
+        deposition
+
+    :type original_data_forms: list of `OriginalDataForm`
+    :type new_data_form_lists: list of list of `NewDataForm`
+    :type global_new_data_form: `GlobalNewDataForm`
+    :type operator: ``django.contrib.auth.models.User``
+    :type sample_names: list of unicode
+    """
+    # FixMe: `sample_names` should include `models.Sample` instances instead of unicodes.
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]
     for original_data_form, new_data_forms, old_name in zip(
@@ -116,6 +193,22 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
 
 def is_referentially_valid(new_data_form_lists, process_name):
+    u"""Test whether all forms are consistent with each other and with the
+    database.  For example, no sample name must occur twice, and the sample
+    names must not exist within the database already.
+
+    :Parameters:
+      - `new_data_form_lists`: new names for all pieces
+      - `process_name`: name of the process, i.e. the deposition number
+
+    :type new_data_form_lists: list of `NewDataForm`
+    :type process_name: unicode
+
+    :Return:
+      whether all forms are consistent with each other and the database
+
+    :rtype: bool
+    """
     referentially_valid = True
     new_names = set()
     more_than_one_piece = sum(len(new_data_forms) for new_data_forms in new_data_form_lists) > 1
@@ -137,6 +230,24 @@ def is_referentially_valid(new_data_form_lists, process_name):
     return referentially_valid
 
 def forms_from_post_data(post_data, process):
+    u"""Intepret the POST data and create bound forms for old and new names and
+    the global data.  The top-level new-data list has the same number of
+    elements as the original-data list because they correspond to each other.
+
+    :Parameters:
+      - `post_data`: the result from ``request.POST``
+      - `process`: the process after which this split takes place, i.e. the deposition.
+
+    :type post_data: ``QueryDict``
+    :type process: `models.Process`
+
+    :Return:
+      list of original data (i.e. old names) of every sample, list of lists of
+      the new data (i.e. piece names), global new data
+
+    :rtype: list of `OriginalDataForm`, list of lists of `NewDataForm`,
+      `GlobalNewDataForm`
+    """
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
     original_data_forms = [OriginalDataForm(post_data, prefix=str(i)) for i in range(number_of_samples)]
     new_data_form_lists = [[NewDataForm(post_data, prefix="%d_%d" % (sample_index, new_name_index))
@@ -146,6 +257,22 @@ def forms_from_post_data(post_data, process):
     return original_data_forms, new_data_form_lists, global_new_data_form
 
 def forms_from_database(process):
+    u"""Take a process instance and construct forms from it for its old and new
+    data.  The top-level new data list has the same number of elements as the
+    old data list because they correspond to each other.
+
+    :Parameters:
+      - `process`: the deposition to be converted to forms.
+
+    :type process: `models.Deposition`
+
+    :Return:
+      list of original data (i.e. old names) of every sample, list of lists of
+      the new data (i.e. piece names), global new data
+
+    :rtype: list of `OriginalDataForm`, list of lists of `NewDataForm`,
+      `GlobalNewDataForm`
+    """
     samples = process.samples
     original_data_forms = [OriginalDataForm(initial={"name": sample.name}, prefix=str(i))
                              for i, sample in enumerate(samples.all())]
@@ -157,12 +284,28 @@ def forms_from_database(process):
 
 @login_required
 def split_and_rename_after_process(request, process_id):
+    u"""View for renaming and/or splitting samples immediately after they have
+    been deposited in the same run.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the ID of the deposition after which samples shouwld be
+        split and/or renamed
+
+    :type request: ``HttpRequest``
+    :type process_id: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
     # FixMe: "find_actual_instance()" can be replaced with "deposition".
     process = process.find_actual_instance()
     if not isinstance(process, models.Deposition):
         raise Http404
-    if not has_permission_for_process(request.user, process):
+    if not request.user.has_perm("samples.change_" + process.__class__.__name__.lower()):
         return utils.HttpResponseSeeOther("permission_error")
     process_name = unicode(process)
     if request.POST:

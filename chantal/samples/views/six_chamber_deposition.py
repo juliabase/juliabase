@@ -310,6 +310,11 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     :type deposition_form: `DepositionForm`
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
+
+    :Return:
+      whether all forms are consistent with each other and the database
+
+    :rtype: bool
     """
     referentially_valid = True
     if deposition_form.is_valid() and (
