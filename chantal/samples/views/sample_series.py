@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Collected views for dealing with sample series.
+
+Names of sample series are of the form ``YY-originator-name``, where ``YY`` is
+the year (two digits), and ``originator`` is the person who created the sample
+series. ``name`` is arbitrary.  Names of sample series can't be changed once
+they have been created.
+"""
+
 import datetime
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -17,6 +25,8 @@ from django.utils.http import urlquote_plus
 from chantal.samples.views import utils
 
 class SampleSeriesForm(Form):
+    u"""Form for editing and creating sample series.
+    """
     _ = ugettext_lazy
     name = forms.CharField(label=_(u"Name"), max_length=40)
     currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
@@ -24,6 +34,10 @@ class SampleSeriesForm(Form):
     group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     def __init__(self, user_details, sample_series, data=None, **keyw):
+        u"""Form constructor.  I have to initialise the form here, especially
+        because the sample set to choose from must be found and the name of an
+        existing series must not be changed.
+        """
         super(SampleSeriesForm, self).__init__(data, **keyw)
         self.fields["samples"].queryset = \
             models.Sample.objects.filter(Q(series=sample_series) | Q(watchers=user_details)).distinct() if sample_series \
@@ -35,6 +49,22 @@ class SampleSeriesForm(Form):
 
 @login_required
 def show(request, name):
+    u"""View for showing a sample series.  You can see a sample series if
+    you're in its group, or you're the currently responsible person for it, or
+    if you can view all samples anyway.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
     if not utils.has_permission_for_sample_or_series(request.user, sample_series):
@@ -51,6 +81,21 @@ def show(request, name):
 
 @login_required
 def edit(request, name):
+    u"""View for editing an existing sample series.  Only the currently
+    responsible person can edit a sample series.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
     if sample_series.currently_responsible_person != request.user:
@@ -83,6 +128,19 @@ def edit(request, name):
 
 @login_required
 def new(request):
+    u"""View for creating a new sample series.  Note that you can add arbitrary
+    samples to a sample series, even those you can't see.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user_details = request.user.get_profile()
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(user_details, None, request.POST)
@@ -114,6 +172,21 @@ def new(request):
 
 @login_required
 def add_result_process(request, name):
+    u"""View for appending a result process to a sample series.  For the rules
+    of adding result processes, see `utils.get_allowed_result_processes`.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     user_details = request.user.get_profile()
     processes = utils.get_allowed_result_processes(request.user, sample_series=[sample_series])
