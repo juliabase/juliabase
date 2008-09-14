@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""This program should run every 10 minutes as a cronjob.  It should not run
+with root priviledges.  Its purpose is to generate a new plot file which is
+written to the file with the name `filename`.  It reads the logs of Apache and
+MySQL server and the monitor data from `monitor_file_name`.
+"""
+
 from __future__ import division
 import glob, gzip, re, datetime, math, pickle, os
 import matplotlib, matplotlib.numerix
@@ -12,7 +18,12 @@ class SystemInfo(object):
         self.timestamp, self.used_mem, self.used_mem_with_buffers, self.used_swap, self.load_avg_5 = \
             timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5
 
+filename = "/home/bronger/repos/chantal/online/chantal/media/server_load.png"
+monitor_file_name = "/home/bronger/repos/chantal/online/monitor.pickle"
 binning = 60
+u"""Number of seconds that are combined to the sample x value in the plot
+data"""
+
 number_of_slots = 24*3600//binning
 
 now = datetime.datetime.now()
@@ -97,7 +108,7 @@ def read_monitor_data():
                 timedelta_to_seconds(monitor_data[j].timestamp - monitor_data[j-1].timestamp) *
                 (getattr(monitor_data[j], attribute) - getattr(monitor_data[j-1], attribute)) +
                 getattr(monitor_data[j-1], attribute))
-    monitor_data = pickle.load(open("/home/bronger/repos/chantal/online/monitor.pickle", "rb"))
+    monitor_data = pickle.load(open(monitor_file_name, "rb"))
     for data in monitor_data:
         data.load_avg_5 = max(0, data.load_avg_5 - 1)
     memory_usage = []
@@ -178,5 +189,4 @@ pylab.xlim(0, 24)
 pylab.ylabel(u"usage %")
 pylab.xlabel(u"time")
 
-pylab.savefig(open("/home/bronger/repos/chantal/online/chantal/media/server_load.png", "wb"),
-              facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"))
+pylab.savefig(open(filename, "wb"), facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"))

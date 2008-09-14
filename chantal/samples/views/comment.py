@@ -68,7 +68,7 @@ class NewCommentForm(forms.Form):
         The most complicated thing is to find all sample series electable for
         the comment.  Note that the current query will probably find to many
         electable sample series, but unallowed series will be rejected by
-        `is_referencially_valid` anyway.
+        `is_referentially_valid` anyway.
         """
         super(NewCommentForm, self).__init__(data, **keyw)
         self.fields["samples"].queryset = \

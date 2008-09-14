@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""This program is supposed to run continuously on the server.  Normally, you
+would start the process with::
+
+    nohup ./monitor.py &
+
+It is not necessary to be root for this, however, it may be necessary to adjust
+`filename`.
+"""
+
 from __future__ import division
 import subprocess, datetime, re, os, pickle, time
 from copy import copy
