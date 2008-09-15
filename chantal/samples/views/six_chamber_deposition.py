@@ -330,6 +330,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
                 utils.append_error(layer_form, _(u"Number is a duplicate."))
+                referentially_valid = False
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
         channel_numbers = set()
@@ -337,6 +338,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
                     utils.append_error(channel_form, _(u"Number is a duplicate."))
+                    referentially_valid = False
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referentially_valid
