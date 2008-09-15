@@ -787,7 +787,6 @@ def parse_query_string(request):
         string = re.sub('%(..)', lambda match: chr(int(match.group(1), 16)), string)
         return string.decode("utf-8")
     query_string = request.META["QUERY_STRING"] or u""
-    print "QUERY_STRING", query_string
     items = [item.split("=", 1) for item in query_string.split("&")]
     result = []
     for item in items:
