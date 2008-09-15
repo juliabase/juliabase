@@ -127,7 +127,7 @@
                                >{{ layer.plasma_start_power.label }}:</label>
                       </td>
                       <td class="value">{{ layer.plasma_start_power }}<br />
-                        <span class="help">({{ layer.plasma_start_power.help_text }})</td>
+                        <span class="help">({{ layer.plasma_start_power.help_text }})</span></td>
                     </tr>
                     <tr>
                       <td class="label">
@@ -148,13 +148,13 @@
                                >{{ layer.heating_temperature.label }}:</label>
                       </td>
                       <td class="value">{{ layer.heating_temperature }}<br />
-                        <span class="help">({{ layer.heating_temperature.help_text }})</td>
+                        <span class="help">({{ layer.heating_temperature.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.deposition_frequency.html_name }}"
                                >{{ layer.deposition_frequency.label }}:</label>
                       </td>
                       <td class="value">{{ layer.deposition_frequency }}<br />
-                        <span class="help">({{ layer.deposition_frequency.help_text }})</td>
+                        <span class="help">({{ layer.deposition_frequency.help_text }})</span></td>
                     </tr>
                     <tr>
                       <td class="label">
@@ -192,26 +192,26 @@
                                >{{ layer.deposition_power.label }}:</label>
                       </td>
                       <td class="value">{{ layer.deposition_power }}<br />
-                        <span class="help">({{ layer.deposition_power.help_text }})</td>
+                        <span class="help">({{ layer.deposition_power.help_text }})</span></td>
                     </tr>
                     <tr>
                       <td class="label">
                         <label for="id_{{ layer.time.html_name }}"
                                >{{ layer.time.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.time }}<br /><span class="help">({{ layer.time.help_text }})</td>
+                      <td class="value">{{ layer.time }}<br /><span class="help">({{ layer.time.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.substrate_electrode_distance.html_name }}"
                                >{{ layer.substrate_electrode_distance.label }}:</label>
                       </td>
                       <td class="value">{{ layer.substrate_electrode_distance }}<br />
-                        <span class="help">({{ layer.substrate_electrode_distance.help_text }})</td>
+                        <span class="help">({{ layer.substrate_electrode_distance.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.base_pressure.html_name }}"
                                >{{ layer.base_pressure.label }}:</label>
                       </td>
                       <td class="value">{{ layer.base_pressure }}<br />
-                        <span class="help">({{ layer.base_pressure.help_text }})</td>
+                        <span class="help">({{ layer.base_pressure.help_text }})</span></td>
                     </tr>
                   </table>
                 </td>
@@ -235,7 +235,7 @@
                               <th>{{ channels.0.number.label }}</th>
                               <th>{{ channels.0.gas.label }}</th>
                               <th>{{ channels.0.flow_rate.label }}<br /><span class="help"
-                                                                              >({{ channels.0.flow_rate.help_text }})</th>
+                                        >({{ channels.0.flow_rate.help_text }})</span></th>
                               <th>{% trans 'delete' %}</th>
                             </tr>
                             {% for channel in channels %}
