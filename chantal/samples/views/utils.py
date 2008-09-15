@@ -72,7 +72,7 @@ class DataModelForm(ModelForm):
 class OperatorChoiceField(ModelChoiceField):
     u"""A specialised ``ModelChoiceField`` for displaying users in a choice
     field in forms.  It's only purpose is that you don't see the dull username
-    then, but the beautifull full name of the user.
+    then, but the beautiful full name of the user.
     """
     def label_from_instance(self, operator):
         return models.get_really_full_name(operator)
