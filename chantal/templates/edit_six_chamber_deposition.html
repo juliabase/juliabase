@@ -226,7 +226,7 @@
                           {{ layer.comments }}
                       </td>
                       {% else %}
-                      <td>&nbsp;</td>
+                      <td> </td>
                       {% endif %}
                       <td style="vertical-align: top; padding: 1ex">
                         {% if channels %}
@@ -262,7 +262,7 @@
                           </table>
                         {% endif %}
                         <p><label for="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                                  >{% trans 'Number of channels to be added:' %}</label>&nbsp;<input
+                                  >{% trans 'Number of channels to be added:' %}</label> <input
                           id="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
                           name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
                           type="text" size="3" /></p>
@@ -279,7 +279,7 @@
   {% endif %}
 
   <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
-    >&nbsp;<input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
+    > <input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
   {{ add_my_layer.as_p }}
 
   {{ remove_from_my_samples }}
