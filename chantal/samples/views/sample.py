@@ -243,6 +243,7 @@ def add(request):
             else:
                 request.session["success_report"] = _(u"Your sample has the provisional name %s.  "
                                                       u"It was added to “My Samples”.") % new_names[0]
+            request.session["success_report_meta"] = u",".join(new_names)
             return utils.http_response_go_next(request)
     else:
         add_samples_form = AddSamplesForm(user_details)

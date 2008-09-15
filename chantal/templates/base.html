@@ -9,6 +9,9 @@
 <link rel="stylesheet" type="text/css" href="/media/css/main.css" />
 {% block css %}{% endblock %}
 {% block extrahead %}{% endblock %}
+{% if success_report_meta %}
+  <meta name="success-report" content="{{ success_report_meta }}"/>
+{% endif %}
 </head>
 {% load i18n %}
 {% load samples_extras %}
@@ -21,7 +24,7 @@
           {% trans 'DB access time:' %}
           {{ db_access_time_in_ms }} ms
         {% else %}
-          &nbsp;
+           
         {% endif %}
       </td>
       <td class="login-data">
