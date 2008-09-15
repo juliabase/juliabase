@@ -40,41 +40,59 @@ class ChantalConnection(object):
                 if div.attrib["class"] == "success-report":
                     return div.text
             raise Exception("Didn't find a success report")
+    def set_form_data(self, form_dict):
+        for key, value in form_dict.iteritems():
+            if value:
+                if isinstance(value, list):
+                    self.browser[key] = [unicode(item) for item in value]
+                else:
+                    try:
+                        self.browser[key] = unicode(value)
+                    except TypeError, e:
+                        if e.message != "ListControl, must set a sequence":
+                            raise
+                        self.browser[key] = [unicode(value)]
     def get_new_samples(self, number_of_samples, current_location, substrate=u"asahi-u", purpose=u"", tags=u"", group=u""):
         self.open("samples/add/")
-        self.browser["number_of_samples"] = str(number_of_samples)
-        self.browser["current_location"] = current_location
-        self.browser["substrate"] = [substrate]
-        self.browser["purpose"] = purpose
-        self.browser["tags"] = tags
-        if group:
-            self.browser["group"] = [self.selection_options["group"][group]]
-        self.browser["currently_responsible_person"] = \
-            [self.selection_options["currently_responsible_person"][self.username]]
+        print self.browser.form.controls["purpose"].__dict__
+        self.set_form_data({"number_of_samples": number_of_samples,
+                            "current_location": current_location,
+                            "substrate": substrate,
+                            "purpose": purpose,
+                            "tags": tags,
+                            "group": self.selection_options["group"][group] if group else None,
+                            "currently_responsible_person":
+                                self.selection_options["currently_responsible_person"][self.username]})
+        return []
         return self.submit().split(",")
     def __del__(self):
         self.browser.open(self.root_url+"logout")
 
-# class SixChamberDeposition(object):
-#     def __init__(self, number, carrier, operator, timestamp=None):
-#         self.number = number
-#         self.carrier = carrier
-#         self.operator = operator
-#         self.timestamp = timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#         self.comments = u""
+class SixChamberDeposition(object):
+    def __init__(self, sample_name=None):
+        self.sample_name = sample_name
+        self.number = self.carrier = self.operator = self.timestamp = self.comments = u""
+        self.layers = []
+    def submit(self, connection):
+        if not self.sample_name:
+            self.sample_name = connection.get_new_samples(1, u"unknown due to legacy data")
+        connection.open("6-chamber depositions/add/")
+        connection.browser["number"] = unicode(self.number)
 
-# class SixChamberLayer(object):
-#     def __init__(self, number, chamber):
-#         self.number, self.chamber = number, chamber
+class SixChamberLayer(object):
+    def __init__(self, deposition):
+        deposition.layers.append(self)
+        self.number = self.chamber = self.chamber = self.pressure = self.time = \
+            self.substrate_electrode_distance = self.comments = self.transfer_in_chamber = self.pre_heat = \
+            self.gas_pre_heat_gas = self.gas_pre_heat_pressure = self.gas_pre_heat_time = self.heating_temperature = \
+            self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
+            self.deposition_frequency = self.deposition_power = self.base_pressure = u""
+        self.channels = []
 
-# def add_layer(deposition):
-#     browser.open(root_url+"6-chamber_depositions/%s/edit/"%deposition)
-#     browser.select_form(nr=0)
-#     browser["structural-change-add-layers"] = "1"
-#     browser.submit()
-#     browser.select_form(nr=0)
-#     browser["0-chamber"] = ["#4"]
-#     browser.submit()
+class SixChamberChannel(object):
+    def __init__(self, layer):
+        layer.channels.append(self)
+        self.number = self.gas = self.flow_rate = u""
 
 
 connection = ChantalConnection("bronger", "*******", "http://127.0.0.1:8000/")
