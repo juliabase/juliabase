@@ -21,32 +21,36 @@ class ChantalConnection(object):
         self.browser["password"] = password
         self.browser.submit()
         # FixMe: Test whether login was successful
-    def open(self, relative_url):
-        response = self.browser.open(self.root_url+relative_url)
+    def parse_form_data(self):
+        self.controls.clear()
+        self.selection_options.clear()
         try:
             self.browser.select_form(nr=0)
         except mechanize._mechanize.FormNotFoundError:
-            pass
-        self.controls.clear()
-        self.selection_options.clear()
+            return
         for control in self.browser.form.controls:
             self.controls[control.name] = control
             if control.type == "select":
                 self.selection_options[control.name] = {}
                 for option in control.items:
                     self.selection_options[control.name][option.attrs["contents"]] = option.attrs["value"]
+    def open(self, relative_url):
+        response = self.browser.open(self.root_url+relative_url)
+        self.parse_form_data()
     def submit(self, get_success_report=True):
         response = self.browser.submit()
-        try:
-            self.browser.select_form(nr=0)
-        except mechanize._mechanize.FormNotFoundError:
-            pass
+        self.parse_form_data()
+        text = response.read()
+        logfile = open("toll.log", "wb")
+        print>>logfile, text
+        logfile.close()
         if get_success_report:
-            for meta in XML(response.read()).getiterator("{http://www.w3.org/1999/xhtml}meta"):
-                if meta.attrib["name"] == "success-report":
+            tree = XML(text)
+            for meta in tree.getiterator("{http://www.w3.org/1999/xhtml}meta"):
+                if meta.attrib.get("name") == "success-report":
                     return meta.attrib["content"]
-            for div in XML(response.read()).getiterator("{http://www.w3.org/1999/xhtml}div"):
-                if div.attrib["class"] == "success-report":
+            for div in tree.getiterator("{http://www.w3.org/1999/xhtml}div"):
+                if div.attrib.get("class") == "success-report":
                     return div.text
             raise Exception("Didn't find a success report")
     def set_form_data(self, form_dict, prefix=None):
@@ -58,7 +62,7 @@ class ChantalConnection(object):
                     return None
             return None
         def build_selection_list(name, options):
-            list_ = [find_value_for_option(option) for option in options]
+            list_ = [find_value_for_option(name, option) for option in options]
             return [item for item in list_ if item is not None]
 
         if prefix:
@@ -106,12 +110,14 @@ class SixChamberDeposition(object):
             connection.browser["structural-change-add-channels-for-layerindex-%d" % i] = unicode(len(layer.channels))
         connection.submit(get_success_report=False)
         date, time = self.timestamp.split(" ")
+        if not self.operator:
+            self.operator = connection.username
         connection.set_form_data({"number": self.number,
                                   "carrier": self.carrier,
                                   "operator": self.operator,
                                   "timestamp_0": date,
                                   "timestamp_1": time,
-                                  "comments": comments,
+                                  "comments": self.comments,
                                   "sample_list": self.sample_name})
         for i, layer in enumerate(self.layers):
             layer.submit(connection, i)
@@ -129,7 +135,6 @@ class SixChamberLayer(object):
         self.channels = []
     def submit(self, connection, index):
         connection.set_form_data({"number": self.number,
-                                  "chamber": self.chamber,
                                   "chamber": self.chamber,
                                   "pressure": self.pressure,
                                   "time": self.time,
@@ -161,5 +166,30 @@ class SixChamberChannel(object):
                                   "flow_rate": self.flow_rate}, prefix="%d_%d" % (layer_index, index))
 
 connection = ChantalConnection("bronger", "*******", "http://127.0.0.1:8000/")
-SixChamberDeposition().submit(connection)
-# print connection.get_new_samples(1, "Hall lab")
+
+six_chamber_deposition = SixChamberDeposition()
+six_chamber_deposition.timestamp = "2008-09-15 22:29:00"
+
+layer = SixChamberLayer(six_chamber_deposition)
+layer.chamber = "#1"
+
+channel1 = SixChamberChannel(layer)
+channel1.number = 1
+channel1.gas = "SiH4"
+channel1.flow_rate = "1"
+
+channel2 = SixChamberChannel(layer)
+channel2.number = 2
+channel2.gas = "SiH4"
+channel2.flow_rate = "2"
+
+channel3 = SixChamberChannel(layer)
+channel3.number = 3
+channel3.gas = "SiH4"
+channel3.flow_rate = "3"
+
+six_chamber_deposition.layers.extend([layer, layer])
+
+for i in range(10):
+    six_chamber_deposition.submit(connection)
+    six_chamber_deposition.sample_name = None
