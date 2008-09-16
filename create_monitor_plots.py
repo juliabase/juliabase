@@ -66,7 +66,7 @@ def read_times_mysql():
         else:
             logfile = open(filename)
         timedelta = datetime.timedelta(0)
-        index = -1
+        index = None
         for linenumber, line in enumerate(logfile):
             date_match = mysql_date_pattern.match(line)
             if date_match:
@@ -77,10 +77,11 @@ def read_times_mysql():
                 timedelta = now - timestamp
                 timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
                 index = (24*3600 - timedelta_seconds)//binning
-            if 0 <= index < number_of_slots and db_hit_pattern.match(line):
-                times[(24*3600 - timedelta.seconds)//binning] += 1/binning
-            elif linenumber == 0:
-                read_further = False
+            if index is not None and db_hit_pattern.match(line):
+                if 0 <= index < number_of_slots:
+                    times[(24*3600 - timedelta.seconds)//binning] += 1/binning
+                else:
+                    read_further = False
         logfile.close()
         if not read_further:
             break
