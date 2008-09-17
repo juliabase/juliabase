@@ -1,98 +1,76 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import mechanize
+import urllib, urllib2, cookielib, pickle
 from elementtree.ElementTree import XML
 import datetime
 
+class ChantalHTTPProcessor(urllib2.BaseHandler):
+    user_agent = "Chantal-Remote 0.1"
+    def http_request(self, request):
+        request.add_header("User-Agent", self.user_agent)
+        return request
+
+def quote_header(value):
+    return unicode(value).encode("utf-8")
+
 class ChantalConnection(object):
+    opener = urllib2.build_opener(ChantalHTTPProcessor())
     def __init__(self, username, password, chantal_url="http://bob.ipv.kfa-juelich.de/chantal/"):
         self.root_url = chantal_url
-        self.browser = mechanize.Browser()
-        self.browser.set_handle_robots(False)
         self.username = username
-        self.controls = {}
-        self.selection_options = {}
 
         # Login
-        self.browser.open(self.root_url+"login")
-        self.browser.select_form(nr=0)
-        self.browser["username"] = username
-        self.browser["password"] = password
-        self.browser.submit()
+        self.open("login", {"username": username, "password": password})
         # FixMe: Test whether login was successful
-    def parse_form_data(self):
-        self.controls.clear()
-        self.selection_options.clear()
-        try:
-            self.browser.select_form(nr=0)
-        except mechanize._mechanize.FormNotFoundError:
-            return
-        for control in self.browser.form.controls:
-            self.controls[control.name] = control
-            if control.type == "select":
-                self.selection_options[control.name] = {}
-                for option in control.items:
-                    self.selection_options[control.name][option.attrs["contents"]] = option.attrs["value"]
-    def open(self, relative_url):
-        response = self.browser.open(self.root_url+relative_url)
-        self.parse_form_data()
-    def submit(self, get_success_report=True):
-        response = self.browser.submit()
-        self.parse_form_data()
-        text = response.read()
-        logfile = open("toll.log", "wb")
-        print>>logfile, text
-        logfile.close()
-        if get_success_report:
+        self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
+    def open(self, relative_url, data=None, parse_response="None"):
+        # `parse_response` may be ``None``, "html", or "pickle"
+        if data is not None:
+            cleaned_data = {}
+            for key, value in data.iteritems():
+                key = quote_header(key)
+                if value is not None:
+                    if not isinstance(value, list):
+                        cleaned_data[key] = quote_header(value)
+                    else:
+                        cleaned_list = [quote_header(item) for item in value if value is not None]
+                        if cleaned_list:
+                            cleaned_data[key] = cleaned_list
+            try:
+                response = self.opener.open(self.root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
+            except urllib2.HTTPError, e:
+                text = e.read()
+                logfile = open("/home/bronger/public_html/toll.html", "wb")
+                print>>logfile, text
+                logfile.close()
+                raise
+        else:
+            response = self.opener.open(self.root_url+relative_url)
+        if parse_response == "pickle":
+            return pickle.load(response)
+        elif parse_response == "html":
+            text = response.read()
+            logfile = open("toll.log", "wb")
+            print>>logfile, text
+            logfile.close()
             tree = XML(text)
-            for meta in tree.getiterator("{http://www.w3.org/1999/xhtml}meta"):
-                if meta.attrib.get("name") == "success-report":
-                    return meta.attrib["content"]
             for div in tree.getiterator("{http://www.w3.org/1999/xhtml}div"):
                 if div.attrib.get("class") == "success-report":
                     return div.text
             raise Exception("Didn't find a success report")
-    def set_form_data(self, form_dict, prefix=None):
-        def find_value_for_option(name, option):
-            if option is not None:
-                try:
-                    return self.selection_options[name][unicode(option)]
-                except KeyError:
-                    return None
-            return None
-        def build_selection_list(name, options):
-            list_ = [find_value_for_option(name, option) for option in options]
-            return [item for item in list_ if item is not None]
-
-        if prefix:
-            prefix += u"-"
-        for key, value in form_dict.iteritems():
-            if prefix:
-                key = prefix + key
-            if value is not None:
-                if self.controls[key].type == "text":
-                    self.browser[key] = unicode(value)
-                elif self.controls[key].type == "select":
-                    if self.controls[key].multiple:
-                        self.browser[key] = build_selection_list(key, value)
-                    else:
-                        value = find_value_for_option(key, value)
-                        if value is not None:
-                            self.browser[key] = [value]
-    def get_new_samples(self, number_of_samples, current_location, substrate=u"ASAHI-U",
+    def get_new_samples(self, number_of_samples, current_location, substrate=u"asahi-u",
                         purpose=None, tags=None, group=None):
-        self.open("samples/add/")
-        self.set_form_data({"number_of_samples": number_of_samples,
-                            "current_location": current_location,
-                            "substrate": substrate,
-                            "purpose": purpose,
-                            "tags": tags,
-                            "group": group,
-                            "currently_responsible_person": self.username})
-        return self.submit().split(",")
-    def __del__(self):
-        self.browser.open(self.root_url+"logout")
+        return self.open("samples/add/", {"number_of_samples": number_of_samples,
+                                          "current_location": current_location,
+                                          "substrate": substrate,
+                                          "purpose": purpose,
+                                          "tags": tags,
+                                          "group": self.primary_keys["groups"].get(group),
+                                          "currently_responsible_person": self.primary_keys["users"].get(self.username)},
+                         parse_response="pickle")
+    def close(self):
+        self.open("logout")
 
 class SixChamberDeposition(object):
     def __init__(self, sample_name=None):
@@ -166,30 +144,32 @@ class SixChamberChannel(object):
                                   "flow_rate": self.flow_rate}, prefix="%d_%d" % (layer_index, index))
 
 connection = ChantalConnection("bronger", "*******", "http://127.0.0.1:8000/")
+print connection.get_new_samples(1, "Hall lab")
+connection.close()
 
-six_chamber_deposition = SixChamberDeposition()
-six_chamber_deposition.timestamp = "2008-09-15 22:29:00"
+# six_chamber_deposition = SixChamberDeposition()
+# six_chamber_deposition.timestamp = "2008-09-15 22:29:00"
 
-layer = SixChamberLayer(six_chamber_deposition)
-layer.chamber = "#1"
+# layer = SixChamberLayer(six_chamber_deposition)
+# layer.chamber = "#1"
 
-channel1 = SixChamberChannel(layer)
-channel1.number = 1
-channel1.gas = "SiH4"
-channel1.flow_rate = "1"
+# channel1 = SixChamberChannel(layer)
+# channel1.number = 1
+# channel1.gas = "SiH4"
+# channel1.flow_rate = "1"
 
-channel2 = SixChamberChannel(layer)
-channel2.number = 2
-channel2.gas = "SiH4"
-channel2.flow_rate = "2"
+# channel2 = SixChamberChannel(layer)
+# channel2.number = 2
+# channel2.gas = "SiH4"
+# channel2.flow_rate = "2"
 
-channel3 = SixChamberChannel(layer)
-channel3.number = 3
-channel3.gas = "SiH4"
-channel3.flow_rate = "3"
+# channel3 = SixChamberChannel(layer)
+# channel3.number = 3
+# channel3.gas = "SiH4"
+# channel3.flow_rate = "3"
 
-six_chamber_deposition.layers.extend([layer, layer])
+# six_chamber_deposition.layers.extend([layer, layer])
 
-for i in range(10):
-    six_chamber_deposition.submit(connection)
-    six_chamber_deposition.sample_name = None
+# for i in range(10):
+#     six_chamber_deposition.submit(connection)
+#     six_chamber_deposition.sample_name = None
