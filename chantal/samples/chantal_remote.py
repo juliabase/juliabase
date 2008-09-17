@@ -5,17 +5,12 @@ import urllib, urllib2, cookielib, pickle
 from elementtree.ElementTree import XML
 import datetime
 
-class ChantalHTTPProcessor(urllib2.BaseHandler):
-    user_agent = "Chantal-Remote 0.1"
-    def http_request(self, request):
-        request.add_header("User-Agent", self.user_agent)
-        return request
-
 def quote_header(value):
     return unicode(value).encode("utf-8")
 
 class ChantalConnection(object):
-    opener = urllib2.build_opener(ChantalHTTPProcessor())
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
+    opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
     def __init__(self, username, password, chantal_url="http://bob.ipv.kfa-juelich.de/chantal/"):
         self.root_url = chantal_url
         self.username = username
