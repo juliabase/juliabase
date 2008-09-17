@@ -79,7 +79,7 @@ def read_times_mysql():
                 index = (24*3600 - timedelta_seconds)//binning
             if index is not None and db_hit_pattern.match(line):
                 if 0 <= index < number_of_slots:
-                    times[(24*3600 - timedelta.seconds)//binning] += 1/binning
+                    times[index] += 1/binning
                 else:
                     read_further = False
         logfile.close()
