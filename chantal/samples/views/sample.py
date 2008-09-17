@@ -5,10 +5,10 @@ u"""All views and helper routines directly connected with samples themselves
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import time, datetime
+import time, datetime, pickle
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.http import Http404
+from django.http import Http404, HttpResponse
 import django.forms as forms
 from chantal.samples.models import Sample
 from chantal.samples import models
@@ -171,7 +171,9 @@ class AddSamplesForm(forms.Form):
         self.fields["currently_responsible_person"].initial = user_details.user.pk
 
 def add_samples_to_database(add_samples_form, user):
-    u"""Create the new samples and add them to the database.
+    u"""Create the new samples and add them to the database.  This routine
+    consists of two parts: First, it tries to find a consecutive block of
+    provisional sample names.  Then, in actuall creates the samples.
 
     :Parameters:
       - `add_samples_form`: the form with the samples' common data, including
@@ -203,6 +205,7 @@ def add_samples_to_database(add_samples_form, user):
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = add_samples_form.cleaned_data["currently_responsible_person"].get_profile()
     new_names = [u"*%d" % i for i in range(starting_number, starting_number + number_of_samples)]
+    ids = []
     for new_name in new_names:
         sample = models.Sample(name=new_name,
                                current_location=add_samples_form.cleaned_data["current_location"],
@@ -211,9 +214,10 @@ def add_samples_to_database(add_samples_form, user):
                                tags=add_samples_form.cleaned_data["tags"],
                                group=add_samples_form.cleaned_data["group"])
         sample.save()
+        ids.append(sample.pk)
         sample.processes.add(substrate)
         user_details.my_samples.add(sample)
-    return new_names
+    return new_names, ids
 
 @login_required
 @check_permission("add_sample")
@@ -230,11 +234,12 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
+    utils.is_remote_client(request)
     user_details = request.user.get_profile()
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
         if add_samples_form.is_valid():
-            new_names = add_samples_to_database(add_samples_form, request.user)
+            new_names, ids = add_samples_to_database(add_samples_form, request.user)
             if len(new_names) > 1:
                 request.session["success_report"] = \
                     _(u"Your samples have the provisional names from %(first_name)s to "
@@ -243,8 +248,10 @@ def add(request):
             else:
                 request.session["success_report"] = _(u"Your sample has the provisional name %s.  "
                                                       u"It was added to “My Samples”.") % new_names[0]
-            request.session["success_report_meta"] = u",".join(new_names)
-            return utils.http_response_go_next(request)
+            if utils.is_remote_client(request):
+                return HttpResponse(pickle.dumps(ids), content_type="text/plain; charset=ascii")
+            else:
+                return utils.http_response_go_next(request)
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",

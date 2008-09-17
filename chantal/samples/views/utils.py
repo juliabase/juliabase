@@ -852,3 +852,7 @@ def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={
         return HttpResponseSeeOther(next_url)
     else:
         return HttpResponseSeeOther(django.core.urlresolvers.reverse(view, kwargs=kwargs))
+
+def is_remote_client(request):
+    print request.META.get("HTTP_USER_AGENT")
+    return request.META.get("HTTP_USER_AGENT").startswith("Chantal-Remote")
