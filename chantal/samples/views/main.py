@@ -12,7 +12,7 @@ from chantal.samples import models
 from django.http import HttpResponsePermanentRedirect, HttpResponse, Http404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import REDIRECT_FIELD_NAME
+import django.contrib.auth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import Site
 import django.contrib.auth.models
@@ -458,3 +458,20 @@ def primary_keys(request):
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.filter(username__in=user_names).
                                         values_list("username", "id"))
     return HttpResponse(pickle.dumps(result_dict), content_type="text/plain; charset=ascii")
+
+def login_remote_client(request):
+    try:
+        username = request.POST["username"]
+        password = request.POST["password"]
+    except KeyError:
+        return utils.respond_to_remote_client(False)
+    user = django.contrib.auth.authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            django.contrib.auth.login(request, user)
+            return utils.respond_to_remote_client(True)
+    return utils.respond_to_remote_client(False)
+
+def logout_remote_client(request):
+    django.contrib.auth.logout(request)
+    return utils.respond_to_remote_client(True)

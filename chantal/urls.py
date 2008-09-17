@@ -77,6 +77,8 @@ urlpatterns = patterns("",
                        (r"^change_password/done/$", "django.contrib.auth.views.password_change_done",
                         {"template_name": "password_changed.html"}),
                        (r"^primary_keys$", "samples.views.main.primary_keys"),
+                       (r"^login_remote_client$", "samples.views.main.login_remote_client"),
+                       (r"^logout_remote_client$", "samples.views.main.logout_remote_client"),
                        (r"^admin/(.*)", admin.site.root),
                        )
 

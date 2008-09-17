@@ -5,7 +5,7 @@ u"""General helper functions for the views.  Try to avoid using it outside the
 views package.
 """
 
-import re, string, copy, datetime, hashlib
+import re, string, copy, datetime, hashlib, pickle
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict, Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -168,6 +168,9 @@ def int_or_zero(number):
         return int(number)
     except ValueError:
         return 0
+    except TypeError:
+        if number is None:
+            return 0
 
 def append_error(form, error_message, fieldname="__all__"):
     u"""This function is called if a validation error is found in form data
@@ -855,3 +858,6 @@ def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={
 
 def is_remote_client(request):
     return request.META.get("HTTP_USER_AGENT").startswith("Chantal-Remote")
+
+def respond_to_remote_client(value):
+    return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle; charset=ascii")

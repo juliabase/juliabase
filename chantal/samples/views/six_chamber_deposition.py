@@ -226,7 +226,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
                  for channel_index, channel in enumerate(channel_form_lists[i])])
 
     # Second step: Add layers
-    to_be_added_layers = utils.int_or_zero(change_params["structural-change-add-layers"])
+    to_be_added_layers = utils.int_or_zero(change_params.get("structural-change-add-layers"))
     if to_be_added_layers < 0:
         to_be_added_layers = 0
     structure_changed = structure_changed or to_be_added_layers > 0
@@ -478,11 +478,14 @@ def edit(request, deposition_number):
                     _(u"Deposition %s was successfully changed in the database.") % deposition.number
                 return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
             else:
-                request.session["success_report"] = \
-                    _(u"Deposition %s was successfully added to the database.") % deposition.number
-                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
-                        "samples.views.split_after_process.split_and_rename_after_process",
-                        kwargs={"process_id": deposition.id}))
+                if utils.is_remote_client(request):
+                    return utils.respond_to_remote_client(True)
+                else:
+                    request.session["success_report"] = \
+                        _(u"Deposition %s was successfully added to the database.") % deposition.number
+                    return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
+                            "samples.views.split_after_process.split_and_rename_after_process",
+                            kwargs={"process_id": deposition.id}))
     else:
         deposition_form = None
         # FixMe: Must make use of utils.parse_query_string

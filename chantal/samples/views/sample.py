@@ -249,7 +249,7 @@ def add(request):
                 request.session["success_report"] = _(u"Your sample has the provisional name %s.  "
                                                       u"It was added to “My Samples”.") % new_names[0]
             if utils.is_remote_client(request):
-                return HttpResponse(pickle.dumps(ids), content_type="text/plain; charset=ascii")
+                return utils.respond_to_remote_client(ids)
             else:
                 return utils.http_response_go_next(request)
     else:

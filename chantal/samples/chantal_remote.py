@@ -16,7 +16,8 @@ class ChantalConnection(object):
         self.username = username
 
         # Login
-        self.open("login", {"username": username, "password": password})
+        if not self.open("login_remote_client", {"username": username, "password": password}):
+            raise Exception("Login failed")
         # FixMe: Test whether login was successful
         self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
     def open(self, relative_url, data=None, parse_response="None"):
@@ -42,18 +43,15 @@ class ChantalConnection(object):
                 raise
         else:
             response = self.opener.open(self.root_url+relative_url)
-        if parse_response == "pickle":
+        is_pickled = response.info()["Content-Type"].startswith("text/x-python-pickle")
+        if is_pickled:
             return pickle.load(response)
-        elif parse_response == "html":
+        else:
             text = response.read()
-            logfile = open("toll.log", "wb")
+            logfile = open("/home/bronger/public_html/toll.html", "wb")
             print>>logfile, text
             logfile.close()
-            tree = XML(text)
-            for div in tree.getiterator("{http://www.w3.org/1999/xhtml}div"):
-                if div.attrib.get("class") == "success-report":
-                    return div.text
-            raise Exception("Didn't find a success report")
+            raise Exception("Response was not in pickle format!")
     def get_new_samples(self, number_of_samples, current_location, substrate=u"asahi-u",
                         purpose=None, tags=None, group=None):
         return self.open("samples/add/", {"number_of_samples": number_of_samples,
@@ -62,39 +60,32 @@ class ChantalConnection(object):
                                           "purpose": purpose,
                                           "tags": tags,
                                           "group": self.primary_keys["groups"].get(group),
-                                          "currently_responsible_person": self.primary_keys["users"].get(self.username)},
+                                          "currently_responsible_person": self.primary_keys["users"][self.username]},
                          parse_response="pickle")
     def close(self):
-        self.open("logout")
+        if not self.open("logout_remote_client"):
+            raise Exception("Logout failed")
 
 class SixChamberDeposition(object):
-    def __init__(self, sample_name=None):
-        self.sample_name = sample_name
+    def __init__(self, sample_id):
+        self.sample_id = sample_id
         self.number = self.carrier = self.operator = self.timestamp = self.comments = None
         self.layers = []
     def submit(self, connection):
-        if not self.sample_name:
-            self.sample_name = connection.get_new_samples(1, u"unknown due to legacy data")
         # FixMe: Assure that sample is in MySamples
-        connection.open("6-chamber_depositions/add/")
-        connection.browser["structural-change-add-layers"] = unicode(len(self.layers))
-        connection.submit(get_success_report=False)
-        for i, layer in enumerate(self.layers):
-            connection.browser["structural-change-add-channels-for-layerindex-%d" % i] = unicode(len(layer.channels))
-        connection.submit(get_success_report=False)
         date, time = self.timestamp.split(" ")
         if not self.operator:
             self.operator = connection.username
-        connection.set_form_data({"number": self.number,
-                                  "carrier": self.carrier,
-                                  "operator": self.operator,
-                                  "timestamp_0": date,
-                                  "timestamp_1": time,
-                                  "comments": self.comments,
-                                  "sample_list": self.sample_name})
-        for i, layer in enumerate(self.layers):
-            layer.submit(connection, i)
-        connection.submit()
+        data = {"number": "08B%d" % self.sample_id,
+                "carrier": self.carrier,
+                "operator": connection.primary_keys["users"][self.operator],
+                "timestamp_0": date,
+                "timestamp_1": time,
+                "comments": self.comments,
+                "sample_list": self.sample_id}
+        for layer_index, layer in enumerate(self.layers):
+            data.update(layer.get_data(layer_index))
+        return connection.open("6-chamber_depositions/add/", data, parse_response="html")
 
 class SixChamberLayer(object):
     def __init__(self, deposition):
@@ -106,65 +97,70 @@ class SixChamberLayer(object):
             self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
             self.deposition_frequency = self.deposition_power = self.base_pressure = None
         self.channels = []
-    def submit(self, connection, index):
-        connection.set_form_data({"number": self.number,
-                                  "chamber": self.chamber,
-                                  "pressure": self.pressure,
-                                  "time": self.time,
-                                  "substrate_electrode_distance": self.substrate_electrode_distance,
-                                  "comments": self.comments,
-                                  "transfer_in_chamber": self.transfer_in_chamber,
-                                  "pre_heat": self.pre_heat,
-                                  "gas_pre_heat_gas": self.gas_pre_heat_gas,
-                                  "gas_pre_heat_pressure": self.gas_pre_heat_pressure,
-                                  "gas_pre_heat_time": self.gas_pre_heat_time,
-                                  "heating_temperature": self.heating_temperature,
-                                  "transfer_out_of_chamber": self.transfer_out_of_chamber,
-                                  "plasma_start_power": self.plasma_start_power,
-                                  "plasma_start_with_carrier": self.plasma_start_with_carrier,
-                                  "deposition_frequency": self.deposition_frequency,
-                                  "deposition_power": self.deposition_power,
-                                  "base_pressure": self.base_pressure}, prefix=unicode(index))
-        for i, channel in enumerate(self.channels):
-            channel.submit(connection, index, i)
+    def get_data(self, layer_index):
+        prefix = unicode(layer_index) + "-"
+        data = {prefix+"number": layer_index + 1,
+                prefix+"chamber": self.chamber,
+                prefix+"pressure": self.pressure,
+                prefix+"time": self.time,
+                prefix+"substrate_electrode_distance": self.substrate_electrode_distance,
+                prefix+"comments": self.comments,
+                prefix+"transfer_in_chamber": self.transfer_in_chamber,
+                prefix+"pre_heat": self.pre_heat,
+                prefix+"gas_pre_heat_gas": self.gas_pre_heat_gas,
+                prefix+"gas_pre_heat_pressure": self.gas_pre_heat_pressure,
+                prefix+"gas_pre_heat_time": self.gas_pre_heat_time,
+                prefix+"heating_temperature": self.heating_temperature,
+                prefix+"transfer_out_of_chamber": self.transfer_out_of_chamber,
+                prefix+"plasma_start_power": self.plasma_start_power,
+                prefix+"plasma_start_with_carrier": self.plasma_start_with_carrier,
+                prefix+"deposition_frequency": self.deposition_frequency,
+                prefix+"deposition_power": self.deposition_power,
+                prefix+"base_pressure": self.base_pressure}
+        for channel_index, channel in enumerate(self.channels):
+            data.update(channel.get_data(layer_index, channel_index))
+        return data
 
 class SixChamberChannel(object):
     def __init__(self, layer):
         self.layer = layer
         layer.channels.append(self)
         self.number = self.gas = self.flow_rate = None
-    def submit(self, connection, layer_index, index):
-        connection.set_form_data({"number": self.number,
-                                  "gas": self.gas,
-                                  "flow_rate": self.flow_rate}, prefix="%d_%d" % (layer_index, index))
+    def get_data(self, layer_index, channel_index):
+        prefix = "%d_%d-" % (layer_index, channel_index)
+        return {prefix+"number": self.number, prefix+"gas": self.gas, prefix+"flow_rate": self.flow_rate}
 
 connection = ChantalConnection("bronger", "*******", "http://127.0.0.1:8000/")
-print connection.get_new_samples(1, "Hall lab")
-connection.close()
 
-# six_chamber_deposition = SixChamberDeposition()
-# six_chamber_deposition.timestamp = "2008-09-15 22:29:00"
+six_chamber_deposition = SixChamberDeposition(None)
+six_chamber_deposition.timestamp = "2008-09-15 22:29:00"
 
-# layer = SixChamberLayer(six_chamber_deposition)
-# layer.chamber = "#1"
+layer = SixChamberLayer(six_chamber_deposition)
+layer.chamber = "#1"
 
-# channel1 = SixChamberChannel(layer)
-# channel1.number = 1
-# channel1.gas = "SiH4"
-# channel1.flow_rate = "1"
+channel1 = SixChamberChannel(layer)
+channel1.number = 1
+channel1.gas = "SiH4"
+channel1.flow_rate = "1"
 
-# channel2 = SixChamberChannel(layer)
-# channel2.number = 2
-# channel2.gas = "SiH4"
-# channel2.flow_rate = "2"
+channel2 = SixChamberChannel(layer)
+channel2.number = 2
+channel2.gas = "SiH4"
+channel2.flow_rate = "2"
 
-# channel3 = SixChamberChannel(layer)
-# channel3.number = 3
-# channel3.gas = "SiH4"
-# channel3.flow_rate = "3"
+channel3 = SixChamberChannel(layer)
+channel3.number = 3
+channel3.gas = "SiH4"
+channel3.flow_rate = "3"
 
-# six_chamber_deposition.layers.extend([layer, layer])
+six_chamber_deposition.layers.extend([layer, layer])
 
-# for i in range(10):
-#     six_chamber_deposition.submit(connection)
-#     six_chamber_deposition.sample_name = None
+number_of_depositions = 100
+sample_ids = connection.get_new_samples(number_of_depositions, u"unknown; legacy data")
+for sample_id in sample_ids:
+    six_chamber_deposition.sample_id = sample_id
+    if not six_chamber_deposition.submit(connection):
+        print "Error!"
+        break
+else:
+    connection.close()
