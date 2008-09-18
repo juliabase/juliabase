@@ -27,7 +27,7 @@ class IsMySampleForm(forms.Form):
     is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
 
 class SampleForm(forms.ModelForm):
-    u"""Model form class for a sample.  All unusual I do here is overwiring
+    u"""Model form class for a sample.  All unusual I do here is overwriting
     `models.Sample.currently_responsible_person` in oder to be able to see
     *full* person names (not just the login name).
     """
@@ -136,9 +136,8 @@ def show(request, sample_name):
                 user_details.my_samples.remove(sample)
                 request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
     else:
-        start = time.time()
-        is_my_sample_form = IsMySampleForm(initial={"is_my_sample": sample in user_details.my_samples.all()})
-        request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
+        is_my_sample_form = IsMySampleForm(
+            initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
     processes = utils.ProcessContext(request.user, sample).collect_processes()
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
