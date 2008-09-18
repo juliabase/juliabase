@@ -460,18 +460,45 @@ def primary_keys(request):
     return HttpResponse(pickle.dumps(result_dict), content_type="text/plain; charset=ascii")
 
 def login_remote_client(request):
+    u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
+    method and expects ``username`` and ``password``.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object.  It is a pickled boolean object, whether the
+      login was successful or not.
+
+    :rtype: ``HttpResponse``
+    """
     try:
         username = request.POST["username"]
         password = request.POST["password"]
     except KeyError:
         return utils.respond_to_remote_client(False)
     user = django.contrib.auth.authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            django.contrib.auth.login(request, user)
-            return utils.respond_to_remote_client(True)
+    if user is not None and user.is_active:
+        django.contrib.auth.login(request, user)
+        return utils.respond_to_remote_client(True)
     return utils.respond_to_remote_client(False)
 
 def logout_remote_client(request):
+    u"""By requesting this view, the Chantal Remote Client can log out.  This
+    view can never fail.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object.  It is a pickled boolean object and always
+      ``True``.
+
+    :rtype: ``HttpResponse``
+    """
     django.contrib.auth.logout(request)
     return utils.respond_to_remote_client(True)

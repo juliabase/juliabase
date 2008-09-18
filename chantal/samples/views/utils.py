@@ -857,7 +857,37 @@ def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={
         return HttpResponseSeeOther(django.core.urlresolvers.reverse(view, kwargs=kwargs))
 
 def is_remote_client(request):
-    return request.META.get("HTTP_USER_AGENT").startswith("Chantal-Remote")
+    u"""Tests whether the current request was not done by an ordinary browser
+    like Firefox or Google Chome but by the Chantal Remote Client.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      whether the request was made with the Remote Client
+
+    :rtype: bool
+    """
+    return request.META.get("HTTP_USER_AGENT", "").startswith("Chantal-Remote")
 
 def respond_to_remote_client(value):
+    u"""The communication with the Chantal Remote Client should be done without
+    generating HTML pages in order to have better performance.  Thus, all
+    responses are Python objects, serialised by the “pickle” module.
+
+    This views that should be accessed by both the Remote Client and the normal
+    users should distinguish between both by using `is_remote_client`.
+
+    :Parameters:
+      - `value`: the data to be sent back to the remote client.
+
+    :type value: ``object`` (an arbitrary Python object)
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle; charset=ascii")
