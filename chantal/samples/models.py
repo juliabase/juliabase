@@ -304,6 +304,78 @@ class SixChamberChannel(models.Model):
         ordering = ["number"]
 admin.site.register(SixChamberChannel)
 
+class LargeAreaDeposition(Deposition):
+    u"""Large-area depositions.
+    """
+    comments = models.TextField(_(u"comments"), blank=True)
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.large_area_deposition.show", [urlquote(self.number, safe="")])
+    class Meta:
+        verbose_name = _(u"large-area deposition")
+        verbose_name_plural = _(u"large-area depositions")
+        permissions = (("can_edit", "Can create and edit large-area depositions"),)
+default_location_of_processed_samples[SixChamberDeposition] = _(u"large-area deposition lab")
+admin.site.register(LargeAreaDeposition)
+
+large_area_layer_type_choices = (
+    ("p", "p"),
+    ("i", "i"),
+    ("n", "n"),
+)
+large_area_station_choices = (
+    ("1", "1"),
+    ("2", "2"),
+    ("3", "3"),
+)
+large_area_hf_frequency_choices = (
+    ("13.56", _(u"13.56")),
+    ("27.12", _(u"27.12")),
+    ("40.68", _(u"40.68")),
+)
+# FixMe: should this really be made translatable?
+large_area_electrode_choices = (
+    ("NN large PC1", _(u"NN large PC1")),
+    ("NN large PC2", _(u"NN large PC2")),
+    ("NN large PC3", _(u"NN large PC3")),
+    ("NN small 1", _(u"NN small 1")),
+    ("NN40 large PC1", _(u"NN40 large PC1")),
+    ("NN40 large PC2", _(u"NN40 large PC2")),
+)
+class LargeAreaLayer(Layer):
+    u"""One layer in a large-area deposition.
+
+    *Important*: Numbers of large-area layers are the numbers after the “L-”
+    beacause they must be ordinary integers!
+    """
+    deposition = models.ForeignKey(LargeAreaDeposition, related_name="layers", verbose_name=_(u"deposition"))
+    date = models.DateField(_(u"date"))
+    layer_type = models.CharField(_(u"layer type"), max_length=2, choices=large_area_layer_type_choices)
+    station = models.CharField(_(u"station"), max_length=2, choices=large_area_station_choices)
+    sih4 = models.DecimalField(_(u"SiH4 flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
+    h2 = models.DecimalField(_(u"H2 flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
+    sc = models.DecimalField(_(u"SC"), max_digits=5, decimal_places=2, help_text=_(u"in %"))
+    tmb = models.DecimalField(_(u"TMB"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    ch4 = models.DecimalField(_(u"CH4"), max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    co2 = models.DecimalField(_(u"CO2"), max_digits=4, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    ph3 = models.DecimalField(_(u"PH3"), max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    power = models.DecimalField(_(u"power"), max_digits=5, decimal_places=1, help_text=_(u"in W"))
+    pressure = models.DecimalField(_(u"pressure"), max_digits=3, decimal_places=1, help_text=_(u"in Torr"))
+    temperature = models.DecimalField(_(u"temperature"), max_digits=4, decimal_places=1, help_text=_(u"in ℃"))
+    hf_frequency = models.DecimalField(_(u"HF frequency"), max_digits=5, decimal_places=2,
+                                       choices=large_area_hf_frequency_choices, help_text=_(u"in MHz"))
+    time = models.IntegerField(_(u"time"), help_text=_(u"in sec"))
+    dc_bias = models.DecimalField(_(u"DC bias"), max_digits=3, decimal_places=1, help_text=_(u"in V"), null=True, blank=True)
+    electrode = models.CharField(_(u"electrode"), max_length=30, choices=large_area_electrode_choices)
+    electrodes_distrance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
+                                               help_text=_(u"in mm"))
+    def __unicode__(self):
+        return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
+    class Meta(Layer.Meta):
+        verbose_name = _(u"large-area layer")
+        verbose_name_plural = _(u"large-area layers")
+admin.site.register(LargeAreaLayer)
+
 class Sample(models.Model):
     u"""The model for samples.
     """
