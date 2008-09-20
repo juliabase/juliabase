@@ -649,15 +649,15 @@ class ProcessContext(ResultContext):
             processes.append(self.digest_process(process))
         return processes
 
-deposition_number_pattern = re.compile(ur"\d{3,4}")
 def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
-    called “08V045”, this routine yields “08V046” (unless the new year has
+    called “08B045”, this routine yields “08B046” (unless the new year has
     begun).
     
     :Parameters:
       - `letter`: the indentifying letter of the deposition apparatus.  For
-        exmaple, it is ``"B"`` for the 6-chamber deposition.
+        example, it is ``"B"`` for the 6-chamber deposition.  It needn't be a
+        single letter: ``"V-"``.
 
     :type letter: str
 
@@ -666,11 +666,17 @@ def get_next_deposition_number(letter):
       given deposition apparatus.
     """
     prefix = ur"%02d%s" % (datetime.date.today().year % 100, letter)
-    pattern_string = ur"^%s[0-9]{3,4}" % prefix
-    deposition_dicts = models.Deposition.objects.filter(number__regex=pattern_string).values("number")
-    numbers = [int(deposition_number_pattern.match(deposition_dict["number"][3:]).group(0))
-               for deposition_dict in deposition_dicts]
-    return prefix + u"%03d" % (max(numbers + [0]) + 1)
+    prefix_length = len(prefix)
+    pattern_string = ur"^%s[0-9]+" % re.escape(prefix)
+    deposition_numbers = \
+        models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
+    try:
+        next_number = max(int(deposition_number[prefix_length:]) for deposition_number in deposition_numbers) + 1
+    except ValueError, e:
+        if e.message != "max() arg is an empty sequence":
+            raise
+        next_number = 0
+    return prefix + u"%03d" % next_number
 
 def lookup_sample(sample_name, request):
     u"""Looks up the `sample_name` in the database (also among the aliases),
