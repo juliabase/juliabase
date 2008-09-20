@@ -675,7 +675,7 @@ def get_next_deposition_number(letter):
     except ValueError, e:
         if e.message != "max() arg is an empty sequence":
             raise
-        next_number = 0
+        next_number = 1
     return prefix + u"%03d" % next_number
 
 def lookup_sample(sample_name, request):
