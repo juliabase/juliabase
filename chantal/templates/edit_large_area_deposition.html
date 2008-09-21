@@ -1,0 +1,21 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form method="post" action="">
+  <table>
+    {{ deposition }}
+    {% for layer, change_layer in layer_and_change_layer %}
+      <table>
+        {{ layer }}
+        {{ change_layer }}
+      </table>
+    {% endfor %}
+    {{ add_layer }}
+  </table>
+  <p class="submit-button"><input type="submit" /></p>
+</form>
+
+
+{% endblock %}

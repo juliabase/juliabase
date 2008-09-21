@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-18 11:09+0200\n"
-"PO-Revision-Date: 2008-09-18 11:09+0200\n"
+"POT-Creation-Date: 2008-09-20 12:31+0200\n"
+"PO-Revision-Date: 2008-09-20 12:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -206,6 +206,111 @@ msgstr "6-Kammer-Channel"
 
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
+
+msgid "large-area deposition"
+msgstr "Großflächige Deposition"
+
+msgid "large-area depositions"
+msgstr "Großflächige Depositionen"
+
+msgid "large-area deposition lab"
+msgstr "Großflächige-Depositionslabor"
+
+msgid "13.56"
+msgstr "13,56"
+
+msgid "27.12"
+msgstr "27,12"
+
+msgid "40.68"
+msgstr "40,68"
+
+msgid "NN large PC1"
+msgstr "NN große PC1"
+
+msgid "NN large PC2"
+msgstr "NN große PC2"
+
+msgid "NN large PC3"
+msgstr "NN große PC3"
+
+msgid "NN small 1"
+msgstr "NN kleine 1"
+
+msgid "NN40 large PC1"
+msgstr "NN40 große PC1"
+
+msgid "NN40 large PC2"
+msgstr "NN40 große PC2"
+
+msgid "date"
+msgstr "Datum"
+
+msgid "layer type"
+msgstr "Schichttyp"
+
+msgid "station"
+msgstr "Station"
+
+msgid "SiH4 flow rate"
+msgstr "SiH4 Flussrate"
+
+msgid "H2 flow rate"
+msgstr "H2 Flussrate"
+
+msgid "SC"
+msgstr "SC"
+
+msgid "in %"
+msgstr "in %"
+
+msgid "TMB"
+msgstr "TMB"
+
+msgid "CH4"
+msgstr "CH4"
+
+msgid "CO2"
+msgstr "CO2"
+
+msgid "PH3"
+msgstr "PH3"
+
+msgid "power"
+msgstr "Leistung"
+
+msgid "pressure"
+msgstr "Druck"
+
+msgid "temperature"
+msgstr "Temperatur"
+
+msgid "HF frequency"
+msgstr "HF-Frequenz"
+
+msgid "time"
+msgstr "Zeit"
+
+msgid "in sec"
+msgstr "in sec"
+
+msgid "DC bias"
+msgstr "DC-Bias"
+
+msgid "in V"
+msgstr "in V"
+
+msgid "electrode"
+msgstr "Elektrode"
+
+msgid "electrodes distance"
+msgstr "Elektrodenabstand"
+
+msgid "large-area layer"
+msgstr "Schicht der Großflächigen"
+
+msgid "large-area layers"
+msgstr "Schichten der Großflächigen"
 
 msgid "current location"
 msgstr "aktueller Probenort"
@@ -408,6 +513,15 @@ msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
 #, python-format
 msgid "Chantal news for %s"
 msgstr "Chantal-Neuigkeiten für %s"
+
+msgid "Number of layers to be added"
+msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
+
+msgid "Remove this layer"
+msgstr "diese Schicht löschen"
+
+msgid "Add large-area deposition"
+msgstr "Großflächige Deposition hinzufügen"
 
 msgid "MainMenu"
 msgstr "MainMenu"
@@ -1177,12 +1291,15 @@ msgid ""
 msgstr ""
 "\n"
 "<p>Diese Plots werden alle 10 Minuten aktualisiert, die Auflösung der\n"
-"Ausgangsdaten ist jedoch größer.  Beachten Sie, dass „CPU load“ die originale\n"
+"Ausgangsdaten ist jedoch größer.  Beachten Sie, dass „CPU load“ die "
+"originale\n"
 "„load average“ <em>minus 1</em> bedeutet, um einen Grid-Computing-Prozess\n"
 "zu eliminieren, der mit hoher Niceness läuft.</p>\n"
 "\n"
-"<p>„Memory usage“ zeigt zwei grüne Kurven: Die Speicherbelegung allein durch\n"
-"die Programme, und die komplette Speicherbelegung inklusive Puffern und Cache.\n"
+"<p>„Memory usage“ zeigt zwei grüne Kurven: Die Speicherbelegung allein "
+"durch\n"
+"die Programme, und die komplette Speicherbelegung inklusive Puffern und "
+"Cache.\n"
 "Die rote Kurve ist die Nutzung des Swap-Speichers.</p>\n"
 
 msgid "server load statistics plots"

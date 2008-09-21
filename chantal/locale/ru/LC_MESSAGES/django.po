@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-18 11:09+0200\n"
+"POT-Creation-Date: 2008-09-20 12:31+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -207,6 +207,111 @@ msgstr ""
 msgid "6-chamber channels"
 msgstr ""
 
+msgid "large-area deposition"
+msgstr ""
+
+msgid "large-area depositions"
+msgstr ""
+
+msgid "large-area deposition lab"
+msgstr ""
+
+msgid "13.56"
+msgstr ""
+
+msgid "27.12"
+msgstr ""
+
+msgid "40.68"
+msgstr ""
+
+msgid "NN large PC1"
+msgstr ""
+
+msgid "NN large PC2"
+msgstr ""
+
+msgid "NN large PC3"
+msgstr ""
+
+msgid "NN small 1"
+msgstr ""
+
+msgid "NN40 large PC1"
+msgstr ""
+
+msgid "NN40 large PC2"
+msgstr ""
+
+msgid "date"
+msgstr ""
+
+msgid "layer type"
+msgstr ""
+
+msgid "station"
+msgstr ""
+
+msgid "SiH4 flow rate"
+msgstr ""
+
+msgid "H2 flow rate"
+msgstr ""
+
+msgid "SC"
+msgstr ""
+
+msgid "in %"
+msgstr ""
+
+msgid "TMB"
+msgstr ""
+
+msgid "CH4"
+msgstr ""
+
+msgid "CO2"
+msgstr ""
+
+msgid "PH3"
+msgstr ""
+
+msgid "power"
+msgstr ""
+
+msgid "pressure"
+msgstr ""
+
+msgid "temperature"
+msgstr ""
+
+msgid "HF frequency"
+msgstr ""
+
+msgid "time"
+msgstr ""
+
+msgid "in sec"
+msgstr ""
+
+msgid "DC bias"
+msgstr ""
+
+msgid "in V"
+msgstr ""
+
+msgid "electrode"
+msgstr ""
+
+msgid "electrodes distance"
+msgstr ""
+
+msgid "large-area layer"
+msgstr ""
+
+msgid "large-area layers"
+msgstr ""
+
 msgid "current location"
 msgstr ""
 
@@ -405,6 +510,15 @@ msgstr ""
 
 #, python-format
 msgid "Chantal news for %s"
+msgstr ""
+
+msgid "Number of layers to be added"
+msgstr ""
+
+msgid "Remove this layer"
+msgstr ""
+
+msgid "Add large-area deposition"
 msgstr ""
 
 msgid "MainMenu"

@@ -346,7 +346,8 @@ class LargeAreaLayer(Layer):
     u"""One layer in a large-area deposition.
 
     *Important*: Numbers of large-area layers are the numbers after the “L-”
-    beacause they must be ordinary integers!
+    because they must be ordinary integers!  This means that all layers of a
+    deposition must be in the same calendar year, oh well …
     """
     deposition = models.ForeignKey(LargeAreaDeposition, related_name="layers", verbose_name=_(u"deposition"))
     date = models.DateField(_(u"date"))
