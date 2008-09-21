@@ -51,59 +51,69 @@ def forms_from_post_data(post_data):
                           for change_layer_index in range(number_of_layers)]
     return layer_forms, change_layer_forms
 
+deposition_number_pattern = re.compile(ur"(?P<prefix>%02dL-)(?P<number>\d+)$" % (datetime.date.today().year % 100))
 def change_structure(deposition_form, layer_forms, change_layer_forms, add_layer_form):
-    deposition_number_pattern = re.compile(ur"(?P<prefix>%02dL-)(?P<number>\d+)$" % (datetime.date.today().year % 100))
     structure_changed = False
-    layer_numbers = [layer_form.cleaned_data["number"] for layer_form in layer_forms if layer_form.is_valid()]
-    if layer_numbers:
-        next_layer_number = max(layer_numbers) + 1
-    elif deposition_form.is_valid():
-        match = deposition_number_pattern.match(deposition_form.cleaned_data["number"])
-        next_layer_number = int(match.group("number")) if match else 1
-    else:
-        next_layer_number = None
-    next_layer_number = max(next_layer_number, 1)
-
+    new_layers = [("original", layer_form) for layer_form in layer_forms]
+    
     # Duplicate layers
-    old_layer_length = len(layer_forms)
-    for layer_index in range(old_layer_length):
-        layer_form, change_layer_form = layer_forms[layer_index], change_layer_forms[layer_index]
+    for layer_form, change_layer_form in zip(layer_forms, change_layer_forms):
         if layer_form.is_valid() and change_layer_form.is_valid() and change_layer_form.cleaned_data["duplicate_this_layer"]:
-            layer_data = layer_form.cleaned_data
-            layer_data["number"] = u"%03d" % next_layer_number
-            next_layer_number += 1
-            layer_forms.append(LayerForm(initial=layer_data, prefix=str(old_layer_length + layer_index)))
-            change_layer_forms.append(ChangeLayerForm(prefix=str(old_layer_length + layer_index)))
-            change_layer_forms[layer_index] = ChangeLayerForm(prefix=str(layer_index))
+            new_layers.append(("duplicate", layer_form))
             structure_changed = True
 
     # Add layers
-    if add_layer_form.is_valid() and next_layer_number is not None:
-        to_be_added_layers = add_layer_form.cleaned_data["number_of_layers_to_add"]
-        old_number_of_layers = len(layer_forms)
-        for layer_index in range(old_number_of_layers, old_number_of_layers + to_be_added_layers):
-            layer_forms.append(LayerForm(initial={"number": u"%03d" % next_layer_number}, prefix=str(layer_index)))
-            next_layer_number += 1
-            change_layer_forms.append(ChangeLayerForm(prefix=str(layer_index)))
+    if add_layer_form.is_valid():
+        for i in range(add_layer_form.cleaned_data["number_of_layers_to_add"]):
+            new_layers.append(("new", None))
             structure_changed = True
         add_layer_form = AddLayerForm()
 
     # Delete layers
-    for layer_index in range(len(layer_forms)-1, -1, -1):
-        if change_layer_forms[layer_index].is_valid() and change_layer_forms[layer_index].cleaned_data["remove_this_layer"]:
-            del layer_forms[layer_index], change_layer_forms[layer_index]
+    for i in range(len(layer_forms)-1, -1, -1):
+        if change_layer_forms[i].is_valid() and change_layer_forms[i].cleaned_data["remove_this_layer"]:
+            del new_layers[i]
             structure_changed = True
 
-    if deposition_form.is_valid():
-        match = deposition_number_pattern.match(deposition_form.cleaned_data["number"])
-        if match:
-            deposition_data = deposition_form.cleaned_data
-            deposition_data["operator"] = \
-                django.contrib.auth.models.User.objects.get(username=deposition_data["operator"]).pk
-            deposition_data["number"] = match.group("prefix") + u"%03d" % (next_layer_number-1)
-            deposition_form = DepositionForm(initial=deposition_data)
+    if structure_changed:
+        next_full_number = utils.get_next_deposition_number("L-")
+        deposition_number_match = deposition_number_pattern.match(next_full_number)
+        next_layer_number = int(deposition_number_match.group("number"))
+        old_prefixes = [int(layer_form.prefix) for layer_form in layer_forms if layer_form.is_bound]
+        next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
+        layer_forms = []
+        for new_layer in new_layers:
+            if new_layer[0] == "original":
+                post_data = new_layer[1].data.copy()
+                prefix = new_layer[1].prefix
+                post_data[prefix+"-number"] = utils.three_digits(next_layer_number)
+                next_layer_number += 1
+                layer_forms.append(LayerForm(post_data, prefix=prefix))
+            elif new_layer[0] == "duplicate":
+                original_layer = layer_forms[new_layer[1]]
+                if original_layer.is_valid():
+                    layer_data = original_layer.cleaned_data
+                    layer_data["number"] = utils.three_digits(next_layer_number)
+                    next_layer_number += 1
+                    layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
+                    next_prefix += 1
+            elif new_layer[0] == "new":
+                layer_forms.append(LayerForm(initial={"number": utils.three_digits(next_layer_number)},
+                                             prefix=str(next_prefix)))
+                next_layer_number += 1
+                next_prefix += 1
+            else:
+                raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
+        post_data = deposition_form.data.copy()
+        post_data["number"] = deposition_number_match.group("prefix") + \
+            utils.three_digits(next_layer_number - 1 if layer_forms else next_layer_number)
+        deposition_form = DepositionForm(post_data)
 
-    return structure_changed, deposition_form, add_layer_form
+        change_layer_forms = []
+        for layer_form in layer_forms:
+            change_layer_forms.append(ChangeLayerForm(prefix=layer_form.prefix))
+
+    return structure_changed, deposition_form, layer_forms, change_layer_forms, add_layer_form
 
 def is_all_valid(deposition_form, layer_forms, change_layer_forms, add_layer_form):
     all_valid = deposition_form.is_valid()
@@ -120,7 +130,7 @@ def add(request):
         add_layer_form = AddLayerForm(request.POST)
         layer_forms, change_layer_forms = forms_from_post_data(request.POST)
         all_valid = is_all_valid(deposition_form, layer_forms, change_layer_forms, add_layer_form)
-        structure_changed, deposition_form, add_layer_form = \
+        structure_changed, deposition_form, layer_forms, change_layer_forms, add_layer_form = \
             change_structure(deposition_form, layer_forms, change_layer_forms, add_layer_form)
     else:
         deposition_form = DepositionForm(initial={"number": utils.get_next_deposition_number("L-")})
