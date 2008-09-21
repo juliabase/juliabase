@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
+import re, datetime
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -9,13 +9,16 @@ from chantal.samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
+import django.contrib.auth.models
 from chantal.samples.views.utils import check_permission
 from chantal.samples.views import utils
 
 class DepositionForm(forms.ModelForm):
     _ = ugettext_lazy
+    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     class Meta:
         model = models.LargeAreaDeposition
+        exclude = ("external_operator",)
 
 class LayerForm(forms.ModelForm):
     _ = ugettext_lazy
@@ -49,15 +52,17 @@ def forms_from_post_data(post_data):
     return layer_forms, change_layer_forms
 
 def change_structure(deposition_form, layer_forms, change_layer_forms, add_layer_form):
+    deposition_number_pattern = re.compile(ur"(?P<prefix>%02dL-)(?P<number>\d+)$" % (datetime.date.today().year % 100))
     structure_changed = False
     layer_numbers = [layer_form.cleaned_data["number"] for layer_form in layer_forms if layer_form.is_valid()]
     if layer_numbers:
         next_layer_number = max(layer_numbers) + 1
     elif deposition_form.is_valid():
-        match = re.match(ur"\d\dL-(\d+)", deposition_form.cleaned_data["number"])
-        next_layer_number = int(match.group(1)) + 1 if match else 1
+        match = deposition_number_pattern.match(deposition_form.cleaned_data["number"])
+        next_layer_number = int(match.group("number")) if match else 1
     else:
         next_layer_number = None
+    next_layer_number = max(next_layer_number, 1)
 
     # Duplicate layers
     old_layer_length = len(layer_forms)
@@ -65,7 +70,7 @@ def change_structure(deposition_form, layer_forms, change_layer_forms, add_layer
         layer_form, change_layer_form = layer_forms[layer_index], change_layer_forms[layer_index]
         if layer_form.is_valid() and change_layer_form.is_valid() and change_layer_form.cleaned_data["duplicate_this_layer"]:
             layer_data = layer_form.cleaned_data
-            layer_data["number"] = next_layer_number
+            layer_data["number"] = u"%03d" % next_layer_number
             next_layer_number += 1
             layer_forms.append(LayerForm(initial=layer_data, prefix=str(old_layer_length + layer_index)))
             change_layer_forms.append(ChangeLayerForm(prefix=str(old_layer_length + layer_index)))
@@ -88,6 +93,15 @@ def change_structure(deposition_form, layer_forms, change_layer_forms, add_layer
         if change_layer_forms[layer_index].is_valid() and change_layer_forms[layer_index].cleaned_data["remove_this_layer"]:
             del layer_forms[layer_index], change_layer_forms[layer_index]
             structure_changed = True
+
+    if deposition_form.is_valid():
+        match = deposition_number_pattern.match(deposition_form.cleaned_data["number"])
+        if match:
+            deposition_data = deposition_form.cleaned_data
+            deposition_data["operator"] = \
+                django.contrib.auth.models.User.objects.get(username=deposition_data["operator"]).pk
+            deposition_data["number"] = match.group("prefix") + u"%03d" % (next_layer_number-1)
+            deposition_form = DepositionForm(initial=deposition_data)
 
     return structure_changed, deposition_form, add_layer_form
 
