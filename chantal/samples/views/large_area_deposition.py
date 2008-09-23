@@ -4,13 +4,14 @@
 import re, datetime
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core.urlresolvers
 import django.contrib.auth.models
+from django.db.models import Q
 from chantal.samples.views.utils import check_permission
 from chantal.samples.views import utils
 
@@ -38,12 +39,10 @@ class DepositionForm(forms.ModelForm):
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, user, data=None, **keyw):
-        initial = keyw.get("initial", {})
-        initial.update({"operator": user.pk, "timestamp": datetime.datetime.now(),
-                        "number": utils.get_next_deposition_number("L-")})
-        keyw["initial"] = initial
         super(DepositionForm, self).__init__(data, **keyw)
         self.fields["number"].widget.attrs["readonly"] = "readonly"
+    def validate_unique(self):
+        pass
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)
@@ -81,13 +80,16 @@ class FormSet(object):
     def __init__(self, user, deposition_number):
         self.user = user
         self.user_details = self.user.get_profile()
-        self.deposition = get_object_or_404(LargeAreaDeposition, number=deposition_number) if deposition_number else None
+        self.deposition = \
+            get_object_or_404(models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layer_form = self.samples_form = None
         self.layer_forms = self.change_layer_forms = []
         self.post_data = None
     def from_post_data(self, post_data):
         self.post_data = post_data
-        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
+        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition,
+                                              initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
+                                                       "number": utils.get_next_deposition_number("L-")})
         self.add_layer_form = AddLayerForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
         # FixMe: Normalisation is not necessary
@@ -100,10 +102,14 @@ class FormSet(object):
         if self.deposition:
             # Normal edit of existing deposition
             self.deposition_form = DepositionForm(self.user, instance=self.deposition)
-            self.layer_forms, self.channel_form_lists = forms_from_database(self.deposition)
+            self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer)
+                                for layer_index, layer in enumerate(self.deposition.layers.all())]
+            self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         else:
             # New deposition, or duplication has failed
-            self.deposition_form = DepositionForm(self.user)
+            self.deposition_form = DepositionForm(
+                self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
+                                    "number": utils.get_next_deposition_number("L-")})
             self.layer_forms, self.change_layer_forms = [], []
         self.add_layer_form = AddLayerForm()
         self.samples_form = SamplesForm(self.user_details, self.deposition)
@@ -132,7 +138,10 @@ class FormSet(object):
                 structure_changed = True
 
         if structure_changed:
-            next_full_number = utils.get_next_deposition_number("L-")
+            if self.deposition:
+                next_full_number = self.deposition_prefix + utils.three_digits(self.deposition.layers.all()[0].number)
+            else:
+                next_full_number = utils.get_next_deposition_number("L-")
             deposition_number_match = self.deposition_number_pattern.match(next_full_number)
             next_layer_number = int(deposition_number_match.group("number"))
             old_prefixes = [int(layer_form.prefix) for layer_form in self.layer_forms if layer_form.is_bound]
@@ -193,19 +202,25 @@ class FormSet(object):
                     number__startswith=self.deposition_prefix).values_list("number", flat=True).all()
                 deposition_numbers = [int(number[len(self.deposition_prefix):]) for number in deposition_numbers]
                 max_deposition_number = max(deposition_numbers) if deposition_numbers else 0
-                if not self.deposition or self.deposition_form.cleaned_data["number"] != deposition.number:
-                    if number_only < max_deposition_number + len(self.layer_forms):
-                        utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
+                if self.deposition:
+                    if self.layer_forms and self.layer_forms[0].is_valid() and \
+                            self.layer_forms[0].cleaned_data["number"] != self.deposition.layers.all()[0].number:
+                        utils.append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
                         referentially_valid = False
-                else:
-                    higher_deposition_numbers = [number for number in deposition_numbers if number >= number_only]
+                    old_number_only = int(self.deposition_number_pattern.match(self.deposition.number).group("number"))
+                    higher_deposition_numbers = [number for number in deposition_numbers if number > old_number_only]
                     if higher_deposition_numbers:
                         next_number = min(higher_deposition_numbers)
                         number_of_next_layers = models.LargeAreaDeposition.objects.get(
-                            name=self.deposition_prefix+utils.three_digits(next_number)).layers.count()
+                            number=self.deposition_prefix+utils.three_digits(next_number)).layers.count()
                         if number_only + number_of_next_layers > next_number:
                             utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
                             referentially_valid = False
+                else:
+                    if self.layer_forms and self.layer_forms[0].is_valid() and \
+                            self.layer_forms[0].cleaned_data["number"] <= max_deposition_number:
+                        utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
+                        referentially_valid = False
                 for i, layer_form in enumerate(self.layer_forms):
                     if layer_form.is_valid() and \
                             layer_form.cleaned_data["number"] - i + len(self.layer_forms) - 1 != number_only:
@@ -225,7 +240,7 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-        return database_ready
+                return deposition
     def get_context_dict(self):
         return {"deposition": self.deposition_form, "samples": self.samples_form,
                 "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms), "add_layer": self.add_layer_form}
@@ -236,9 +251,10 @@ def edit(request, deposition_number):
     form_set = FormSet(request.user, deposition_number)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
-        if form_set.save_to_database():
+        deposition = form_set.save_to_database()
+        if deposition:
             request.session["success_report"] = \
-                _(u"Deposition %s was successfully changed in the database.") % deposition_number
+                _(u"Deposition %s was successfully changed in the database.") % deposition.number
             return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     else:
         form_set.from_database()
