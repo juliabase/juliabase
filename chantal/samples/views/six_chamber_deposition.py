@@ -70,8 +70,6 @@ class DepositionForm(ModelForm):
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
-        # FixMe: Maybe removing ".fields" would also work.  Affects some other
-        # modules, too.
         self.fields["timestamp"].widget = split_widget
         self.fields["sample_list"].queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
