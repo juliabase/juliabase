@@ -14,6 +14,33 @@ import django.contrib.auth.models
 from chantal.samples.views.utils import check_permission
 from chantal.samples.views import utils
 
+class SamplesForm(forms.Form):
+    _ = ugettext_lazy
+    sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
+    def __init__(self, user_details, data=None, **keyw):
+        u"""Form constructor.  I have to initialise a couple of things here in
+        a non-trivial way, especially those that I have added myself
+        (``sample_list`` and ``operator``).
+        """
+        deposition = keyw.get("instance")
+        initial = keyw.get("initial", {})
+        if deposition:
+            # Mark the samples of the deposition in the choise field
+            initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
+        keyw["initial"] = initial
+        super(DepositionForm, self).__init__(data, **keyw)
+        # FixMe: Maybe removing ".fields" would also work.  Affects some other
+        # modules, too.
+        self.fields["sample_list"].queryset = \
+            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
+            else user_details.my_samples
+        self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
+    def clean_sample_list(self):
+        sample_list = list(set(self.cleaned_data["sample_list"]))
+        if not sample_list:
+            raise ValidationError(_(u"You must mark at least one sample."))
+        return sample_list
+
 class DepositionForm(forms.ModelForm):
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
@@ -43,17 +70,20 @@ class ChangeLayerForm(forms.Form):
         return self.cleaned_data
 
 class FormSet(object):
-    deposition_prefix = u"02dL-" % (datetime.date.today().year % 100)
+    deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
     deposition_number_pattern = re.compile(ur"(?P<prefix>%s)(?P<number>\d+)$" % re.escape(deposition_prefix))
-    def __init__(self, request, deposition_number):
-        self.post_data = request.POST
+    def __init__(self, user, deposition_number):
+        self.user = user
+        self.user_details = self.user.get_profile()
         self.deposition = get_object_or_404(LargeAreaDeposition, number=deposition_number) if deposition_number else None
-        self.deposition_form = self.add_layer_form = None
+        self.deposition_form = self.add_layer_form = self.samples_form = None
         self.layer_forms = self.change_layer_forms = []
         self.post_data = None
-    def from_post_data(self):
+    def from_post_data(self, post_data):
+        self.post_data = post_data
         self.deposition_form = DepositionForm(self.post_data, instance=self.deposition)
         self.add_layer_form = AddLayerForm(self.post_data)
+        self.samples_form = SamplesForm(self.user_details, self.post_data, instance=self.deposition)
         # FixMe: Normalisation is not necessary
         self.post_data, number_of_layers, __ = utils.normalize_prefixes(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in range(number_of_layers)]
@@ -69,7 +99,8 @@ class FormSet(object):
             # New deposition, or duplication has failed
             self.deposition_form = DepositionForm(initial={"number": utils.get_next_deposition_number("L-")})
             self.layer_forms, self.change_layer_forms = [], []
-        self.add_layer_deposition = AddLayerDeposition()
+        self.add_layer_form = AddLayerForm()
+        self.samples_form = SamplesForm(self.user_details, instance=self.deposition)
     def _change_structure(self):
         structure_changed = False
         new_layers = [("original", layer_form) for layer_form in self.layer_forms]
@@ -136,6 +167,7 @@ class FormSet(object):
         all_valid = True
         all_valid = self.deposition_form.is_valid()
         all_valid = self.add_layer_form.is_valid() and all_valid
+        all_valid = self.samples_form.is_valid() and all_valid
         all_valid = all([layer_form.is_valid() for layer_form in self.layer_forms]) and all_valid
         all_valid = all([change_layer_form.is_valid() for change_layer_form in self.change_layer_forms]) and all_valid
         return all_valid
@@ -160,7 +192,7 @@ class FormSet(object):
                         utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
                         referentially_valid = False
                 else:
-                    higher_deposition_numbers = [number for number in deposition_numbers if number > number_only]
+                    higher_deposition_numbers = [number for number in deposition_numbers if number >= number_only]
                     if higher_deposition_numbers:
                         next_number = min(higher_deposition_numbers)
                         number_of_next_layers = models.LargeAreaDeposition.objects.get(
@@ -179,18 +211,18 @@ class FormSet(object):
         structure_changed = self.change_structure()
         database_ready = database_ready and not structure_changed
         database_ready = self._is_referentially_valid() and database_ready
-
-        # FixMe: Write to database
-
+        if database_ready:
+            # FixMe: Write to database
+            pass
         return database_ready
     def get_context_dict(self):
-        return {"deposition": self.deposition_form, "layers": self.layer_forms,
+        return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
                 "change_layers": self.change_layer_forms, "add_layer": self.add_layer_form}
 
 @login_required
 @check_permission("change_largeareadeposition")
 def edit(request, deposition_number):
-    form_set = FormSet()
+    form_set = FormSet(request.user)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         if form_set.save_to_database():
