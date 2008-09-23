@@ -6,7 +6,8 @@
 <form method="post" action="">
   <table>
     {{ deposition }}
-    {% for layer, change_layer in layer_and_change_layer %}
+    {{ samples }}
+    {% for layer, change_layer in layers_and_change_layers %}
       <table>
         {{ layer }}
         {{ change_layer }}
