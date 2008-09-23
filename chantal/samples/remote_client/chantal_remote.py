@@ -20,8 +20,7 @@ class ChantalConnection(object):
             raise Exception("Login failed")
         # FixMe: Test whether login was successful
         self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
-    def open(self, relative_url, data=None, parse_response="None"):
-        # `parse_response` may be ``None``, "html", or "pickle"
+    def open(self, relative_url, data=None):
         if data is not None:
             cleaned_data = {}
             for key, value in data.iteritems():
@@ -60,8 +59,7 @@ class ChantalConnection(object):
                                           "purpose": purpose,
                                           "tags": tags,
                                           "group": self.primary_keys["groups"].get(group),
-                                          "currently_responsible_person": self.primary_keys["users"][self.username]},
-                         parse_response="pickle")
+                                          "currently_responsible_person": self.primary_keys["users"][self.username]})
     def close(self):
         if not self.open("logout_remote_client"):
             raise Exception("Logout failed")
@@ -85,7 +83,7 @@ class SixChamberDeposition(object):
                 "sample_list": self.sample_id}
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
-        return connection.open("6-chamber_depositions/add/", data, parse_response="html")
+        return connection.open("6-chamber_depositions/add/", data)
 
 class SixChamberLayer(object):
     def __init__(self, deposition):
