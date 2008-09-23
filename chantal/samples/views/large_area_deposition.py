@@ -17,18 +17,17 @@ from chantal.samples.views import utils
 class SamplesForm(forms.Form):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    def __init__(self, user_details, data=None, **keyw):
+    def __init__(self, user_details, deposition, data=None, **keyw):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
         (``sample_list`` and ``operator``).
         """
-        deposition = keyw.get("instance")
         initial = keyw.get("initial", {})
         if deposition:
             # Mark the samples of the deposition in the choise field
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
-        super(DepositionForm, self).__init__(data, **keyw)
+        super(SamplesForm, self).__init__(data, **keyw)
         # FixMe: Maybe removing ".fields" would also work.  Affects some other
         # modules, too.
         self.fields["sample_list"].queryset = \
@@ -44,6 +43,12 @@ class SamplesForm(forms.Form):
 class DepositionForm(forms.ModelForm):
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    def __init__(self, user, data=None, **keyw):
+        initial = keyw.get("initial", {})
+        initial.update({"operator": user.pk, "timestamp": datetime.datetime.now(),
+                        "number": utils.get_next_deposition_number("L-")})
+        keyw["initial"] = initial
+        super(DepositionForm, self).__init__(data, **keyw)
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)
@@ -81,9 +86,9 @@ class FormSet(object):
         self.post_data = None
     def from_post_data(self, post_data):
         self.post_data = post_data
-        self.deposition_form = DepositionForm(self.post_data, instance=self.deposition)
+        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
         self.add_layer_form = AddLayerForm(self.post_data)
-        self.samples_form = SamplesForm(self.user_details, self.post_data, instance=self.deposition)
+        self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
         # FixMe: Normalisation is not necessary
         self.post_data, number_of_layers, __ = utils.normalize_prefixes(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in range(number_of_layers)]
@@ -93,14 +98,14 @@ class FormSet(object):
         # FixMe: Duplication still missing
         if self.deposition:
             # Normal edit of existing deposition
-            self.deposition_form = DepositionForm(instance=self.deposition)
+            self.deposition_form = DepositionForm(self.user, instance=self.deposition)
             self.layer_forms, self.channel_form_lists = forms_from_database(self.deposition)
         else:
             # New deposition, or duplication has failed
-            self.deposition_form = DepositionForm(initial={"number": utils.get_next_deposition_number("L-")})
+            self.deposition_form = DepositionForm(self.user)
             self.layer_forms, self.change_layer_forms = [], []
         self.add_layer_form = AddLayerForm()
-        self.samples_form = SamplesForm(self.user_details, instance=self.deposition)
+        self.samples_form = SamplesForm(self.user_details, self.deposition)
     def _change_structure(self):
         structure_changed = False
         new_layers = [("original", layer_form) for layer_form in self.layer_forms]
@@ -157,7 +162,7 @@ class FormSet(object):
             post_data = self.post_data.copy()
             post_data["number"] = deposition_number_match.group("prefix") + \
                 utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
-            self.deposition_form = DepositionForm(post_data)
+            self.deposition_form = DepositionForm(self.user, post_data)
 
             self.change_layer_forms = []
             for layer_form in self.layer_forms:
@@ -177,7 +182,7 @@ class FormSet(object):
             utils.append_error(self.deposition_form, _(u"No layers given."))
             referentially_valid = False
         if self.deposition_form.is_valid():
-            match = deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
+            match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
             if not match:
                 utils.append_error(self.deposition_form, _(u"Invalid deposition number format."))
                 referentially_valid = False
@@ -208,7 +213,7 @@ class FormSet(object):
         return referentially_valid
     def save_to_database(self):
         database_ready = self._is_all_valid()
-        structure_changed = self.change_structure()
+        structure_changed = self._change_structure()
         database_ready = database_ready and not structure_changed
         database_ready = self._is_referentially_valid() and database_ready
         if database_ready:
@@ -221,13 +226,13 @@ class FormSet(object):
                 layer.save()
         return database_ready
     def get_context_dict(self):
-        return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
-                "change_layers": self.change_layer_forms, "add_layer": self.add_layer_form}
+        return {"deposition": self.deposition_form, "samples": self.samples_form,
+                "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms), "add_layer": self.add_layer_form}
 
 @login_required
 @check_permission("change_largeareadeposition")
 def edit(request, deposition_number):
-    form_set = FormSet(request.user)
+    form_set = FormSet(request.user, deposition_number)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         if form_set.save_to_database():
@@ -235,7 +240,7 @@ def edit(request, deposition_number):
                 _(u"Deposition %s was successfully changed in the database.") % deposition_number
             return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     else:
-        form_set.from_database(request, deposition_number)
+        form_set.from_database()
     title = _(u"Large-area deposition “%s”") % deposition_number if deposition_number else _(u"Add large-area deposition")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
