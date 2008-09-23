@@ -191,6 +191,7 @@ def append_error(form, error_message, fieldname="__all__"):
     :type fieldname: str
     :type error_message: unicode
     """
+    form.is_valid()
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
 class _PermissionCheck(object):
@@ -897,3 +898,6 @@ def respond_to_remote_client(value):
     :rtype: ``HttpResponse``
     """
     return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle; charset=ascii")
+
+def three_digits(number):
+    return u"%03d" % number
