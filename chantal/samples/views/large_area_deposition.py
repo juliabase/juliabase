@@ -24,8 +24,6 @@ class SamplesForm(forms.Form):
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
         super(SamplesForm, self).__init__(data, **keyw)
-        # FixMe: Maybe removing ".fields" would also work.  Affects some other
-        # modules, too.
         self.fields["sample_list"].queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
             else user_details.my_samples
@@ -53,6 +51,9 @@ class DepositionForm(forms.ModelForm):
 class LayerForm(forms.ModelForm):
     _ = ugettext_lazy
     def __init__(self, *args, **keyw):
+        initial = keyw.get("initial", {})
+        initial["date"] = datetime.date.today()
+        keyw["initial"] = initial
         super(LayerForm, self).__init__(*args, **keyw)
         self.fields["number"].widget.attrs["readonly"] = "readonly"
     class Meta:
@@ -187,7 +188,7 @@ class FormSet(object):
                 utils.append_error(self.deposition_form, _(u"Invalid deposition number format."))
                 referentially_valid = False
             else:
-                number_only = match.group("number")
+                number_only = int(match.group("number"))
                 deposition_numbers = models.LargeAreaDeposition.objects.filter(
                     number__startswith=self.deposition_prefix).values_list("number", flat=True).all()
                 deposition_numbers = [int(number[len(self.deposition_prefix):]) for number in deposition_numbers]
@@ -208,7 +209,7 @@ class FormSet(object):
                 for i, layer_form in enumerate(self.layer_forms):
                     if layer_form.is_valid() and \
                             layer_form.cleaned_data["number"] - i + len(self.layer_forms) - 1 != number_only:
-                        utils.append_error(self.layer_form, _(u"Layer number is not consecutive."))
+                        utils.append_error(layer_form, _(u"Layer number is not consecutive."))
                         referentially_valid = False
         return referentially_valid
     def save_to_database(self):
@@ -221,7 +222,7 @@ class FormSet(object):
             deposition.samples = self.samples_form.cleaned_data["sample_list"]
             deposition.layers.all().delete()
             for layer_form in self.layer_forms:
-                layer = layer_form.save()
+                layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
         return database_ready
