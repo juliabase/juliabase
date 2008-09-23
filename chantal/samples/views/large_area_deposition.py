@@ -212,8 +212,13 @@ class FormSet(object):
         database_ready = database_ready and not structure_changed
         database_ready = self._is_referentially_valid() and database_ready
         if database_ready:
-            # FixMe: Write to database
-            pass
+            deposition = self.deposition_form.save()
+            deposition.samples = self.samples_form.cleaned_data["sample_list"]
+            deposition.layers.all().delete()
+            for layer_form in self.layer_forms:
+                layer = layer_form.save()
+                layer.deposition = deposition
+                layer.save()
         return database_ready
     def get_context_dict(self):
         return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
