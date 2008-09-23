@@ -18,10 +18,6 @@ class SamplesForm(forms.Form):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
     def __init__(self, user_details, deposition, data=None, **keyw):
-        u"""Form constructor.  I have to initialise a couple of things here in
-        a non-trivial way, especially those that I have added myself
-        (``sample_list`` and ``operator``).
-        """
         initial = keyw.get("initial", {})
         if deposition:
             # Mark the samples of the deposition in the choise field
@@ -49,12 +45,16 @@ class DepositionForm(forms.ModelForm):
                         "number": utils.get_next_deposition_number("L-")})
         keyw["initial"] = initial
         super(DepositionForm, self).__init__(data, **keyw)
+        self.fields["number"].widget.attrs["readonly"] = "readonly"
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)
 
 class LayerForm(forms.ModelForm):
     _ = ugettext_lazy
+    def __init__(self, *args, **keyw):
+        super(LayerForm, self).__init__(*args, **keyw)
+        self.fields["number"].widget.attrs["readonly"] = "readonly"
     class Meta:
         model = models.LargeAreaLayer
         exclude = ("deposition",)
