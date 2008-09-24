@@ -5,6 +5,11 @@ u"""Common helper classes.  This is imported by various modules for having
 common ground for pickling and unpickling of data structures, mostly for
 statistical purposes."""
 
+from __future__ import division
+import re, datetime
+
+remote_monitor_log_file_name = "/windows/hobie/remote_monitor.log"
+
 class SystemInfo(object):
     def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5):
         self.timestamp, self.used_mem, self.used_mem_with_buffers, self.used_swap, self.load_avg_5 = \
