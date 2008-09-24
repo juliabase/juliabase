@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-20 12:31+0200\n"
-"PO-Revision-Date: 2008-09-20 12:37+0200\n"
+"POT-Creation-Date: 2008-09-24 16:09+0200\n"
+"PO-Revision-Date: 2008-09-24 16:14+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -514,11 +514,49 @@ msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
 msgid "Chantal news for %s"
 msgstr "Chantal-Neuigkeiten für %s"
 
+msgid "You must mark at least one sample."
+msgstr "Sie müssen mindestens eine Probe markieren."
+
+msgid "Operator"
+msgstr "Operator"
+
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
-msgid "Remove this layer"
+msgid "duplicate this layer"
+msgstr "diese Schicht duplizieren"
+
+msgid "remove this layer"
 msgstr "diese Schicht löschen"
+
+msgid "You can't duplicate and remove a layer at the same time."
+msgstr "Sie können nicht gleichzeitig dieselbe Schicht duplizieren und entfernen."
+
+msgid "No layers given."
+msgstr "Keine Schichten angebeben."
+
+msgid "Invalid deposition number format."
+msgstr "Ungültiges Depositionsnummer-Format."
+
+msgid "You can't change the number of the first layer."
+msgstr "Sie können nicht die Nummer des ersten Layers ändern."
+
+msgid "New layers collide with following deposition."
+msgstr "Die neuen Schichten kollidieren mit der nachfolgenden Deposition."
+
+msgid "Overlap with previous deposition numbers."
+msgstr "Überlapp mit der vorherigen Depositionsnummer."
+
+msgid "Layer number is not consecutive."
+msgstr "Die Schichtnummern nicht nicht aufeinanderfolgend."
+
+#, python-format
+msgid "Deposition %s was successfully changed in the database."
+msgstr "Die Deposition %s wurde erfolgreich in der Datenbank geändert."
+
+#, python-format
+msgid "Large-area deposition “%s”"
+msgstr "Großflächige Deposition „%s“"
 
 msgid "Add large-area deposition"
 msgstr "Großflächige Deposition hinzufügen"
@@ -598,6 +636,21 @@ msgstr "gestern, %H:%M"
 
 msgid "%A, %b %d, %Y, %H:%M"
 msgstr "%A, %d. %b %Y, %H:%M"
+
+msgid "100.0 %"
+msgstr "100,0 %"
+
+msgid "%b %d, %Y, %H:%M"
+msgstr "%d. %b %Y, %H:%M"
+
+msgid "%H:%M"
+msgstr "%H:%M"
+
+#, python-format
+msgid "%(from)s until %(to)s (%(minutes)d minute)"
+msgid_plural "%(from)s until %(to)s (%(minutes)d minutes)"
+msgstr[0] "%(from)s bis %(to)s (%(minutes)d Minute)"
+msgstr[1] "%(from)s bis %(to)s (%(minutes)d Minuten)"
 
 #, python-format
 msgid "for %(time)s"
@@ -747,12 +800,6 @@ msgstr "Entferne deponierte Proben von Meine Proben"
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-msgid "Operator"
-msgstr "Operator"
-
-msgid "You must mark at least one sample."
-msgstr "Sie müssen mindestens eine Probe markieren."
-
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
@@ -762,15 +809,8 @@ msgstr "Dieser Gastyp ist unbekannt."
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-msgid "No layers given."
-msgstr "Keine Schichten angebeben."
-
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
-
-#, python-format
-msgid "Deposition %s was successfully changed in the database."
-msgstr "Die Deposition %s wurde erfolgreich in der Datenbank geändert."
 
 #, python-format
 msgid "Deposition %s was successfully added to the database."
@@ -1044,9 +1084,6 @@ msgstr "Fehler in Deposition"
 msgid "Layer error"
 msgstr "Fehler in Schicht"
 
-msgid "duplicate this layer"
-msgstr "diese Schicht duplizieren"
-
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
 
@@ -1269,6 +1306,22 @@ msgstr "Webserver"
 
 msgid "database server"
 msgstr "Datenbank-Server"
+
+msgid "Overall uptime/downtime data"
+msgstr "Generelle Uptime/Downtime"
+
+msgid "No data available."
+msgstr "Keine Daten verfügbar."
+
+#, python-format
+msgid "(Counted since %(start_date)s.)"
+msgstr "(Gerechnet ab %(start_date)s.)"
+
+msgid "Availability:"
+msgstr "Verfügbarkeit:"
+
+msgid "Latest 10 downtimes:"
+msgstr "Letzte 10 Ausfälle:"
 
 msgid "Work load"
 msgstr "Arbeitslast"
