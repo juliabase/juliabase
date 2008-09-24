@@ -52,9 +52,10 @@ class ChantalConnection(object):
             logfile.close()
             raise Exception("Response was not in pickle format!")
     def get_new_samples(self, number_of_samples, current_location, substrate=u"asahi-u",
-                        purpose=None, tags=None, group=None):
+                        timestamp=None, purpose=None, tags=None, group=None):
         return self.open("samples/add/", {"number_of_samples": number_of_samples,
                                           "current_location": current_location,
+                                          "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                                           "substrate": substrate,
                                           "purpose": purpose,
                                           "tags": tags,
