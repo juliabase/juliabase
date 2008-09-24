@@ -61,7 +61,7 @@ class Availability(object):
         for line in open(logfile_name):
             linematch = self.line_pattern.match(line.strip())
             if linematch:
-                date = datetime.datetime.strptime("%Y-%m-%d %H:%M:%S", linematch.group("date"))
+                date = datetime.datetime.strptime(linematch.group("date"), "%Y-%m-%d %H:%M:%S")
                 if self.start_of_log is None:
                     self.start_of_log = date
                 type_ = linematch.group("type")
