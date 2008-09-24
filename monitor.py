@@ -13,11 +13,7 @@ It is not necessary to be root for this, however, it may be necessary to adjust
 from __future__ import division
 import subprocess, datetime, re, os, pickle, time
 from copy import copy
-
-class SystemInfo(object):
-    def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5):
-        self.timestamp, self.used_mem, self.used_mem_with_buffers, self.used_swap, self.load_avg_5 = \
-            timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5
+from chantal.common import SystemInfo, Availability
 
 filename = "/home/bronger/repos/chantal/online/monitor.pickle"
 remote_monitor_log_file_name = "/windows/hobie/remote_monitor.log"
@@ -50,33 +46,6 @@ if isinstance(monitor_data[0], tuple):
     monitor_data = []
     for data in old_monitor_data:
         monitor_data.append(SystemInfo(data[0], data[1], data[2], 0, data[3]+1))
-
-class Availability(object):
-    line_pattern = re.compile(ur"(?P<date>[-0-9 :]+)\s+(?P<type>[A-Z]+)\s+(?P<message>.*)")
-    def __init__(self, logfile_name=remote_monitor_log_file_name):
-        self.downtime_intervals = []
-        self.start_of_log = None
-        up = down = 0
-        start = None
-        for line in open(logfile_name):
-            linematch = self.line_pattern.match(line.strip())
-            if linematch:
-                date = datetime.datetime.strptime(linematch.group("date"), "%Y-%m-%d %H:%M:%S")
-                if self.start_of_log is None:
-                    self.start_of_log = date
-                type_ = linematch.group("type")
-                if type_ == "ERROR":
-                    if start is None:
-                        start = date
-                    down += 1
-                elif type_ == "INFO":
-                    if start is not None:
-                        self.downtime_intervals.append((start, date))
-                        start = None
-                    up += 1
-        if start is not None:
-            self.downtime_intervals.append((start, date))
-        self.availability = up / (up + down) if up or down else None
 
 while True:
     now = datetime.datetime.now()

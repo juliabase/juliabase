@@ -21,6 +21,7 @@ import django
 from django.conf import settings
 from chantal.samples.views import utils
 from chantal.samples.views.utils import help_link
+from chantal.common import Availability
 
 class MySeries(object):
     u"""Helper class to pass sample series data to the main menu template.  It
