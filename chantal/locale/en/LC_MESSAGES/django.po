@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-20 12:31+0200\n"
+"POT-Creation-Date: 2008-09-24 16:09+0200\n"
 "PO-Revision-Date: 2008-09-01 09:17+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -513,10 +513,48 @@ msgstr ""
 msgid "Chantal news for %s"
 msgstr ""
 
+msgid "You must mark at least one sample."
+msgstr ""
+
+msgid "Operator"
+msgstr ""
+
 msgid "Number of layers to be added"
 msgstr ""
 
-msgid "Remove this layer"
+msgid "duplicate this layer"
+msgstr ""
+
+msgid "remove this layer"
+msgstr ""
+
+msgid "You can't duplicate and remove a layer at the same time."
+msgstr ""
+
+msgid "No layers given."
+msgstr ""
+
+msgid "Invalid deposition number format."
+msgstr ""
+
+msgid "You can't change the number of the first layer."
+msgstr ""
+
+msgid "New layers collide with following deposition."
+msgstr ""
+
+msgid "Overlap with previous deposition numbers."
+msgstr ""
+
+msgid "Layer number is not consecutive."
+msgstr ""
+
+#, python-format
+msgid "Deposition %s was successfully changed in the database."
+msgstr ""
+
+#, python-format
+msgid "Large-area deposition “%s”"
 msgstr ""
 
 msgid "Add large-area deposition"
@@ -597,6 +635,21 @@ msgstr ""
 
 msgid "%A, %b %d, %Y, %H:%M"
 msgstr ""
+
+msgid "100.0 %"
+msgstr ""
+
+msgid "%b %d, %Y, %H:%M"
+msgstr ""
+
+msgid "%H:%M"
+msgstr ""
+
+#, python-format
+msgid "%(from)s until %(to)s (%(minutes)d minute)"
+msgid_plural "%(from)s until %(to)s (%(minutes)d minutes)"
+msgstr[0] ""
+msgstr[1] ""
 
 #, python-format
 msgid "for %(time)s"
@@ -743,12 +796,6 @@ msgstr ""
 msgid "Nickname of My Layer to be added"
 msgstr ""
 
-msgid "Operator"
-msgstr ""
-
-msgid "You must mark at least one sample."
-msgstr ""
-
 msgid "Name is unknown."
 msgstr ""
 
@@ -758,14 +805,7 @@ msgstr ""
 msgid "This deposition number exists already."
 msgstr ""
 
-msgid "No layers given."
-msgstr ""
-
 msgid "Number is a duplicate."
-msgstr ""
-
-#, python-format
-msgid "Deposition %s was successfully changed in the database."
 msgstr ""
 
 #, python-format
@@ -1022,9 +1062,6 @@ msgstr ""
 msgid "Layer error"
 msgstr ""
 
-msgid "duplicate this layer"
-msgstr ""
-
 msgid "delete this layer"
 msgstr ""
 
@@ -1225,6 +1262,22 @@ msgid "web server"
 msgstr ""
 
 msgid "database server"
+msgstr ""
+
+msgid "Overall uptime/downtime data"
+msgstr ""
+
+msgid "No data available."
+msgstr ""
+
+#, python-format
+msgid "(Counted since %(start_date)s.)"
+msgstr ""
+
+msgid "Availability:"
+msgstr ""
+
+msgid "Latest 10 downtimes:"
 msgstr ""
 
 msgid "Work load"
