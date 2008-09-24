@@ -30,9 +30,7 @@ def test_connection():
         raise Exception("Logout response was not True.")
 
 def send_error_email(error_message):
-    print "Hallo1"
     s = smtplib.SMTP("mailrelay.fz-juelich.de")
-    print "Hallo2"
     message = MIMEText((u"Der automatische Chantal-Monitor meldet folgenden Fehler:\n%s" %
                         error_message).encode("utf-8"), _charset = "utf-8")
     message["Subject"] = "Chantal-Monitor Fehlerbericht"
