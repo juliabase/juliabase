@@ -1,0 +1,249 @@
+\documentclass[german,11pt]{article}
+
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpple}
+\usepackage[a4paper]{geometry}
+% \usepackage{courier}
+%\usepackage[scaled=0.9]{beramono}
+\usepackage{listings}
+\usepackage{xspace}
+
+\newcommand{\IEF}{\mbox{IEF-5}\xspace}
+
+\newbox\toll
+\setbox\toll=\hbox{\ttfamily\small t}
+
+\lstset{language=python, basicstyle=\ttfamily\small,
+  keywordstyle=\small\sffamily\bfseries, numbers=left,
+  numberstyle=\footnotesize, basewidth=\wd\toll,
+  morekeywords=as, escapeinside={(*}{*)}}
+
+
+\title{Der Chantal Remote-Client}
+\author{Torsten Bronger}
+\date{24.~September 2008}
+
+\begin{document}
+\nonfrenchspacing
+\maketitle
+
+\begin{abstract}
+  Der „Chantal Remote-Client“ ist ein kleines Programm, das es ermöglicht, von
+  einem beliebigen Computer des Instituts Daten in die Datenbank automatisiert
+  einzutragen (und auszulesen).
+
+  Warum das ganze?  Damit man an Apparaturen, an denen das sinnvoll ist, die
+  Daten, die dort produziert werden und die für die Datenbank interessant sind,
+  in dieselbe hineinschreiben kann, ohne daß der Operateur noch mal im Browser
+  die ganzen Daten abtippen muß.  Denn letzteres ist umständlich und
+  fehleranfällig.
+\end{abstract}
+
+\tableofcontents
+
+\section{Das Problem}
+
+Die Datenbank ist nur sinnvoll, wenn da auch alle relevanten Daten drinstehen.
+Die beste Möglichkeit, die Datenbank fehlerfrei und vollständig zu halten ist,
+daß die datengenerierenden System (Depositionen, Meßapparaturen) automatisch
+die Daten an die Datenbank übermitteln.
+
+Nur wie?  Der Browser schickt Daten an die Datenbank über das HTTP-Protokoll.
+Und das ist auch das einzige Tor zur Datenbank, damit alle Daten an denselben
+Überprüfungen und Authentifizierungen vorbei müssen.  Also müssen die
+(Meß"~)""Systeme ihre Daten ebenso über HTTP an den Datenbank-Server schicken.
+
+Das führt zu zwei Problemen:
+\begin{enumerate}
+\item Die Programmierer im Institut wissen nicht, wie sie Daten per HTTP
+  verschicken.  (Ist ja auch keine besonders aufregende Erfahrung~…)
+\item Nicht alle Programmiersprachen und Systeme im \IEF \emph{können}
+  überhaupt Daten per HTTP verschicken.
+\end{enumerate}
+
+Im Institut kommen sehr verschiedene Programmiersysteme zum Einsatz: HT\,Basic,
+LabVIEW, Delphi, Python etc.  Außerdem gibt es Systeme, zu denen wir nicht den
+Quellcode haben, die aber u.\,U. eine eingebaute Makro- oder Skriptsprache
+haben.  Die müssen nun alle in die Lage versetzt werden, in \emph{einfacher}
+Form Daten an den Datenbank-Server zu schicken, und eventuell sogar Daten aus
+der Datenbank auszulesen.
+
+\section{Die Lösung}
+
+Alle Systeme und alle Programmierer im \IEF sollten zumindest zwei Sachen
+können:
+\begin{enumerate}
+\item Daten in eine Textdatei schreiben bzw.\ aus ihr lesen.
+\item Ein externes, rein kommandozeilenbasiertes Programm ausführen.
+\end{enumerate}
+Und mehr ist für den Chantal Remote-Client nicht nötig!
+
+Will man also aus einem Programm heraus Daten an die Datenbank senden, muß auf
+dem jeweiligen Rechner zunächst der Remote-Client installiert sein.  Dann
+schreibt man seine „Wunschliste“ in eine Textdatei und ruft ein bestimmtes
+externes Programm auf.  Anschließend kann man in einer Log-Datei sehen, ob
+alles glattgegangen ist.  Die Log-Datei sollte man natürlich auch durch das
+eigene Programm auslesen lassen.
+
+\section{Installation des Remote-Clients}
+
+To be done~…
+
+\section{Grundlegendes}
+
+Technisch gesehen ist die Textdatei, die man schreiben muß, ein
+Python-Programm.  Python ist eine höhere Programmiersprache.  Das, was man zum
+übermitteln benötigt, ist zwar so einfach, daß man kaum merkt, daß man
+irgendwas programmiert, aber theoretisch steht einem der komplette Sprachschatz
+von Python zur Verfügung.
+
+Eine Datei für den Remote-Client beginnt immer mit
+\begin{lstlisting}
+from chantal_remote import *
+\end{lstlisting}
+Das bedeutet, daß alle Funktionen des Moduls \lstinline{chantal_remote}
+eingebunden werden.
+
+In Python ist die Einrückung der Zeilen wichtig.  Achtet deshalb darauf, daß
+alle Zeilen in der ersten Spalte beginnen.  Benutzt keine Sonderzeichen
+(deutsche Umlaute o.\,ä.).  Solltet ihr sowas dennoch brauchen, kontaktiert
+mich.
+
+Alle Zeilen, die mit einer Raute~\lstinline{#} beginnen, werden als
+Kommentarzeilen ignoriert:
+\begin{lstlisting}
+# Programm zum uebersenden von 6-Kammer-Depositionen
+from chantal_remote import *
+\end{lstlisting}
+
+
+\subsection{Einloggen und ausloggen}
+
+Es ist wichtig, sich beim Server zu identifizieren.  Dazu muß man sich zu
+Beginn der Datei einloggen und sich zuletzt auch wieder ausloggen:
+\begin{lstlisting}
+from chantal_remote import *
+
+login("r.meier", "mammaistdiebeste")
+
+(*\emph{Hier nun die ganzen Daten~…} *)
+
+logout()
+\end{lstlisting}
+Dabei ist \lstinline{"r.meier"} der Loginname und
+\lstinline{"mammaistdiebeste"} das Paßwort.  Beides ist dasselbe wie für die
+freigegebenen Verzeichnissen und Drucker im Institut.  Im folgenden geht es nun
+darum, wie man die Daten selber angibt.
+
+Ein Wort zu Paßworten.  Sie sollte man nicht leichtfertig in Dateien
+schreiben.  Wenn man es lokal auf seinem Rechner tut und die Datei danach
+wieder löscht, ist das okay.  An einer Meßapparatur, zu der niemand sonst
+Zugriff hat, mag das auch okay sein.  Man muß aber, wenn man die Apparaur an
+jemanden anderes übergibt, sein Paßwort löschen.
+
+Besser ist es jedoch, daß das Meßprogramm verlangt, daß man ein Paßwort
+eingibt, und die Textdatei, in der das Paßwort dann steht, sofort nach Gebrauch
+wieder löscht.  Noch sicherer ist es, gar nicht erst eine Textdatei zu
+schreiben, sondern den Text direkt dem Python-Interpreter zu übergeben.  Das
+geht aber u.\,U. nicht mit jeder Programmiersprache.
+
+Außerdem besteht die Möglichkeit, Sammel-Benutzer anzulegen, die mit einem
+schwachen Paßwort, das einer begrenzten Zahl von Leuten bekannt ist,
+ausgestattet sind.  Zum Beispiel könnte eine Datei so anfangen:
+\begin{lstlisting}
+from chantal_remote import *
+login("pds_benutzer", "rotesocke")
+\end{lstlisting}
+
+
+\subsection{Zeitstempel}
+
+An vielen Stellen muß oder kann man sogenannte Zeitstempel angeben.  Das sind
+Strings, die angeben, wann ein Prozeß durchgeführt wurde.  Sowas wird
+grundsätzlich immer in der Form
+\begin{lstlisting}
+"JJJJ-MM-TT HH:MM:SS"
+\end{lstlisting}
+angegeben, also z.\,B. \lstinline{"2008-08-23 13:34:00"}.
+
+\section{Referenz}
+
+Was folgt, ist eine Auflistung aller bislang unterstützter Operationen anhand
+von Beispielen.
+
+\subsection{Proben hinzufügen}
+
+Man kann bis zu 100~Proben auf einen Schlag hinzufügen.  Der folgende Befehl
+legt 10 neue Proben an und gibt an, daß sie zur Zeit im MAIKE-Labor liegen:
+\begin{lstlisting}
+from chantal_remote import *
+login("r.meier", "mammaistdiebeste")
+new_samples(10, "MAIKE-Labor")
+logout()
+\end{lstlisting}
+Es gibt noch einige optionale Parameter, nämlich Substrat, Zeitstempel, Zweck,
+Tags und Gruppe, bzw.\ \lstinline{substrate}, \lstinline{timestamp},
+\lstinline{purpose}, \lstinline{tags} und \lstinline{group}.  Man könnte also
+auch schreiben:
+\begin{lstlisting}
+new_samples(10, "MAIKE-Labor", "asahi-u", "2008-08-23 13:34:00", group="SiC")
+\end{lstlisting}
+Aber \lstinline{"asahi-u"} ist eh Default, und wenn kein Zeitstempel angegeben
+wird, gilt \emph{jetzt}.  Für die Gruppe mußte ich den Parameternamen
+\lstinline|group| davorschreiben, weil ich ja \lstinline|purpose| und
+\lstinline|tags| übersprungen habe, sonst käme der Interpreter ja
+durcheinander.
+
+
+\subsection{6-Kammer-Depositionen}
+
+\begin{lstlisting}
+new_samples = new_samples(5, "6-Kammer-Labor")  (*\label{sc:Proben}*)
+
+six_chamber_deposition = SixChamberDeposition(new_samples)  (*\label{sc:deposition}*)
+six_chamber_deposition.timestamp = "2008-09-15 22:29:00"    (*\label{sc:attribute}*)
+
+layer = SixChamberLayer(six_chamber_deposition)   (*\label{sc:layer}*)
+layer.chamber = "#1"                              (*\label{sc:chamber}*)
+
+channel = SixChamberChannel(layer)                (*\label{sc:channel}*)
+channel.number = 1
+channel.gas = "SiH4"
+channel.flow_rate = 1
+
+channel = SixChamberChannel(layer)                (*\label{sc:another-channel}*)
+channel.number = 2
+channel.gas = "SiH4"
+channel.flow_rate = 2
+
+six_chamber_deposition.submit()                   (*\label{sc:submit}*)
+\end{lstlisting}
+
+Okay, was passiert hier?
+
+\begin{itemize}
+\item In Zeile~\ref{sc:Proben} hole ich mir 5~neue Proben.  Da ich mit den
+  Proben noch was vorhabe, speichere ich sie in der Variablen
+  \lstinline|new_samples|.
+\item Dann erzeuge ich eine neue 6-Kammer-Deposition in
+  Zeile~\ref{sc:deposition} mit \lstinline|SixChamberDeposition|, übergebe ihr
+  die Proben als Parameter und speichere sie in einer Variablen.
+\item In Zeile~\ref{sc:attribute} kann man sehen, wie man einem Objekt
+  Eigenschaften zuweist: Nämlich mit der beliebten Punkt-Notation.  Mit
+  \lstinline|.timestamp = |…\ kann man beispielsweise der Deposition einen
+  Zeitstempel aufdrücken.
+\item Eine Deposition braucht mindestens eine Schicht.  Den legen wir in
+  Zeile~\ref{sc:layer} an.  Man muß ihm die Depositions-Variable übergeben, zu
+  der er gehört.  In Zeile~\ref{sc:chamber} weisen wir ihm eine Kammer zu.
+\item In Zeile~\ref{sc:channel} legen wir den ersten Channel an und verbinden
+  ihn mit der Schicht, analog zu vorhin.  Außerdem weisen wir dem neuen Channel
+  ein paar Attribute zu.
+\item Damit's nicht zu langweilig ist, kommt in Zeile~\ref{sc:another-channel}
+  noch ein Channel zu derselben Schicht hinzu.
+\item Schließlich wird in Zeile~\ref{sc:submit} die Deposition mit allen
+  Schichten und Channels in die Datenbank übertragen. 
+\end{itemize}
+
+\end{document}
