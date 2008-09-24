@@ -16,7 +16,6 @@ from copy import copy
 from chantal.common import SystemInfo, Availability
 
 filename = "/home/bronger/repos/chantal/online/monitor.pickle"
-remote_monitor_log_file_name = "/windows/hobie/remote_monitor.log"
 remote_monitor_pickle_file_name = "/home/bronger/repos/chantal/online/remote_monitor.pickle"
 
 total_pattern = re.compile(r"Mem:\s*(\d+)\s+(\d+)")
