@@ -5,7 +5,8 @@ u"""Model for the main menu view and some miscellaneous views that don't have a
 better place to be (yet).
 """
 
-import string, time, os, datetime, re, pickle
+from __future__ import division
+import string, time, os, datetime, re, pickle, locale
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
@@ -283,6 +284,24 @@ def get_availability_data():
     except IOError:
         return None
     result["start_date"] = availability.start_of_log.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+    accuracy = 100000000
+    a = availability.availability
+    a = int(round(a * accuracy))
+    if availability.availability == accuracy:
+        result["availability"] = _(u"100.0 %")
+    else:
+        result["availability"] = u"%s %%" % locale.str(a*100 / accuracy)
+    result["downtimes"] = []
+    for interval in availability.downtime_intervals[-10:]:
+        minutes = int(round((interval[1] - interval[0]).seconds / 60))
+        from_ = interval[0].strftime(str(_("%b %d, %Y, %H:%M")))
+        if interval[0].date() == interval[1].date():
+            to = interval[1].strftime(str(_("%H:%M")))
+        else:
+            to = interval[1].strftime(str(_("%b %d, %Y, %H:%M")))
+        result["downtimes"].append(ungettext(u"%(from)s until %(to)s (%(minutes)d minute)",
+                                             u"%(from)s until %(to)s (%(minutes)d minutes)", minutes) %
+                                   {"from": from_, "to": to, "minutes": minutes})
     return result
 
 def statistics(request):

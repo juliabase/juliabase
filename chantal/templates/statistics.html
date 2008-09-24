@@ -50,7 +50,19 @@
 {% if not availability %}
   <p>{% trans 'No data available.' %}</p>
 {% else %}
-  <p>{% blocktrans %}(All data since {{ availability.start_date }}.){% endblocktrans %}</p>
+  <p>{% blocktrans with availability.start_date as start_date %}(Counted since {{ start_date }}.){% endblocktrans %}</p>
+
+  <p>{% trans 'Availability:' %} {{ availability.availability }}</p>
+
+  {% if availability.downtimes %}
+    <p>{% trans 'Latest 10 downtimes:' %}</p>
+
+    <ul>
+      {% for downtime in availability.downtimes %}
+        <li>{{ downtime }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endif %}
 
 
