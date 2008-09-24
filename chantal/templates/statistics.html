@@ -45,6 +45,14 @@
   </tr>
 </table>
 
+<h3>{% trans 'Overall uptime/downtime data' %}</h3>
+
+{% if not availability %}
+  <p>{% trans 'No data available.' %}</p>
+{% else %}
+  <p>{% blocktrans %}(All data since {{ availability.start_date }}.){% endblocktrans %}</p>
+{% endif %}
+
 
 <h2 style="clear:both">{% trans 'Work load' %}</h2>
 

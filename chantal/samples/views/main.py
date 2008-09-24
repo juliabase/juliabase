@@ -275,6 +275,15 @@ def get_adsm_results():
     log_file.close()
     return result
 
+def get_availability_data():
+    result = {}
+    try:
+        availability = pickle.load(open("/home/bronger/repos/chantal/online/remote_monitor.pickle", "rb"))
+    except IOError:
+        return None
+    result["start_date"] = availability.start_of_log.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+    return result
+
 def statistics(request):
     u"""View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
@@ -298,7 +307,8 @@ def statistics(request):
                                                   "os_uptime": os_uptime,
                                                   "web_server_uptime": web_server_uptime,
                                                   "db_uptime": db_uptime,
-                                                  "adsm_results": get_adsm_results()},
+                                                  "adsm_results": get_adsm_results(),
+                                                  "availability": get_availability_data()},
                               context_instance=RequestContext(request))
 
 @login_required
