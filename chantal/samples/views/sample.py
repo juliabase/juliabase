@@ -234,7 +234,6 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
-    utils.is_remote_client(request)
     user_details = request.user.get_profile()
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
