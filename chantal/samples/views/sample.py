@@ -158,6 +158,7 @@ class AddSamplesForm(forms.Form):
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
+    timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
     currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
                                                              queryset=django.contrib.auth.models.User.objects)
@@ -187,7 +188,7 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
-    substrate = models.Substrate(operator=user, timestamp=datetime.datetime.now(),
+    substrate = models.Substrate(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
                                  material=add_samples_form.cleaned_data["substrate"])
     substrate.save()
     provisional_sample_names = \
