@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib, urllib2, cookielib, pickle
+import urllib, urllib2, cookielib, pickle, logging
 from elementtree.ElementTree import XML
 import datetime
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)-8s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filename='chantal_remote.log',
+                    filemode='w')
 
 __all__ = ["login", "logout", "new_samples"]
 
@@ -43,19 +49,22 @@ class ChantalConnection(object):
         if is_pickled:
             return pickle.load(response)
         else:
+            logger.error("Resonse was not in pickle format.  Probably failed validation.")
             text = response.read()
-            logfile = open("/home/bronger/public_html/toll.html", "wb")
-            print>>logfile, text
+            logfile = open("chantal_remote.html", "wb")
+            logfile.write(text)
             logfile.close()
             raise Exception("Response was not in pickle format!")
     def login(self, username, password):
         self.username = username
         if not self.open("login_remote_client", {"username": username, "password": password}):
+            logger.error("Login failed.")
             raise Exception("Login failed")
         # FixMe: Test whether login was successful
         self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
     def logout(self):
         if not self.open("logout_remote_client"):
+            logger.error("Logout failed.")
             raise Exception("Logout failed")
 
 connection = ChantalConnection()
@@ -83,7 +92,7 @@ class SixChamberDeposition(object):
         self.sample_ids = sample_ids
         self.number = self.carrier = self.operator = self.timestamp = self.comments = None
         self.layers = []
-    def submit(self, connection):
+    def submit(self):
         # FixMe: Assure that sample is in MySamples
         date, time = self.timestamp.split(" ")
         if not self.operator:
@@ -143,36 +152,3 @@ class SixChamberChannel(object):
         return {prefix+"number": self.number, prefix+"gas": self.gas, prefix+"flow_rate": self.flow_rate}
 
 connection = ChantalConnection("bronger", "*******", "http://127.0.0.1:8000/")
-
-six_chamber_deposition = SixChamberDeposition(None)
-six_chamber_deposition.timestamp = "2008-09-15 22:29:00"
-
-layer = SixChamberLayer(six_chamber_deposition)
-layer.chamber = "#1"
-
-channel1 = SixChamberChannel(layer)
-channel1.number = 1
-channel1.gas = "SiH4"
-channel1.flow_rate = "1"
-
-channel2 = SixChamberChannel(layer)
-channel2.number = 2
-channel2.gas = "SiH4"
-channel2.flow_rate = "2"
-
-channel3 = SixChamberChannel(layer)
-channel3.number = 3
-channel3.gas = "SiH4"
-channel3.flow_rate = "3"
-
-six_chamber_deposition.layers.extend([layer, layer])
-
-number_of_depositions = 100
-sample_ids = connection.get_new_samples(number_of_depositions, u"unknown; legacy data")
-for sample_id in sample_ids:
-    six_chamber_deposition.sample_id = sample_id
-    if not six_chamber_deposition.submit(connection):
-        print "Error!"
-        break
-else:
-    connection.close()

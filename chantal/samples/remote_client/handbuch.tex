@@ -5,10 +5,11 @@
 \usepackage[T1]{fontenc}
 \usepackage{mathpple}
 \usepackage[a4paper]{geometry}
-% \usepackage{courier}
-%\usepackage[scaled=0.9]{beramono}
+\usepackage{courier}\usepackage[scaled=0.9]{berasans}
+% \usepackage[scaled=0.9]{beramono}
 \usepackage{listings}
 \usepackage{xspace}
+\usepackage{color}
 
 \newcommand{\IEF}{\mbox{IEF-5}\xspace}
 
@@ -16,9 +17,11 @@
 \setbox\toll=\hbox{\ttfamily\small t}
 
 \lstset{language=python, basicstyle=\ttfamily\small,
-  keywordstyle=\small\sffamily\bfseries, numbers=left,
+  keywordstyle=\small\sffamily\bfseries,
   numberstyle=\footnotesize, basewidth=\wd\toll,
-  morekeywords=as, escapeinside={(*}{*)}}
+  morekeywords=as,emph={login,logout,new_samples,SixChamberDeposition,SixChamberLayer,SixChamberChannel},
+  emphstyle=\bfseries, backgroundcolor=\color[gray]{0.9}, showstringspaces=false,
+  escapeinside={(*}{*)}}
 
 
 \title{Der Chantal Remote-Client}
@@ -107,9 +110,8 @@ Das bedeutet, daß alle Funktionen des Moduls \lstinline{chantal_remote}
 eingebunden werden.
 
 In Python ist die Einrückung der Zeilen wichtig.  Achtet deshalb darauf, daß
-alle Zeilen in der ersten Spalte beginnen.  Benutzt keine Sonderzeichen
-(deutsche Umlaute o.\,ä.).  Solltet ihr sowas dennoch brauchen, kontaktiert
-mich.
+alle neuen Befehle in der ersten Spalte beginnen.  Solltet ihr Sonderzeichen
+(deutsche Umlaute o.\,ä.)\ brauchen, kontaktiert mich.
 
 Alle Zeilen, die mit einer Raute~\lstinline{#} beginnen, werden als
 Kommentarzeilen ignoriert:
@@ -188,45 +190,46 @@ Tags und Gruppe, bzw.\ \lstinline{substrate}, \lstinline{timestamp},
 \lstinline{purpose}, \lstinline{tags} und \lstinline{group}.  Man könnte also
 auch schreiben:
 \begin{lstlisting}
-new_samples(10, "MAIKE-Labor", "asahi-u", "2008-08-23 13:34:00", group="SiC")
+new_samples(10, "MAIKE-Labor",
+            substrate="asahi-u",
+            timestamp="2008-08-23 13:34:00",
+            group="SiC")
 \end{lstlisting}
 Aber \lstinline{"asahi-u"} ist eh Default, und wenn kein Zeitstempel angegeben
-wird, gilt \emph{jetzt}.  Für die Gruppe mußte ich den Parameternamen
-\lstinline|group| davorschreiben, weil ich ja \lstinline|purpose| und
-\lstinline|tags| übersprungen habe, sonst käme der Interpreter ja
-durcheinander.
+wird, gilt \emph{jetzt}.  Bei optionalen Parametern schreibt man besser den
+Parameternamen mit Gleichheitszeichen davor.
 
 
 \subsection{6-Kammer-Depositionen}
 
-\begin{lstlisting}
-new_samples = new_samples(5, "6-Kammer-Labor")  (*\label{sc:Proben}*)
+\begin{lstlisting}[numbers=left]
+samples = new_samples(5, "6-Kammer-Labor")  (*\label{sc:Proben}*)
 
-six_chamber_deposition = SixChamberDeposition(new_samples)  (*\label{sc:deposition}*)
+six_chamber_deposition = SixChamberDeposition(samples)  (*\label{sc:deposition}*)
 six_chamber_deposition.timestamp = "2008-09-15 22:29:00"    (*\label{sc:attribute}*)
 
 layer = SixChamberLayer(six_chamber_deposition)   (*\label{sc:layer}*)
 layer.chamber = "#1"                              (*\label{sc:chamber}*)
 
-channel = SixChamberChannel(layer)                (*\label{sc:channel}*)
-channel.number = 1
-channel.gas = "SiH4"
-channel.flow_rate = 1
+channel1 = SixChamberChannel(layer)               (*\label{sc:channel}*)
+channel1.number = 1
+channel1.gas = "SiH4"
+channel1.flow_rate = 1
 
-channel = SixChamberChannel(layer)                (*\label{sc:another-channel}*)
-channel.number = 2
-channel.gas = "SiH4"
-channel.flow_rate = 2
+channel2 = SixChamberChannel(layer)               (*\label{sc:another-channel}*)
+channel2.number = 2
+channel2.gas = "SiH4"
+channel2.flow_rate = 2
 
 six_chamber_deposition.submit()                   (*\label{sc:submit}*)
 \end{lstlisting}
 
-Okay, was passiert hier?
+Okay, was passiert hier?\bigskip
 
 \begin{itemize}
 \item In Zeile~\ref{sc:Proben} hole ich mir 5~neue Proben.  Da ich mit den
   Proben noch was vorhabe, speichere ich sie in der Variablen
-  \lstinline|new_samples|.
+  \lstinline|samples|.
 \item Dann erzeuge ich eine neue 6-Kammer-Deposition in
   Zeile~\ref{sc:deposition} mit \lstinline|SixChamberDeposition|, übergebe ihr
   die Proben als Parameter und speichere sie in einer Variablen.
@@ -234,9 +237,9 @@ Okay, was passiert hier?
   Eigenschaften zuweist: Nämlich mit der beliebten Punkt-Notation.  Mit
   \lstinline|.timestamp = |…\ kann man beispielsweise der Deposition einen
   Zeitstempel aufdrücken.
-\item Eine Deposition braucht mindestens eine Schicht.  Den legen wir in
-  Zeile~\ref{sc:layer} an.  Man muß ihm die Depositions-Variable übergeben, zu
-  der er gehört.  In Zeile~\ref{sc:chamber} weisen wir ihm eine Kammer zu.
+\item Eine Deposition braucht mindestens eine Schicht.  Die legen wir in
+  Zeile~\ref{sc:layer} an.  Man muß ihr die Depositions-Variable übergeben, zu
+  der sie gehört.  In Zeile~\ref{sc:chamber} weisen wir ihr eine Kammer zu.
 \item In Zeile~\ref{sc:channel} legen wir den ersten Channel an und verbinden
   ihn mit der Schicht, analog zu vorhin.  Außerdem weisen wir dem neuen Channel
   ein paar Attribute zu.
