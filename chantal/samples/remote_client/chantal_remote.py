@@ -5,21 +5,18 @@ import urllib, urllib2, cookielib, pickle
 from elementtree.ElementTree import XML
 import datetime
 
+__all__ = ["login", "logout", "new_samples"]
+
 def quote_header(value):
     return unicode(value).encode("utf-8")
 
 class ChantalConnection(object):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
     opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
-    def __init__(self, username, password, chantal_url="http://bob.ipv.kfa-juelich.de/chantal/"):
+    def __init__(self, chantal_url="http://bob.ipv.kfa-juelich.de/chantal/"):
         self.root_url = chantal_url
-        self.username = username
-
-        # Login
-        if not self.open("login_remote_client", {"username": username, "password": password}):
-            raise Exception("Login failed")
-        # FixMe: Test whether login was successful
-        self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
+        self.username = None
+        self.primary_keys = None
     def open(self, relative_url, data=None):
         if data is not None:
             cleaned_data = {}
@@ -51,23 +48,39 @@ class ChantalConnection(object):
             print>>logfile, text
             logfile.close()
             raise Exception("Response was not in pickle format!")
-    def get_new_samples(self, number_of_samples, current_location, substrate=u"asahi-u",
-                        timestamp=None, purpose=None, tags=None, group=None):
-        return self.open("samples/add/", {"number_of_samples": number_of_samples,
-                                          "current_location": current_location,
-                                          "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                          "substrate": substrate,
-                                          "purpose": purpose,
-                                          "tags": tags,
-                                          "group": self.primary_keys["groups"].get(group),
-                                          "currently_responsible_person": self.primary_keys["users"][self.username]})
-    def close(self):
+    def login(self, username, password):
+        self.username = username
+        if not self.open("login_remote_client", {"username": username, "password": password}):
+            raise Exception("Login failed")
+        # FixMe: Test whether login was successful
+        self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
+    def logout(self):
         if not self.open("logout_remote_client"):
             raise Exception("Logout failed")
 
+connection = ChantalConnection()
+
+def login(username, password):
+    connection.login(username, password)
+
+def logout():
+    connection.logout()
+
+def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, purpose=None, tags=None,
+                group=None):
+    return connection.open("samples/add/", {"number_of_samples": number_of_samples,
+                                            "current_location": current_location,
+                                            "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                            "substrate": substrate,
+                                            "purpose": purpose,
+                                            "tags": tags,
+                                            "group": connection.primary_keys["groups"].get(group),
+                                            "currently_responsible_person":
+                                                connection.primary_keys["users"][connection.username]})
+
 class SixChamberDeposition(object):
-    def __init__(self, sample_id):
-        self.sample_id = sample_id
+    def __init__(self, sample_ids):
+        self.sample_ids = sample_ids
         self.number = self.carrier = self.operator = self.timestamp = self.comments = None
         self.layers = []
     def submit(self, connection):
@@ -75,13 +88,13 @@ class SixChamberDeposition(object):
         date, time = self.timestamp.split(" ")
         if not self.operator:
             self.operator = connection.username
-        data = {"number": "08B%d" % self.sample_id,
+        data = {"number": "08B%d" % self.sample_ids,
                 "carrier": self.carrier,
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp_0": date,
                 "timestamp_1": time,
                 "comments": self.comments,
-                "sample_list": self.sample_id}
+                "sample_list": self.sample_ids}
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
         return connection.open("6-chamber_depositions/add/", data)
