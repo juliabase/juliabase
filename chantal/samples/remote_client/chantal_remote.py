@@ -162,4 +162,4 @@ class SixChamberChannel(object):
         prefix = "%d_%d-" % (layer_index, channel_index)
         return {prefix+"number": self.number, prefix+"gas": self.gas, prefix+"flow_rate": self.flow_rate}
 
-connection = ChantalConnection("bronger", "*******", "http://127.0.0.1:8000/")
+connection = ChantalConnection("http://127.0.0.1:8000/")
