@@ -532,3 +532,23 @@ def logout_remote_client(request):
     """
     django.contrib.auth.logout(request)
     return utils.respond_to_remote_client(True)
+
+def next_deposition_number(request, letter):
+    u"""Send the next free deposition number to the Chantal Remote Client.  It
+    only supports the HTTP POST method and expects ``username`` and
+    ``password``.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `letter`: the letter of the deposition system, see
+        `utils.get_next_deposition_number`.
+
+    :type request: ``HttpRequest``
+    :type letter: str
+
+    :Returns:
+      the next free deposition number for the given apparatus.
+
+    :rtype: ``HttpResponse``
+    """
+    return utils.respond_to_remote_client(utils.get_next_deposition_number(letter))

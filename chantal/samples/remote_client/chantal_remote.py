@@ -71,21 +71,26 @@ connection = ChantalConnection()
 
 def login(username, password):
     connection.login(username, password)
+    logger.info("Successfully logged-in as %s." % username)
 
 def logout():
     connection.logout()
+    logger.info("Successfully logged-out.")
 
 def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, purpose=None, tags=None,
                 group=None):
-    return connection.open("samples/add/", {"number_of_samples": number_of_samples,
-                                            "current_location": current_location,
-                                            "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                            "substrate": substrate,
-                                            "purpose": purpose,
-                                            "tags": tags,
-                                            "group": connection.primary_keys["groups"].get(group),
-                                            "currently_responsible_person":
-                                                connection.primary_keys["users"][connection.username]})
+    samples = connection.open("samples/add/",
+                              {"number_of_samples": number_of_samples,
+                               "current_location": current_location,
+                               "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                               "substrate": substrate,
+                               "purpose": purpose,
+                               "tags": tags,
+                               "group": connection.primary_keys["groups"].get(group),
+                               "currently_responsible_person":
+                                   connection.primary_keys["users"][connection.username]})
+    logger.info("Successfully created %d samples with the ids %s." % (len(samples), ",".join(str(id_) for id_ in samples)))
+    return samples
 
 class SixChamberDeposition(object):
     def __init__(self, sample_ids):
@@ -97,7 +102,9 @@ class SixChamberDeposition(object):
         date, time = self.timestamp.split(" ")
         if not self.operator:
             self.operator = connection.username
-        data = {"number": "08B%d" % self.sample_ids,
+        if self.number is None:
+            self.number = pickle.load(self.opener.open(self.root_url+"next_deposition_number/B"))
+        data = {"number": self.number,
                 "carrier": self.carrier,
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp_0": date,
@@ -106,7 +113,9 @@ class SixChamberDeposition(object):
                 "sample_list": self.sample_ids}
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
-        return connection.open("6-chamber_depositions/add/", data)
+        result = connection.open("6-chamber_depositions/add/", data)
+        logger.info("Successfully added 6-chamber deposition %s." % )
+        return result
 
 class SixChamberLayer(object):
     def __init__(self, deposition):
