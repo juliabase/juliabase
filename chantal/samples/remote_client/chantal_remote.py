@@ -3,7 +3,7 @@
 
 import urllib, urllib2, cookielib, pickle, logging
 from elementtree.ElementTree import XML
-import datetime
+import datetime, re
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -116,14 +116,14 @@ class SixChamberDeposition(object):
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
         result = connection.open("6-chamber_depositions/add/", data)
-        logger.info("Successfully added 6-chamber deposition %s." % )
+        logger.info("Successfully added 6-chamber deposition %s." % self.number)
         return result
 
 class SixChamberLayer(object):
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
-        self.number = self.chamber = self.chamber = self.pressure = self.time = \
+        self.chamber = self.chamber = self.pressure = self.time = \
             self.substrate_electrode_distance = self.comments = self.transfer_in_chamber = self.pre_heat = \
             self.gas_pre_heat_gas = self.gas_pre_heat_pressure = self.gas_pre_heat_time = self.heating_temperature = \
             self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
@@ -161,5 +161,64 @@ class SixChamberChannel(object):
     def get_data(self, layer_index, channel_index):
         prefix = "%d_%d-" % (layer_index, channel_index)
         return {prefix+"number": self.number, prefix+"gas": self.gas, prefix+"flow_rate": self.flow_rate}
+
+
+class LargeAreaDeposition(object):
+    deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
+    deposition_number_pattern = re.compile(ur"(?P<prefix>%s)(?P<number>\d+)$" % re.escape(deposition_prefix))
+    def __init__(self, sample_ids):
+        self.sample_ids = sample_ids
+        self.number = self.operator = self.timestamp = self.comments = None
+        self.layers = []
+    def submit(self):
+        # FixMe: Assure that sample is in MySamples
+        #
+        # Returns the deposition number if succeeded
+        if not self.operator:
+            self.operator = connection.username
+        if self.number is None:
+            self.number = pickle.load(self.opener.open(self.root_url+"next_deposition_number/L-"))
+        number_base = int(deposition_number_pattern.match(self.number).group("number")) - 1
+        self.number = self.deposition_prefix + u"%03d" % number_base + len(self.layers)
+        data = {"number": self.number,
+                "operator": connection.primary_keys["users"][self.operator],
+                "timestamp": self.timestamp,
+                "comments": self.comments,
+                "sample_list": self.sample_ids}
+        for layer_index, layer in enumerate(self.layers):
+            data.update(layer.get_data(layer_index+number_base, layer_index))
+        result = connection.open("large_area_depositions/add/", data)
+        logger.info("Successfully added large area deposition %s." % self.number)
+        return result
+
+class LargeAreaLayer(object):
+    def __init__(self, deposition):
+        self.deposition = deposition
+        deposition.layers.append(self)
+        self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.sc = self.tmb = self.ch4 = \
+            self.co2 = self.ph3 = self.power = self.pressure = self.temperature = self.hf_frequency = self.time = \
+            self.dc_bias = self.electrode = self.electrodes_distrance 
+    def get_data(self, layer_number, layer_index):
+        prefix = unicode(layer_index) + "-"
+        data = {prefix+"number": layer_number,
+                prefix+"date": self.date,
+                prefix+"layer_type": self.layer_type,
+                prefix+"station": self.station,
+                prefix+"sih4": self.sih4,
+                prefix+"h2": self.h2,
+                prefix+"sc": self.sc,
+                prefix+"tmb": self.tmb,
+                prefix+"ch4": self.ch4,
+                prefix+"co2": self.co2,
+                prefix+"ph3": self.ph3,
+                prefix+"power": self.power,
+                prefix+"pressure": self.pressure,
+                prefix+"temperature": self.temperature,
+                prefix+"hf_frequency": self.hf_frequency,
+                prefix+"time": self.time,
+                prefix+"dc_bias": self.dc_bias,
+                prefix+"electrode": self.electrode,
+                prefix+"electrodes_distrance": self.electrodes_distrance}
+        return data
 
 connection = ChantalConnection("http://127.0.0.1:8000/")
