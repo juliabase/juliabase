@@ -477,7 +477,7 @@ def edit(request, deposition_number):
                 return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
             else:
                 if utils.is_remote_client(request):
-                    return utils.respond_to_remote_client(True)
+                    return utils.respond_to_remote_client(deposition.number)
                 else:
                     request.session["success_report"] = \
                         _(u"Deposition %s was successfully added to the database.") % deposition.number

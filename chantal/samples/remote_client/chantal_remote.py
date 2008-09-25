@@ -99,6 +99,8 @@ class SixChamberDeposition(object):
         self.layers = []
     def submit(self):
         # FixMe: Assure that sample is in MySamples
+        #
+        # Returns the deposition number if succeeded
         date, time = self.timestamp.split(" ")
         if not self.operator:
             self.operator = connection.username
