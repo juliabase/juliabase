@@ -76,7 +76,7 @@ class ChangeLayerForm(forms.Form):
 
 class FormSet(object):
     deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
-    deposition_number_pattern = re.compile(ur"(?P<prefix>%s)(?P<number>\d+)$" % re.escape(deposition_prefix))
+    deposition_number_pattern = re.compile(ur"(?P<prefix>%s)(?P<number>\d{3,})$" % re.escape(deposition_prefix))
     def __init__(self, user, deposition_number):
         self.user = user
         self.user_details = self.user.get_profile()
