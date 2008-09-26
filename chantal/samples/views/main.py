@@ -278,6 +278,20 @@ def get_adsm_results():
     return result
 
 def get_availability_data():
+    u"""Read the report file from the remote monitor program and generate a
+    succinct report from it.  The remote monitor is a small program called
+    ``remote_monitor.py`` which tries to login into the database every minute.
+    Its successes and failures are logged in a pickle file.  This is read here
+    and analysed.
+
+    :Return:
+      a dict with two keys: ``"availability"`` and ``"downtimes"``.  The first
+      maps to a string describing the overall availability of the Chntal
+      service, he latter maps to a list of strings describing all downtime
+      intervals.
+
+    :rtype: dict mapping str to unicode and list of unicode
+    """
     result = {}
     try:
         availability = pickle.load(open("/home/bronger/repos/chantal/online/remote_monitor.pickle", "rb"))
@@ -304,6 +318,40 @@ def get_availability_data():
                                    {"from": from_, "to": to, "minutes": minutes})
     return result
 
+logline_pattern = re.compile(r"(?P<date>[-0-9: ]+ (?P<type>[A-Z]+)\s+(?P<message>.*)")
+def analyze_last_database_backup():
+    def format_timestamp(timestamp):
+        if timestamp.date() == datetime.date.today():
+            return timestamp.strftime(str(_("today, %H:%M")))
+        elif timestamp.date() == datetime.date.today() - datetime.timedelta(1):
+            return timestamp.strftime(str(_("yesterday, %H:%M")))
+        else:
+            return timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+    try:
+        logfile = open("/home/bronger/backups/mysql/mysql_backup.log")
+    except IOError:
+        return None
+    last_backup = last_copy = None
+    for line in logfile:
+        logline_pattern.match(line.strip())
+        if match:
+            timestamp = datetime.datetime.strptime(match.group("date"), "%Y-%m-%d %H:%M:%S")
+            type_ = match.group("type")
+            message = match.group("message")
+            if type_ == "INFO" and message.startswith("Database dump was successfully created"):
+                last_backup = _(u"successful, %s") % format_timestamp(timestamp)
+            elif type_ == "INFO" and message.startswith("Database backups were successfully copied"):
+                last_copy = _(u"successful, %s") % format_timestamp(timestamp)
+            elif type_ == "ERROR" and message.startswith("Database dump failed"):
+                last_backup = _(u"failed, %s") % format_timestamp(timestamp)
+            elif type_ == "ERROR" and message.startswith("Copying of database tables to sonne failed"):
+                last_copy = _(u"failed, %s") % format_timestamp(timestamp)
+    if not last_backup:
+        last_backup = _(u"no log data found")
+    if not last_copy:
+        last_copy = _(u"no log data found")
+    return {"last_backup": last_backup, "last_copy": last_copy}
+
 def statistics(request):
     u"""View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
@@ -328,7 +376,8 @@ def statistics(request):
                                                   "web_server_uptime": web_server_uptime,
                                                   "db_uptime": db_uptime,
                                                   "adsm_results": get_adsm_results(),
-                                                  "availability": get_availability_data()},
+                                                  "availability": get_availability_data(),
+                                                  "last_db_backup": analyze_last_database_backup()},
                               context_instance=RequestContext(request))
 
 @login_required

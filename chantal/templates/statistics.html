@@ -107,4 +107,13 @@ usage.</p>
   </table>
 {% endif %}
 
+<h3>{% trans 'Hourly backups of the database tables' %}</h3>
+
+{% if last_db_backup %}
+  <p>{% trans 'Last backup:' %}{{ last_db_backup.last_backup }}</p>
+  <p>{% trans 'Last copy of all backups to sonne:' %}{{ last_db_backup.last_copy }}</p>
+{% else %}
+  <p>{% trans 'No log data found.' %}</p>
+{% endif %}
+
 {% endblock %}

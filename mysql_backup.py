@@ -31,9 +31,9 @@ class DumpRotation(object):
         outfile.close()
         return_code_mysqldump = mysqldump.wait()
         if return_code_mysqldump != 0:
-            logging.error("mysqldump returned with exit code %d." % return_code_mysqldump)
+            logging.error("Database dump failed; mysqldump returned with exit code %d." % return_code_mysqldump)
         if return_code_gzip != 0:
-            logging.error("gzip returned with exit code %d." % return_code_gzip)
+            logging.error("Database dump failed; gzip returned with exit code %d." % return_code_gzip)
         if return_code_mysqldump != 0 or return_code_gzip != 0:
             try:
                 os.remove(filename)
