@@ -70,11 +70,20 @@ class DumpRotation(object):
         print_queue("Monthly queue", self.queue_monthly)
         print_queue("Yearly queue", self.queue_yearly)
 
+def copy_to_sonne():
+    result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/bronger/backups/mysql/",
+                                   "/windows/T/datenbank/chantal/backups/"])
+    if result_code == 0:
+        logging.info("Database backups were successfully copied to sonne.")
+    else:
+        logging.error("Copying of database tables to sonne failed.")
+
 try:
     dump_rotation = pickle.load(open(pickle_filename, "rb"))
 except IOError:
     dump_rotation = DumpRotation()
 
 dump_rotation.create_backup()
+copy_to_sonne()
 
 pickle.dump(dump_rotation, open(pickle_filename, "wb"))
