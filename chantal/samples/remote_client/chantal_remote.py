@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.DEBUG,
                     filename='chantal_remote.log',
                     filemode='w')
 
-__all__ = ["login", "logout", "new_samples"]
+__all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamberLayer", "SixChamberChannel",
+           "LargeAreaDeposition", "LargeAreaLayer"]
 
 def quote_header(value):
     return unicode(value).encode("utf-8")
@@ -49,7 +50,7 @@ class ChantalConnection(object):
         if is_pickled:
             return pickle.load(response)
         else:
-            logger.error("Resonse was not in pickle format.  Probably failed validation.")
+            logging.error("Resonse was not in pickle format.  Probably failed validation.")
             text = response.read()
             logfile = open("chantal_remote.html", "wb")
             logfile.write(text)
@@ -58,24 +59,24 @@ class ChantalConnection(object):
     def login(self, username, password):
         self.username = username
         if not self.open("login_remote_client", {"username": username, "password": password}):
-            logger.error("Login failed.")
+            logging.error("Login failed.")
             raise Exception("Login failed")
         # FixMe: Test whether login was successful
         self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
     def logout(self):
         if not self.open("logout_remote_client"):
-            logger.error("Logout failed.")
+            logging.error("Logout failed.")
             raise Exception("Logout failed")
 
 connection = ChantalConnection()
 
 def login(username, password):
     connection.login(username, password)
-    logger.info("Successfully logged-in as %s." % username)
+    logging.info("Successfully logged-in as %s." % username)
 
 def logout():
     connection.logout()
-    logger.info("Successfully logged-out.")
+    logging.info("Successfully logged-out.")
 
 def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, purpose=None, tags=None,
                 group=None):
@@ -89,7 +90,7 @@ def new_samples(number_of_samples, current_location, substrate=u"asahi-u", times
                                "group": connection.primary_keys["groups"].get(group),
                                "currently_responsible_person":
                                    connection.primary_keys["users"][connection.username]})
-    logger.info("Successfully created %d samples with the ids %s." % (len(samples), ",".join(str(id_) for id_ in samples)))
+    logging.info("Successfully created %d samples with the ids %s." % (len(samples), ",".join(str(id_) for id_ in samples)))
     return samples
 
 class SixChamberDeposition(object):
@@ -116,7 +117,7 @@ class SixChamberDeposition(object):
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
         result = connection.open("6-chamber_depositions/add/", data)
-        logger.info("Successfully added 6-chamber deposition %s." % self.number)
+        logging.info("Successfully added 6-chamber deposition %s." % self.number)
         return result
 
 class SixChamberLayer(object):
@@ -177,18 +178,18 @@ class LargeAreaDeposition(object):
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
-            self.number = pickle.load(self.opener.open(self.root_url+"next_deposition_number/L-"))
-        number_base = int(deposition_number_pattern.match(self.number).group("number")) - 1
-        self.number = self.deposition_prefix + u"%03d" % number_base + len(self.layers)
+            self.number = connection.open("next_deposition_number/L-")
+        number_base = int(self.deposition_number_pattern.match(self.number).group("number")) - 1
+        self.number = self.deposition_prefix + u"%03d" % (number_base + len(self.layers))
         data = {"number": self.number,
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp": self.timestamp,
                 "comments": self.comments,
                 "sample_list": self.sample_ids}
         for layer_index, layer in enumerate(self.layers):
-            data.update(layer.get_data(layer_index+number_base, layer_index))
-        result = connection.open("large_area_depositions/add/", data)
-        logger.info("Successfully added large area deposition %s." % self.number)
+            data.update(layer.get_data(layer_index+number_base+1, layer_index))
+        result = connection.open("large-area_depositions/add/", data)
+        logging.info("Successfully added large area deposition %s." % self.number)
         return result
 
 class LargeAreaLayer(object):
@@ -197,7 +198,7 @@ class LargeAreaLayer(object):
         deposition.layers.append(self)
         self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.sc = self.tmb = self.ch4 = \
             self.co2 = self.ph3 = self.power = self.pressure = self.temperature = self.hf_frequency = self.time = \
-            self.dc_bias = self.electrode = self.electrodes_distrance 
+            self.dc_bias = self.electrode = self.electrodes_distrance = None
     def get_data(self, layer_number, layer_index):
         prefix = unicode(layer_index) + "-"
         data = {prefix+"number": layer_number,

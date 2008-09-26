@@ -205,10 +205,10 @@ Parameternamen mit Gleichheitszeichen davor.
 \begin{lstlisting}[numbers=left]
 samples = new_samples(5, "6-Kammer-Labor")  (*\label{sc:Proben}*)
 
-six_chamber_deposition = SixChamberDeposition(samples)  (*\label{sc:deposition}*)
-six_chamber_deposition.timestamp = "2008-09-15 22:29:00"    (*\label{sc:attribute}*)
+deposition = SixChamberDeposition(samples)  (*\label{sc:deposition}*)
+deposition.timestamp = "2008-09-15 22:29:00"    (*\label{sc:attribute}*)
 
-layer = SixChamberLayer(six_chamber_deposition)   (*\label{sc:layer}*)
+layer = SixChamberLayer(deposition)   (*\label{sc:layer}*)
 layer.chamber = "#1"                              (*\label{sc:chamber}*)
 
 channel1 = SixChamberChannel(layer)               (*\label{sc:channel}*)
@@ -221,7 +221,7 @@ channel2.number = 2
 channel2.gas = "SiH4"
 channel2.flow_rate = 2
 
-six_chamber_deposition.submit()                   (*\label{sc:submit}*)
+deposition.submit()                   (*\label{sc:submit}*)
 \end{lstlisting}
 
 Okay, was passiert hier?\bigskip

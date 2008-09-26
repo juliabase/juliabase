@@ -253,9 +253,12 @@ def edit(request, deposition_number):
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
         if deposition:
-            request.session["success_report"] = \
-                _(u"Deposition %s was successfully changed in the database.") % deposition.number
-            return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+            if utils.is_remote_client(request):
+                return utils.respond_to_remote_client(deposition.number)
+            else:
+                request.session["success_report"] = \
+                    _(u"Deposition %s was successfully changed in the database.") % deposition.number
+                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     else:
         form_set.from_database()
     title = _(u"Large-area deposition “%s”") % deposition_number if deposition_number else _(u"Add large-area deposition")
