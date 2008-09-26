@@ -322,9 +322,9 @@ logline_pattern = re.compile(r"(?P<date>[-0-9: ]+) (?P<type>[A-Z]+)\s+(?P<messag
 def analyze_last_database_backup():
     def format_timestamp(timestamp):
         if timestamp.date() == datetime.date.today():
-            return timestamp.strftime(str(_("today, %H:%M")))
+            return timestamp.strftime(str(_("%H:%M today")))
         elif timestamp.date() == datetime.date.today() - datetime.timedelta(1):
-            return timestamp.strftime(str(_("yesterday, %H:%M")))
+            return timestamp.strftime(str(_("%H:%M yesterday")))
         else:
             return timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
     try:
