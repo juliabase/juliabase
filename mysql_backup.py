@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""This program creates backup dumps of the MySQL database.  It should be
+called hourly as a cron job.  It will write the backups in gzip format in the
+directory ``/home/bronger/backups/mysql/``.
+
+The program contains a rotation scheme: Only the last 24 backups are kept, then
+one of each day of the past week, then one of each week of the last four weeks,
+and the same for months.
+
+Note that the MySQL root login and password are hard-coded in this file.
+"""
+
 import datetime, os.path, subprocess, pickle, logging
 
 logging.basicConfig(level=logging.DEBUG,
@@ -21,6 +32,9 @@ class DumpRotation(object):
         self.queue_yearly = []
         self.index_hourly = self.index_daily = self.index_weekly = self.index_monthly = 0
     def create_backup(self):
+        u"""Create a new backup dump and also do the rotation.  In other words,
+        this implicitly calls `rotate`.
+        """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
         filename = os.path.join(self.backup_dir, "mysql_dump_%s.sql.gz" % timestamp)
         outfile = open(filename, "wb")
@@ -43,6 +57,18 @@ class DumpRotation(object):
             self.rotate(filename)
             logging.info("Database dump was successfully created at \"%s\"." % filename)
     def rotate(self, filename):
+        u"""Does the backup rotation.  It adds a new file to the repository (it must
+        exist already) and removes files that are too old from both the
+        repository and from the backup directory.
+
+        (With “repository” I mean the queue-like datastructure in memory, not
+        the physical files on the hard disk.)
+
+        :Parameters:
+          - `filename`: full path to the bakcup file to add
+
+        :type filename: str
+        """
         def process_queue(queue, next_queue, index, index_max):
             if len(queue) > index_max:
                 if index == 0:
@@ -60,6 +86,7 @@ class DumpRotation(object):
         self.index_weekly = process_queue(self.queue_weekly, self.queue_monthly, self.index_weekly, 4)
         self.index_monthly = process_queue(self.queue_monthly, self.queue_yearly, self.index_monthly, 12)
     def print_queues(self):
+        """Just for debugging."""
         def print_queue(name, queue):
             print name + ":"
             for i in queue:
@@ -71,6 +98,10 @@ class DumpRotation(object):
         print_queue("Yearly queue", self.queue_yearly)
 
 def copy_to_sonne():
+    u"""Synchronises the local backup directory with the “sonne” server.  Note
+    that this also implies that outdated (and therefore removed) backup files
+    are removed from sonne, too.
+    """
     result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/bronger/backups/mysql/",
                                    "/windows/T/datenbank/chantal/backups/"])
     if result_code == 0:

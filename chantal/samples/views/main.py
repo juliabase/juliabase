@@ -319,7 +319,19 @@ def get_availability_data():
     return result
 
 logline_pattern = re.compile(r"(?P<date>[-0-9: ]+) (?P<type>[A-Z]+)\s+(?P<message>.*)")
+u"""Format of a line in the backup cron job's logfile."""
 def analyze_last_database_backup():
+    u"""Read the logfile of the backup cron job and generate a report about the
+    last backup tried (when it was made, whether it was successful or not).
+
+    :Return:
+      a dict with the two keys ``"last_backup"`` and ``"last_copy"``.  The
+      first maps to a description of the last backup tried, the latter to a
+      description about the last copy to the server “sonne” tried.  It may also
+      be ``None`` is no logfile was found.
+
+    :rtype: dict mapping str to unicode, or ``NoneType``
+    """
     def format_timestamp(timestamp):
         if timestamp.date() == datetime.date.today():
             return timestamp.strftime(str(_("%H:%M today")))
