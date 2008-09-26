@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filename="/home/bronger/backups/mysql/mysql_backup.log",
                     filemode="a")
 
-pickle_filename = "/home/bronger/backups/dump_rotation.pickle"
+pickle_filename = "/home/bronger/backups/mysql/dump_rotation.pickle"
 
 class DumpRotation(object):
     def __init__(self, backup_dir="/home/bronger/backups/mysql/"):
@@ -19,12 +19,13 @@ class DumpRotation(object):
         self.queue_weekly = []
         self.queue_monthly = []
         self.queue_yearly = []
-        self.index_hourly = self.index_daily = self.index_weekly = self.index_monthly = self.index_yearly = 0
+        self.index_hourly = self.index_daily = self.index_weekly = self.index_monthly = 0
     def create_backup(self):
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M")
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
         filename = os.path.join(self.backup_dir, "mysql_dump_%s.sql.gz" % timestamp)
         outfile = open(filename, "wb")
-        mysqldump = subprocess.Popen(["mysqldump", "--user=root", "--password=Sonne", "--compact"], stdout=subprocess.PIPE)
+        mysqldump = subprocess.Popen(["mysqldump", "--user=root", "--password=Sonne", "--compact", "mysql"],
+                                     stdout=subprocess.PIPE)
         gzip = subprocess.Popen(["gzip"], stdin=mysqldump.stdout, stdout=outfile)
         return_code_gzip = gzip.wait()
         outfile.close()
@@ -43,13 +44,13 @@ class DumpRotation(object):
             logging.info("Database dump was successfully created at \"%s\"." % filename)
     def rotate(self, filename):
         def process_queue(queue, next_queue, index, index_max):
-            if len(queue) >= index_max:
-                if index >= index_max:
+            if len(queue) > index_max:
+                if index == 0:
                     next_queue.insert(0, queue[-1])
-                    index = 0
+                    index = index_max
                 else:
                     os.remove(queue[-1])
-                    index += 1
+                index -= 1
                 del queue[-1]
             return index
 
@@ -57,7 +58,17 @@ class DumpRotation(object):
         self.index_hourly = process_queue(self.queue_hourly, self.queue_daily, self.index_hourly, 24)
         self.index_daily = process_queue(self.queue_daily, self.queue_weekly, self.index_daily, 7)
         self.index_weekly = process_queue(self.queue_weekly, self.queue_monthly, self.index_weekly, 4)
-        self.index_monthly = process_queue(self.queue_monthly, self.queue_yearly, self.index_yearly, 12)
+        self.index_monthly = process_queue(self.queue_monthly, self.queue_yearly, self.index_monthly, 12)
+    def print_queues(self):
+        def print_queue(name, queue):
+            print name + ":"
+            for i in queue:
+                print "  ", i
+        print_queue("Hourly queue", self.queue_hourly)
+        print_queue("Daily queue", self.queue_daily)
+        print_queue("Weekly queue", self.queue_weekly)
+        print_queue("Monthly queue", self.queue_monthly)
+        print_queue("Yearly queue", self.queue_yearly)
 
 try:
     dump_rotation = pickle.load(open(pickle_filename, "rb"))
