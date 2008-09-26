@@ -85,6 +85,15 @@ usage.</p>
 
 <h2>{% trans 'Backups' %}</h2>
 
+<h3>{% trans 'Hourly backups of the database tables' %}</h3>
+
+{% if last_db_backup %}
+  <p>{% trans 'Last backup:' %} {{ last_db_backup.last_backup }}</p>
+  <p>{% trans 'Last copy of all backups to sonne:' %} {{ last_db_backup.last_copy }}</p>
+{% else %}
+  <p>{% trans 'No log data found.' %}</p>
+{% endif %}
+
 <h3>{% trans 'Tivoli storage manager' %}</h3>
 
 {% if adsm_results.log_file_error %}
@@ -105,15 +114,6 @@ usage.</p>
       <td>{{ adsm_results.failed_objects }}</td>
     </tr>
   </table>
-{% endif %}
-
-<h3>{% trans 'Hourly backups of the database tables' %}</h3>
-
-{% if last_db_backup %}
-  <p>{% trans 'Last backup:' %}{{ last_db_backup.last_backup }}</p>
-  <p>{% trans 'Last copy of all backups to sonne:' %}{{ last_db_backup.last_copy }}</p>
-{% else %}
-  <p>{% trans 'No log data found.' %}</p>
 {% endif %}
 
 {% endblock %}

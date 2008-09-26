@@ -318,7 +318,7 @@ def get_availability_data():
                                    {"from": from_, "to": to, "minutes": minutes})
     return result
 
-logline_pattern = re.compile(r"(?P<date>[-0-9: ]+ (?P<type>[A-Z]+)\s+(?P<message>.*)")
+logline_pattern = re.compile(r"(?P<date>[-0-9: ]+) (?P<type>[A-Z]+)\s+(?P<message>.*)")
 def analyze_last_database_backup():
     def format_timestamp(timestamp):
         if timestamp.date() == datetime.date.today():
@@ -333,7 +333,7 @@ def analyze_last_database_backup():
         return None
     last_backup = last_copy = None
     for line in logfile:
-        logline_pattern.match(line.strip())
+        match = logline_pattern.match(line.strip())
         if match:
             timestamp = datetime.datetime.strptime(match.group("date"), "%Y-%m-%d %H:%M:%S")
             type_ = match.group("type")
