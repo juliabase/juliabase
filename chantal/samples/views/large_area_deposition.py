@@ -155,7 +155,7 @@ class FormSet(object):
                     next_layer_number += 1
                     self.layer_forms.append(LayerForm(post_data, prefix=prefix))
                 elif new_layer[0] == "duplicate":
-                    original_layer = self.layer_forms[new_layer[1]]
+                    original_layer = new_layer[1]
                     if original_layer.is_valid():
                         layer_data = original_layer.cleaned_data
                         layer_data["number"] = utils.three_digits(next_layer_number)
@@ -240,7 +240,7 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-                return deposition
+            return deposition
     def get_context_dict(self):
         return {"deposition": self.deposition_form, "samples": self.samples_form,
                 "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms), "add_layer": self.add_layer_form}
