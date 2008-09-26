@@ -84,6 +84,5 @@ except IOError:
     dump_rotation = DumpRotation()
 
 dump_rotation.create_backup()
-copy_to_sonne()
-
 pickle.dump(dump_rotation, open(pickle_filename, "wb"))
+copy_to_sonne()
