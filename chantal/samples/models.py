@@ -339,6 +339,7 @@ large_area_electrode_choices = (
     ("NN large PC2", _(u"NN large PC2")),
     ("NN large PC3", _(u"NN large PC3")),
     ("NN small 1", _(u"NN small 1")),
+    ("NN small 2", _(u"NN small 2")),
     ("NN40 large PC1", _(u"NN40 large PC1")),
     ("NN40 large PC2", _(u"NN40 large PC2")),
 )
@@ -353,7 +354,7 @@ class LargeAreaLayer(Layer):
     date = models.DateField(_(u"date"))
     layer_type = models.CharField(_(u"layer type"), max_length=2, choices=large_area_layer_type_choices)
     station = models.CharField(_(u"station"), max_length=2, choices=large_area_station_choices)
-    sih4 = models.DecimalField(_(u"SiH4 flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
+    sih4 = models.DecimalField(_(u"SiH4 flow rate"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
     h2 = models.DecimalField(_(u"H2 flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
     sc = models.DecimalField(_(u"SC"), max_digits=5, decimal_places=2, help_text=_(u"in %"))
     tmb = models.DecimalField(_(u"TMB"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
