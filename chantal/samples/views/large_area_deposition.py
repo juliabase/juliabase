@@ -75,8 +75,7 @@ class ChangeLayerForm(forms.Form):
         return self.cleaned_data
 
 class FormSet(object):
-    deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
-    deposition_number_pattern = re.compile(ur"(?P<prefix>%s)(?P<number>\d{3,})$" % re.escape(deposition_prefix))
+    deposition_number_pattern = re.compile(ur"(?P<prefix>\d\dL-)(?P<number>\d+)$")
     def __init__(self, user, deposition_number):
         self.user = user
         self.user_details = self.user.get_profile()
@@ -139,7 +138,7 @@ class FormSet(object):
 
         if structure_changed:
             if self.deposition:
-                next_full_number = self.deposition_prefix + utils.three_digits(self.deposition.layers.all()[0].number)
+                next_full_number = self.deposition.number[:4] + utils.three_digits(self.deposition.layers.all()[0].number)
             else:
                 next_full_number = utils.get_next_deposition_number("L-")
             deposition_number_match = self.deposition_number_pattern.match(next_full_number)
@@ -197,10 +196,15 @@ class FormSet(object):
                 utils.append_error(self.deposition_form, _(u"Invalid deposition number format."))
                 referentially_valid = False
             else:
+                deposition_prefix = match.group("prefix")
+                if deposition_prefix != u"%02dL-" % (self.deposition_form.cleaned_data["timestamp"].year % 100):
+                    utils.append_error(self.deposition_form,
+                                       _(u"Year in deposition number doesn't match deposition timestamp."))
+                    referentially_valid = False
                 number_only = int(match.group("number"))
                 deposition_numbers = models.LargeAreaDeposition.objects.filter(
-                    number__startswith=self.deposition_prefix).values_list("number", flat=True).all()
-                deposition_numbers = [int(number[len(self.deposition_prefix):]) for number in deposition_numbers]
+                    number__startswith=deposition_prefix).values_list("number", flat=True).all()
+                deposition_numbers = [int(number[len(deposition_prefix):]) for number in deposition_numbers]
                 max_deposition_number = max(deposition_numbers) if deposition_numbers else 0
                 if self.deposition:
                     if self.layer_forms and self.layer_forms[0].is_valid() and \
@@ -212,7 +216,7 @@ class FormSet(object):
                     if higher_deposition_numbers:
                         next_number = min(higher_deposition_numbers)
                         number_of_next_layers = models.LargeAreaDeposition.objects.get(
-                            number=self.deposition_prefix+utils.three_digits(next_number)).layers.count()
+                            number=deposition_prefix+utils.three_digits(next_number)).layers.count()
                         if number_only + number_of_next_layers > next_number:
                             utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
                             referentially_valid = False

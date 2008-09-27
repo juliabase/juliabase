@@ -166,7 +166,7 @@ class SixChamberChannel(object):
 
 class LargeAreaDeposition(object):
     deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
-    deposition_number_pattern = re.compile(ur"(?P<prefix>%s)(?P<number>\d+)$" % re.escape(deposition_prefix))
+    deposition_number_pattern = re.compile(ur"\d\dL-(?P<number>\d+)$")
     def __init__(self, sample_ids):
         self.sample_ids = sample_ids
         self.number = self.operator = self.timestamp = self.comments = None
@@ -178,9 +178,11 @@ class LargeAreaDeposition(object):
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
-            self.number = connection.open("next_deposition_number/L-")
-        number_base = int(self.deposition_number_pattern.match(self.number).group("number")) - 1
-        self.number = self.deposition_prefix + u"%03d" % (number_base + len(self.layers))
+            next_number = connection.open("next_deposition_number/L-")
+            number_base = int(self.deposition_number_pattern.match(next_number).group("number")) - 1
+            self.number = self.deposition_prefix + u"%03d" % (number_base + len(self.layers))
+        else:
+            number_base = int(self.deposition_number_pattern.match(self.number).group("number")) - 1
         data = {"number": self.number,
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp": self.timestamp,
@@ -201,7 +203,7 @@ class LargeAreaLayer(object):
             self.dc_bias = self.electrode = self.electrodes_distrance = None
     def get_data(self, layer_number, layer_index):
         prefix = unicode(layer_index) + "-"
-        data = {prefix+"number": layer_number,
+        data = {prefix+"number": self.number or layer_number,
                 prefix+"date": self.date,
                 prefix+"layer_type": self.layer_type,
                 prefix+"station": self.station,
