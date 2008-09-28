@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-28 03:27+0200\n"
-"PO-Revision-Date: 2008-09-28 03:27+0200\n"
+"POT-Creation-Date: 2008-09-28 18:42+0200\n"
+"PO-Revision-Date: 2008-09-28 18:43+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1081,8 +1081,14 @@ msgstr ""
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
+msgid "Samples error"
+msgstr "Fehler in der Probe"
+
 msgid "Layer error"
 msgstr "Fehler in Schicht"
+
+msgid "Error with adding layers"
+msgstr "Fehler beim hinzufügen von Schichten"
 
 msgid "My Layer error"
 msgstr "Fehler in Meiner Schicht"
@@ -1199,6 +1205,9 @@ msgid ""
 msgstr ""
 "\n"
 "Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
+
+msgid "Silane conc."
+msgstr "Silankonz."
 
 #, python-format
 msgid ""

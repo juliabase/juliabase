@@ -23,63 +23,52 @@
           <td class="label">{% verbose_name LargeAreaLayer.number %}:</td>
           <td class="value">{{ layer.number }}</td>
           <td class="label">SiH<sub>4</sub>:</td>
-          <td class="value">{{ layer.sih4|quantity:"sccm"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.sih4|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.power %}:</td>
-          <td class="value">{{ layer.power|quantity:"W"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.power|quantity:"W"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.layer_type %}:</td>
           <td class="value">{{ layer.layer_type }}</td>
           <td class="label">H<sub>2</sub>:</td>
-          <td class="value">{{ layer.h2|quantity:"sccm"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.h2|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.pressure %}:</td>
-          <td class="value">{{ layer.pressure|quantity:"Torr"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.pressure|quantity:"Torr"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.station %}:</td>
           <td class="value">{{ layer.station }}</td>
-          <td colspan="2" />
+          <td class="label">{% trans 'Silane conc.' %}:</td>
+          <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.temperature %}:</td>
-          <td class="value">{{ layer.temperature|quantity:"℃"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.temperature|quantity:"℃"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.date %}:</td>
           <td class="value">{{ layer.date }}</td>
           <td class="label">TMB:</td>
-          <td class="value">{{ layer.tmb|quantity:"sccm"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.tmb|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.hf_frequency %}:</td>
-          <td class="value">{{ layer.hf_frequency|quantity:"MHz"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.hf_frequency|quantity:"MHz"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           <td colspan="2" />
           <td class="label">CH<sub>4</sub>:</td>
-          <td class="value">{{ layer.ch4|quantity:"sccm"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.ch4|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.time %}:</td>
-          <td class="value">{{ layer.time|quantity:"sec"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.time|quantity:"sec"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           <td colspan="2" />
           <td class="label">CO<sub>2</sub>:</td>
-          <td class="value">{{ layer.co2|quantity:"sccm"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.co2|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.dc_bias %}:</td>
-          <td class="value">{{ layer.dc_bias|quantity:"V"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.dc_bias|quantity:"V"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           <td colspan="2" />
           <td class="label">PH<sub>3</sub>:</td>
-          <td class="value">{{ layer.ph3|quantity:"sccm"|default_if_none:"—" }}
-            </td>
+          <td class="value">{{ layer.ph3|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.electrode %}:</td>
           <td class="value">{{ layer.electrode }}</span></td>
         </tr>

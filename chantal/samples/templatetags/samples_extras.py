@@ -4,6 +4,7 @@
 u"""Collection of tags and filters that I found useful for Chantal.
 """
 
+from __future__ import division
 import string, re
 from django.template.defaultfilters import stringfilter
 from django import template
@@ -181,3 +182,15 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     else:
         return u""
 get_really_full_name.needs_autoescape = True
+
+@register.filter
+def calculate_silane_concentration(value):
+    u"""Filter for calculating the silane concentration for a large-area
+    deposition layer from the silane and hydrogen fluxes.
+    """
+    silane = float(value.sih4)*0.6
+    hydrogen = float(value.h2)
+    if silane + hydrogen == 0:
+        return None
+    # Cheap way to cut the digits
+    return float(u"%5.2f" % (100 * silane / (silane + hydrogen)))
