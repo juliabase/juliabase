@@ -369,7 +369,7 @@ class LargeAreaLayer(Layer):
     dc_bias = models.DecimalField(_(u"DC bias"), max_digits=3, decimal_places=1, help_text=_(u"in V"), null=True, blank=True)
     electrode = models.CharField(_(u"electrode"), max_length=30, choices=large_area_electrode_choices)
     # FixMe: Must be called "electrodes_distance".  Also in other modules.
-    electrodes_distrance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
+    electrodes_distance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
                                                help_text=_(u"in mm"))
     def __unicode__(self):
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}

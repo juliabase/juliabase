@@ -200,7 +200,7 @@ class LargeAreaLayer(object):
         deposition.layers.append(self)
         self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.sc = self.tmb = self.ch4 = \
             self.co2 = self.ph3 = self.power = self.pressure = self.temperature = self.hf_frequency = self.time = \
-            self.dc_bias = self.electrode = self.electrodes_distrance = None
+            self.dc_bias = self.electrode = self.electrodes_distance = None
     def get_data(self, layer_number, layer_index):
         prefix = unicode(layer_index) + "-"
         data = {prefix+"number": self.number or layer_number,
@@ -221,7 +221,7 @@ class LargeAreaLayer(object):
                 prefix+"time": self.time,
                 prefix+"dc_bias": self.dc_bias,
                 prefix+"electrode": self.electrode,
-                prefix+"electrodes_distrance": self.electrodes_distrance}
+                prefix+"electrodes_distance": self.electrodes_distance}
         return data
 
 connection = ChantalConnection("http://127.0.0.1:8000/")

@@ -56,7 +56,7 @@ class LayerForm(forms.ModelForm):
         super(LayerForm, self).__init__(*args, **keyw)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
         for fieldname in ["date", "sih4", "h2", "tmb", "ch4", "co2", "ph3", "power", "pressure", "temperature",
-                          "time", "dc_bias", "electrodes_distrance"]:
+                          "time", "dc_bias", "electrodes_distance"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
     class Meta:
         model = models.LargeAreaLayer
@@ -181,7 +181,6 @@ class FormSet(object):
                 self.change_layer_forms.append(ChangeLayerForm(prefix=layer_form.prefix))
         return structure_changed
     def _is_all_valid(self):
-        all_valid = True
         all_valid = self.deposition_form.is_valid()
         all_valid = self.add_layer_form.is_valid() and all_valid
         all_valid = self.samples_form.is_valid() and all_valid

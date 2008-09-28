@@ -4,13 +4,19 @@
 
 {% block content %}
 <form method="post" action="">
-  {% if deposition.errors or deposition.non_field_errors %}
+  {% if deposition.errors or deposition.non_field_errors or samples.errors or samples.non_field_errors %}
     <table width="100%"><tr><td class="error-messages">
       {% for field in deposition %}
         {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
       {% endfor %}
       {% if deposition.non_field_errors %}
         <p>{% trans 'Deposition error' %}</p>{{ deposition.non_field_errors }}
+      {% endif %}
+      {% for field in samples %}
+        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+      {% endfor %}
+      {% if samples.non_field_errors %}
+        <p>{% trans 'Samples error' %}</p>{{ samples.non_field_errors }}
       {% endif %}
     </td></tr></table>
   {% endif %}
@@ -196,11 +202,11 @@
               <tr>
                 <td colspan="4" />
                 <td class="label">
-                  <label for="id_{{ layer.electrodes_distrance.html_name }}"
-                         >{{ layer.electrodes_distrance.label }}:</label>
+                  <label for="id_{{ layer.electrodes_distance.html_name }}"
+                         >{{ layer.electrodes_distance.label }}:</label>
                 </td>
-                <td class="value">{{ layer.electrodes_distrance }}
-                  <span class="help">({{ layer.electrodes_distrance.help_text }})</span></td>
+                <td class="value">{{ layer.electrodes_distance }}
+                  <span class="help">({{ layer.electrodes_distance.help_text }})</span></td>
               </tr>
             </table>
           </td>
@@ -210,6 +216,16 @@
   {% endif %}
 
   <table>
+    {% if add_layer.errors or add_layer.non_field_errors %}
+      <tr><td class="error-messages">
+        {% for field in add_layer %}
+          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+        {% endfor %}
+        {% if add_layer.non_field_errors %}
+          <p>{% trans 'Error with adding layers' %}</p>{{ add_layer.non_field_errors }}
+        {% endif %}
+      </td></tr>
+    {% endif %}
     {{ add_layer }}
   </table>
   <p class="submit-button"><input type="submit" /></p>

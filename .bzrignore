@@ -20,3 +20,7 @@ handbuch.log
 handbuch.pdf
 handbuch.toc
 missfont.log
+chantal/samples/remote_client/chantal_remote.html
+chantal/samples/remote_client/chantal_remote.log
+chantal/samples/remote_client/la_import.py
+chantal/samples/remote_client/large_area_depositions.pickle
