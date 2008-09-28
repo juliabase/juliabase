@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-27 18:55+0200\n"
+"POT-Creation-Date: 2008-09-28 03:27+0200\n"
 "PO-Revision-Date: 2008-09-01 09:17+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -173,16 +173,16 @@ msgstr ""
 msgid "6-chamber layers"
 msgstr ""
 
-msgid "PH3 in 2% SiH4"
+msgid "PH₃ in 2% SiH₄"
 msgstr ""
 
 msgid "TMB in 1% He"
 msgstr ""
 
-msgid "B2H6 in 5ppm H2"
+msgid "B₂H₆ in 5ppm H₂"
 msgstr ""
 
-msgid "PH3 in 10 ppm H2"
+msgid "PH₃ in 10 ppm H₂"
 msgstr ""
 
 msgid "channel"
@@ -255,28 +255,10 @@ msgstr ""
 msgid "station"
 msgstr ""
 
-msgid "SiH4 flow rate"
+msgid "SiH₄ flow rate"
 msgstr ""
 
-msgid "H2 flow rate"
-msgstr ""
-
-msgid "SC"
-msgstr ""
-
-msgid "in %"
-msgstr ""
-
-msgid "TMB"
-msgstr ""
-
-msgid "CH4"
-msgstr ""
-
-msgid "CO2"
-msgstr ""
-
-msgid "PH3"
+msgid "H₂ flow rate"
 msgstr ""
 
 msgid "power"
@@ -1072,18 +1054,18 @@ msgid ""
 "    "
 msgstr ""
 
+msgid "Deposition error"
+msgstr ""
+
+msgid "Layer error"
+msgstr ""
+
 msgid "My Layer error"
 msgstr ""
 
 #, fuzzy
 msgid "Sample series error"
 msgstr "sample series"
-
-msgid "Deposition error"
-msgstr ""
-
-msgid "Layer error"
-msgstr ""
 
 msgid "delete this layer"
 msgstr ""

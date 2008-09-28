@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-27 18:55+0200\n"
-"PO-Revision-Date: 2008-09-27 18:56+0200\n"
+"POT-Creation-Date: 2008-09-28 03:27+0200\n"
+"PO-Revision-Date: 2008-09-28 03:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -173,17 +173,17 @@ msgstr "6-Kammer-Deposition"
 msgid "6-chamber layers"
 msgstr "6-Kammer-Schichten"
 
-msgid "PH3 in 2% SiH4"
-msgstr "PH3 in 2% SiH4"
+msgid "PH₃ in 2% SiH₄"
+msgstr "PH₃ in 2% SiH₄"
 
 msgid "TMB in 1% He"
 msgstr "TMB in 1% He"
 
-msgid "B2H6 in 5ppm H2"
-msgstr "B2H6 in 5ppm H2"
+msgid "B₂H₆ in 5ppm H₂"
+msgstr "B₂H₆ in 5ppm H₂"
 
-msgid "PH3 in 10 ppm H2"
-msgstr "PH3 in 10 ppm H2"
+msgid "PH₃ in 10 ppm H₂"
+msgstr "PH₃ in 10 ppm H₂"
 
 msgid "channel"
 msgstr "Channel"
@@ -255,29 +255,11 @@ msgstr "Schichttyp"
 msgid "station"
 msgstr "Station"
 
-msgid "SiH4 flow rate"
-msgstr "SiH4 Flussrate"
+msgid "SiH₄ flow rate"
+msgstr "SiH₄ Flussrate"
 
-msgid "H2 flow rate"
-msgstr "H2 Flussrate"
-
-msgid "SC"
-msgstr "SC"
-
-msgid "in %"
-msgstr "in %"
-
-msgid "TMB"
-msgstr "TMB"
-
-msgid "CH4"
-msgstr "CH4"
-
-msgid "CO2"
-msgstr "CO2"
-
-msgid "PH3"
-msgstr "PH3"
+msgid "H₂ flow rate"
+msgstr "H₂ Flussrate"
 
 msgid "power"
 msgstr "Leistung"
@@ -1096,17 +1078,17 @@ msgstr ""
 "\n"
 "Der Name %(alias)s ist ein Alias für die folgenden Proben:"
 
-msgid "My Layer error"
-msgstr "Fehler in Meiner Schicht"
-
-msgid "Sample series error"
-msgstr "Fehler in der Probenserie"
-
 msgid "Deposition error"
 msgstr "Fehler in Deposition"
 
 msgid "Layer error"
 msgstr "Fehler in Schicht"
+
+msgid "My Layer error"
+msgstr "Fehler in Meiner Schicht"
+
+msgid "Sample series error"
+msgstr "Fehler in der Probenserie"
 
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
@@ -1368,12 +1350,15 @@ msgid ""
 msgstr ""
 "\n"
 "<p>Diese Plots werden alle 10 Minuten aktualisiert, die Auflösung der\n"
-"Ausgangsdaten ist jedoch größer.  Beachten Sie, dass „CPU load“ die originale\n"
+"Ausgangsdaten ist jedoch größer.  Beachten Sie, dass „CPU load“ die "
+"originale\n"
 "„load average“ <em>minus 1</em> bedeutet, um einen Grid-Computing-Prozess\n"
 "zu eliminieren, der mit niedriger Priorität läuft.</p>\n"
 "\n"
-"<p>„Memory usage“ zeigt zwei grüne Kurven: Die Speicherbelegung allein durch\n"
-"die Programme, und die komplette Speicherbelegung inklusive Puffern und Cache.\n"
+"<p>„Memory usage“ zeigt zwei grüne Kurven: Die Speicherbelegung allein "
+"durch\n"
+"die Programme, und die komplette Speicherbelegung inklusive Puffern und "
+"Cache.\n"
 "Die rote Kurve ist die Nutzung des Auslagerungs-Speichers.</p>\n"
 
 msgid "server load statistics plots"
@@ -1411,6 +1396,24 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "TMB"
+#~ msgstr "TMB"
+
+#~ msgid "CH4"
+#~ msgstr "CH4"
+
+#~ msgid "CO2"
+#~ msgstr "CO2"
+
+#~ msgid "PH3"
+#~ msgstr "PH3"
+
+#~ msgid "SC"
+#~ msgstr "SC"
+
+#~ msgid "in %"
+#~ msgstr "in %"
 
 #~ msgid ""
 #~ "\n"
