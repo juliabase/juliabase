@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-28 18:42+0200\n"
+"POT-Creation-Date: 2008-09-28 18:57+0200\n"
 "PO-Revision-Date: 2008-09-01 09:17+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1264,6 +1264,22 @@ msgstr ""
 msgid "Availability"
 msgstr ""
 
+msgid "No data available."
+msgstr ""
+
+#, python-format
+msgid "(Counted since %(start_date)s.)"
+msgstr ""
+
+msgid "Availability:"
+msgstr ""
+
+msgid "Latest 10 downtimes:"
+msgstr ""
+
+msgid "Component uptimes"
+msgstr ""
+
 msgid "Component"
 msgstr ""
 
@@ -1277,22 +1293,6 @@ msgid "web server"
 msgstr ""
 
 msgid "database server"
-msgstr ""
-
-msgid "Overall uptime/downtime data"
-msgstr ""
-
-msgid "No data available."
-msgstr ""
-
-#, python-format
-msgid "(Counted since %(start_date)s.)"
-msgstr ""
-
-msgid "Availability:"
-msgstr ""
-
-msgid "Latest 10 downtimes:"
 msgstr ""
 
 msgid "Work load"
