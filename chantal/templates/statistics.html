@@ -22,6 +22,26 @@
 {% block content %}
 <h2>{% trans 'Availability' %}</h2>
 
+{% if not availability %}
+  <p>{% trans 'No data available.' %}</p>
+{% else %}
+  <p>{% blocktrans with availability.start_date as start_date %}(Counted since {{ start_date }}.){% endblocktrans %}</p>
+
+  <p>{% trans 'Availability:' %} {{ availability.availability }}</p>
+
+  {% if availability.downtimes %}
+    <p>{% trans 'Latest 10 downtimes:' %}</p>
+
+    <ul>
+      {% for downtime in availability.downtimes %}
+        <li>{{ downtime }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
+
+<h3>{% trans 'Component uptimes' %}</h3>
+
 <table cellpadding="10" style="large" border="1">
   <tr>
     <th>{% trans 'Component' %}</th>
@@ -44,26 +64,6 @@
     <td>{{ db_uptime }}</td>
   </tr>
 </table>
-
-<h3>{% trans 'Overall uptime/downtime data' %}</h3>
-
-{% if not availability %}
-  <p>{% trans 'No data available.' %}</p>
-{% else %}
-  <p>{% blocktrans with availability.start_date as start_date %}(Counted since {{ start_date }}.){% endblocktrans %}</p>
-
-  <p>{% trans 'Availability:' %} {{ availability.availability }}</p>
-
-  {% if availability.downtimes %}
-    <p>{% trans 'Latest 10 downtimes:' %}</p>
-
-    <ul>
-      {% for downtime in availability.downtimes %}
-        <li>{{ downtime }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endif %}
 
 
 <h2 style="clear:both">{% trans 'Work load' %}</h2>
