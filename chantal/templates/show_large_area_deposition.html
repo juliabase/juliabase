@@ -29,7 +29,7 @@
         </tr>
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.layer_type %}:</td>
-          <td class="value">{{ layer.layer_type }}</td>
+          <td class="value">{{ layer.get_layer_type_display }}</td>
           <td class="label">H<sub>2</sub>:</td>
           <td class="value">{{ layer.h2|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.pressure %}:</td>
@@ -49,7 +49,7 @@
           <td class="label">TMB:</td>
           <td class="value">{{ layer.tmb|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.hf_frequency %}:</td>
-          <td class="value">{{ layer.hf_frequency|quantity:"MHz"|default_if_none:"—" }}</td>
+          <td class="value">{{ layer.get_hf_frequency_display }}</td>
         </tr>
         <tr>
           <td colspan="2" />
@@ -70,7 +70,7 @@
           <td class="label">PH<sub>3</sub>:</td>
           <td class="value">{{ layer.ph3|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.electrode %}:</td>
-          <td class="value">{{ layer.electrode }}</span></td>
+          <td class="value">{{ layer.get_electrode_display }}</span></td>
         </tr>
         <tr>
           <td colspan="4" />
