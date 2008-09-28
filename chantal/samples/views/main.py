@@ -297,7 +297,7 @@ def get_availability_data():
         availability = pickle.load(open("/home/bronger/repos/chantal/online/remote_monitor.pickle", "rb"))
     except IOError:
         return None
-    result["start_date"] = availability.start_of_log.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+    result["start_date"] = availability.start_of_log.strftime(str(_("%b %d, %Y, %H:%M")))
     accuracy = 100000000
     a = availability.availability
     a = int(round(a * accuracy))

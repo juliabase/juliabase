@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-28 19:00+0200\n"
+"POT-Creation-Date: 2008-09-28 19:10+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -623,10 +623,10 @@ msgstr ""
 msgid "%A, %b %d, %Y, %H:%M"
 msgstr ""
 
-msgid "100.0 %"
+msgid "%b %d, %Y, %H:%M"
 msgstr ""
 
-msgid "%b %d, %Y, %H:%M"
+msgid "100.0 %"
 msgstr ""
 
 msgid "%H:%M"
@@ -1262,7 +1262,9 @@ msgid "No data available."
 msgstr ""
 
 #, python-format
-msgid "Availability since %(start_date)s:"
+msgid ""
+"%(availability)s \n"
+"         availability since %(start_date)s."
 msgstr ""
 
 msgid "Latest 10 downtimes:"

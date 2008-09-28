@@ -25,7 +25,8 @@
 {% if not availability %}
   <p>{% trans 'No data available.' %}</p>
 {% else %}
-  <p>{% blocktrans %}Availability since {{ start_date }}:{% endblocktrans %} {{ availability.availability }}</p>
+  <p>{% blocktrans with availability.availability as availability and availability.start_date as start_date %}{{ availability }} 
+         availability since {{ start_date }}.{% endblocktrans %}</p>
 
   {% if availability.downtimes %}
     <p>{% trans 'Latest 10 downtimes:' %}</p>
