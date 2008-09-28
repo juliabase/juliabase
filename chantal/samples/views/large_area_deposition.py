@@ -28,7 +28,7 @@ class SamplesForm(forms.Form):
         self.fields["sample_list"].queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
             else user_details.my_samples
-        self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
+        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
     def clean_sample_list(self):
         sample_list = list(set(self.cleaned_data["sample_list"]))
         if not sample_list:
@@ -40,7 +40,7 @@ class DepositionForm(forms.ModelForm):
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, user, data=None, **keyw):
         super(DepositionForm, self).__init__(data, **keyw)
-        self.fields["number"].widget.attrs["readonly"] = "readonly"
+        self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
     def validate_unique(self):
         pass
     class Meta:
@@ -54,7 +54,10 @@ class LayerForm(forms.ModelForm):
         initial["date"] = datetime.date.today()
         keyw["initial"] = initial
         super(LayerForm, self).__init__(*args, **keyw)
-        self.fields["number"].widget.attrs["readonly"] = "readonly"
+        self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
+        for fieldname in ["date", "sih4", "h2", "tmb", "ch4", "co2", "ph3", "power", "pressure", "temperature",
+                          "time", "dc_bias", "electrodes_distrance"]:
+            self.fields[fieldname].widget.attrs["size"] = "10"
     class Meta:
         model = models.LargeAreaLayer
         exclude = ("deposition",)

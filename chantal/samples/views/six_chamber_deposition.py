@@ -96,14 +96,13 @@ class LayerForm(DataModelForm):
         very harmless: It's only about visual appearance and numerical limits.
         """
         super(LayerForm, self).__init__(data, **keyw)
-        self.fields["number"].widget = \
-            forms.TextInput(attrs={"size": "2", "style": "text-align: center; font-size: xx-large"})
-        self.fields["comments"].widget = forms.Textarea(attrs={"cols": "30"})
+        self.fields["number"].widget.attrs.update({"size": "2", "style": "text-align: center; font-size: xx-large"})
+        self.fields["comments"].widget.attrs["cols"] = "30"
         for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
                           "transfer_out_of_chamber", "plasma_start_power",
                           "deposition_frequency", "deposition_power", "base_pressure"]:
-            self.fields[fieldname].widget = forms.TextInput(attrs={"size": "10"})
+            self.fields[fieldname].widget.attrs["size"] = "10"
         for fieldname, min_value, max_value in [("deposition_frequency", 13, 150), ("plasma_start_power", 0, 1000),
                                                 ("deposition_power", 0, 1000)]:
             self.fields[fieldname].min_value = min_value
