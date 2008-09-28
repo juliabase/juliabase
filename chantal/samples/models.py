@@ -274,17 +274,17 @@ class SixChamberLayer(Layer):
 admin.site.register(SixChamberLayer)
 
 six_chamber_gas_choices = (
-    ("SiH4", "SiH4"),
-    ("H2", "H2"),
-    ("PH3+SiH4", _(u"PH3 in 2% SiH4")),
+    ("SiH4", "SiH₄"),
+    ("H2", "H₂"),
+    ("PH3+SiH4", _(u"PH₃ in 2% SiH₄")),
     ("TMB", _(u"TMB in 1% He")),
-    ("B2H6", _(u"B2H6 in 5ppm H2")),
-    ("CH4", "CH4"),
-    ("CO2", "CO2"),
-    ("GeH4", "GeH4"),
+    ("B2H6", _(u"B₂H₆ in 5ppm H₂")),
+    ("CH4", "CH₄"),
+    ("CO2", "CO₂"),
+    ("GeH4", "GeH₄"),
     ("Ar", "Ar"),
-    ("Si2H6", "Si2H6"),
-    ("PH3", _(u"PH3 in 10 ppm H2")))
+    ("Si2H6", "Si₂H₆"),
+    ("PH3", _(u"PH₃ in 10 ppm H₂")))
 u"""Contains all possible choices for `SixChamberChannel.gas`.
 """
     
@@ -354,13 +354,12 @@ class LargeAreaLayer(Layer):
     date = models.DateField(_(u"date"))
     layer_type = models.CharField(_(u"layer type"), max_length=2, choices=large_area_layer_type_choices)
     station = models.CharField(_(u"station"), max_length=2, choices=large_area_station_choices)
-    sih4 = models.DecimalField(_(u"SiH4 flow rate"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
-    h2 = models.DecimalField(_(u"H2 flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
-    sc = models.DecimalField(_(u"SC"), max_digits=5, decimal_places=2, help_text=_(u"in %"))
-    tmb = models.DecimalField(_(u"TMB"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
-    ch4 = models.DecimalField(_(u"CH4"), max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
-    co2 = models.DecimalField(_(u"CO2"), max_digits=4, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
-    ph3 = models.DecimalField(_(u"PH3"), max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    sih4 = models.DecimalField(_(u"SiH₄ flow rate"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
+    h2 = models.DecimalField(_(u"H₂ flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
+    tmb = models.DecimalField(u"TMB", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    ch4 = models.DecimalField(u"CH₄", max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    co2 = models.DecimalField(u"CO₂", max_digits=4, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    ph3 = models.DecimalField(u"PH₃", max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
     power = models.DecimalField(_(u"power"), max_digits=5, decimal_places=1, help_text=_(u"in W"))
     pressure = models.DecimalField(_(u"pressure"), max_digits=3, decimal_places=1, help_text=_(u"in Torr"))
     temperature = models.DecimalField(_(u"temperature"), max_digits=4, decimal_places=1, help_text=_(u"in ℃"))
@@ -369,6 +368,7 @@ class LargeAreaLayer(Layer):
     time = models.IntegerField(_(u"time"), help_text=_(u"in sec"))
     dc_bias = models.DecimalField(_(u"DC bias"), max_digits=3, decimal_places=1, help_text=_(u"in V"), null=True, blank=True)
     electrode = models.CharField(_(u"electrode"), max_length=30, choices=large_area_electrode_choices)
+    # FixMe: Must be called "electrodes_distance".  Also in other modules.
     electrodes_distrance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
                                                help_text=_(u"in mm"))
     def __unicode__(self):
