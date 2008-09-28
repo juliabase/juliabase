@@ -24,9 +24,11 @@ for style in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:style:1.0}
             bottomline_styles.append(style.attrib["{urn:oasis:names:tc:opendocument:xmlns:style:1.0}name"])
 
 def text(root):
-    current_text = u""
-    for element in root.findall("{urn:oasis:names:tc:opendocument:xmlns:text:1.0}p"):
-        current_text += element.text or u""
+    if root.tag == "{urn:oasis:names:tc:opendocument:xmlns:office:1.0}annotation":
+        return u""
+    current_text = root.text or u""
+    for element in list(root):
+        current_text += text(element)
     return current_text
 
 class EmptyRowException(Exception):
@@ -35,10 +37,11 @@ class EmptyRowException(Exception):
 layers = []
 depositions = []
 
-columns = ("number", "date", "layer_type", "station", "sih4", "h2", "sc", "tmb", "ch4", "co2", "ph3", "power",
+columns = ("number", "date", "layer_type", "station", "sih4", "h2", "__", "tmb", "ch4", "co2", "ph3", "power",
            "pressure", "temperature", "hf_frequency", "time", "dc_bias", "__", "__", "__", "__", "__", "__", "__", "__",
-           "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "electrode", "electrodes_distrance",
+           "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "electrode", "electrodes_distance",
            "comments")
+
 for row in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}table-row"):
     try:
         current_column = 0
@@ -94,19 +97,26 @@ for deposition in depositions:
     deposition_number = deposition[-1].fields["number"]
     if not deposition_number:
         continue
+    comments = u"\\n".join(layer.fields["comments"] for layer in deposition)
+    while comments[-4:] == "\\n\\n":
+        comments = comments[:-2]
+    while comments[:2] == "\\n":
+        comments = comments[2:]
+    comments = comments.replace('"', '\\"')
     print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor")
 
 deposition = LargeAreaDeposition(sample)
-deposition.number = "%s"
-deposition.timestamp = '%s 12:00:00'""" % (deposition_number, datum2date(deposition[-1].fields["date"]))
+deposition.number = u"%s"
+deposition.comments = u"%s"
+deposition.timestamp = u'%s 12:00:00'""" % (deposition_number, comments, datum2date(deposition[-1].fields["date"]))
     for layer in deposition:
         print>>outfile, "\nlayer = LargeAreaLayer(deposition)"
         for key, value in layer.fields.iteritems():
-            if key != "__":
+            if key != "__" and key != "comments":
                 if key == "date":
                     value = datum2date(value)
-                if key in ("sih4", "h2", "sc", "tmb", "ch4", "co2", "ph3", "power",
-                           "pressure", "temperature", "hf_frequency", "time", "dc_bias", "electrodes_distrance"):
+                if key in ("sih4", "h2", "tmb", "ch4", "co2", "ph3", "power",
+                           "pressure", "temperature", "hf_frequency", "time", "dc_bias", "electrodes_distance"):
                     value = value.replace(",", ".")
                     if key == "sih4" and value == "155-178.4":
                         value = "155"
@@ -116,7 +126,7 @@ deposition.timestamp = '%s 12:00:00'""" % (deposition_number, datum2date(deposit
                         value = ""
                     if value == "?":
                         value = "0"
-                    if key in ("h2", "power", "sc") and not value:
+                    if key in ("h2", "power") and not value:
                         value = "0"
                     if key == "time" and value == "ca. 10'":
                         value = "10"
