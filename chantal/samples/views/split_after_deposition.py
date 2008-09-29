@@ -64,7 +64,7 @@ class GlobalNewDataForm(Form):
         super(GlobalNewDataForm, self).__init__(data, **keyw)
         self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
         self.fields["new_location"].initial = \
-            models.default_location_of_processed_samples.get(deposition_instance.__class__, u"")
+            models.default_location_of_deposited_samples.get(deposition_instance.__class__, u"")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
 
 def is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form):

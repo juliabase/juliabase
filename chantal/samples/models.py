@@ -16,7 +16,8 @@ to improve this situation.)
 However, if you add new *classes*, you can just run ``./manage.py syncdb`` and
 the new tables are automatically created.
 
-:type default_location_of_processed_samples: dict mapping `Process` to string.
+:type default_location_of_deposited_samples: dict mapping `Deposition` to
+  string.
 :type result_process_classes: set of `Process`
 """
 
@@ -44,7 +45,7 @@ def get_really_full_name(user):
     """
     return user.get_full_name() or unicode(user)
 
-default_location_of_processed_samples = {}
+default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
 This is used in
@@ -187,7 +188,7 @@ class SixChamberDeposition(Deposition):
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
         permissions = (("can_edit", "Can create and edit 6-chamber depositions"),)
-default_location_of_processed_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
+default_location_of_deposited_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
 admin.site.register(SixChamberDeposition)
 
 class HallMeasurement(Process):
@@ -316,7 +317,7 @@ class LargeAreaDeposition(Deposition):
         verbose_name = _(u"large-area deposition")
         verbose_name_plural = _(u"large-area depositions")
         permissions = (("can_edit", "Can create and edit large-area depositions"),)
-default_location_of_processed_samples[SixChamberDeposition] = _(u"large-area deposition lab")
+default_location_of_deposited_samples[SixChamberDeposition] = _(u"large-area deposition lab")
 admin.site.register(LargeAreaDeposition)
 
 large_area_layer_type_choices = (
