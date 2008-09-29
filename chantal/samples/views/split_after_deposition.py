@@ -58,7 +58,7 @@ class NewDataForm(Form):
     """
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
-    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None)
+    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None, required=False)
     def __init__(self, data=None, **keyw):
         super(NewDataForm, self).__init__(data, **keyw)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
@@ -143,7 +143,9 @@ def change_structure(original_data_forms, new_data_form_lists, deposition_number
                 for new_name_index in range(len(new_data_forms), number_of_pieces):
                     default_new_responsible_person = None
                     if new_data_forms[-1].is_valid():
-                        default_new_responsible_person = new_data_forms[-1].cleaned_data["new_responsible_person"].pk
+                        default_new_responsible_person = new_data_forms[-1].cleaned_data["new_responsible_person"]
+                        if default_new_responsible_person:
+                            default_new_responsible_person = default_new_responsible_person.pk
                     new_data_forms.append(NewDataForm(initial={"new_name": deposition_number,
                                                                "new_responsible_person": default_new_responsible_person},
                                                       prefix="%d_%d"%(sample_index, new_name_index)))
@@ -179,9 +181,12 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
                 child_sample.split_origin = sample_split
                 if global_new_location:
                     child_sample.current_location = global_new_location
-                child_sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
+                currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
                     else new_data_form.cleaned_data["new_responsible_person"]
+                if currently_responsible_person:
+                    child_sample.currently_responsible_person = currently_responsible_person
                 child_sample.save()
+                # FixMe: Don't do that always
                 child_sample.currently_responsible_person.get_profile().my_samples.add(child_sample)
         else:
             if not sample.name.startswith("*"):
@@ -189,8 +194,10 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
             sample.name = new_data_forms[0].cleaned_data["new_name"]
             if global_new_location:
                 sample.current_location = global_new_location
-            sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
+            currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
                 else new_data_forms[0].cleaned_data["new_responsible_person"]
+            if currently_responsible_person:
+                sample.currently_responsible_person = currently_responsible_person
             sample.save()
             # Cheap heuristics to avoid re-adding samples that have been already removed from the operator's MySamples
             if sample.currently_responsible_person != operator:
