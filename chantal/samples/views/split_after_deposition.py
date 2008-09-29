@@ -21,14 +21,21 @@ from django.forms.util import ValidationError
 from chantal.samples.views import utils
 
 class OriginalDataForm(Form):
-    u"""Form holding the old name of a sample and the number of pieces it is
-    about to be split into.
+    u"""Form holding the old sample and the number of pieces it is about to be
+    split into.
     """
     _ = ugettext_lazy
-    name = forms.CharField(label=_(u"Old sample name"), max_length=30,
+    sample = forms.CharField(label=_(u"Old sample name"), max_length=30,
                            widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
+    def clean_sample(self):
+        sample = utils.get_sample(self.cleaned_data["sample"])
+        if sample is None:
+            raise ValidationError(_(u"No sample with this name found."))
+        if isinstance(sample, list):
+            raise ValidationError(_(u"Alias is not unique."))
+        return sample
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
             raise ValidationError(_(u"Must be at least 1."))
@@ -73,7 +80,7 @@ def is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
     returns ``False`` (and makes the return value clear prematurely).
 
     :Parameters:
-      - `original_data_forms`: all old names and pieces numbers
+      - `original_data_forms`: all old samples and pieces numbers
       - `new_data_form_lists`: new names for all pieces
       - `global_new_data_form`: the global, overriding settings
 
@@ -99,7 +106,7 @@ def change_structure(original_data_forms, new_data_form_lists, deposition_number
     performed here.
     
     :Parameters:
-      - `original_data_forms`: all old names and pieces numbers
+      - `original_data_forms`: all old samples and pieces numbers
       - `new_data_form_lists`: new names for all pieces
       - `deposition_number`: the deposition number
 
@@ -132,32 +139,25 @@ def change_structure(original_data_forms, new_data_form_lists, deposition_number
                 structure_changed = True
     return structure_changed
 
-def save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, operator, sample_names):
+def save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, operator):
     u"""Performs all splits – if any – and renames the samples according to
     what was input by the user.
 
     :Parameters:
-      - `original_data_forms`: all old names and pieces numbers
+      - `original_data_forms`: all old samples and pieces numbers
       - `new_data_form_lists`: new names for all pieces
       - `global_new_data_form`: the global, overriding settings
       - `operator`: the user who performed the split
-      - `sample_names`: the original names of the samples involved in the
-        deposition
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_data_form_lists: list of list of `NewDataForm`
     :type global_new_data_form: `GlobalNewDataForm`
     :type operator: ``django.contrib.auth.models.User``
-    :type sample_names: list of unicode
     """
-    # FixMe: `sample_names` should include `models.Sample` instances instead of unicodes.
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]
-    for original_data_form, new_data_forms, old_name in zip(
-        original_data_forms, new_data_form_lists, sample_names):
-        # I don't take the old name from `original_data_form` because it may be
-        # forged.
-        sample = models.Sample.objects.get(name=old_name)
+    for original_data_form, new_data_forms in zip(original_data_forms, new_data_form_lists):
+        sample = original_data_form.cleaned_data["sample"]
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=operator, parent=sample)
             sample_split.save()
@@ -173,8 +173,8 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
                 child_sample.save()
                 child_sample.currently_responsible_person.get_profile().my_samples.add(child_sample)
         else:
-            if not old_name.startswith("*"):
-                models.SampleAlias(name=old_name, sample=sample).save()
+            if not sample.name.startswith("*"):
+                models.SampleAlias(name=sample.name, sample=sample).save()
             sample.name = new_data_forms[0].cleaned_data["new_name"]
             if global_new_location:
                 sample.current_location = global_new_location
@@ -185,19 +185,19 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
             if sample.currently_responsible_person != operator:
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
 
-def is_referentially_valid(original_data_forms, new_data_form_lists, deposition_name):
+def is_referentially_valid(original_data_forms, new_data_form_lists, deposition):
     u"""Test whether all forms are consistent with each other and with the
     database.  For example, no sample name must occur twice, and the sample
     names must not exist within the database already.
 
     :Parameters:
-      - `original_data_forms`: all old names and pieces numbers
+      - `original_data_forms`: all old samples and pieces numbers
       - `new_data_form_lists`: new names for all pieces
-      - `deposition_name`: the deposition number
+      - `deposition`: the deposition after which the split takes place
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_data_form_lists: list of `NewDataForm`
-    :type deposition_name: unicode
+    :type deposition: `models.Deposition`
 
     :Return:
       whether all forms are consistent with each other and the database
@@ -205,15 +205,20 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition_
     :rtype: bool
     """
     referentially_valid = True
+    samples = deposition.samples.all()
+    for original_data_form in original_data_forms:
+        if original_data_form.is_valid() and original_data_form.cleaned_data["sample"] not in samples:
+            utils.append_error(original_data_form, _(u"Sample name %s doesn't belong to this deposition."))
+            referentially_valid = False
     new_names = set()
     more_than_one_piece = sum(len(new_data_forms) for new_data_forms in new_data_form_lists) > 1
     for new_data_forms in new_data_form_lists:
         for new_data_form in new_data_forms:
             if new_data_form.is_valid():
                 new_name = new_data_form.cleaned_data["new_name"]
-                if more_than_one_piece and new_name == deposition_name:
+                if more_than_one_piece and new_name == deposition.name:
                     utils.append_error(new_data_form, _(u"Since there is more than one piece, the new name "
-                                                                   u"must not be exactly the deposition's name."))
+                                                        u"must not be exactly the deposition's name."))
                     referentially_valid = False
                 if new_name in new_names:
                     utils.append_error(new_data_form, _(u"This sample name has been used already on this page."))
@@ -301,14 +306,12 @@ def split_and_rename_after_deposition(request, deposition_id):
     if not request.user.has_perm("samples.change_" + deposition.__class__.__name__.lower()):
         return utils.HttpResponseSeeOther("permission_error")
     if request.POST:
-        sample_names = [sample.name for sample in deposition.samples.all()]
         original_data_forms, new_data_form_lists, global_new_data_form = forms_from_post_data(request.POST, deposition)
         all_valid = is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
         structure_changed = change_structure(original_data_forms, new_data_form_lists, deposition.number)
         referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition.number)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition.operator,
-                             sample_names)
+            save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition.operator)
             request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
             return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     else:
