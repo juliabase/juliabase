@@ -29,12 +29,23 @@ class OriginalDataForm(Form):
                            widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
+    def __init__(self, remote_client, *args, **kwargs):
+        super(OriginalDataForm, self).__init__(*args, **kwargs)
+        self.remote_client = remote_client
     def clean_sample(self):
-        sample = utils.get_sample(self.cleaned_data["sample"])
-        if sample is None:
-            raise ValidationError(_(u"No sample with this name found."))
-        if isinstance(sample, list):
-            raise ValidationError(_(u"Alias is not unique."))
+        if not self.remote_client:
+            sample = utils.get_sample(self.cleaned_data["sample"])
+            if sample is None:
+                raise ValidationError(_(u"No sample with this name found."))
+            if isinstance(sample, list):
+                raise ValidationError(_(u"Alias is not unique."))
+        else:
+            try:
+                sample = models.Sample.get(id=int(self.cleaned_data["sample"]))
+            except models.Sample.DoesNotExist:
+                raise ValidationError(_(u"No sample with this ID found."))
+            except ValueError:
+                raise ValidationError(_(u"Invalid ID format."))
         return sample
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
@@ -229,7 +240,7 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
                     referentially_valid = False
     return referentially_valid
 
-def forms_from_post_data(post_data, deposition):
+def forms_from_post_data(post_data, deposition, remote_client):
     u"""Intepret the POST data and create bound forms for old and new names and
     the global data.  The top-level new-data list has the same number of
     elements as the original-data list because they correspond to each other.
@@ -237,9 +248,12 @@ def forms_from_post_data(post_data, deposition):
     :Parameters:
       - `post_data`: the result from ``request.POST``
       - `deposition`: the deposition after which this split takes place
+      - `remote_client`: whether the request was sent from the Chantal remote
+        client
 
     :type post_data: ``QueryDict``
     :type deposition: `models.Deposition`
+    :type remote_client: bool
 
     :Return:
       list of original data (i.e. old names) of every sample, list of lists of
@@ -251,22 +265,25 @@ def forms_from_post_data(post_data, deposition):
     for item in sorted(post_data.iteritems()):
         print "%s: %s" % item
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
-    original_data_forms = [OriginalDataForm(post_data, prefix=str(i)) for i in range(number_of_samples)]
+    original_data_forms = [OriginalDataForm(remote_client, post_data, prefix=str(i)) for i in range(number_of_samples)]
     new_data_form_lists = [[NewDataForm(post_data, prefix="%d_%d" % (sample_index, new_name_index))
                             for new_name_index in range(list_of_number_of_new_names[sample_index])]
                            for sample_index in range(number_of_samples)]
     global_new_data_form = GlobalNewDataForm(post_data, deposition_instance=deposition)
     return original_data_forms, new_data_form_lists, global_new_data_form
 
-def forms_from_database(deposition):
+def forms_from_database(deposition, remote_client):
     u"""Take a deposition instance and construct forms from it for its old and
     new data.  The top-level new data list has the same number of elements as
     the old data list because they correspond to each other.
 
     :Parameters:
       - `deposition`: the deposition to be converted to forms.
+      - `remote_client`: whether the request was sent from the Chantal remote
+        client
 
     :type deposition: `models.Deposition`
+    :type remote_client: bool
 
     :Return:
       list of original data (i.e. old names) of every sample, list of lists of
@@ -276,7 +293,7 @@ def forms_from_database(deposition):
       `GlobalNewDataForm`
     """
     samples = deposition.samples
-    original_data_forms = [OriginalDataForm(initial={"name": sample.name}, prefix=str(i))
+    original_data_forms = [OriginalDataForm(remote_client, initial={"name": sample.name}, prefix=str(i))
                              for i, sample in enumerate(samples.all())]
     new_data_form_lists = [[NewDataForm(
                 initial={"new_name": deposition.number, "new_responsible_person": sample.currently_responsible_person.pk},
@@ -303,19 +320,24 @@ def split_and_rename_after_deposition(request, deposition_id):
     :rtype: ``HttpResponse``
     """
     deposition = get_object_or_404(models.Deposition, pk=utils.convert_id_to_int(deposition_id))
+    remote_client = utils.is_remote_client(request)
     if not request.user.has_perm("samples.change_" + deposition.__class__.__name__.lower()):
         return utils.HttpResponseSeeOther("permission_error")
     if request.POST:
-        original_data_forms, new_data_form_lists, global_new_data_form = forms_from_post_data(request.POST, deposition)
+        original_data_forms, new_data_form_lists, global_new_data_form = \
+            forms_from_post_data(remote_client, request.POST, deposition)
         all_valid = is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
         structure_changed = change_structure(original_data_forms, new_data_form_lists, deposition.number)
         referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition.number)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition.operator)
-            request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
-            return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+            if not remote_client:
+                request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
+                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+            else:
+                return utils.respond_to_remote_client(True)
     else:
-        original_data_forms, new_data_form_lists, global_new_data_form = forms_from_database(deposition)
+        original_data_forms, new_data_form_lists, global_new_data_form = forms_from_database(remote_client, deposition)
     return render_to_response("split_after_deposition.html",
                               {"title": _(u"Bulk sample rename for %s") % deposition,
                                "samples": zip(original_data_forms, new_data_form_lists),
