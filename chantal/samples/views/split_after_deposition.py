@@ -41,7 +41,7 @@ class OriginalDataForm(Form):
                 raise ValidationError(_(u"Alias is not unique."))
         else:
             try:
-                sample = models.Sample.get(id=int(self.cleaned_data["sample"]))
+                sample = models.Sample.objects.get(id=int(self.cleaned_data["sample"]))
             except models.Sample.DoesNotExist:
                 raise ValidationError(_(u"No sample with this ID found."))
             except ValueError:
@@ -269,8 +269,6 @@ def forms_from_post_data(post_data, deposition, remote_client):
     :rtype: list of `OriginalDataForm`, list of lists of `NewDataForm`,
       `GlobalNewDataForm`
     """
-    for item in sorted(post_data.iteritems()):
-        print "%s: %s" % item
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
     original_data_forms = [OriginalDataForm(remote_client, post_data, prefix=str(i)) for i in range(number_of_samples)]
     new_data_form_lists = [[NewDataForm(post_data, prefix="%d_%d" % (sample_index, new_name_index))
