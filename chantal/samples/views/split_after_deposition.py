@@ -26,7 +26,7 @@ class OriginalDataForm(Form):
     """
     _ = ugettext_lazy
     sample = forms.CharField(label=_(u"Old sample name"), max_length=30,
-                           widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
+                             widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
     def __init__(self, remote_client, *args, **kwargs):
@@ -227,7 +227,7 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
         for new_data_form in new_data_forms:
             if new_data_form.is_valid():
                 new_name = new_data_form.cleaned_data["new_name"]
-                if more_than_one_piece and new_name == deposition.name:
+                if more_than_one_piece and new_name == deposition.number:
                     utils.append_error(new_data_form, _(u"Since there is more than one piece, the new name "
                                                         u"must not be exactly the deposition's name."))
                     referentially_valid = False
@@ -293,7 +293,7 @@ def forms_from_database(deposition, remote_client):
       `GlobalNewDataForm`
     """
     samples = deposition.samples
-    original_data_forms = [OriginalDataForm(remote_client, initial={"name": sample.name}, prefix=str(i))
+    original_data_forms = [OriginalDataForm(remote_client, initial={"sample": sample.name}, prefix=str(i))
                              for i, sample in enumerate(samples.all())]
     new_data_form_lists = [[NewDataForm(
                 initial={"new_name": deposition.number, "new_responsible_person": sample.currently_responsible_person.pk},
@@ -325,10 +325,10 @@ def split_and_rename_after_deposition(request, deposition_id):
         return utils.HttpResponseSeeOther("permission_error")
     if request.POST:
         original_data_forms, new_data_form_lists, global_new_data_form = \
-            forms_from_post_data(remote_client, request.POST, deposition)
+            forms_from_post_data(request.POST, deposition, remote_client)
         all_valid = is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
         structure_changed = change_structure(original_data_forms, new_data_form_lists, deposition.number)
-        referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition.number)
+        referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition.operator)
             if not remote_client:
@@ -337,7 +337,7 @@ def split_and_rename_after_deposition(request, deposition_id):
             else:
                 return utils.respond_to_remote_client(True)
     else:
-        original_data_forms, new_data_form_lists, global_new_data_form = forms_from_database(remote_client, deposition)
+        original_data_forms, new_data_form_lists, global_new_data_form = forms_from_database(deposition, remote_client)
     return render_to_response("split_after_deposition.html",
                               {"title": _(u"Bulk sample rename for %s") % deposition,
                                "samples": zip(original_data_forms, new_data_form_lists),
