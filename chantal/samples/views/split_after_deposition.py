@@ -309,24 +309,24 @@ def forms_from_database(deposition, remote_client):
     return original_data_forms, new_data_form_lists, global_new_data_form
 
 @login_required
-def split_and_rename_after_deposition(request, deposition_id):
+def split_and_rename_after_deposition(request, deposition_number):
     u"""View for renaming and/or splitting samples immediately after they have
     been deposited in the same run.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `deposition_id`: the ID of the deposition after which samples should be
-        split and/or renamed
+      - `deposition_number`: the number of the deposition after which samples
+        should be split and/or renamed
 
     :type request: ``HttpRequest``
-    :type deposition_id: unicode
+    :type deposition_number: unicode
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    deposition = get_object_or_404(models.Deposition, pk=utils.convert_id_to_int(deposition_id))
+    deposition = get_object_or_404(models.Deposition, number=deposition_number)
     remote_client = utils.is_remote_client(request)
     if not request.user.has_perm("samples.change_" + deposition.__class__.__name__.lower()):
         return utils.HttpResponseSeeOther("permission_error")

@@ -271,7 +271,7 @@ def edit(request, deposition_number):
                         _(u"Deposition %s was successfully added to the database.") % deposition.number
                     return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
                             "samples.views.split_after_deposition.split_and_rename_after_deposition",
-                            kwargs={"deposition_id": deposition.id}))
+                            kwargs={"deposition_number": deposition.number}))
     else:
         form_set.from_database()
     title = _(u"Large-area deposition “%s”") % deposition_number if deposition_number else _(u"Add large-area deposition")
