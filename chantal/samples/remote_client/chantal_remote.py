@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 
 __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamberLayer", "SixChamberChannel",
-           "LargeAreaDeposition", "LargeAreaLayer"]
+           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition"]
 
 def quote_header(value):
     return unicode(value).encode("utf-8")
@@ -40,7 +40,7 @@ class ChantalConnection(object):
                 response = self.opener.open(self.root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
             except urllib2.HTTPError, e:
                 text = e.read()
-                logfile = open("/home/bronger/public_html/toll.html", "wb")
+                logfile = open("chantal_remote.html", "wb")
                 print>>logfile, text
                 logfile.close()
                 raise
@@ -223,5 +223,13 @@ class LargeAreaLayer(object):
                 prefix+"electrode": self.electrode,
                 prefix+"electrodes_distance": self.electrodes_distance}
         return data
+
+def rename_after_deposition(deposition_number, samples):
+    data = {}
+    for i, id_ in enumerate(samples):
+        data["%d-sample" % i] = id_
+        data["%d-number_of_pieces" % i] = 1
+        data["%d_0-new_name" % i] = samples[id_]
+    return connection.open("depositions/split_and_rename_samples/"+deposition_number, data)
 
 connection = ChantalConnection("http://127.0.0.1:8000/")

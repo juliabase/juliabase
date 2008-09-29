@@ -93,6 +93,7 @@ login("bronger", "*******")
 """
 
 started = False
+last_date = None
 for deposition in depositions:
     deposition_number = deposition[-1].fields["number"]
     if not deposition_number:
@@ -103,12 +104,18 @@ for deposition in depositions:
     while comments[:2] == "\\n":
         comments = comments[2:]
     comments = comments.replace('"', '\\"')
-    print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor")
+    date = datum2date(deposition[-1].fields["date"])
+    if last_date is None or last_date != date:
+        hour = 13
+    else:
+        hour += 1
+    last_date = date
+    print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00")
 
 deposition = LargeAreaDeposition(sample)
 deposition.number = u"%s"
 deposition.comments = u"%s"
-deposition.timestamp = u'%s 12:00:00'""" % (deposition_number, comments, datum2date(deposition[-1].fields["date"]))
+deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments, date, hour)
     for layer in deposition:
         print>>outfile, "\nlayer = LargeAreaLayer(deposition)"
         for key, value in layer.fields.iteritems():
@@ -137,7 +144,9 @@ deposition.timestamp = u'%s 12:00:00'""" % (deposition_number, comments, datum2d
                 if value:
                     print>>outfile, u"layer.%s = u\"%s\"" % (key, value.replace('"', '\\"'))
     print>>outfile, u"""
-deposition.submit()
+deposition_number = deposition.submit()
+
+rename_after_deposition(deposition_number, {sample[0]: deposition_number})
 
 """
 
