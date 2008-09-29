@@ -178,7 +178,7 @@ def append_error(form, error_message, fieldname="__all__"):
     very simple: For many types of invalid data, you must take other forms in
     the same view into account.
 
-    See, for example, `split_after_process.is_referentially_valid`.
+    See, for example, `split_after_deposition.is_referentially_valid`.
 
     :Parameters:
       - `form`: the form to which the erroneous field belongs

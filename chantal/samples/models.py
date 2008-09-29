@@ -47,7 +47,8 @@ def get_really_full_name(user):
 default_location_of_processed_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
-This is used in `samples.views.split_after_process.GlobalNewDataForm.__init__`.
+This is used in
+`samples.views.split_after_deposition.GlobalNewDataForm.__init__`.
 """
 
 result_process_classes = set()
