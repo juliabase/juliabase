@@ -133,7 +133,9 @@ class FormSet(object):
             for i in range(self.global_data_form.cleaned_data["number_of_layers_to_add"]):
                 new_layers.append(("new", None))
                 structure_changed = True
-            self.global_data_form = GlobalDataForm()
+            post_data = self.post_data.copy()
+            post_data.pop("number_of_layers_to_add")
+            self.global_data_form = GlobalDataForm(post_data)
 
         # Delete layers
         for i in range(len(self.layer_forms)-1, -1, -1):
@@ -259,7 +261,6 @@ class FormSet(object):
 def edit(request, deposition_number):
     form_set = FormSet(request.user, deposition_number)
     if request.method == "POST":
-        print request.POST
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
         if deposition:
