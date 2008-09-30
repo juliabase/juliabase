@@ -62,7 +62,7 @@ class LayerForm(forms.ModelForm):
         model = models.LargeAreaLayer
         exclude = ("deposition",)
 
-class AddLayerForm(forms.Form):
+class GlobalDataForm(forms.Form):
     _ = ugettext_lazy
     number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
     def clean_number_of_layers_to_add(self):
@@ -84,7 +84,7 @@ class FormSet(object):
         self.user_details = self.user.get_profile()
         self.deposition = \
             get_object_or_404(models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
-        self.deposition_form = self.add_layer_form = self.samples_form = None
+        self.deposition_form = self.global_data_form = self.samples_form = None
         self.layer_forms = self.change_layer_forms = []
         self.post_data = None
     def from_post_data(self, post_data):
@@ -92,7 +92,7 @@ class FormSet(object):
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                                        "number": utils.get_next_deposition_number("L-")})
-        self.add_layer_form = AddLayerForm(self.post_data)
+        self.global_data_form = GlobalDataForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
         # FixMe: Normalisation is not necessary
         self.post_data, number_of_layers, __ = utils.normalize_prefixes(self.post_data)
@@ -113,7 +113,7 @@ class FormSet(object):
                 self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                     "number": utils.get_next_deposition_number("L-")})
             self.layer_forms, self.change_layer_forms = [], []
-        self.add_layer_form = AddLayerForm()
+        self.global_data_form = GlobalDataForm()
         self.samples_form = SamplesForm(self.user_details, self.deposition)
     def _change_structure(self):
         structure_changed = False
@@ -127,11 +127,11 @@ class FormSet(object):
                 structure_changed = True
 
         # Add layers
-        if self.add_layer_form.is_valid():
-            for i in range(self.add_layer_form.cleaned_data["number_of_layers_to_add"]):
+        if self.global_data_form.is_valid():
+            for i in range(self.global_data_form.cleaned_data["number_of_layers_to_add"]):
                 new_layers.append(("new", None))
                 structure_changed = True
-            self.add_layer_form = AddLayerForm()
+            self.global_data_form = GlobalDataForm()
 
         # Delete layers
         for i in range(len(self.layer_forms)-1, -1, -1):
@@ -182,7 +182,7 @@ class FormSet(object):
         return structure_changed
     def _is_all_valid(self):
         all_valid = self.deposition_form.is_valid()
-        all_valid = self.add_layer_form.is_valid() and all_valid
+        all_valid = self.global_data_form.is_valid() and all_valid
         all_valid = self.samples_form.is_valid() and all_valid
         all_valid = all([layer_form.is_valid() for layer_form in self.layer_forms]) and all_valid
         all_valid = all([change_layer_form.is_valid() for change_layer_form in self.change_layer_forms]) and all_valid
@@ -249,7 +249,8 @@ class FormSet(object):
             return deposition
     def get_context_dict(self):
         return {"deposition": self.deposition_form, "samples": self.samples_form,
-                "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms), "add_layer": self.add_layer_form}
+                "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms),
+                "global_data": self.global_data_form}
 
 @login_required
 @check_permission("change_largeareadeposition")
