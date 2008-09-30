@@ -38,7 +38,7 @@ class DumpRotation(object):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
         filename = os.path.join(self.backup_dir, "mysql_dump_%s.sql.gz" % timestamp)
         outfile = open(filename, "wb")
-        mysqldump = subprocess.Popen(["mysqldump", "--user=root", "--password=Sonne", "--compact", "mysql"],
+        mysqldump = subprocess.Popen(["mysqldump", "--user=root", "--password=Sonne", "--compact", "chantal"],
                                      stdout=subprocess.PIPE)
         gzip = subprocess.Popen(["gzip"], stdin=mysqldump.stdout, stdout=outfile)
         return_code_gzip = gzip.wait()
