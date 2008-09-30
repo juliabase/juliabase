@@ -13,6 +13,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm, ModelChoiceField
+import django.forms as forms
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
@@ -76,6 +77,31 @@ class OperatorChoiceField(ModelChoiceField):
     """
     def label_from_instance(self, operator):
         return models.get_really_full_name(operator)
+
+class AddLayersForm(forms.Form):
+    _ = ugettext_lazy
+    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
+    my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
+    def __init__(self, user_details, model, data=None, **keyw):
+        super(AddLayersForm, self).__init__(data, **keyw)
+        self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
+        self.model = model
+    def clean_number_of_layers_to_add(self):
+        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+    def clean_my_layer_to_be_added(self):
+        nickname = self.cleaned_data["my_layer_to_be_added"]
+        if nickname and "-" in nickname:
+            deposition_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
+            deposition_id, layer_number = int(deposition_id), int(layer_number)
+            try:
+                deposition = self.model.objects.get(pk=deposition_id)
+            except self.model.DoesNotExist:
+                pass
+            else:
+                layer_query = deposition.layers.filter(number=layer_number)
+                if layer_query.count() == 1:
+                    layer = layer_query[0]
+                    return layer_query.values()[0]    
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:

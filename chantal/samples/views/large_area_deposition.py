@@ -62,12 +62,6 @@ class LayerForm(forms.ModelForm):
         model = models.LargeAreaLayer
         exclude = ("deposition",)
 
-class AddLayersForm(forms.Form):
-    _ = ugettext_lazy
-    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
-    def clean_number_of_layers_to_add(self):
-        return utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
-
 class RemoveFromMySamplesForm(forms.Form):
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
@@ -97,7 +91,7 @@ class FormSet(object):
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                                        "number": utils.get_next_deposition_number("L-")})
-        self.add_layers_form = AddLayersForm(self.post_data)
+        self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
         # FixMe: Normalisation is not necessary
@@ -119,7 +113,7 @@ class FormSet(object):
                 self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                     "number": utils.get_next_deposition_number("L-")})
             self.layer_forms, self.change_layer_forms = [], []
-        self.add_layers_form = AddLayersForm()
+        self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm()
         self.samples_form = SamplesForm(self.user_details, self.deposition)
     def _change_structure(self):
@@ -136,9 +130,15 @@ class FormSet(object):
         # Add layers
         if self.add_layers_form.is_valid():
             for i in range(self.add_layers_form.cleaned_data["number_of_layers_to_add"]):
-                new_layers.append(("new", None))
+                new_layers.append(("new", {}))
                 structure_changed = True
-            self.add_layers_form = AddLayersForm()
+            # Add MyLayer
+            my_layer_data = self.add_layers_form.cleaned_data["my_layer_to_be_added"]
+            if my_layer_data is not None:
+                new_layers.append(("new", my_layer_data))
+                structure_changed = True
+            self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
+                
 
         # Delete layers
         for i in range(len(self.layer_forms)-1, -1, -1):
@@ -172,8 +172,9 @@ class FormSet(object):
                         self.layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
                         next_prefix += 1
                 elif new_layer[0] == "new":
-                    self.layer_forms.append(LayerForm(initial={"number": utils.three_digits(next_layer_number)},
-                                                 prefix=str(next_prefix)))
+                    initial = new_layer[1]
+                    initial["number"] = utils.three_digits(next_layer_number)
+                    self.layer_forms.append(LayerForm(initial=initial, prefix=str(next_prefix)))
                     next_layer_number += 1
                     next_prefix += 1
                 else:
