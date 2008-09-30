@@ -15,6 +15,8 @@ __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamber
            "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition"]
 
 def quote_header(value):
+    if isinstance(value, bool):
+        return u"on" if value else None
     return unicode(value).encode("utf-8")
 
 class ChantalConnection(object):
@@ -31,7 +33,9 @@ class ChantalConnection(object):
                 key = quote_header(key)
                 if value is not None:
                     if not isinstance(value, list):
-                        cleaned_data[key] = quote_header(value)
+                        quoted_header = quote_header(value)
+                        if quoted_header:
+                            cleaned_data[key] = quoted_header
                     else:
                         cleaned_list = [quote_header(item) for item in value if value is not None]
                         if cleaned_list:
@@ -187,7 +191,8 @@ class LargeAreaDeposition(object):
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp": self.timestamp,
                 "comments": self.comments,
-                "sample_list": self.sample_ids}
+                "sample_list": self.sample_ids,
+                "remove_deposited_from_my_samples": True}
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index+number_base+1, layer_index))
         result = connection.open("large-area_depositions/add/", data)

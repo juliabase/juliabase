@@ -216,17 +216,17 @@
   {% endif %}
 
   <table>
-    {% if add_layer.errors or add_layer.non_field_errors %}
+    {% if global_data.errors or global_data.non_field_errors %}
       <tr><td class="error-messages">
-        {% for field in add_layer %}
+        {% for field in global_data %}
           {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
         {% endfor %}
-        {% if add_layer.non_field_errors %}
-          <p>{% trans 'Error with adding layers' %}</p>{{ add_layer.non_field_errors }}
+        {% if global_data.non_field_errors %}
+          <p>{% trans 'Error with adding layers' %}</p>{{ global_data.non_field_errors }}
         {% endif %}
       </td></tr>
     {% endif %}
-    {{ add_layer }}
+    {{ global_data }}
   </table>
   <p class="submit-button"><input type="submit" /></p>
 </form>

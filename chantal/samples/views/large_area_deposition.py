@@ -65,6 +65,8 @@ class LayerForm(forms.ModelForm):
 class GlobalDataForm(forms.Form):
     _ = ugettext_lazy
     number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
+    remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
+                                                          required=False, initial=True)
     def clean_number_of_layers_to_add(self):
         return utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
 
@@ -257,9 +259,12 @@ class FormSet(object):
 def edit(request, deposition_number):
     form_set = FormSet(request.user, deposition_number)
     if request.method == "POST":
+        print request.POST
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
         if deposition:
+            if form_set.global_data_form.cleaned_data["remove_deposited_from_my_samples"]:
+                utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
             if deposition_number:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully changed in the database.") % deposition.number

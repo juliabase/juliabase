@@ -109,6 +109,7 @@ for deposition in depositions:
         hour = 13
     else:
         hour += 1
+    assert hour < 24
     last_date = date
     print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00")
 

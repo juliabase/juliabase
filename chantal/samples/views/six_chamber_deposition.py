@@ -373,21 +373,6 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
             channel.save()
     return deposition
 
-def remove_samples_from_my_samples(samples, user_details):
-    u"""Remove the given samples from the user's MySamples list
-
-    :Parameters:
-      - `samples`: the samples to be removed.  FixMe: How does it react if a
-        sample hasn't been in ``my_samples``?
-      - `user_details`: details of the user whose MySamples list is affected
-
-    :type samples: list of `models.Sample`
-    :type user_details: `models.UserDetails`
-    """
-    # FixMe: Should be moved to utils.py
-    for sample in samples:
-        user_details.my_samples.remove(sample)
-
 def forms_from_post_data(post_data):
     u"""Interpret the POST data and create bound forms for layers and channels
     from it.  The top-level channel list has the same number of elements as the
@@ -469,7 +454,7 @@ def edit(request, deposition_number):
         if all_valid and referentially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
             if remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
-                remove_samples_from_my_samples(deposition.samples.all(), user_details)
+                utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
             if deposition_number:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully changed in the database.") % deposition.number
