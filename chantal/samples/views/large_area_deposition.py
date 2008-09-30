@@ -68,7 +68,7 @@ class AddLayersForm(forms.Form):
     def clean_number_of_layers_to_add(self):
         return utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
 
-class RemoveFromMySamplesForm(form.Form):
+class RemoveFromMySamplesForm(forms.Form):
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
@@ -269,7 +269,7 @@ def edit(request, deposition_number):
         deposition = form_set.save_to_database()
         if deposition:
             if form_set.remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
-                utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
+                utils.remove_samples_from_my_samples(deposition.samples.all(), form_set.user_details)
             if deposition_number:
                 request.session["success_report"] = \
                     _(u"Deposition %s was successfully changed in the database.") % deposition.number
