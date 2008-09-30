@@ -216,17 +216,28 @@
   {% endif %}
 
   <table>
-    {% if global_data.errors or global_data.non_field_errors %}
+    {% if add_layers.errors or add_layers.non_field_errors %}
       <tr><td class="error-messages">
-        {% for field in global_data %}
+        {% for field in add_layers %}
           {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
         {% endfor %}
-        {% if global_data.non_field_errors %}
-          <p>{% trans 'Error with adding layers' %}</p>{{ global_data.non_field_errors }}
+        {% if add_layers.non_field_errors %}
+          <p>{% trans 'Error with adding layers' %}</p>{{ add_layers.non_field_errors }}
         {% endif %}
       </td></tr>
     {% endif %}
-    {{ global_data }}
+    {{ add_layers }}
+    {% if remove_from_my_samples.errors or remove_from_my_samples.non_field_errors %}
+      <tr><td class="error-messages">
+        {% for field in remove_from_my_samples %}
+          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+        {% endfor %}
+        {% if remove_from_my_samples.non_field_errors %}
+          <p>{% trans 'Error with removing from My Samples' %}</p>{{ remove_from_my_samples.non_field_errors }}
+        {% endif %}
+      </td></tr>
+    {% endif %}
+    {{ remove_from_my_samples }}
   </table>
   <p class="submit-button"><input type="submit" /></p>
 </form>
