@@ -343,10 +343,30 @@ def normalize_sample_name(sample_name):
     else:
         return sample_alias.sample.name
 
+def collect_subform_indices(post_data, subform_key="number", prefix=u""):
+    subform_name_pattern = re.compile(re.escape(prefix) + ur"(?P<index>\d+)(_\d+)*-(?P<key>.+)")
+    values = {}
+    for key, value in post_data.iteritems():
+        match = subform_name_pattern.match(key)
+        if match:
+            index = int(match.group("index"))
+            if match.group("key") == subform_key:
+                values[index] = value[0]
+            elif index not in values:
+                values[index] = None
+    last_value = 0
+    for index in sorted(values):
+        try:
+            value = int(values[index])
+        except TypeError, ValueError:
+            value = last_value + 0.01
+        last_value = values[index] = value
+    return sorted(values, key=lambda index: values[index])
+    
 level0_pattern = re.compile(ur"(?P<level0_index>\d+)-(?P<id>.+)")
 level1_pattern = re.compile(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
 def normalize_prefixes(post_data):
-    u"""Manipulates the prefixes of POST data keys for bringing then in
+    u"""Manipulates the prefixes of POST data keys for bringing them in
     consecutive order.  It only works for at most two-level numeric prefixes,
     which is sufficient for most purposes.  For example, in the 6-chamber
     deposition view, top-level is the layer index, and second-level is the

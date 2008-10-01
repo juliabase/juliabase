@@ -71,6 +71,8 @@ class ChangeLayerForm(forms.Form):
     _ = ugettext_lazy
     duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
+    move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
+                                        choices=((None, _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
     def clean(self):
         if self.cleaned_data["duplicate_this_layer"] and self.cleaned_data["remove_this_layer"]:
             raise ValidationError(_(u"You can't duplicate and remove a layer at the same time."))
@@ -94,11 +96,10 @@ class FormSet(object):
         self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
-        # FixMe: Normalisation is not necessary
-        self.post_data, number_of_layers, __ = utils.normalize_prefixes(self.post_data)
-        self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in range(number_of_layers)]
+        indices = utils.collect_subform_indices(self.post_data)
+        self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
-                                   for change_layer_index in range(number_of_layers)]
+                                   for change_layer_index in indices]
     def from_database(self):
         # FixMe: Duplication still missing
         if self.deposition:

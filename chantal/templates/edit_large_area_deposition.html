@@ -186,7 +186,11 @@
                   <span class="help">({{ layer.dc_bias.help_text }})</span></td>
               </tr>
               <tr>
-                <td colspan="2" />
+                <td class="label">
+                  <label for="id_{{ change_layer.move_this_layer.html_name }}"
+                         >{{ change_layer.move_this_layer.label }}:</label>
+                </td>
+                <td style="font-weight: normal">{{ change_layer.move_this_layer }}</td>
                 <td class="label">
                   <label for="id_{{ layer.ph3.html_name }}"
                          >PH<sub>3</sub>:</label>
