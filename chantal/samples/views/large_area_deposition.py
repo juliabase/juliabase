@@ -72,10 +72,17 @@ class ChangeLayerForm(forms.Form):
     duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
     move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
-                                        choices=((None, _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
+                                        choices=(("", _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
     def clean(self):
-        if self.cleaned_data["duplicate_this_layer"] and self.cleaned_data["remove_this_layer"]:
-            raise ValidationError(_(u"You can't duplicate and remove a layer at the same time."))
+        operations = 0
+        if self.cleaned_data["duplicate_this_layer"]:
+            operations += 1
+        if self.cleaned_data["remove_this_layer"]:
+            operations += 1
+        if self.cleaned_data["move_this_layer"]:
+            operations += 1
+        if operations > 1:
+            raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
         return self.cleaned_data
 
 class FormSet(object):
@@ -119,7 +126,23 @@ class FormSet(object):
         self.samples_form = SamplesForm(self.user_details, self.deposition)
     def _change_structure(self):
         structure_changed = False
-        new_layers = [("original", layer_form) for layer_form in self.layer_forms]
+        new_layers = [("original", layer_form, change_layer_form)
+                      for layer_form, change_layer_form in zip(self.layer_forms, self.change_layer_forms)]
+
+        # Move layers
+        for i in range(len(new_layers)):
+            layer_form, change_layer_form = new_layers[i][1:3]
+            if change_layer_form.is_valid():
+                if change_layer_form.cleaned_data["move_this_layer"] == "up" and i > 0:
+                    temp = new_layers[i-1]
+                    new_layers[i-1] = new_layers[i]
+                    new_layers[i] = temp
+                    structure_changed = True
+                elif change_layer_form.cleaned_data["move_this_layer"] == "down" and i < len(new_layers) - 1:
+                    temp = new_layers[i]
+                    new_layers[i] = new_layers[i+1]
+                    new_layers[i+1] = temp
+                    structure_changed = True
 
         # Duplicate layers
         for layer_form, change_layer_form in zip(self.layer_forms, self.change_layer_forms):
@@ -140,12 +163,13 @@ class FormSet(object):
                 structure_changed = True
             self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
                 
-
         # Delete layers
-        for i in range(len(self.layer_forms)-1, -1, -1):
-            if self.change_layer_forms[i].is_valid() and self.change_layer_forms[i].cleaned_data["remove_this_layer"]:
-                del new_layers[i]
-                structure_changed = True
+        for i in range(len(new_layers)-1, -1, -1):
+            if len(new_layers[i]) == 3:
+                change_layer_form = new_layers[i][2]
+                if change_layer_form.is_valid() and change_layer_form.cleaned_data["remove_this_layer"]:
+                    del new_layers[i]
+                    structure_changed = True
 
         if structure_changed:
             if self.deposition:
