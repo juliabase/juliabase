@@ -25,6 +25,8 @@ class SamplesForm(forms.Form):
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
         keyw["initial"] = initial
         super(SamplesForm, self).__init__(data, **keyw)
+        if deposition:
+            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
         self.fields["sample_list"].queryset = \
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
             else user_details.my_samples
@@ -278,7 +280,9 @@ class FormSet(object):
         database_ready = self._is_referentially_valid() and database_ready
         if database_ready:
             deposition = self.deposition_form.save()
-            deposition.samples = self.samples_form.cleaned_data["sample_list"]
+            if not self.deposition:
+                # Change sample list only for *new* depositions
+                deposition.samples = self.samples_form.cleaned_data["sample_list"]
             deposition.layers.all().delete()
             for layer_form in self.layer_forms:
                 layer = layer_form.save(commit=False)
