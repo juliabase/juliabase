@@ -126,29 +126,33 @@ class FormSet(object):
         self.samples_form = SamplesForm(self.user_details, self.deposition)
     def _change_structure(self):
         structure_changed = False
-        new_layers = [("original", layer_form, change_layer_form)
+        new_layers = [["original", layer_form, change_layer_form]
                       for layer_form, change_layer_form in zip(self.layer_forms, self.change_layer_forms)]
 
         # Move layers
         for i in range(len(new_layers)):
             layer_form, change_layer_form = new_layers[i][1:3]
             if change_layer_form.is_valid():
-                if change_layer_form.cleaned_data["move_this_layer"] == "up" and i > 0:
-                    temp = new_layers[i-1]
-                    new_layers[i-1] = new_layers[i]
-                    new_layers[i] = temp
+                movement = change_layer_form.cleaned_data["move_this_layer"]
+                if movement:
+                    new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
                     structure_changed = True
-                elif change_layer_form.cleaned_data["move_this_layer"] == "down" and i < len(new_layers) - 1:
-                    temp = new_layers[i]
-                    new_layers[i] = new_layers[i+1]
-                    new_layers[i+1] = temp
-                    structure_changed = True
+                    if movement == "up" and i > 0:
+                        temp = new_layers[i-1]
+                        new_layers[i-1] = new_layers[i]
+                        new_layers[i] = temp
+                    elif movement == "down" and i < len(new_layers) - 1:
+                        temp = new_layers[i]
+                        new_layers[i] = new_layers[i+1]
+                        new_layers[i+1] = temp
 
         # Duplicate layers
-        for layer_form, change_layer_form in zip(self.layer_forms, self.change_layer_forms):
+        for i in range(len(new_layers)):
+            layer_form, change_layer_form = new_layers[i][1:3]
             if layer_form.is_valid() and \
                     change_layer_form.is_valid() and change_layer_form.cleaned_data["duplicate_this_layer"]:
                 new_layers.append(("duplicate", layer_form))
+                new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
                 structure_changed = True
 
         # Add layers
@@ -181,6 +185,7 @@ class FormSet(object):
         old_prefixes = [int(layer_form.prefix) for layer_form in self.layer_forms if layer_form.is_bound]
         next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
         self.layer_forms = []
+        self.change_layer_forms = []
         for new_layer in new_layers:
             if new_layer[0] == "original":
                 post_data = self.post_data.copy()
@@ -188,6 +193,7 @@ class FormSet(object):
                 post_data[prefix+"-number"] = utils.three_digits(next_layer_number)
                 next_layer_number += 1
                 self.layer_forms.append(LayerForm(post_data, prefix=prefix))
+                self.change_layer_forms.append(new_layer[2])
             elif new_layer[0] == "duplicate":
                 original_layer = new_layer[1]
                 if original_layer.is_valid():
@@ -195,11 +201,13 @@ class FormSet(object):
                     layer_data["number"] = utils.three_digits(next_layer_number)
                     next_layer_number += 1
                     self.layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
+                    self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
                 initial = new_layer[1]
                 initial["number"] = utils.three_digits(next_layer_number)
                 self.layer_forms.append(LayerForm(initial=initial, prefix=str(next_prefix)))
+                self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_layer_number += 1
                 next_prefix += 1
             else:
@@ -209,9 +217,6 @@ class FormSet(object):
             utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
         self.deposition_form = DepositionForm(self.user, post_data)
 
-        self.change_layer_forms = []
-        for layer_form in self.layer_forms:
-            self.change_layer_forms.append(ChangeLayerForm(prefix=layer_form.prefix))
         return structure_changed
     def _is_all_valid(self):
         all_valid = self.deposition_form.is_valid()
