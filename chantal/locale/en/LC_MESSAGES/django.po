@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-28 19:11+0200\n"
+"POT-Creation-Date: 2008-10-01 19:08+0200\n"
 "PO-Revision-Date: 2008-09-01 09:17+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -504,7 +504,7 @@ msgstr ""
 msgid "Operator"
 msgstr ""
 
-msgid "Number of layers to be added"
+msgid "Remove deposited samples from My Samples"
 msgstr ""
 
 msgid "duplicate this layer"
@@ -513,7 +513,19 @@ msgstr ""
 msgid "remove this layer"
 msgstr ""
 
-msgid "You can't duplicate and remove a layer at the same time."
+msgid "move this layer"
+msgstr ""
+
+msgid "---------"
+msgstr ""
+
+msgid "up"
+msgstr ""
+
+msgid "down"
+msgstr ""
+
+msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 
 msgid "No layers given."
@@ -539,6 +551,10 @@ msgstr ""
 
 #, python-format
 msgid "Deposition %s was successfully changed in the database."
+msgstr ""
+
+#, python-format
+msgid "Deposition %s was successfully added to the database."
 msgstr ""
 
 #, python-format
@@ -795,9 +811,6 @@ msgstr "sample series"
 msgid "Add result to “%s”"
 msgstr "sample series"
 
-msgid "Remove deposited samples from My Samples"
-msgstr ""
-
 msgid "Nickname of My Layer to be added"
 msgstr ""
 
@@ -814,10 +827,6 @@ msgid "Number is a duplicate."
 msgstr ""
 
 #, python-format
-msgid "Deposition %s was successfully added to the database."
-msgstr ""
-
-#, python-format
 msgid "6-chamber deposition “%s”"
 msgstr ""
 
@@ -828,6 +837,18 @@ msgid "Old sample name"
 msgstr ""
 
 msgid "Pieces"
+msgstr ""
+
+msgid "No sample with this name found."
+msgstr ""
+
+msgid "Alias is not unique."
+msgstr ""
+
+msgid "No sample with this ID found."
+msgstr ""
+
+msgid "Invalid ID format."
 msgstr ""
 
 msgid "Must be at least 1."
@@ -849,6 +870,10 @@ msgid "New current location"
 msgstr ""
 
 msgid "(for all samples; leave empty for no change)"
+msgstr ""
+
+#, python-format
+msgid "Sample name %s doesn't belong to this deposition."
 msgstr ""
 
 msgid ""
@@ -896,6 +921,9 @@ msgstr ""
 
 #, python-format
 msgid "Split sample “%s”"
+msgstr ""
+
+msgid "Number of layers to be added"
 msgstr ""
 
 msgid "Time must be given in the form HH:MM:SS."
@@ -1065,6 +1093,9 @@ msgid "Layer error"
 msgstr ""
 
 msgid "Error with adding layers"
+msgstr ""
+
+msgid "Error with removing from My Samples"
 msgstr ""
 
 msgid "My Layer error"
