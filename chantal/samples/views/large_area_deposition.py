@@ -323,3 +323,30 @@ def edit(request, deposition_number):
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
     return render_to_response("edit_large_area_deposition.html", context_dict, context_instance=RequestContext(request))
+
+@login_required
+def show(request, deposition_number):
+    u"""Show an existing large-area_deposision.  You must be a large-area
+    operator *or* be able to view one of the samples affected by this
+    deposition in order to be allowed to view it.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `deposition_number`: the number (=name) or the deposition
+
+    :type request: ``HttpRequest``
+    :type deposition_number: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    deposition = get_object_or_404(models.LargeAreaDeposition, number=deposition_number)
+    samples = deposition.samples
+    if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
+            and not request.user.has_perm("change_largeareadeposition"):
+        return utils.HttpResponseSeeOther("permission_error")
+    template_context = {"title": _(u"large area deposition “%s”") % deposition.number, "samples": samples.all()}
+    template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
+    return render_to_response("show_process.html", template_context, context_instance=RequestContext(request))
