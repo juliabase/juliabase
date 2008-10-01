@@ -100,7 +100,6 @@ class AddLayersForm(forms.Form):
             else:
                 layer_query = deposition.layers.filter(number=layer_number)
                 if layer_query.count() == 1:
-                    layer = layer_query[0]
                     return layer_query.values()[0]    
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
@@ -351,7 +350,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
         if match:
             index = int(match.group("index"))
             if match.group("key") == subform_key:
-                values[index] = value[0]
+                values[index] = value
             elif index not in values:
                 values[index] = None
     last_value = 0

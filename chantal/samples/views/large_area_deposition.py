@@ -79,7 +79,7 @@ class ChangeLayerForm(forms.Form):
             operations += 1
         if self.cleaned_data["remove_this_layer"]:
             operations += 1
-        if self.cleaned_data["move_this_layer"]:
+        if self.cleaned_data.get("move_this_layer"):
             operations += 1
         if operations > 1:
             raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
@@ -171,47 +171,47 @@ class FormSet(object):
                     del new_layers[i]
                     structure_changed = True
 
-        if structure_changed:
-            if self.deposition:
-                next_full_number = self.deposition.number[:4] + utils.three_digits(self.deposition.layers.all()[0].number)
-            else:
-                next_full_number = utils.get_next_deposition_number("L-")
-            deposition_number_match = self.deposition_number_pattern.match(next_full_number)
-            next_layer_number = int(deposition_number_match.group("number"))
-            old_prefixes = [int(layer_form.prefix) for layer_form in self.layer_forms if layer_form.is_bound]
-            next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
-            self.layer_forms = []
-            for new_layer in new_layers:
-                if new_layer[0] == "original":
-                    post_data = self.post_data.copy()
-                    prefix = new_layer[1].prefix
-                    post_data[prefix+"-number"] = utils.three_digits(next_layer_number)
+        # Apply changes
+        if self.deposition:
+            next_full_number = self.deposition.number[:4] + utils.three_digits(self.deposition.layers.all()[0].number)
+        else:
+            next_full_number = utils.get_next_deposition_number("L-")
+        deposition_number_match = self.deposition_number_pattern.match(next_full_number)
+        next_layer_number = int(deposition_number_match.group("number"))
+        old_prefixes = [int(layer_form.prefix) for layer_form in self.layer_forms if layer_form.is_bound]
+        next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
+        self.layer_forms = []
+        for new_layer in new_layers:
+            if new_layer[0] == "original":
+                post_data = self.post_data.copy()
+                prefix = new_layer[1].prefix
+                post_data[prefix+"-number"] = utils.three_digits(next_layer_number)
+                next_layer_number += 1
+                self.layer_forms.append(LayerForm(post_data, prefix=prefix))
+            elif new_layer[0] == "duplicate":
+                original_layer = new_layer[1]
+                if original_layer.is_valid():
+                    layer_data = original_layer.cleaned_data
+                    layer_data["number"] = utils.three_digits(next_layer_number)
                     next_layer_number += 1
-                    self.layer_forms.append(LayerForm(post_data, prefix=prefix))
-                elif new_layer[0] == "duplicate":
-                    original_layer = new_layer[1]
-                    if original_layer.is_valid():
-                        layer_data = original_layer.cleaned_data
-                        layer_data["number"] = utils.three_digits(next_layer_number)
-                        next_layer_number += 1
-                        self.layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
-                        next_prefix += 1
-                elif new_layer[0] == "new":
-                    initial = new_layer[1]
-                    initial["number"] = utils.three_digits(next_layer_number)
-                    self.layer_forms.append(LayerForm(initial=initial, prefix=str(next_prefix)))
-                    next_layer_number += 1
+                    self.layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
                     next_prefix += 1
-                else:
-                    raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
-            post_data = self.post_data.copy()
-            post_data["number"] = deposition_number_match.group("prefix") + \
-                utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
-            self.deposition_form = DepositionForm(self.user, post_data)
+            elif new_layer[0] == "new":
+                initial = new_layer[1]
+                initial["number"] = utils.three_digits(next_layer_number)
+                self.layer_forms.append(LayerForm(initial=initial, prefix=str(next_prefix)))
+                next_layer_number += 1
+                next_prefix += 1
+            else:
+                raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
+        post_data = self.post_data.copy()
+        post_data["number"] = deposition_number_match.group("prefix") + \
+            utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
+        self.deposition_form = DepositionForm(self.user, post_data)
 
-            self.change_layer_forms = []
-            for layer_form in self.layer_forms:
-                self.change_layer_forms.append(ChangeLayerForm(prefix=layer_form.prefix))
+        self.change_layer_forms = []
+        for layer_form in self.layer_forms:
+            self.change_layer_forms.append(ChangeLayerForm(prefix=layer_form.prefix))
         return structure_changed
     def _is_all_valid(self):
         all_valid = self.deposition_form.is_valid()
@@ -268,9 +268,8 @@ class FormSet(object):
                         referentially_valid = False
         return referentially_valid
     def save_to_database(self):
-        database_ready = self._is_all_valid()
-        structure_changed = self._change_structure()
-        database_ready = database_ready and not structure_changed
+        database_ready = not self._change_structure()
+        database_ready = self._is_all_valid() and database_ready
         database_ready = self._is_referentially_valid() and database_ready
         if database_ready:
             deposition = self.deposition_form.save()
