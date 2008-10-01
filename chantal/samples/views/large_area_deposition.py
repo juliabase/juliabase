@@ -347,6 +347,6 @@ def show(request, deposition_number):
     if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
             and not request.user.has_perm("change_largeareadeposition"):
         return utils.HttpResponseSeeOther("permission_error")
-    template_context = {"title": _(u"large area deposition “%s”") % deposition.number, "samples": samples.all()}
+    template_context = {"title": _(u"Large-area deposition “%s”") % deposition.number, "samples": samples.all()}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
     return render_to_response("show_process.html", template_context, context_instance=RequestContext(request))

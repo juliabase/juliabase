@@ -310,6 +310,27 @@ class LargeAreaDeposition(Deposition):
     u"""Large-area depositions.
     """
     comments = models.TextField(_(u"comments"), blank=True)
+    def get_additional_template_context(self, process_context):
+        u"""See `SixChamberDeposition.get_additional_template_context`.
+
+        :Parameters:
+          - `process_context`: the context of this process
+
+        :type process_context: `views.utils.ProcessContext`
+
+        :Return:
+          dict with additional fields that are supposed to be given to the
+          templates.
+
+        :rtype: dict mapping str to arbitrary objects
+        """
+        if process_context.user.has_perm("change_largeareadeposition"):
+            return {"edit_url": django.core.urlresolvers.reverse("edit_large-area_deposition",
+                                                                 kwargs={"deposition_number": self.number}),
+                    "duplicate_url": "%s?copy_from=%s" % (django.core.urlresolvers.reverse("add_large-area_deposition"),
+                                                          urlquote_plus(self.number))}
+        else:
+            return {}
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.large_area_deposition.show", [urlquote(self.number, safe="")])
