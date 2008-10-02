@@ -86,6 +86,13 @@ def fancy_bool(boolean):
     result = _(u"Yes") if boolean else _(u"No")
     return mark_safe(result)
 
+@register.filter
+def three_digits(number):
+    u"""Filter for padding an integer with zeros so that it has at least three
+    digits.
+    """
+    return mark_safe(u"%03d" % number)
+
 class VerboseNameNode(template.Node):
     u"""Helper class for the tag `verbose_name`.  While `verbose_name` does the
     parsing, this class does the actual processing.
@@ -128,6 +135,9 @@ def verbose_name(parser, token):
 def urlquote(value):
     u"""Filter for quoting strings so that they can be used as parts of URLs.
     Note that also slashs »/« are escaped.
+
+    Also note that this filter is “not safe” because for example ampersands
+    need to be further escaped.
     """
     return django.utils.http.urlquote(value, safe="")
 urlquote.is_safe = False

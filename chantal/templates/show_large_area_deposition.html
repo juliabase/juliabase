@@ -21,7 +21,7 @@
       <table width="100%">
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.number %}:</td>
-          <td class="value">{{ layer.number }}</td>
+          <td class="value">{{ layer.number|three_digits }}</td>
           <td class="label">SiH<sub>4</sub>:</td>
           <td class="value">{{ layer.sih4|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.power %}:</td>
