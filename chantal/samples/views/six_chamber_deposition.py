@@ -63,7 +63,7 @@ class DepositionForm(ModelForm):
         initial = keyw.get("initial", {})
         if deposition:
             # Mark the samples of the deposition in the choise field
-            initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
+            initial.update({"sample_list": deposition.samples.values_list("pk", flat=True)})
         keyw["initial"] = initial
         super(DepositionForm, self).__init__(data, **keyw)
         # Connect the date/time fields with the JavaScript
@@ -75,11 +75,6 @@ class DepositionForm(ModelForm):
             models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
             else user_details.my_samples
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
-    def clean_sample_list(self):
-        sample_list = list(set(self.cleaned_data["sample_list"]))
-        if not sample_list:
-            raise ValidationError(_(u"You must mark at least one sample."))
-        return sample_list
     def save(self, *args, **keyw):
         u"""Additionally to the deposition itself, I must store the list of
         samples connected with the deposition."""

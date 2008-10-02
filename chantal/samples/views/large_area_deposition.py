@@ -1,6 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""All views and helper routines directly connected with the large-area
+deposition.  This includes adding, editing, and viewing such processes.
+
+Note that this implementation differs greatly from the first deposition system
+implementation for the 6-chamber deposition.  The main reason is that I have
+many forms here, so keeping everything in one class called `FormSet` saved me
+from having annoyingly long function signature.  Another reason is the
+ideosyncratic way to number depositions for the large-area, which leads to
+*calculated* layer and deposition numbers rather than the free, editable
+numbers for the 6-chamber deposition.
+
+I recommend to copy from here instead of from the 6-chamber deposition for new
+deposition views.
+"""
+
 import re, datetime
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
@@ -16,47 +31,65 @@ from chantal.samples.views.utils import check_permission
 from chantal.samples.views import utils
 
 class SamplesForm(forms.Form):
+    u"""Form for the list selection of samples that took part in the
+    deposition.
+    """
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
     def __init__(self, user_details, deposition, data=None, **keyw):
-        initial = keyw.get("initial", {})
+        u"""Class constructor.  Note that I have to distinguish clearly here
+        between new and existing depositions.
+        """
         if deposition:
             # Mark the samples of the deposition in the choise field
-            initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
-            # Don't read data because it's disabled (see below)
-            data = None
-        keyw["initial"] = initial
-        super(SamplesForm, self).__init__(data, **keyw)
-        if deposition:
+            keyw["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
+            # Don't use ``data`` because it's disabled and thus empty (see below)
+            super(SamplesForm, self).__init__(**keyw)
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-        self.fields["sample_list"].queryset = \
-            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
-            else user_details.my_samples
+            self.fields["sample_list"].queryset = \
+                models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct()
+        else:
+            super(SamplesForm, self).__init__(data, **keyw)
+            self.fields["sample_list"].queryset = user_details.my_samples
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
-    def clean_sample_list(self):
-        sample_list = list(set(self.cleaned_data["sample_list"]))
-        if not sample_list:
-            raise ValidationError(_(u"You must mark at least one sample."))
-        return sample_list
 
 class DepositionForm(forms.ModelForm):
+    u"""Model form for the deposition main data.  I only overwrite ``operator``
+    in order to have full real names.
+    """
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, data=None, **keyw):
+        u"""Class constructor just for changing the appearance of the number
+        field."""
         super(DepositionForm, self).__init__(data, **keyw)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
     def validate_unique(self):
+        u"""Overridden to disable Django's intrinsic test for uniqueness.  I
+        simply disable this inherited method completely because I do my own
+        uniqueness test in `FormSet._is_referentially_valid`.  I cannot use
+        Django's built-in test anyway because it leads to an error message in
+        wrong German (difficult to fix, even for the Django guys).
+        """
         pass
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)
 
 class LayerForm(forms.ModelForm):
+    u"""Model form for a single layer.
+    """
     _ = ugettext_lazy
     def __init__(self, *args, **keyw):
-        initial = keyw.get("initial", {})
-        initial["date"] = datetime.date.today()
-        keyw["initial"] = initial
+        u"""Form constructor.  I only tweak the HTML layout slightly, and I set
+        the initial date to today for fresh layers.
+        """
+        if "instance" not in keyw:
+            # Note that ``initial`` has higher priority than ``instance`` in
+            # model forms.
+            initial = keyw.get("initial", {})
+            initial["date"] = datetime.date.today()
+            keyw["initial"] = initial
         super(LayerForm, self).__init__(*args, **keyw)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
         for fieldname in ["date", "sih4", "h2", "tmb", "ch4", "co2", "ph3", "power", "pressure", "temperature",
@@ -67,11 +100,17 @@ class LayerForm(forms.ModelForm):
         exclude = ("deposition",)
 
 class RemoveFromMySamplesForm(forms.Form):
+    u"""Form for the question whether the user wants to remove the deposited
+        samples from the “My Samples” list after having created the deposition.
+    """
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
 
 class ChangeLayerForm(forms.Form):
+    u"""Form for manipulating a layer.  Duplicating it (appending the
+    duplicate), deleting it, and moving it up- or downwards.
+    """
     _ = ugettext_lazy
     duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
@@ -90,8 +129,28 @@ class ChangeLayerForm(forms.Form):
         return self.cleaned_data
 
 class FormSet(object):
+    u"""Class for holding all forms of the large-area deposition views, and for
+    all methods working on these forms.
+
+    :ivar deposition: the deposition to be edited.  If it is ``None``, we
+      create a new one.  This is very important because testing ``deposition``
+      is the only way to distinguish between editing or creating.
+
+    :type deposition: `models.LargeAreaDeposition` or ``NoneType``
+    """
     deposition_number_pattern = re.compile(ur"(?P<prefix>\d\dL-)(?P<number>\d+)$")
     def __init__(self, user, deposition_number):
+        u"""Class constructor.  Note that I don't create the forms here – this
+        is done later in `from_post_data` and in `from_database`.
+
+        :Parameters:
+          - `user`: the current user
+          - `deposition_number`: number of the deposition to be edited/created.
+            If this number already exists, *edit* it, if not, *create* it.
+
+        :type user: ``django.contrib.auth.models.User``
+        :type deposition_number: unicode
+        """
         self.user = user
         self.user_details = self.user.get_profile()
         self.deposition = \
@@ -100,6 +159,13 @@ class FormSet(object):
         self.layer_forms = self.change_layer_forms = []
         self.post_data = None
     def from_post_data(self, post_data):
+        u"""Generate all forms from the post data submitted by the user.
+
+        :Parameters:
+          - `post_data`: the result from ``request.POST``
+
+        :type post_data: ``QueryDict``
+        """
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
@@ -112,6 +178,22 @@ class FormSet(object):
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
     def _read_layer_forms(self, source_deposition, destination_deposition_number=None):
+        u"""Generate a set of layer forms from database data.  Note that the
+        layers are not returned – instead, they are written directly into
+        ``self.layer_forms``.
+
+        :Parameters:
+          - `source_deposition`: the deposition from which the layers should be
+            taken.  Note that this may be the deposition which is currently
+            edited, or the deposition which is duplicated to create a new
+            deposition.
+          - `destination_deposition_number`: if given, duplicate into a
+            deposition with this number.  If none, ``source_deposition``
+            already contains the proper deposition number.
+
+        :type source_deposition: `models.LargeAreaDeposition`
+        :type destination_deposition_number: unicode
+        """
         if destination_deposition_number:
             base_number = int(self.deposition_number_pattern.match(destination_deposition_number).group("number")) - \
                 source_deposition.layers.count() + 1
@@ -122,6 +204,18 @@ class FormSet(object):
                                       initial={"number": utils.three_digits(base_number + layer_index)})
                             for layer_index, layer in enumerate(source_deposition.layers.all())]
     def from_database(self, query_dict):
+        u"""Create all forms from database data.  This is used if the view was
+        retrieved from the user with the HTTP GET method, so there hasn't been
+        any post data submitted.
+
+        I have to distinguish all three cases in this method: editing, copying,
+        and duplication.
+
+        :Parameters:
+          - `query_dict`: dictionary with all given URL query string parameters
+
+        :type query_dict: dict mapping unicode to unicode
+        """
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
@@ -149,6 +243,35 @@ class FormSet(object):
         self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm()
     def _change_structure(self):
+        u"""Apply any layer-based rearrangements the user has requested.  This
+        is layer duplication, order changes, appending of layers, and deletion.
+
+        The method has two parts: First, the changes are collected in a data
+        structure called ``new_layers``.  Then, I walk through ``new_layers``
+        and build a new list ``self.layer_forms`` from it.
+
+        ``new_layers`` is a list of small lists.  Every small list has a string
+        as its zeroth element which may be ``"original"``, ``"duplicate"``, or
+        ``"new"``, denoting the origin of that layer form.  The remainding
+        elements are parameters: the (old) layer and change-layer form for
+        ``"original"``; the source layer form for ``"duplicate"``; and the
+        initial layer form data for ``"new"``.
+
+        Of course, the new layer forms are not validated.  Therefore,
+        `_is_all_valid` is called *after* this routine in `save_to_database`.
+
+        Note that – as usual – the numbers id depositions and layers are called
+        *number*, whereas the internal numbers used as prefixes in the HTML
+        names are called *indices*.  The index (and thus prefix) of a layer
+        form does never change (in contrast to the 6-chamber deposition, see
+        `utils.normalize_prefixes`), not even across many “post cycles”.  Only
+        the layer numbers are used for determining the order of layers.
+
+        :Return:
+          whether the structure was changed in any way.
+
+        :rtype: bool
+        """
         structure_changed = False
         new_layers = [["original", layer_form, change_layer_form]
                       for layer_form, change_layer_form in zip(self.layer_forms, self.change_layer_forms)]
@@ -236,6 +359,7 @@ class FormSet(object):
                 next_prefix += 1
             else:
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
+        # Finally, adjust the deposition number to the new number of layers.
         post_data = self.post_data.copy()
         post_data["number"] = deposition_number_match.group("prefix") + \
             utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
@@ -243,6 +367,16 @@ class FormSet(object):
 
         return structure_changed
     def _is_all_valid(self):
+        u"""Tests the “inner” validity of all forms belonging to this view.
+        This function calls the ``is_valid()`` method of all forms, even if one
+        of them returns ``False`` (and makes the return value clear
+        prematurely).
+    
+        :Return:
+          whether all forms are valid.
+
+        :rtype: bool
+        """
         all_valid = self.deposition_form.is_valid()
         all_valid = self.add_layers_form.is_valid() and all_valid
         all_valid = self.remove_from_my_samples_form.is_valid() and all_valid
@@ -251,6 +385,21 @@ class FormSet(object):
         all_valid = all([change_layer_form.is_valid() for change_layer_form in self.change_layer_forms]) and all_valid
         return all_valid
     def _is_referentially_valid(self):
+        u"""Test whether all forms are consistent with each other and with the
+        database.  For example, no layer number must occur twice, and the
+        deposition number must not exist within the database.
+
+        Note that I test many situations here that cannot be achieved with
+        using the browser because all number fields are read-only and thus
+        inherently referentially valid.  However, the remote client (or a
+        manipulated HTTP client) may be used in a malicious way, thus I have to
+        test for *all* cases.
+
+        :Return:
+          whether all forms are consistent with each other and the database
+
+        :rtype: bool
+        """
         referentially_valid = True
         if not self.layer_forms:
             utils.append_error(self.deposition_form, _(u"No layers given."))
@@ -297,6 +446,16 @@ class FormSet(object):
                         referentially_valid = False
         return referentially_valid
     def save_to_database(self):
+        u"""Apply all layer changes, check the whole validity of the data, and
+        save the forms to the database.  Only the deposition is just updated if
+        it already existed.  However, the layers are completely deleted and
+        re-constructed from scratch.
+
+        :Return:
+          The saved deposition object, or ``None`` if validation failed
+
+        :rtype: `models.LargeAreaDeposition` or ``NoneType``
+        """
         database_ready = not self._change_structure()
         database_ready = self._is_all_valid() and database_ready
         database_ready = self._is_referentially_valid() and database_ready
@@ -312,6 +471,15 @@ class FormSet(object):
                 layer.save()
             return deposition
     def get_context_dict(self):
+        u"""Retrieve the context dictionary to be passed to the template.  This
+        context dictionary contains all forms in an easy-to-use format for the
+        template code.
+
+        :Return:
+          context dictionary
+
+        :rtype: dict mapping str to various types
+        """
         return {"deposition": self.deposition_form, "samples": self.samples_form,
                 "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms),
                 "add_layers": self.add_layers_form, "remove_from_my_samples": self.remove_from_my_samples_form}
@@ -319,6 +487,23 @@ class FormSet(object):
 @login_required
 @check_permission("change_largeareadeposition")
 def edit(request, deposition_number):
+    u"""Edit or create a large-area deposition.  In case of creation, starting
+    with a duplicate of another deposition is also possible if a ``copy-from``
+    query string parameter is present (as for the other depositions).
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `deposition_number`: number of the deposition to be edited/created.  If
+        this number already exists, *edit* it, if not, *create* it.
+
+    :type request: ``HttpRequest``
+    :type deposition_number: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     form_set = FormSet(request.user, deposition_number)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
