@@ -230,7 +230,20 @@
         {% endif %}
       </td></tr>
     {% endif %}
-    {{ add_layers }}
+    <tr>
+      <td class="label">
+        <label for="id_{{ add_layers.number_of_layers_to_add.html_name }}"
+               >{{ add_layers.number_of_layers_to_add.label }}:</label>
+      </td>
+      <td class="value">{{ add_layers.number_of_layers_to_add }}</td>
+    </tr>
+    <tr>
+      <td class="label">
+        <label for="id_{{ add_layers.my_layer_to_be_added.html_name }}"
+               >{{ add_layers.my_layer_to_be_added.label }}:</label>
+      </td>
+      <td class="value">{{ add_layers.my_layer_to_be_added }}</td>
+    </tr>
     {% if remove_from_my_samples.errors or remove_from_my_samples.non_field_errors %}
       <tr><td class="error-messages">
         {% for field in remove_from_my_samples %}
@@ -241,7 +254,13 @@
         {% endif %}
       </td></tr>
     {% endif %}
-    {{ remove_from_my_samples }}
+    <tr>
+      <td class="label">
+        <label for="id_{{ remove_from_my_samples.remove_deposited_from_my_samples.html_name }}"
+               >{{ remove_from_my_samples.remove_deposited_from_my_samples.label }}:</label>
+      </td>
+      <td class="value">{{ remove_from_my_samples.remove_deposited_from_my_samples }}</td>
+    </tr>
   </table>
   <p class="submit-button"><input type="submit" /></p>
 </form>
