@@ -42,7 +42,7 @@ class SamplesForm(forms.Form):
 class DepositionForm(forms.ModelForm):
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, user, data=None, **keyw):
+    def __init__(self, data=None, **keyw):
         super(DepositionForm, self).__init__(data, **keyw)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
     def validate_unique(self):
@@ -101,7 +101,7 @@ class FormSet(object):
         self.post_data = None
     def from_post_data(self, post_data):
         self.post_data = post_data
-        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition,
+        self.deposition_form = DepositionForm(self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                                        "number": utils.get_next_deposition_number("L-")})
         self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
@@ -111,23 +111,41 @@ class FormSet(object):
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
-    def from_database(self):
-        # FixMe: Duplication still missing
-        if self.deposition:
-            # Normal edit of existing deposition
-            self.deposition_form = DepositionForm(self.user, instance=self.deposition)
-            self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer)
-                                for layer_index, layer in enumerate(self.deposition.layers.all())]
-            self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
-        else:
-            # New deposition, or duplication has failed
-            self.deposition_form = DepositionForm(
-                self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                    "number": utils.get_next_deposition_number("L-")})
-            self.layer_forms, self.change_layer_forms = [], []
+    def _read_layer_forms(self, source_deposition, destination_deposition_number=None):
+        if destination_deposition_number:
+            base_number = int(self.deposition_number_pattern.match(destination_deposition_number).group("number")) - \
+                source_deposition.layers.count() + 1
+        self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer,
+                                      initial={"number": utils.three_digits(base_number + layer_index)}
+                                      if destination_deposition_number else {})
+                            for layer_index, layer in enumerate(source_deposition.layers.all())]
+    def from_database(self, query_dict):
+        copy_from = query_dict.get("copy_from")
+        if not self.deposition and copy_from:
+            # Duplication of a deposition
+            source_deposition_query = models.LargeAreaDeposition.objects.filter(number=copy_from)
+            if source_deposition_query.count() == 1:
+                deposition_data = source_deposition_query.values()[0]
+                deposition_data["timestamp"] = datetime.datetime.now()
+                deposition_data["operator"] = self.user.pk
+                deposition_data["number"] = utils.get_next_deposition_number("L-")
+                self.deposition_form = DepositionForm(initial=deposition_data)
+                self._read_layer_forms(source_deposition_query.all()[0], deposition_data["number"])
+        if not self.deposition_form:
+            if self.deposition:
+                # Normal edit of existing deposition
+                self.deposition_form = DepositionForm(instance=self.deposition)
+                self._read_layer_forms(self.deposition)
+            else:
+                # New deposition, or duplication has failed
+                self.deposition_form = DepositionForm(
+                    initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
+                             "number": utils.get_next_deposition_number("L-")})
+                self.layer_forms, self.change_layer_forms = [], []
+        self.samples_form = SamplesForm(self.user_details, self.deposition)
+        self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm()
-        self.samples_form = SamplesForm(self.user_details, self.deposition)
     def _change_structure(self):
         structure_changed = False
         new_layers = [["original", layer_form, change_layer_form]
@@ -219,7 +237,7 @@ class FormSet(object):
         post_data = self.post_data.copy()
         post_data["number"] = deposition_number_match.group("prefix") + \
             utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
-        self.deposition_form = DepositionForm(self.user, post_data)
+        self.deposition_form = DepositionForm(post_data)
 
         return structure_changed
     def _is_all_valid(self):
@@ -320,7 +338,7 @@ def edit(request, deposition_number):
                             "samples.views.split_after_deposition.split_and_rename_after_deposition",
                             kwargs={"deposition_number": deposition.number}))
     else:
-        form_set.from_database()
+        form_set.from_database(utils.parse_query_string(request))
     title = _(u"Large-area deposition “%s”") % deposition_number if deposition_number else _(u"Add large-area deposition")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
