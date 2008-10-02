@@ -111,6 +111,16 @@ class FormSet(object):
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
+    def _read_layer_forms(self, source_deposition, destination_deposition_number=None):
+        if destination_deposition_number:
+            base_number = int(self.deposition_number_pattern.match(destination_deposition_number).group("number")) - \
+                source_deposition.layers.count() + 1
+        else:
+            base_number = int(self.deposition_number_pattern.match(source_deposition.number).group("number")) - \
+                source_deposition.layers.count() + 1
+        self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer,
+                                      initial={"number": utils.three_digits(base_number + layer_index)})
+                            for layer_index, layer in enumerate(source_deposition.layers.all())]
     def from_database(self, query_dict):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
@@ -122,18 +132,12 @@ class FormSet(object):
                 deposition_data["operator"] = self.user.pk
                 deposition_data["number"] = utils.get_next_deposition_number("L-")
                 self.deposition_form = DepositionForm(initial=deposition_data)
-                source_layers = source_deposition_query.all()[0].layers
-                base_number = int(self.deposition_number_pattern.match(deposition_data["number"]).group("number")) - \
-                    source_layers.count() + 1
-                self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer,
-                                              initial={"number": utils.three_digits(base_number + layer_index)})
-                                    for layer_index, layer in enumerate(source_layers.all())]
+                self._read_layer_forms(source_deposition_query.all()[0], deposition_data["number"])
         if not self.deposition_form:
             if self.deposition:
                 # Normal edit of existing deposition
                 self.deposition_form = DepositionForm(instance=self.deposition)
-                self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer)
-                                    for layer_index, layer in enumerate(self.deposition.layers.all())]
+                self._read_layer_forms(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
