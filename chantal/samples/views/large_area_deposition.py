@@ -23,6 +23,8 @@ class SamplesForm(forms.Form):
         if deposition:
             # Mark the samples of the deposition in the choise field
             initial.update({"sample_list": [sample._get_pk_val() for sample in deposition.samples.all()]})
+            # Don't read data because it's disabled (see below)
+            data = None
         keyw["initial"] = initial
         super(SamplesForm, self).__init__(data, **keyw)
         if deposition:
