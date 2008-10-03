@@ -366,7 +366,6 @@ def analyze_last_database_backup():
         last_copy = _(u"no log data found")
     return {"last_backup": last_backup, "last_copy": last_copy}
 
-@cache_page(600)
 def statistics(request):
     u"""View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
