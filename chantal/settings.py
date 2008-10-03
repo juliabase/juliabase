@@ -59,11 +59,9 @@ SECRET_KEY = ')bd!vw1dukz!f((*e+r6k!^9#y4z+f2-kyi$2ao1=+c&i24mmm'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -71,7 +69,6 @@ MIDDLEWARE_CLASSES = (
     'chantal.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 APPEND_SLASH = False
 
@@ -93,8 +90,6 @@ INSTALLED_APPS = (
 )
 
 CACHE_BACKEND = "file:///var/tmp/django_cache"
-CACHE_MIDDLEWARE_SECONDS = 60
-CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 WITH_EPYDOC = 'epydoc' in sys.modules
 IS_TESTSERVER = len(sys.argv) >= 2
@@ -108,7 +103,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
-                               "chantal.samples.context_processors.parse_session_data",
+                               "chantal.samples.context_processors.default",
                                )
 
 AUTH_PROFILE_MODULE = 'samples.userdetails'
