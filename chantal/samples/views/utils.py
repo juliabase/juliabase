@@ -343,6 +343,28 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 def collect_subform_indices(post_data, subform_key="number", prefix=u""):
+    u"""Find all indices of subforms of a certain type (e.g. layers) and return
+    them so that the objects (e.g. layers) have a sensible order (e.g. sorted
+    by layer number).  This is necessary because indices are used as form
+    prefixes and cannot be changed easily, even if the layers are rearranges,
+    duplicated, or deleted.  By using this function, the view has the change to
+    have everything in proper order nevertheless.
+    
+    :Parameters:
+      - `post_data`: the result from ``request.POST``
+      - `subform_key`: the fieldname in the forms that is used for ordering.
+        Defaults to ``number``.
+      - `prefix`: an additional prefix to prepend to every form field name
+        (even before the index).  (Is almost never used.)
+
+    :type post_data: ``QueryDict``
+
+    :Return:
+      list with all found indices having this form prefix and key.
+      Their order is so that the respective values for that key are ascending.
+
+    :rtype: list of int
+    """
     subform_name_pattern = re.compile(re.escape(prefix) + ur"(?P<index>\d+)(_\d+)*-(?P<key>.+)")
     values = {}
     for key, value in post_data.iteritems():
