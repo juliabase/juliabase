@@ -357,7 +357,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     for index in sorted(values):
         try:
             value = int(values[index])
-        except TypeError, ValueError:
+        except (TypeError, ValueError):
             value = last_value + 0.01
         last_value = values[index] = value
     return sorted(values, key=lambda index: values[index])
