@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-01 20:35+0200\n"
+"POT-Creation-Date: 2008-10-03 18:25+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,9 @@ msgid "alternative email"
 msgstr ""
 
 msgid "phone"
+msgstr ""
+
+msgid "contact person in the institute"
 msgstr ""
 
 msgid "external operator"
@@ -410,7 +413,13 @@ msgstr ""
 msgid "sample serieses"
 msgstr ""
 
+msgid "initials"
+msgstr ""
+
 msgid "user"
+msgstr ""
+
+msgid "initialses"
 msgstr ""
 
 msgid "language"
@@ -495,9 +504,6 @@ msgstr ""
 
 #, python-format
 msgid "Chantal news for %s"
-msgstr ""
-
-msgid "You must mark at least one sample."
 msgstr ""
 
 msgid "Operator"

@@ -66,6 +66,8 @@ class ExternalOperator(models.Model):
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
+    contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
+                                       verbose_name=_(u"contact person in the institute"))
     def __unicode__(self):
         return self.name
     class Meta:
@@ -78,7 +80,7 @@ class Process(models.Model):
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
     in the ``Meta`` subclass because I must be able to link to it with
-    ``ForeignKey`` s.
+    ``ForeignKey`` s.
 
     If you retrieve a `Process`, you may call (injected) method
     `find_actual_instance` to get the actual object, e.g. a
@@ -637,6 +639,31 @@ class SampleSeries(models.Model):
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
 admin.site.register(SampleSeries)
+
+class Initials(models.Model):
+    u"""Model for initials of people or external operators.  They are used to
+    build namespaces for sample names and sample series names.  They must match
+    the regular expression ``"[A-Z]{2,4}[0-9]*"`` with the additional
+    constraint to be no longer than 4 characters.
+
+    You should not delete an entry in this table, and you must never have an
+    entry where ``user`` and ``external_operator`` are both set.  It is,
+    however, possible to have both ``user`` and ``external_operator`` not set
+    in case of initials that have been abandonned.  They should not be re-given
+    though.  “Should not” means here “to be done only by the administrator
+    after thorough examination”.
+    """
+    initials = models.CharField(_(u"initials"), max_length=4, primary_key=True)
+    user = models.OneToOneField(django.contrib.auth.models.User, verbose_name=_(u"user"),
+                                related_name="initials", null=True, blank=True)
+    external_operator = models.OneToOneField(ExternalOperator, verbose_name=_(u"external operator"),
+                                             related_name="initials", null=True, blank=True)
+    def __unicode__(self):
+        return self.initials
+    class Meta:
+        verbose_name = _(u"initials")
+        verbose_name_plural = _(u"initialses")
+admin.site.register(Initials)
 
 languages = (
     ("de", "Deutsch"),
