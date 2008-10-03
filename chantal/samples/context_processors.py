@@ -25,8 +25,11 @@ def parse_session_data(request):
     :rtype: dict mapping str to session data
     """
     result = {}
-    for key in ["db_access_time_in_ms", "success_report", "help_link"]:
+    for key in ["db_access_time_in_ms", "success_report"]:
         if key in request.session:
             result[key] = request.session[key]
             del request.session[key]
+    if hasattr(request, "chantal_help_link"):
+        result["help_link"] = request.chantal_help_link
+        del request.chantal_help_link
     return result

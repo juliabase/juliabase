@@ -260,7 +260,7 @@ class _AddHelpLink(object):
         self.help_link = help_link
         update_wrapper(self, original_view_function)
     def __call__(self, request, *args, **kwargs):
-        request.session["help_link"] = self.help_link
+        request.chantal_help_link = self.help_link
         return self.original_view_function(request, *args, **kwargs)
     
 def help_link(link):
