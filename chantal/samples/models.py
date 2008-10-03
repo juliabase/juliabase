@@ -88,13 +88,11 @@ class Process(models.Model):
 
         process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
         process = process.find_actual_instance()
-
-    FixMe: An open question is which `operator` should be filled in if
-    `external_operator` is given.  (Note that `operator` is mandatory.)
     """
     timestamp = models.DateTimeField(_(u"timestamp"))
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
+    comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
         return unicode(self.find_actual_instance())
     @models.permalink
@@ -144,12 +142,8 @@ class Deposition(Process):
 
 class SixChamberDeposition(Deposition):
     u"""6-chamber depositions.
-
-    FixMe: Maybe the possibility to make comments should be avaiable to *all*
-    processes?
     """
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
-    comments = models.TextField(_(u"comments"), blank=True)
     def get_additional_template_context(self, process_context):
         u"""This method is called e.g. when the process list for a sample is
         being constructed.  It returns a dict with additional fields that are
@@ -311,7 +305,6 @@ admin.site.register(SixChamberChannel)
 class LargeAreaDeposition(Deposition):
     u"""Large-area depositions.
     """
-    comments = models.TextField(_(u"comments"), blank=True)
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context`.
 
@@ -548,11 +541,12 @@ class SampleDeath(Process):
 admin.site.register(SampleDeath)
 
 class Comment(Process):
-    u"""Adds a comment to the history of a sample.  This is also a so-called
-    result process, i.e. it is allowed for being connected with a
-    `SampleSeries`.
+    u"""Adds only a comment to the history of a sample.  Since a comment is
+    already part of `Process`, this model has no fields of its own.
+
+    This is also a so-called result process, i.e. it is allowed for being
+    connected with a `SampleSeries`.
     """
-    contents = models.TextField(_(u"contents"))
     def __unicode__(self):
         try:
             return _(u"comment about %s") % self.samples.get()

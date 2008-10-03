@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-03 18:25+0200\n"
+"POT-Creation-Date: 2008-10-03 22:35+0200\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -40,6 +40,9 @@ msgstr ""
 msgid "operator"
 msgstr ""
 
+msgid "comments"
+msgstr ""
+
 msgid "process"
 msgstr ""
 
@@ -60,9 +63,6 @@ msgid "depositions"
 msgstr ""
 
 msgid "carrier"
-msgstr ""
-
-msgid "comments"
 msgstr ""
 
 msgid "6-chamber deposition"
@@ -385,9 +385,6 @@ msgid "cease of existence"
 msgstr ""
 
 msgid "ceases of existence"
-msgstr ""
-
-msgid "contents"
 msgstr ""
 
 #, python-format

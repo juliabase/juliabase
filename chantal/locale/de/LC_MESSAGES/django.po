@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-03 18:25+0200\n"
+"POT-Creation-Date: 2008-10-03 22:35+0200\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -40,6 +40,9 @@ msgstr "Zeitstempel"
 msgid "operator"
 msgstr "Operator"
 
+msgid "comments"
+msgstr "Kommentare"
+
 msgid "process"
 msgstr "Prozess"
 
@@ -61,9 +64,6 @@ msgstr "Depositionen"
 
 msgid "carrier"
 msgstr "Carrier"
-
-msgid "comments"
-msgstr "Kommentare"
 
 msgid "6-chamber deposition"
 msgstr "6-Kammer-Deposition"
@@ -386,9 +386,6 @@ msgstr "Beendigung der Existenz"
 
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
-
-msgid "contents"
-msgstr "Inhalt"
 
 #, python-format
 msgid "comment about %s"
@@ -1459,6 +1456,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "contents"
+#~ msgstr "Inhalt"
 
 #~ msgid "You must mark at least one sample."
 #~ msgstr "Sie müssen mindestens eine Probe markieren."

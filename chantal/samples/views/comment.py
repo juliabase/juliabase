@@ -44,11 +44,11 @@ def edit(request, process_id):
     if request.method == "POST":
         comment_form = EditCommentForm(request.POST)
         if comment_form.is_valid():
-            comment.contents = comment_form.cleaned_data["contents"]
+            comment.comments = comment_form.cleaned_data["contents"]
             comment.save()
             return utils.http_response_go_next(request)
     else:
-        comment_form = EditCommentForm(initial={"contents": comment.contents})
+        comment_form = EditCommentForm(initial={"contents": comment.comments})
     return render_to_response("edit_comment.html", {"title": _(u"Edit comment"), "is_new": False, "comment": comment_form},
                               context_instance=RequestContext(request))
 
@@ -130,7 +130,7 @@ def new(request):
         comment_form = NewCommentForm(user_details, query_string_dict, request.POST)
         if comment_form.is_valid() and is_referentially_valid(comment_form, request.user):
             comment = models.Comment(operator=request.user, timestamp=datetime.datetime.now(),
-                                     contents=comment_form.cleaned_data["contents"])
+                                     comments=comment_form.cleaned_data["contents"])
             comment.save()
             comment.samples = comment_form.cleaned_data["samples"]
             comment.sample_series = comment_form.cleaned_data["sample_series"]
