@@ -11,6 +11,7 @@ from django.template import Context, loader
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.views.decorators.cache import cache_page
 from chantal.samples import models
 from django.conf import settings
 import django.core.urlresolvers
