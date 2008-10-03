@@ -336,7 +336,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     return referentially_valid
     
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
-    u"""Save the forms to the database.  Only the deposition is just update if
+    u"""Save the forms to the database.  Only the deposition is just updated if
     it already existed.  However, layers and channels are completely deleted
     and re-constructed from scratch.
 
@@ -352,7 +352,7 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
     :type channel_form_lists: list of lists of `ChannelForm`
 
     :Return:
-      The daved deposition object
+      The saved deposition object
 
     :rtype: `models.SixChamberDeposition`
     """
