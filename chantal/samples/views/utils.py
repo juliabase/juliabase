@@ -967,6 +967,19 @@ def respond_to_remote_client(value):
     return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle; charset=ascii")
 
 def three_digits(number):
+    u"""
+    :Parameters:
+      - `number`: the number of the deposition (only the number after the
+        deposition system letter)
+
+    :type number: int
+
+    :Return:
+      The number filled with leading zeros so that it has at least three
+      digits.
+
+    :rtype: unicode
+    """
     return u"%03d" % number
 
 def remove_samples_from_my_samples(samples, user_details):
