@@ -20,6 +20,7 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django
 from django.conf import settings
+from django.views.decorators.cache import cache_page, never_cache
 from chantal.samples.views import utils
 from chantal.samples.views.utils import help_link
 from chantal.common import Availability
@@ -206,6 +207,7 @@ def breakup_time(seconds):
     else:
         return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
 
+@cache_page(3600)
 def about(request):
     u"""The “about” view.  It displays general superficial information about
     Chantal.  This view is more or less static – it shows only the components
@@ -364,6 +366,7 @@ def analyze_last_database_backup():
         last_copy = _(u"no log data found")
     return {"last_backup": last_backup, "last_copy": last_copy}
 
+@cache_page(600)
 def statistics(request):
     u"""View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
@@ -491,6 +494,7 @@ def show_deposition(request, deposition_number):
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
 
 @login_required
+@never_cache
 def primary_keys(request):
     u"""Generate a pickle document in plain text (*no* HTML!) containing
     mappings of names of database objects to primary keys.  While this can be

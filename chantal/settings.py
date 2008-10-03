@@ -63,6 +63,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -70,6 +71,7 @@ MIDDLEWARE_CLASSES = (
     'chantal.middleware.locale.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 APPEND_SLASH = False
 
@@ -89,6 +91,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'chantal.samples',
 )
+
+CACHE_BACKEND = "file:///var/tmp/django_cache"
+CACHE_MIDDLEWARE_SECONDS = 60
+CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 WITH_EPYDOC = 'epydoc' in sys.modules
 IS_TESTSERVER = len(sys.argv) >= 2
