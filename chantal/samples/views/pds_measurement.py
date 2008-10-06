@@ -13,7 +13,7 @@ from chantal.samples.views.utils import check_permission
 from chantal.samples import models
 from chantal import settings
 
-root_dir = "/home/bronger/temp/pds" if settings.IS_TESTSERVER else "/windows/T/daten/pds"
+root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T/daten/pds/"
 raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 date_pattern = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})")
@@ -38,7 +38,7 @@ def get_data_from_file(number):
     sample = None
     comment_lines = []
     if raw_filename:
-        result["raw_datafile"] = raw_filename
+        result["raw_datafile"] = raw_filename[len(root_dir):]
         try:
             for linenumber, line in enumerate(codecs.open(raw_filename, encoding="cp1252")):
                 linenumber += 1
@@ -72,7 +72,7 @@ def get_data_from_file(number):
         comments = comments[1:]
     result["comments"] = comments
     if evaluated_filename:
-        result["evaluated_datafile"] = evaluated_filename
+        result["evaluated_datafile"] = evaluated_filename[len(root_dir):]
     result["number"] = unicode(number)
     return result, sample
 
@@ -86,13 +86,21 @@ class SampleForm(forms.Form):
 class PDSMeasurementForm(forms.ModelForm):
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    def validate_unique(self):
+        u"""Overridden to disable Django's intrinsic test for uniqueness.  I
+        simply disable this inherited method completely because I do my own
+        uniqueness test in `edit`.  I cannot use Django's built-in test anyway
+        because it leads to an error message in wrong German (difficult to fix,
+        even for the Django guys).
+        """
+        pass
     class Meta:
         model = models.PDSMeasurement
         exclude = ("external_operator",)
 
 class OverwriteForm(forms.Form):
     _ = ugettext_lazy
-    overwrite_from_file = forms.BooleanField(label=_(u"overwrite with file data"), required=False)
+    overwrite_from_file = forms.BooleanField(label=_(u"Overwrite with file data"), required=False)
 
 def is_all_valid(pds_measurement_form, sample_form, overwrite_form):
     all_valid = pds_measurement_form.is_valid()
@@ -127,6 +135,10 @@ def edit(request, pd_number):
                 overwrite_form = OverwriteForm()
         if pds_measurement_form is None:
             pds_measurement_form = PDSMeasurementForm(request.POST, instance=pds_measurement)
+        if pds_measurement_form.is_valid():
+            number = pds_measurement_form.cleaned_data["number"]
+            if number != int(pd_number) and models.PDSMeasurement.objects.filter(number=number).count():
+                utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
         if is_all_valid(pds_measurement_form, sample_form, overwrite_form):
             pds_measurement = pds_measurement_form.save()
             pds_measurement.samples = [sample_form.cleaned_data["sample"]]
