@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-06 22:51+0200\n"
+"POT-Creation-Date: 2008-10-07 00:33+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -750,6 +750,13 @@ msgid "Overwrite with file data"
 msgstr ""
 
 msgid "This PD number is already in use."
+msgstr ""
+
+#, python-format
+msgid "PDS measurement %s"
+msgstr ""
+
+msgid "Add PDS measurement"
 msgstr ""
 
 msgid "is amongst My Samples"

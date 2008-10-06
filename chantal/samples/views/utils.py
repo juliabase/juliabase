@@ -511,7 +511,8 @@ def has_permission_for_sample_or_series(user, sample_or_series):
 
 def camel_case_to_underscores(name):
     u"""Converts a CamelCase identifier to one using underscores.  For example,
-    ``"MySamples"`` is converted to ``"my_samples"``.
+    ``"MySamples"`` is converted to ``"my_samples"``, and ``"PDSMeasurement"``
+    to ``"pds_measurement"``.
 
     :Parameters:
       - `name`: the camel-cased identifier
@@ -527,10 +528,10 @@ def camel_case_to_underscores(name):
     for i, character in enumerate(name):
         if i == 0:
             result.append(character.lower())
-        elif character in string.ascii_uppercase:
+        elif character in string.ascii_uppercase and (i+1 < len(name) and name[i+1] not in string.ascii_uppercase):
             result.extend(("_", character.lower()))
         else:
-            result.append(character)
+            result.append(character.lower())
     return "".join(result)
 
 class ResultContext(object):

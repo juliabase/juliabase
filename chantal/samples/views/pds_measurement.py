@@ -157,7 +157,9 @@ def edit(request, pd_number):
                 initial["sample"] = samples[0].pk
         sample_form = SampleForm(user_details, initial=initial)
         overwrite_form = OverwriteForm()
-    return render_to_response("edit_pds_measurement.html", {"pds_measurement": pds_measurement_form,
+    title = _(u"PDS measurement %s") % pd_number if pd_number else _(u"Add PDS measurement")
+    return render_to_response("edit_pds_measurement.html", {"title": title,
+                                                            "pds_measurement": pds_measurement_form,
                                                             "overwrite": overwrite_form,
                                                             "sample": sample_form},
                               context_instance=RequestContext(request))
