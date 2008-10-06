@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-03 22:35+0200\n"
-"PO-Revision-Date: 2008-10-03 18:26+0200\n"
+"POT-Creation-Date: 2008-10-06 21:51+0200\n"
+"PO-Revision-Date: 2008-10-06 21:54+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -299,6 +299,32 @@ msgstr "Schicht der Großflächigen"
 
 msgid "large-area layers"
 msgstr "Schichten der Großflächigen"
+
+msgid "pd number"
+msgstr "PD-Nummber"
+
+msgid "raw data file"
+msgstr "Rohdaten-Datei"
+
+msgid "only the relative path"
+msgstr "nur der relative Pfad"
+
+msgid "evaluated data file"
+msgstr "ausgewertete Daten-Datei"
+
+#, python-format
+msgid "PDS measurement of %s"
+msgstr "PDS-Messung von %s"
+
+#, python-format
+msgid "PDS measurement #%d"
+msgstr "PDS-Messung #%d"
+
+msgid "PDS measurement"
+msgstr "PDS-Messung"
+
+msgid "PDS measurements"
+msgstr "PDS-Messungen"
 
 msgid "current location"
 msgstr "aktueller Probenort"
@@ -720,6 +746,12 @@ msgstr "Dieser Spitzname ist schon vergeben."
 
 msgid "My Layers"
 msgstr "Meine Schichten"
+
+msgid "Sample"
+msgstr "Probe"
+
+msgid "overwrite with file data"
+msgstr "mit Datei-Daten überschreiben"
 
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"

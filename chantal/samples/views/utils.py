@@ -783,7 +783,7 @@ def lookup_sample(sample_name, request):
 
 def convert_id_to_int(process_id):
     u"""If the user gives a process ID via the browser, it must be converted to
-    an integer ecause this is what's stored in the database.  (Well, actually
+    an integer because this is what's stored in the database.  (Well, actually
     SQL gives a string, too, but that's beside the point.)  This routine
     converts it to a real integer and tests also for validity (not for
     availability in the database).
@@ -996,3 +996,12 @@ def remove_samples_from_my_samples(samples, user_details):
     for sample in samples:
         user_details.my_samples.remove(sample)
 
+quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCbvhlc])-?(?P<number>\d{1,4})"
+                                        ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
+def normalize_legacy_sample_name(sample_name):
+    match = quirky_sample_name_pattern.match(sample_name)
+    if not match:
+        raise ValueError("Sample name is too quirky to normalize")
+    parts = match.groupdict(u"")
+    parts["number"] = int(parts["number"])
+    return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts

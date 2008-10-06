@@ -113,7 +113,7 @@ class Process(models.Model):
         :rtype: str
         """
         return ("samples.views.main.main_menu", (), {})
-#        return ("samples.views.main.show_process", [str(self.id)])
+#        return ("samples.views.main.show_process", [str(self.pk)])
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")
@@ -195,7 +195,7 @@ class HallMeasurement(Process):
         try:
             _(u"hall measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            return _(u"hall measurement #%d") % self.id
+            return _(u"hall measurement #%d") % self.pk
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
@@ -396,6 +396,27 @@ class LargeAreaLayer(Layer):
         verbose_name_plural = _(u"large-area layers")
 admin.site.register(LargeAreaLayer)
 
+from django.core.files.storage import FileSystemStorage
+fs = FileSystemStorage(location='/home/bronger/temp')
+
+class PDSMeasurement(Process):
+    u"""Model for PDS measurements.
+    """
+    number = models.IntegerField(_(u"pd number"), unique=True)
+    raw_datafile = models.CharField(_(u"raw data file"), max_length=200, help_text=_(u"only the relative path"))
+    evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200, help_text=_("only the relative path"),
+                                          blank=True)
+    def __unicode__(self):
+        try:
+            return _(u"PDS measurement of %s") % self.samples.get()
+        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+            return _(u"PDS measurement #%d") % self.number
+    class Meta:
+        verbose_name = _(u"PDS measurement")
+        verbose_name_plural = _(u"PDS measurements")
+        permissions = (("can_edit", "Can create and edit PDS measurements"),)
+admin.site.register(PDSMeasurement)
+
 class Sample(models.Model):
     u"""The model for samples.
     """
@@ -534,7 +555,7 @@ class SampleDeath(Process):
         try:
             return _(u"cease of existence of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            return _(u"cease of existence #%d") % self.id
+            return _(u"cease of existence #%d") % self.pk
     class Meta:
         verbose_name = _(u"cease of existence")
         verbose_name_plural = _(u"ceases of existence")
@@ -554,7 +575,7 @@ class Comment(Process):
             try:
                 return _(u"comment about %s") % self.sample_series.get()
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
-                return _(u"comment #%d") % self.id
+                return _(u"comment #%d") % self.pk
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
@@ -573,7 +594,7 @@ class Comment(Process):
         """
         if process_context.user == self.operator:
             return {"edit_url":
-                        django.core.urlresolvers.reverse("samples.views.comment.edit", kwargs={"process_id": self.id})}
+                        django.core.urlresolvers.reverse("samples.views.comment.edit", kwargs={"process_id": self.pk})}
         else:
             return {}
     @classmethod
@@ -687,7 +708,7 @@ class UserDetails(models.Model):
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
     deposition2-layer2, ..."``, where “nickname” can be chosen freely except
     that it mustn't contain “:” or “,” or whitespace.  “deposition” is the
-    *process id* (``Process.id``, not the deposition number!) of the
+    *process id* (``Process.pk``, not the deposition number!) of the
     deposition, and “layer” is the layer number (`Layer.number`).
     """
     def __unicode__(self):
@@ -710,7 +731,7 @@ class FeedEntry(models.Model):
     u"""You'll never calculate the SHA-1 hash yourself.  It is done in
     `save`."""
     def __unicode__(self):
-        return _(u"feed entry #%d") % self.id
+        return _(u"feed entry #%d") % self.pk
     def get_title(self):
         u"""Return the title of this feed entry, as a plain string (no HTML).
 
