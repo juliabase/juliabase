@@ -21,13 +21,18 @@ the new tables are automatically created.
 :type result_process_classes: set of `Process`
 """
 
-import hashlib
+import hashlib, os.path, codecs
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.contrib import admin
+from chantal import settings
+
+import matplotlib
+matplotlib.use("Agg")
+import pylab
 
 def get_really_full_name(user):
     u"""Unfortunately, Django's ``get_full_name`` method for users returns the
@@ -44,6 +49,48 @@ def get_really_full_name(user):
     :rtype: unicode
     """
     return user.get_full_name() or unicode(user)
+
+def read_techplot_file(filename, columns=(0, 1)):
+    u"""Read a datafile in TechPlot format and return the content of selected
+    columns.
+    
+    :Parameters:
+      - `filename`: full path to the Techplot data file
+      - `columns`: the columns that should be read.  Defaults to the first two,
+        i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
+
+    :type filename: str
+    :type columns: list of int
+
+    :Return:
+      List of all columns.  Every column is represented as a list of floating
+      point values.  If there was a problem, every column is ``None`` instead.
+
+    :rtype: list of list of float; or list of ``NoneType``
+    """
+    start_values = False
+    try:
+        datafile = codecs.open(filename, encoding="cp1252")
+    except IOError:
+        return len(columns) * [None]
+    result = [[] for i in range(len(columns))]
+    for line in datafile:
+        if start_values:
+            if line.startswith("END"):
+                break
+            cells = line.split()
+            for column, result_array in zip(columns, result):
+                try:
+                    value = float(cells[column])
+                except IndexError:
+                    return len(columns) * [None]
+                except ValueError:
+                    value = float("nan")
+                result_array.append(value)
+        elif line.startswith("BEGIN"):
+            start_values = True
+    datafile.close()
+    return result
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -114,6 +161,128 @@ class Process(models.Model):
         """
         return ("samples.views.main.main_menu", (), {})
 #        return ("samples.views.main.show_process", [str(self.pk)])
+    def calculate_image_filename_and_url(self, number):
+        u"""Get the location of a (plot) image in the local filesystem as well
+        as on the webpage.  The results are without file ending so that you can
+        append ``".jpeg"`` or ``".png"`` (for the thumbnails) or ``".pdf"``
+        (for the high-quality figure) yourself.
+
+        Every plot or image has a peculiar filename in order to be
+        un-guessable.  This is not security by obscurity because we really use
+        cryptographic hashes.  While it still is not the highest level of
+        security, it is a sensible compromise between security and
+        performance.  Besides, this method excludes name collisions and makes
+        name escaping unnecessary.
+
+        :Parameters:
+          - `number`: the number of the image.  This is mostly ``0`` because
+            most measurement models have only one graphics.
+
+        :type number: int
+
+        :Return:
+          the full path to the image file in the local filesystem, and the full
+          relative URL to the image on the website (i.e., only the domain is
+          missing).  Note that both is without file ending to remain flexible
+          (even without the dot).
+
+        :rtype: str, str
+        """
+        hash_ = hashlib.sha1()
+        hash_.update(settings.SECRET_KEY)
+        hash_.update(repr(self.pk))
+        hash_.update(repr(number))
+        filename = str(self.pk) + "-" + hash_.hexdigest()
+        return os.path.join(settings.MEDIA_ROOT, filename), os.path.join(settings.MEDIA_URL, filename)
+    def generate_plot(self, number=0):
+        u"""The central plot-generating method which shouldn't be overridden by
+        a derived class.  This method tests whether it is necessary to generate
+        new plots from the original datafile (by checking existence and file
+        timestamps), and does it if necessary.
+
+        The thumbnail image is a PNG, the figure image is a PDF.
+
+        :Parameters:
+          - `number`: the number of the plot to be generated.  It defaults to
+            ``0`` because most models will have at most one plot anyway.
+
+        :type number: int
+
+        :Return:
+          the full relative URL to the thumbnail image (i.e., without domain
+          but with file ending), and the full relative URL to the figure image
+          (which usually is linked with the thumbnail).  If the generation
+          fails, it returns ``None, None``.
+
+        :rtype: str, str; or ``NoneType``, ``NoneType``
+        """
+        datafile_name = self.get_datafile_name(number)
+        output_filename, output_url = self.calculate_image_filename_and_url(number)
+        if not os.path.exists(datafile_name):
+            return None, None
+        thumbnail_filename = output_filename + ".png"
+        thumbnail_necessary = \
+            not os.path.exists(thumbnail_filename) or os.stat(thumbnail_filename).st_mtime < os.stat(datafile_name).st_mtime
+        figure_filename = output_filename + ".pdf"
+        figure_necessary = \
+            not os.path.exists(figure_filename) or os.stat(figure_filename).st_mtime < os.stat(datafile_name).st_mtime
+        if thumbnail_necessary or figure_necessary:
+            if not self.pylab_commands(number, datafile_name):
+                return None, None
+            try:
+                if thumbnail_necessary:
+                    pylab.savefig(open(thumbnail_filename, "wb"), facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"), dpi=50)
+                if figure_necessary:
+                    pylab.savefig(open(figure_filename, "wb"), format="pdf")
+            except IOError:
+                return None, None
+        return output_url+".png", output_url+".pdf"
+    def pylab_commands(self, number, filename):
+        u"""Generate a plot using Pylab commands.  You may do whatever you want
+        here – but eventually, there must be a savable Matplotlib plot.  The
+        ``filename`` parameter ist not really necessary but it makes things a
+        little bit faster and easier.
+
+        This method must be overridden in derived classes that wish to offer
+        plots.
+
+        :Parameters:
+          - `number`: the number of the plot.  For most models offering plots,
+            this can only be zero and as such is not used it all in this
+            method.
+          - `filename`: the filename of the original data file
+
+        :type number: int
+        :type filename: str
+
+        :Return:
+          Whether the plot generation has succeeded.  Note that any exceptions
+          raised here mean an internal error.
+
+        :rtype: bool
+        """
+        raise NotImplementedError
+    def get_datafile_name(self, number):
+        u"""Get the name of the file with the original data for the plot with
+        the given ``number``.
+
+        This method must be overridden in derived classes that wish to offer
+        plots.
+
+        :Parameters:
+          - `number`: the number of the plot.  For most models offering plots,
+            this can only be zero and as such is not used it all in this
+            method.
+
+        :type number: int
+
+        :Return:
+          the absolute path of the file with the original data for this plot in
+          the local filesystem.
+
+        :rtype: str
+        """
+        raise NotImplementedError
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")
@@ -396,8 +565,7 @@ class LargeAreaLayer(Layer):
         verbose_name_plural = _(u"large-area layers")
 admin.site.register(LargeAreaLayer)
 
-from django.core.files.storage import FileSystemStorage
-fs = FileSystemStorage(location='/home/bronger/temp')
+pds_root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T/daten/pds/"
 
 class PDSMeasurement(Process):
     u"""Model for PDS measurements.
@@ -412,6 +580,33 @@ class PDSMeasurement(Process):
             return _(u"PDS measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return _(u"PDS measurement #%d") % self.number
+    def pylab_commands(self, number, filename):
+        x_values, y_values = read_techplot_file(filename)
+        if not x_values:
+            return False
+        pylab.plot(x_values, y_values)
+        return True
+    def get_datafile_name(self, number):
+        return os.path.join(pds_root_dir, self.evaluated_datafile)
+    def get_additional_template_context(self, process_context):
+        u"""See `SixChamberDeposition.get_additional_template_context`.
+
+        :Parameters:
+          - `process_context`: the context of this process
+
+        :type process_context: `views.utils.ProcessContext`
+
+        :Return:
+          dict with additional fields that are supposed to be given to the
+          templates.
+
+        :rtype: dict mapping str to arbitrary objects
+        """
+        result = {}
+        result["thumbnail"], result["figure"] = self.generate_plot()
+        if process_context.user.has_perm("change_pdsmeasurement"):
+            result["edit_url"] = django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pd_number": self.number})
+        return result
     class Meta:
         verbose_name = _(u"PDS measurement")
         verbose_name_plural = _(u"PDS measurements")
