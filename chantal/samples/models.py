@@ -127,7 +127,7 @@ class Process(models.Model):
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
     in the ``Meta`` subclass because I must be able to link to it with
-    ``ForeignKey`` s.
+    ``ForeignKey``.
 
     If you retrieve a `Process`, you may call (injected) method
     `find_actual_instance` to get the actual object, e.g. a
