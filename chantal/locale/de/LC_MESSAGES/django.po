@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-07 00:33+0200\n"
-"PO-Revision-Date: 2008-10-07 00:34+0200\n"
+"POT-Creation-Date: 2008-10-07 09:39+0200\n"
+"PO-Revision-Date: 2008-10-07 09:39+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -306,8 +306,8 @@ msgstr "PD-Nummer"
 msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
-msgid "only the relative path"
-msgstr "nur der relative Pfad"
+msgid "only the relative path below \"pds/\""
+msgstr "nur der relative Pfad unterhalb von \"pds/\""
 
 msgid "evaluated data file"
 msgstr "ausgewertete Daten-Datei"
@@ -750,6 +750,9 @@ msgstr "Meine Schichten"
 msgid "Sample"
 msgstr "Probe"
 
+msgid "Couldn't open datafile."
+msgstr "Konnte Daten-Datei nicht öffnen."
+
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
@@ -1187,6 +1190,15 @@ msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 msgid "My Layer error"
 msgstr "Fehler in Meiner Schicht"
 
+msgid "PDS data error"
+msgstr "Fehler mit PDS-Daten"
+
+msgid "Sample error"
+msgstr "Fehler in Probe"
+
+msgid "Extract from datafile error"
+msgstr "Fehler mit dem extrahieren aus der Datendatei"
+
 msgid "Sample series error"
 msgstr "Fehler in der Probenserie"
 
@@ -1498,6 +1510,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "Couldn't open evaluated datafile."
+#~ msgstr "Konnte ausgewertete Daten-Datei nicht öffnen."
 
 #~ msgid "contents"
 #~ msgstr "Inhalt"

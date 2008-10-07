@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-07 00:33+0200\n"
+"POT-Creation-Date: 2008-10-07 09:39+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -306,7 +306,7 @@ msgstr ""
 msgid "raw data file"
 msgstr ""
 
-msgid "only the relative path"
+msgid "only the relative path below \"pds/\""
 msgstr ""
 
 msgid "evaluated data file"
@@ -746,6 +746,9 @@ msgstr ""
 msgid "Sample"
 msgstr ""
 
+msgid "Couldn't open datafile."
+msgstr ""
+
 msgid "Overwrite with file data"
 msgstr ""
 
@@ -1150,6 +1153,15 @@ msgid "Error with removing from My Samples"
 msgstr ""
 
 msgid "My Layer error"
+msgstr ""
+
+msgid "PDS data error"
+msgstr ""
+
+msgid "Sample error"
+msgstr ""
+
+msgid "Extract from datafile error"
 msgstr ""
 
 msgid "Sample series error"

@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django import forms
+from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
 from chantal.samples.views import utils
@@ -86,6 +87,24 @@ class SampleForm(forms.Form):
 class PDSMeasurementForm(forms.ModelForm):
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    def __init__(self, *args, **keyw):
+        super(PDSMeasurementForm, self).__init__(*args, **keyw)
+        self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
+        self.fields["number"].widget.attrs["size"] = "10"
+    def test_for_datafile(self, filename):
+        if filename:
+            try:
+                open(os.path.join(root_dir, filename))
+            except IOError:
+                raise ValidationError(_(u"Couldn't open datafile."))
+    def clean_raw_datafile(self):
+        filename = self.cleaned_data["raw_datafile"]
+        self.test_for_datafile(filename)
+        return filename
+    def clean_evaluated_datafile(self):
+        filename = self.cleaned_data["evaluated_datafile"]
+        self.test_for_datafile(filename)
+        return filename
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -137,7 +156,7 @@ def edit(request, pd_number):
             pds_measurement_form = PDSMeasurementForm(request.POST, instance=pds_measurement)
         if pds_measurement_form.is_valid():
             number = pds_measurement_form.cleaned_data["number"]
-            if number != int(pd_number) and models.PDSMeasurement.objects.filter(number=number).count():
+            if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
                 utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
         if is_all_valid(pds_measurement_form, sample_form, overwrite_form):
             pds_measurement = pds_measurement_form.save()

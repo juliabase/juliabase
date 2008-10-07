@@ -403,9 +403,10 @@ class PDSMeasurement(Process):
     u"""Model for PDS measurements.
     """
     number = models.IntegerField(_(u"pd number"), unique=True)
-    raw_datafile = models.CharField(_(u"raw data file"), max_length=200, help_text=_(u"only the relative path"))
-    evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200, help_text=_("only the relative path"),
-                                          blank=True)
+    raw_datafile = models.CharField(_(u"raw data file"), max_length=200,
+                                    help_text=_(u"only the relative path below \"pds/\""))
+    evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200,
+                                          help_text=_("only the relative path below \"pds/\""), blank=True)
     def __unicode__(self):
         try:
             return _(u"PDS measurement of %s") % self.samples.get()
