@@ -2,6 +2,10 @@
 {% load i18n %}
 {% load samples_extras %}
 
+{% if thumbnail %}
+  <div style="float: right"><a href="{{ figure }}"><img src="{{ thumbnail }}" /></a></div>
+{% endif %}
+
 <table cellpadding="5">
   <tr>
     <td class="label">{% verbose_name PDSMeasurement.number %}:</td>
@@ -28,4 +32,3 @@
     </tr>
   {% endif %}
 </table>
-

@@ -49,7 +49,7 @@ def get_data_from_file(number):
                 if linenumber == 1:
                     match = date_pattern.match(line)
                     if match:
-                        file_timestamp = datetime.datetime.fromtimestamp(os.stat(raw_filename)[8])
+                        file_timestamp = datetime.datetime.fromtimestamp(os.stat(raw_filename).st_mtime)
                         data_timestamp = datetime.datetime(
                             int(match.group("year")), int(match.group("month")), int(match.group("day")), 10, 0)
                         if file_timestamp.date() == data_timestamp.date():

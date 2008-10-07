@@ -57,7 +57,7 @@ h1 { margin-top: 0pt }
 p.operator_and_timestamp { float: right; font-size: small }
 a.edit-button, a.duplicate-button { font-size: small; white-space: nowrap }
 
-div.process { margin-top: 3ex }
+div.process { margin-top: 3ex; clear: both }
 span.aliases { font-size: x-small; font-weight: normal }
 
 span.label { margin-right: 0.5em }
@@ -85,3 +85,5 @@ span.version { font-size: small }
 div.short-messages { text-align: center; clear: both }
 
 p.submit-button { text-align: right; margin-bottom: 0px }
+
+a > img { border: none }
