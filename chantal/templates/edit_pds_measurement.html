@@ -4,7 +4,7 @@
 
 {% block content %}
 <form method="post" action="">
-  {% if pds_measurement.errors or pds_measurement.non_field_errors or sample.errors or sample.non_field_errors or overwrite.errors or overwrite.non_field_errors %}
+  {% if pds_measurement.errors or pds_measurement.non_field_errors or sample.errors or sample.non_field_errors or overwrite.errors or overwrite.non_field_errors or remove_from_my_samples.errors or remove_from_my_samples.non_field_errors %}
     <table width="100%"><tr><td class="error-messages">
       {% for field in pds_measurement %}
         {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
@@ -23,6 +23,12 @@
       {% endfor %}
       {% if overwrite.non_field_errors %}
         <p>{% trans 'Extract from datafile error' %}</p>{{ overwrite.non_field_errors }}
+      {% endif %}
+      {% for field in remove_from_my_samples %}
+        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+      {% endfor %}
+      {% if remove_from_my_samples.non_field_errors %}
+        <p>{% trans 'Extract from datafile error' %}</p>{{ remove_from_my_samples.non_field_errors }}
       {% endif %}
     </td></tr></table>
   {% endif %}
@@ -70,7 +76,17 @@
            >{{ pds_measurement.comments.label }}:</label></td>
       <td colspan="3">{{ pds_measurement.comments }}</td>
     </tr>
+    <tr>
+      <td style="text-align: right; vertical-align: top"><label for="id_{{ pds_measurement.comments.html_name }}"
+           >{{ pds_measurement.comments.label }}:</label></td>
+      <td colspan="3">{{ pds_measurement.comments }}</td>
+    </tr>
   </table>
+
+  <div style="text-align: right">
+    {{ remove_from_my_samples.as_p }}
+  </div>
+
   <p class="submit-button" style="clear: both"><input type="submit" /></p>
 </form>
 

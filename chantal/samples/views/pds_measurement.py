@@ -187,7 +187,15 @@ class OverwriteForm(forms.Form):
     _ = ugettext_lazy
     overwrite_from_file = forms.BooleanField(label=_(u"Overwrite with file data"), required=False)
 
-def is_all_valid(pds_measurement_form, sample_form, overwrite_form):
+class RemoveFromMySamplesForm(forms.Form):
+    u"""Form for the question whether the user wants to remove the measured
+    sample from the “My Samples” list after having created the deposition.
+    """
+    _ = ugettext_lazy
+    remove_measured_from_my_samples = forms.BooleanField(label=_(u"Remove measured sample from My Samples"),
+                                                         required=False, initial=True)
+
+def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
@@ -196,10 +204,12 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form):
       - `pds_measurement_form`: a bound PDS measurement form
       - `sample_form`: a bound sample selection form
       - `overwrite_form`: a bound overwrite data form
+      - `remove_from_my_samples_form`: a bound remove-from-my-samples form
 
     :type pds_measurement_form: `PDSMeasurementForm`
     :type sample_form: `SampleForm`
     :type overwrite_form: `OverwriteForm`
+    :type remove_from_my_samples_form: `RemoveFromMySamplesForm`
 
     :Return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
@@ -210,6 +220,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form):
     all_valid = pds_measurement_form.is_valid()
     all_valid = sample_form.is_valid() and all_valid
     all_valid = overwrite_form.is_valid() and all_valid
+    all_valid = remove_from_my_samples_form.is_valid() and all_valid
     return all_valid
     
 @login_required
@@ -236,6 +247,7 @@ def edit(request, pd_number):
     if request.method == "POST":
         pds_measurement_form = None
         sample_form = SampleForm(user_details, request.POST)
+        remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
         overwrite_form = OverwriteForm(request.POST)
         if overwrite_form.is_valid() and overwrite_form.cleaned_data["overwrite_from_file"]:
             try:
@@ -258,9 +270,12 @@ def edit(request, pd_number):
             number = pds_measurement_form.cleaned_data["number"]
             if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
                 utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
-        if is_all_valid(pds_measurement_form, sample_form, overwrite_form):
+        if is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form):
             pds_measurement = pds_measurement_form.save()
-            pds_measurement.samples = [sample_form.cleaned_data["sample"]]
+            samples = [sample_form.cleaned_data["sample"]]
+            pds_measurement.samples = samples
+            if remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
+                utils.remove_samples_from_my_samples(samples, user_details)
             return utils.http_response_go_next(request)
     else:
         initial = {}
@@ -276,9 +291,11 @@ def edit(request, pd_number):
                 initial["sample"] = samples[0].pk
         sample_form = SampleForm(user_details, initial=initial)
         overwrite_form = OverwriteForm()
+        remove_from_my_samples_form = RemoveFromMySamplesForm()
     title = _(u"PDS measurement %s") % pd_number if pd_number else _(u"Add PDS measurement")
     return render_to_response("edit_pds_measurement.html", {"title": title,
                                                             "pds_measurement": pds_measurement_form,
                                                             "overwrite": overwrite_form,
-                                                            "sample": sample_form},
+                                                            "sample": sample_form,
+                                                            "remove_from_my_samples": remove_from_my_samples_form},
                               context_instance=RequestContext(request))
