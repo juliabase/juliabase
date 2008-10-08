@@ -104,6 +104,7 @@ class LayerForm(DataModelForm):
             self.fields[fieldname].max_value = max_value
     def clean_chamber(self):
         # FixMe: Isn't this already tested by Django itself?
+        _ = ugettext
         if self.cleaned_data["chamber"] not in set([x[0] for x in models.six_chamber_chamber_choices]):
             raise ValidationError(_(u"Name is unknown."))
         return self.cleaned_data["chamber"]
@@ -131,6 +132,7 @@ class ChannelForm(ModelForm):
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):
+        _ = ugettext
         # FixMe: Isn't this already tested by Django itself?
         if self.cleaned_data["gas"] not in set([x[0] for x in models.six_chamber_gas_choices]):
             raise ValidationError(_(u"Gas type is unknown."))

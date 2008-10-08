@@ -24,7 +24,7 @@ the new tables are automatically created.
 import hashlib, os.path, codecs
 from django.db import models
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.contrib import admin
@@ -304,6 +304,7 @@ class Deposition(Process):
     def get_absolute_url(self):
         return ("samples.views.main.show_deposition", [urlquote(self.number, safe="")])
     def __unicode__(self):
+        _ = ugettext
         return _(u"deposition %s") % self.number
     class Meta:
         verbose_name = _(u"deposition")
@@ -361,6 +362,7 @@ class HallMeasurement(Process):
     fields here …
     """
     def __unicode__(self):
+        _ = ugettext
         try:
             _(u"hall measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
@@ -434,6 +436,7 @@ class SixChamberLayer(Layer):
                                            help_text=_(u"in W"))
     base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
     def __unicode__(self):
+        _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
     class Meta(Layer.Meta):
         verbose_name = _(u"6-chamber layer")
@@ -463,6 +466,7 @@ class SixChamberChannel(models.Model):
     gas = models.CharField(_(u"gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
     flow_rate = models.DecimalField(_(u"flow rate"), max_digits=4, decimal_places=1, help_text=_(u"in sccm"))
     def __unicode__(self):
+        _ = ugettext
         return _(u"channel %(number)d of %(layer)s") % {"number": self.number, "layer": self.layer}
     class Meta:
         verbose_name = _(u"6-chamber channel")
@@ -559,6 +563,7 @@ class LargeAreaLayer(Layer):
     electrodes_distance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
                                                help_text=_(u"in mm"))
     def __unicode__(self):
+        _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
     class Meta(Layer.Meta):
         verbose_name = _(u"large-area layer")
@@ -576,6 +581,7 @@ class PDSMeasurement(Process):
     evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200,
                                           help_text=_("only the relative path below \"pds/\""), blank=True)
     def __unicode__(self):
+        _ = ugettext
         try:
             return _(u"PDS measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
@@ -679,6 +685,7 @@ class SampleSplit(Process):
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
     def __unicode__(self):
+        _ = ugettext
         return _(u"split of %s") % self.parent.name
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
@@ -748,6 +755,7 @@ class SampleDeath(Process):
     """
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
     def __unicode__(self):
+        _ = ugettext
         try:
             return _(u"cease of existence of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
@@ -765,6 +773,7 @@ class Comment(Process):
     connected with a `SampleSeries`.
     """
     def __unicode__(self):
+        _ = ugettext
         try:
             return _(u"comment about %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
@@ -927,6 +936,7 @@ class FeedEntry(models.Model):
     u"""You'll never calculate the SHA-1 hash yourself.  It is done in
     `save`."""
     def __unicode__(self):
+        _ = ugettext
         return _(u"feed entry #%d") % self.pk
     def get_title(self):
         u"""Return the title of this feed entry, as a plain string (no HTML).
@@ -964,6 +974,7 @@ class FeedNewSamples(FeedEntry):
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
     u"""The person who added the sample(s)."""
     def get_title(self):
+        _ = ugettext
         # FixMe: Must distinguish between one or more samples.
         if self.group:
             return _(u"%(originator)s has added new samples in group %(group)s") % \

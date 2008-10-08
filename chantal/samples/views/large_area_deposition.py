@@ -117,6 +117,7 @@ class ChangeLayerForm(forms.Form):
     move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
                                         choices=(("", _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
     def clean(self):
+        _ = ugettext
         operations = 0
         if self.cleaned_data["duplicate_this_layer"]:
             operations += 1
