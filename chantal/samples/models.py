@@ -174,16 +174,15 @@ class Process(models.Model):
 #        return ("samples.views.main.show_process", [str(self.pk)])
     def calculate_image_filename_and_url(self, number):
         u"""Get the location of a (plot) image in the local filesystem as well
-        as on the webpage.  The results are without file ending so that you can
-        append ``".jpeg"`` or ``".png"`` (for the thumbnails) or ``".pdf"``
+        as on the webpage.  The results are without file extension so that you
+        can append ``".jpeg"`` or ``".png"`` (for the thumbnails) or ``".pdf"``
         (for the high-quality figure) yourself.
 
-        Every plot or image has a peculiar filename in order to be
-        un-guessable.  This is not security by obscurity because we really use
-        cryptographic hashes.  While it still is not the highest level of
-        security, it is a sensible compromise between security and
-        performance.  Besides, this method excludes name collisions and makes
-        name escaping unnecessary.
+        Every plot or image resides in a directory with a peculiar name in
+        order to be un-guessable.  This is not security by obscurity because we
+        really use cryptographic hashes.  While it still is not the highest
+        level of security, it is a sensible compromise between security and
+        performance.  Besides, this method excludes name collisions.
 
         :Parameters:
           - `number`: the number of the image.  This is mostly ``0`` because
@@ -194,7 +193,7 @@ class Process(models.Model):
         :Return:
           the full path to the image file in the local filesystem, and the full
           relative URL to the image on the website (i.e., only the domain is
-          missing).  Note that both is without file ending to remain flexible
+          missing).  Note that both is without file extension to remain flexible
           (even without the dot).
 
         :rtype: str, str
@@ -204,8 +203,13 @@ class Process(models.Model):
         hash_.update(translation.get_language())
         hash_.update(repr(self.pk))
         hash_.update(repr(number))
-        filename = str(self.pk) + "-" + hash_.hexdigest()
-        return os.path.join(settings.MEDIA_ROOT, filename), os.path.join(settings.MEDIA_URL, filename)
+        dirname = str(self.pk) + "-" + hash_.hexdigest()
+        try:
+            os.mkdir(os.path.join(settings.MEDIA_ROOT, dirname))
+        except OSError:
+            pass
+        filename = self.get_imagefile_basename(number)
+        return os.path.join(settings.MEDIA_ROOT, dirname, filename), os.path.join(settings.MEDIA_URL, dirname, filename)
     def generate_plot(self, number=0):
         u"""The central plot-generating method which shouldn't be overridden by
         a derived class.  This method tests whether it is necessary to generate
@@ -222,9 +226,9 @@ class Process(models.Model):
 
         :Return:
           the full relative URL to the thumbnail image (i.e., without domain
-          but with file ending), and the full relative URL to the figure image
-          (which usually is linked with the thumbnail).  If the generation
-          fails, it returns ``None, None``.
+          but with file extension), and the full relative URL to the figure
+          image (which usually is linked with the thumbnail).  If the
+          generation fails, it returns ``None, None``.
 
         :rtype: str, str; or ``NoneType``, ``NoneType``
         """
@@ -293,6 +297,30 @@ class Process(models.Model):
         :Return:
           the absolute path of the file with the original data for this plot in
           the local filesystem.
+
+        :rtype: str
+        """
+        raise NotImplementedError
+    def get_imagefile_basename(self, number):
+        u"""Get the name of the plot files with the given ``number``.  For
+        example, for the PDS measurement for the sample 01B410, this may be
+        ``"pds_01B410"``.  It should be human-friendly and reasonable
+        descriptive since this is the name that is used if the user wishes to
+        download a plot to their local filesystem.  It need not be unique in
+        any way (although mostly it is).
+
+        This method must be overridden in derived classes that wish to offer
+        plots.
+
+        :Parameters:
+          - `number`: the number of the plot.  For most models offering plots,
+            this can only be zero and as such is not used it all in this
+            method.
+
+        :type number: int
+
+        :Return:
+          the base name for the plot files, without directories or extension
 
         :rtype: str
         """
@@ -608,6 +636,11 @@ class PDSMeasurement(Process):
         pylab.ylabel(_(u"counts"))
     def get_datafile_name(self, number):
         return os.path.join(pds_root_dir, self.evaluated_datafile)
+    def get_imagefile_basename(self, number):
+        try:
+            return ("pds_%s" % self.samples.get()).replace("*", "")
+        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+            return "pds_pd%d" % self.number
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context`.
 
