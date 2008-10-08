@@ -219,7 +219,8 @@ def edit(request, pd_number):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `pd_number`: the PD number of the PDS measurement to be edited
+      - `pd_number`: The PD number of the PDS measurement to be edited.  If it
+        is ``None``, a new measurement is added to the database.
 
     :type request: ``HttpRequest``
     :type pd_number: unicode

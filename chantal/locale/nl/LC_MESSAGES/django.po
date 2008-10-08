@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-07 09:38+0200\n"
+"POT-Creation-Date: 2008-10-08 11:47+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -318,6 +318,12 @@ msgstr ""
 
 #, python-format
 msgid "PDS measurement #%d"
+msgstr ""
+
+msgid "energy in eV"
+msgstr ""
+
+msgid "counts"
 msgstr ""
 
 msgid "PDS measurement"

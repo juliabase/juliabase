@@ -25,6 +25,7 @@ import hashlib, os.path, codecs
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils import translation
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.contrib import admin
@@ -190,6 +191,7 @@ class Process(models.Model):
         """
         hash_ = hashlib.sha1()
         hash_.update(settings.SECRET_KEY)
+        hash_.update(translation.get_language())
         hash_.update(repr(self.pk))
         hash_.update(repr(number))
         filename = str(self.pk) + "-" + hash_.hexdigest()
@@ -227,15 +229,21 @@ class Process(models.Model):
         figure_necessary = \
             not os.path.exists(figure_filename) or os.stat(figure_filename).st_mtime < os.stat(datafile_name).st_mtime
         if thumbnail_necessary or figure_necessary:
+            pylab.figure()
             if not self.pylab_commands(number, datafile_name):
+                pylab.close("all")
                 return None, None
             try:
                 if thumbnail_necessary:
                     pylab.savefig(open(thumbnail_filename, "wb"), facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"), dpi=50)
+                pylab.title(unicode(self))
                 if figure_necessary:
                     pylab.savefig(open(figure_filename, "wb"), format="pdf")
             except IOError:
+                pylab.close("all")
                 return None, None
+            finally:
+                pylab.close("all")
         return output_url+".png", output_url+".pdf"
     def pylab_commands(self, number, filename):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
@@ -587,10 +595,13 @@ class PDSMeasurement(Process):
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return _(u"PDS measurement #%d") % self.number
     def pylab_commands(self, number, filename):
+        _ = ugettext
         x_values, y_values = read_techplot_file(filename)
         if not x_values:
             return False
         pylab.plot(x_values, y_values)
+        pylab.xlabel(_(u"energy in eV"))
+        pylab.ylabel(_(u"counts"))
         return True
     def get_datafile_name(self, number):
         return os.path.join(pds_root_dir, self.evaluated_datafile)
