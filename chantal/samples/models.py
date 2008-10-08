@@ -51,6 +51,12 @@ def get_really_full_name(user):
     """
     return user.get_full_name() or unicode(user)
 
+class PlotError(Exception):
+    u"""Raised if an error occurs while generating a plot.  Usually, it is
+    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
+    """
+    pass
+
 def read_techplot_file(filename, columns=(0, 1)):
     u"""Read a datafile in TechPlot format and return the content of selected
     columns.
@@ -65,15 +71,19 @@ def read_techplot_file(filename, columns=(0, 1)):
 
     :Return:
       List of all columns.  Every column is represented as a list of floating
-      point values.  If there was a problem, every column is ``None`` instead.
+      point values.
 
-    :rtype: list of list of float; or list of ``NoneType``
+    :rtype: list of list of float
+
+    :Exceptions:
+      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+        unparseble data)
     """
     start_values = False
     try:
         datafile = codecs.open(filename, encoding="cp1252")
     except IOError:
-        return len(columns) * [None]
+        raise PlotError("datafile could not be opened")
     result = [[] for i in range(len(columns))]
     for line in datafile:
         if start_values:
@@ -84,7 +94,7 @@ def read_techplot_file(filename, columns=(0, 1)):
                 try:
                     value = float(cells[column])
                 except IndexError:
-                    return len(columns) * [None]
+                    raise PlotError("datafile contained too few columns")
                 except ValueError:
                     value = float("nan")
                 result_array.append(value)
@@ -230,16 +240,14 @@ class Process(models.Model):
             not os.path.exists(figure_filename) or os.stat(figure_filename).st_mtime < os.stat(datafile_name).st_mtime
         if thumbnail_necessary or figure_necessary:
             pylab.figure()
-            if not self.pylab_commands(number, datafile_name):
-                pylab.close("all")
-                return None, None
             try:
+                self.pylab_commands(number, datafile_name)
                 if thumbnail_necessary:
                     pylab.savefig(open(thumbnail_filename, "wb"), facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"), dpi=50)
                 pylab.title(unicode(self))
                 if figure_necessary:
                     pylab.savefig(open(figure_filename, "wb"), format="pdf")
-            except IOError:
+            except (IOError, PlotError):
                 pylab.close("all")
                 return None, None
             finally:
@@ -247,9 +255,9 @@ class Process(models.Model):
         return output_url+".png", output_url+".pdf"
     def pylab_commands(self, number, filename):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
-        here – but eventually, there must be a savable Matplotlib plot.  The
-        ``filename`` parameter ist not really necessary but it makes things a
-        little bit faster and easier.
+        here – but eventually, there must be a savable Matplotlib plot.  You
+        should't use ``pylab.figure``.  The ``filename`` parameter ist not
+        really necessary but it makes things a little bit faster and easier.
 
         This method must be overridden in derived classes that wish to offer
         plots.
@@ -263,11 +271,9 @@ class Process(models.Model):
         :type number: int
         :type filename: str
 
-        :Return:
-          Whether the plot generation has succeeded.  Note that any exceptions
-          raised here mean an internal error.
-
-        :rtype: bool
+        :Exceptions:
+          - `PlotError`: if anything went wrong during the generation of the
+            plot
         """
         raise NotImplementedError
     def get_datafile_name(self, number):
@@ -597,12 +603,9 @@ class PDSMeasurement(Process):
     def pylab_commands(self, number, filename):
         _ = ugettext
         x_values, y_values = read_techplot_file(filename)
-        if not x_values:
-            return False
         pylab.plot(x_values, y_values)
         pylab.xlabel(_(u"energy in eV"))
         pylab.ylabel(_(u"counts"))
-        return True
     def get_datafile_name(self, number):
         return os.path.join(pds_root_dir, self.evaluated_datafile)
     def get_additional_template_context(self, process_context):
