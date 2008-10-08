@@ -139,7 +139,7 @@ class PDSMeasurementForm(forms.ModelForm):
         u"""Test whether a certain file is openable by Chantal.
 
         :Parameters:
-          - `filename`: Path to the file to be tested.  Noe that this is a
+          - `filename`: Path to the file to be tested.  Note that this is a
             relative path: The `root_dir` is implicitly prepended to the
             filename.
 
@@ -276,6 +276,13 @@ def edit(request, pd_number):
             pds_measurement.samples = samples
             if remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, user_details)
+            if pd_number:
+                request.session["success_report"] = _(u"%s was successfully changed in the database.") % pds_measurement
+            else:
+                if utils.is_remote_client(request):
+                    return utils.respond_to_remote_client(pds_measurement.pk)
+                else:
+                    request.session["success_report"] = _(u"%s was successfully added to the database.") % pds_measurement
             return utils.http_response_go_next(request)
     else:
         initial = {}

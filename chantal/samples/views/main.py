@@ -551,7 +551,7 @@ def primary_keys(request):
             # FixMe: Return only *active* users
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.filter(username__in=user_names).
                                         values_list("username", "id"))
-    return HttpResponse(pickle.dumps(result_dict), content_type="text/plain; charset=ascii")
+    return utils.respond_to_remote_client(result_dict)
 
 def login_remote_client(request):
     u"""Login for the Chantal Remote Client.  It only supports the HTTP POST

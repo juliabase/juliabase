@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import urllib, urllib2, cookielib, pickle, logging
-from elementtree.ElementTree import XML
 import datetime, re
 
 logging.basicConfig(level=logging.DEBUG,
@@ -12,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 
 __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamberLayer", "SixChamberChannel",
-           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition"]
+           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition", "PDSMeasurement"]
 
 def quote_header(value):
     if isinstance(value, bool):
@@ -66,7 +65,7 @@ class ChantalConnection(object):
             logging.error("Login failed.")
             raise Exception("Login failed")
         # FixMe: Test whether login was successful
-        self.primary_keys = pickle.load(self.opener.open(self.root_url+"primary_keys?groups=*&users=*"))
+        self.primary_keys = self.open("primary_keys?groups=*&users=*")
     def logout(self):
         if not self.open("logout_remote_client"):
             logging.error("Logout failed.")
@@ -236,5 +235,26 @@ def rename_after_deposition(deposition_number, samples):
         data["%d-number_of_pieces" % i] = 1
         data["%d_0-new_name" % i] = samples[id_]
     return connection.open("depositions/split_and_rename_samples/"+deposition_number, data)
+
+class PDSMeasurement(object):
+    def __init__(self, sample_name):
+        self.sample_name = sample_name
+        self.sample_id = connection.open("primary_keys?samples=%s" % sample_name)["samples"][sample_name]
+        self.number = self.operator = self.timestamp = self.comments = None
+        self.raw_datafile = self.evaluated_datafile = None
+    def submit(self):
+        if not self.operator:
+            self.operator = connection.username
+        assert connection.open("samples/%s" % self.sample_name, {"is_my_sample": True})
+        data = {"number": self.number,
+                "sample": self.sample_id,
+                "timestamp": self.timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "operator": connection.primary_keys["users"][self.operator],
+                "raw_datafile": self.raw_datafile,
+                "evaluated_datafile": self.evaluated_datafile,
+                "comments": self.comments,
+                "remove_measured_from_my_samples": True}
+        return connection.open("pds_measurements/add/", data)
+        
 
 connection = ChantalConnection("http://127.0.0.1:8000/")

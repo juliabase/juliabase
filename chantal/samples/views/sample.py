@@ -71,8 +71,11 @@ def edit(request, sample_name):
                     user.get_profile().my_samples.add(sample)
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
-            request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
-            return utils.HttpResponseSeeOther(utils.parse_query_string(request).get("next", sample.get_absolute_url()))
+            if utils.is_remote_client(request):
+                return utils.respond_to_remote_client(True)
+            else:
+                request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
+                return utils.http_response_go_next(sample.get_absolute_url())
     else:
         sample_form = SampleForm(instance=sample)
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
@@ -131,10 +134,16 @@ def show(request, sample_name):
         if is_my_sample_form.is_valid():
             if is_my_sample_form.cleaned_data["is_my_sample"]:
                 user_details.my_samples.add(sample)
-                request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample.name
+                if utils.is_remote_client(request):
+                    return utils.respond_to_remote_client(True)
+                else:
+                    request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample.name
             else:
                 user_details.my_samples.remove(sample)
-                request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
+                if utils.is_remote_client(request):
+                    return utils.respond_to_remote_client(True)
+                else:
+                    request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
     else:
         is_my_sample_form = IsMySampleForm(
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
