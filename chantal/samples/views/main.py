@@ -254,18 +254,16 @@ def get_adsm_results():
         result["log_file_error"] = True
         return result
     in_record = False
+    last_timestamp = None
     for line in log_file:
         if "--- SCHEDULEREC STATUS BEGIN" in line:
             timestamp = datetime.datetime.strptime(line[:19], "%m/%d/%y   %H:%M:%S")
             if timestamp.date() == datetime.date.today():
-                result["last_backup_timestamp"] = \
-                    timestamp.strftime(str(_("today, %H:%M")))
+                last_timestamp = timestamp.strftime(str(_("today, %H:%M")))
             elif timestamp.date() == datetime.date.today() - datetime.timedelta(1):
-                result["last_backup_timestamp"] = \
-                    timestamp.strftime(str(_("yesterday, %H:%M")))
+                last_timestamp = timestamp.strftime(str(_("yesterday, %H:%M")))
             else:
-                result["last_backup_timestamp"] = \
-                    timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+                last_timestamp = timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
             in_record = True
         elif "--- SCHEDULEREC STATUS END" in line:
             in_record = False
@@ -273,6 +271,7 @@ def get_adsm_results():
             match = backup_inspected_pattern.search(line)
             if match:
                 result["ispected_objects"] = match.group(1).replace(",", "")
+                result["last_backup_timestamp"] = last_timestamp
             match = backup_failed_pattern.search(line)
             if match:
                 result["failed_objects"] = match.group(1).replace(",", "")
