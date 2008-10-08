@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""All the views for the PDS measurements.  This is significantly simpler than
+the views for deposition systems (mostly because the rearrangement of layers
+doesn't happen here).
+"""
+
 import datetime, os.path, re, codecs
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -19,6 +24,27 @@ raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 date_pattern = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})")
 def get_data_from_file(number):
+    u"""Find the datafiles for a given PD number, and return all data found in
+    them.  The resulting dictionary may contain the following keys:
+    ``"raw_datafile"``, ``"evaluated_datafile"``, ``"timestamp"``,
+    ``"number"``, and ``"comments"``.  This is ready to be used as the
+    ``initial`` keyword parameter of a `PDSMeasurementForm`.  Moreover, it
+    looks for the sample that was measured in the database, and if it finds it,
+    returns it, too.
+
+    :Parameters:
+      - `number`: the PD number of the PDS measurement
+
+    :type number: int
+
+    :Return:
+      a dictionary with all data found in the datafile including the filenames
+      for this measurement, and the sample connected with deposition if any.
+      If no sample in the database fits, ``None`` is returned as the sample.
+
+    :rtype: dict mapping str to ``object``, `models.Sample`
+    """
+    # First step: find the files
     raw_filename = evaluated_filename = None
     for directory, __, filenames in os.walk(root_dir, topdown=False):
         for filename in filenames:
@@ -35,6 +61,8 @@ def get_data_from_file(number):
                     evaluated_filename = os.path.join(directory, filename)
         if raw_filename and evaluated_filename:
             break
+    # Second step: parse the raw data file and populate the resulting
+    # dictionary
     result = {}
     sample = None
     comment_lines = []
@@ -78,30 +106,65 @@ def get_data_from_file(number):
     return result, sample
 
 class SampleForm(forms.Form):
+    u"""Form for the sample selection field.  You can only select *one* sample
+    per PDS measurement (in contrast to depositions).
+    """
     _ = ugettext_lazy
     sample = forms.ModelChoiceField(label=_(u"Sample"), queryset=None)
     def __init__(self, user_details, *args, **keyw):
+        u"""Form constructor.  I only set the selection of samples to the
+        current user's “My Samples”.
+
+        :Parameters:
+          - `user_details`: the details of the current user
+
+        :type user_details: `models.UserDetails`
+        """
         super(SampleForm, self).__init__(*args, **keyw)
         self.fields["sample"].queryset = user_details.my_samples
     
 class PDSMeasurementForm(forms.ModelForm):
+    u"""Model form for the core PDS measurement data.  I only redefine the
+    ``operator`` field here in oder to have the full names of the users.
+    """
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, *args, **keyw):
+        u"""Form constructor.  I just adjust layout here.
+        """
         super(PDSMeasurementForm, self).__init__(*args, **keyw)
         self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
     def test_for_datafile(self, filename):
+        u"""Test whether a certain file is openable by Chantal.
+
+        :Parameters:
+          - `filename`: Path to the file to be tested.  Noe that this is a
+            relative path: The `root_dir` is implicitly prepended to the
+            filename.
+
+        :type filename: str
+
+        :Return:
+          wheter the file could be opened for reading
+
+        :rtype: bool
+        """
         if filename:
             try:
                 open(os.path.join(root_dir, filename))
             except IOError:
                 raise ValidationError(_(u"Couldn't open datafile."))
     def clean_raw_datafile(self):
+        u"""Check whether the raw datafile name points to a readable file.
+        """
         filename = self.cleaned_data["raw_datafile"]
         self.test_for_datafile(filename)
         return filename
     def clean_evaluated_datafile(self):
+        u"""Check whether the evaluated datafile name points to a readable
+        file.
+        """
         filename = self.cleaned_data["evaluated_datafile"]
         self.test_for_datafile(filename)
         return filename
@@ -118,10 +181,32 @@ class PDSMeasurementForm(forms.ModelForm):
         exclude = ("external_operator",)
 
 class OverwriteForm(forms.Form):
+    u"""Form for the checkbox whether the form data should be taken from the
+    datafile.
+    """
     _ = ugettext_lazy
     overwrite_from_file = forms.BooleanField(label=_(u"Overwrite with file data"), required=False)
 
 def is_all_valid(pds_measurement_form, sample_form, overwrite_form):
+    u"""Tests the “inner” validity of all forms belonging to this view.  This
+    function calls the ``is_valid()`` method of all forms, even if one of them
+    returns ``False`` (and makes the return value clear prematurely).
+
+    :Parameters:
+      - `pds_measurement_form`: a bound PDS measurement form
+      - `sample_form`: a bound sample selection form
+      - `overwrite_form`: a bound overwrite data form
+
+    :type pds_measurement_form: `PDSMeasurementForm`
+    :type sample_form: `SampleForm`
+    :type overwrite_form: `OverwriteForm`
+
+    :Return:
+      whether all forms are valid, i.e. their ``is_valid`` method returns
+      ``True``.
+
+    :rtype: bool
+    """
     all_valid = pds_measurement_form.is_valid()
     all_valid = sample_form.is_valid() and all_valid
     all_valid = overwrite_form.is_valid() and all_valid
@@ -130,6 +215,20 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form):
 @login_required
 @check_permission("change_pdsmeasurement")
 def edit(request, pd_number):
+    u"""Edit and create view for PDS measurements.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `pd_number`: the PD number of the PDS measurement to be edited
+
+    :type request: ``HttpRequest``
+    :type pd_number: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     pds_measurement = get_object_or_404(models.PDSMeasurement, number=utils.convert_id_to_int(pd_number)) \
         if pd_number is not None else None
     user_details = request.user.get_profile()
