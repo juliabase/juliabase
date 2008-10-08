@@ -18,6 +18,9 @@ def quote_header(value):
         return u"on" if value else None
     return unicode(value).encode("utf-8")
 
+class ResponseError(Exception):
+    pass
+
 class ChantalConnection(object):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
     opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
@@ -58,18 +61,18 @@ class ChantalConnection(object):
             logfile = open("chantal_remote.html", "wb")
             logfile.write(text)
             logfile.close()
-            raise Exception("Response was not in pickle format!")
+            raise ResponseError("Response was not in pickle format!")
     def login(self, username, password):
         self.username = username
         if not self.open("login_remote_client", {"username": username, "password": password}):
             logging.error("Login failed.")
-            raise Exception("Login failed")
+            raise ResponseError("Login failed")
         # FixMe: Test whether login was successful
         self.primary_keys = self.open("primary_keys?groups=*&users=*")
     def logout(self):
         if not self.open("logout_remote_client"):
             logging.error("Logout failed.")
-            raise Exception("Logout failed")
+            raise ResponseError("Logout failed")
 
 connection = ChantalConnection()
 
