@@ -773,7 +773,10 @@ def lookup_sample(sample_name, request):
     """
     sample = get_sample(sample_name)
     if not sample:
-        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+        if is_remote_client(request):
+            return None, respond_to_remote_client(False)
+        else:
+            raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if isinstance(sample, list):
         return None, render_to_response(
             "disambiguation.html", {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
