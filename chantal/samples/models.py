@@ -133,6 +133,16 @@ class ExternalOperator(models.Model):
         verbose_name_plural = _(u"external operators")
 admin.site.register(ExternalOperator)
 
+timestamp_inaccuracy_choices = (
+    (0, _(u"totally accurate")),
+    (1, _(u"accurate to the minute")),
+    (2, _(u"accurate to the hour")),
+    (3, _(u"accurate to the day")),
+    (4, _(u"accurate to the month")),
+    (5, _(u"accurate to the year")),
+    (6, _(u"not even accurate to the year")),
+    )
+    
 class Process(models.Model):
     u"""This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
@@ -148,6 +158,7 @@ class Process(models.Model):
         process = process.find_actual_instance()
     """
     timestamp = models.DateTimeField(_(u"timestamp"))
+    timestamp_inaccuracy = models.IntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
     comments = models.TextField(_(u"comments"), blank=True)

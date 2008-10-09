@@ -282,7 +282,9 @@ name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerinde
     > <input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
   {{ add_my_layer.as_p }}
 
-  {{ remove_from_my_samples }}
+  {{ remove_from_my_samples.as_p }}
+
+  {{ deposition.timestamp_inaccuracy }}
 
   <p class="submit-button"><input type="submit" /></p>
 </form>

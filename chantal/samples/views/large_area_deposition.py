@@ -64,6 +64,7 @@ class DepositionForm(forms.ModelForm):
         field."""
         super(DepositionForm, self).__init__(data, **keyw)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
+        self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own

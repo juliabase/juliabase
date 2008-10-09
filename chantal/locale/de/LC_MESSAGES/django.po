@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-08 18:06+0200\n"
-"PO-Revision-Date: 2008-10-08 18:07+0200\n"
+"POT-Creation-Date: 2008-10-09 17:38+0200\n"
+"PO-Revision-Date: 2008-10-09 17:39+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,8 +34,32 @@ msgstr "externer Operator"
 msgid "external operators"
 msgstr "externe Operatoren"
 
+msgid "totally accurate"
+msgstr "vollständig genau"
+
+msgid "accurate to the minute"
+msgstr "auf die Minute genau"
+
+msgid "accurate to the hour"
+msgstr "auf die Stunde genau"
+
+msgid "accurate to the day"
+msgstr "auf den Tag genau"
+
+msgid "accurate to the month"
+msgstr "auf den Monat genau"
+
+msgid "accurate to the year"
+msgstr "auf das Jahr genau"
+
+msgid "not even accurate to the year"
+msgstr "nicht einmal auf das Jahr genau"
+
 msgid "timestamp"
 msgstr "Zeitstempel"
+
+msgid "timestamp inaccuracy"
+msgstr "Zeitstempel-Unsicherheit"
 
 msgid "operator"
 msgstr "Operator"
