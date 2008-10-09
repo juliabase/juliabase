@@ -24,7 +24,7 @@
   {% for process in processes %}
     <div class="process">
       <p class="operator_and_timestamp">
-        {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
+        {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
       </p>
       <h2>{{ process.name }}{% if process.edit_url %}
             <a class="edit-button" href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"

@@ -13,7 +13,7 @@ from django.utils.safestring import mark_safe
 import django.utils.http
 import django.core.urlresolvers
 import chantal.samples.models, django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 import chantal.samples.views.utils
 
 register = template.Library()
@@ -83,6 +83,7 @@ chem_markup.needs_autoescape = True
 def fancy_bool(boolean):
     u"""Filter for coverting a bool into a translated “Yes” or “No”.
     """
+    _ = ugettext
     result = _(u"Yes") if boolean else _(u"No")
     return mark_safe(result)
 
@@ -204,3 +205,17 @@ def calculate_silane_concentration(value):
         return None
     # Cheap way to cut the digits
     return float(u"%5.2f" % (100 * silane / (silane + hydrogen)))
+
+timestamp_formats = ("%Y-%m-%d %H:%M:%S",
+                     "%Y-%m-%d %H:%M",
+                     _(u"%Y-%m-%d %H<sup>h</sup>"),
+                     "%Y-%m-%d",
+                     _(u"%b %Y"),
+                     "%Y",
+                     _(u"date unknown"))
+@register.filter
+def timestamp(value):
+    u"""Filter for formatting the timestamp of a process properly to reflect
+    the inaccuracy connected with this timestamp.
+    """
+    return mark_safe(value["timestamp"].strftime(str(unicode(timestamp_formats[value["timestamp_inaccuracy"]]))))

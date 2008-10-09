@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-09 17:38+0200\n"
-"PO-Revision-Date: 2008-10-09 17:39+0200\n"
+"POT-Creation-Date: 2008-10-10 01:31+0200\n"
+"PO-Revision-Date: 2008-10-10 01:31+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -528,6 +528,15 @@ msgstr "Ja"
 
 msgid "No"
 msgstr "Nein"
+
+msgid "%Y-%m-%d %H<sup>h</sup>"
+msgstr "%Y-%m-%d %H<sup>h</sup>"
+
+msgid "%b %Y"
+msgstr "%b %Y"
+
+msgid "date unknown"
+msgstr "Datum unbekannt"
 
 msgid "Contents"
 msgstr "Inhalt"

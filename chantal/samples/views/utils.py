@@ -611,7 +611,7 @@ class ResultContext(object):
         name = unicode(process._meta.verbose_name)
         template_context = self.get_template_context(process)
         context_dict = {"name": name[0].upper()+name[1:], "operator": process.operator,
-                        "timestamp": process.timestamp,
+                        "timestamp": process.timestamp, "timestamp_inaccuracy": process.timestamp_inaccuracy,
                         "html_body": template.render(Context(template_context))}
         for key in ["edit_url", "duplicate_url"]:
             if key in template_context:
