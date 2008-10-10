@@ -623,7 +623,7 @@ class LargeAreaLayer(Layer):
         verbose_name_plural = _(u"large-area layers")
 admin.site.register(LargeAreaLayer)
 
-pds_root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T/daten/pds/"
+pds_root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"
 
 class PDSMeasurement(Process):
     u"""Model for PDS measurements.

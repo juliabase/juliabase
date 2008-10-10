@@ -103,7 +103,7 @@ def copy_to_sonne():
     are removed from sonne, too.
     """
     result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/www-data/backups/mysql/",
-                                   "/windows/T/datenbank/chantal/backups/"])
+                                   "/windows/T_www-data/datenbank/chantal/backups/"])
     if result_code == 0:
         logging.info("Database backups were successfully copied to sonne.")
     else:

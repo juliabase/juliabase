@@ -19,7 +19,7 @@ from chantal.samples.views.utils import check_permission
 from chantal.samples import models
 from chantal import settings
 
-root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T/daten/pds/"
+root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"
 raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 date_pattern = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})")
