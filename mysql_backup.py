@@ -3,7 +3,7 @@
 
 u"""This program creates backup dumps of the MySQL database.  It should be
 called hourly as a cron job.  It will write the backups in gzip format in the
-directory ``/home/bronger/backups/mysql/``.
+directory ``/home/www-data/backups/mysql/``.
 
 The program contains a rotation scheme: Only the last 24 backups are kept, then
 one of each day of the past week, then one of each week of the last four weeks,
@@ -17,13 +17,13 @@ import datetime, os.path, subprocess, pickle, logging
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s %(levelname)-8s %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S",
-                    filename="/home/bronger/backups/mysql/mysql_backup.log",
+                    filename="/home/www-data/backups/mysql/mysql_backup.log",
                     filemode="a")
 
-pickle_filename = "/home/bronger/backups/mysql/dump_rotation.pickle"
+pickle_filename = "/home/www-data/backups/mysql/dump_rotation.pickle"
 
 class DumpRotation(object):
-    def __init__(self, backup_dir="/home/bronger/backups/mysql/"):
+    def __init__(self, backup_dir="/home/www-data/backups/mysql/"):
         self.backup_dir = backup_dir
         self.queue_hourly = []
         self.queue_daily = []
@@ -102,7 +102,7 @@ def copy_to_sonne():
     that this also implies that outdated (and therefore removed) backup files
     are removed from sonne, too.
     """
-    result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/bronger/backups/mysql/",
+    result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/www-data/backups/mysql/",
                                    "/windows/T/datenbank/chantal/backups/"])
     if result_code == 0:
         logging.info("Database backups were successfully copied to sonne.")

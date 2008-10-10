@@ -14,8 +14,8 @@ matplotlib.use("Agg")
 import pylab
 from chantal.common import SystemInfo
 
-filename = "/home/bronger/repos/chantal/online/chantal/media/server_load.png"
-monitor_file_name = "/home/bronger/repos/chantal/online/monitor.pickle"
+filename = "/home/www-data/online/chantal/media/server_load.png"
+monitor_file_name = "/home/www-data/online/monitor.pickle"
 binning = 60
 u"""Number of seconds that are combined to the sample x value in the plot
 data"""

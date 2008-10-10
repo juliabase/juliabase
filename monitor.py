@@ -15,8 +15,8 @@ import subprocess, datetime, re, os, pickle, time
 from copy import copy
 from chantal.common import SystemInfo, Availability
 
-filename = "/home/bronger/repos/chantal/online/monitor.pickle"
-remote_monitor_pickle_file_name = "/home/bronger/repos/chantal/online/remote_monitor.pickle"
+filename = "/home/www-data/online/monitor.pickle"
+remote_monitor_pickle_file_name = "/home/www-data/online/remote_monitor.pickle"
 
 total_pattern = re.compile(r"Mem:\s*(\d+)\s+(\d+)")
 used_pattern = re.compile(r"-/\+ buffers/cache:\s*(\d+)")

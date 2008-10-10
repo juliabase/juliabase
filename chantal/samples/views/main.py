@@ -295,7 +295,7 @@ def get_availability_data():
     """
     result = {}
     try:
-        availability = pickle.load(open("/home/bronger/repos/chantal/online/remote_monitor.pickle", "rb"))
+        availability = pickle.load(open("/home/www-data/online/remote_monitor.pickle", "rb"))
     except IOError:
         return None
     result["start_date"] = availability.start_of_log.strftime(str(_("%b %d, %Y, %H:%M")))
@@ -341,7 +341,7 @@ def analyze_last_database_backup():
         else:
             return timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
     try:
-        logfile = open("/home/bronger/backups/mysql/mysql_backup.log")
+        logfile = open("/home/www-data/backups/mysql/mysql_backup.log")
     except IOError:
         return None
     last_backup = last_copy = None
