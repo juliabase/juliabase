@@ -944,8 +944,8 @@ class Initials(models.Model):
 admin.site.register(Initials)
 
 languages = (
-    ("de", "Deutsch"),
-    ("en", "English"),
+    ("de", u"Deutsch"),
+    ("en", u"English"),
     )
 u"""Contains all possible choices for `UserDetails.language`.
 """

@@ -88,6 +88,7 @@ urlpatterns = patterns("",
 
                        (r"^about$", "samples.views.main.about"),
                        (r"^statistics$", "samples.views.main.statistics"),
+                       (r"^switch_language$", "samples.views.main.switch_language"),
                        (r"^users/(?P<login_name>.+)$", "samples.views.main.show_user"),
                        (r"^my_layers/$", "samples.views.my_layers.edit"),
                        (r"^change_password$", "django.contrib.auth.views.password_change",

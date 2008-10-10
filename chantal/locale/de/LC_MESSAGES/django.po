@@ -6,12 +6,33 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-10 01:31+0200\n"
-"PO-Revision-Date: 2008-10-10 01:31+0200\n"
+"POT-Creation-Date: 2008-10-10 16:09+0200\n"
+"PO-Revision-Date: 2008-10-10 16:11+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "Chinese"
+msgstr "Chinesisch"
+
+msgid "Ukrainian"
+msgstr "Ukrainisch"
+
+msgid "Russian"
+msgstr "Russisch"
+
+msgid "French"
+msgstr "Französisch"
+
+msgid "Dutch"
+msgstr "Niederländisch"
 
 msgid "name"
 msgstr "Name"
@@ -1162,6 +1183,10 @@ msgstr ""
 "    <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</"
 "strong>ibrary“.\n"
 "  "
+
+#, python-format
+msgid "switch to %(language)s"
+msgstr "wechsle zu %(language)s"
 
 msgid "DB access time:"
 msgstr "DB-Zugriffszeit:"

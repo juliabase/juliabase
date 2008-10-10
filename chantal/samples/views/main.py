@@ -616,3 +616,28 @@ def next_deposition_number(request, letter):
     :rtype: ``HttpResponse``
     """
     return utils.respond_to_remote_client(utils.get_next_deposition_number(letter))
+
+@login_required
+def switch_language(request):
+    u"""This view parses the query string and extracts a language code from it,
+    then switches the current user's prefered language to that language, and
+    then goes back to the last URL.  This is used for realising the language
+    switching by the flags on the top left.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    query_dict = utils.parse_query_string(request)
+    language = query_dict.get("lang")
+    if language in dict(models.languages):
+        user_details = request.user.get_profile()
+        user_details.language = language
+        user_details.save()
+    return utils.http_response_go_next(request)
