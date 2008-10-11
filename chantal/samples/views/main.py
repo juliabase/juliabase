@@ -639,4 +639,4 @@ def switch_language(request):
         user_details = request.user.get_profile()
         user_details.language = language
         user_details.save()
-    return utils.http_response_go_next(request)
+    return utils.successful_response(request)

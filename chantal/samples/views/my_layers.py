@@ -156,7 +156,7 @@ def edit(request):
         referentially_valid = is_referentially_valid(my_layer_forms)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(my_layer_forms, request.user)
-            return utils.http_response_go_next(request)
+            return utils.successful_response(request)
     else:
         my_layer_forms = forms_from_database(request.user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))

@@ -277,14 +277,9 @@ def edit(request, pd_number):
             pds_measurement.samples = samples
             if remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, user_details)
-            if pd_number:
-                request.session["success_report"] = _(u"%s was successfully changed in the database.") % pds_measurement
-            else:
-                if utils.is_remote_client(request):
-                    return utils.respond_to_remote_client(pds_measurement.pk)
-                else:
-                    request.session["success_report"] = _(u"%s was successfully added to the database.") % pds_measurement
-            return utils.http_response_go_next(request)
+            success_report = _(u"%s was successfully changed in the database.") % pds_measurement if pd_number else \
+                _(u"%s was successfully added to the database.") % pds_measurement
+            return utils.successful_response(request, success_report, remote_client_response=pds_measurement.pk)
     else:
         initial = {}
         if pd_number is None:

@@ -46,7 +46,7 @@ def edit(request, process_id):
         if comment_form.is_valid():
             comment.comments = comment_form.cleaned_data["contents"]
             comment.save()
-            return utils.http_response_go_next(request)
+            return utils.successful_response(request)
     else:
         comment_form = EditCommentForm(initial={"contents": comment.comments})
     return render_to_response("edit_comment.html", {"title": _(u"Edit comment"), "is_new": False, "comment": comment_form},
@@ -134,7 +134,7 @@ def new(request):
             comment.save()
             comment.samples = comment_form.cleaned_data["samples"]
             comment.sample_series = comment_form.cleaned_data["sample_series"]
-            return utils.http_response_go_next(request)
+            return utils.successful_response(request)
     else:
         comment_form = NewCommentForm(user_details, query_string_dict)
     return render_to_response("edit_comment.html", {"title": _(u"New comment"), "is_new": True, "comment": comment_form},

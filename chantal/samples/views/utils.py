@@ -901,8 +901,9 @@ def get_user_hash(user):
     user_hash.update(user.username)
     return user_hash.hexdigest()[:10]
 
-def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={}):
-    u"""After a POST request was successfully processed, there si typically a
+def successful_response(request, success_report=None, view="samples.views.main.main_menu", kwargs={},
+                        remote_client_response=True):
+    u"""After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
     add/edit request was started.
 
@@ -914,12 +915,21 @@ def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={
     This routine generated the proper ``HttpResponse`` object that contains the
     redirection.  It always has HTPP status code 303 (“see other”).
 
+    If the request came from the Chantal Remote Client, the response is a
+    pickled ``remote_client_response``.  (Normally, a simple ``True``.)
+
     :Parameters:
       - `request`: the current HTTP request
-      - `view`: the view name/function to redirect to
+      - `success_report`: an optional short success message reported to the
+        user on the next view
+      - `view`: the view name/function to redirect to; defaults to the main
+        menu page
       - `kwargs`: group parameters in the URL pattern that have to be filled
+      - `remote_client_response`: object which is to be sent as a pickled
+        response to the remote client; defaults to ``True``.
 
     :type request: ``HttpRequest``
+    :type success_report: unicode
     :type view: str or function
     :type kwargs: dict
 
@@ -928,6 +938,10 @@ def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={
 
     :rtype: ``HttpResponse``
     """
+    if is_remote_client(request):
+        return respond_to_remote_client(remote_client_response)
+    if success_report:
+        request.session["success_report"] = success_report
     next_url = parse_query_string(request).get("next")
     if next_url is not None:
         return HttpResponseSeeOther(next_url)
@@ -936,7 +950,7 @@ def http_response_go_next(request, view="samples.views.main.main_menu", kwargs={
 
 def is_remote_client(request):
     u"""Tests whether the current request was not done by an ordinary browser
-    like Firefox or Google Chome but by the Chantal Remote Client.
+    like Firefox or Google Chrome but by the Chantal Remote Client.
 
     :Parameters:
       - `request`: the current HTTP Request object

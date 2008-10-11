@@ -217,7 +217,9 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
-    u"""
+    u"""Both splitting of a sample and re-split of an already existing split
+    are handled here.
+    
     :Parameters:
       - `request`: the current HTTP Request object
       - `parent_name`: if given, the name of the sample to be split

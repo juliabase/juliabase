@@ -71,11 +71,9 @@ def edit(request, sample_name):
                     user.get_profile().my_samples.add(sample)
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
-            if utils.is_remote_client(request):
-                return utils.respond_to_remote_client(True)
-            else:
-                request.session["success_report"] = _(u"Sample %s was successfully changed in the database.") % sample.name
-                return utils.http_response_go_next(sample.get_absolute_url())
+            return utils.successful_response(request,
+                                               _(u"Sample %s was successfully changed in the database.") % sample.name,
+                                               sample.get_absolute_url())
     else:
         sample_form = SampleForm(instance=sample)
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
@@ -249,17 +247,13 @@ def add(request):
         if add_samples_form.is_valid():
             new_names, ids = add_samples_to_database(add_samples_form, request.user)
             if len(new_names) > 1:
-                request.session["success_report"] = \
+                success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "
                       u"%(last_name)s.  They were added to “My Samples”.") % \
                       {"first_name": new_names[0], "last_name": new_names[-1]}
             else:
-                request.session["success_report"] = _(u"Your sample has the provisional name %s.  "
-                                                      u"It was added to “My Samples”.") % new_names[0]
-            if utils.is_remote_client(request):
-                return utils.respond_to_remote_client(ids)
-            else:
-                return utils.http_response_go_next(request)
+                success_report = _(u"Your sample has the provisional name %s.  It was added to “My Samples”.") % new_names[0]
+            return utils.successful_response(request, success_report, remote_client_response=ids)
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",
