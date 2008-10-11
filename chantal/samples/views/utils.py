@@ -1039,4 +1039,5 @@ def normalize_legacy_sample_name(sample_name):
         raise ValueError("Sample name is too quirky to normalize")
     parts = match.groupdict(u"")
     parts["number"] = int(parts["number"])
+    parts["letter"] = parts["letter"].upper()
     return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
