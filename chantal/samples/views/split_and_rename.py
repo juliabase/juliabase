@@ -218,7 +218,8 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
     u"""Both splitting of a sample and re-split of an already existing split
-    are handled here.
+    are handled here.  *Either* ``parent_name`` *or* ``old_split`` are unequal
+    to ``None``.
     
     :Parameters:
       - `request`: the current HTTP Request object
@@ -254,7 +255,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+            return utils.successful_response(request)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
