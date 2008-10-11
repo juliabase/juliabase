@@ -2,7 +2,7 @@
 
 body { 
     background-color: gray;
-    font-family: Frutiger,Trebuchet MS,DejaVu Sans,Bitstream Vera Sans,Verdana,sans-serif;
+    font-family: Frutiger, "Trebuchet MS", "DejaVu Sans", "Bitstream Vera Sans", Verdana, sans-serif;
     margin: 0pt; padding: 0pt;
 }
 p.logo-text {
@@ -36,7 +36,7 @@ div.inner-frame {
     border-style: solid;
     -moz-border-radius: 10px;
     background-color: #e6e6e6;
-    min-height: 0px;   # IE7 quirk
+    min-height: 0px;   /* IE7 quirk */
 }
 
 table.headbar {

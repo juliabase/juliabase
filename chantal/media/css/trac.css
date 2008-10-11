@@ -1,6 +1,6 @@
 body { 
     background-color: gray;
-    font-family: Frutiger,Trebuchet MS,DejaVu Sans,Bitstream Vera Sans,Verdana,sans-serif;
+    font-family: Frutiger, "Trebuchet MS", "DejaVu Sans", "Bitstream Vera Sans", Verdana, sans-serif;
     margin: 0pt; padding: 0pt;
 }
 p.logo-text {
@@ -14,7 +14,7 @@ p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; 
 img.logo-fz { float: right; margin-right: 0.1em }
 
 table.headbar {
-    font-size: inherited;
+    font-size: inherit;
     color: white;
     background-color: #045078;
     padding: 0.3ex 25px 0.5ex;
