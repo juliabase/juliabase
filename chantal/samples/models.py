@@ -214,13 +214,14 @@ class Process(models.Model):
         hash_.update(translation.get_language())
         hash_.update(repr(self.pk))
         hash_.update(repr(number))
-        dirname = str(self.pk) + "-" + hash_.hexdigest()
+        dirname = os.path.join("results", str(self.pk) + "-" + hash_.hexdigest())
         try:
-            os.mkdir(os.path.join(settings.MEDIA_ROOT, dirname))
+            os.makedirs(os.path.join(settings.MEDIA_ROOT, dirname))
         except OSError:
             pass
         filename = self.get_imagefile_basename(number)
-        return os.path.join(settings.MEDIA_ROOT, dirname, filename), os.path.join(settings.MEDIA_URL, dirname, filename)
+        relative_path = os.path.join(dirname, filename)
+        return os.path.join(settings.MEDIA_ROOT, relative_path), os.path.join(settings.MEDIA_URL, relative_path)
     def generate_plot(self, number=0):
         u"""The central plot-generating method which shouldn't be overridden by
         a derived class.  This method tests whether it is necessary to generate
