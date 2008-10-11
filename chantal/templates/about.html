@@ -21,13 +21,12 @@
     <td><p><a href="http://www.ubuntu.com"><img class="helper-program-logo" src="/media/ubuntu.png"
                                                 alt="{% trans 'Ubuntu logo' %}"/></a></p>
       <p><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">8.04
-      <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a></p></td>
+          <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition">Server Edition</a></span></p></td>
   </tr>
   <tr>
     <th>{% trans 'Web server' %}:</th>
     {% if is_testserver %}
-    <td>{% trans 'Django testserver' %}
-      </span><span class="uptime">{{ web_server_uptime }}</span></td>
+    <td>{% trans 'Django testserver' %}</td>
     {% else %}
     <td><p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}"
               ><img class="helper-program-logo" src="/media/apache.png" alt="{% trans 'Apache logo' %}"/></a></p>
