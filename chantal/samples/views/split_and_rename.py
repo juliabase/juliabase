@@ -269,3 +269,31 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                                                         "old_split": old_split},
                               context_instance=RequestContext(request))
 
+@login_required
+def latest_split(request, sample_name):
+    u"""Get the database ID of the latest split of a sample, if it is also the
+    very latest process for that sample.  In all other cases, return ``None``
+    (or an error HTML page).
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    sample, redirect = utils.lookup_sample(sample_name, request)
+    if redirect:
+        return redirect
+    try:
+        most_recent_process = sample.processes.latest("timestamp").find_actual_instance()
+    except models.Process.DoesNotExist:
+        return utils.respond_to_remote_client(None)
+    if isinstance(most_recent_process, models.SampleSplit):
+        return utils.respond_to_remote_client(most_recent_process.pk)
+    return utils.respond_to_remote_client(None)

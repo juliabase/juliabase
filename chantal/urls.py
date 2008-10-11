@@ -52,20 +52,20 @@ urlpatterns = patterns("",
 
                        (r"^samples/$", "samples.views.sample.search"),
                        (r"^samples/add/$", "samples.views.sample.add"),
-                       (r"^samples/(?P<parent_name>.+)/split/", "samples.views.split_and_rename.split_and_rename"),
-                       (r"^samples/(?P<sample_name>.+)/add_process/", "samples.views.sample.add_process"),
-                       (r"^samples/(?P<sample_name>.+)/edit/", "samples.views.sample.edit"),
+                       (r"^samples/(?P<parent_name>.+)/split/$", "samples.views.split_and_rename.split_and_rename"),
+                       (r"^samples/(?P<sample_name>.+)/add_process/$", "samples.views.sample.add_process"),
+                       (r"^samples/(?P<sample_name>.+)/edit/$", "samples.views.sample.edit"),
                        (r"^samples/(?P<sample_name>.+)", "samples.views.sample.show"),
 
                        url(r"^6-chamber_depositions/add/$", "samples.views.six_chamber_deposition.edit",
                            {"deposition_number": None}, "add_6-chamber_deposition"),
-                       url(r"^6-chamber_depositions/(?P<deposition_number>.+)/edit/",
+                       url(r"^6-chamber_depositions/(?P<deposition_number>.+)/edit/$",
                            "samples.views.six_chamber_deposition.edit", name="edit_6-chamber_deposition"),
                        (r"^6-chamber_depositions/(?P<deposition_number>.+)", "samples.views.six_chamber_deposition.show"),
 
                        url(r"^large-area_depositions/add/$", "samples.views.large_area_deposition.edit",
                            {"deposition_number": None}, "add_large-area_deposition"),
-                       url(r"^large-area_depositions/(?P<deposition_number>.+)/edit/",
+                       url(r"^large-area_depositions/(?P<deposition_number>.+)/edit/$",
                            "samples.views.large_area_deposition.edit", name="edit_large-area_deposition"),
                        url(r"^large-area_depositions/(?P<deposition_number>.+)", "samples.views.large_area_deposition.show"),
 
@@ -98,6 +98,7 @@ urlpatterns = patterns("",
 
                        (r"^primary_keys$", "samples.views.main.primary_keys"),
                        (r"^next_deposition_number/(?P<letter>.+)$", "samples.views.main.next_deposition_number"),
+                       (r"^latest_split/(?P<sample_name>.+)", "samples.views.split_and_rename.latest_split"),
                        (r"^login_remote_client$", "samples.views.main.login_remote_client"),
                        (r"^logout_remote_client$", "samples.views.main.logout_remote_client"),
 
