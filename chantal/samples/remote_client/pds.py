@@ -76,7 +76,7 @@ class LegacyPDSMeasurement(object):
             raise ValueError
         self.comments = extract_comments(self.path)
         if not self.comments.startswith(self.remarks):
-            self.comments = u"Abweichende angeben in Datenbank und Messdatei!\n"
+            self.comments = u"Abweichende Angaben in Datenbank und Messdatei!\n"
         self.evaluated_path = evaluated_data_files.get(self.number)
 
 pds_measurements = []
