@@ -202,14 +202,17 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         death.save()
         parent.processes.add(death)
     sample_series = global_data_form.cleaned_data["sample_series"]
+    new_pieces = {}
     for new_name_form in new_name_forms:
-        child = models.Sample(name=new_name_form.cleaned_data["new_name"],
+        new_name = new_name_form.cleaned_data["new_name"]
+        child = models.Sample(name=new_name,
                               current_location=parent.current_location,
                               currently_responsible_person=user,
                               purpose=new_name_form.cleaned_data["new_purpose"], tags=parent.tags,
                               split_origin=sample_split,
                               group=parent.group)
         child.save()
+        new_pieces[new_name] = child.pk
         for watcher in parent.watchers.all():
             watcher.my_samples.add(child)
         if sample_series:
@@ -254,8 +257,8 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            return utils.successful_response(request)
+            new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
+            return utils.successful_response(request, remote_client_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
@@ -273,7 +276,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
 def latest_split(request, sample_name):
     u"""Get the database ID of the latest split of a sample, if it is also the
     very latest process for that sample.  In all other cases, return ``None``
-    (or an error HTML page).
+    (or an error HTML page if the sample didn't exist).
 
     :Parameters:
       - `request`: the current HTTP Request object
