@@ -7,7 +7,7 @@ import os, re, codecs, datetime
 root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"
 database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
 
-#login("bronger", "*******")
+login("bronger", "*******")
 
 def read_lines(filename):
     try:
@@ -86,14 +86,16 @@ for line in open(database_path):
     except ValueError:
         pass
 
-import sys
-sys.exit()
+for legacy_pds_measurement in pds_measurements:
+    sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
+    if sample_id is not None:
+        pds_measurement = PDSMeasurement(sample_id)
+        pds_measurement.number = legacy_pds_measurement.number
+        pds_measurement.timestamp = legacy_pds_measurement.timestamp
+        pds_measurement.timestamp_inaccuracy = 3
+        pds_measurement.raw_datafile = legacy_pds_measurement.path
+        pds_measurement.evaluated_datafile = legacy_pds_measurement.evaluated_path
+        pds_measurement.comments = legacy_pds_measurement.comments
+        pds_measurement.submit()
 
-# pds_measurement = PDSMeasurement("*100")
-# pds_measurement.number = 3511
-# pds_measurement.timestamp = "2008-08-04 10:25:11"
-# pds_measurement.raw_datafile = "p3500-/pd3511.dat"
-# pds_measurement.comments = "nur Trans\nQuarz-Linse\n"
-# pds_measurement.submit()
-
-#logout()
+logout()

@@ -240,10 +240,10 @@ def rename_after_deposition(deposition_number, samples):
     return connection.open("depositions/split_and_rename_samples/"+deposition_number, data)
 
 class PDSMeasurement(object):
-    def __init__(self, sample_name):
-        self.sample_name = sample_name
-        self.sample_id = connection.open("primary_keys?samples=%s" % sample_name)["samples"][sample_name]
+    def __init__(self, sample_id):
+        self.sample_id = sample_id
         self.number = self.operator = self.timestamp = self.comments = None
+        self.timestamp_inaccuracy = 0
         self.raw_datafile = self.evaluated_datafile = None
     def submit(self):
         if not self.operator:
@@ -252,12 +252,76 @@ class PDSMeasurement(object):
         data = {"number": self.number,
                 "sample": self.sample_id,
                 "timestamp": self.timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "operator": connection.primary_keys["users"][self.operator],
                 "raw_datafile": self.raw_datafile,
                 "evaluated_datafile": self.evaluated_datafile,
                 "comments": self.comments,
                 "remove_measured_from_my_samples": True}
         return connection.open("pds_measurements/add/", data)
-        
+
+def add_century(two_digit_year):
+    two_digit_year = int(two_digit_year)
+    if two_digit_year < 70:
+        return 2000 + two_digit_year
+    else:
+        return 1900 + two_digit_year
+
+quirky_deposition_number_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
+                                              ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
+quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)-(?P<initials>[A-Za-z]{2}(?:[A-Za-z]{0,2}|[A-Za-z]\d|\d{0,2}))-"
+                                        ur"(?P<suffix>[A-Za-z0-9][-A-Za-z_/0-9]*)?$")
+def normalize_sample_name(sample_name):
+    result_dict = {}
+    match = quirky_deposition_number_pattern.match(sample_name)
+    if match:
+        parts = match.groupdict(u"")
+        parts["number"] = int(parts["number"])
+        parts["letter"] = parts["letter"].upper()
+        deposition_number = u"%(year)s%(letter)s-%(number)03d%" % parts
+        result_dict.update({"year": add_century(parts["year"]), "letter": parts["letter"], "number": parts["number"],
+                            "deposition_number": deposition_number})
+        if parts["suffix"]:
+            result_dict["suffix"] = parts["suffix"]
+        sample_name = deposition_number + parts["suffix"]
+    else:
+        match = quirky_sample_name_pattern.match(sample_name)
+        if match:
+            parts = match.groupdict(u"")
+            parts["number"] = int(parts["number"])
+            parts["initials"] = parts["initials"].upper()
+            result_dict.update({"year": add_century(parts["year"]), "initials": parts["initials"]})
+            if parts["suffix"]:
+                result_dict["suffix"] = parts["suffix"]
+            sample_name = u"%(year)s-%(initials)s-%(suffix)s" % parts
+        else:
+            raise ValueError("Sample name is too quirky to normalize")
+    return sample_name, result_dict
+
+def get_or_create_sample(sample_name):
+    try:
+        sample_name, name_info = normalize_sample_same(sample_name)
+    except ValueError:
+        # FixMe: Convert legacy names to "08-TB-XXX"-like names whenever
+        # possible
+        pass
+    sample_id = connection.open("primary_keys?samples=" + sample_name)["samples"].get(sample_name)
+    if sample_id is None:
+        if "deposition_number" in name_info:
+            parent_name = name_info["deposition_number"]
+            parent_id = connection.open("primary_keys?samples=" + parent_name)["samples"].get(sample_name)
+            if not parent_id:
+                return None
+            latest_split = connection.open("latest_split/" + parent_name)
+            data = {"0-new_name": sample_name, "1-new_name": ""}
+            if latest_split is None:
+                new_ids = connection.open("samples/%s/split/" % parent_name, data)
+            else:
+                new_ids = connection.open("resplit/%d" % latest_split, data)
+            sample_id = new_ids[sample_name]
+        else:
+            # FixMe: Create completely new sample with "08-TB-XXX"-like name
+            pass
+    return sample_id
 
 connection = ChantalConnection("http://127.0.0.1:8000/")
