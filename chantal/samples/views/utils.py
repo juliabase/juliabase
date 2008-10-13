@@ -346,8 +346,8 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     u"""Find all indices of subforms of a certain type (e.g. layers) and return
     them so that the objects (e.g. layers) have a sensible order (e.g. sorted
     by layer number).  This is necessary because indices are used as form
-    prefixes and cannot be changed easily, even if the layers are rearranges,
-    duplicated, or deleted.  By using this function, the view has the change to
+    prefixes and cannot be changed easily, even if the layers are rearranged,
+    duplicated, or deleted.  By using this function, the view has the chance to
     have everything in proper order nevertheless.
     
     :Parameters:
