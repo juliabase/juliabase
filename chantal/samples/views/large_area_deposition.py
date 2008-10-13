@@ -45,7 +45,7 @@ class SamplesForm(forms.Form):
             keyw["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
             # Don't use ``data`` because it's disabled and thus empty (see below)
             super(SamplesForm, self).__init__(**keyw)
-            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+#            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             self.fields["sample_list"].queryset = \
                 models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct()
         else:

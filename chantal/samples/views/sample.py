@@ -7,7 +7,7 @@ u"""All views and helper routines directly connected with samples themselves
 
 import time, datetime, pickle
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
 import django.forms as forms
 from chantal.samples.models import Sample
@@ -72,8 +72,8 @@ def edit(request, sample_name):
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.get_profile().my_samples.add(sample)
             return utils.successful_response(request,
-                                               _(u"Sample %s was successfully changed in the database.") % sample.name,
-                                               sample.get_absolute_url())
+                                             _(u"Sample %s was successfully changed in the database.") % sample.name,
+                                             sample.get_absolute_url())
     else:
         sample_form = SampleForm(instance=sample)
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
@@ -107,15 +107,17 @@ def get_allowed_processes(user, sample):
     return processes
 
 @login_required
-def show(request, sample_name):
+def show(request, sample_name, sample_id=None):
     u"""A view for showing existing samples.
 
     :Parameters:
       - `request`: the current HTTP Request object
       - `sample_name`: the name of the sample
+      - `sample_id`: the id of the sample; only used by the remote client
 
     :type request: ``HttpRequest``
     :type sample_name: unicode
+    :type sample_id: unicode
 
     :Returns:
       the HTTP response object
@@ -123,9 +125,12 @@ def show(request, sample_name):
     :rtype: ``HttpResponse``
     """
     start = time.time()
-    sample, redirect = utils.lookup_sample(sample_name, request)
-    if redirect:
-        return redirect
+    if sample_id is None:
+        sample, redirect = utils.lookup_sample(sample_name, request)
+        if redirect:
+            return redirect
+    else:
+        sample = get_object_or_404(models.Sample, pk=sample_id)
     user_details = request.user.get_profile()
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)

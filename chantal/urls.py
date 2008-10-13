@@ -97,6 +97,7 @@ urlpatterns = patterns("",
                         {"template_name": "password_changed.html"}),
 
                        (r"^primary_keys$", "samples.views.main.primary_keys"),
+                       (r"^samples_by_id/(?P<sample_id>\d+)", "samples.views.sample.show", {"sample_name": None}),
                        (r"^next_deposition_number/(?P<letter>.+)$", "samples.views.main.next_deposition_number"),
                        (r"^latest_split/(?P<sample_name>.+)", "samples.views.split_and_rename.latest_split"),
                        (r"^login_remote_client$", "samples.views.main.login_remote_client"),

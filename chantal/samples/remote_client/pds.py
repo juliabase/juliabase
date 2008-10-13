@@ -4,8 +4,8 @@
 from chantal_remote import *
 import os, re, codecs, datetime
 
-root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"
-database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
+root_dir = "/windows/T/daten/pds/"
+database_path = "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
 
 login("bronger", "*******")
 
@@ -87,14 +87,17 @@ for line in open(database_path):
         pass
 
 for legacy_pds_measurement in pds_measurements:
+    if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].lower() != u"l":
+        continue
     sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
     if sample_id is not None:
         pds_measurement = PDSMeasurement(sample_id)
         pds_measurement.number = legacy_pds_measurement.number
-        pds_measurement.timestamp = legacy_pds_measurement.timestamp
+        pds_measurement.timestamp = legacy_pds_measurement.date
         pds_measurement.timestamp_inaccuracy = 3
-        pds_measurement.raw_datafile = legacy_pds_measurement.path
-        pds_measurement.evaluated_datafile = legacy_pds_measurement.evaluated_path
+        pds_measurement.raw_datafile = legacy_pds_measurement.path[len(root_dir):]
+        if legacy_pds_measurement.evaluated_path:
+            pds_measurement.evaluated_datafile = legacy_pds_measurement.evaluated_path[len(root_dir):]
         pds_measurement.comments = legacy_pds_measurement.comments
         pds_measurement.submit()
 

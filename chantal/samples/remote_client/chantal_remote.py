@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 
 __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamberLayer", "SixChamberChannel",
-           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition", "PDSMeasurement"]
+           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition", "PDSMeasurement", "get_or_create_sample"]
 
 def quote_header(value):
     if isinstance(value, bool):
@@ -252,7 +252,9 @@ class PDSMeasurement(object):
     def submit(self):
         if not self.operator:
             self.operator = connection.username
-        assert connection.open("samples/%s" % self.sample_name, {"is_my_sample": True})
+        result = connection.open("samples_by_id/%s" % self.sample_id, {"is_my_sample": True})
+        print result
+        assert result
         data = {"number": self.number,
                 "sample": self.sample_id,
                 "timestamp": self.timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -271,6 +273,9 @@ def add_century(two_digit_year):
     else:
         return 1900 + two_digit_year
 
+class QuirkySampleError(Exception):
+    pass
+
 quirky_deposition_number_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
                                               ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)-(?P<initials>[A-Za-z]{2}(?:[A-Za-z]{0,2}|[A-Za-z]\d|\d{0,2}))-"
@@ -282,7 +287,7 @@ def normalize_sample_name(sample_name):
         parts = match.groupdict(u"")
         parts["number"] = int(parts["number"])
         parts["letter"] = parts["letter"].upper()
-        deposition_number = u"%(year)s%(letter)s-%(number)03d%" % parts
+        deposition_number = u"%(year)s%(letter)s-%(number)03d" % parts
         result_dict.update({"year": add_century(parts["year"]), "letter": parts["letter"], "number": parts["number"],
                             "deposition_number": deposition_number})
         if parts["suffix"]:
@@ -299,16 +304,16 @@ def normalize_sample_name(sample_name):
                 result_dict["suffix"] = parts["suffix"]
             sample_name = u"%(year)s-%(initials)s-%(suffix)s" % parts
         else:
-            raise ValueError("Sample name is too quirky to normalize")
+            raise QuirkySampleError("Sample name is too quirky to normalize")
     return sample_name, result_dict
 
 def get_or_create_sample(sample_name):
     try:
-        sample_name, name_info = normalize_sample_same(sample_name)
-    except ValueError:
+        sample_name, name_info = normalize_sample_name(sample_name)
+    except QuirkySampleError:
         # FixMe: Convert legacy names to "08-TB-XXX"-like names whenever
         # possible
-        pass
+        return None
     sample_id = connection.open("primary_keys?samples=" + sample_name)["samples"].get(sample_name)
     if sample_id is None:
         if "deposition_number" in name_info:
@@ -327,5 +332,3 @@ def get_or_create_sample(sample_name):
             # FixMe: Create completely new sample with "08-TB-XXX"-like name
             pass
     return sample_id
-
-connection = ChantalConnection("http://127.0.0.1:8000/")
