@@ -116,6 +116,7 @@ for deposition in depositions:
 deposition = LargeAreaDeposition(sample)
 deposition.number = u"%s"
 deposition.comments = u"%s"
+deposition.timestamp_inaccuracy = 3
 deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments, date, hour)
     for layer in deposition:
         print>>outfile, "\nlayer = LargeAreaLayer(deposition)"

@@ -103,6 +103,7 @@ class SixChamberDeposition(object):
     def __init__(self, sample_ids):
         self.sample_ids = sample_ids
         self.number = self.carrier = self.operator = self.timestamp = self.comments = None
+        self.timestamp_inaccuracy = 0
         self.layers = []
     def submit(self):
         # FixMe: Assure that sample is in MySamples
@@ -118,6 +119,7 @@ class SixChamberDeposition(object):
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp_0": date,
                 "timestamp_1": time,
+                "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "comments": self.comments,
                 "sample_list": self.sample_ids}
         for layer_index, layer in enumerate(self.layers):
@@ -176,6 +178,7 @@ class LargeAreaDeposition(object):
     def __init__(self, sample_ids):
         self.sample_ids = sample_ids
         self.number = self.operator = self.timestamp = self.comments = None
+        self.timestamp_inaccuracy = 0
         self.layers = []
     def submit(self):
         # FixMe: Assure that sample is in MySamples
@@ -192,6 +195,7 @@ class LargeAreaDeposition(object):
         data = {"number": self.number,
                 "operator": connection.primary_keys["users"][self.operator],
                 "timestamp": self.timestamp,
+                "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "comments": self.comments,
                 "sample_list": self.sample_ids,
                 "remove_deposited_from_my_samples": True}
