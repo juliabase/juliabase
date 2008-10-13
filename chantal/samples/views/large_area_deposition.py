@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models
 from django import forms
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 import django.core.urlresolvers
 import django.contrib.auth.models
 from django.db.models import Q
