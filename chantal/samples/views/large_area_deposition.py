@@ -43,9 +43,10 @@ class SamplesForm(forms.Form):
         if deposition:
             # Mark the samples of the deposition in the choise field
             keyw["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
-            # Don't use ``data`` because it's disabled and thus empty (see below)
+            # Don't use ``data`` because it's disabled and thus empty (see
+            # below)
             super(SamplesForm, self).__init__(**keyw)
-#            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             self.fields["sample_list"].queryset = \
                 models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct()
         else:
@@ -371,7 +372,7 @@ class FormSet(object):
         post_data = self.post_data.copy()
         post_data["number"] = deposition_number_match.group("prefix") + \
             utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
-        self.deposition_form = DepositionForm(post_data)
+        self.deposition_form = DepositionForm(post_data, instance=self.deposition)
 
         return structure_changed
     def _is_all_valid(self):
@@ -388,7 +389,8 @@ class FormSet(object):
         all_valid = self.deposition_form.is_valid()
         all_valid = (self.add_layers_form.is_valid() or not self.add_layers_form.is_bound) and all_valid
         all_valid = self.remove_from_my_samples_form.is_valid() and all_valid
-        all_valid = self.samples_form.is_valid() and all_valid
+        if not self.deposition:
+            all_valid = self.samples_form.is_valid() and all_valid
         all_valid = all([layer_form.is_valid() for layer_form in self.layer_forms]) and all_valid
         all_valid = all([(change_layer_form.is_valid() or not change_layer_form.is_bound)
                          for change_layer_form in self.change_layer_forms]) and all_valid
