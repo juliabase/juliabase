@@ -329,7 +329,7 @@ class FormSet(object):
         if self.deposition:
             next_full_number = self.deposition.number[:4] + utils.three_digits(self.deposition.layers.all()[0].number)
         elif self.deposition_form.is_valid():
-            match = self.deposition_number_pattern.match(deposition_form.cleaned_data["number"])
+            match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
             if match:
                 number_of_first_layer = int(match.group("number")) - (len(self.layer_forms) - 1 if self.layer_forms else 0)
                 next_full_number = match.group("prefix") + utils.three_digits(number_of_first_layer)
@@ -386,11 +386,12 @@ class FormSet(object):
         :rtype: bool
         """
         all_valid = self.deposition_form.is_valid()
-        all_valid = self.add_layers_form.is_valid() and all_valid
+        all_valid = (self.add_layers_form.is_valid() or not self.add_layers_form.is_bound) and all_valid
         all_valid = self.remove_from_my_samples_form.is_valid() and all_valid
         all_valid = self.samples_form.is_valid() and all_valid
         all_valid = all([layer_form.is_valid() for layer_form in self.layer_forms]) and all_valid
-        all_valid = all([change_layer_form.is_valid() for change_layer_form in self.change_layer_forms]) and all_valid
+        all_valid = all([(change_layer_form.is_valid() or not change_layer_form.is_bound)
+                         for change_layer_form in self.change_layer_forms]) and all_valid
         return all_valid
     def _is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
