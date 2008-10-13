@@ -262,7 +262,7 @@ class FormSet(object):
         Of course, the new layer forms are not validated.  Therefore,
         `_is_all_valid` is called *after* this routine in `save_to_database`.
 
-        Note that – as usual – the numbers id depositions and layers are called
+        Note that – as usual – the numbers of depositions and layers are called
         *number*, whereas the internal numbers used as prefixes in the HTML
         names are called *indices*.  The index (and thus prefix) of a layer
         form does never change (in contrast to the 6-chamber deposition, see
@@ -325,9 +325,15 @@ class FormSet(object):
                     structure_changed = True
 
         # Apply changes
+        next_full_number = None
         if self.deposition:
             next_full_number = self.deposition.number[:4] + utils.three_digits(self.deposition.layers.all()[0].number)
-        else:
+        elif self.deposition_form.is_valid():
+            match = self.deposition_number_pattern.match(deposition_form.cleaned_data["number"])
+            if match:
+                number_of_first_layer = int(match.group("number")) - (len(self.layer_forms) - 1 if self.layer_forms else 0)
+                next_full_number = match.group("prefix") + utils.three_digits(number_of_first_layer)
+        if not next_full_number:
             next_full_number = utils.get_next_deposition_number("L-")
         deposition_number_match = self.deposition_number_pattern.match(next_full_number)
         next_layer_number = int(deposition_number_match.group("number"))
