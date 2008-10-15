@@ -74,7 +74,7 @@ class ChantalConnection(object):
             logging.error("Logout failed.")
             raise ResponseError("Logout failed")
 
-connection = ChantalConnection()
+connection = ChantalConnection("http://127.0.0.1:8000/")
 
 def login(username, password):
     connection.login(username, password)

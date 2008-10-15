@@ -4,8 +4,8 @@
 from chantal_remote import *
 import os, re, codecs, datetime
 
-root_dir = "/windows/T/daten/pds/"
-database_path = "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
+root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"
+database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
 
 login("bronger", "*******")
 
