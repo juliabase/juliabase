@@ -91,7 +91,7 @@ def main_menu(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     my_series = {}
     seriesless_samples = []
     for sample in user_details.my_samples.all():
@@ -412,10 +412,7 @@ def show_user(request, login_name):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
-    try:
-        userdetails = user.get_profile()
-    except models.UserDetails.DoesNotExist:
-        userdetails = None
+    userdetails = utils.get_profile(user)
     username = models.get_really_full_name(user)
     return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
@@ -539,7 +536,7 @@ def primary_keys(request):
                                          values_list("name", "id"))
     if "samples" in query_dict:
         if query_dict["samples"] == "*":
-            result_dict["samples"] = dict(request.user.get_profile().my_samples.values_list("name", "id"))
+            result_dict["samples"] = dict(utils.get_profile(request.user).my_samples.values_list("name", "id"))
         else:
             sample_names = query_dict["samples"].split(",")
             result_dict["samples"] = dict(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
@@ -637,7 +634,7 @@ def switch_language(request):
     query_dict = utils.parse_query_string(request)
     language = query_dict.get("lang")
     if language in dict(models.languages):
-        user_details = request.user.get_profile()
+        user_details = utils.get_profile(request.user)
         user_details.language = language
         user_details.save()
     return utils.successful_response(request)

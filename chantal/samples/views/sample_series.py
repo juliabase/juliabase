@@ -66,7 +66,7 @@ def show(request, name):
     :rtype: ``HttpResponse``
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if not utils.has_permission_for_sample_or_series(request.user, sample_series):
         return utils.HttpResponseSeeOther("permission_error")
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
@@ -97,7 +97,7 @@ def edit(request, name):
     :rtype: ``HttpResponse``
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if sample_series.currently_responsible_person != request.user:
         return utils.HttpResponseSeeOther("permission_error")
     if request.method == "POST":
@@ -141,7 +141,7 @@ def new(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(user_details, None, request.POST)
         if sample_series_form.is_valid():
@@ -188,7 +188,7 @@ def add_result_process(request, name):
     :rtype: ``HttpResponse``
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     processes = utils.get_allowed_result_processes(request.user, sample_series=[sample_series])
     if not processes:
         return utils.HttpResponseSeeOther("permission_error")

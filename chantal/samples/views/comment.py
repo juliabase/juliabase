@@ -124,7 +124,7 @@ def new(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     query_string_dict = utils.parse_query_string(request)
     if request.method == "POST":
         comment_form = NewCommentForm(user_details, query_string_dict, request.POST)

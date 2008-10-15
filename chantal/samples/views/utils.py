@@ -1041,3 +1041,12 @@ def normalize_legacy_sample_name(sample_name):
     parts["number"] = int(parts["number"])
     parts["letter"] = parts["letter"].upper()
     return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
+
+def get_profile(user):
+    try:
+        return user.get_profile()
+    except models.UserDetails.DoesNotExist:
+        # FixMe: Should be fleshed out with e.g. FZJ homepage data
+        user_details = models.UserDetails(user=user)
+        user_details.save()
+        return user_details

@@ -155,7 +155,7 @@ class FormSet(object):
         :type deposition_number: unicode
         """
         self.user = user
-        self.user_details = self.user.get_profile()
+        self.user_details = utils.get_profile(self.user)
         self.deposition = \
             get_object_or_404(models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None

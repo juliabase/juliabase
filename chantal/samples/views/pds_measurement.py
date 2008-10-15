@@ -244,7 +244,7 @@ def edit(request, pd_number):
     """
     pds_measurement = get_object_or_404(models.PDSMeasurement, number=utils.convert_id_to_int(pd_number)) \
         if pd_number is not None else None
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         pds_measurement_form = None
         sample_form = SampleForm(user_details, request.POST)

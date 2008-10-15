@@ -61,16 +61,16 @@ def edit(request, sample_name):
     old_group, old_responsible_person = sample.group, sample.currently_responsible_person
     if sample.currently_responsible_person != request.user:
         return utils.HttpResponseSeeOther("permission_error")
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         sample_form = SampleForm(request.POST, instance=sample)
         if sample_form.is_valid():
             sample = sample_form.save()
             if sample.group and sample.group != old_group:
                 for user in sample.group.user_set.all():
-                    user.get_profile().my_samples.add(sample)
+                    utils.get_profile(user).my_samples.add(sample)
             if sample.currently_responsible_person != old_responsible_person:
-                sample.currently_responsible_person.get_profile().my_samples.add(sample)
+                utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
             return utils.successful_response(request,
                                              _(u"Sample %s was successfully changed in the database.") % sample.name,
                                              sample.get_absolute_url())
@@ -131,7 +131,7 @@ def show(request, sample_name, sample_id=None):
             return redirect
     else:
         sample = get_object_or_404(models.Sample, pk=sample_id)
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)
         if is_my_sample_form.is_valid():
@@ -215,7 +215,7 @@ def add_samples_to_database(add_samples_form, user):
             break
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
-    user_details = add_samples_form.cleaned_data["currently_responsible_person"].get_profile()
+    user_details = utils.get_profile(add_samples_form.cleaned_data["currently_responsible_person"])
     new_names = [u"*%d" % i for i in range(starting_number, starting_number + number_of_samples)]
     ids = []
     for new_name in new_names:
@@ -246,7 +246,7 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
         if add_samples_form.is_valid():
@@ -285,7 +285,7 @@ def add_process(request, sample_name):
     sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
         return redirect
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     processes = get_allowed_processes(request.user, sample)
     if not processes:
         return utils.HttpResponseSeeOther("permission_error")

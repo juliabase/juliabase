@@ -187,7 +187,7 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
                     child_sample.currently_responsible_person = currently_responsible_person
                 child_sample.save()
                 # FixMe: Don't do that always
-                child_sample.currently_responsible_person.get_profile().my_samples.add(child_sample)
+                utils.get_profile(child_sample.currently_responsible_person).my_samples.add(child_sample)
         else:
             if not sample.name.startswith("*"):
                 models.SampleAlias(name=sample.name, sample=sample).save()
@@ -201,7 +201,7 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
             sample.save()
             # Cheap heuristics to avoid re-adding samples that have been already removed from the operator's MySamples
             if sample.currently_responsible_person != operator:
-                sample.currently_responsible_person.get_profile().my_samples.add(sample)
+                utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
 
 def is_referentially_valid(original_data_forms, new_data_form_lists, deposition):
     u"""Test whether all forms are consistent with each other and with the

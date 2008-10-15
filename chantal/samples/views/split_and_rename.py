@@ -251,7 +251,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
             raise Http404(_(u"This split is not the last one in the sample's process list."))
         if not utils.has_permission_for_sample_or_series(request.user, parent):
             return utils.HttpResponseSeeOther("permission_error")
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
         all_valid = is_all_valid(new_name_forms, global_data_form)

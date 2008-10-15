@@ -439,7 +439,7 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
-    user_details = request.user.get_profile()
+    user_details = utils.get_profile(request.user)
     if request.method == "POST":
         deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)

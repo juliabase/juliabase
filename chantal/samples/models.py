@@ -965,7 +965,7 @@ class UserDetails(models.Model):
     this class – with a decent fallback.
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
-    language = models.CharField(_(u"language"), max_length=10, choices=languages)
+    language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
