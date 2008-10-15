@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-10 16:09+0200\n"
+"POT-Creation-Date: 2008-10-15 17:59+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -500,6 +500,15 @@ msgid "language"
 msgstr ""
 
 msgid "my samples"
+msgstr ""
+
+msgid "auto-addition groups"
+msgstr ""
+
+msgid "new samples in these groups are automatically added to “My Samples”"
+msgstr ""
+
+msgid "get only important news"
 msgstr ""
 
 msgid "my layers"
@@ -1037,6 +1046,20 @@ msgstr ""
 
 #, python-format
 msgid "Split sample “%s”"
+msgstr ""
+
+msgid "Initials"
+msgstr ""
+
+msgid ""
+"The initials must start with two uppercase letters.  They must contain "
+"uppercase letters and digits only.  Digits must be at the end."
+msgstr ""
+
+msgid "These initials are already used."
+msgstr ""
+
+msgid "The preferences were successfully updated."
 msgstr ""
 
 msgid "Number of layers to be added"

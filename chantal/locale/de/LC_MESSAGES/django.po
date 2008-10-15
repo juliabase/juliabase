@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-10 16:09+0200\n"
-"PO-Revision-Date: 2008-10-10 16:11+0200\n"
+"POT-Creation-Date: 2008-10-15 17:59+0200\n"
+"PO-Revision-Date: 2008-10-15 18:01+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -501,6 +501,17 @@ msgstr "Sprache"
 
 msgid "my samples"
 msgstr "meine Proben"
+
+msgid "auto-addition groups"
+msgstr "Gruppen mit Auto-Hinzufügen"
+
+msgid "new samples in these groups are automatically added to “My Samples”"
+msgstr ""
+"neue Proben in diesen Gruppen werden automatisch zu „Meine Proben“ "
+"hinzugefügt"
+
+msgid "get only important news"
+msgstr "nur wichtige Neuigkeiten"
 
 msgid "my layers"
 msgstr "meine Schichten"
@@ -1052,6 +1063,20 @@ msgstr ""
 #, python-format
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
+
+msgid "Initials"
+msgstr "Kürzel"
+
+msgid ""
+"The initials must start with two uppercase letters.  They must contain "
+"uppercase letters and digits only.  Digits must be at the end."
+msgstr "Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
+
+msgid "These initials are already used."
+msgstr "Dieses Namenskürzel ist schon vergeben."
+
+msgid "The preferences were successfully updated."
+msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
 
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
