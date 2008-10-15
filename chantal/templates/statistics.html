@@ -86,8 +86,16 @@ usage.</p>
 <h3>{% trans 'Hourly backups of the database tables' %}</h3>
 
 {% if last_db_backup %}
-  <p>{% trans 'Last backup:' %} {{ last_db_backup.last_backup }}</p>
-  <p>{% trans 'Last copy of all backups to sonne:' %} {{ last_db_backup.last_copy }}</p>
+  <table>
+    <tr>
+      <td>{% trans 'Last backup:' %}</td>
+      <td style="padding-left: 1em">{{ last_db_backup.last_backup }}</td>
+    </tr>
+    <tr>
+      <td>{% trans 'Last copy of all backups to sonne:' %}</td>
+      <td style="padding-left: 1em">{{ last_db_backup.last_copy }}</td>
+    </tr>
+  </table>
 {% else %}
   <p>{% trans 'No log data found.' %}</p>
 {% endif %}
