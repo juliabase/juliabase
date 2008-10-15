@@ -45,7 +45,7 @@ def default(request):
         result["help_link"] = request.chantal_help_link
         del request.chantal_help_link
     # Now for the flags for the language switching
-    if not request.POST and request.user.is_authenticated():
+    if request.method == "GET" and request.user.is_authenticated():
         old_query_string = request.META["QUERY_STRING"] or u""
         if old_query_string:
             old_query_string = "?" + old_query_string
