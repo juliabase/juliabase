@@ -395,8 +395,9 @@ def statistics(request):
 
 @login_required
 def show_user(request, login_name):
-    u"""View for showing basic information about a user, like phone number or
-    email address.
+    u"""View for showing basic information about a user, like the email
+    address.  Maybe this could be fleshed out with phone number, picture,
+    position, and field of interest.
 
     :Parameters:
       - `request`: the current HTTP Request object

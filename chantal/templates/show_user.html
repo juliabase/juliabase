@@ -20,10 +20,7 @@
     <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
   </tr>
   {% if userdetails %}
-    <tr>
-      <th>{% verbose_name UserDetails.phone %}:</th>
-      <td>{{ userdetails.phone }}</td>
-    </tr>
+    <!-- Phone number, picture, whatever.  Not used yet. -->
   {% endif %}
 </table>
 {% endblock %}
