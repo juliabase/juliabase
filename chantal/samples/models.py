@@ -1086,7 +1086,7 @@ def inject_direct_subclasses(parent, hierarchy):
     into the class itself, under the name ``direct_subclasses``.  It is only
     for use by `find_actual_instance`.
 
-    This is basically a tree walker through the qeird nested data structure
+    This is basically a tree walker through the weird nested data structure
     returned by ``inspect.getclasstree`` and stored in `class_hierarchy`.
 
     :Parameters:
