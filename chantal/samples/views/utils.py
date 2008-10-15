@@ -1043,6 +1043,20 @@ def normalize_legacy_sample_name(sample_name):
     return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
 
 def get_profile(user):
+    u"""Retrieve the user details for the given user.  If this user hasn't yet
+    any record in the ``UserDetails`` table, create one with sane defaults and
+    return it.
+
+    :Parameters:
+      - `user`: the user the profile of which should be fetched
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      the user details (aka profile) for the user
+
+    :rtype: `models.UserDetails`
+    """
     try:
         return user.get_profile()
     except models.UserDetails.DoesNotExist:
