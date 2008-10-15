@@ -955,14 +955,6 @@ class UserDetails(models.Model):
     u"""Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
-
-    Warning and FixMe: Currently, you run into server errors if you try to surf
-    on Chantal without `UserDetails` because they are frequently used.
-    Normally, there is no fallback if `UserDetails` are not avaibale (with the
-    notable exception being
-    `chantal.middleware.locale.LocaleMiddleware.get_language_for_user`).  There
-    should be a central point for getting it – possibly as a static method of
-    this class – with a decent fallback.
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
