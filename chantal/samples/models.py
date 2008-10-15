@@ -967,6 +967,10 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
+    auto_addition_groups = models.ManyToManyField(
+        django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),
+        help_text=_(u"new samples in these groups are automatically added to “My Samples”"))
+    only_important_news = models.BooleanField(_(u"get only important news"), default=False, null=True, blank=True)
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
     deposition2-layer2, ..."``, where “nickname” can be chosen freely except
