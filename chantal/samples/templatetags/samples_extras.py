@@ -119,7 +119,7 @@ def verbose_name(parser, token):
     u"""Tag for retrieving the descriptive name for an instance attribute.  For
     example::
 
-        {% verbose_name deposition.pressure %}
+        {% verbose_name Deposition.pressure %}
 
     will print “pressure”.  Note that it will be translated for a non-English
     user.  It is useful for creating labels.
