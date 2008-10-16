@@ -183,7 +183,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     if autoescape:
         full_name = conditional_escape(full_name)
     if anchor_type == "http":
-        return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse("samples.views.main.show_user",
+        return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse("samples.views.user_details.show_user",
                                                                                     kwargs={"login_name": user.username}),
                                                    full_name))
     elif anchor_type == "mailto":
