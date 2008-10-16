@@ -121,6 +121,7 @@ class ExternalOperator(models.Model):
     field, which in turn contains `ExternalOperator`.
     """
     name = models.CharField(_(u"name"), max_length=30)
+    institution = models.CharField(_(u"institution"), max_length=255)
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
@@ -128,6 +129,9 @@ class ExternalOperator(models.Model):
                                        verbose_name=_(u"contact person in the institute"))
     def __unicode__(self):
         return self.name
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.external_operator.show", [urlquote(self.pk, safe="")])
     class Meta:
         verbose_name = _(u"external operator")
         verbose_name_plural = _(u"external operators")
@@ -159,8 +163,9 @@ class Process(models.Model):
     """
     timestamp = models.DateTimeField(_(u"timestamp"))
     timestamp_inaccuracy = models.IntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
-    operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"))
-    external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True)
+    operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"), related_name="processes")
+    external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
+                                          related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
     def __unicode__(self):
         return unicode(self.find_actual_instance())

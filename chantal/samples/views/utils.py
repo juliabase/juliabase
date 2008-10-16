@@ -14,6 +14,7 @@ from functools import update_wrapper
 from chantal.samples import models
 from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
+import django.contrib.auth.models
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
@@ -101,6 +102,53 @@ class AddLayersForm(forms.Form):
                 layer_query = deposition.layers.filter(number=layer_number)
                 if layer_query.count() == 1:
                     return layer_query.values()[0]    
+
+initials_pattern = re.compile(ur"[A-Z]{2,4}[0-9]*$")
+class InitialsForm(forms.Form):
+    u"""Form for a person's initials.  A “person” can be a user or an external
+    operator.  Initials are optional, however, if you choose them, you cannot
+    change (or delete) them anymore.
+    """
+    _ = ugettext_lazy
+    initials = forms.CharField(label=_(u"Initials"), max_length=4, required=False)
+    def __init__(self, person, *args, **keyw):
+        super(InitialsForm, self).__init__(*args, **keyw)
+        self.person = person
+        self.is_user = isinstance(person, django.contrib.auth.models.User)
+        try:
+            initials = person.initials
+            self.readonly = True
+        except models.Initials.DoesNotExist:
+            self.readonly = False
+        if self.readonly:
+            self.fields["initials"].widget.attrs["readonly"] = "readonly"
+            self.fields["initials"].initial = initials
+        self.fields["initials"].min_length = 2 if self.is_user else 4
+    def clean_initials(self):
+        initials = self.cleaned_data["initials"]
+        if not initials or self.readonly:
+            return initials
+        # Note that minimal and maximal length are already checked.
+        if not initials_pattern.match(initials):
+            raise ValidationError(_(u"The initials must start with two uppercase letters.  "
+                                    u"They must contain uppercase letters and digits only.  Digits must be at the end."))
+        if models.Initials.objects.filter(initials=initials).count():
+            raise ValidationError(_(u"These initials are already used."))
+        return initials
+    def save(self):
+        u"""Although this is not a model form, I add a ``save()`` method in
+        order to avoid code duplication.  Here, I test whether the “initials”
+        field in the database is still empty, and if so, add it to the
+        database.
+        """
+        initials = self.cleaned_data["initials"]
+        if initials:
+            if self.is_user:
+                if models.Initials.objects.filter(user=self.person).count() == 0:
+                    models.Initials.objects.create(initials=initials, user=self.person)
+            else:
+                if models.Initials.objects.filter(external_operator=self.person).count() == 0:
+                    models.Initials.objects.create(initials=initials, external_operator=self.person)
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
@@ -491,7 +539,7 @@ def get_my_layers(user_details, deposition_model):
     return fitting_items
 
 def has_permission_for_sample_or_series(user, sample_or_series):
-    u"""Returns ``True`` if the user is allowed to see a sample series.
+    u"""Returns ``True`` if the user is allowed to see a sample (series).
 
     :Parameters:
       - `user`: the currently logged-in user

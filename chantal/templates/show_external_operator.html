@@ -1,0 +1,49 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load samples_extras %}
+
+{% block css %}
+<style type="text/css">
+  th { text-align: right }
+</style>
+{% endblock %}
+
+{% block content %}
+<table cellpadding="5" style="margin-bottom: 2ex">
+  <tr>
+    <th>{% verbose_name ExternalOperator.name %}:</th>
+    <td>{{ external_operator.name }}</td>
+  </tr>
+  <tr>
+    <th>{% verbose_name ExternalOperator.institution %}:</th>
+    <td>{{ external_operator.institution }}</td>
+  </tr>
+  <tr>
+    <th>{% verbose_name ExternalOperator.email %}:</th>
+    <td><a href="mailto:{{ external_operator.email }}">{{ external_operator.email }}</a></td>
+  </tr>
+  {% if external_operator.alternative_email %}
+    <tr>
+      <th>{% verbose_name ExternalOperator.alternative_email %}:</th>
+      <td>{{ external_operator.alternative_email }}</td>
+    </tr>
+  {% endif %}
+  {% if external_operator.phone %}
+    <tr>
+      <th>{% verbose_name ExternalOperator.phone %}:</th>
+      <td>{{ external_operator.phone }}</td>
+    </tr>
+  {% endif %}
+  <tr>
+    <th>{% verbose_name ExternalOperator.contact_person %}:</th>
+    <td>{{ external_operator.contact_person|get_really_full_name }}</td>
+  </tr>
+  {% if initials %}
+    <tr>
+      <th>{% verbose_name Initials.initials %}:</th>
+      <td>{{ initials }}</td>
+    </tr>
+  {% endif %}
+</table>
+{% endblock %}

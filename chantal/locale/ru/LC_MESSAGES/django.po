@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-15 17:59+0200\n"
+"POT-Creation-Date: 2008-10-16 18:28+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -35,6 +35,9 @@ msgid "Dutch"
 msgstr ""
 
 msgid "name"
+msgstr ""
+
+msgid "institution"
 msgstr ""
 
 msgid "email"
@@ -591,6 +594,28 @@ msgstr ""
 msgid "New comment"
 msgstr ""
 
+#, python-format
+msgid "The external operator “%s” was successfully added."
+msgstr ""
+
+msgid "Add external operator"
+msgstr ""
+
+msgid "Concact person"
+msgstr ""
+
+#, python-format
+msgid "The external operator “%s” was successfully changed."
+msgstr ""
+
+#, python-format
+msgid "Edit external operator “%s”"
+msgstr ""
+
+#, python-format
+msgid "External operator “%s”"
+msgstr ""
+
 msgid "You must add a \"hash\" parameter to the query string."
 msgstr ""
 
@@ -1048,6 +1073,12 @@ msgstr ""
 msgid "Split sample “%s”"
 msgstr ""
 
+msgid "The preferences were successfully updated."
+msgstr ""
+
+msgid "Number of layers to be added"
+msgstr ""
+
 msgid "Initials"
 msgstr ""
 
@@ -1057,12 +1088,6 @@ msgid ""
 msgstr ""
 
 msgid "These initials are already used."
-msgstr ""
-
-msgid "The preferences were successfully updated."
-msgstr ""
-
-msgid "Number of layers to be added"
 msgstr ""
 
 msgid "Time must be given in the form HH:MM:SS."

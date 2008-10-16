@@ -53,28 +53,6 @@ class UserDetailsForm(forms.ModelForm):
         model = models.UserDetails
         fields = ("auto_addition_groups", "only_important_news")
 
-initials_pattern = re.compile(ur"[A-Z]{2,4}[0-9]*$")
-class InitialsForm(forms.Form):
-    u"""Form for the user's initials.  Initials are optional, however, if you
-    choose them, you cannot change (or delete) them anymore.
-    """
-    _ = ugettext_lazy
-    initials = forms.CharField(label=_(u"Initials"), min_length=2, max_length=4, required=False)
-    def __init__(self, user, *args, **keyw):
-        super(InitialsForm, self).__init__(*args, **keyw)
-        if user.initials:
-            self.fields["initials"].widget.attrs["readonly"] = "readonly"
-    def clean_initials(self):
-        initials = self.cleaned_data["initials"]
-        if not initials:
-            return initials
-        # Note that minimal and maximal length are already checked.
-        if not initials_pattern.match(initials):
-            raise ValidationError(_(u"The initials must start with two uppercase letters.  "
-                                    u"They must contain uppercase letters and digits only.  Digits must be at the end."))
-        if models.Initials.objects.filter(initials=initials).count():
-            raise ValidationError(_(u"These initials are already used."))
-
 @login_required
 def edit_preferences(request, login_name):
     u"""View for editing preferences of a user.  Note that by giving the
@@ -108,16 +86,14 @@ def edit_preferences(request, login_name):
     user_details = utils.get_profile(user)
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
-        initials_form = InitialsForm(user, request.POST)
+        initials_form = utils.InitialsForm(user, request.POST)
         if user_details_form.is_valid() and initials_form.is_valid():
             user_details_form.save()
-            initials = initials_form.cleaned_data["initials"]
-            if initials and models.Initials.objects.filter(user=user).count() == 0:
-                models.Initials.objects.create(initials=initials, user=user)
+            initials_form.save()
             return utils.successful_response(request, _(u"The preferences were successfully updated."))
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
-        initials_form = InitialsForm(user)
+        initials_form = utils.InitialsForm(user)
     return render_to_response("edit_preferences.html", {"title": login_name, "user_details": user_details_form,
                                                         "initials": initials_form},
                               context_instance=RequestContext(request))

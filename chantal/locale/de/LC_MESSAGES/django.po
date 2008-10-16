@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-15 17:59+0200\n"
-"PO-Revision-Date: 2008-10-15 18:02+0200\n"
+"POT-Creation-Date: 2008-10-16 18:28+0200\n"
+"PO-Revision-Date: 2008-10-16 18:29+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,6 +36,9 @@ msgstr "Niederländisch"
 
 msgid "name"
 msgstr "Name"
+
+msgid "institution"
+msgstr "Institution"
 
 msgid "email"
 msgstr "Email"
@@ -595,6 +598,28 @@ msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 msgid "New comment"
 msgstr "Neuer Kommentar"
 
+#, python-format
+msgid "The external operator “%s” was successfully added."
+msgstr "Der externe Operateur „%s“ wurde erfolgreich neu angelegt."
+
+msgid "Add external operator"
+msgstr "Neuen externen Operateur anlegen"
+
+msgid "Concact person"
+msgstr "Kontaktperson"
+
+#, python-format
+msgid "The external operator “%s” was successfully changed."
+msgstr "Der externe Operateur „%s“ wurde erfolgreich geändert."
+
+#, python-format
+msgid "Edit external operator “%s”"
+msgstr "Externen Operateur „%s“ ändern"
+
+#, python-format
+msgid "External operator “%s”"
+msgstr "Externer Operateur „%s“"
+
 msgid "You must add a \"hash\" parameter to the query string."
 msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
 
@@ -1064,22 +1089,24 @@ msgstr ""
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
 
+msgid "The preferences were successfully updated."
+msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
+
+msgid "Number of layers to be added"
+msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
+
 msgid "Initials"
 msgstr "Kürzel"
 
 msgid ""
 "The initials must start with two uppercase letters.  They must contain "
 "uppercase letters and digits only.  Digits must be at the end."
-msgstr "Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
+msgstr ""
+"Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
+"Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
 
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
-
-msgid "The preferences were successfully updated."
-msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
-
-msgid "Number of layers to be added"
-msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
