@@ -140,6 +140,7 @@ def show(request, external_operator_id):
     except models.Initials.DoesNotExist:
         initials = None
     return render_to_response("show_external_operator.html",
-                              {"title": _(u"External operator “%s”") % external_operator.name,
-                               "external_operator": external_operator, "initials": initials},
+                              {"title": _(u"External operator “%(name)s”") % {"name": external_operator.name},
+                               "external_operator": external_operator, "initials": initials,
+                               "can_edit": request.user == external_operator.contact_person},
                               context_instance=RequestContext(request))

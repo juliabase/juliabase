@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 18:28+0200\n"
-"PO-Revision-Date: 2008-10-16 18:29+0200\n"
+"POT-Creation-Date: 2008-10-16 19:50+0200\n"
+"PO-Revision-Date: 2008-10-16 19:51+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -617,8 +617,8 @@ msgid "Edit external operator “%s”"
 msgstr "Externen Operateur „%s“ ändern"
 
 #, python-format
-msgid "External operator “%s”"
-msgstr "Externer Operateur „%s“"
+msgid "External operator “%(name)s”"
+msgstr "Externer Operateur „%(name)s“"
 
 msgid "You must add a \"hash\" parameter to the query string."
 msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
@@ -1439,6 +1439,9 @@ msgstr ""
 "\n"
 "Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
 
+msgid "edit"
+msgstr "ändern"
+
 msgid "Silane conc."
 msgstr "Silankonz."
 
@@ -1473,9 +1476,6 @@ msgstr "Geschichte der Probe „"
 
 msgid "”"
 msgstr "“"
-
-msgid "edit"
-msgstr "ändern"
 
 msgid "add process"
 msgstr "Prozess hinzufügen"
@@ -1637,6 +1637,11 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid ""
+#~ "External\n"
+#~ "  operator “%(name)s”"
+#~ msgstr "Externer Operateur „%s“"
 
 #~ msgid "Couldn't open evaluated datafile."
 #~ msgstr "Konnte ausgewertete Daten-Datei nicht öffnen."

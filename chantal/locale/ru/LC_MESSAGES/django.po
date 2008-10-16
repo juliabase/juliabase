@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 18:28+0200\n"
+"POT-Creation-Date: 2008-10-16 19:50+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -613,7 +613,7 @@ msgid "Edit external operator “%s”"
 msgstr ""
 
 #, python-format
-msgid "External operator “%s”"
+msgid "External operator “%(name)s”"
 msgstr ""
 
 msgid "You must add a \"hash\" parameter to the query string."
@@ -1389,6 +1389,9 @@ msgid ""
 "    "
 msgstr ""
 
+msgid "edit"
+msgstr ""
+
 msgid "Silane conc."
 msgstr ""
 
@@ -1416,9 +1419,6 @@ msgid "History of sample “"
 msgstr ""
 
 msgid "”"
-msgstr ""
-
-msgid "edit"
 msgstr ""
 
 msgid "add process"
