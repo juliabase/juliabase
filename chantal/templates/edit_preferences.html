@@ -2,12 +2,33 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-
 {% block content %}
 <form method="post" action="">
-  <table>
-    {{ user_details }}
-    {{ initials }}
+  <table cellspacing="10">
+    <tr>
+      <td class="label">
+        <label for="id_{{ user_details.only_important_news.html_name }}"
+               >{{ user_details.only_important_news.label }}:</label>
+      </td>
+      <td colspan="2" class="value">{{ user_details.only_important_news }}</td>
+    </tr>
+    <tr>
+      <td class="label">
+        <label for="id_{{ user_details.auto_addition_groups.html_name }}"
+               >{{ user_details.auto_addition_groups.label }}:</label>
+      </td>
+      <td class="value">{{ user_details.auto_addition_groups }}</td>
+      <td style="font-size: small; vertical-align: bottom"><div style="max-width: 30em">{% blocktrans %}(This list shows
+          all groups you are a member of.  You can mark those groups that you want all new samples of which to be
+          implicitly added to “My Samples”.){% endblocktrans %}</div></td>
+    </tr>
+    <tr>
+      <td class="label">
+        <label for="id_{{ initials.initials.html_name }}"
+               >{{ initials.initials.label }}:</label>
+      </td>
+      <td colspan="2" class="value">{{ initials.initials }}</td>
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit" /></p>
 </form>

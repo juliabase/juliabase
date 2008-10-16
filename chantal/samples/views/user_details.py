@@ -94,7 +94,8 @@ def edit_preferences(request, login_name):
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
         initials_form = utils.InitialsForm(user)
-    return render_to_response("edit_preferences.html", {"title": login_name, "user_details": user_details_form,
-                                                        "initials": initials_form},
+    return render_to_response("edit_preferences.html",
+                              {"title": _(u"Change preferences for %s") % models.get_really_full_name(request.user),
+                               "user_details": user_details_form, "initials": initials_form},
                               context_instance=RequestContext(request))
     
