@@ -87,3 +87,5 @@ div.short-messages { text-align: center; clear: both }
 p.submit-button { text-align: right; margin-bottom: 0px }
 
 a > img { border: none }
+
+optgroup { font-weight: bold; font-style: normal }
