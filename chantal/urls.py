@@ -44,6 +44,7 @@ urlpatterns = patterns("",
                        (r"^$", "samples.views.main.main_menu"),
                        (r"^(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
                        (r"^feeds/(?P<username>.+)", "samples.views.feed.show"),
+                       (r"^my_samples/(?P<username>.+)", "samples.views.my_samples.edit"),
 
                        (r"^depositions/split_and_rename_samples/(?P<deposition_number>.+)",
                         "samples.views.split_after_deposition.split_and_rename_after_deposition"),

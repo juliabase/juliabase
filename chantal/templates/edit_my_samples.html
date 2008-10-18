@@ -1,0 +1,19 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load markup %}
+
+{% block content %}
+<form method="post" action="">
+  <table style="float: right">
+    {{ action }}
+  </table>
+  <table cellspacing="10">
+    {{ my_samples }}
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit" /></p>
+  <div>{{ comment_preview|markdown }}</div>
+</form>
+
+
+{% endblock %}
