@@ -46,15 +46,18 @@ class MySamplesForm(forms.Form):
 
 class ActionForm(forms.Form):
     _ = ugettext_lazy
-    new_currently_responsible_person = forms.ChoiceField(label=_(u"New currently responsible person"), required=False)
-    new_group = forms.ChoiceField(label=_(u"New group"), required=False)
+    new_currently_responsible_person = utils.OperatorChoiceField(
+        label=_(u"New currently responsible person"), required=False, queryset=None)
+    new_group = utils.ModelChoiceField(label=_(u"New Group"), queryset=django.contrib.auth.models.Group.objects,
+                                       required=False)
     new_current_location = forms.CharField(label=_(u"New current location"), required=False, max_length=50)
-    copy_to_user = utils.OperatorChoiceField(label=_(u"Copy to user"), required=False,
-                                             queryset=django.contrib.auth.models.User.objects.all())
+    copy_to_user = utils.OperatorChoiceField(label=_(u"Copy to user"), required=False, queryset=None)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
-    def __init__(self, *args, **keyw):
+    def __init__(self, user, *args, **keyw):
         super(ActionForm, self).__init__(*args, **keyw)
+        self.fields["new_currently_responsible_person"].queryset = self.fields["copy_to_user"].queryset = \
+            django.contrib.auth.models.User.objects.exclude(pk=user.pk)
 
 def is_referentially_valid(current_user, user, my_samples_form, action_form):
     referentially_valid = True
@@ -74,9 +77,6 @@ def is_referentially_valid(current_user, user, my_samples_form, action_form):
             utils.append_error(
                 action_form, _(u"If you move the sample over to another person, you must enter a short comment."), "comment")
             referentially_valid = False
-        if action_data["copy_to_user"] and action_data["copy_to_user"] == user:
-            utils.append_error(action_form, _(u"You can't copy data to yourself."), "copy_to_user")
-            referentially_valid = False
     return referentially_valid
 
 @login_required
@@ -87,7 +87,7 @@ def edit(request, username):
     comment_preview = None
     if request.method == "POST":
         my_samples_form = MySamplesForm(user, request.POST)
-        action_form = ActionForm(request.POST)
+        action_form = ActionForm(user, request.POST)
         if action_form.is_valid():
             comment_preview = action_form.cleaned_data["comment"]
         referentially_valid = is_referentially_valid(request.user, user, my_samples_form, action_form)
@@ -109,9 +109,10 @@ def edit(request, username):
                     recipient_my_samples.add(sample)
                 if action_data["remove_from_my_samples"]:
                     current_user_my_samples.remove(sample)
+            return utils.successful_response(request, _(u"Successfully processed “My Samples”."))
     else:
         my_samples_form = MySamplesForm(user)
-        action_form = ActionForm()
+        action_form = ActionForm(user)
     return render_to_response("edit_my_samples.html",
                               {"title": _(u"Edit “My Samples” of %s") % models.get_really_full_name(user),
                                "my_samples": my_samples_form, "action": action_form, "comment_preview": comment_preview},
