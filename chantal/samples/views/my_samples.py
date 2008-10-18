@@ -92,6 +92,7 @@ class ActionForm(forms.Form):
         if (self.cleaned_data["new_currently_responsible_person"] or self.cleaned_data["copy_to_user"]) and \
                 not self.cleaned_data["comment"]:
             raise ValidationError(_(u"If you move the sample over to another person, you must enter a short comment."))
+        return action_data
 
 def is_referentially_valid(current_user, my_samples_form, action_form):
     u"""Test whether all forms are consistent with each other and with the
@@ -193,7 +194,7 @@ def edit(request, username):
         action_form = ActionForm(user, request.POST)
         if action_form.is_valid():
             comment_preview = action_form.cleaned_data["comment"]
-        referentially_valid = is_referentially_valid(request.user, user, my_samples_form, action_form)
+        referentially_valid = is_referentially_valid(request.user, my_samples_form, action_form)
         if my_samples_form.is_valid() and action_form.is_valid() and referentially_valid:
             save_to_database(user, my_samples_form, action_form)
             return utils.successful_response(request, _(u"Successfully processed “My Samples”."))
