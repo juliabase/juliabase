@@ -60,7 +60,7 @@ class MySamplesForm(forms.Form):
                     my_series[series.name].samples.append(sample)
         my_series = sorted(my_series.values(), key=lambda series: series.timestamp, reverse=True)
         my_series = [series.get_choices() for series in sorted(my_series, reverse=True)]
-        self.fields["samples"].choices = my_series + [(sample.pk, unicode(sample)) for sample in seriesless_samples]
+        self.fields["samples"].choices = [(sample.pk, unicode(sample)) for sample in seriesless_samples] + my_series
     def clean_samples(self):
         return models.Sample.objects.in_bulk([int(pk) for pk in set(self.cleaned_data["samples"])]).values()
 
