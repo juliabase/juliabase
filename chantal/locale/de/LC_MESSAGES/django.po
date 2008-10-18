@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 22:32+0200\n"
-"PO-Revision-Date: 2008-10-16 22:33+0200\n"
+"POT-Creation-Date: 2008-10-18 21:34+0200\n"
+"PO-Revision-Date: 2008-10-18 21:34+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -843,6 +843,45 @@ msgstr "Dieser Spitzname ist schon vergeben."
 msgid "My Layers"
 msgstr "Meine Schichten"
 
+msgid "My Samples"
+msgstr "Meine Proben"
+
+msgid "New currently responsible person"
+msgstr "Neuer aktuell Verantwortlicher"
+
+msgid "New Group"
+msgstr "Neue Gruppe"
+
+msgid "New current location"
+msgstr "Neuer Probenort"
+
+msgid "Copy to user"
+msgstr "Zu Benutzer kopieren"
+
+msgid "Comment for recipient"
+msgstr "Kommentar für Empfänger"
+
+msgid "Remove from “My Samples”"
+msgstr "Entferne von „Meine Proben“"
+
+msgid ""
+"If you move samples over to another person, you must enter a short comment."
+msgstr "Wenn Sie Proben zu einer anderen Person verschieben, müssen Sie einen kurzen Kommentar eingeben."
+
+msgid ""
+"You must be the currently responsible person for samples you'd like to "
+"change."
+msgstr ""
+"Sie müssen die aktuell verantwortliche Person sein für die Proben, die Sie "
+"ändern wollen."
+
+msgid "Successfully processed “My Samples”."
+msgstr "Erfolgreich „Meine Proben“ verarbeitet."
+
+#, python-format
+msgid "Edit “My Samples” of %s"
+msgstr "„Meine Proben“ von %s ändern"
+
 msgid "Sample"
 msgstr "Probe"
 
@@ -1026,9 +1065,6 @@ msgstr "(für alle Proben; überschreibt einzelne obige Einstellungen)"
 
 msgid "(no global change)"
 msgstr "(keine globale Änderung)"
-
-msgid "New current location"
-msgstr "Neuer Probenort"
 
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
@@ -1404,9 +1440,6 @@ msgstr "Nach Proben suchen"
 
 msgid "Search for depositions"
 msgstr "Nach Depositionen suchen"
-
-msgid "My Samples"
-msgstr "Meine Proben"
 
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"

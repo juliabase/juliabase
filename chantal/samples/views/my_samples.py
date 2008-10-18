@@ -91,7 +91,7 @@ class ActionForm(forms.Form):
         action_data = self.cleaned_data
         if (self.cleaned_data["new_currently_responsible_person"] or self.cleaned_data["copy_to_user"]) and \
                 not self.cleaned_data["comment"]:
-            raise ValidationError(_(u"If you move the sample over to another person, you must enter a short comment."))
+            raise ValidationError(_(u"If you move samples over to another person, you must enter a short comment."))
         return action_data
 
 def is_referentially_valid(current_user, my_samples_form, action_form):
@@ -164,7 +164,7 @@ def edit(request, username):
     Samples”.  For example, copying them to the “My Samples” list of another
     user, or simply removing them from the list.
 
-    Note that there are two differen user variables in this view and its
+    Note that there are two different user variables in this view and its
     associated functions.  ``current_user`` is the same as ``request.user``.
     Thus, it is the currently logged-in user.  However, ``user`` is the user
     whose “My Samples” are to be processed.  Almost always both are the same,

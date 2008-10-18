@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-16 22:32+0200\n"
+"POT-Creation-Date: 2008-10-18 21:34+0200\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -838,6 +838,43 @@ msgstr ""
 msgid "My Layers"
 msgstr ""
 
+msgid "My Samples"
+msgstr ""
+
+msgid "New currently responsible person"
+msgstr ""
+
+msgid "New Group"
+msgstr ""
+
+msgid "New current location"
+msgstr ""
+
+msgid "Copy to user"
+msgstr ""
+
+msgid "Comment for recipient"
+msgstr ""
+
+msgid "Remove from “My Samples”"
+msgstr ""
+
+msgid ""
+"If you move samples over to another person, you must enter a short comment."
+msgstr ""
+
+msgid ""
+"You must be the currently responsible person for samples you'd like to "
+"change."
+msgstr ""
+
+msgid "Successfully processed “My Samples”."
+msgstr ""
+
+#, python-format
+msgid "Edit “My Samples” of %s"
+msgstr ""
+
 #, fuzzy
 msgid "Sample"
 msgstr "sample series"
@@ -1018,9 +1055,6 @@ msgid "(for all samples; overrides individual settings above)"
 msgstr ""
 
 msgid "(no global change)"
-msgstr ""
-
-msgid "New current location"
 msgstr ""
 
 msgid "(for all samples; leave empty for no change)"
@@ -1370,9 +1404,6 @@ msgid "Search for samples"
 msgstr ""
 
 msgid "Search for depositions"
-msgstr ""
-
-msgid "My Samples"
 msgstr ""
 
 msgid ""
