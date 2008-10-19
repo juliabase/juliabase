@@ -22,7 +22,7 @@ from django.conf import settings
 from django.views.decorators.cache import cache_page, never_cache
 from chantal.samples.views import utils
 from chantal.samples.views.utils import help_link
-from chantal.samples.views import permissions
+from chantal.samples import permissions
 from chantal.common import Availability
 
 class MySeries(object):

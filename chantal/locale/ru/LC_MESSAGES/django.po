@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 04:14+0200\n"
+"POT-Creation-Date: 2008-10-19 14:18+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -559,6 +559,23 @@ msgstr ""
 msgid "new samples feed entries"
 msgstr ""
 
+#, python-format
+msgid "You are not allowed to %s."
+msgstr ""
+
+#, python-format
+msgid "%(description)s  Reason: %(reason)s"
+msgstr ""
+
+#, python-format
+msgid "view sample %s"
+msgstr ""
+
+msgid ""
+"You are not in the sample's group, nor are you its currently responsible "
+"person, nor are you a senior user."
+msgstr ""
+
 msgid "Yes"
 msgstr ""
 
@@ -902,9 +919,6 @@ msgid "PDS measurement %s"
 msgstr ""
 
 msgid "Add PDS measurement"
-msgstr ""
-
-msgid "Permission missing: "
 msgstr ""
 
 msgid "is amongst My Samples"
@@ -1429,11 +1443,14 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"    Sorry, you can't access this resource because you don't have the "
-"following\n"
-"    permission: %(permission_description)s Please contact the administrator\n"
-"    if you think you ought to have that permission.\n"
+"      Sorry, you can't access this resource.  %(description)s Reason: <em>%"
+"(reason)s</em>\n"
+"      Please contact the administrator if you think you ought to have the "
+"permission.\n"
 "    "
+msgstr ""
+
+msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 
 #, python-format

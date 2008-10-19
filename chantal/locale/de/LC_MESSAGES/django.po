@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 04:14+0200\n"
-"PO-Revision-Date: 2008-10-19 04:18+0200\n"
+"POT-Creation-Date: 2008-10-19 14:18+0200\n"
+"PO-Revision-Date: 2008-10-19 14:19+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -561,6 +561,25 @@ msgstr "Feed-Eintrag für neue Proben"
 msgid "new samples feed entries"
 msgstr "Feed-Einträge für neue Proben"
 
+#, python-format
+msgid "You are not allowed to %s."
+msgstr "Ihnen ist es nicht erlaubt, %s."
+
+#, python-format
+msgid "%(description)s  Reason: %(reason)s"
+msgstr "%(description)s  Begründung: %(reason)s"
+
+#, python-format
+msgid "view sample %s"
+msgstr "sich Probe %s anzusehen"
+
+msgid ""
+"You are not in the sample's group, nor are you its currently responsible "
+"person, nor are you a senior user."
+msgstr ""
+"Weder sind Sie in der Gruppe der Probe, noch sind Sie ihr aktuell "
+"Verantwortlicher, noch sind Sie Seniornutzer."
+
 msgid "Yes"
 msgstr "Ja"
 
@@ -913,9 +932,6 @@ msgstr "PDS-Messung %s"
 
 msgid "Add PDS measurement"
 msgstr "PDS-Messung hinzufügen"
-
-msgid "Permission missing: "
-msgstr "Fehlende Berechtigung:"
 
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
@@ -1479,12 +1495,20 @@ msgstr "Frau mit Schloss"
 #, python-format
 msgid ""
 "\n"
-"    Sorry, you can't access this resource because you don't have the "
-"following\n"
-"    permission: %(permission_description)s Please contact the administrator\n"
-"    if you think you ought to have that permission.\n"
+"      Sorry, you can't access this resource.  %(description)s Reason: <em>%"
+"(reason)s</em>\n"
+"      Please contact the administrator if you think you ought to have the "
+"permission.\n"
 "    "
-msgstr "\nLeider haben Sie keinen Zugriff auf diese Ressource weil Ihnen die folgende Berechtigung fehlt:  %(permission_description)s  Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie diese Berechtigung haben sollten."
+msgstr ""
+"\n"
+"Leider dürfen Sie nicht auf diese Resource zugreifen.  %(description)s  "
+"Begründung: <em>%(reason)s</em>  Bitte kontaktieren Sie den Administrator, "
+"wenn Sie glauben, dass Sie die Berechtigung haben sollten."
+
+msgid "This occurence isn't reported to anyone, and it is not logged."
+msgstr ""
+"Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
 
 #, python-format
 msgid ""
@@ -1693,6 +1717,12 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "Permission missing for: %(action)s  Cause: %(cause)s"
+#~ msgstr "Berechtigung fehlt für: %(action)s  Begründung: %(cause)s"
+
+#~ msgid "Permission missing: "
+#~ msgstr "Fehlende Berechtigung:"
 
 #~ msgid ""
 #~ "\n"

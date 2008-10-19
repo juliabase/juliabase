@@ -8,12 +8,13 @@
 
 {% block content %}
   <p>
-    {% blocktrans %}
-    Sorry, you can't access this resource because you don't have the following
-    permission: {{ permission_description }} Please contact the administrator
-    if you think you ought to have that permission.
+    {% blocktrans with exception.description as description and exception.reason as reason %}
+      Sorry, you can't access this resource.  {{ description }} Reason: <em>{{ reason }}</em>
+      Please contact the administrator if you think you ought to have the permission.
     {% endblocktrans %}
   </p>
-<p style="margin: 0pt"> </p> <!-- IE7 quirk -->
-<div style="clear: both" />
+
+  <p>{% trans "This occurence isn't reported to anyone, and it is not logged." %}</p>
+  <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+  <div style="clear: both" />
 {% endblock %}
