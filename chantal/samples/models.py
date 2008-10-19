@@ -135,6 +135,7 @@ class ExternalOperator(models.Model):
     class Meta:
         verbose_name = _(u"external operator")
         verbose_name_plural = _(u"external operators")
+        permissions = (("can_add", "Can add an external operator"),)
 admin.site.register(ExternalOperator)
 
 timestamp_inaccuracy_choices = (
@@ -429,6 +430,7 @@ class HallMeasurement(Process):
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
+        permissions = (("can_edit", "Can create and edit hall measurements"),)
 admin.site.register(HallMeasurement)
 
 class Layer(models.Model):
@@ -719,8 +721,7 @@ class Sample(models.Model):
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
-        permissions = (("can_view_all_samples", "Can view all samples"),
-                       ("can_add", "Can add samples and edit substrates"),)
+        permissions = (("can_view_all_samples", "Can view all samples (senior user)"),)
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):
@@ -980,6 +981,7 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
+        permissions = (("can_edit_group_memberships", "Can edit group memberships"),)
 admin.site.register(UserDetails)
 
 class FeedEntry(models.Model):
