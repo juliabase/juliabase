@@ -133,7 +133,7 @@ def show(request, external_operator_id):
     :rtype: ``HttpResponse``
     """
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
-    if request.user != external_operator.contact_person and not request.user.has_perm("samples.can_view_all_samples"):
+    if request.user != external_operator.contact_person and not request.user.has_perm("samples.view_all_samples"):
         return utils.HttpResponseSeeOther("permission_error")
     try:
         initials = external_operator.initials

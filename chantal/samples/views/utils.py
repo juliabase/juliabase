@@ -554,7 +554,7 @@ def has_permission_for_sample_or_series(user, sample_or_series):
 
     :rtype: bool
     """
-    return user.has_perm("samples.can_view_all_samples") or sample_or_series.group in user.groups.all() \
+    return user.has_perm("samples.view_all_samples") or sample_or_series.group in user.groups.all() \
         or sample_or_series.currently_responsible_person == user
 
 def camel_case_to_underscores(name):

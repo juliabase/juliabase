@@ -135,7 +135,7 @@ class ExternalOperator(models.Model):
     class Meta:
         verbose_name = _(u"external operator")
         verbose_name_plural = _(u"external operators")
-        permissions = (("can_add", "Can add an external operator"),)
+        permissions = (("add_external_operator", "Can add an external operator"),)
 admin.site.register(ExternalOperator)
 
 timestamp_inaccuracy_choices = (
@@ -413,7 +413,7 @@ class SixChamberDeposition(Deposition):
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
-        permissions = (("can_edit", "Can create and edit 6-chamber depositions"),)
+        permissions = (("add_edit_6_chamber_deposition", "Can create and edit 6-chamber depositions"),)
 default_location_of_deposited_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
 admin.site.register(SixChamberDeposition)
 
@@ -430,7 +430,7 @@ class HallMeasurement(Process):
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
-        permissions = (("can_edit", "Can create and edit hall measurements"),)
+        permissions = (("add_edit_hall_measurement", "Can create and edit hall measurements"),)
 admin.site.register(HallMeasurement)
 
 class Layer(models.Model):
@@ -566,7 +566,7 @@ class LargeAreaDeposition(Deposition):
     class Meta:
         verbose_name = _(u"large-area deposition")
         verbose_name_plural = _(u"large-area depositions")
-        permissions = (("can_edit", "Can create and edit large-area depositions"),)
+        permissions = (("add_edit_large_area_deposition", "Can create and edit large-area depositions"),)
 default_location_of_deposited_samples[SixChamberDeposition] = _(u"large-area deposition lab")
 admin.site.register(LargeAreaDeposition)
 
@@ -682,7 +682,7 @@ class PDSMeasurement(Process):
     class Meta:
         verbose_name = _(u"PDS measurement")
         verbose_name_plural = _(u"PDS measurements")
-        permissions = (("can_edit", "Can create and edit PDS measurements"),)
+        permissions = (("add_edit_pds_measurement", "Can create and edit PDS measurements"),)
 admin.site.register(PDSMeasurement)
 
 class Sample(models.Model):
@@ -721,7 +721,7 @@ class Sample(models.Model):
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
-        permissions = (("can_view_all_samples", "Can view all samples (senior user)"),)
+        permissions = (("view_all_samples", "Can view all samples (senior user)"),)
 admin.site.register(Sample)
 
 class SampleAlias(models.Model):
@@ -981,7 +981,7 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
-        permissions = (("can_edit_group_memberships", "Can edit group memberships"),)
+        permissions = (("edit_group_memberships", "Can edit group memberships"),)
 admin.site.register(UserDetails)
 
 class FeedEntry(models.Model):
