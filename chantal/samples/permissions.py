@@ -80,12 +80,6 @@ class PermissionError(Exception):
         self.user, self.reason = user, reason
 
 class PermissionViewSampleError(PermissionError):
-    u"""Raised if a user wants to see a sample which he is not allowed to see.
-
-    :ivar sample: the sample that could not be accessed
-
-    :type sample: `models.Sample`
-    """
     def __init__(self, user, sample, reason):
         super(PermissionViewSampleError, self).__init__(user, _(u"view sample %s") % sample, reason)
         self.sample = sample
@@ -101,10 +95,30 @@ def assert_can_view_sample(user, sample):
       - `PermissionViewSampleError`: raised if the user is not allowed to view
         the sample.
     """
-    if not user.has_perm("samples.can_view_all_samples") and sample.group not in user.groups.all() \
+    if not user.has_perm("samples.view_all_samples") and sample.group not in user.groups.all() \
             and sample.currently_responsible_person != user:
         raise PermissionViewSampleError(user, sample, _(u"You are not in the sample's group, nor are you its currently "
                                                         u"responsible person, nor are you a senior user."))
+
+
+class PermissionEditSampleError(PermissionError):
+    def __init__(self, user, sample, reason):
+        super(PermissionViewSampleError, self).__init__(user, _(u"edit sample %s") % sample, reason)
+        self.sample = sample
+
+def assert_can_edit_sample(user, sample):
+    u"""Tests whether the user can edit the sample.
+
+    :Parameters:
+      - `user`: ``django.contrib.auth.models.User``
+      - `sample`: `models.Sample`
+
+    :Exceptions:
+      - `PermissionEditSampleError`: raised if the user is not allowed to edit
+        the sample.
+    """
+    if sample.currently_responsible_person != user:
+        raise PermissionEditSampleError(user, sample, _(u"You are not the sample's currently responsible person."))
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for
