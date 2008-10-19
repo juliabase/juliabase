@@ -7,7 +7,7 @@ from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
 from chantal.samples.models import UserDetails
 from chantal.samples.views import utils
-from chantal.samples.views.permissions import PermissionDeniedError
+from chantal.samples.views.permissions import PermissionError
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -53,7 +53,7 @@ class LocaleMiddleware(object):
 
 class PermissionDeniedMiddleware(object):
     def process_exception(self, request, exception):
-        if isinstance(exception, PermissionDeniedError):
+        if isinstance(exception, PermissionError):
             return utils.HttpResponseUnauthorized(
                 loader.render_to_string("permission_error.html", {"title": _(u"Access denied"),
                                                                   "permission_description": exception.description},
