@@ -9,9 +9,9 @@
 {% block content %}
   <p>
     {% blocktrans %}
-    Sorry, you don't have permission to do that action, probably because you
-    are not in the specific group that is allowed to do it.  Please contact the
-    administrator to add you to that group.
+    Sorry, you can't access this resource because you don't have the following
+    permission: {{ permission_description }} Please contact the administrator
+    if you think you ought to have that permission.
     {% endblocktrans %}
   </p>
 <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
