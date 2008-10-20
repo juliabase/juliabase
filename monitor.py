@@ -6,8 +6,7 @@ would start the process with::
 
     nohup ./monitor.py &
 
-It is not necessary to be root for this, however, it may be necessary to adjust
-`filename`.
+It is not necessary to be root for this.
 """
 
 from __future__ import division
