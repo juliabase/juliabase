@@ -24,6 +24,7 @@ permission just means that e.g. a link is not generated (for example, in the
 from django.utils.translation import ugettext as _
 # Attention! This is a cyclic import.  Don't use models in top-level code.
 from chantal.samples import models
+from chantal.samples.views import shared_utils
 
 class PermissionError(Exception):
     u"""Common base class for all permission exceptions.  It should never be
