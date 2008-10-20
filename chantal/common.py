@@ -8,7 +8,7 @@ statistical purposes."""
 from __future__ import division
 import re, datetime
 
-remote_monitor_log_file_name = "/windows/hobie/remote_monitor.log"
+remote_monitor_log_file_name = "/windows/T/public/bronger/remote_monitor.log"
 
 class SystemInfo(object):
     def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5):
