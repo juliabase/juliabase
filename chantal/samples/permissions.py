@@ -291,6 +291,98 @@ def assert_can_edit_sample_series(user, sample_series):
                         u"you are not the currently responsible person for this sample series.") % sample_series
         raise PermissionError(user, description)
 
+def assert_can_view_sample_series(user, sample_series):
+    u"""Tests whether the user can view a sample series.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `sample_series`: the sample series to be shown
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample_series: `models.SampleSeries`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to view the sample
+        series
+    """
+    if sample_series.currently_responsible_person != user and sample_series.group not in user.groups.all():
+        description = _(u"You are not allowed to view the sample series “%s” because neither are"
+                        u"you the currently responsible person for it, nor are you in its group.") % sample_series
+        raise PermissionError(user, description)
+
+def assert_can_add_external_operator(user):
+    u"""Tests whether the user can add an external operator.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to add an external
+        operator.
+    """
+    if not user.has_perm("samples.add_external_operator"):
+        description = _(u"You are not allowed to add an external operator because you don't have the permission “%s”.") \
+            % translate_permission("add_external_operator")
+        raise PermissionError(user, description)
+
+def assert_can_edit_external_operator(user, external_operator):
+    u"""Tests whether the user can edit an external operator.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `external_operator`: the external operator to be edited
+
+    :type user: ``django.contrib.auth.models.User``
+    :type external_operator: `models.ExternalOperator`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit an
+        external operator.
+    """
+    if external_operator.contact_person != user:
+        description = _(u"You are not allowed to edit this external operator because you aren't their "
+                        u"current contact person.")
+        raise PermissionError(user, description)
+
+def assert_can_view_external_operator(user, external_operator):
+    u"""Tests whether the user can view an external operator.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `external_operator`: the external operator to be shown
+
+    :type user: ``django.contrib.auth.models.User``
+    :type external_operator: `models.ExternalOperator`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to view an
+        external operator.
+    """
+    if external_operator.contact_person != user and not user.has_perm("samples.view_all_samples"):
+        description = _(u"You are not allowed to view this external operator because neither are you their "
+                        u"current contact person, nor are you a senior user.")
+        raise PermissionError(user, description)
+
+def assert_can_edit_group_memberships(user):
+    u"""Tests whether the user can change group memberships of other users.
+    This typically is a priviledge of heads of institute groups.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit griup
+        memberships.
+    """
+    if not user.has_perm("samples.edit_group_memberships"):
+        description = _(u"You are not allowed to change group memberships because you don't have the permission “%s”.") \
+            % translate_permission("edit_group_memberships")
+        raise PermissionError(user, description)
+
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for
 # for every ``assert_can_...`` function found here.

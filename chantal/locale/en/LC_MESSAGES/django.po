@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 15:16+0200\n"
+"POT-Creation-Date: 2008-10-22 15:37+0200\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -659,6 +659,34 @@ msgstr ""
 msgid ""
 "You are not allowed to edit the sample series “%s” because you are not the "
 "currently responsible person for this sample series."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to view the sample series “%s” because neither areyou "
+"the currently responsible person for it, nor are you in its group."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to add an external operator because you don't have the "
+"permission “%s”."
+msgstr ""
+
+msgid ""
+"You are not allowed to edit this external operator because you aren't their "
+"current contact person."
+msgstr ""
+
+msgid ""
+"You are not allowed to view this external operator because neither are you "
+"their current contact person, nor are you a senior user."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to change group memberships because you don't have the "
+"permission “%s”."
 msgstr ""
 
 msgid "Yes"
