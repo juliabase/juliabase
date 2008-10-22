@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 15:37+0200\n"
+"POT-Creation-Date: 2008-10-22 18:13+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -592,12 +592,6 @@ msgstr ""
 
 #, python-format
 msgid ""
-"You are not allowed to edit sample %s since you are not the sample's "
-"currently responsible person."
-msgstr ""
-
-#, python-format
-msgid ""
 "You are not allowed to edit the process “%(process)s” because you don't have "
 "the permission “%(permission)s”."
 msgstr ""
@@ -748,6 +742,11 @@ msgid "External operator “%(name)s”"
 msgstr ""
 
 msgid "You must add a \"hash\" parameter to the query string."
+msgstr ""
+
+msgid ""
+"You gave in invalid hash parameter in the query string.  Note that you can't "
+"access the news feed of another user."
 msgstr ""
 
 #, python-format
@@ -995,6 +994,9 @@ msgid ""
 "change."
 msgstr ""
 
+msgid "You can't access the “My Samples” section of another user."
+msgstr ""
+
 msgid "Successfully processed “My Samples”."
 msgstr ""
 
@@ -1047,6 +1049,13 @@ msgid "Edit sample “%s”"
 msgstr ""
 
 msgid "split"
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to add any processes to the sample %s because neither "
+"are you its currently responsible person, nor in its group, nor do you have "
+"special permissions for a physical process."
 msgstr ""
 
 #, python-format
@@ -1233,6 +1242,9 @@ msgstr ""
 
 #, python-format
 msgid "Split sample “%s”"
+msgstr ""
+
+msgid "You can't access the preferences of another user."
 msgstr ""
 
 msgid "The preferences were successfully updated."

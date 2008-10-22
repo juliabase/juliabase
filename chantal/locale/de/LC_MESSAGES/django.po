@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 15:37+0200\n"
-"PO-Revision-Date: 2008-10-22 15:37+0200\n"
+"POT-Creation-Date: 2008-10-22 18:13+0200\n"
+"PO-Revision-Date: 2008-10-22 18:58+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -596,14 +596,6 @@ msgstr ""
 
 #, python-format
 msgid ""
-"You are not allowed to edit sample %s since you are not the sample's "
-"currently responsible person."
-msgstr ""
-"Sie dürfen nicht die Probe %s ändern, da Sie nicht der aktuell "
-"Verantwortliche für diese Probe sind."
-
-#, python-format
-msgid ""
 "You are not allowed to edit the process “%(process)s” because you don't have "
 "the permission “%(permission)s”."
 msgstr ""
@@ -720,7 +712,9 @@ msgstr ""
 msgid ""
 "You are not allowed to change group memberships because you don't have the "
 "permission “%s”."
-msgstr "Sie dürfen keine Gruppenzugehörigkeiten ändern, weil Ihnen die Berechtgung „%s“ fehlt."
+msgstr ""
+"Sie dürfen keine Gruppenzugehörigkeiten ändern, weil Ihnen die Berechtgung „%"
+"s“ fehlt."
 
 msgid "Yes"
 msgstr "Ja"
@@ -786,6 +780,11 @@ msgstr "Externer Operateur „%(name)s“"
 
 msgid "You must add a \"hash\" parameter to the query string."
 msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
+
+msgid ""
+"You gave in invalid hash parameter in the query string.  Note that you can't "
+"access the news feed of another user."
+msgstr "Sie haben einen ungültigen Hash-Wert im Query-String angegeben.  Beachten Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen dürfen."
 
 #, python-format
 msgid "Chantal news for %s"
@@ -1038,6 +1037,9 @@ msgstr ""
 "Sie müssen die aktuell verantwortliche Person sein für die Proben, die Sie "
 "ändern wollen."
 
+msgid "You can't access the “My Samples” section of another user."
+msgstr "Sie düfen nicht auf „Meine Proben“ eines anderen Benutzers zugreifen."
+
 msgid "Successfully processed “My Samples”."
 msgstr "Erfolgreich „Meine Proben“ verarbeitet."
 
@@ -1091,6 +1093,13 @@ msgstr "Ändern der Probe „%s“"
 
 msgid "split"
 msgstr "Spaltung"
+
+#, python-format
+msgid ""
+"You are not allowed to add any processes to the sample %s because neither "
+"are you its currently responsible person, nor in its group, nor do you have "
+"special permissions for a physical process."
+msgstr "Sie dürfen keine Prozesse zur Probe %s hinzufügen, weil Sie weder ihr aktueller Verantwortlicher sind, noch in ihrer Gruppe sind, noch spezielle Berechtigungen für physikalische Prozesse haben."
 
 #, python-format
 msgid "Sample %s was added to Your Samples."
@@ -1287,6 +1296,9 @@ msgstr ""
 #, python-format
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
+
+msgid "You can't access the preferences of another user."
+msgstr "Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
 
 msgid "The preferences were successfully updated."
 msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
@@ -1869,6 +1881,13 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid ""
+#~ "You are not allowed to edit sample %s since you are not the sample's "
+#~ "currently responsible person."
+#~ msgstr ""
+#~ "Sie dürfen nicht die Probe %s ändern, da Sie nicht der aktuell "
+#~ "Verantwortliche für diese Probe sind."
 
 #~ msgid "edit the process “%s”"
 #~ msgstr "den Prozess „%s“ zu ändern"
