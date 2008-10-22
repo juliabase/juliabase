@@ -271,7 +271,7 @@ def assert_can_edit_sample(user, sample):
                         u"you are not the currently responsible person for this sample.") % sample
         raise PermissionError(user, description)
 
-def assert_can_edit_sample_series(user, sample):
+def assert_can_edit_sample_series(user, sample_series):
     u"""Tests whether the user can edit a sample series, including adding or
     removing samples.
 
