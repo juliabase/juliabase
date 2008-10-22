@@ -151,8 +151,8 @@ def assert_can_add_edit_physical_process(user, process_class, process):
         raise PermissionError(user, description)
 
 def assert_can_view_physical_process(user, process):
-    u"""Tests whether the user can view edit a physical process
-    (i.e. deposition, measurement, etching process, clean room work etc).
+    u"""Tests whether the user can view a physical process (i.e. deposition,
+    measurement, etching process, clean room work etc).
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -175,6 +175,121 @@ def assert_can_view_physical_process(user, process):
                             u"permission “%(permission)s”, nor you are allowed to view one of the processed samples.") \
                             % {"process": unicode(process), "permission": permission}
             raise PermissionError(user, description, new_group_would_help=True)
+
+def assert_can_edit_result_process(user, result_process):
+    u"""Tests whether the user can edit a result process.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `result_process`: The result process to edit.
+
+    :type user: ``django.contrib.auth.models.User``
+    :type result_process: `models.Process`  FixMe: Should be ResultProcess
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit the result
+        process.
+    """
+    if result_process.operator != user:
+        description = _(u"You are not allowed to edit the result “%s” because you didn't create this result.") \
+            % unicode(result_process)
+        raise PermissionError(user, description)
+
+def assert_can_add_result_process(user, sample_or_series):
+    u"""Tests whether the user can add a result process.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `sample_or_series`: the sample (series) the user wants to add a result
+        to 
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample_or_series: `models.Sample` or `models.SampleSeries`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to add the result
+        process to the sample or series
+    """
+    if sample_or_series.currently_responsible_person != user and sample_or_series.group not in user.groups.all():
+        if isinstance(sample_or_series, models.Sample):
+            description = _(u"You are not allowed to add the result to %s because neither are you the currently "
+                            u"responsible person for this sample, nor are you a member of its group.") % sample_or_series
+        else:
+            description = _(u"You are not allowed to add the result to %s because neither are you the currently "
+                            u"responsible person for this sample series, nor are you a member of its group.") \
+                            % sample_or_series
+        raise PermissionError(user, description)
+
+def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
+    u"""Tests whether the user can add or edit a substrate to *already
+    existing* samples.  This is not used if samples and substrate process are
+    created in the same request.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `substrate`: the substrate process to be edited; ``None`` if the user
+        wants to create one
+      - `affected_samples`: the samples that belong to the newly created
+        substrate process; ``None`` if the user wants to edit one
+
+    :type user: ``django.contrib.auth.models.User``
+    :type substrate: `models.Substrate`
+    :type affected_samples: list of `models.Sample`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to add or edit the
+        substrate process for those samples
+    """
+    assert (substrate and affected_names is None) or (substrate is None and affected_names is not None)
+    if substrate:
+        affected_names = substrate.samples
+    for sample in affected_samples:
+        if sample.currently_responsible_person != user:
+            if substrate:
+                description = _(u"You are not allowed to edit the substrate #%d because you are not allowed to edit "
+                                u"all affected samples.") % substrate.pk
+            else:
+                description = _(u"You are not allowed to add a substrate because you are not allowed to edit all "
+                                u"affected samples.")
+            raise PermissionError(user, description, new_group_would_help=True)
+
+def assert_can_edit_sample(user, sample):
+    u"""Tests whether the user can edit, split, and kill a sample.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `sample`: the sample to be changed
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample: `models.Sample`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit the sample
+    """
+    if sample.group and sample.currently_responsible_person != user:
+        description = _(u"You are not allowed to edit the sample “%s” (including splitting and declaring dead) because "
+                        u"you are not the currently responsible person for this sample.") % sample
+        raise PermissionError(user, description)
+
+def assert_can_edit_sample_series(user, sample):
+    u"""Tests whether the user can edit a sample series, including adding or
+    removing samples.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `sample_series`: the sample series to be changed
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample_series: `models.SampleSeries`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit the sample
+        series
+    """
+    if sample_series.currently_responsible_person != user:
+        description = _(u"You are not allowed to edit the sample series “%s” because "
+                        u"you are not the currently responsible person for this sample series.") % sample_series
+        raise PermissionError(user, description)
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for

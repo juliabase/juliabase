@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 11:26+0200\n"
+"POT-Creation-Date: 2008-10-22 15:16+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -613,6 +613,50 @@ msgid ""
 "You are not allowed to view the process “%(process)s” because neither you "
 "have the permission “%(permission)s”, nor you are allowed to view one of the "
 "processed samples."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to edit the result “%s” because you didn't create this "
+"result."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to add the result to %s because neither are you the "
+"currently responsible person for this sample, nor are you a member of its "
+"group."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to add the result to %s because neither are you the "
+"currently responsible person for this sample series, nor are you a member of "
+"its group."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to edit the substrate #%d because you are not allowed to "
+"edit all affected samples."
+msgstr ""
+
+msgid ""
+"You are not allowed to add a substrate because you are not allowed to edit "
+"all affected samples."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to edit the sample “%s” (including splitting and "
+"declaring dead) because you are not the currently responsible person for "
+"this sample."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to edit the sample series “%s” because you are not the "
+"currently responsible person for this sample series."
 msgstr ""
 
 msgid "Yes"
