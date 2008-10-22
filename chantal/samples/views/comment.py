@@ -96,8 +96,8 @@ def is_referentially_valid(comment_form, user):
     :rtype: bool
     """
     referentially_valid = True
-    if not utils.get_allowed_result_processes(user, comment_form.cleaned_data["samples"],
-                                              comment_form.cleaned_data["sample_series"]):
+    if not permissions.get_allowed_result_processes(user, comment_form.cleaned_data["samples"],
+                                                    comment_form.cleaned_data["sample_series"]):
         referentially_valid = False
         utils.append_error(comment_form,
                            _(u"You don't have the permission to add the result to all selected samples/series."))

@@ -99,7 +99,7 @@ def get_allowed_processes(user, sample):
         process to the sample
     """
     processes = []
-    processes.extend(utils.get_allowed_result_processes(user, samples=[sample]))
+    processes.extend(permissions.get_allowed_result_processes(user, samples=[sample]))
     if sample.currently_responsible_person == user:
         processes.append({"name": _(u"split"), "link": sample.get_absolute_url() + "/split/"})
         # FixMe: Add sample death
@@ -130,10 +130,8 @@ def show(request, sample_name, sample_id=None):
     :rtype: ``HttpResponse``
     """
     start = time.time()
-    if sample_id is None:
-        sample = utils.lookup_sample(sample_name, request)
-    else:
-        sample = get_object_or_404(models.Sample, pk=sample_id)
+    sample = \
+        utils.lookup_sample(sample_name, request) if sample_id is None else get_object_or_404(models.Sample, pk=sample_id)
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)

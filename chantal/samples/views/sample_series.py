@@ -69,11 +69,11 @@ def show(request, name):
     permissions.assert_can_view_sample_series(request.user, sample_series)
     user_details = utils.get_profile(request.user)
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
+    can_add_process = bool(permissions.get_allowed_result_processes(request.user, sample_series=[sample_series]))
     return render_to_response("show_sample_series.html",
                               {"title": _(u"Sample series “%s”") % sample_series.name,
                                "can_edit": sample_series.currently_responsible_person == request.user,
-                               "can_add_process":
-                                   bool(utils.get_allowed_result_processes(request.user, sample_series=[sample_series])),
+                               "can_add_process": can_add_process,
                                "sample_series": sample_series,
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
@@ -171,7 +171,7 @@ def new(request):
 @login_required
 def add_result_process(request, name):
     u"""View for appending a result process to a sample series.  For the rules
-    of adding result processes, see `utils.get_allowed_result_processes`.
+    of adding result processes, see `permissions.get_allowed_result_processes`.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -188,7 +188,7 @@ def add_result_process(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_add_result_process(request.user, sample_series)
     user_details = utils.get_profile(request.user)
-    processes = utils.get_allowed_result_processes(request.user, sample_series=[sample_series])
+    processes = permissions.get_allowed_result_processes(request.user, sample_series=[sample_series])
     return render_to_response("add_process.html",
                               {"title": _(u"Add result to “%s”") % name,
                                "processes": processes,

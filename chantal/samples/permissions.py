@@ -371,6 +371,44 @@ def assert_can_edit_group_memberships(user):
         raise PermissionError(user, description)
 
 
+def get_allowed_result_processes(user, samples=[], sample_series=[]):
+    u"""Generates a list of all result processes that the user is allowed to
+    add to the given sample(-series).  It's a list of dictionaries containing
+    two keys: ``"name"`` and ``"link"``.  The name is a human-friendly name of
+    the result process, and the link points to the add view of the respective
+    process.
+
+    Actually, it is an all-or-nothing situation.  Either the result is the
+    empty list, or the full list of result processes.  At least at the moment,
+    I see no reason to have something more fine-grained.
+
+    :Parameters:
+      - `user`: the current user
+      - `samples`: a list with samples for which the user wants to add result
+        processes
+      - `sample_series`: a list with sample series for which the user wants to
+        add result processes
+
+    :type user: ``django.contrib.auth.models.User``
+    :type samples: list of `models.Sample`
+    :type sample_series: list of `models.SampleSeries`
+
+    :Return:
+      all result processes that the user is allowed to add to the given
+      sample(-series).
+
+    :rtype: list of dict
+    """
+    user_groups = user.groups.all()
+    for sample in samples:
+        if sample.currently_responsible_person != user and sample.group and sample.group not in user_groups:
+            return []
+    for sample_series in sample_series:
+        if sample_series.currently_responsible_person != user and sample_series.group not in user_groups:
+            return []
+    return [{"name": cls._meta.verbose_name, "link": cls.get_add_url()} for cls in models.result_process_classes]
+
+
 # Now, I inject the ``has_permission_to_...`` functions into this module for
 # for every ``assert_can_...`` function found here.
 

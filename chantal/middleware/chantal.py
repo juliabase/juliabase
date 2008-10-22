@@ -61,6 +61,10 @@ class HttpResponseUnauthorized(django.http.HttpResponse):
     status_code = 401
 
 class ExceptionsMiddleware(object):
+    u"""Middleware for catching all exceptions raised by views.  An exception
+    means a redirect in one way or another.  An HTTP 404 code is only handled
+    here if the client was the Remote Client.
+    """
     def process_exception(self, request, exception):
         if isinstance(exception, django.http.Http404):
             if utils.is_remote_client(request):

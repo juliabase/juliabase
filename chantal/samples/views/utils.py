@@ -477,25 +477,6 @@ def get_my_layers(user_details, deposition_model):
         fitting_items.append((u"%d-%d" % (deposition_id, layer_number), nickname))
     return fitting_items
 
-def has_permission_for_sample_or_series(user, sample_or_series):
-    u"""Returns ``True`` if the user is allowed to see a sample (series).
-
-    :Parameters:
-      - `user`: the currently logged-in user
-      - `sample_or_series`: the sample or sample series for which the
-        permission should be checked
-
-    :type user: ``django.contrib.auth.models.User``
-    :type sample_or_series: `models.Sample` or `models.SampleSeries`
-
-    :Returns:
-      whether the user is allowed to see the sample or sample series.
-
-    :rtype: bool
-    """
-    return user.has_perm("samples.view_all_samples") or sample_or_series.group in user.groups.all() \
-        or sample_or_series.currently_responsible_person == user
-
 class ResultContext(object):
     u"""Contains all info that result processes must know in order to render
     themselves as HTML.  It retrieves all processes, resolve the polymorphism
@@ -775,43 +756,6 @@ def convert_id_to_int(process_id):
         return int(process_id)
     except ValueError:
         raise Http404
-
-def get_allowed_result_processes(user, samples=[], sample_series=[]):
-    u"""Generates a list of all result processes that the user is allowed to
-    add to the given sample(-series).  It's a list of dictionaries containing
-    two keys: ``"name"`` and ``"link"``.  The name is a human-friendly name of
-    the result process, and the link points to the add view of the respective
-    process.
-
-    Actually, it is an all-or-nothing situation.  Either the result is the
-    empty list, or the full list of result processes.  At least at the moment,
-    I see no reason to have something more fine-grained.
-
-    :Parameters:
-      - `user`: the current user
-      - `samples`: a list with samples for which the user wants to add result
-        processes
-      - `sample_series`: a list with sample series for which the user wants to
-        add result processes
-
-    :type user: ``django.contrib.auth.models.User``
-    :type samples: list of `models.Sample`
-    :type sample_series: list of `models.SampleSeries`
-
-    :Return:
-      all result processes that the user is allowed to add to the given
-      sample(-series).
-
-    :rtype: list of dict
-    """
-    user_groups = user.groups.all()
-    for sample in samples:
-        if sample.currently_responsible_person != user and sample.group and sample.group not in user_groups:
-            return []
-    for sample_series in sample_series:
-        if sample_series.currently_responsible_person != user and sample_series.group not in user_groups:
-            return []
-    return [{"name": cls._meta.verbose_name, "link": cls.get_add_url()} for cls in models.result_process_classes]
 
 def parse_query_string(request):
     u"""Parses an URL query string.
