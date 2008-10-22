@@ -21,10 +21,22 @@ permission just means that e.g. a link is not generated (for example, in the
 ``get_additional_template_context`` methods in the models).
 """
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
+import django.contrib.auth.models
 # Attention! This is a cyclic import.  Don't use models in top-level code.
 from chantal.samples import models
 from chantal.samples.views import shared_utils
+
+_ = ugettext_lazy
+translate_permission = {"Can add an external operator": _("Can add an external operator"),
+                        "Can create and edit 6-chamber depositions": _("Can create and edit 6-chamber depositions"),
+                        "Can create and edit hall measurements": _("Can create and edit hall measurements"),
+                        "Can create and edit large-area depositions": _("Can create and edit large-area depositions"),
+                        "Can create and edit PDS measurements": _("Can create and edit PDS measurements"),
+                        "Can view all samples (senior user)": _("Can view all samples (senior user)"),
+                        "Can edit group memberships": _("Can edit group memberships"),
+                        }
+_ = ugettext
 
 class PermissionError(Exception):
     u"""Common base class for all permission exceptions.  It should never be
@@ -56,7 +68,7 @@ class PermissionError(Exception):
     :type description: unicode
     :type reason: unicode
     """
-    def __init__(self, user, partial_description, reason):
+    def __init__(self, user, partial_description, reason, reason_is_permission=False, group_would_help=False):
         u"""Class constructor.  The only difficult thing here is
         ``partial_description``.  It is embedded into another string to form a
         complete sentence.  The embracing string for English is ``"You are not
@@ -78,7 +90,10 @@ class PermissionError(Exception):
         self.description = _(u"You are not allowed to %s.") % partial_description
         super(PermissionError, self).__init__(_(u"%(description)s  Reason: %(reason)s") %
                                               {"description": self.description, "reason": reason})
-        self.user, self.reason = user, reason
+        if reason_is_permission:
+            reason = translate_permission[django.contrib.auth.models.Permission.objects.get(codename=reason).name]
+        self.user, self.reason, self.reason_is_permission, self.group_would_help = \
+            user, reason, reason_is_permission, group_would_help
 
 class PermissionViewSampleError(PermissionError):
     def __init__(self, user, sample, reason):
@@ -120,6 +135,34 @@ def assert_can_edit_sample(user, sample):
     """
     if sample.currently_responsible_person != user:
         raise PermissionEditSampleError(user, sample, _(u"You are not the sample's currently responsible person."))
+
+
+class PermissionAddEditPhysicalProcessError(PermissionError):
+    def __init__(self, user, process_class, process, reason):
+        if process:
+            partial_description = _(u"edit the process “%s”") % unicode(process)
+        else:
+            partial_description = _(u"add %s") % process_class._meta.verbose_name_plural
+        super(PermissionAddEditPhysicalProcessError, self).__init__(user, partial_description, reason)
+        self.process_class, self.process = process_class, process
+
+def assert_can_add_edit_physical_process(user, process_class, process):
+    u"""Tests whether the user can create or edit a physical process
+    (i.e. deposition, measurement, etching process, clean room work etc).
+
+    :Parameters:
+      - `user`: ``django.contrib.auth.models.User``
+      - `process_class`: ``class`` (derived from `models.Process`)
+
+    :Exceptions:
+      - `PermissionAddEditPhysicalProcessError`: raised if the user is not
+        allowed to create or edit the process.
+    """
+    permission = "samples.add_edit_" + shared_utils.camel_case_to_underscores(process_class.__name__)
+    if not user.has_perm(permission) or True:
+        raise PermissionAddEditPhysicalProcessError(
+            user, process_class, process,
+            _(u"You don't have the special right to add or edit %s.") % process_class._meta.verbose_name_plural)
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for
