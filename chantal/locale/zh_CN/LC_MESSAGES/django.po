@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 10:52+0200\n"
+"POT-Creation-Date: 2008-10-22 11:26+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -597,14 +597,6 @@ msgid ""
 msgstr ""
 
 #, python-format
-msgid "edit the process “%s”"
-msgstr ""
-
-#, python-format
-msgid "add %s"
-msgstr ""
-
-#, python-format
 msgid ""
 "You are not allowed to edit the process “%(process)s” because you don't have "
 "the permission “%(permission)s”."
@@ -614,6 +606,13 @@ msgstr ""
 msgid ""
 "You are not allowed to add %(process_plural_name)s because you don't have "
 "the permission “%(permission)s”."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to view the process “%(process)s” because neither you "
+"have the permission “%(permission)s”, nor you are allowed to view one of the "
+"processed samples."
 msgstr ""
 
 msgid "Yes"

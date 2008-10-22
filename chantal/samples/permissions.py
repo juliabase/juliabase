@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 u"""Central permission checking.  This module consists of three parts: First,
-the exceptions that are raised if a certain permission condition is not met.
+the exception that is raised if a certain permission condition is not met.
 Secondly, the assertion functions that test for certain permissions.  And
 thirdly, top-level code that generates a ``has_permission_to_...`` function for
 every ``assert_can_...`` function.
 
 The idea is the following.  For example, there is a function called
 ``assert_can_view_sample``.  If the user can't view the sample, a
-``PermissionViewSampleError`` is raised.  Sometimes however, you just want to
-check it without having to catch an exception.  Then, you use
+``PermissionError`` is raised.  Sometimes however, you just want to check it
+without having to catch an exception.  Then, you use
 ``has_permission_to_view_sample``.  The parameters are the same but instead of
 raising an exception, it returns ``True`` or ``False``.
 
@@ -120,22 +120,20 @@ def assert_can_edit_sample(user, sample):
         raise PermissionEditSampleError(user, description)
 
 
-class PermissionAddEditPhysicalProcessError(PermissionError):
-    def __init__(self, user, process_class, process, reason):
-        if process:
-            partial_description = _(u"edit the process “%s”") % unicode(process)
-        else:
-            partial_description = _(u"add %s") % process_class._meta.verbose_name_plural
-        super(PermissionAddEditPhysicalProcessError, self).__init__(user, partial_description, reason)
-        self.process_class, self.process = process_class, process
-
 def assert_can_add_edit_physical_process(user, process_class, process):
     u"""Tests whether the user can create or edit a physical process
     (i.e. deposition, measurement, etching process, clean room work etc).
 
     :Parameters:
-      - `user`: ``django.contrib.auth.models.User``
-      - `process_class`: ``class`` (derived from `models.Process`)
+      - `user`: the user whose permission should be checked
+      - `process_class`: the type of physical process that the user asks
+        permission for
+      - `process`: The concrete process to edit.  If ``None``, a new process is
+        about to be created.
+
+    :type user: ``django.contrib.auth.models.User``
+    :type process_class: ``class`` (derived from `models.Process`)
+    :type process: `models.Process`
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to create or edit
@@ -151,6 +149,32 @@ def assert_can_add_edit_physical_process(user, process_class, process):
                             u"permission “%(permission)s”.") % \
                             {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
         raise PermissionError(user, description)
+
+def assert_can_view_physical_process(user, process):
+    u"""Tests whether the user can view edit a physical process
+    (i.e. deposition, measurement, etching process, clean room work etc).
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `process`: The concrete process to view.
+
+    :type user: ``django.contrib.auth.models.User``
+    :type process: `models.Process`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to view the
+        process.
+    """
+    permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process.__class__.__name__))
+    if not user.has_perm(permission):
+        for sample in process.samples:
+            if has_permission_to_view_sample(user, sample):
+                break
+        else:
+            description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
+                            u"permission “%(permission)s”, nor you are allowed to view one of the processed samples.") \
+                            % {"process": unicode(process), "permission": permission}
+            raise PermissionError(user, description, new_group_would_help=True)
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for

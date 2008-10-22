@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 10:52+0200\n"
-"PO-Revision-Date: 2008-10-22 10:54+0200\n"
+"POT-Creation-Date: 2008-10-22 11:26+0200\n"
+"PO-Revision-Date: 2008-10-22 11:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -603,14 +603,6 @@ msgstr ""
 "Verantwortliche für diese Probe sind."
 
 #, python-format
-msgid "edit the process “%s”"
-msgstr "den Prozess „%s“ zu ändern"
-
-#, python-format
-msgid "add %s"
-msgstr "%s hinzuzufügen"
-
-#, python-format
 msgid ""
 "You are not allowed to edit the process “%(process)s” because you don't have "
 "the permission “%(permission)s”."
@@ -625,6 +617,13 @@ msgid ""
 msgstr ""
 "Sie dürfen keine %(process_plural_name)s hinzufügen, weil Sie nicht die "
 "Berechtigung „%(permission)s“ haben."
+
+#, python-format
+msgid ""
+"You are not allowed to view the process “%(process)s” because neither you "
+"have the permission “%(permission)s”, nor you are allowed to view one of the "
+"processed samples."
+msgstr "Sie dürfen den Prozess „%(process)s“ sich nicht anschauen, weil Sie weder die Berechtigung „%(permission)s“ haben, noch eine der beteiligten Proben sehen dürfen."
 
 msgid "Yes"
 msgstr "Ja"
@@ -1556,7 +1555,11 @@ msgid ""
 "        Also note that the heads of your institute group may add you to the\n"
 "        Chantal group you need to access this resource.\n"
 "      "
-msgstr "\nBeachten Sie außerdem, dass der Leiter Ihrer Institutsgruppe Sie zu der Chantal-Gruppe hinzufügen könnte, die Sie benötigen, um auf diese Ressource zuzugreifen."
+msgstr ""
+"\n"
+"Beachten Sie außerdem, dass der Leiter Ihrer Institutsgruppe Sie zu der "
+"Chantal-Gruppe hinzufügen könnte, die Sie benötigen, um auf diese Ressource "
+"zuzugreifen."
 
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
@@ -1769,6 +1772,12 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "edit the process “%s”"
+#~ msgstr "den Prozess „%s“ zu ändern"
+
+#~ msgid "add %s"
+#~ msgstr "%s hinzuzufügen"
 
 #~ msgid "You are not allowed to %s."
 #~ msgstr "Ihnen ist es nicht erlaubt, %s."
