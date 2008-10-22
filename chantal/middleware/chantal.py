@@ -10,6 +10,8 @@ from chantal.samples.views import utils
 from chantal.samples.permissions import PermissionError
 from django.conf import settings
 from django.utils.translation import ugettext as _
+import django.http
+from django.shortcuts import render_to_response
 
 u"""Middleware for setting the current language to what can be found in
 `models.UserDetails`.
@@ -51,9 +53,23 @@ class LocaleMiddleware(object):
         translation.deactivate()
         return response
 
-class PermissionDeniedMiddleware(object):
+class HttpResponseUnauthorized(django.http.HttpResponse):
+    u"""The response sent back in case of a permission error.  This is another
+    missing response class in Dango.  I have no clue why they leave out such
+    trivial code.
+    """
+    status_code = 401
+
+class ExceptionsMiddleware(object):
     def process_exception(self, request, exception):
-        if isinstance(exception, PermissionError):
-            return utils.HttpResponseUnauthorized(
+        if isinstance(exception, django.http.Http404):
+            if utils.is_remote_client(request):
+                return utils.respond_to_remote_client(False)
+        elif isinstance(exception, PermissionError):
+            return HttpResponseUnauthorized(
                 loader.render_to_string("permission_error.html", {"title": _(u"Access denied"), "exception": exception},
                                         context_instance=RequestContext(request)))
+        elif isinstance(exception, utils.AmbiguityException):
+            render_to_response("disambiguation.html", {"alias": exception.sample_name, "samples": exception.samples,
+                                                       "title": _("Ambiguous sample name")},
+                               context_instance=RequestContext(request))

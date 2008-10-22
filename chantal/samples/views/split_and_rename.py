@@ -240,10 +240,8 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     """
     assert (parent_name or old_split_id) and not (parent_name and old_split_id)
     if parent_name:
-        parent, redirect = utils.lookup_sample(parent_name, request)
-        if redirect:
-            return redirect
         old_split = None
+        parent = utils.lookup_sample(parent_name, request)
     else:
         old_split = get_object_or_404(models.SampleSplit, pk=utils.convert_id_to_int(old_split_id))
         parent = old_split.parent
@@ -289,9 +287,7 @@ def latest_split(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample, redirect = utils.lookup_sample(sample_name, request)
-    if redirect:
-        return redirect
+    sample = utils.lookup_sample(sample_name, request)
     try:
         most_recent_process = sample.processes.latest("timestamp").find_actual_instance()
     except models.Process.DoesNotExist:

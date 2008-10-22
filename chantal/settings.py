@@ -69,7 +69,7 @@ MIDDLEWARE_CLASSES = (
     'chantal.middleware.chantal.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    'chantal.middleware.chantal.PermissionDeniedMiddleware',
+    'chantal.middleware.chantal.ExceptionsMiddleware',
 )
 APPEND_SLASH = False
 

@@ -54,9 +54,7 @@ def edit(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample, redirect = utils.lookup_sample(sample_name, request)
-    if redirect:
-        return redirect
+    sample = utils.lookup_sample(sample_name, request)
     permissions.assert_can_edit_sample(request.user, sample)
     old_group, old_responsible_person = sample.group, sample.currently_responsible_person
     user_details = utils.get_profile(request.user)
@@ -133,9 +131,7 @@ def show(request, sample_name, sample_id=None):
     """
     start = time.time()
     if sample_id is None:
-        sample, redirect = utils.lookup_sample(sample_name, request)
-        if redirect:
-            return redirect
+        sample = utils.lookup_sample(sample_name, request)
     else:
         sample = get_object_or_404(models.Sample, pk=sample_id)
     user_details = utils.get_profile(request.user)
@@ -293,9 +289,7 @@ def add_process(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample, redirect = utils.lookup_sample(sample_name, request)
-    if redirect:
-        return redirect
+    sample = utils.lookup_sample(sample_name, request)
     user_details = utils.get_profile(request.user)
     processes = get_allowed_processes(request.user, sample)
     return render_to_response("add_process.html",

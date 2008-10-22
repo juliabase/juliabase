@@ -19,7 +19,7 @@ from django.shortcuts import render_to_response
 from django.conf import settings
 from django.utils.http import urlquote
 import django.core.urlresolvers
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views.shared_utils import *
 
 class HttpResponseSeeOther(HttpResponse):
@@ -37,15 +37,6 @@ class HttpResponseSeeOther(HttpResponse):
     def __init__(self, redirect_to):
         super(HttpResponseSeeOther, self).__init__()
         self["Location"] = iri_to_uri(redirect_to)
-
-class HttpResponseUnauthorized(HttpResponse):
-    u"""The response sent back in case of a permission error.  This is another
-    missing response class in Dango.  I have no clue why they leave out such
-    trivial code.
-
-    So far, it is only used in `main.permission_error`.
-    """
-    status_code = 401
 
 class DataModelForm(ModelForm):
     u"""Model form class for accessing the data fields of a bound form, whether
@@ -718,12 +709,18 @@ def get_next_deposition_number(letter):
         next_number = 1
     return prefix + u"%03d" % next_number
 
+class AmbiguityException(Exception):
+    u"""Exception if a sample lookup leads to more than one matching alias
+    (remember that alias names needn't be unique).  It is raised in
+    `lookup_sample` and typically caught in Chantal's own middleware.
+    """
+    def __init__(self, sample_name, samples):
+        self.sample_name, self.samples = sample_name, samples
+
 def lookup_sample(sample_name, request):
     u"""Looks up the `sample_name` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
-    to view it.  If not, it either raises an exception or returns an HTTP
-    response object that the calling view should return immediately to its
-    caller.
+    to view it.  If not, it raises an exception.
     
     :Parameters:
       - `sample_name`: name of the sample
@@ -733,28 +730,23 @@ def lookup_sample(sample_name, request):
     :type request: ``HttpRequest``
 
     :Return:
-      the single found sample, and an HTTP response object.  Exactly one of
-      both is ``None``.  So if the HTTP response object is given, this is some
-      sort of mild exception.
+      the single found sample
 
-    :rtype: `models.Sample`, ``HttpResponse``
+    :rtype: `models.Sample`
 
     :Exceptions:
-      - `Http404`: of the sample name could not be found.
+      - ``Http404``: if the sample name could not be found
+      - `AmbiguityException`: if more than one matching alias was found
+      - `permissions.PermissionError`: if the user is not allowed to view the
+        sample
     """
     sample = get_sample(sample_name)
     if not sample:
-        if is_remote_client(request):
-            return None, respond_to_remote_client(False)
-        else:
-            raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if isinstance(sample, list):
-        return None, render_to_response(
-            "disambiguation.html", {"alias": sample_name, "samples": sample, "title": _("Ambiguous sample name")},
-            context_instance=RequestContext(request))
-    if not has_permission_for_sample_or_series(request.user, sample):
-        return None, utils.HttpResponseSeeOther("permission_error")
-    return sample, None
+        raise AmbiguityException(sample_name, sample)
+    permissions.assert_can_view_sample(request.user, sample)
+    return sample
 
 def convert_id_to_int(process_id):
     u"""If the user gives a process ID via the browser, it must be converted to
