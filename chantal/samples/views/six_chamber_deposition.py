@@ -21,7 +21,7 @@ from django import forms
 import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
 from chantal.samples.views.utils import check_permission, DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -440,6 +440,7 @@ def edit(request, deposition_number):
     """
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
     user_details = utils.get_profile(request.user)
+    permissions.assert_can_add_edit_physical_process(request.user, SixChamberDeposition, deposition)
     if request.method == "POST":
         deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)

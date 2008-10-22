@@ -413,7 +413,7 @@ class SixChamberDeposition(Deposition):
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
-        permissions = (("add_edit_6_chamber_deposition", "Can create and edit 6-chamber depositions"),)
+        permissions = (("add_edit_six_chamber_deposition", "Can create and edit 6-chamber depositions"),)
 default_location_of_deposited_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
 admin.site.register(SixChamberDeposition)
 

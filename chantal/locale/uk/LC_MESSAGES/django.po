@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 14:18+0200\n"
+"POT-Creation-Date: 2008-10-22 10:52+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -559,21 +559,61 @@ msgstr ""
 msgid "new samples feed entries"
 msgstr ""
 
-#, python-format
-msgid "You are not allowed to %s."
+msgid "Can add an external operator"
+msgstr ""
+
+msgid "Can create and edit 6-chamber depositions"
+msgstr ""
+
+msgid "Can create and edit hall measurements"
+msgstr ""
+
+msgid "Can create and edit large-area depositions"
+msgstr ""
+
+msgid "Can create and edit PDS measurements"
+msgstr ""
+
+msgid "Can view all samples (senior user)"
+msgstr ""
+
+msgid "Can edit group memberships"
+msgstr ""
+
+msgid "Permission denied: "
 msgstr ""
 
 #, python-format
-msgid "%(description)s  Reason: %(reason)s"
-msgstr ""
-
-#, python-format
-msgid "view sample %s"
-msgstr ""
-
 msgid ""
-"You are not in the sample's group, nor are you its currently responsible "
-"person, nor are you a senior user."
+"You are not allowed to view sample %s since you are not in the sample's "
+"group, nor are you its currently responsible person, nor are you a senior "
+"user."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to edit sample %s since you are not the sample's "
+"currently responsible person."
+msgstr ""
+
+#, python-format
+msgid "edit the process “%s”"
+msgstr ""
+
+#, python-format
+msgid "add %s"
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to edit the process “%(process)s” because you don't have "
+"the permission “%(permission)s”."
+msgstr ""
+
+#, python-format
+msgid ""
+"You are not allowed to add %(process_plural_name)s because you don't have "
+"the permission “%(permission)s”."
 msgstr ""
 
 msgid "Yes"
@@ -1443,11 +1483,17 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"      Sorry, you can't access this resource.  %(description)s Reason: <em>%"
-"(reason)s</em>\n"
+"      Sorry, you can't access this resource.  %(description)s\n"
 "      Please contact the administrator if you think you ought to have the "
 "permission.\n"
 "    "
+msgstr ""
+
+msgid ""
+"\n"
+"        Also note that the heads of your institute group may add you to the\n"
+"        Chantal group you need to access this resource.\n"
+"      "
 msgstr ""
 
 msgid "This occurence isn't reported to anyone, and it is not logged."

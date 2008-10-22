@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-19 14:18+0200\n"
-"PO-Revision-Date: 2008-10-19 14:19+0200\n"
+"POT-Creation-Date: 2008-10-22 10:52+0200\n"
+"PO-Revision-Date: 2008-10-22 10:54+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -561,24 +561,70 @@ msgstr "Feed-Eintrag für neue Proben"
 msgid "new samples feed entries"
 msgstr "Feed-Einträge für neue Proben"
 
-#, python-format
-msgid "You are not allowed to %s."
-msgstr "Ihnen ist es nicht erlaubt, %s."
+msgid "Can add an external operator"
+msgstr "Darf externen Operateur anlegen"
+
+msgid "Can create and edit 6-chamber depositions"
+msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"
+
+msgid "Can create and edit hall measurements"
+msgstr "Darf Hallmessungen anlegen und ändern"
+
+msgid "Can create and edit large-area depositions"
+msgstr "Darf großflächige Depositionen anlegen und ändern"
+
+msgid "Can create and edit PDS measurements"
+msgstr "Darf PDS-Messungen anlegen und ändern"
+
+msgid "Can view all samples (senior user)"
+msgstr "Darf alle Proben sehen (Seniornutzer)"
+
+msgid "Can edit group memberships"
+msgstr "Darf Gruppenzugehörigkeiten ändern"
+
+msgid "Permission denied: "
+msgstr "Zugriff verweigert: "
 
 #, python-format
-msgid "%(description)s  Reason: %(reason)s"
-msgstr "%(description)s  Begründung: %(reason)s"
-
-#, python-format
-msgid "view sample %s"
-msgstr "sich Probe %s anzusehen"
-
 msgid ""
-"You are not in the sample's group, nor are you its currently responsible "
-"person, nor are you a senior user."
+"You are not allowed to view sample %s since you are not in the sample's "
+"group, nor are you its currently responsible person, nor are you a senior "
+"user."
 msgstr ""
-"Weder sind Sie in der Gruppe der Probe, noch sind Sie ihr aktuell "
-"Verantwortlicher, noch sind Sie Seniornutzer."
+"Sie dürfen nicht die Probe %s sehen, da Sie weder in der Gruppe der Probe "
+"sind, noch ihr aktuell Verantwortlicher sind, noch Seniornutzer sind."
+
+#, python-format
+msgid ""
+"You are not allowed to edit sample %s since you are not the sample's "
+"currently responsible person."
+msgstr ""
+"Sie dürfen nicht die Probe %s ändern, da Sie nicht der aktuell "
+"Verantwortliche für diese Probe sind."
+
+#, python-format
+msgid "edit the process “%s”"
+msgstr "den Prozess „%s“ zu ändern"
+
+#, python-format
+msgid "add %s"
+msgstr "%s hinzuzufügen"
+
+#, python-format
+msgid ""
+"You are not allowed to edit the process “%(process)s” because you don't have "
+"the permission “%(permission)s”."
+msgstr ""
+"Sie dürfen den Prozess „%(process)s“ nicht ändern, weil Sie nicht die "
+"Berechtigung „%(permission)s“ haben."
+
+#, python-format
+msgid ""
+"You are not allowed to add %(process_plural_name)s because you don't have "
+"the permission “%(permission)s”."
+msgstr ""
+"Sie dürfen keine %(process_plural_name)s hinzufügen, weil Sie nicht die "
+"Berechtigung „%(permission)s“ haben."
 
 msgid "Yes"
 msgstr "Ja"
@@ -1495,16 +1541,22 @@ msgstr "Frau mit Schloss"
 #, python-format
 msgid ""
 "\n"
-"      Sorry, you can't access this resource.  %(description)s Reason: <em>%"
-"(reason)s</em>\n"
+"      Sorry, you can't access this resource.  %(description)s\n"
 "      Please contact the administrator if you think you ought to have the "
 "permission.\n"
 "    "
 msgstr ""
 "\n"
-"Leider dürfen Sie nicht auf diese Resource zugreifen.  %(description)s  "
-"Begründung: <em>%(reason)s</em>  Bitte kontaktieren Sie den Administrator, "
-"wenn Sie glauben, dass Sie die Berechtigung haben sollten."
+"Leider dürfen Sie nicht auf diese Ressource zugreifen.  %(description)s  "
+"Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die "
+"Berechtigung haben sollten."
+
+msgid ""
+"\n"
+"        Also note that the heads of your institute group may add you to the\n"
+"        Chantal group you need to access this resource.\n"
+"      "
+msgstr "\nBeachten Sie außerdem, dass der Leiter Ihrer Institutsgruppe Sie zu der Chantal-Gruppe hinzufügen könnte, die Sie benötigen, um auf diese Ressource zuzugreifen."
 
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
@@ -1718,11 +1770,23 @@ msgstr "Inspizierte Objekte"
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
 
+#~ msgid "You are not allowed to %s."
+#~ msgstr "Ihnen ist es nicht erlaubt, %s."
+
+#~ msgid "%(description)s  Reason: %(reason)s"
+#~ msgstr "%(description)s  Begründung: %(reason)s"
+
+#~ msgid "view sample %s"
+#~ msgstr "sich Probe %s anzusehen"
+
+#~ msgid "edit sample %s"
+#~ msgstr "die Probe %s zu ändern"
+
+#~ msgid "You don't have the special right to add or edit %s."
+#~ msgstr "Sie haben nicht das spezielle Recht, %s anzulegen oder zu ändern."
+
 #~ msgid "Permission missing for: %(action)s  Cause: %(cause)s"
 #~ msgstr "Berechtigung fehlt für: %(action)s  Begründung: %(cause)s"
-
-#~ msgid "Permission missing: "
-#~ msgstr "Fehlende Berechtigung:"
 
 #~ msgid ""
 #~ "\n"
@@ -1820,12 +1884,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "Added %d samples to the database"
 #~ msgstr "Es wurden %d Proben zur Datenbank hinzugefügt"
-
-#~ msgid "Can create and edit 6-chamber depositions"
-#~ msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"
-
-#~ msgid "Can view all samples"
-#~ msgstr "Darf alle Proben sehen"
 
 #~ msgid ""
 #~ "Warning: If you click on one of the links below, any changes on this page "
