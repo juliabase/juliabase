@@ -42,7 +42,6 @@ admin.autodiscover()
 
 urlpatterns = patterns("",
                        (r"^$", "samples.views.main.main_menu"),
-                       (r"^(?P<failed_action>.+)/permission_error$", "samples.views.main.permission_error"),
                        (r"^feeds/(?P<username>.+)", "samples.views.feed.show"),
                        (r"^my_samples/(?P<username>.+)", "samples.views.my_samples.edit"),
 

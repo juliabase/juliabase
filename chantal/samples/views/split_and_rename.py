@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from django.db.models import Q
-from chantal.samples import models
+from chantal.samples import models, permissions
 import django.core.urlresolvers
 from chantal.samples.views import utils
 
@@ -247,10 +247,9 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     else:
         old_split = get_object_or_404(models.SampleSplit, pk=utils.convert_id_to_int(old_split_id))
         parent = old_split.parent
+        permissions.assert_can_edit_sample(request.user, parent)
         if parent.processes.filter(timestamp__gt=old_split.timestamp).count():
             raise Http404(_(u"This split is not the last one in the sample's process list."))
-        if not utils.has_permission_for_sample_or_series(request.user, parent):
-            return utils.HttpResponseSeeOther("permission_error")
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)

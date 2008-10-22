@@ -82,7 +82,7 @@ def edit_preferences(request, login_name):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
-        return utils.HttpResponseSeeOther("permission_error")
+        raise permissions.PermissionError(request.user, _(u"You can't access the preferences of another user."))
     user_details = utils.get_profile(user)
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)

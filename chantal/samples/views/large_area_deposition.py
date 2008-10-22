@@ -20,14 +20,13 @@ import re, datetime
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from chantal.samples import models
+from chantal.samples import models, permissions
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 import django.core.urlresolvers
 import django.contrib.auth.models
 from django.db.models import Q
-from chantal.samples.views.utils import check_permission
 from chantal.samples.views import utils
 
 class SamplesForm(forms.Form):
@@ -496,7 +495,6 @@ class FormSet(object):
                 "add_layers": self.add_layers_form, "remove_from_my_samples": self.remove_from_my_samples_form}
 
 @login_required
-@check_permission("change_largeareadeposition")
 def edit(request, deposition_number):
     u"""Edit or create a large-area deposition.  In case of creation, starting
     with a duplicate of another deposition is also possible if a ``copy-from``
@@ -516,6 +514,7 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     form_set = FormSet(request.user, deposition_number)
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, models.LargeAreaDeposition)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
@@ -562,9 +561,7 @@ def show(request, deposition_number):
     """
     deposition = get_object_or_404(models.LargeAreaDeposition, number=deposition_number)
     samples = deposition.samples
-    if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
-            and not request.user.has_perm("change_largeareadeposition"):
-        return utils.HttpResponseSeeOther("permission_error")
+    permissions.assert_can_view_physical_process(request.user, form_set.deposition)
     template_context = {"title": _(u"Large-area deposition “%s”") % deposition.number, "samples": samples.all(),
                         "process": deposition}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))

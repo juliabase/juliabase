@@ -12,7 +12,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
 class EditCommentForm(forms.Form):
@@ -38,9 +38,7 @@ def edit(request, process_id):
     :rtype: ``HttpResponse``
     """
     comment = get_object_or_404(models.Comment, pk=utils.convert_id_to_int(process_id))
-    if request.user != comment.operator or \
-            not utils.get_allowed_result_processes(request.user, comment.samples.all(), comment.sample_series.all()):
-        return utils.HttpResponseSeeOther("permission_error")
+    permissions.assert_can_edit_result_process(request.user, comment)
     if request.method == "POST":
         comment_form = EditCommentForm(request.POST)
         if comment_form.is_valid():

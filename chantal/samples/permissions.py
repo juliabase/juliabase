@@ -102,43 +102,30 @@ def assert_can_view_sample(user, sample):
                         u"its currently responsible person, nor are you a senior user.") % sample
         raise PermissionError(user, description, new_group_would_help=True)
 
-
-def assert_can_edit_sample(user, sample):
-    u"""Tests whether the user can edit the sample.
-
-    :Parameters:
-      - `user`: ``django.contrib.auth.models.User``
-      - `sample`: `models.Sample`
-
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit the
-        sample.
-    """
-    if sample.currently_responsible_person != user:
-        description = _(u"You are not allowed to edit sample %s since you are not the sample's currently "
-                        u"responsible person.") % sample
-        raise PermissionEditSampleError(user, description)
-
-
-def assert_can_add_edit_physical_process(user, process_class, process):
+def assert_can_add_edit_physical_process(user, process, process_class=None):
     u"""Tests whether the user can create or edit a physical process
     (i.e. deposition, measurement, etching process, clean room work etc).
 
     :Parameters:
       - `user`: the user whose permission should be checked
-      - `process_class`: the type of physical process that the user asks
-        permission for
       - `process`: The concrete process to edit.  If ``None``, a new process is
         about to be created.
+      - `process_class`: the type of physical process that the user asks
+        permission for
 
     :type user: ``django.contrib.auth.models.User``
-    :type process_class: ``class`` (derived from `models.Process`)
     :type process: `models.Process`
+    :type process_class: ``class`` (derived from `models.Process`) or
+      ``NoneType``
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to create or edit
         the process.
     """
+    if not process_class:
+        process_class = process.__class__
+    elif process:
+        assert process_class == process.__class__
     permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process_class.__name__))
     if not user.has_perm(permission):
         if process:

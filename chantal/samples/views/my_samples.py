@@ -13,7 +13,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
 class _MySeries(object):
@@ -187,7 +187,7 @@ def edit(request, username):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if not request.user.is_staff and request.user != user:
-        return utils.HttpResponseSeeOther("permission_error")
+        raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     comment_preview = None
     if request.method == "POST":
         my_samples_form = MySamplesForm(user, request.POST)

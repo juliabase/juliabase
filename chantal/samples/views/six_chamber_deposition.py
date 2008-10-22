@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models, permissions
 from chantal.samples.views import utils
-from chantal.samples.views.utils import check_permission, DataModelForm
+from chantal.samples.views.utils import DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 import django.contrib.auth.models
@@ -420,7 +420,6 @@ def forms_from_database(deposition):
 query_string_pattern = re.compile(r"^copy_from=(?P<copy_from>.+)$")
 
 @login_required
-@check_permission("change_sixchamberdeposition")
 def edit(request, deposition_number):
     u"""Central view for editing, creating, and duplicating 6-chamber
     depositions.  If `deposition_number` is ``None``, a new depositon is
@@ -439,8 +438,8 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
+    permissions.assert_can_add_edit_physical_process(request.user, deposition, SixChamberDeposition)
     user_details = utils.get_profile(request.user)
-    permissions.assert_can_add_edit_physical_process(request.user, SixChamberDeposition, deposition)
     if request.method == "POST":
         deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
@@ -516,10 +515,8 @@ def show(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number)
+    permissions.assert_can_view_physical_process(request.user, deposition)
     samples = deposition.samples
-    if all(not utils.has_permission_for_sample_or_series(request.user, sample) for sample in samples.all()) \
-            and not request.user.has_perm("change_sixchamberdeposition"):
-        return utils.HttpResponseSeeOther("permission_error")
     template_context = {"title": _(u"6-chamber deposition “%s”") % deposition.number, "samples": samples.all(),
                         "process": deposition}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))

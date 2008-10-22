@@ -247,38 +247,6 @@ def append_error(form, error_message, fieldname="__all__"):
     form.is_valid()
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
-class _PermissionCheck(object):
-    u"""Internal helper class in order to realise the `check_permission`
-    function decorator.
-    """
-    def __init__(self, original_view_function, permissions):
-        self.original_view_function = original_view_function
-        try:
-            self.permissions = set("samples." + permission for permission in permissions)
-        except TypeError:
-            self.permissions = set(["samples." + permissions])
-        update_wrapper(self, original_view_function)
-    def __call__(self, request, *args, **kwargs):
-        if any(request.user.has_perm(permission) for permission in self.permissions):
-            return self.original_view_function(request, *args, **kwargs)
-        return utils.HttpResponseSeeOther("permission_error")
-    
-def check_permission(permissions):
-    u"""Function decorator for views functions to detect whether the user has a
-    certain permission.  If the user doesn't have this permission, he is
-    redirected to the “permission error” page.  If more than one permission is
-    given, he must have at least one of them.
-
-    :Parameters:
-      - `permissions`: the permission(s) the user has to have.
-
-    :type permissions: str or list of str
-    """
-    # If more than one permission is given, any of them would unlock the view.
-    def decorate(original_view_function):
-        return _PermissionCheck(original_view_function, permissions)
-    return decorate
-
 class _AddHelpLink(object):
     u"""Internal helper class in order to realise the `help_link` function
     decorator.

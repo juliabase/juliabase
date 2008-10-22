@@ -111,26 +111,6 @@ def main_menu(request):
                                                  "user_hash": utils.get_user_hash(request.user)},
                               context_instance=RequestContext(request))
 
-def permission_error(request, failed_action):
-    u"""This view is displayed if the user tries to request a URL for which he
-    has no permission.  Typically, it is redirected to this view with a HTTP
-    status 303 redirect, see for example `utils.lookup_sample`.
-    
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `failed_action`: the URL to the request that failed
-
-    :type request: ``HttpRequest``
-    :type failed_action: unicode
-
-    :Returns:
-      the HTTP response object with error 401 (not authorised).
-
-    :rtype: `utils.HttpResponseUnauthorized`
-    """
-    return utils.HttpResponseUnauthorized(loader.render_to_string("permission_error.html", {"title": _(u"Access denied")},
-                                                                  context_instance=RequestContext(request)))
-
 def breakup_time(seconds):
     u"""Local helper routine for the `statistics` view.  It is used to
     calculate the uptime of Chantal components.

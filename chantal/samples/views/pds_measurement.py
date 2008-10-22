@@ -15,8 +15,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
 from chantal.samples.views import utils
-from chantal.samples.views.utils import check_permission
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal import settings
 
 root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"
@@ -225,7 +224,6 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     return all_valid
     
 @login_required
-@check_permission("change_pdsmeasurement")
 def edit(request, pd_number):
     u"""Edit and create view for PDS measurements.
 
@@ -244,6 +242,7 @@ def edit(request, pd_number):
     """
     pds_measurement = get_object_or_404(models.PDSMeasurement, number=utils.convert_id_to_int(pd_number)) \
         if pd_number is not None else None
+    permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, models.PDSMeasurement)
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         pds_measurement_form = None

@@ -10,9 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
-from chantal.samples.views.utils import check_permission
 
 class AddExternalOperatorForm(forms.ModelForm):
     u"""Model form for creating a new external operator.  The
@@ -35,7 +34,6 @@ class AddExternalOperatorForm(forms.ModelForm):
         exclude = ("contact_person",)
 
 @login_required
-@check_permission("add_externaloperator")
 def new(request):
     u"""View for adding a new external operator.
     
@@ -49,6 +47,7 @@ def new(request):
 
     :rtype: ``HttpResponse``
     """
+    permissions.assert_can_add_external_operator(request.user)
     if request.method == "POST":
         external_operator_form = AddExternalOperatorForm(request.user, request.POST)
         if external_operator_form.is_valid():
@@ -95,8 +94,7 @@ def edit(request, external_operator_id):
     :rtype: ``HttpResponse``
     """
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
-    if external_operator.contact_person != request.user:
-        return utils.HttpResponseSeeOther("permission_error")
+    permissions.assert_can_edit_external_operator(request.user, external_operator)
     if request.method == "POST":
         external_operator_form = EditExternalOperatorForm(request.POST, instance=external_operator)
         initials_form = utils.InitialsForm(external_operator, request.POST)
@@ -133,8 +131,7 @@ def show(request, external_operator_id):
     :rtype: ``HttpResponse``
     """
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
-    if request.user != external_operator.contact_person and not request.user.has_perm("samples.view_all_samples"):
-        return utils.HttpResponseSeeOther("permission_error")
+    permissions.assert_can_view_external_operator(request.user, external_operator)
     try:
         initials = external_operator.initials
     except models.Initials.DoesNotExist:

@@ -11,12 +11,11 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
 import django.forms as forms
 from chantal.samples.models import Sample
-from chantal.samples import models
+from chantal.samples import models, permissions
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 from chantal.samples.views import utils
-from chantal.samples.views.utils import check_permission
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
@@ -58,9 +57,8 @@ def edit(request, sample_name):
     sample, redirect = utils.lookup_sample(sample_name, request)
     if redirect:
         return redirect
+    permissions.assert_can_edit_sample(request.user, sample)
     old_group, old_responsible_person = sample.group, sample.currently_responsible_person
-    if sample.currently_responsible_person != request.user:
-        return utils.HttpResponseSeeOther("permission_error")
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         sample_form = SampleForm(request.POST, instance=sample)
@@ -97,6 +95,10 @@ def get_allowed_processes(user, sample):
       the process (processing `sample`!).
 
     :rtype: list of dict mapping str to unicode/str
+
+    :Exceptions:
+      - `permissions.PermissionError`: if the user is not allowed to add any
+        process to the sample
     """
     processes = []
     processes.extend(utils.get_allowed_result_processes(user, samples=[sample]))
@@ -104,6 +106,11 @@ def get_allowed_processes(user, sample):
         processes.append({"name": _(u"split"), "link": sample.get_absolute_url() + "/split/"})
         # FixMe: Add sample death
     # FixMe: Add other processes, deposition, measurements, if the user is allowed to do it
+    if not processes:
+        raise permissions.PermissionError(user, _(u"You are not allowed to add any processes to the sample %s "
+                                                  u"because neither are you its currently responsible person, "
+                                                  u"nor in its group, nor do you have special permissions for a "
+                                                  u"physical process.") % sample, new_group_would_help=True)
     return processes
 
 @login_required
@@ -152,10 +159,15 @@ def show(request, sample_name, sample_id=None):
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
     processes = utils.ProcessContext(request.user, sample).collect_processes()
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
+    try:
+        # FixMe: calling get_allowed_processes is too expensive
+        get_allowed_processes(request.user, sample)
+        can_add_process = True
+    except permissions.PermissionError:
+        can_add_process = False
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
                                                    "can_edit": request.user == sample.currently_responsible_person,
-                                                   # FixMe: calling get_allowed_processes is too expensive
-                                                   "can_add_process": bool(get_allowed_processes(request.user, sample)),
+                                                   "can_add_process": can_add_process,
                                                    "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))
 
@@ -232,7 +244,6 @@ def add_samples_to_database(add_samples_form, user):
     return new_names, ids
 
 @login_required
-@check_permission("add_sample")
 def add(request):
     u"""View for adding new samples.
 
@@ -287,8 +298,6 @@ def add_process(request, sample_name):
         return redirect
     user_details = utils.get_profile(request.user)
     processes = get_allowed_processes(request.user, sample)
-    if not processes:
-        return utils.HttpResponseSeeOther("permission_error")
     return render_to_response("add_process.html",
                               {"title": _(u"Add process to sample “%s”" % sample.name),
                                "processes": processes,

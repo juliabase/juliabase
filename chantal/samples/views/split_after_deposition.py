@@ -7,7 +7,7 @@ you can rename and/or split them.
 """
 
 import datetime
-from chantal.samples import models
+from chantal.samples import models, permissions
 from django.template import RequestContext
 from django.http import Http404
 from django.shortcuts import render_to_response, get_object_or_404
@@ -325,9 +325,8 @@ def split_and_rename_after_deposition(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number)
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition)
     remote_client = utils.is_remote_client(request)
-    if not request.user.has_perm("samples.change_" + deposition.__class__.__name__.lower()):
-        return utils.HttpResponseSeeOther("permission_error")
     if request.POST:
         original_data_forms, new_data_form_lists, global_new_data_form = \
             forms_from_post_data(request.POST, deposition, remote_client)

@@ -12,7 +12,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
-from chantal.samples import models
+from chantal.samples import models, permissions
 from django.conf import settings
 import django.core.urlresolvers
 from chantal.samples.views import utils
@@ -135,8 +135,9 @@ def show(request, username):
     except KeyError:
         raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
     if user_hash != utils.get_user_hash(user):
-        return utils.HttpResponseSeeOther("permission_error")
-
+        raise permissions.PermissionError(
+            request.user, _(u"You gave in invalid hash parameter in the query string.  "
+                            u"Note that you can't access the news feed of another user."))
     feed_absolute_url = \
         "http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse(show, kwargs={"username": username})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
