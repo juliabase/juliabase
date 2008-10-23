@@ -7,7 +7,7 @@ import os, re, codecs, datetime
 root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"
 database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
 
-login("bronger", "*******")
+login("bronger", "Rigel")
 
 def read_lines(filename):
     try:

@@ -16,7 +16,7 @@ opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
 
 def test_connection():
     response = opener.open("http://bob.ipv.kfa-juelich.de/chantal/login_remote_client",
-                           urllib.urlencode({"username": "bronger", "password": "*******"}, doseq=True))
+                           urllib.urlencode({"username": "bronger", "password": "Rigel"}, doseq=True))
     is_pickled = response.info()["Content-Type"].startswith("text/x-python-pickle")
     if not is_pickled:
         raise Exception("Login response was not pickled.")

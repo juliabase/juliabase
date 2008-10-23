@@ -3,7 +3,7 @@
 
 from chantal_remote import *
 
-login("bronger", "*******")
+login("bronger", "Rigel")
 
 sample = new_samples(1, u"Großflächige-Labor")
 

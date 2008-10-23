@@ -88,7 +88,7 @@ print>>outfile, """#!/usr/bin/env python
 
 from chantal_remote import *
 
-login("bronger", "*******")
+login("bronger", "Rigel")
 
 """
 
