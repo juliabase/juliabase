@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-22 18:13+0200\n"
+"POT-Creation-Date: 2008-10-23 04:26+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -14,6 +14,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Access denied"
+msgstr ""
+
+msgid "Ambiguous sample name"
 msgstr ""
 
 msgid "German"
@@ -1285,9 +1288,6 @@ msgstr ""
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr ""
 
-msgid "Ambiguous sample name"
-msgstr ""
-
 msgid "woman with binoculars"
 msgstr ""
 
@@ -1574,7 +1574,7 @@ msgstr ""
 
 msgid ""
 "\n"
-"        Also note that the heads of your institute group may add you to the\n"
+"        Also note that the head of your institute group may add you to the\n"
 "        Chantal group you need to access this resource.\n"
 "      "
 msgstr ""

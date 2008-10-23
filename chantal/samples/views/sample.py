@@ -291,7 +291,7 @@ def add_process(request, sample_name):
     user_details = utils.get_profile(request.user)
     processes = get_allowed_processes(request.user, sample)
     return render_to_response("add_process.html",
-                              {"title": _(u"Add process to sample “%s”" % sample.name),
+                              {"title": _(u"Add process to sample “%s”") % sample.name,
                                "processes": processes,
                                "query_string": "sample=%s&next=%s" % (urlquote_plus(sample_name),
                                                                       sample.get_absolute_url())},
