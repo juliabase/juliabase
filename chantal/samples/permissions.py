@@ -372,8 +372,9 @@ def assert_can_view_external_operator(user, external_operator):
         raise PermissionError(user, description)
 
 def assert_can_edit_group_memberships(user):
-    u"""Tests whether the user can change group memberships of other users.
-    This typically is a priviledge of heads of institute groups.
+    u"""Tests whether the user can change group memberships of other users, and
+    add new groups.  This typically is a priviledge of heads of institute
+    groups.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -381,8 +382,8 @@ def assert_can_edit_group_memberships(user):
     :type user: ``django.contrib.auth.models.User``
 
     :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit griup
-        memberships.
+      - `PermissionError`: raised if the user is not allowed to edit group
+        memberships, nor to add new groups.
     """
     if not user.has_perm("samples.edit_group_memberships"):
         description = _(u"You are not allowed to change group memberships because you don't have the permission “%s”.") \

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 13:42+0200\n"
-"PO-Revision-Date: 2008-10-23 13:49+0200\n"
+"POT-Creation-Date: 2008-10-23 17:44+0200\n"
+"PO-Revision-Date: 2008-10-23 17:44+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -795,6 +795,35 @@ msgstr ""
 #, python-format
 msgid "Chantal news for %s"
 msgstr "Chantal-Neuigkeiten für %s"
+
+msgid "Name of new group"
+msgstr "Name der neuen Gruppe"
+
+msgid "This group name is already used."
+msgstr "Dieser Gruppenname ist bereits vergeben."
+
+#, python-format
+msgid "Group %s was successfully created."
+msgstr "Die Gruppe %s wurde erfolgreich angelegt."
+
+msgid "Add new group"
+msgstr "Neue Gruppe hinzufügen"
+
+msgid "List of all groups"
+msgstr "Liste aller Gruppen"
+
+msgid "Members"
+msgstr "Mitglieder"
+
+#, python-format
+msgid "Members of group “%s” were successfully updated."
+msgstr ""
+"Die Mitglieder der Gruppe „%s“ wurden erfolgreich auf den neuesten Stand "
+"gebracht."
+
+#, python-format
+msgid "Change group memberships of “%s”"
+msgstr "Mitglieder der Gruppe “%s” ändern"
 
 msgid "Operator"
 msgstr "Operator"
@@ -1671,6 +1700,9 @@ msgstr "besondere Berechtigungen, die Sie nicht haben"
 
 msgid "none"
 msgstr "keine"
+
+msgid "No groups available."
+msgstr "Keine Gruppen vorhanden."
 
 msgid "Chantal login"
 msgstr "Chantal-Login"

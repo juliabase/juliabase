@@ -17,7 +17,6 @@ import django.contrib.auth.models
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
-from django.utils.http import urlquote
 import django.core.urlresolvers
 from chantal.samples import models, permissions
 from chantal.samples.views.shared_utils import *

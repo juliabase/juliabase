@@ -102,6 +102,10 @@ urlpatterns = patterns("",
                        (r"^change_password/done/$", "django.contrib.auth.views.password_change_done",
                         {"template_name": "password_changed.html"}),
 
+                       (r"^groups/add/$", "samples.views.group.add"),
+                       (r"^groups/$", "samples.views.group.list_"),
+                       (r"^groups/(?P<name>.+)", "samples.views.group.edit"),
+
                        (r"^primary_keys$", "samples.views.main.primary_keys"),
                        (r"^samples_by_id/(?P<sample_id>\d+)", "samples.views.sample.show", {"sample_name": None}),
                        (r"^next_deposition_number/(?P<letter>.+)", "samples.views.main.next_deposition_number"),
