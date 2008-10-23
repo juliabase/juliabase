@@ -27,17 +27,6 @@ import django.contrib.auth.models
 from chantal.samples import models
 from chantal.samples.views import shared_utils
 
-_ = ugettext_lazy
-permission_translations = {"Can add an external operator": _("Can add an external operator"),
-                           "Can create and edit 6-chamber depositions": _("Can create and edit 6-chamber depositions"),
-                           "Can create and edit hall measurements": _("Can create and edit hall measurements"),
-                           "Can create and edit large-area depositions": _("Can create and edit large-area depositions"),
-                           "Can create and edit PDS measurements": _("Can create and edit PDS measurements"),
-                           "Can view all samples (senior user)": _("Can view all samples (senior user)"),
-                           "Can edit group memberships": _("Can edit group memberships"),
-                           }
-_ = ugettext
-
 def translate_permission(permission_codename):
     u"""Translates a permission description to the user's language.
 
@@ -54,7 +43,7 @@ def translate_permission(permission_codename):
 
     :rtype: unicode
     """
-    return permission_translations[django.contrib.auth.models.Permission.objects.get(codename=permission_codename).name]
+    return ugettext(django.contrib.auth.models.Permission.objects.get(codename=permission_codename))
 
 def get_user_permissions(user):
     u"""Determines the permissions of a user.  It iterates through all
@@ -77,9 +66,9 @@ def get_user_permissions(user):
     has_not = []
     for permission in django.contrib.auth.models.Permission.objects.all().values("name", "codename"):
         if user.has_perm(permission["codename"]):
-            has.append(permission_translations[permission["name"]])
+            has.append(ugettext(permission["name"]))
         else:
-            has_not.append(permission_translations[permission["name"]])
+            has_not.append(ugettext(permission["name"]))
     return has, has_not
             
 
@@ -90,7 +79,7 @@ class PermissionError(Exception):
       inclusive.  It should be a complete sentence, which addresses the user
       directly.  It should start with a capital letter and end with a full
       stop.  For example, it may be “You are not allowed to view sample 01B-410
-      because you're not … Note that a head of and institute group may add you
+      because you're not … Note that a head of an institute group may add you
       to new Chantal groups.”.
 
     :type description: unicode

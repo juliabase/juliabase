@@ -13,7 +13,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
 @login_required
@@ -98,4 +98,15 @@ def edit_preferences(request, login_name):
                               {"title": _(u"Change preferences for %s") % models.get_really_full_name(request.user),
                                "user_details": user_details_form, "initials": initials_form},
                               context_instance=RequestContext(request))
-    
+
+@login_required
+def groups_and_permissions(request, login_name):
+    user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
+    if not request.user.is_staff and request.user != user:
+        raise permissions.PermissionError(
+            request.user, _(u"You can't access the list of groups and permissions of another user."))
+    return render_to_response("groups_and_permissions.html",
+                              {"title": _(u"Groups and permissions for %s") % models.get_really_full_name(request.user),
+                               "groups": user.groups.all(), "permissions": permissions.get_user_permissions(user),
+                               "full_user_name": models.get_really_full_name(request.user)},
+                              context_instance=RequestContext(request))

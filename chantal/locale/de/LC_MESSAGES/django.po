@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 04:26+0200\n"
-"PO-Revision-Date: 2008-10-23 04:27+0200\n"
+"POT-Creation-Date: 2008-10-23 13:42+0200\n"
+"PO-Revision-Date: 2008-10-23 13:43+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,6 +63,9 @@ msgstr "externer Operator"
 
 msgid "external operators"
 msgstr "externe Operatoren"
+
+msgid "Can add an external operator"
+msgstr "Darf externen Operateur anlegen"
 
 msgid "totally accurate"
 msgstr "vollständig genau"
@@ -125,6 +128,9 @@ msgstr "6-Kammer-Deposition"
 msgid "6-chamber depositions"
 msgstr "6-Kammer-Depositionen"
 
+msgid "Can create and edit 6-chamber depositions"
+msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"
+
 msgid "6-chamber deposition lab"
 msgstr "6-Kammer-Depositionslabor"
 
@@ -141,6 +147,9 @@ msgstr "Hall-Messung"
 
 msgid "Hall measurements"
 msgstr "Hall-Messungen"
+
+msgid "Can create and edit hall measurements"
+msgstr "Darf Hallmessungen anlegen und ändern"
 
 msgid "layer number"
 msgstr "Schichtnummer"
@@ -270,6 +279,9 @@ msgstr "Großflächige Deposition"
 msgid "large-area depositions"
 msgstr "Großflächige Depositionen"
 
+msgid "Can create and edit large-area depositions"
+msgstr "Darf großflächige Depositionen anlegen und ändern"
+
 msgid "large-area deposition lab"
 msgstr "Großflächige-Depositionslabor"
 
@@ -386,6 +398,9 @@ msgstr "PDS-Messung"
 msgid "PDS measurements"
 msgstr "PDS-Messungen"
 
+msgid "Can create and edit PDS measurements"
+msgstr "Darf PDS-Messungen anlegen und ändern"
+
 msgid "current location"
 msgstr "aktueller Probenort"
 
@@ -412,6 +427,9 @@ msgstr "Probe"
 
 msgid "samples"
 msgstr "Proben"
+
+msgid "Can view all samples (senior user)"
+msgstr "Darf alle Proben sehen (Seniornutzer)"
 
 msgid "name alias"
 msgstr "Alternativname"
@@ -528,6 +546,9 @@ msgstr "meine Schichten"
 msgid "user details"
 msgstr "Benutzerdetails"
 
+msgid "Can edit group memberships and add new groups"
+msgstr "Darf Gruppenzugehörigkeiten ändern und neue Gruppen hinzufügen"
+
 msgid "link"
 msgstr "Link"
 
@@ -563,27 +584,6 @@ msgstr "Feed-Eintrag für neue Proben"
 
 msgid "new samples feed entries"
 msgstr "Feed-Einträge für neue Proben"
-
-msgid "Can add an external operator"
-msgstr "Darf externen Operateur anlegen"
-
-msgid "Can create and edit 6-chamber depositions"
-msgstr "Darf 6-Kammer-Depositionen anlegen und ändern"
-
-msgid "Can create and edit hall measurements"
-msgstr "Darf Hallmessungen anlegen und ändern"
-
-msgid "Can create and edit large-area depositions"
-msgstr "Darf großflächige Depositionen anlegen und ändern"
-
-msgid "Can create and edit PDS measurements"
-msgstr "Darf PDS-Messungen anlegen und ändern"
-
-msgid "Can view all samples (senior user)"
-msgstr "Darf alle Proben sehen (Seniornutzer)"
-
-msgid "Can edit group memberships"
-msgstr "Darf Gruppenzugehörigkeiten ändern"
 
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
@@ -1317,6 +1317,15 @@ msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
 msgid "Change preferences for %s"
 msgstr "Ändere Einstellungen für %s"
 
+msgid "You can't access the list of groups and permissions of another user."
+msgstr ""
+"Sie können nicht auf die Gruppenliste und Berechtigungen eines anderen "
+"Benutzers zugreifen."
+
+#, python-format
+msgid "Groups and permissions for %s"
+msgstr "Gruppen und Berechtigungen von %s"
+
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
@@ -1584,6 +1593,84 @@ msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
+
+msgid "Groups"
+msgstr "Gruppen"
+
+#, python-format
+msgid ""
+"\n"
+"      %(full_user_name)s is member of the following group:\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(full_user_name)s is member of the following groups:\n"
+"    "
+msgstr[0] ""
+"\n"
+"%(full_user_name)s ist Mitglied in der folgenden Gruppe:"
+msgstr[1] ""
+"\n"
+"%(full_user_name)s ist Mitglied in den folgenden Gruppen:"
+
+#, python-format
+msgid ""
+"\n"
+"      %(full_user_name)s isn't a member of any group.\n"
+"    "
+msgstr ""
+"\n"
+"%(full_user_name)s ist in keiner Gruppe Mitglied."
+
+msgid ""
+"The head of your institute group is allowed to add you to further Chantal "
+"groups."
+msgstr ""
+"Der Leiter Ihrer Institutsgruppe ist berechtigt, Sie zu Chantal-Gruppen "
+"hinzuzufügen."
+
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+msgid "General permissions"
+msgstr "Allgemeine Berechtigungen"
+
+msgid "(This is only a rough summary.)"
+msgstr "(Dies ist nur eine grobe Auflistung.)"
+
+msgid "You can add new samples and sample series"
+msgstr "Sie dürfen neue Proben und Probenserien anlegen"
+
+msgid ""
+"You can edit all samples and sample series that you are the currently "
+"responsible person for"
+msgstr ""
+"Sie dürfen alle Proben und Probenserien ändern, für die Sie der aktuell "
+"Verantwortliche sind"
+
+msgid "You can view all samples of your groups"
+msgstr "Sie dürfen alle Proben Ihrer Gruppen sehen"
+
+msgid "You can add results to all samples of your groups"
+msgstr "Sie dürfen Resultate zu allen Proben Ihrer Gruppen hinzufügen"
+
+msgid "You can edit results that you added"
+msgstr "Sie können Resultate, die Sie hinzugefügt haben, ändern"
+
+msgid "Special permissions"
+msgstr "Besondere Berechtigungen"
+
+msgid "Only the administrators can change the special permissions."
+msgstr "Nur die Administratoren dürfen die besonderen Berechtigungen ändern."
+
+msgid "special permissions that you have"
+msgstr "besondere Berechtigungen, die Sie haben"
+
+msgid "special permissions that you don't have"
+msgstr "besondere Berechtigungen, die Sie nicht haben"
+
+msgid "none"
+msgstr "keine"
 
 msgid "Chantal login"
 msgstr "Chantal-Login"
@@ -1890,11 +1977,10 @@ msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid ""
-#~ "You are not allowed to edit sample %s since you are not the sample's "
-#~ "currently responsible person."
+#~ "You can edit all samples that you are the currently responsible person for"
 #~ msgstr ""
-#~ "Sie dürfen nicht die Probe %s ändern, da Sie nicht der aktuell "
-#~ "Verantwortliche für diese Probe sind."
+#~ "Sie dürfen alle Proben ändern, für die Sie der aktuell Verantwortliche "
+#~ "sind"
 
 #~ msgid "edit the process “%s”"
 #~ msgstr "den Prozess „%s“ zu ändern"

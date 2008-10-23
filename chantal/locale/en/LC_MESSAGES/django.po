@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 04:26+0200\n"
+"POT-Creation-Date: 2008-10-23 13:42+0200\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -63,6 +63,10 @@ msgstr ""
 
 msgid "external operators"
 msgstr ""
+
+#, fuzzy
+msgid "Can add an external operator"
+msgstr "sample series"
 
 msgid "totally accurate"
 msgstr ""
@@ -125,6 +129,9 @@ msgstr ""
 msgid "6-chamber depositions"
 msgstr ""
 
+msgid "Can create and edit 6-chamber depositions"
+msgstr ""
+
 msgid "6-chamber deposition lab"
 msgstr ""
 
@@ -140,6 +147,9 @@ msgid "Hall measurement"
 msgstr ""
 
 msgid "Hall measurements"
+msgstr ""
+
+msgid "Can create and edit hall measurements"
 msgstr ""
 
 msgid "layer number"
@@ -270,6 +280,9 @@ msgstr ""
 msgid "large-area depositions"
 msgstr ""
 
+msgid "Can create and edit large-area depositions"
+msgstr ""
+
 msgid "large-area deposition lab"
 msgstr ""
 
@@ -386,6 +399,9 @@ msgstr ""
 msgid "PDS measurements"
 msgstr ""
 
+msgid "Can create and edit PDS measurements"
+msgstr ""
+
 msgid "current location"
 msgstr ""
 
@@ -411,6 +427,9 @@ msgid "sample"
 msgstr ""
 
 msgid "samples"
+msgstr ""
+
+msgid "Can view all samples (senior user)"
 msgstr ""
 
 msgid "name alias"
@@ -526,6 +545,9 @@ msgstr ""
 msgid "user details"
 msgstr ""
 
+msgid "Can edit group memberships and add new groups"
+msgstr ""
+
 msgid "link"
 msgstr ""
 
@@ -562,28 +584,6 @@ msgstr ""
 #, fuzzy
 msgid "new samples feed entries"
 msgstr "sample series"
-
-#, fuzzy
-msgid "Can add an external operator"
-msgstr "sample series"
-
-msgid "Can create and edit 6-chamber depositions"
-msgstr ""
-
-msgid "Can create and edit hall measurements"
-msgstr ""
-
-msgid "Can create and edit large-area depositions"
-msgstr ""
-
-msgid "Can create and edit PDS measurements"
-msgstr ""
-
-msgid "Can view all samples (senior user)"
-msgstr ""
-
-msgid "Can edit group memberships"
-msgstr ""
 
 msgid "Permission denied: "
 msgstr ""
@@ -1262,6 +1262,13 @@ msgstr ""
 msgid "Change preferences for %s"
 msgstr ""
 
+msgid "You can't access the list of groups and permissions of another user."
+msgstr ""
+
+#, python-format
+msgid "Groups and permissions for %s"
+msgstr ""
+
 msgid "Number of layers to be added"
 msgstr ""
 
@@ -1508,6 +1515,74 @@ msgid "Number of channels to be added:"
 msgstr ""
 
 msgid "Number of layers to be added:"
+msgstr ""
+
+msgid "Groups"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"      %(full_user_name)s is member of the following group:\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(full_user_name)s is member of the following groups:\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid ""
+"\n"
+"      %(full_user_name)s isn't a member of any group.\n"
+"    "
+msgstr ""
+
+msgid ""
+"The head of your institute group is allowed to add you to further Chantal "
+"groups."
+msgstr ""
+
+msgid "Permissions"
+msgstr ""
+
+msgid "General permissions"
+msgstr ""
+
+msgid "(This is only a rough summary.)"
+msgstr ""
+
+msgid "You can add new samples and sample series"
+msgstr ""
+
+msgid ""
+"You can edit all samples and sample series that you are the currently "
+"responsible person for"
+msgstr ""
+
+msgid "You can view all samples of your groups"
+msgstr ""
+
+msgid "You can add results to all samples of your groups"
+msgstr ""
+
+msgid "You can edit results that you added"
+msgstr ""
+
+msgid "Special permissions"
+msgstr ""
+
+msgid "Only the administrators can change the special permissions."
+msgstr ""
+
+msgid "special permissions that you have"
+msgstr ""
+
+msgid "special permissions that you don't have"
+msgstr ""
+
+msgid "none"
 msgstr ""
 
 msgid "Chantal login"
