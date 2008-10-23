@@ -56,6 +56,33 @@ def translate_permission(permission_codename):
     """
     return permission_translations[django.contrib.auth.models.Permission.objects.get(codename=permission_codename).name]
 
+def get_user_permissions(user):
+    u"""Determines the permissions of a user.  It iterates through all
+    permissions and looks whether the user has them or not, and returns its
+    findings.
+
+    :Parameters:
+      - `user`: the user for which the permissions should be determined
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      A list with all permissions the user has got, a list with all permissions
+      that the user doesn't have got.  Both lists contain translated
+      descriptions.
+
+    :rtype: list of unicode, list of unicode
+    """
+    has = []
+    has_not = []
+    for permission in django.contrib.auth.models.Permission.objects.all().values("name", "codename"):
+        if user.has_perm(permission["codename"]):
+            has.append(permission_translations[permission["name"]])
+        else:
+            has_not.append(permission_translations[permission["name"]])
+    return has, has_not
+            
+
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
 
@@ -89,8 +116,11 @@ def assert_can_view_sample(user, sample):
     u"""Tests whether the user can view the sample.
 
     :Parameters:
-      - `user`: ``django.contrib.auth.models.User``
-      - `sample`: `models.Sample`
+      - `user`: the user whose permission should be checked
+      - `sample`: the sample to be shown
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample: `models.Sample`
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to view the
