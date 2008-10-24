@@ -8,12 +8,13 @@ from __future__ import division
 import string, re
 from django.template.defaultfilters import stringfilter
 from django import template
-from django.utils.html import conditional_escape
+from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 import django.utils.http
 import django.core.urlresolvers
 import chantal.samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.contrib.markup.templatetags import markup
 import chantal.samples.views.utils
 
 register = template.Library()
@@ -219,3 +220,54 @@ def timestamp(value):
     the inaccuracy connected with this timestamp.
     """
     return mark_safe(value["timestamp"].strftime(str(unicode(timestamp_formats[value["timestamp_inaccuracy"]]))))
+
+sample_name_pattern = \
+    re.compile(ur"(\W|\A)(?P<name>[0-9][0-9](([BVHLCS]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?)|"
+               ur"(-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})-[-A-Za-z_/0-9]+)))(\W|\Z)", re.UNICODE)
+sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A-Za-zÄÖÜäöüß_/0-9]+)(\W|\Z)",
+                                        re.UNICODE)
+@register.filter
+@stringfilter
+def markdown(value):
+    u"""Filter for formatting the value by assuming Markdown syntax.
+    Additionally, sample names and sample series names are converted to
+    clickable links.  Embedded HTML is always escaped.  Warning: You need at
+    least Python Markdown 1.7 or later so that this works.
+    """
+    def escape_dangerous_syntax(text):
+        u"""Escape special Markdown constructs to disable markup with the
+        underscore »_«, headings, and images.
+        """
+        return text.replace("\n=", "\n\\=").replace("\r=", "\r\\=").replace("\n-", "\n\\-").replace("\r-", "\r\\-"). \
+            replace("_", "\\_").replace("![", "\\!\\[")
+    value = unicode(escape(value))
+    position = 0
+    result = u""
+    while position < len(value):
+        sample_match = sample_name_pattern.search(value, position)
+        sample_series_match = sample_series_name_pattern.search(value, position)
+        sample_start = sample_match.start("name") if sample_match else len(value)
+        sample_series_start = sample_series_match.start("name") if sample_series_match else len(value)
+        next_is_sample = sample_start <= sample_series_start
+        match = sample_match if next_is_sample else sample_series_match
+        if match:
+            start, end = match.span("name")
+            result += escape_dangerous_syntax(value[position:start])
+            position = end
+            name = match.group("name")
+            database_item = None
+            if next_is_sample:
+                sample = chantal.samples.views.utils.get_sample(name)
+                if isinstance(sample, chantal.samples.models.Sample):
+                    database_item = sample
+            else:
+                try:
+                    database_item = chantal.samples.models.SampleSeries.objects.get(name=name)
+                except chantal.samples.models.SampleSeries.DoesNotExist:
+                    pass
+            name = escape_dangerous_syntax(name)
+            result += "[%s](%s)" % (name, database_item.get_absolute_url()) if database_item else name
+        else:
+            result += escape_dangerous_syntax(value[position:])
+            break
+    return markup.markdown(result)
