@@ -69,11 +69,11 @@ def show(request, name):
     permissions.assert_can_view_sample_series(request.user, sample_series)
     user_details = utils.get_profile(request.user)
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
-    can_add_process = bool(permissions.get_allowed_result_processes(request.user, sample_series=[sample_series]))
+    can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
+    can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
     return render_to_response("show_sample_series.html",
                               {"title": _(u"Sample series “%s”") % sample_series.name,
-                               "can_edit": sample_series.currently_responsible_person == request.user,
-                               "can_add_process": can_add_process,
+                               "can_edit": can_edit, "can_add_result": can_add_result,
                                "sample_series": sample_series,
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
@@ -165,33 +165,4 @@ def new(request):
                                "sample_series": sample_series_form,
                                "is_new": True,
                                "name_prefix": u"%02d-%s" % (datetime.datetime.today().year % 100, request.user.username)},
-                              context_instance=RequestContext(request))
-
-
-@login_required
-def add_result_process(request, name):
-    u"""View for appending a result process to a sample series.  For the rules
-    of adding result processes, see `permissions.get_allowed_result_processes`.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: name of the sample series
-
-    :type request: ``HttpRequest``
-    :type name: unicode
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    sample_series = get_object_or_404(models.SampleSeries, name=name)
-    permissions.assert_can_add_result_process(request.user, sample_series)
-    user_details = utils.get_profile(request.user)
-    processes = permissions.get_allowed_result_processes(request.user, sample_series=[sample_series])
-    return render_to_response("add_process.html",
-                              {"title": _(u"Add result to “%s”") % name,
-                               "processes": processes,
-                               "query_string": "sample_series=%s&next=%s" % (urlquote_plus(name),
-                                                                             sample_series.get_absolute_url())},
                               context_instance=RequestContext(request))

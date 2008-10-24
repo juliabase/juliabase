@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 17:44+0200\n"
-"PO-Revision-Date: 2008-10-23 17:44+0200\n"
+"POT-Creation-Date: 2008-10-24 08:48+0200\n"
+"PO-Revision-Date: 2008-10-24 08:50+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -492,21 +492,21 @@ msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #, python-format
-msgid "comment about %s"
-msgstr "Kommentar über %s"
+msgid "result for %s"
+msgstr "Ergebnis für %s"
 
 #, python-format
-msgid "comment #%d"
-msgstr "Kommentar #%d"
+msgid "result #%d"
+msgstr "Ergebnis #%d"
 
-msgid "comment"
-msgstr "Kommentar"
-
-msgid "must be of the form “YY-originator-name”"
-msgstr "muss von der Form „YY-Urheber-name“ sein"
+msgid "result"
+msgstr "Ergebnis"
 
 msgid "results"
 msgstr "Ergebnisse"
+
+msgid "must be of the form “YY-originator-name”"
+msgstr "muss von der Form „YY-Urheber-name“ sein"
 
 msgid "sample series"
 msgstr "Probenserie"
@@ -734,31 +734,6 @@ msgstr "%b %Y"
 msgid "date unknown"
 msgstr "Datum unbekannt"
 
-msgid "Contents"
-msgstr "Inhalt"
-
-msgid "Edit comment"
-msgstr "Kommentar ändern"
-
-msgid "Samples"
-msgstr "Proben"
-
-msgid "Sample series"
-msgstr "Probenserie"
-
-msgid ""
-"You don't have the permission to add the result to all selected samples/"
-"series."
-msgstr ""
-"Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
-"Serien zu ändern."
-
-msgid "You must select at least one samples/series."
-msgstr "Sie müssen mindestens eine Probe/Serie markieren."
-
-msgid "New comment"
-msgstr "Neuer Kommentar"
-
 #, python-format
 msgid "The external operator “%s” was successfully added."
 msgstr "Der externe Operateur „%s“ wurde erfolgreich neu angelegt."
@@ -824,6 +799,9 @@ msgstr ""
 #, python-format
 msgid "Change group memberships of “%s”"
 msgstr "Mitglieder der Gruppe “%s” ändern"
+
+msgid "Samples"
+msgstr "Proben"
 
 msgid "Operator"
 msgstr "Operator"
@@ -1112,6 +1090,28 @@ msgstr "PDS-Messung %s"
 msgid "Add PDS measurement"
 msgstr "PDS-Messung hinzufügen"
 
+msgid "Comments"
+msgstr "Kommentare"
+
+msgid "Edit result"
+msgstr "Ergebnis ändern"
+
+msgid "Sample series"
+msgstr "Probenserie"
+
+msgid ""
+"You don't have the permission to add the result to all selected samples/"
+"series."
+msgstr ""
+"Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
+"Serien zu ändern."
+
+msgid "You must select at least one samples/series."
+msgstr "Sie müssen mindestens eine Probe/Serie markieren."
+
+msgid "New result"
+msgstr "Ergebnis hinzufügen"
+
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
@@ -1216,10 +1216,6 @@ msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
-
-#, python-format
-msgid "Add result to “%s”"
-msgstr "Ergebnis zu „%s“ hinzufügen"
 
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
@@ -2007,6 +2003,27 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "comment about %s"
+#~ msgstr "Kommentar über %s"
+
+#~ msgid "comment #%d"
+#~ msgstr "Kommentar #%d"
+
+#~ msgid "comment"
+#~ msgstr "Kommentar"
+
+#~ msgid "Contents"
+#~ msgstr "Inhalt"
+
+#~ msgid "Edit comment"
+#~ msgstr "Kommentar ändern"
+
+#~ msgid "New comment"
+#~ msgstr "Neuer Kommentar"
+
+#~ msgid "Add result to “%s”"
+#~ msgstr "Ergebnis zu „%s“ hinzufügen"
 
 #~ msgid ""
 #~ "You can edit all samples that you are the currently responsible person for"

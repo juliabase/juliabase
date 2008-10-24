@@ -6,8 +6,9 @@
 {% block content_title %}<h1>{{ title|escape }}
   {% if can_edit %}<a class="edit-button" href="{{ sample_series.get_absolute_url }}/edit/"
                       >{% trans 'edit' %}</a>{% endif %}
-  {% if can_add_process %}<a class="edit-button" href="{{ sample_series.get_absolute_url }}/add_result/"
-                      >{% trans 'add result' %}</a>{% endif %}</h1>{% endblock %}
+  {% if can_add_result %}<a class="edit-button" 
+ href="{% url samples.views.result.new %}?sample_series={{ sample_series.name|urlquote_plus }}&next={{ sample_series.get_absolute_url|urlquote_plus }}"
+                            >{% trans 'add result' %}</a>{% endif %}</h1>{% endblock %}
 
 {% block content %}
 {% if sample_series.samples.count %}

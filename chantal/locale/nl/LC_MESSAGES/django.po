@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-23 17:43+0200\n"
+"POT-Creation-Date: 2008-10-24 08:48+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -492,20 +492,20 @@ msgid "ceases of existence"
 msgstr ""
 
 #, python-format
-msgid "comment about %s"
+msgid "result for %s"
 msgstr ""
 
 #, python-format
-msgid "comment #%d"
+msgid "result #%d"
 msgstr ""
 
-msgid "comment"
-msgstr ""
-
-msgid "must be of the form “YY-originator-name”"
+msgid "result"
 msgstr ""
 
 msgid "results"
+msgstr ""
+
+msgid "must be of the form “YY-originator-name”"
 msgstr ""
 
 msgid "sample series"
@@ -699,29 +699,6 @@ msgstr ""
 msgid "date unknown"
 msgstr ""
 
-msgid "Contents"
-msgstr ""
-
-msgid "Edit comment"
-msgstr ""
-
-msgid "Samples"
-msgstr ""
-
-msgid "Sample series"
-msgstr ""
-
-msgid ""
-"You don't have the permission to add the result to all selected samples/"
-"series."
-msgstr ""
-
-msgid "You must select at least one samples/series."
-msgstr ""
-
-msgid "New comment"
-msgstr ""
-
 #, python-format
 msgid "The external operator “%s” was successfully added."
 msgstr ""
@@ -781,6 +758,9 @@ msgstr ""
 
 #, python-format
 msgid "Change group memberships of “%s”"
+msgstr ""
+
+msgid "Samples"
 msgstr ""
 
 msgid "Operator"
@@ -1064,6 +1044,26 @@ msgstr ""
 msgid "Add PDS measurement"
 msgstr ""
 
+msgid "Comments"
+msgstr ""
+
+msgid "Edit result"
+msgstr ""
+
+msgid "Sample series"
+msgstr ""
+
+msgid ""
+"You don't have the permission to add the result to all selected samples/"
+"series."
+msgstr ""
+
+msgid "You must select at least one samples/series."
+msgstr ""
+
+msgid "New result"
+msgstr ""
+
 msgid "is amongst My Samples"
 msgstr ""
 
@@ -1160,10 +1160,6 @@ msgid "Sample series %s was successfully added to the database."
 msgstr ""
 
 msgid "Create new sample series"
-msgstr ""
-
-#, python-format
-msgid "Add result to “%s”"
 msgstr ""
 
 msgid "Nickname of My Layer to be added"

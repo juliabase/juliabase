@@ -99,7 +99,8 @@ def get_allowed_processes(user, sample):
         process to the sample
     """
     processes = []
-    processes.extend(permissions.get_allowed_result_processes(user, samples=[sample]))
+    if permissions.has_permission_to_add_result_process(user, sample):
+        processes.append({"name": models.Result._meta.verbose_name, "link": models.Result.get_add_url()})
     if sample.currently_responsible_person == user:
         processes.append({"name": _(u"split"), "link": sample.get_absolute_url() + "/split/"})
         # FixMe: Add sample death

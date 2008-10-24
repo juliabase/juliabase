@@ -75,11 +75,10 @@ urlpatterns = patterns("",
 
                        (r"^sample_series/add/$", "samples.views.sample_series.new"),
                        (r"^sample_series/(?P<name>.+)/edit/$", "samples.views.sample_series.edit"),
-                       (r"^sample_series/(?P<name>.+)/add_result/$", "samples.views.sample_series.add_result_process"),
                        (r"^sample_series/(?P<name>.+)", "samples.views.sample_series.show"),
 
-                       (r"^comments/add/$", "samples.views.comment.new"),
-                       (r"^comments/(?P<process_id>.+)/edit/$", "samples.views.comment.edit"),
+                       (r"^results/add/$", "samples.views.result.new"),
+                       (r"^results/(?P<process_id>.+)/edit/$", "samples.views.result.edit"),
 
                        url(r"^pds_measurements/add/$", "samples.views.pds_measurement.edit", {"pd_number": None},
                            "add_pds_measurement"),

@@ -18,7 +18,6 @@ the new tables are automatically created.
 
 :type default_location_of_deposited_samples: dict mapping `Deposition` to
   string.
-:type result_process_classes: set of `Process`
 """
 
 import hashlib, os.path, codecs
@@ -108,11 +107,6 @@ u"""Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
 This is used in
 `samples.views.split_after_deposition.GlobalNewDataForm.__init__`.
-"""
-
-result_process_classes = set()
-u"""This set contains all process classes which may act as a *result*,
-i.e. being used as a process for a `SampleSeries`.
 """
 
 class ExternalOperator(models.Model):
@@ -836,22 +830,19 @@ class SampleDeath(Process):
         verbose_name_plural = _(u"ceases of existence")
 admin.site.register(SampleDeath)
 
-class Comment(Process):
-    u"""Adds only a comment to the history of a sample.  Since a comment is
-    already part of `Process`, this model has no fields of its own.
-
-    This is also a so-called result process, i.e. it is allowed for being
-    connected with a `SampleSeries`.
+class Result(Process):
+    u"""Adds a result to the history of a sample.  This may be just a comment,
+    or a plot, or an image, or a link.
     """
     def __unicode__(self):
         _ = ugettext
         try:
-            return _(u"comment about %s") % self.samples.get()
+            return _(u"result for %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             try:
-                return _(u"comment about %s") % self.sample_series.get()
+                return _(u"result for %s") % self.sample_series.get()
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
-                return _(u"comment #%d") % self.pk
+                return _(u"result #%d") % self.pk
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
@@ -870,35 +861,30 @@ class Comment(Process):
         """
         if process_context.user == self.operator:
             return {"edit_url":
-                        django.core.urlresolvers.reverse("samples.views.comment.edit", kwargs={"process_id": self.pk})}
+                        django.core.urlresolvers.reverse("samples.views.result.edit", kwargs={"process_id": self.pk})}
         else:
             return {}
     @classmethod
     def get_add_url(cls):
-        u"""Yields the URL to the “add new” page for this process class.  This
-        method must be defined for all result processes.
+        u"""Yields the URL to the “add new” page for this process class.
 
         :Return:
-          Full but relative URL to the resource where you can add new `Comment`
+          Full but relative URL to the resource where you can add a new result
           instances.
 
         :rtype: str
         """
-        return django.core.urlresolvers.reverse("samples.views.comment.new")
+        return django.core.urlresolvers.reverse("samples.views.result.new")
     class Meta:
-        verbose_name = _(u"comment")
-        verbose_name_plural = _(u"comments")
-admin.site.register(Comment)
-result_process_classes.add(Comment)
+        verbose_name = _(u"result")
+        verbose_name_plural = _(u"results")
+admin.site.register(Result)
 
 class SampleSeries(models.Model):
     u"""A sample series groups together zero or more `Sample`.  It must belong
-    to a group, and it may contain processes, however, only *result processes*
-    (see `result_process_classes`).  The `name` and the `timestamp` of a sample
-    series can never change after it has been created.
-
-    FixMe: *Maybe* it's better to have result processes with its own common
-    parent class.
+    to a group, and it may contain processes, however, only *result processes*.
+    The `name` and the `timestamp` of a sample series can never change after it
+    has been created.
     """
     name = models.CharField(_(u"name"), max_length=50, primary_key=True,
                             help_text=_(u"must be of the form “YY-originator-name”"))
@@ -906,23 +892,10 @@ class SampleSeries(models.Model):
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
                                                      verbose_name=_(u"currently responsible person"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
-    results = models.ManyToManyField(Process, blank=True, related_name="sample_series", verbose_name=_(u"results"))
+    results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
     def __unicode__(self):
         return self.name
-    def add_result_process(self, result_process):
-        u"""Adds a new result process to the sample series.  The main purpose of
-        this method is that it tests whether the given process really is a
-        *result* process.
-
-        :Parameters:
-          - `result_process`: the result process to be added
-
-        :type result_process: `Process`, however it must be in
-          `result_process_classes`
-        """
-        assert result_process.__class__ in result_process_classes
-        self.results.add(result_process)
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.sample_series.show", [urlquote(self.name, safe="")])
