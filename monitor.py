@@ -52,5 +52,8 @@ while True:
     while monitor_data and now - monitor_data[0].timestamp > datetime.timedelta(1.1):
         del monitor_data[0]
     pickle.dump(monitor_data, open(filename, "wb"))
-    pickle.dump(Availability(), open(remote_monitor_pickle_file_name, "wb"))
+    try:
+        pickle.dump(Availability(), open(remote_monitor_pickle_file_name, "wb"))
+    except IOError:
+        pass
     time.sleep(5*60)
