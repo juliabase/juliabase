@@ -234,12 +234,6 @@ def markdown(value):
     clickable links.  Embedded HTML is always escaped.  Warning: You need at
     least Python Markdown 1.7 or later so that this works.
     """
-    def escape_dangerous_syntax(text):
-        u"""Escape special Markdown constructs to disable markup with the
-        underscore »_«, headings, and images.
-        """
-        return text.replace("\n=", "\n\\=").replace("\r=", "\r\\=").replace("\n-", "\n\\-").replace("\r-", "\r\\-"). \
-            replace("_", "\\_").replace("![", "\\!\\[")
     value = unicode(escape(value))
     position = 0
     result = u""
@@ -252,7 +246,7 @@ def markdown(value):
         match = sample_match if next_is_sample else sample_series_match
         if match:
             start, end = match.span("name")
-            result += escape_dangerous_syntax(value[position:start])
+            result += value[position:start]
             position = end
             name = match.group("name")
             database_item = None
@@ -265,9 +259,9 @@ def markdown(value):
                     database_item = chantal.samples.models.SampleSeries.objects.get(name=name)
                 except chantal.samples.models.SampleSeries.DoesNotExist:
                     pass
-            name = escape_dangerous_syntax(name)
+            name = name
             result += "[%s](%s)" % (name, database_item.get_absolute_url()) if database_item else name
         else:
-            result += escape_dangerous_syntax(value[position:])
+            result += value[position:]
             break
     return markup.markdown(result)

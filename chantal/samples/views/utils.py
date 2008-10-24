@@ -926,3 +926,8 @@ def get_profile(user):
         user_details = models.UserDetails(user=user)
         user_details.save()
         return user_details
+
+dangerous_markup_pattern = re.compile(r"[^\\]!\[|[\n\r][-=]")
+def check_markdown(text):
+    if dangerous_markup_pattern.search(text):
+        raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))

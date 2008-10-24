@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-24 08:48+0200\n"
+"POT-Creation-Date: 2008-10-25 01:57+0200\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1316,6 +1316,9 @@ msgstr ""
 
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
+msgstr ""
+
+msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 
 msgid "woman with binoculars"

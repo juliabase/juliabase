@@ -87,6 +87,12 @@ class ActionForm(forms.Form):
         super(ActionForm, self).__init__(*args, **keyw)
         self.fields["new_currently_responsible_person"].queryset = self.fields["copy_to_user"].queryset = \
             django.contrib.auth.models.User.objects.exclude(pk=user.pk)
+    def clean_comment(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comment = self.cleaned_data["comment"]
+        utils.check_markdown(comment)
+        return comment
     def clean(self):
         action_data = self.cleaned_data
         if (self.cleaned_data["new_currently_responsible_person"] or self.cleaned_data["copy_to_user"]) and \
