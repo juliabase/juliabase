@@ -136,7 +136,7 @@ def show(request, username):
         raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
     if user_hash != utils.get_user_hash(user):
         raise permissions.PermissionError(
-            request.user, _(u"You gave in invalid hash parameter in the query string.  "
+            request.user, _(u"You gave an invalid hash parameter in the query string.  "
                             u"Note that you can't access the news feed of another user."))
     feed_absolute_url = \
         "http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse(show, kwargs={"username": username})
