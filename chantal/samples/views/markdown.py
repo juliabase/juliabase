@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils
+from chantal.samples.views.utils import help_link
 
 class SandboxForm(forms.Form):
     u"""Form for entering Markdown markup just for testing it.
