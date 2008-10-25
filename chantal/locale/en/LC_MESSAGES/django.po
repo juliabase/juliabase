@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-25 01:57+0200\n"
+"POT-Creation-Date: 2008-10-25 12:16+0200\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -946,6 +946,15 @@ msgstr ""
 msgid "Search for deposition"
 msgstr ""
 
+msgid "Sandbox"
+msgstr ""
+
+msgid "MarkdownMarkup"
+msgstr ""
+
+msgid "Markdown sandbox"
+msgstr ""
+
 msgid "Nickname"
 msgstr ""
 
@@ -1668,6 +1677,26 @@ msgid "Change password"
 msgstr ""
 
 msgid "Newsfeed"
+msgstr ""
+
+msgid ""
+"\n"
+"  <p>Chantal uses the lightweight markup language “Markdown” for comments.  "
+"It\n"
+"  doesn't support images and headings though.  As compensation, it adds\n"
+"  implicit sample and sample series linking.  Follow the help link at the "
+"top\n"
+"  of the page for further information.</p>\n"
+"\n"
+"  <p>Here, you can test the markup as you like.  What you enter here is "
+"never\n"
+"  saved.</p>\n"
+msgstr ""
+
+msgid "input"
+msgstr ""
+
+msgid "Generate result"
 msgstr ""
 
 msgid "Password change successful"
