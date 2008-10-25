@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
 # Attention! This is a cyclic import.  Don't use models in top-level code.
-from chantal.samples import models
+import chantal.samples.models
 from chantal.samples.views import shared_utils
 
 def translate_permission(permission_codename):
@@ -244,7 +244,7 @@ def assert_can_add_result_process(user, sample_or_series):
         process to the sample or series
     """
     if sample_or_series.currently_responsible_person != user and sample_or_series.group not in user.groups.all():
-        if isinstance(sample_or_series, models.Sample):
+        if isinstance(sample_or_series, chantal.samples.models.Sample):
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
                             u"responsible person for this sample, nor are you a member of its group.") % sample_or_series
         else:
