@@ -8,7 +8,7 @@
 
 {% block content %}
   <p>
-    {% blocktrans with exception.description as description and exception.reason as reason %}
+    {% blocktrans with exception.description as description %}
       Sorry, you can't access this resource.  {{ description }}
       Please contact the administrator if you think you ought to have the permission.
     {% endblocktrans %}

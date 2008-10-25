@@ -113,8 +113,9 @@ def show(request, username):
     The problem we have to deal with here is that the feed-reading program
     cannot login.  Therefore, it must be possible to fetch the feed without
     being logged-in.  The username is no problem, it is part of the path.
-    Additionally, a secret hash (see `utils.get_user_hash`) is appended to the
-    URL in the query string.  This should be enough security for this purpose.
+    Additionally, a secret hash (see `permissions.get_user_hash`) is appended
+    to the URL in the query string.  This should be enough security for this
+    purpose.
     
     :Parameters:
       - `request`: the current HTTP Request object
@@ -134,10 +135,7 @@ def show(request, username):
         user_hash = utils.parse_query_string(request)["hash"]
     except KeyError:
         raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
-    if user_hash != utils.get_user_hash(user):
-        raise permissions.PermissionError(
-            request.user, _(u"You gave an invalid hash parameter in the query string.  "
-                            u"Note that you can't access the news feed of another user."))
+    permissions.assert_can_view_feed(user_hash, user)
     feed_absolute_url = \
         "http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse(show, kwargs={"username": username})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")

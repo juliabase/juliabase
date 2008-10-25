@@ -15,6 +15,7 @@ from chantal.samples import models, permissions
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
+import django.core.urlresolvers
 from chantal.samples.views import utils
 from django.utils.translation import ugettext as _, ugettext_lazy
 
@@ -100,8 +101,9 @@ def get_allowed_processes(user, sample):
     """
     processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
-        processes.append({"name": models.Result._meta.verbose_name, "link": models.Result.get_add_url()})
-    if sample.currently_responsible_person == user:
+        processes.append({"name": models.Result._meta.verbose_name,
+                          "link": django.core.urlresolvers.reverse("samples.views.result.new")})
+    if permissions.has_permission_to_edit_sample(user, sample):
         processes.append({"name": _(u"split"), "link": sample.get_absolute_url() + "/split/"})
         # FixMe: Add sample death
     # FixMe: Add other processes, deposition, measurements, if the user is allowed to do it
@@ -160,8 +162,9 @@ def show(request, sample_name, sample_id=None):
         can_add_process = True
     except permissions.PermissionError:
         can_add_process = False
+    can_edit = permissions.has_permission_to_edit_sample(request.user, sample)
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
-                                                   "can_edit": request.user == sample.currently_responsible_person,
+                                                   "can_edit": can_edit,
                                                    "can_add_process": can_add_process,
                                                    "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))

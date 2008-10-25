@@ -29,6 +29,7 @@ from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.contrib import admin
 from chantal import settings
+from chantal.samples import permissions
 
 import matplotlib
 matplotlib.use("Agg")
@@ -395,7 +396,7 @@ class SixChamberDeposition(Deposition):
 
         :rtype: dict mapping str to arbitrary objects
         """
-        if process_context.user.has_perm("change_sixchamberdeposition"):
+        if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
             return {"edit_url": django.core.urlresolvers.reverse("edit_6-chamber_deposition",
                                                                  kwargs={"deposition_number": self.number}),
                     "duplicate_url": "%s?copy_from=%s" % (django.core.urlresolvers.reverse("add_6-chamber_deposition"),
@@ -550,7 +551,7 @@ class LargeAreaDeposition(Deposition):
 
         :rtype: dict mapping str to arbitrary objects
         """
-        if process_context.user.has_perm("change_largeareadeposition"):
+        if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
             return {"edit_url": django.core.urlresolvers.reverse("edit_large-area_deposition",
                                                                  kwargs={"deposition_number": self.number}),
                     "duplicate_url": "%s?copy_from=%s" % (django.core.urlresolvers.reverse("add_large-area_deposition"),
@@ -674,7 +675,7 @@ class PDSMeasurement(Process):
         """
         result = {}
         result["thumbnail"], result["figure"] = self.generate_plot()
-        if process_context.user.has_perm("change_pdsmeasurement"):
+        if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
             result["edit_url"] = django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pd_number": self.number})
         return result
     class Meta:
@@ -859,22 +860,11 @@ class Result(Process):
 
         :rtype: dict mapping str to str
         """
-        if process_context.user == self.operator:
+        if permissions.has_permission_to_edit_result_process(process_context.user, self):
             return {"edit_url":
                         django.core.urlresolvers.reverse("samples.views.result.edit", kwargs={"process_id": self.pk})}
         else:
             return {}
-    @classmethod
-    def get_add_url(cls):
-        u"""Yields the URL to the “add new” page for this process class.
-
-        :Return:
-          Full but relative URL to the resource where you can add a new result
-          instances.
-
-        :rtype: str
-        """
-        return django.core.urlresolvers.reverse("samples.views.result.new")
     class Meta:
         verbose_name = _(u"result")
         verbose_name_plural = _(u"results")

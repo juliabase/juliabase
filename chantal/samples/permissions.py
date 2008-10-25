@@ -21,8 +21,10 @@ permission just means that e.g. a link is not generated (for example, in the
 ``get_additional_template_context`` methods in the models).
 """
 
+import hashlib
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import django.contrib.auth.models
+from django.conf import settings
 # Attention! This is a cyclic import.  Don't use models in top-level code.
 from chantal.samples import models
 from chantal.samples.views import shared_utils
@@ -70,7 +72,32 @@ def get_user_permissions(user):
         else:
             has_not.append(ugettext(permission["name"]))
     return has, has_not
-            
+
+def get_user_hash(user):
+    u"""Generates a secret hash that is connected with a user.  It is means as
+    some sort of URL-based login for fetching feeds.  If the user accesses his
+    feed via his aggregator, he is possibly not logged-in.  Because the
+    aggregator cannot login by itself, the URL must be made unguessable.  This
+    is done by appending the secret hash.
+
+    Technically, it is the fist 10 characters of a salted SHA-1 hash of the
+    user's name.
+    
+    :Parameters:
+      - `user`: the current user
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      The user's secret hash
+
+    :rtype: str
+    """
+    user_hash = hashlib.sha1()
+    user_hash.update(settings.SECRET_KEY)
+    user_hash.update(user.username)
+    return user_hash.hexdigest()[:10]
+
 
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
@@ -389,6 +416,27 @@ def assert_can_edit_group_memberships(user):
         description = _(u"You are not allowed to change group memberships because you don't have the permission “%s”.") \
             % translate_permission("edit_group_memberships")
         raise PermissionError(user, description)
+
+def assert_can_view_feed(hash_value, user):
+    u"""Tests whether the requester that gave a certain ``hash_value`` can view
+    the news feed of a certain ``user``.  Basically, this tests whether the
+    requester *is* the user because only he can know the hash value.
+
+    :Parameters:
+      - `hash_value`: the hash value given by the requester
+      - `user`: the user whose news feed is requested
+
+    :type hash_value: str
+    :type user: ``django.contrib.auth.models.User``
+
+    :Exceptions:
+      - `PermissionError`: raised if the requester is not allowed to view the
+        user's news feed.
+    """
+    if user_hash != utils.get_user_hash(user):
+        description = _(u"You gave an invalid hash parameter in the query string.  "
+                        u"Note that you can't access the news feed of another user.")
+        raise permissions.PermissionError(None, description)
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for

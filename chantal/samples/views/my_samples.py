@@ -125,12 +125,13 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
         action_data = action_form.cleaned_data
         if action_data["new_currently_responsible_person"] or action_data["new_group"] or \
                     action_data["new_current_location"]:
-            for sample in my_samples_form.cleaned_data["samples"]:
-                if sample.currently_responsible_person != current_user:
-                    utils.append_error(action_form,
-                                       _(u"You must be the currently responsible person for samples you'd like to change."))
-                    referentially_valid = False
-                    break
+            try:
+                for sample in my_samples_form.cleaned_data["samples"]:
+                    permissions.assert_can_edit_sample(current_user, sample)
+            except permissions.PermissionError:
+                utils.append_error(action_form,
+                                   _(u"You must be the currently responsible person for samples you'd like to change."))
+                referentially_valid = False
     return referentially_valid
 
 def save_to_database(user, my_samples_form, action_form):

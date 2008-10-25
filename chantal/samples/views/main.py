@@ -9,7 +9,7 @@ from __future__ import division
 import string, time, os, datetime, re, pickle, locale
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from chantal.samples import models
+from chantal.samples import models, permissions
 from django.http import HttpResponsePermanentRedirect, HttpResponse, Http404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
@@ -22,7 +22,6 @@ from django.conf import settings
 from django.views.decorators.cache import cache_page, never_cache
 from chantal.samples.views import utils
 from chantal.samples.views.utils import help_link
-from chantal.samples import permissions
 from chantal.common import Availability
 
 class MySeries(object):
@@ -108,7 +107,7 @@ def main_menu(request):
                                                  "my_series": my_series,
                                                  "seriesless_samples": seriesless_samples,
                                                  "username": request.user.username,
-                                                 "user_hash": utils.get_user_hash(request.user)},
+                                                 "user_hash": permissions.get_user_hash(request.user)},
                               context_instance=RequestContext(request))
 
 def breakup_time(seconds):

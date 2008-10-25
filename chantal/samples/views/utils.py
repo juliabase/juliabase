@@ -5,7 +5,7 @@ u"""General helper functions for the views.  Try to avoid using it outside the
 views package.
 """
 
-import re, string, copy, datetime, hashlib, pickle
+import re, string, copy, datetime, pickle
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict, Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -16,7 +16,6 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
-from django.conf import settings
 import django.core.urlresolvers
 from chantal.samples import models, permissions
 from chantal.samples.views.shared_utils import *
@@ -781,31 +780,6 @@ def parse_query_string(request):
             item.append(u"")
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
-
-def get_user_hash(user):
-    u"""Generates a secret hash that is connected with a user.  It is means as
-    some sort of URL-based login for fetching feeds.  If the user accesses his
-    feed via his aggregator, he is possibly not logged-in.  Because the
-    aggregator cannot login by itself, the URL must be made unguessable.  This
-    is done by appending the secret hash.
-
-    Technically, it is the fist 10 characters of a salted SHA-1 hash of the
-    user's name.
-    
-    :Parameters:
-      - `user`: the current user
-
-    :type user: ``django.contrib.auth.models.User``
-
-    :Return:
-      The user's secret hash
-
-    :rtype: str
-    """
-    user_hash = hashlib.sha1()
-    user_hash.update(settings.SECRET_KEY)
-    user_hash.update(user.username)
-    return user_hash.hexdigest()[:10]
 
 def successful_response(request, success_report=None, view="samples.views.main.main_menu", kwargs={},
                         remote_client_response=True):
