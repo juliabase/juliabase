@@ -58,11 +58,11 @@ class NewDataForm(Form):
     """
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
-    new_responsible_person = utils.OperatorChoiceField(label=_(u"New responsible person"), queryset=None, required=False)
+    new_responsible_person = utils.OperatorChoiceField(
+        label=_(u"New responsible person"), queryset=django.contrib.auth.models.User.objects.all(), required=False)
     def __init__(self, data=None, **keyw):
         super(NewDataForm, self).__init__(data, **keyw)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
-        self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
 
 class GlobalNewDataForm(Form):
     u"""Form for holding new data which applies to all samples and overrides
@@ -70,7 +70,7 @@ class GlobalNewDataForm(Form):
     """
     _ = ugettext_lazy
     new_responsible_person = utils.OperatorChoiceField(
-        label=_(u"New responsible person"), required=False, queryset=None,
+        label=_(u"New responsible person"), required=False, queryset=django.contrib.auth.models.User.objects.all(),
         help_text=_(u"(for all samples; overrides individual settings above)"), empty_label=_(u"(no global change)"))
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples; leave empty for no change)"))
@@ -80,7 +80,6 @@ class GlobalNewDataForm(Form):
         """
         deposition_instance = keyw.pop("deposition_instance")
         super(GlobalNewDataForm, self).__init__(data, **keyw)
-        self.fields["new_responsible_person"].queryset = django.contrib.auth.models.User.objects.all()
         self.fields["new_location"].initial = \
             models.default_location_of_deposited_samples.get(deposition_instance.__class__, u"")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
