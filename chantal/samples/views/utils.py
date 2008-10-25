@@ -697,7 +697,7 @@ class AmbiguityException(Exception):
         self.sample_name, self.samples = sample_name, samples
 
 def lookup_sample(sample_name, request):
-    u"""Looks up the `sample_name` in the database (also among the aliases),
+    u"""Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
     to view it.  If not, it raises an exception.
     
@@ -714,7 +714,7 @@ def lookup_sample(sample_name, request):
     :rtype: `models.Sample`
 
     :Exceptions:
-      - ``Http404``: if the sample name could not be found
+      - `Http404`: if the sample name could not be found
       - `AmbiguityException`: if more than one matching alias was found
       - `permissions.PermissionError`: if the user is not allowed to view the
         sample

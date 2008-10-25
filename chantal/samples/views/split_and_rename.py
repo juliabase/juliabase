@@ -43,8 +43,7 @@ class GlobalDataForm(forms.Form):
         super(GlobalDataForm, self).__init__(data, **keyw)
         now = datetime.datetime.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
-        self.fields["sample_series"].queryset = \
-            models.SampleSeries.objects.filter(currently_responsible_person=user_details.user)
+        self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)
 
 def forms_from_post_data(post_data, parent, user_details):
     u"""Interpret the POST data sent by the user through his browser and create

@@ -98,6 +98,22 @@ def get_user_hash(user):
     user_hash.update(user.username)
     return user_hash.hexdigest()[:10]
 
+def get_editable_sample_series(user):
+    u"""Return a query set with all sample series that the user can edit.  So
+    far, it is only used in `split_and_rename.GlobalDataForm`.
+
+    :Parameters:
+      - `user`: the user which has too few permissions
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      a query set with all sample series that the user can edit
+
+    :rtype: ``QuerySet``
+    """
+    return chantal.samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
+
 
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
