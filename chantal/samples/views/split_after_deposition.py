@@ -59,7 +59,7 @@ class NewDataForm(Form):
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_responsible_person = utils.OperatorChoiceField(
-        label=_(u"New responsible person"), queryset=django.contrib.auth.models.User.objects.all(), required=False)
+        label=_(u"New responsible person"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, data=None, **keyw):
         super(NewDataForm, self).__init__(data, **keyw)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
@@ -151,7 +151,7 @@ def change_structure(original_data_forms, new_data_form_lists, deposition_number
                 structure_changed = True
     return structure_changed
 
-def save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, operator):
+def save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition):
     u"""Performs all splits – if any – and renames the samples according to
     what was input by the user.
 
@@ -159,19 +159,20 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
       - `original_data_forms`: all old samples and pieces numbers
       - `new_data_form_lists`: new names for all pieces
       - `global_new_data_form`: the global, overriding settings
-      - `operator`: the user who performed the split
+      - `deposition`: the deposition after which the splits took place
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_data_form_lists: list of list of `NewDataForm`
     :type global_new_data_form: `GlobalNewDataForm`
-    :type operator: ``django.contrib.auth.models.User``
+    :type depositon: `models.Deposition`
     """
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]
     for original_data_form, new_data_forms in zip(original_data_forms, new_data_form_lists):
         sample = original_data_form.cleaned_data["sample"]
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
-            sample_split = models.SampleSplit(timestamp=datetime.datetime.now(), operator=operator, parent=sample)
+            sample_split = models.SampleSplit(timestamp=deposition.timestamp + datetime.timedelta(seconds=5),
+                                              operator=deposition.operator, parent=sample)
             sample_split.save()
             sample.processes.add(sample_split)
             for new_data_form in new_data_forms:
@@ -180,26 +181,27 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
                 child_sample.split_origin = sample_split
                 if global_new_location:
                     child_sample.current_location = global_new_location
-                currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
+                child_sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
                     else new_data_form.cleaned_data["new_responsible_person"]
-                if currently_responsible_person:
-                    child_sample.currently_responsible_person = currently_responsible_person
                 child_sample.save()
-                # FixMe: Don't do that always
-                utils.get_profile(child_sample.currently_responsible_person).my_samples.add(child_sample)
+                for watcher in sample.watchers.all():
+                    watcher.my_samples.add(child_sample)
+            sample.watchers.clear()
+            death = models.SampleDeath(timestamp=deposition.timestamp + datetime.timedelta(seconds=10),
+                                       operator=deposition.operator, reason="split")
+            death.save()
+            sample.processes.add(death)
         else:
             if not sample.name.startswith("*"):
                 models.SampleAlias(name=sample.name, sample=sample).save()
             sample.name = new_data_forms[0].cleaned_data["new_name"]
             if global_new_location:
                 sample.current_location = global_new_location
-            currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
+            formerly_responsible_person = sample.currently_responsible_person
+            sample.currently_responsible_person = global_new_responsible_person if global_new_responsible_person \
                 else new_data_forms[0].cleaned_data["new_responsible_person"]
-            if currently_responsible_person:
-                sample.currently_responsible_person = currently_responsible_person
             sample.save()
-            # Cheap heuristics to avoid re-adding samples that have been already removed from the operator's MySamples
-            if sample.currently_responsible_person != operator:
+            if formerly_responsible_person != sample.currently_responsible_person:
                 utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
 
 def is_referentially_valid(original_data_forms, new_data_form_lists, deposition):
@@ -333,7 +335,7 @@ def split_and_rename_after_deposition(request, deposition_number):
         structure_changed = change_structure(original_data_forms, new_data_form_lists, deposition.number)
         referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition.operator)
+            save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition)
             if not remote_client:
                 request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
                 return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
