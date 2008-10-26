@@ -60,6 +60,9 @@
 
   <h2>{% trans 'Miscellaneous' %}</h2>
   <ul>
+    {% if user.is_staff %}
+      <li><a href="admin/">{% trans 'Administration' %}</a></li>
+    {% endif %}
     <li><a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}">{% trans 'Edit preferences' %}</a></li>
     <li><a href="{% url samples.views.user_details.groups_and_permissions login_name=user.username %}">{% trans 'My groups and permissions' %}</a></li>
     <li><a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
