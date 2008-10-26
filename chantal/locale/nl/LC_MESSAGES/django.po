@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-26 21:25+0100\n"
+"POT-Creation-Date: 2008-10-27 00:25+0100\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1205,6 +1205,9 @@ msgstr ""
 msgid "Old sample name"
 msgstr ""
 
+msgid "New name"
+msgstr ""
+
 msgid "Pieces"
 msgstr ""
 
@@ -1218,6 +1221,9 @@ msgid "No sample with this ID found."
 msgstr ""
 
 msgid "Invalid ID format."
+msgstr ""
+
+msgid "New name of original sample must begin with deposition number."
 msgstr ""
 
 msgid "Must be at least 1."
@@ -1238,6 +1244,12 @@ msgstr ""
 msgid "(for all samples; leave empty for no change)"
 msgstr ""
 
+msgid "This sample name has been used already on this page."
+msgstr ""
+
+msgid "This sample name exists already."
+msgstr ""
+
 #, python-format
 msgid "Sample name %s doesn't belong to this deposition."
 msgstr ""
@@ -1247,10 +1259,7 @@ msgid ""
 "deposition's name."
 msgstr ""
 
-msgid "This sample name has been used already on this page."
-msgstr ""
-
-msgid "This sample name exists already."
+msgid "The new sample name must start with the new name of the parent sample."
 msgstr ""
 
 msgid "Samples were successfully split and/or renamed."

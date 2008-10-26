@@ -27,11 +27,15 @@ class OriginalDataForm(Form):
     _ = ugettext_lazy
     sample = forms.CharField(label=_(u"Old sample name"), max_length=30,
                              widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
+    new_name = forms.CharField(label=_(u"New name"), max_length=30)
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
-    def __init__(self, remote_client, *args, **kwargs):
+    def __init__(self, remote_client, deposition_number, *args, **kwargs):
+        if "initial" not in kwargs:
+            kwargs["initial"] = {}
+        kwargs["initial"]["new_name"] = deposition_number
         super(OriginalDataForm, self).__init__(*args, **kwargs)
-        self.remote_client = remote_client
+        self.remote_client, self.deposition_number = remote_client, deposition_number
     def clean_sample(self):
         if not self.remote_client:
             sample = utils.get_sample(self.cleaned_data["sample"])
@@ -41,12 +45,17 @@ class OriginalDataForm(Form):
                 raise ValidationError(_(u"Alias is not unique."))
         else:
             try:
-                sample = models.Sample.objects.get(id=int(self.cleaned_data["sample"]))
+                sample = models.Sample.objects.get(pk=int(self.cleaned_data["sample"]))
             except models.Sample.DoesNotExist:
                 raise ValidationError(_(u"No sample with this ID found."))
             except ValueError:
                 raise ValidationError(_(u"Invalid ID format."))
         return sample
+    def clean_new_name(self):
+        new_name = self.cleaned_data["new_name"]
+        if not new_name.startswith(self.deposition_number):
+            raise ValidationError(_(u"New name of original sample must begin with deposition number."))
+        return new_name
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
             raise ValidationError(_(u"Must be at least 1."))
@@ -109,7 +118,7 @@ def is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
     valid = valid and global_new_data_form.is_valid()
     return valid
 
-def change_structure(original_data_forms, new_data_form_lists, deposition_number):
+def change_structure(original_data_forms, new_data_form_lists):
     u"""Add or delete new data form according to the new number of pieces
     entered by the user.  While changes in form fields are performs by the form
     objects themselves, they can't change the *structure* of the view.  This is
@@ -118,11 +127,9 @@ def change_structure(original_data_forms, new_data_form_lists, deposition_number
     :Parameters:
       - `original_data_forms`: all old samples and pieces numbers
       - `new_data_form_lists`: new names for all pieces
-      - `deposition_number`: the deposition number
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_data_form_lists: list of list of `NewDataForm`
-    :type deposition_number: unicode
 
     :Return:
       whether the structure was changed, i.e. whether the number of pieces of
@@ -145,7 +152,7 @@ def change_structure(original_data_forms, new_data_form_lists, deposition_number
                         default_new_responsible_person = new_data_forms[-1].cleaned_data["new_responsible_person"]
                         if default_new_responsible_person:
                             default_new_responsible_person = default_new_responsible_person.pk
-                    new_data_forms.append(NewDataForm(initial={"new_name": deposition_number,
+                    new_data_forms.append(NewDataForm(initial={"new_name": original_data_form.cleaned_data["new_name"],
                                                                "new_responsible_person": default_new_responsible_person},
                                                       prefix="%d_%d"%(sample_index, new_name_index)))
                 structure_changed = True
@@ -170,6 +177,8 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]
     for original_data_form, new_data_forms in zip(original_data_forms, new_data_form_lists):
         sample = original_data_form.cleaned_data["sample"]
+        sample.name = original_data_form.cleaned_data["new_name"]
+        sample.save()
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=deposition.timestamp + datetime.timedelta(seconds=5),
                                               operator=deposition.operator, parent=sample)
@@ -225,26 +234,41 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
     """
     referentially_valid = True
     samples = deposition.samples.all()
-    for original_data_form in original_data_forms:
-        if original_data_form.is_valid() and original_data_form.cleaned_data["sample"] not in samples:
-            utils.append_error(original_data_form, _(u"Sample name %s doesn't belong to this deposition."))
-            referentially_valid = False
+    more_than_one_piece = len(original_data_forms) > 1
     new_names = set()
-    more_than_one_piece = sum(len(new_data_forms) for new_data_forms in new_data_form_lists) > 1
-    for new_data_forms in new_data_form_lists:
+    for original_data_form in original_data_forms:
+        if original_data_form.is_valid():
+            new_name = original_data_form.cleaned_data["new_name"]
+            if new_name in new_names:
+                utils.append_error(
+                    original_data_form, _(u"This sample name has been used already on this page."), "new_name")
+                referentially_valid = False
+            new_names.add(new_name)
+            if utils.does_sample_exist(new_name):
+                utils.append_error(original_data_form, _(u"This sample name exists already."), "new_name")
+                referentially_valid = False
+            if original_data_form.cleaned_data["sample"] not in samples:
+                utils.append_error(original_data_form, _(u"Sample name %s doesn't belong to this deposition."))
+                referentially_valid = False
+            if more_than_one_piece and new_name == deposition.number:
+                utils.append_error(original_data_form, _(u"Since there is more than one piece, the new name "
+                                                         u"must not be exactly the deposition's name."), "new_name")
+                referentially_valid = False
+    for new_data_forms, original_data_form in zip(new_data_form_lists, original_data_forms):
         for new_data_form in new_data_forms:
             if new_data_form.is_valid():
                 new_name = new_data_form.cleaned_data["new_name"]
-                if more_than_one_piece and new_name == deposition.number:
-                    utils.append_error(new_data_form, _(u"Since there is more than one piece, the new name "
-                                                        u"must not be exactly the deposition's name."))
-                    referentially_valid = False
                 if new_name in new_names:
-                    utils.append_error(new_data_form, _(u"This sample name has been used already on this page."))
+                    utils.append_error(new_data_form, _(u"This sample name has been used already on this page."), "new_name")
+                    referentially_valid = False
+                if original_data_form.is_valid() and not new_name.startswith(original_data_form.cleaned_data["new_name"]):
+                    utils.append_error(new_data_form,
+                                       _(u"The new sample name must start with the new name of the parent sample."),
+                                       "new_name")
                     referentially_valid = False
                 new_names.add(new_name)
                 if utils.does_sample_exist(new_name):
-                    utils.append_error(new_data_form, _(u"This sample name exists already."))
+                    utils.append_error(new_data_form, _(u"This sample name exists already."), "new_name")
                     referentially_valid = False
     return referentially_valid
 
@@ -271,7 +295,8 @@ def forms_from_post_data(post_data, deposition, remote_client):
       `GlobalNewDataForm`
     """
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
-    original_data_forms = [OriginalDataForm(remote_client, post_data, prefix=str(i)) for i in range(number_of_samples)]
+    original_data_forms = [OriginalDataForm(remote_client, deposition.number, post_data, prefix=str(i))
+                           for i in range(number_of_samples)]
     new_data_form_lists = [[NewDataForm(post_data, prefix="%d_%d" % (sample_index, new_name_index))
                             for new_name_index in range(list_of_number_of_new_names[sample_index])]
                            for sample_index in range(number_of_samples)]
@@ -299,8 +324,8 @@ def forms_from_database(deposition, remote_client):
       `GlobalNewDataForm`
     """
     samples = deposition.samples
-    original_data_forms = [OriginalDataForm(remote_client, initial={"sample": sample.name}, prefix=str(i))
-                             for i, sample in enumerate(samples.all())]
+    original_data_forms = [OriginalDataForm(remote_client, deposition.number, initial={"sample": sample.name}, prefix=str(i))
+                           for i, sample in enumerate(samples.all())]
     new_data_form_lists = [[NewDataForm(
                 initial={"new_name": deposition.number, "new_responsible_person": sample.currently_responsible_person.pk},
                 prefix="%d_0"%i)] for i, sample in enumerate(samples.all())]
@@ -332,7 +357,7 @@ def split_and_rename_after_deposition(request, deposition_number):
         original_data_forms, new_data_form_lists, global_new_data_form = \
             forms_from_post_data(request.POST, deposition, remote_client)
         all_valid = is_all_valid(original_data_forms, new_data_form_lists, global_new_data_form)
-        structure_changed = change_structure(original_data_forms, new_data_form_lists, deposition.number)
+        structure_changed = change_structure(original_data_forms, new_data_form_lists)
         referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
         if all_valid and referentially_valid and not structure_changed:
             save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition)

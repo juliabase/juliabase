@@ -7,6 +7,7 @@
   <table style="margin-left: auto; margin-right: auto; margin-bottom: 3ex" cellpadding="10" border="1">
     <tr>
       <th>{{ samples.0.0.sample.label }}</th>
+      <th>{{ samples.0.0.new_name.label }}</th>
       <th>{{ samples.0.0.number_of_pieces.label }}</th>
       <th>{{ samples.0.1.0.new_name.label }}<br/>{{ samples.0.1.0.new_responsible_person.label }}</th>
     </tr>
@@ -26,6 +27,9 @@
       <tr>
         <td style="vertical-align: top">
           {{ sample.sample }}
+        </td>
+        <td style="text-align: center; vertical-align: top">
+          {{ sample.new_name }}
         </td>
         <td style="text-align: center; vertical-align: top">
           {{ sample.number_of_pieces }}
