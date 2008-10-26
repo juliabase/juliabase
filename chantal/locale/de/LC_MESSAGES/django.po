@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-25 12:49+0200\n"
-"PO-Revision-Date: 2008-10-25 12:50+0200\n"
+"POT-Creation-Date: 2008-10-26 12:41+0100\n"
+"PO-Revision-Date: 2008-10-26 12:42+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -122,6 +122,9 @@ msgstr "Depositionen"
 msgid "carrier"
 msgstr "Carrier"
 
+msgid "Add 6-chamber deposition"
+msgstr "6-Kammer-Deposition hinzufügen"
+
 msgid "6-chamber deposition"
 msgstr "6-Kammer-Deposition"
 
@@ -141,6 +144,9 @@ msgstr "Hall-Messung von %s"
 #, python-format
 msgid "hall measurement #%d"
 msgstr "Hall-Messung #%d"
+
+msgid "Add hall measurement"
+msgstr "Hall-Messung hinzufügen"
 
 msgid "Hall measurement"
 msgstr "Hall-Messung"
@@ -273,6 +279,9 @@ msgstr "6-Kammer-Channel"
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
 
+msgid "Add large-area deposition"
+msgstr "Großflächige Deposition hinzufügen"
+
 msgid "large-area deposition"
 msgstr "Großflächige Deposition"
 
@@ -391,6 +400,9 @@ msgstr "Energie in eV"
 
 msgid "counts"
 msgstr "Counts"
+
+msgid "Add PDS measurement"
+msgstr "PDS-Messung hinzufügen"
 
 msgid "PDS measurement"
 msgstr "PDS-Messung"
@@ -719,6 +731,14 @@ msgstr ""
 "Sie dürfen keine Gruppenzugehörigkeiten ändern, weil Ihnen die Berechtgung „%"
 "s“ fehlt."
 
+msgid ""
+"You gave an invalid hash parameter in the query string.  Note that you can't "
+"access the news feed of another user."
+msgstr ""
+"Sie haben einen ungültigen Hash-Wert im Query-String angegeben.  Beachten "
+"Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
+"dürfen."
+
 msgid "Yes"
 msgstr "Ja"
 
@@ -758,14 +778,6 @@ msgstr "Externer Operateur „%(name)s“"
 
 msgid "You must add a \"hash\" parameter to the query string."
 msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
-
-msgid ""
-"You gave in invalid hash parameter in the query string.  Note that you can't "
-"access the news feed of another user."
-msgstr ""
-"Sie haben einen ungültigen Hash-Wert im Query-String angegeben.  Beachten "
-"Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
-"dürfen."
 
 #, python-format
 msgid "Chantal news for %s"
@@ -864,9 +876,6 @@ msgstr "Die Deposition %s wurde erfolgreich zur Datenbank hinzugefügt."
 #, python-format
 msgid "Large-area deposition “%s”"
 msgstr "Großflächige Deposition „%s“"
-
-msgid "Add large-area deposition"
-msgstr "Großflächige Deposition hinzufügen"
 
 msgid "MainMenu"
 msgstr "MainMenu"
@@ -1022,6 +1031,10 @@ msgstr "In dieser Deposition gibt es diesen Layer nicht."
 msgid "Nickname is already given."
 msgstr "Dieser Spitzname ist schon vergeben."
 
+msgid "You can't access the “My Layers” section of another user."
+msgstr ""
+"Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
+
 msgid "My Layers"
 msgstr "Meine Schichten"
 
@@ -1095,9 +1108,6 @@ msgstr "%s wurde erfolgreich zur Datenbank hinzugefügt."
 #, python-format
 msgid "PDS measurement %s"
 msgstr "PDS-Messung %s"
-
-msgid "Add PDS measurement"
-msgstr "PDS-Messung hinzufügen"
 
 msgid "Comments"
 msgstr "Kommentare"
@@ -1739,17 +1749,20 @@ msgstr "Erneut anmelden"
 msgid "Add things"
 msgstr "Dinge hinzufügen"
 
-msgid "Add sample series"
-msgstr "Probenserie hinzufügen"
+msgid "Result"
+msgstr "Ergebnis"
 
-msgid "Search things"
+msgid "External operator"
+msgstr "Externer Operateur"
+
+msgid "Search for things"
 msgstr "Nach Dingen suchen"
 
-msgid "Search for samples"
-msgstr "Nach Proben suchen"
+msgid "Depositions"
+msgstr "Depositionen"
 
-msgid "Search for depositions"
-msgstr "Nach Depositionen suchen"
+msgid "edit"
+msgstr "ändern"
 
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
@@ -1757,20 +1770,35 @@ msgstr ""
 "(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste "
 "gehören.)"
 
+msgid "Edit groups"
+msgstr "Gruppen ändern"
+
+msgid "Change group memberships"
+msgstr "Mitglieder von Gruppen ändern"
+
 msgid "Miscellaneous"
 msgstr "Sonstiges"
 
-msgid "About Chantal"
-msgstr "Über Chantal"
+msgid "Edit preferences"
+msgstr "Einstellungen ändern"
 
-msgid "Server statistics"
-msgstr "Server-Statistik"
+msgid "My groups and permissions"
+msgstr "Meine Gruppen und Berechtigungen"
+
+msgid "Edit “My Layers”"
+msgstr "„Meine Proben“ ändern"
 
 msgid "Change password"
 msgstr "Ändere Passwort"
 
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
+
+msgid "About Chantal"
+msgstr "Über Chantal"
+
+msgid "Server statistics"
+msgstr "Server-Statistik"
 
 msgid ""
 "\n"
@@ -1849,9 +1877,6 @@ msgid ""
 msgstr ""
 "\n"
 "Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
-
-msgid "edit"
-msgstr "ändern"
 
 msgid "Silane conc."
 msgstr "Silankonz."
@@ -2048,6 +2073,21 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "Add sample series"
+#~ msgstr "Probenserie hinzufügen"
+
+#~ msgid "Add result"
+#~ msgstr "Ergebnis hinzufügen"
+
+#~ msgid "Search for samples"
+#~ msgstr "Nach Proben suchen"
+
+#~ msgid "Search for depositions"
+#~ msgstr "Nach Depositionen suchen"
+
+#~ msgid "Edit external operators"
+#~ msgstr "Externe Operateure ändern"
 
 #~ msgid "comment about %s"
 #~ msgstr "Kommentar über %s"

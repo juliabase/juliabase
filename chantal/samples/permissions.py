@@ -114,6 +114,12 @@ def get_editable_sample_series(user):
     """
     return chantal.samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
 
+def get_allowed_physical_processes(user):
+    allowed_physical_processes = []
+    for physical_process_class in chantal.samples.models.all_physical_process_models:
+        if has_permission_to_add_edit_physical_process(user, None, physical_process_class):
+            allowed_physical_processes.append(physical_process_class)
+    return allowed_physical_processes
 
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
@@ -449,10 +455,10 @@ def assert_can_view_feed(hash_value, user):
       - `PermissionError`: raised if the requester is not allowed to view the
         user's news feed.
     """
-    if user_hash != utils.get_user_hash(user):
+    if hash_value != get_user_hash(user):
         description = _(u"You gave an invalid hash parameter in the query string.  "
                         u"Note that you can't access the news feed of another user.")
-        raise permissions.PermissionError(None, description)
+        raise PermissionError(None, description)
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for

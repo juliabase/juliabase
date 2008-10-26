@@ -18,6 +18,16 @@ the new tables are automatically created.
 
 :type default_location_of_deposited_samples: dict mapping `Deposition` to
   string.
+
+:var all_physical_process_models: list of all models that denote physical
+  processes (i.e. depositions, measurements, etching processes etc).  Such
+  processes must have a permission of the form ``"add_edit_model_name"`` where
+  the model name is in lowercase with underscores.  Additionally, they must
+  have the method ``get_add_link`` (see `SixChamberDeposition.get_add_link`).
+  For the sake of performance, I don't want to enforce the latter by a common
+  parent class.
+
+:type all_physical_process_models: list of ``class``.
 """
 
 import hashlib, os.path, codecs
@@ -406,6 +416,24 @@ class SixChamberDeposition(Deposition):
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.six_chamber_deposition.show", [urlquote(self.number, safe="")])
+    @classmethod
+    def get_add_link(cls):
+        u"""Return all you need to generate a link to the “add” view for this
+        process.  This is the URL, and a short text used for labeling it.  This
+        starts with a capital letter, and it is not ended by a full stop.  For
+        example, it may be ``u"Add 6-chamber deposition"``.
+
+        This method marks the current class as a so-called physical process.
+        This implies that it also must have an “add-edit” permission.
+
+        :Return:
+          the full URL to the add page for this process, hyperlink label like
+          ``u"Add 6-chamber deposition"``
+
+        :rtype: str, unicode
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_6-chamber_deposition"), _(u"Add 6-chamber deposition")
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
@@ -424,6 +452,20 @@ class HallMeasurement(Process):
             _(u"hall measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return _(u"hall measurement #%d") % self.pk
+    @classmethod
+    def get_add_link(cls):
+        u"""Return all you need to generate a link to the “add” view for this
+        process.  See `SixChamberDeposition.get_add_link`.
+
+        :Return:
+          the full URL to the add page for this process, hyperlink label like
+          ``u"Add 6-chamber deposition"``
+
+        :rtype: str, unicode
+        """
+        _ = ugettext
+        raise NotImplementedError
+        return django.core.urlresolvers.reverse("add_hall_measurement"), _(u"Add hall measurement")
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
@@ -561,6 +603,19 @@ class LargeAreaDeposition(Deposition):
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.large_area_deposition.show", [urlquote(self.number, safe="")])
+    @classmethod
+    def get_add_link(cls):
+        u"""Return all you need to generate a link to the “add” view for this
+        process.  See `SixChamberDeposition.get_add_link`.
+
+        :Return:
+          the full URL to the add page for this process, hyperlink label like
+          ``u"Add 6-chamber deposition"``
+
+        :rtype: str, unicode
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_large-area_deposition"), _(u"Add large-area deposition")
     class Meta:
         verbose_name = _(u"large-area deposition")
         verbose_name_plural = _(u"large-area depositions")
@@ -678,6 +733,19 @@ class PDSMeasurement(Process):
         if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
             result["edit_url"] = django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pd_number": self.number})
         return result
+    @classmethod
+    def get_add_link(cls):
+        u"""Return all you need to generate a link to the “add” view for this
+        process.  See `SixChamberDeposition.get_add_link`.
+
+        :Return:
+          the full URL to the add page for this process, hyperlink label like
+          ``u"Add 6-chamber deposition"``
+
+        :rtype: str, unicode
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_pds_measurement"), _(u"Add PDS measurement")
     class Meta:
         verbose_name = _(u"PDS measurement")
         verbose_name_plural = _(u"PDS measurements")
@@ -1020,6 +1088,7 @@ admin.site.register(FeedNewSamples)
 import copy, inspect
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
+all_physical_process_models = [cls for cls in all_models if hasattr(cls, "get_add_link")]
 class_hierarchy = inspect.getclasstree(all_models)
 u"""Rather complicated list structure that represents the class hierarchy of
 models in this module.  Nobody needs to understand it as long as the internal

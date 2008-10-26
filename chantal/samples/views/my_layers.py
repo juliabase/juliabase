@@ -9,10 +9,11 @@ import re
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.forms.util import ValidationError
-from chantal.samples import models
+import django.contrib.auth.models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
 class MyLayerForm(forms.Form):
@@ -137,28 +138,34 @@ def save_to_database(my_layer_forms, user):
     user_details.save()
     
 @login_required
-def edit(request):
+def edit(request, login_name):
     u"""View for editing the “My Layers”.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `login_name`: the login name of the user whose “My Layers” should be
+        changed
 
     :type request: ``HttpRequest``
+    :type login_name: unicode
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
+    user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
+    if not request.user.is_staff and request.user != user:
+        raise permissions.PermissionError(request.user, _(u"You can't access the “My Layers” section of another user."))
     if request.method == "POST":
         my_layer_forms, structure_changed = forms_from_post_data(request.POST)
         all_valid = all([my_layer_form.is_valid() for my_layer_form in my_layer_forms])
         referentially_valid = is_referentially_valid(my_layer_forms)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(my_layer_forms, request.user)
+            save_to_database(my_layer_forms, user)
             return utils.successful_response(request)
     else:
-        my_layer_forms = forms_from_database(request.user)
+        my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
     return render_to_response("edit_my_layers.html", {"title": _(u"My Layers"), "my_layers": my_layer_forms},
                               context_instance=RequestContext(request))

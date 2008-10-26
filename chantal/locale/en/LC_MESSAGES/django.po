@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-25 12:49+0200\n"
+"POT-Creation-Date: 2008-10-26 12:41+0100\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -123,6 +123,9 @@ msgstr ""
 msgid "carrier"
 msgstr ""
 
+msgid "Add 6-chamber deposition"
+msgstr ""
+
 msgid "6-chamber deposition"
 msgstr ""
 
@@ -141,6 +144,9 @@ msgstr ""
 
 #, python-format
 msgid "hall measurement #%d"
+msgstr ""
+
+msgid "Add hall measurement"
 msgstr ""
 
 msgid "Hall measurement"
@@ -274,6 +280,9 @@ msgstr ""
 msgid "6-chamber channels"
 msgstr ""
 
+msgid "Add large-area deposition"
+msgstr ""
+
 msgid "large-area deposition"
 msgstr ""
 
@@ -391,6 +400,9 @@ msgid "energy in eV"
 msgstr ""
 
 msgid "counts"
+msgstr ""
+
+msgid "Add PDS measurement"
 msgstr ""
 
 msgid "PDS measurement"
@@ -686,6 +698,11 @@ msgid ""
 "permission “%s”."
 msgstr ""
 
+msgid ""
+"You gave an invalid hash parameter in the query string.  Note that you can't "
+"access the news feed of another user."
+msgstr ""
+
 msgid "Yes"
 msgstr ""
 
@@ -724,11 +741,6 @@ msgid "External operator “%(name)s”"
 msgstr "sample series"
 
 msgid "You must add a \"hash\" parameter to the query string."
-msgstr ""
-
-msgid ""
-"You gave in invalid hash parameter in the query string.  Note that you can't "
-"access the news feed of another user."
 msgstr ""
 
 #, python-format
@@ -823,9 +835,6 @@ msgstr ""
 
 #, python-format
 msgid "Large-area deposition “%s”"
-msgstr ""
-
-msgid "Add large-area deposition"
 msgstr ""
 
 msgid "MainMenu"
@@ -982,6 +991,9 @@ msgstr ""
 msgid "Nickname is already given."
 msgstr ""
 
+msgid "You can't access the “My Layers” section of another user."
+msgstr ""
+
 msgid "My Layers"
 msgstr ""
 
@@ -1051,9 +1063,6 @@ msgstr ""
 
 #, python-format
 msgid "PDS measurement %s"
-msgstr ""
-
-msgid "Add PDS measurement"
 msgstr ""
 
 msgid "Comments"
@@ -1647,36 +1656,56 @@ msgstr ""
 msgid "Add things"
 msgstr ""
 
+msgid "Result"
+msgstr ""
+
 #, fuzzy
-msgid "Add sample series"
+msgid "External operator"
 msgstr "sample series"
 
-msgid "Search things"
+msgid "Search for things"
 msgstr ""
 
-msgid "Search for samples"
+msgid "Depositions"
 msgstr ""
 
-msgid "Search for depositions"
+msgid "edit"
 msgstr ""
 
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
 msgstr ""
 
+msgid "Edit groups"
+msgstr ""
+
+msgid "Change group memberships"
+msgstr ""
+
 msgid "Miscellaneous"
+msgstr ""
+
+#, fuzzy
+msgid "Edit preferences"
+msgstr "sample series"
+
+msgid "My groups and permissions"
+msgstr ""
+
+#, fuzzy
+msgid "Edit “My Layers”"
+msgstr "sample series"
+
+msgid "Change password"
+msgstr ""
+
+msgid "Newsfeed"
 msgstr ""
 
 msgid "About Chantal"
 msgstr ""
 
 msgid "Server statistics"
-msgstr ""
-
-msgid "Change password"
-msgstr ""
-
-msgid "Newsfeed"
 msgstr ""
 
 msgid ""
@@ -1736,9 +1765,6 @@ msgid ""
 "\n"
 "      Too many matches were found.  I show only %(max_results)s of them.\n"
 "    "
-msgstr ""
-
-msgid "edit"
 msgstr ""
 
 msgid "Silane conc."
@@ -1913,6 +1939,10 @@ msgstr ""
 
 msgid "Objects failed"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Add sample series"
+#~ msgstr "sample series"
 
 #, fuzzy
 #~ msgid "edit the process “%s”"

@@ -103,12 +103,24 @@ def main_menu(request):
                     my_series[series.name] = MySeries(series)
                 my_series[series.name].append(sample)
     my_series = sorted(my_series.itervalues(), key=lambda series: series.timestamp, reverse=True)
-    return render_to_response("main_menu.html", {"title": _(u"Main menu"),
-                                                 "my_series": my_series,
-                                                 "seriesless_samples": seriesless_samples,
-                                                 "username": request.user.username,
-                                                 "user_hash": permissions.get_user_hash(request.user)},
-                              context_instance=RequestContext(request))
+    physical_processes = []
+    for cls in permissions.get_allowed_physical_processes(request.user):
+        # FixMe: This try block should vanish
+        try:
+            url, label = cls.get_add_link()
+        except NotImplementedError:
+            continue
+        physical_processes.append({"url": url, "label": cls._meta.verbose_name})
+    return render_to_response(
+        "main_menu.html",
+        {"title": _(u"Main menu"),
+         "my_series": my_series,
+         "seriesless_samples": seriesless_samples,
+         "user_hash": permissions.get_user_hash(request.user),
+         "can_edit_group_memberships": permissions.has_permission_to_edit_group_memberships(request.user),
+         "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
+         "physical_processes": physical_processes},
+        context_instance=RequestContext(request))
 
 def breakup_time(seconds):
     u"""Local helper routine for the `statistics` view.  It is used to
