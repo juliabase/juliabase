@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-26 12:41+0100\n"
+"POT-Creation-Date: 2008-10-26 21:25+0100\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1685,6 +1685,9 @@ msgstr ""
 msgid "Miscellaneous"
 msgstr ""
 
+msgid "Administration"
+msgstr ""
+
 #, fuzzy
 msgid "Edit preferences"
 msgstr "sample series"
@@ -1823,7 +1826,10 @@ msgid ""
 "    "
 msgstr ""
 
-msgid "this one"
+msgid "(the ancestor of this one)"
+msgstr ""
+
+msgid "(this one)"
 msgstr ""
 
 msgid "Material"

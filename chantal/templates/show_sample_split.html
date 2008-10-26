@@ -19,10 +19,12 @@
     {% ifnotequal piece original_sample %}
       <li>
         <a href="{{ piece.get_absolute_url }}">{{ piece.name }}</a>
+        {% ifequal piece latest_descendant %}
+          {% trans '(the ancestor of this one)' %}
+        {% endifequal %}
       </li>
+    {% else %}
+      <li>{{ piece.name }} {% trans '(this one)' %}</li>
     {% endifnotequal %}
   {% endfor %}
-  {% ifnotequal current_sample original_sample %}
-    <li>{% trans 'this one' %}</li>
-  {% endifnotequal %}
 </ul>

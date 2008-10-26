@@ -845,7 +845,7 @@ class SampleSplit(Process):
         else:
             parent = None
         return {"parent": parent, "original_sample": process_context.original_sample,
-                "current_sample": process_context.current_sample}
+                "current_sample": process_context.current_sample, "latest_descendant": process_context.latest_descendant}
     class Meta:
         verbose_name = _(u"sample split")
         verbose_name_plural = _(u"sample splits")

@@ -604,6 +604,7 @@ class ProcessContext(ResultContext):
         :type original_sample: `models.Sample`
         """
         self.original_sample = self.current_sample = original_sample
+        self.latest_descendant = None
         self.user = user
         self.cutoff_timestamp = None
     def split(self, split):
@@ -623,6 +624,7 @@ class ProcessContext(ResultContext):
         """
         result = copy.copy(self)
         result.current_sample = split.parent
+        result.latest_descendant = self.current_sample
         result.cutoff_timestamp = split.timestamp
         return result
     def get_processes(self):
