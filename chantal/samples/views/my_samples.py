@@ -195,12 +195,9 @@ def edit(request, username):
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
-    comment_preview = None
     if request.method == "POST":
         my_samples_form = MySamplesForm(user, request.POST)
         action_form = ActionForm(user, request.POST)
-        if action_form.is_valid():
-            comment_preview = action_form.cleaned_data["comment"]
         referentially_valid = is_referentially_valid(request.user, my_samples_form, action_form)
         if my_samples_form.is_valid() and action_form.is_valid() and referentially_valid:
             save_to_database(user, my_samples_form, action_form)
@@ -210,5 +207,5 @@ def edit(request, username):
         action_form = ActionForm(user)
     return render_to_response("edit_my_samples.html",
                               {"title": _(u"Edit “My Samples” of %s") % models.get_really_full_name(user),
-                               "my_samples": my_samples_form, "action": action_form, "comment_preview": comment_preview},
+                               "my_samples": my_samples_form, "action": action_form},
                               context_instance=RequestContext(request))
