@@ -184,6 +184,11 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
     :type parent: `models.Sample`
     :type sample_split: `models.SampleSplit`
     :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      the new pieces as a dictionary mapping the new names to the sample IDs
+
+    :rtype: dict mapping unicode to int
     """
     now = datetime.datetime.now()
     if not sample_split:
@@ -194,12 +199,6 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         sample_split.timestamp = now
         sample_split.operator = user
         sample_split.save()
-    if global_data_form.cleaned_data["sample_completely_split"]:
-        for watcher in parent.watchers.all():
-            watcher.my_samples.remove(parent)
-        death = models.SampleDeath(timestamp=now+datetime.timedelta(seconds=5), operator=user, reason="split")
-        death.save()
-        parent.processes.add(death)
     sample_series = global_data_form.cleaned_data["sample_series"]
     new_pieces = {}
     for new_name_form in new_name_forms:
@@ -216,6 +215,12 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
             watcher.my_samples.add(child)
         if sample_series:
             sample_series.samples.add(child)
+    if global_data_form.cleaned_data["sample_completely_split"]:
+        parent.watchers.clear()
+        death = models.SampleDeath(timestamp=now+datetime.timedelta(seconds=5), operator=user, reason="split")
+        death.save()
+        parent.processes.add(death)
+    return new_pieces
         
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
