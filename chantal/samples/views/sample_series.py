@@ -3,10 +3,10 @@
 
 u"""Collected views for dealing with sample series.
 
-Names of sample series are of the form ``YY-originator-name``, where ``YY`` is
-the year (two digits), and ``originator`` is the person who created the sample
-series. ``name`` is arbitrary.  Names of sample series can't be changed once
-they have been created.
+Names of sample series are of the form ``originator-YY-name``, where
+``originator`` is the person who created the sample series, and ``YY`` is the
+year (two digits). ``name`` is almost arbitrary.  Names of sample series can't
+be changed once they have been created.
 """
 
 import datetime
@@ -145,7 +145,7 @@ def new(request):
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
             full_name = \
-                u"%02d-%s-%s" % (timestamp.year % 100, request.user.username, sample_series_form.cleaned_data["name"])
+                u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["name"])
             if models.SampleSeries.objects.filter(name=full_name).count():
                 utils.append_error(sample_series_form, _("This sample series name is already given."), "name")
             else:
@@ -164,5 +164,5 @@ def new(request):
                               {"title": _(u"Create new sample series"),
                                "sample_series": sample_series_form,
                                "is_new": True,
-                               "name_prefix": u"%02d-%s" % (datetime.datetime.today().year % 100, request.user.username)},
+                               "name_prefix": u"%s-%02d" % (request.user.username, datetime.datetime.today().year % 100)},
                               context_instance=RequestContext(request))

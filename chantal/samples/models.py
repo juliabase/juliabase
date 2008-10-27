@@ -945,7 +945,7 @@ class SampleSeries(models.Model):
     has been created.
     """
     name = models.CharField(_(u"name"), max_length=50, primary_key=True,
-                            help_text=_(u"must be of the form “YY-originator-name”"))
+                            help_text=_(u"must be of the form “originator-YY-name”"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
                                                      verbose_name=_(u"currently responsible person"))
