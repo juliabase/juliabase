@@ -29,12 +29,11 @@ class NewNameForm(forms.Form):
         self.parent_name = parent_name
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
+        if utils.ckeck_sample_name_format(new_name) == "old":
+            if not new_name.startswith(self.parent_name):
+                raise ValidationError(_(u"The new sample name must start with the parent sample's name."))
         if utils.does_sample_exist(new_name):
             raise ValidationError(_(u"Name does already exist in database."))
-        if new_name.startswith("*"):
-            raise ValidationError(_(u"You must not give a provisional name, i.e., it must not start with “*”."))
-        if not new_name.startswith(self.parent_name):
-            raise ValidationError(_(u"The new sample name must start with the parent sample's name."))
         return new_name
 
 class GlobalDataForm(forms.Form):
