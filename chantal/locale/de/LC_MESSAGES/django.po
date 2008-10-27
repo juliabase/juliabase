@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 10:31+0100\n"
-"PO-Revision-Date: 2008-10-27 10:31+0100\n"
+"POT-Creation-Date: 2008-10-27 13:30+0100\n"
+"PO-Revision-Date: 2008-10-27 13:32+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -847,12 +847,6 @@ msgstr ""
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-msgid "Invalid deposition number format."
-msgstr "Ungültiges Depositionsnummer-Format."
-
-msgid "Year in deposition number doesn't match deposition timestamp."
-msgstr "Das Jahr in der Depositionsnummer passt nicht zum Depositionsdatum."
-
 msgid "You can't change the number of the first layer."
 msgstr "Sie können nicht die Nummer des ersten Layers ändern."
 
@@ -1412,6 +1406,16 @@ msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
+
+msgid "Invalid deposition number.  It must be of the form YYL-NNN."
+msgstr "Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
+
+#, python-format
+msgid "The deposition letter must be an uppercase “%s”."
+msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
+
+msgid "The first two digits must match the year of the deposition."
+msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
@@ -2093,6 +2097,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "Year in deposition number doesn't match deposition timestamp."
+#~ msgstr "Das Jahr in der Depositionsnummer passt nicht zum Depositionsdatum."
 
 #~ msgid "Add sample series"
 #~ msgstr "Probenserie hinzufügen"

@@ -65,6 +65,8 @@ class DepositionForm(forms.ModelForm):
         super(DepositionForm, self).__init__(data, **keyw)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
+    def clean_number(self):
+        return utils.clean_deposition_number_field(self.cleaned_data["number"], "L", self.cleaned_data["timestamp"])
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -171,7 +173,7 @@ class FormSet(object):
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                                       "number": utils.get_next_deposition_number("L-")})
+                                                       "number": utils.get_next_deposition_number("L")})
         self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
@@ -226,7 +228,7 @@ class FormSet(object):
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["operator"] = self.user.pk
-                deposition_data["number"] = utils.get_next_deposition_number("L-")
+                deposition_data["number"] = utils.get_next_deposition_number("L")
                 self.deposition_form = DepositionForm(initial=deposition_data)
                 self._read_layer_forms(source_deposition_query.all()[0], deposition_data["number"])
         if not self.deposition_form:
@@ -238,7 +240,7 @@ class FormSet(object):
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                             "number": utils.get_next_deposition_number("L-")})
+                             "number": utils.get_next_deposition_number("L")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = SamplesForm(self.user_details, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
@@ -334,7 +336,7 @@ class FormSet(object):
                 number_of_first_layer = int(match.group("number")) - (len(self.layer_forms) - 1 if self.layer_forms else 0)
                 next_full_number = match.group("prefix") + utils.three_digits(number_of_first_layer)
         if not next_full_number:
-            next_full_number = utils.get_next_deposition_number("L-")
+            next_full_number = utils.get_next_deposition_number("L")
         deposition_number_match = self.deposition_number_pattern.match(next_full_number)
         next_layer_number = int(deposition_number_match.group("number"))
         old_prefixes = [int(layer_form.prefix) for layer_form in self.layer_forms if layer_form.is_bound]
@@ -416,44 +418,36 @@ class FormSet(object):
             referentially_valid = False
         if self.deposition_form.is_valid():
             match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
-            if not match:
-                utils.append_error(self.deposition_form, _(u"Invalid deposition number format."))
-                referentially_valid = False
-            else:
-                deposition_prefix = match.group("prefix")
-                if deposition_prefix != u"%02dL-" % (self.deposition_form.cleaned_data["timestamp"].year % 100):
-                    utils.append_error(self.deposition_form,
-                                       _(u"Year in deposition number doesn't match deposition timestamp."))
+            deposition_prefix = match.group("prefix")
+            number_only = int(match.group("number"))
+            deposition_numbers = models.LargeAreaDeposition.objects.filter(
+                number__startswith=deposition_prefix).values_list("number", flat=True).all()
+            deposition_numbers = [int(number[len(deposition_prefix):]) for number in deposition_numbers]
+            max_deposition_number = max(deposition_numbers) if deposition_numbers else 0
+            if self.deposition:
+                if self.layer_forms and self.layer_forms[0].is_valid() and \
+                        self.layer_forms[0].cleaned_data["number"] != self.deposition.layers.all()[0].number:
+                    utils.append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
                     referentially_valid = False
-                number_only = int(match.group("number"))
-                deposition_numbers = models.LargeAreaDeposition.objects.filter(
-                    number__startswith=deposition_prefix).values_list("number", flat=True).all()
-                deposition_numbers = [int(number[len(deposition_prefix):]) for number in deposition_numbers]
-                max_deposition_number = max(deposition_numbers) if deposition_numbers else 0
-                if self.deposition:
-                    if self.layer_forms and self.layer_forms[0].is_valid() and \
-                            self.layer_forms[0].cleaned_data["number"] != self.deposition.layers.all()[0].number:
-                        utils.append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
+                old_number_only = int(self.deposition_number_pattern.match(self.deposition.number).group("number"))
+                higher_deposition_numbers = [number for number in deposition_numbers if number > old_number_only]
+                if higher_deposition_numbers:
+                    next_number = min(higher_deposition_numbers)
+                    number_of_next_layers = models.LargeAreaDeposition.objects.get(
+                        number=deposition_prefix+utils.three_digits(next_number)).layers.count()
+                    if number_only + number_of_next_layers > next_number:
+                        utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
                         referentially_valid = False
-                    old_number_only = int(self.deposition_number_pattern.match(self.deposition.number).group("number"))
-                    higher_deposition_numbers = [number for number in deposition_numbers if number > old_number_only]
-                    if higher_deposition_numbers:
-                        next_number = min(higher_deposition_numbers)
-                        number_of_next_layers = models.LargeAreaDeposition.objects.get(
-                            number=deposition_prefix+utils.three_digits(next_number)).layers.count()
-                        if number_only + number_of_next_layers > next_number:
-                            utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
-                            referentially_valid = False
-                else:
-                    if self.layer_forms and self.layer_forms[0].is_valid() and \
-                            self.layer_forms[0].cleaned_data["number"] <= max_deposition_number:
-                        utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
-                        referentially_valid = False
-                for i, layer_form in enumerate(self.layer_forms):
-                    if layer_form.is_valid() and \
-                            layer_form.cleaned_data["number"] - i + len(self.layer_forms) - 1 != number_only:
-                        utils.append_error(layer_form, _(u"Layer number is not consecutive."))
-                        referentially_valid = False
+            else:
+                if self.layer_forms and self.layer_forms[0].is_valid() and \
+                        self.layer_forms[0].cleaned_data["number"] <= max_deposition_number:
+                    utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
+                    referentially_valid = False
+            for i, layer_form in enumerate(self.layer_forms):
+                if layer_form.is_valid() and \
+                        layer_form.cleaned_data["number"] - i + len(self.layer_forms) - 1 != number_only:
+                    utils.append_error(layer_form, _(u"Layer number is not consecutive."))
+                    referentially_valid = False
         return referentially_valid
     def save_to_database(self):
         u"""Apply all layer changes, check the whole validity of the data, and

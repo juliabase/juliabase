@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 10:31+0100\n"
+"POT-Creation-Date: 2008-10-27 13:30+0100\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -805,12 +805,6 @@ msgstr ""
 msgid "No layers given."
 msgstr ""
 
-msgid "Invalid deposition number format."
-msgstr ""
-
-msgid "Year in deposition number doesn't match deposition timestamp."
-msgstr ""
-
 msgid "You can't change the number of the first layer."
 msgstr ""
 
@@ -1342,6 +1336,16 @@ msgstr ""
 
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
+msgstr ""
+
+msgid "Invalid deposition number.  It must be of the form YYL-NNN."
+msgstr ""
+
+#, python-format
+msgid "The deposition letter must be an uppercase “%s”."
+msgstr ""
+
+msgid "The first two digits must match the year of the deposition."
 msgstr ""
 
 #, python-format

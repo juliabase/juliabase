@@ -76,6 +76,8 @@ class DepositionForm(ModelForm):
             else user_details.my_samples
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
+    def clean_number(self):
+        return utils.clean_deposition_number_field(self.cleaned_data["number"], "B", self.cleaned_data["timestamp"])
     def save(self, *args, **keyw):
         u"""Additionally to the deposition itself, I must store the list of
         samples connected with the deposition."""

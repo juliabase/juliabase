@@ -213,7 +213,40 @@ def clean_quantity_field(value, units):
     else:
         raise ValidationError(_(u"The unit is invalid.  Valid units are: %s")%", ".join(units))
     return match.group("number") + " " + unit
-    
+
+deposition_number_pattern = re.compile("\d\d[A-Za-z]-\d{3,4}$")
+def clean_deposition_number_field(value, letter, timestamp):
+    u"""Checks wheter a deposition number given by the user in a form is a
+    valid one.  Note that it does not check whether a deposition with this
+    number already exists in the database.  It just checks the syntax of the
+    number.
+
+    :Parameters:
+      - `value`: the deposition number entered by the user
+      - `letter`: the single uppercase letter denoting the deposition system
+      - `timestamp`: the timestamp of the deposition; only the year is used
+
+    :type value: unicode
+    :type letter: unicode
+    :type timestamp: ``datetime.datetime``
+
+    :Return:
+      the original ``value`` (unchanged)
+
+    :rtype: unicode
+
+    :Exceptions:
+      `ValidationError`: if the deposition number was not a valid deposition
+      number
+    """
+    if not deposition_number_pattern.match(value):
+        raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
+    if value[2] != letter:
+        raise ValidationError(_(u"The deposition letter must be an uppercase “%s”.") % letter)
+    if int(value[:2]) != timestamp.year % 100:
+        raise ValidationError(_(u"The first two digits must match the year of the deposition."))
+    return value
+
 def append_error(form, error_message, fieldname="__all__"):
     u"""This function is called if a validation error is found in form data
     which cannot be found by the ``is_valid`` method itself.  The reason is
@@ -663,13 +696,12 @@ class ProcessContext(ResultContext):
 
 def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
-    called “08B045”, this routine yields “08B046” (unless the new year has
+    called “08B-045”, this routine yields “08B-046” (unless the new year has
     begun).
     
     :Parameters:
       - `letter`: the indentifying letter of the deposition apparatus.  For
-        example, it is ``"B"`` for the 6-chamber deposition.  It needn't be a
-        single letter: ``"V-"``.
+        example, it is ``"B"`` for the 6-chamber deposition.
 
     :type letter: str
 
@@ -677,7 +709,7 @@ def get_next_deposition_number(letter):
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
-    prefix = ur"%02d%s" % (datetime.date.today().year % 100, letter)
+    prefix = ur"%02d%s-" % (datetime.date.today().year % 100, letter)
     prefix_length = len(prefix)
     pattern_string = ur"^%s[0-9]+" % re.escape(prefix)
     deposition_numbers = \
