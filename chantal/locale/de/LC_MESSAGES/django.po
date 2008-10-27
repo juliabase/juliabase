@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 14:18+0100\n"
-"PO-Revision-Date: 2008-10-27 14:19+0100\n"
+"POT-Creation-Date: 2008-10-27 18:06+0100\n"
+"PO-Revision-Date: 2008-10-27 18:07+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1347,7 +1347,9 @@ msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
 
 msgid "You must split into at least two pieces if the split is complete."
-msgstr "Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig ist."
+msgstr ""
+"Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig "
+"ist."
 
 msgid "Name is already given."
 msgstr "Dieser Name ist schon vergeben."
@@ -1420,6 +1422,9 @@ msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
 
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
+
+msgid "The sample name is invalid."
+msgstr "Dieser Probenname ist ungültig."
 
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."

@@ -269,6 +269,34 @@ def append_error(form, error_message, fieldname="__all__"):
     form.is_valid()
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
+old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?$")
+new_sample_name_pattern = re.compile(r"\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})-[-A-Za-z_/0-9]+$")
+def sample_name_format(name):
+    u"""Determines which sample name format a given sample name has.
+
+    :Parameters:
+      - `name`: the sample name
+
+    :type name: unicode
+
+    :Return:
+      ``"old"`` if the sample name is of the old format, and ``"new"`` if it is
+      of the new format (i.e. not derived from a deposition number).
+
+    :rtype: str
+
+    :Exceptions:
+      `ValidationError`: if the sample name format is invalid, i.e. neither a
+      new-style nor an old-style name
+    """
+    old_sample_name_match = old_sample_name_pattern.match(name)
+    new_sample_name_match = new_sample_name_pattern.match(name)
+    if old_sample_name_match:
+        return "old"
+    elif new_sample_name_match:
+        return "new"
+    raise ValidationError(_(u"The sample name is invalid."))
+
 class _AddHelpLink(object):
     u"""Internal helper class in order to realise the `help_link` function
     decorator.
