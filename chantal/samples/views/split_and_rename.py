@@ -24,12 +24,18 @@ class NewNameForm(forms.Form):
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_(u"Delete"), required=False)
+    def __init__(self, parent_name, *args, **keyw):
+        super(NewNameForm, self).__init__(*args, **keyw)
+        self.parent_name = parent_name
     def clean_new_name(self):
-        if utils.does_sample_exist(self.cleaned_data["new_name"]):
+        new_name = self.cleaned_data["new_name"]
+        if utils.does_sample_exist(new_name):
             raise ValidationError(_(u"Name does already exist in database."))
-        if self.cleaned_data["new_name"].startswith("*"):
+        if new_name.startswith("*"):
             raise ValidationError(_(u"You must not give a provisional name, i.e., it must not start with “*”."))
-        return self.cleaned_data["new_name"]
+        if not new_name.startswith(self.parent_name):
+            raise ValidationError(_(u"The new sample name must start with the parent sample's name."))
+        return new_name
 
 class GlobalDataForm(forms.Form):
     u"""Form for general data for a split as a whole, and for the “finished”
@@ -80,7 +86,7 @@ def forms_from_post_data(post_data, parent, user_details):
             structure_changed = True
             last_deleted = True
         else:
-            new_name_forms.append(NewNameForm(post_data, prefix=str(index)))
+            new_name_forms.append(NewNameForm(parent.name, post_data, prefix=str(index)))
             last_deleted = False
         index += 1
     if not last_deleted and post_data.get("%d-new_name" % (index-1), parent.name) == parent.name:
@@ -262,7 +268,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
             return utils.successful_response(request, remote_client_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
-    new_name_forms.append(NewNameForm(initial={"new_name": parent.name, "new_purpose": parent.purpose},
+    new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,

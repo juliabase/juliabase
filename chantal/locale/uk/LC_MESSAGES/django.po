@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 00:25+0100\n"
+"POT-Creation-Date: 2008-10-27 10:31+0100\n"
 "PO-Revision-Date: 2008-08-31 18:13+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1276,6 +1276,9 @@ msgid "Name does already exist in database."
 msgstr ""
 
 msgid "You must not give a provisional name, i.e., it must not start with “*”."
+msgstr ""
+
+msgid "The new sample name must start with the parent sample's name."
 msgstr ""
 
 msgid "All pieces completely entered"
