@@ -64,8 +64,8 @@ def edit(request, sample_name):
         if sample_form.is_valid():
             sample = sample_form.save()
             if sample.group and sample.group != old_group:
-                for user in sample.group.user_set.all():
-                    utils.get_profile(user).my_samples.add(sample)
+                for watcher in sample.group.auto_adders.all():
+                    watcher.my_samples.add(sample)
             if sample.currently_responsible_person != old_responsible_person:
                 utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
             return utils.successful_response(request,
@@ -230,16 +230,20 @@ def add_samples_to_database(add_samples_form, user):
     new_names = [u"*%d" % i for i in range(starting_number, starting_number + number_of_samples)]
     ids = []
     for new_name in new_names:
+        sample_group = add_samples_form.cleaned_data["group"]
         sample = models.Sample(name=new_name,
                                current_location=add_samples_form.cleaned_data["current_location"],
                                currently_responsible_person=add_samples_form.cleaned_data["currently_responsible_person"],
                                purpose=add_samples_form.cleaned_data["purpose"],
                                tags=add_samples_form.cleaned_data["tags"],
-                               group=add_samples_form.cleaned_data["group"])
+                               group=sample_group)
         sample.save()
         ids.append(sample.pk)
         sample.processes.add(substrate)
         user_details.my_samples.add(sample)
+        if sample_group:
+            for watcher in sample_group.auto_adders.all():
+                watcher.my_samples.add(sample)
     return new_names, ids
 
 @login_required

@@ -153,6 +153,7 @@ def save_to_database(user, my_samples_form, action_form):
     if action_data["remove_from_my_samples"]:
         current_user_my_samples = utils.get_profile(user).my_samples
     for sample in my_samples_form.cleaned_data["samples"]:
+        old_group, old_responsible_person = sample.group, sample.currently_responsible_person
         if action_data["new_currently_responsible_person"]:
             sample.currently_responsible_person = action_data["new_currently_responsible_person"]
         if action_data["new_group"]:
@@ -160,6 +161,11 @@ def save_to_database(user, my_samples_form, action_form):
         if action_data["new_current_location"]:
             sample.current_location = action_data["new_current_location"]
         sample.save()
+        if sample.group and sample.group != old_group:
+            for watcher in sample.group.auto_adders.all():
+                watcher.my_samples.add(sample)
+        if sample.currently_responsible_person != old_responsible_person:
+            utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
         if action_data["remove_from_my_samples"]:
