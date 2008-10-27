@@ -160,6 +160,9 @@ def is_referentially_valid(new_name_forms, global_data_form):
     if not new_name_forms:
         utils.append_error(global_data_form, _(u"You must split into at least one piece."))
         referentially_valid = False
+    if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and len(new_name_forms) < 2:
+        utils.append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
+        referentially_valid = False
     new_names = set()
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():

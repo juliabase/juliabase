@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 13:30+0100\n"
-"PO-Revision-Date: 2008-10-27 13:32+0100\n"
+"POT-Creation-Date: 2008-10-27 14:18+0100\n"
+"PO-Revision-Date: 2008-10-27 14:19+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -517,8 +517,8 @@ msgstr "Ergebnis"
 msgid "results"
 msgstr "Ergebnisse"
 
-msgid "must be of the form “YY-originator-name”"
-msgstr "muss von der Form „YY-Urheber-name“ sein"
+msgid "must be of the form “originator-YY-name”"
+msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
 msgid "sample series"
 msgstr "Probenserie"
@@ -1346,6 +1346,9 @@ msgstr "Probe wurde vollständig gespalten"
 msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
 
+msgid "You must split into at least two pieces if the split is complete."
+msgstr "Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig ist."
+
 msgid "Name is already given."
 msgstr "Dieser Name ist schon vergeben."
 
@@ -1408,7 +1411,8 @@ msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
-msgstr "Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
+msgstr ""
+"Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
 
 #, python-format
 msgid "The deposition letter must be an uppercase “%s”."
