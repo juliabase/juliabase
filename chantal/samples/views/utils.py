@@ -963,5 +963,15 @@ def get_profile(user):
 
 dangerous_markup_pattern = re.compile(r"[^\\]!\[|[\n\r][-=]")
 def check_markdown(text):
+    u"""Checks whether the Markdown input by the user contains only permitted
+    syntax elements.  I forbid images and headings so far.
+
+    :Parameters:
+      - `text`: the Markdown input to be checked
+
+    :Exceptions:
+      - `ValidationError`: if the ``text`` contained forbidden syntax
+        elements.
+    """
     if dangerous_markup_pattern.search(text):
         raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
