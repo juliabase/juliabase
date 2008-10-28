@@ -34,14 +34,10 @@ class OriginalDataForm(Form):
         if "initial" not in kwargs:
             kwargs["initial"] = {}
         if post_data is None:
-            # Sample names of the new format mustn't be changed after
-            # deposition
             old_sample_name = kwargs["initial"]["sample"]
-            old_sample_name_format = utils.sample_name_format(old_sample_name)
-            kwargs["initial"]["new_name"] = old_sample_name if old_sample_name_format == "new" else deposition_number
+            kwargs["initial"]["new_name"] = old_sample_name if utils.sample_name_format(old_sample_name) == "new" \
+                else deposition_number
         super(OriginalDataForm, self).__init__(post_data, *args, **kwargs)
-        if post_data is None and old_sample_name_format == "new":
-            self.fields["new_name"].widget.attrs["readonly"] = "readonly"
         self.remote_client, self.deposition_number = remote_client, deposition_number
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
@@ -62,8 +58,6 @@ class OriginalDataForm(Form):
                 raise ValidationError(_(u"No sample with this ID found."))
             except ValueError:
                 raise ValidationError(_(u"Invalid ID format."))
-        if utils.sample_name_format(sample.name) == "new":
-            self.fields["new_name"].widget.attrs["readonly"] = "readonly"
         return sample
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
@@ -73,15 +67,16 @@ class OriginalDataForm(Form):
         if "new_name" in self.cleaned_data:
             sample = self.cleaned_data.get("sample")
             if sample:
-                old_sample_name = sample.name
-                if utils.sample_name_format(old_sample_name) == "new":
-                    if self.cleaned_data["new_name"] != old_sample_name:
-                        utils.append_error(self, _(u"New name of original sample must not change."), "new_name")
+                new_name = self.cleaned_data["new_name"]
+                if utils.sample_name_format(new_name) == "new":
+                    if new_name != sample.name:
+                        utils.append_error(self, _(u"If you chose a new-style name, it must not change."), "new_name")
                         del self.cleaned_data["new_name"]
                 else:
-                    if not self.cleaned_data["new_name"].startswith(self.deposition_number):
-                        utils.append_error(self, _(u"New name of original sample must begin with deposition number."),
-                                           "new_name")
+                    if not new_name.startswith(self.deposition_number):
+                        utils.append_error(
+                            self, _(u"If you chose a deposition-style name, it must begin with the deposition number."),
+                            "new_name")
                         del self.cleaned_data["new_name"]
         return self.cleaned_data
 
@@ -272,7 +267,7 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
                 utils.append_error(
                     original_data_form, _(u"Sample %s doesn't belong to this deposition.") % original_sample, "sample")
                 referentially_valid = False
-            if utils.sample_name_format(original_sample.name) != "new":
+            if utils.sample_name_format(original_data_form.cleaned_data["new_name"]) != "new":
                 # "new" names exist in the database already anyway, so we don't
                 # need to check for duplicates in the form, too.
                 new_name = original_data_form.cleaned_data["new_name"]
