@@ -91,9 +91,11 @@ class NewDataForm(Form):
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_responsible_person = utils.OperatorChoiceField(
         label=_(u"New responsible person"), queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, data=None, **keyw):
+    def __init__(self, readonly, data=None, **keyw):
         super(NewDataForm, self).__init__(data, **keyw)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
+        if readonly:
+            self.fields["new_name"].widget.attrs["readonly"] = "readonly"
 
 class GlobalNewDataForm(Form):
     u"""Form for holding new data which applies to all samples and overrides
@@ -174,7 +176,8 @@ def change_structure(original_data_forms, new_data_form_lists):
                         default_new_responsible_person = new_data_forms[-1].cleaned_data["new_responsible_person"]
                         if default_new_responsible_person:
                             default_new_responsible_person = default_new_responsible_person.pk
-                    new_data_forms.append(NewDataForm(initial={"new_name": original_data_form.cleaned_data["new_name"],
+                    new_data_forms.append(NewDataForm(readonly=False,
+                                                      initial={"new_name": original_data_form.cleaned_data["new_name"],
                                                                "new_responsible_person": default_new_responsible_person},
                                                       prefix="%d_%d"%(sample_index, new_name_index)))
                 structure_changed = True
@@ -298,7 +301,7 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
                     if original_data_form.cleaned_data["number_of_pieces"] == 1:
                         if new_name != original_data_form.cleaned_data["new_name"]:
                             utils.append_error(
-                                new_data_form, _(u"If you don't split, you can't rename the sample."), "new_name")
+                                new_data_form, _(u"If you don't split, you can't rename the single piece."), "new_name")
                             referentially_valid = False
                     else:
                         if new_name in new_names:
@@ -341,9 +344,14 @@ def forms_from_post_data(post_data, deposition, remote_client):
     post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
     original_data_forms = [OriginalDataForm(remote_client, deposition.number, post_data, prefix=str(i))
                            for i in range(number_of_samples)]
-    new_data_form_lists = [[NewDataForm(post_data, prefix="%d_%d" % (sample_index, new_name_index))
-                            for new_name_index in range(list_of_number_of_new_names[sample_index])]
-                           for sample_index in range(number_of_samples)]
+    new_data_form_lists = []
+    for sample_index, original_data_form in enumerate(original_data_forms):
+        number_of_pieces = original_data_form.cleaned_data["number_of_pieces"] if original_data_form.is_valid() else None
+        new_data_forms = []
+        for new_name_index in range(list_of_number_of_new_names[sample_index]):
+            new_data_forms.append(NewDataForm(readonly=number_of_pieces==1,
+                                              data=post_data, prefix="%d_%d" % (sample_index, new_name_index)))
+        new_data_form_lists.append(new_data_forms)
     global_new_data_form = GlobalNewDataForm(post_data, deposition_instance=deposition)
     return original_data_forms, new_data_form_lists, global_new_data_form
 
@@ -371,6 +379,7 @@ def forms_from_database(deposition, remote_client):
     original_data_forms = [OriginalDataForm(remote_client, deposition.number, initial={"sample": sample.name}, prefix=str(i))
                            for i, sample in enumerate(samples.all())]
     new_data_form_lists = [[NewDataForm(
+                readonly=True,
                 initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else deposition.number,
                          "new_responsible_person": sample.currently_responsible_person.pk},
                 prefix="%d_0"%i)] for i, sample in enumerate(samples.all())]
