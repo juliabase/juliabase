@@ -145,6 +145,20 @@ def show(request, external_operator_id):
 
 @login_required
 def list_(request):
+    u"""View for listing all external contacts of the currently logged-in user
+    for selecting one to edit it.  If you have no external contacts, a 404 is
+    generated.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     external_operators = list(request.user.external_contacts.all())
     if not external_operators:
         raise Http404(_("You have no external contacts."))
