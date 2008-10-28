@@ -13,9 +13,6 @@
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label }}</a></li>
     {% endfor %}
-    {% if can_add_external_operator %}
-      <li><a href="{% url samples.views.external_operator.new %}">{% trans 'External operator' %}</a></li>
-    {% endif %}  
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>
@@ -57,6 +54,18 @@
     </ul>  
   {% endif %}  
 
+  {% if can_add_external_operator or has_external_contacts %}
+    <h2>{% trans 'External operators' %}</h2>
+
+    <ul>
+      {% if can_add_external_operator %}
+        <li><a href="{% url samples.views.external_operator.new %}">{% trans 'Add external operator' %}</a></li>
+      {% endif %}  
+      {% if has_external_contacts %}
+        <li><a href="{% url samples.views.external_operator.list_ %}">{% trans 'Edit external operator' %}</a></li>
+      {% endif %}  
+    </ul>
+  {% endif %}  
 
   <h2>{% trans 'Miscellaneous' %}</h2>
   <ul>

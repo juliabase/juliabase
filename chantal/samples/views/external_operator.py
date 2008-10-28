@@ -7,6 +7,7 @@ u"""Views for showing, editing, and creating external operators.
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
@@ -140,4 +141,13 @@ def show(request, external_operator_id):
                               {"title": _(u"External operator “%(name)s”") % {"name": external_operator.name},
                                "external_operator": external_operator, "initials": initials,
                                "can_edit": request.user == external_operator.contact_person},
+                              context_instance=RequestContext(request))
+
+@login_required
+def list_(request):
+    external_operators = list(request.user.external_contacts.all())
+    if not external_operators:
+        raise Http404(_("You have no external contacts."))
+    return render_to_response("list_external_operators.html",
+                              {"title": _(u"All you external contacts"), "external_operators": external_operators},
                               context_instance=RequestContext(request))

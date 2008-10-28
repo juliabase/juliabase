@@ -119,6 +119,7 @@ def main_menu(request):
          "user_hash": permissions.get_user_hash(request.user),
          "can_edit_group_memberships": permissions.has_permission_to_edit_group_memberships(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
+         "has_external_contacts": request.user.external_contacts.count() > 0,
          "physical_processes": physical_processes},
         context_instance=RequestContext(request))
 

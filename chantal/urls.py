@@ -88,6 +88,7 @@ urlpatterns = patterns("",
                        (r"^external_operators/add/$", "samples.views.external_operator.new"),
                        (r"^external_operators/(?P<external_operator_id>.+)/edit/$", "samples.views.external_operator.edit"),
                        (r"^external_operators/(?P<external_operator_id>.+)", "samples.views.external_operator.show"),
+                       (r"^external_operators/$", "samples.views.external_operator.list_"),
 
                        (r"^markdown$", "samples.views.markdown.sandbox"),
                        (r"^about$", "samples.views.main.about"),
