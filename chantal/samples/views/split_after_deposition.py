@@ -30,11 +30,18 @@ class OriginalDataForm(Form):
     new_name = forms.CharField(label=_(u"New name"), max_length=30)
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
-    def __init__(self, remote_client, deposition_number, *args, **kwargs):
+    def __init__(self, remote_client, deposition_number, post_data=None, *args, **kwargs):
         if "initial" not in kwargs:
             kwargs["initial"] = {}
-        kwargs["initial"]["new_name"] = deposition_number
-        super(OriginalDataForm, self).__init__(*args, **kwargs)
+        if post_data is None:
+            # Sample names of the new format mustn't be changed after
+            # deposition
+            old_sample_name = kwargs["initial"]["sample"]
+            old_sample_name_format = utils.sample_name_format(old_sample_name)
+            kwargs["initial"]["new_name"] = old_sample_name if old_sample_name_format == "new" else deposition_number
+        super(OriginalDataForm, self).__init__(post_data, *args, **kwargs)
+        if post_data is None and old_sample_name_format == "new":
+            self.fields["new_name"].widget.attrs["readonly"] = "readonly"
         self.remote_client, self.deposition_number = remote_client, deposition_number
     def clean_sample(self):
         if not self.remote_client:
@@ -50,6 +57,8 @@ class OriginalDataForm(Form):
                 raise ValidationError(_(u"No sample with this ID found."))
             except ValueError:
                 raise ValidationError(_(u"Invalid ID format."))
+        if utils.sample_name_format(sample.name) == "new":
+            self.fields["new_name"].widget.attrs["readonly"] = "readonly"
         return sample
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
@@ -327,7 +336,8 @@ def forms_from_database(deposition, remote_client):
     original_data_forms = [OriginalDataForm(remote_client, deposition.number, initial={"sample": sample.name}, prefix=str(i))
                            for i, sample in enumerate(samples.all())]
     new_data_form_lists = [[NewDataForm(
-                initial={"new_name": deposition.number, "new_responsible_person": sample.currently_responsible_person.pk},
+                initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else deposition.number,
+                         "new_responsible_person": sample.currently_responsible_person.pk},
                 prefix="%d_0"%i)] for i, sample in enumerate(samples.all())]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_data_form_lists, global_new_data_form
