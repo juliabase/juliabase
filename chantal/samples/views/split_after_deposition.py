@@ -41,8 +41,11 @@ class OriginalDataForm(Form):
         self.remote_client, self.deposition_number = remote_client, deposition_number
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        if utils.sample_name_format(new_name) != "new" and utils.does_sample_exist(new_name):
+        new_name_format = utils.sample_name_format(new_name)
+        if new_name_format == "old" and utils.does_sample_exist(new_name):
             raise ValidationError(_(u"This sample name exists already."))
+        elif new_name_format == "provisional":
+            raise ValidationError(_(u"You must get rid of the provisional sample name."))
         return new_name
     def clean_sample(self):
         if not self.remote_client:
@@ -196,8 +199,12 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]
     for original_data_form, new_data_forms in zip(original_data_forms, new_data_form_lists):
         sample = original_data_form.cleaned_data["sample"]
-        sample.name = original_data_form.cleaned_data["new_name"]
-        sample.save()
+        new_name = original_data_form.cleaned_data["new_name"]
+        if new_name != sample.name:
+            if not sample.name.startswith("*"):
+                models.SampleAlias(name=sample.name, sample=sample).save()
+            sample.name = new_name
+            sample.save()
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=deposition.timestamp + datetime.timedelta(seconds=5),
                                               operator=deposition.operator, parent=sample)
@@ -220,9 +227,6 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
             death.save()
             sample.processes.add(death)
         else:
-            if not sample.name.startswith("*"):
-                models.SampleAlias(name=sample.name, sample=sample).save()
-            sample.name = new_data_forms[0].cleaned_data["new_name"]
             if global_new_location:
                 sample.current_location = global_new_location
             formerly_responsible_person = sample.currently_responsible_person
@@ -267,10 +271,11 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
                 utils.append_error(
                     original_data_form, _(u"Sample %s doesn't belong to this deposition.") % original_sample, "sample")
                 referentially_valid = False
-            if utils.sample_name_format(original_data_form.cleaned_data["new_name"]) != "new":
-                # "new" names exist in the database already anyway, so we don't
-                # need to check for duplicates in the form, too.
-                new_name = original_data_form.cleaned_data["new_name"]
+            new_name = original_data_form.cleaned_data["new_name"]
+            if utils.sample_name_format(new_name) == "old":
+                # "new" names exist in the database already anyway, so we have
+                # to check for duplicates in the form only for deposition-style
+                # names.
                 if new_name in new_names:
                     utils.append_error(
                         original_data_form, _(u"This sample name has been used already on this page."), "new_name")
@@ -286,21 +291,29 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
             utils.append_error(original_data_form, _(u"At least one sample of the original deposition is missing."))
             referentially_valid = False
     for new_data_forms, original_data_form in zip(new_data_form_lists, original_data_forms):
-        for new_data_form in new_data_forms:
-            if new_data_form.is_valid():
-                new_name = new_data_form.cleaned_data["new_name"]
-                if new_name in new_names:
-                    utils.append_error(new_data_form, _(u"This sample name has been used already on this page."), "new_name")
-                    referentially_valid = False
-                if original_data_form.is_valid() and not new_name.startswith(original_data_form.cleaned_data["new_name"]):
-                    utils.append_error(new_data_form,
-                                       _(u"The new sample name must start with the new name of the parent sample."),
-                                       "new_name")
-                    referentially_valid = False
-                new_names.add(new_name)
-                if utils.does_sample_exist(new_name):
-                    utils.append_error(new_data_form, _(u"This sample name exists already."), "new_name")
-                    referentially_valid = False
+        if original_data_form.is_valid():
+            for new_data_form in new_data_forms:
+                if new_data_form.is_valid():
+                    new_name = new_data_form.cleaned_data["new_name"]
+                    if original_data_form.cleaned_data["number_of_pieces"] == 1:
+                        if new_name != original_data_form.cleaned_data["new_name"]:
+                            utils.append_error(
+                                new_data_form, _(u"If you don't split, you can't rename the sample."), "new_name")
+                            referentially_valid = False
+                    else:
+                        if new_name in new_names:
+                            utils.append_error(
+                                new_data_form, _(u"This sample name has been used already on this page."), "new_name")
+                            referentially_valid = False
+                        new_names.add(new_name)
+                        if utils.sample_name_format(new_name) != "new" and \
+                                not new_name.startswith(original_data_form.cleaned_data["new_name"]):
+                            utils.append_error(new_data_form, _(u"If you chose a deposition-style name, it must begin "
+                                                                u"with the parent's new name."), "new_name")
+                            referentially_valid = False
+                        if utils.does_sample_exist(new_name):
+                            utils.append_error(new_data_form, _(u"This sample name exists already."), "new_name")
+                            referentially_valid = False
     return referentially_valid
 
 def forms_from_post_data(post_data, deposition, remote_client):
