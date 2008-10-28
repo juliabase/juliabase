@@ -349,8 +349,16 @@ def forms_from_post_data(post_data, deposition, remote_client):
         number_of_pieces = original_data_form.cleaned_data["number_of_pieces"] if original_data_form.is_valid() else None
         new_data_forms = []
         for new_name_index in range(list_of_number_of_new_names[sample_index]):
-            new_data_forms.append(NewDataForm(readonly=number_of_pieces==1,
-                                              data=post_data, prefix="%d_%d" % (sample_index, new_name_index)))
+            prefix = "%d_%d" % (sample_index, new_name_index)
+            new_data_form = \
+                NewDataForm(readonly=number_of_pieces==1, data=post_data, prefix=prefix)
+            if number_of_pieces == 1 and new_data_form.is_valid() and original_data_form.is_valid():
+                piece_data = {}
+                piece_data["new_name"] = original_data_form.cleaned_data["new_name"]
+                piece_data["new_responsible_person"] = new_data_form.cleaned_data["new_responsible_person"].pk
+                new_data_form = NewDataForm(readonly=True, initial=piece_data, prefix=prefix)
+                print piece_data
+            new_data_forms.append(new_data_form)
         new_data_form_lists.append(new_data_forms)
     global_new_data_form = GlobalNewDataForm(post_data, deposition_instance=deposition)
     return original_data_forms, new_data_form_lists, global_new_data_form
