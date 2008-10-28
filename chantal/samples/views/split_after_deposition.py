@@ -73,12 +73,12 @@ class OriginalDataForm(Form):
                 new_name = self.cleaned_data["new_name"]
                 if utils.sample_name_format(new_name) == "new":
                     if new_name != sample.name:
-                        utils.append_error(self, _(u"If you chose a new-style name, it must not change."), "new_name")
+                        utils.append_error(self, _(u"If you choose a new-style name, it must not change."), "new_name")
                         del self.cleaned_data["new_name"]
                 else:
                     if not new_name.startswith(self.deposition_number):
                         utils.append_error(
-                            self, _(u"If you chose a deposition-style name, it must begin with the deposition number."),
+                            self, _(u"If you choose a deposition-style name, it must begin with the deposition number."),
                             "new_name")
                         del self.cleaned_data["new_name"]
         return self.cleaned_data
@@ -308,7 +308,7 @@ def is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
                         new_names.add(new_name)
                         if utils.sample_name_format(new_name) != "new" and \
                                 not new_name.startswith(original_data_form.cleaned_data["new_name"]):
-                            utils.append_error(new_data_form, _(u"If you chose a deposition-style name, it must begin "
+                            utils.append_error(new_data_form, _(u"If you choose a deposition-style name, it must begin "
                                                                 u"with the parent's new name."), "new_name")
                             referentially_valid = False
                         if utils.does_sample_exist(new_name):

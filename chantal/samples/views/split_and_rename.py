@@ -29,7 +29,10 @@ class NewNameForm(forms.Form):
         self.parent_name = parent_name
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        if utils.ckeck_sample_name_format(new_name) == "old":
+        sample_name_format = utils.sample_name_format(new_name)
+        if not sample_name_format:
+            raise ValidationError(_(u"The sample name has an invalid format."))
+        elif sample_name_format == "old":
             if not new_name.startswith(self.parent_name):
                 raise ValidationError(_(u"The new sample name must start with the parent sample's name."))
         if utils.does_sample_exist(new_name):

@@ -271,9 +271,9 @@ def append_error(form, error_message, fieldname="__all__"):
 
 old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 new_sample_name_pattern = re.compile(r"\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})-[-A-Za-z_/0-9]+$")
-def check_sample_name_format(name):
-    u"""Checks whether a sample name is valid, and determines which sample name
-    format it has.
+provisional_sample_name_pattern = re.compile(r"\*\d+")
+def sample_name_format(name):
+    u"""Determines which sample name format the given name has.
 
     :Parameters:
       - `name`: the sample name
@@ -281,22 +281,19 @@ def check_sample_name_format(name):
     :type name: unicode
 
     :Return:
-      ``"old"`` if the sample name is of the old format, and ``"new"`` if it is
-      of the new format (i.e. not derived from a deposition number).
+      ``"old"`` if the sample name is of the old format, ``"new"`` if it is of
+      the new format (i.e. not derived from a deposition number), and
+      ``"provisional"`` if it is a provisional sample name.  ``None`` if the
+      name had no valid format.
 
-    :rtype: str
-
-    :Exceptions:
-      `ValidationError`: if the sample name format is invalid, i.e. neither a
-      new-style nor an old-style name
+    :rtype: str or ``NoneType``.
     """
-    old_sample_name_match = old_sample_name_pattern.match(name)
-    new_sample_name_match = new_sample_name_pattern.match(name)
-    if old_sample_name_match:
+    if old_sample_name_pattern.match(name):
         return "old"
-    elif new_sample_name_match:
+    elif new_sample_name_pattern.match(name):
         return "new"
-    raise ValidationError(_(u"The sample name has an invalid format."))
+    elif provisional_sample_name_pattern.match(name):
+        return "provisional"
 
 class _AddHelpLink(object):
     u"""Internal helper class in order to realise the `help_link` function

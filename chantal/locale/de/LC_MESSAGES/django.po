@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 19:05+0100\n"
-"PO-Revision-Date: 2008-10-27 19:05+0100\n"
+"POT-Creation-Date: 2008-10-28 14:57+0100\n"
+"PO-Revision-Date: 2008-10-28 14:59+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1261,6 +1261,12 @@ msgstr "Neuer Name"
 msgid "Pieces"
 msgstr "Stücke"
 
+msgid "This sample name exists already."
+msgstr "Dieser Probenname ist schon vergeben."
+
+msgid "You must get rid of the provisional sample name."
+msgstr "Sie müssen den provisorischen Probennamen aufgeben."
+
 msgid "No sample with this name found."
 msgstr "Keine Probe dieses Namens gefunden."
 
@@ -1273,12 +1279,18 @@ msgstr "Keine Probe mit dieser ID gefunden."
 msgid "Invalid ID format."
 msgstr "Ungültiges ID-Format."
 
-msgid "New name of original sample must begin with deposition number."
-msgstr ""
-"Der neue Name der Ursprungsprobe muss mit der Depositionsnummer beginnen."
-
 msgid "Must be at least 1."
 msgstr "Muss mindestens 1 sein."
+
+msgid "If you choose a new-style name, it must not change."
+msgstr "Wenn Sie einen Namen „neuer Art“ wählen, dürfen Sie ihn nicht ändern."
+
+msgid ""
+"If you choose a deposition-style name, it must begin with the deposition "
+"number."
+msgstr ""
+"Wenn Sie einen Depositions-Probennamen wählen, muss er mit der "
+"Depositionsnummer beginnen."
 
 msgid "New sample name"
 msgstr "Neuer Probenname"
@@ -1295,15 +1307,16 @@ msgstr "(keine globale Änderung)"
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
 
-msgid "This sample name has been used already on this page."
-msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
-
-msgid "This sample name exists already."
-msgstr "Dieser Probenname ist schon vergeben."
+#, python-format
+msgid "Sample %s occurs multiple times."
+msgstr "Probe %s kommt mehrfach vor."
 
 #, python-format
-msgid "Sample name %s doesn't belong to this deposition."
-msgstr "Probenname %s gehört nicht zu dieser Deposition."
+msgid "Sample %s doesn't belong to this deposition."
+msgstr "Probe %s gehört nicht zu dieser Deposition."
+
+msgid "This sample name has been used already on this page."
+msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
@@ -1312,9 +1325,18 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-msgid "The new sample name must start with the new name of the parent sample."
+msgid "At least one sample of the original deposition is missing."
+msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
+
+msgid "If you don't split, you can't rename the sample."
+msgstr "Wenn Sie nicht spalten, gibt es auch keine Kindnamen zu vergeben."
+
+msgid ""
+"If you choose a deposition-style name, it must begin with the parent's new "
+"name."
 msgstr ""
-"Der neue Probenname muss mit dem neuen Namen der Ursprungsprobe beginnen."
+"Wenn Sie einen Depositions-Probennamen wählen, muss er mit dem neuen Namen "
+"der Mutterprobe beginnen."
 
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
@@ -1325,6 +1347,9 @@ msgstr "Probenumbenennung für %s"
 
 msgid "New sample purpose"
 msgstr "Neuer Probenzweck"
+
+msgid "The sample name has an invalid format."
+msgstr "Dieser Probenname hat ein ungültiges Format."
 
 msgid "The new sample name must start with the parent sample's name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
@@ -1417,9 +1442,6 @@ msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
 
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
-
-msgid "The sample name has an invalid format."
-msgstr "Dieser Probenname hat ein ungültiges Format."
 
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
@@ -2101,6 +2123,11 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid ""
+#~ "The new sample name must start with the new name of the parent sample."
+#~ msgstr ""
+#~ "Der neue Probenname muss mit dem neuen Namen der Ursprungsprobe beginnen."
 
 #~ msgid ""
 #~ "You must not give a provisional name, i.e., it must not start with “*”."
