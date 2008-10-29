@@ -120,8 +120,8 @@ def bulk_rename(request):
             continue
         available_initials.append((operator_initials.pk, unicode(operator_initials)))
     if not available_initials:
-        query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(request.path, safe="/") + \
-            django.utils.http.urlquote_plus("?" + request.META["QUERY_STRING"])
+        query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(
+            request.path + "?" + request.META["QUERY_STRING"], safe="/")
         return utils.successful_response(request, _(u"You may change the sample names, but you must choose initials first."),
                                          view="samples.views.user_details.edit_preferences",
                                          kwargs={"login_name": request.user.username},

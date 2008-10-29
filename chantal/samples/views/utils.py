@@ -870,8 +870,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
       - `query_string`: the *quoted* query string to be appended, without the
         leading ``"?"``
       - `forced`: If ``True``, go to ``view`` even if a “next” URL is
-        available.  The “next” URL is then passed to ``view``.  Defaults to
-        ``False``.
+        available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
+        using this option to generate some sort of nested forwarding.
       - `remote_client_response`: object which is to be sent as a pickled
         response to the remote client; defaults to ``True``.
 
@@ -897,10 +897,6 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
         return HttpResponseSeeOther(next_url)
     if query_string:
         query_string = "?" + query_string
-        if next_url:
-            query_string += "&next=" + django.utils.http.urlquote_plus(next_url, safe="/")
-    elif next_url:
-            query_string = "?next=" + django.utils.http.urlquote_plus(next_url, safe="/")
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "samples.views.main.main_menu", kwargs=kwargs)
                                 + query_string)
 

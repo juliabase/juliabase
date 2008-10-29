@@ -9,7 +9,11 @@
     alias <strong>{{ alias }}</strong> {% endfor %}</span>
   {% if can_edit %}<a class="edit-button"
                       href="{{ sample.get_absolute_url }}/edit/?next={{ sample.get_absolute_url|urlquote_plus }}"
-                      >{% trans 'edit' %}</a>{% endif %}
+                      >{% trans 'edit' %}</a>
+    {% if number_for_rename %}<a class="edit-button"
+                        href="{% url samples.views.bulk_rename.bulk_rename %}?numbers={{ number_for_rename }}&next={{ sample_url_by_id|urlquote_plus }}"
+                        >{% trans 'give name' %}</a>{% endif %}
+  {% endif %}
   {% if can_add_process %}<a class="edit-button" href="{{ sample.get_absolute_url }}/add_process/"
                              >{% trans 'add process' %}</a>{% endif %}</h1>{% endblock %}
 
