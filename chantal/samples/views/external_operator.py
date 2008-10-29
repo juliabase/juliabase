@@ -98,7 +98,7 @@ def edit(request, external_operator_id):
     permissions.assert_can_edit_external_operator(request.user, external_operator)
     if request.method == "POST":
         external_operator_form = EditExternalOperatorForm(request.POST, instance=external_operator)
-        initials_form = utils.InitialsForm(external_operator, request.POST)
+        initials_form = utils.InitialsForm(external_operator, initials_mandatory=False, data=request.POST)
         if external_operator_form.is_valid() and initials_form.is_valid():
             external_operator = external_operator_form.save()
             initials_form.save()
@@ -106,7 +106,7 @@ def edit(request, external_operator_id):
                                                         external_operator.name)
     else:
         external_operator_form = EditExternalOperatorForm(instance=external_operator)
-        initials_form = utils.InitialsForm(external_operator)
+        initials_form = utils.InitialsForm(external_operator, initials_mandatory=False)
     return render_to_response("edit_external_operator.html",
                               {"title": _(u"Edit external operator “%s”") % external_operator.name,
                                "external_operator": external_operator_form,

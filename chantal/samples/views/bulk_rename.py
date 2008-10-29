@@ -10,6 +10,7 @@ import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import Http404
+import django.utils.http
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -118,6 +119,13 @@ def bulk_rename(request):
         except models.Initials.DoesNotExist:
             continue
         available_initials.append((operator_initials.pk, unicode(operator_initials)))
+    if not available_initials:
+        query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(request.path, safe="/") + \
+            django.utils.http.urlquote_plus("?" + request.META["QUERY_STRING"])
+        return utils.successful_response(request, _(u"You may change the sample names, but you must choose initials first."),
+                                         view="samples.views.user_details.edit_preferences",
+                                         kwargs={"login_name": request.user.username},
+                                         query_string=query_string, forced=True)
     single_initials = available_initials[0][1] if len(available_initials) == 1 else None
     if request.method == "POST":
         initials_form = InitialsForm(available_initials, request.POST)
@@ -132,7 +140,7 @@ def bulk_rename(request):
                 sample.save()
             return utils.successful_response(request, _(u"Successfully renamed the samples."))
     else:
-        initials_form = InitialsForm(available_initials, initial={"initials": own_initials.pk})
+        initials_form = InitialsForm(available_initials, initial={"initials": available_initials[0][0]})
         new_name_forms = [NewNameForm(year, u"", prefix=str(sample.pk)) for sample in samples]
     return render_to_response("bulk_rename.html",
                               {"title": _(u"Giving new-style names"),

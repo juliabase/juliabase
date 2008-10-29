@@ -83,17 +83,18 @@ def edit_preferences(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the preferences of another user."))
+    initials_mandatory = utils.parse_query_string(request).get("initials_mandatory") == "True"
     user_details = utils.get_profile(user)
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
-        initials_form = utils.InitialsForm(user, request.POST)
+        initials_form = utils.InitialsForm(user, initials_mandatory, request.POST)
         if user_details_form.is_valid() and initials_form.is_valid():
             user_details_form.save()
             initials_form.save()
             return utils.successful_response(request, _(u"The preferences were successfully updated."))
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
-        initials_form = utils.InitialsForm(user)
+        initials_form = utils.InitialsForm(user, initials_mandatory)
     return render_to_response("edit_preferences.html",
                               {"title": _(u"Change preferences for %s") % models.get_really_full_name(request.user),
                                "user_details": user_details_form, "initials": initials_form},

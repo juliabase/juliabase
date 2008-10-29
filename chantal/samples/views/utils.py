@@ -10,6 +10,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict, Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _, ugettext_lazy
+import django.utils.http
 from functools import update_wrapper
 from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
@@ -101,8 +102,9 @@ class InitialsForm(forms.Form):
     """
     _ = ugettext_lazy
     initials = forms.CharField(label=_(u"Initials"), max_length=4, required=False)
-    def __init__(self, person, *args, **keyw):
+    def __init__(self, person, initials_mandatory, *args, **keyw):
         super(InitialsForm, self).__init__(*args, **keyw)
+        self.fields["initials"].required = initials_mandatory
         self.person = person
         self.is_user = isinstance(person, django.contrib.auth.models.User)
         try:
@@ -841,7 +843,7 @@ def parse_query_string(request):
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
 
-def successful_response(request, success_report=None, view="samples.views.main.main_menu", kwargs={},
+def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
                         remote_client_response=True):
     u"""After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
@@ -863,8 +865,13 @@ def successful_response(request, success_report=None, view="samples.views.main.m
       - `success_report`: an optional short success message reported to the
         user on the next view
       - `view`: the view name/function to redirect to; defaults to the main
-        menu page
+        menu page (same when ``None`` is given)
       - `kwargs`: group parameters in the URL pattern that have to be filled
+      - `query_string`: the *quoted* query string to be appended, without the
+        leading ``"?"``
+      - `forced`: If ``True``, go to ``view`` even if a “next” URL is
+        available.  The “next” URL is then passed to ``view``.  Defaults to
+        ``False``.
       - `remote_client_response`: object which is to be sent as a pickled
         response to the remote client; defaults to ``True``.
 
@@ -872,6 +879,9 @@ def successful_response(request, success_report=None, view="samples.views.main.m
     :type success_report: unicode
     :type view: str or function
     :type kwargs: dict
+    :type query_string: unicode
+    :type forced: bool
+    :type remote_client_respone: ``object``
 
     :Return:
       the HTTP response object to be returned to the view's caller
@@ -883,10 +893,16 @@ def successful_response(request, success_report=None, view="samples.views.main.m
     if success_report:
         request.session["success_report"] = success_report
     next_url = parse_query_string(request).get("next")
-    if next_url is not None:
+    if next_url is not None and not forced:
         return HttpResponseSeeOther(next_url)
-    else:
-        return HttpResponseSeeOther(django.core.urlresolvers.reverse(view, kwargs=kwargs))
+    if query_string:
+        query_string = "?" + query_string
+        if next_url:
+            query_string += "&next=" + django.utils.http.urlquote_plus(next_url, safe="/")
+    elif next_url:
+            query_string = "?next=" + django.utils.http.urlquote_plus(next_url, safe="/")
+    return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "samples.views.main.main_menu", kwargs=kwargs)
+                                + query_string)
 
 def is_remote_client(request):
     u"""Tests whether the current request was not done by an ordinary browser

@@ -189,6 +189,7 @@ class AddSamplesForm(forms.Form):
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
                            help_text=_(u"separated with commas, no whitespace"))
     group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects, required=False)
+    bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
     def __init__(self, user_details, data=None, **keyw):
         super(AddSamplesForm, self).__init__(data, **keyw)
         self.fields["currently_responsible_person"].initial = user_details.user.pk
@@ -272,7 +273,12 @@ def add(request):
                       {"first_name": new_names[0], "last_name": new_names[-1]}
             else:
                 success_report = _(u"Your sample has the provisional name %s.  It was added to “My Samples”.") % new_names[0]
-            return utils.successful_response(request, success_report, remote_client_response=ids)
+            if add_samples_form.cleaned_data["bulk_rename"]:
+                return utils.successful_response(request, success_report, "samples.views.bulk_rename.bulk_rename",
+                                                 query_string="numbers=" + ",".join(new_name[1:] for new_name in new_names),
+                                                 forced=True, remote_client_response=ids)
+            else:
+                return utils.successful_response(request, success_report, remote_client_response=ids)
     else:
         add_samples_form = AddSamplesForm(user_details)
     return render_to_response("add_samples.html",
