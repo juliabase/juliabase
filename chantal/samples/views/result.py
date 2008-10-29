@@ -59,7 +59,7 @@ class NewResultForm(forms.Form):
     comments = forms.CharField(label=_(u"Comments"), widget=forms.Textarea)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample series"), queryset=None, required=False)
-    def __init__(self, user_details, query_string_dict, data=None, **keyw):
+    def __init__(self, user_details, query_string_dict, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
 
@@ -68,7 +68,7 @@ class NewResultForm(forms.Form):
         electable sample series, but unallowed series will be rejected by
         `is_referentially_valid` anyway.
         """
-        super(NewResultForm, self).__init__(data, **keyw)
+        super(NewResultForm, self).__init__(data, **kwargs)
         self.fields["samples"].queryset = \
             models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample"))).distinct()
         if "sample" in query_string_dict:

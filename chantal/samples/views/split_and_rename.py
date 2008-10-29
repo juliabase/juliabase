@@ -24,8 +24,8 @@ class NewNameForm(forms.Form):
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_(u"Delete"), required=False)
-    def __init__(self, parent_name, *args, **keyw):
-        super(NewNameForm, self).__init__(*args, **keyw)
+    def __init__(self, parent_name, *args, **kwargs):
+        super(NewNameForm, self).__init__(*args, **kwargs)
         self.parent_name = parent_name
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
@@ -47,8 +47,8 @@ class GlobalDataForm(forms.Form):
     finished = forms.BooleanField(label=_(u"All pieces completely entered"), required=False)
     sample_completely_split = forms.BooleanField(label=_(u"Sample was completely split"), initial=True, required=False)
     sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None, required=False)
-    def __init__(self, parent, user_details, data=None, **keyw):
-        super(GlobalDataForm, self).__init__(data, **keyw)
+    def __init__(self, parent, user_details, data=None, **kwargs):
+        super(GlobalDataForm, self).__init__(data, **kwargs)
         now = datetime.datetime.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
         self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)

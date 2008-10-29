@@ -22,8 +22,8 @@ class NewGroupForm(forms.Form):
     """
     _ = ugettext_lazy
     new_group_name = forms.CharField(label=_(u"Name of new group"), max_length=80)
-    def __init__(self, *args, **keyw):
-        super(NewGroupForm, self).__init__(*args, **keyw)
+    def __init__(self, *args, **kwargs):
+        super(NewGroupForm, self).__init__(*args, **kwargs)
         self.fields["new_group_name"].widget.attrs["size"] = 40
     def clean_new_group_name(self):
         group_name = self.cleaned_data["new_group_name"]

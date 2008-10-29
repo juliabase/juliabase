@@ -46,8 +46,8 @@ class UserDetailsForm(forms.ModelForm):
     important news or all.
     """
     _ = ugettext_lazy
-    def __init__(self, user, *args, **keyw):
-        super(UserDetailsForm, self).__init__(*args, **keyw)
+    def __init__(self, user, *args, **kwargs):
+        super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_groups"].queryset = user.groups
     class Meta:
         model = models.UserDetails

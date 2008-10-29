@@ -37,7 +37,7 @@ class MySamplesForm(forms.Form):
     """
     _ = ugettext_lazy
     samples = forms.MultipleChoiceField(label=_(u"My Samples"))
-    def __init__(self, user, *args, **keyw):
+    def __init__(self, user, *args, **kwargs):
         u"""Form constructor.
 
         :Parameters:
@@ -45,7 +45,7 @@ class MySamplesForm(forms.Form):
 
         :type user: ``django.contrib.auth.models.User``
         """
-        super(MySamplesForm, self).__init__(*args, **keyw)
+        super(MySamplesForm, self).__init__(*args, **kwargs)
         user_details = utils.get_profile(user)
         my_series = {}
         seriesless_samples = []
@@ -76,7 +76,7 @@ class ActionForm(forms.Form):
     copy_to_user = utils.OperatorChoiceField(label=_(u"Copy to user"), required=False, queryset=None)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
-    def __init__(self, user, *args, **keyw):
+    def __init__(self, user, *args, **kwargs):
         u"""Form constructor.
 
         :Parameters:
@@ -84,7 +84,7 @@ class ActionForm(forms.Form):
 
         :type user: ``django.contrib.auth.models.User``
         """
-        super(ActionForm, self).__init__(*args, **keyw)
+        super(ActionForm, self).__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].queryset = self.fields["copy_to_user"].queryset = \
             django.contrib.auth.models.User.objects.exclude(pk=user.pk)
     def clean_comment(self):

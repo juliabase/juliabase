@@ -35,21 +35,21 @@ class SamplesForm(forms.Form):
     """
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    def __init__(self, user_details, deposition, data=None, **keyw):
+    def __init__(self, user_details, deposition, data=None, **kwargs):
         u"""Class constructor.  Note that I have to distinguish clearly here
         between new and existing depositions.
         """
         if deposition:
             # Mark the samples of the deposition in the choise field
-            keyw["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
+            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
             # Don't use ``data`` because it's disabled and thus empty (see
             # below)
-            super(SamplesForm, self).__init__(**keyw)
+            super(SamplesForm, self).__init__(**kwargs)
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             self.fields["sample_list"].queryset = \
                 models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct()
         else:
-            super(SamplesForm, self).__init__(data, **keyw)
+            super(SamplesForm, self).__init__(data, **kwargs)
             self.fields["sample_list"].queryset = user_details.my_samples
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
@@ -59,10 +59,10 @@ class DepositionForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, data=None, **keyw):
+    def __init__(self, data=None, **kwargs):
         u"""Class constructor just for changing the appearance of the number
         field."""
-        super(DepositionForm, self).__init__(data, **keyw)
+        super(DepositionForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def clean_number(self):
@@ -89,17 +89,17 @@ class LayerForm(forms.ModelForm):
     u"""Model form for a single layer.
     """
     _ = ugettext_lazy
-    def __init__(self, *args, **keyw):
+    def __init__(self, *args, **kwargs):
         u"""Form constructor.  I only tweak the HTML layout slightly, and I set
         the initial date to today for fresh layers.
         """
-        if "instance" not in keyw:
+        if "instance" not in kwargs:
             # Note that ``initial`` has higher priority than ``instance`` in
             # model forms.
-            initial = keyw.get("initial", {})
+            initial = kwargs.get("initial", {})
             initial["date"] = datetime.date.today()
-            keyw["initial"] = initial
-        super(LayerForm, self).__init__(*args, **keyw)
+            kwargs["initial"] = initial
+        super(LayerForm, self).__init__(*args, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
         for fieldname in ["date", "sih4", "h2", "tmb", "ch4", "co2", "ph3", "power", "pressure", "temperature",
                           "time", "dc_bias", "electrodes_distance"]:

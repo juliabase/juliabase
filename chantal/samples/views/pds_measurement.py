@@ -111,7 +111,7 @@ class SampleForm(forms.Form):
     """
     _ = ugettext_lazy
     sample = forms.ModelChoiceField(label=_(u"Sample"), queryset=None)
-    def __init__(self, user_details, pds_measurement, *args, **keyw):
+    def __init__(self, user_details, pds_measurement, *args, **kwargs):
         u"""Form constructor.  I only set the selection of samples to the
         current user's “My Samples”.
 
@@ -123,7 +123,7 @@ class SampleForm(forms.Form):
         :type user_details: `models.UserDetails`
         :type pds_measurement: `models.PDSMeasurement`
         """
-        super(SampleForm, self).__init__(*args, **keyw)
+        super(SampleForm, self).__init__(*args, **kwargs)
         self.fields["sample"].queryset = \
             models.Sample.objects.filter(Q(processes=pds_measurement) | Q(watchers=user_details)).distinct() \
             if pds_measurement else user_details.my_samples
@@ -134,10 +134,10 @@ class PDSMeasurementForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, *args, **keyw):
+    def __init__(self, *args, **kwargs):
         u"""Form constructor.  I just adjust layout here.
         """
-        super(PDSMeasurementForm, self).__init__(*args, **keyw)
+        super(PDSMeasurementForm, self).__init__(*args, **kwargs)
         self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"

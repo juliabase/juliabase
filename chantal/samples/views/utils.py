@@ -74,8 +74,8 @@ class AddLayersForm(forms.Form):
     _ = ugettext_lazy
     number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
-    def __init__(self, user_details, model, data=None, **keyw):
-        super(AddLayersForm, self).__init__(data, **keyw)
+    def __init__(self, user_details, model, data=None, **kwargs):
+        super(AddLayersForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
         self.model = model
     def clean_number_of_layers_to_add(self):
@@ -102,8 +102,8 @@ class InitialsForm(forms.Form):
     """
     _ = ugettext_lazy
     initials = forms.CharField(label=_(u"Initials"), max_length=4, required=False)
-    def __init__(self, person, initials_mandatory, *args, **keyw):
-        super(InitialsForm, self).__init__(*args, **keyw)
+    def __init__(self, person, initials_mandatory, *args, **kwargs):
+        super(InitialsForm, self).__init__(*args, **kwargs)
         self.fields["initials"].required = initials_mandatory
         self.person = person
         self.is_user = isinstance(person, django.contrib.auth.models.User)

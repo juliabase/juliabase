@@ -33,12 +33,12 @@ class SampleSeriesForm(Form):
                                                              queryset=django.contrib.auth.models.User.objects)
     group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
-    def __init__(self, user_details, sample_series, data=None, **keyw):
+    def __init__(self, user_details, sample_series, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the form here, especially
         because the sample set to choose from must be found and the name of an
         existing series must not be changed.
         """
-        super(SampleSeriesForm, self).__init__(data, **keyw)
+        super(SampleSeriesForm, self).__init__(data, **kwargs)
         self.fields["samples"].queryset = \
             models.Sample.objects.filter(Q(series=sample_series) | Q(watchers=user_details)).distinct() if sample_series \
             else user_details.my_samples

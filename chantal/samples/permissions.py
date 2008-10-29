@@ -465,9 +465,9 @@ def assert_can_view_feed(hash_value, user):
 # for every ``assert_can_...`` function found here.
 
 def generate_permission_function(assert_func):
-    def has_permission(*args, **keyw):
+    def has_permission(*args, **kwargs):
         try:
-            assert_func(*args, **keyw)
+            assert_func(*args, **kwargs)
         except PermissionError:
             return False
         else:

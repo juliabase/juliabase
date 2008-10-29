@@ -199,8 +199,8 @@ class AddSamplesForm(forms.Form):
                            help_text=_(u"separated with commas, no whitespace"))
     group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects, required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
-    def __init__(self, user_details, data=None, **keyw):
-        super(AddSamplesForm, self).__init__(data, **keyw)
+    def __init__(self, user_details, data=None, **kwargs):
+        super(AddSamplesForm, self).__init__(data, **kwargs)
         self.fields["currently_responsible_person"].initial = user_details.user.pk
 
 def add_samples_to_database(add_samples_form, user):

@@ -19,8 +19,8 @@ class AddExternalOperatorForm(forms.ModelForm):
     ``contact_person`` is implicitly the currently logged-in user.
     """
     _ = ugettext_lazy
-    def __init__(self, user, *args, **keyw):
-        super(AddExternalOperatorForm, self).__init__(*args, **keyw)
+    def __init__(self, user, *args, **kwargs):
+        super(AddExternalOperatorForm, self).__init__(*args, **kwargs)
         self.user = user
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
@@ -69,8 +69,8 @@ class EditExternalOperatorForm(forms.ModelForm):
     _ = ugettext_lazy
     contact_person = utils.OperatorChoiceField(label=_(u"Concact person"),
                                                queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, *args, **keyw):
-        super(EditExternalOperatorForm, self).__init__(*args, **keyw)
+    def __init__(self, *args, **kwargs):
+        super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"

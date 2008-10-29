@@ -43,9 +43,9 @@ class AddMyLayerForm(Form):
     """
     _ = ugettext_lazy
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
-    def __init__(self, data=None, **keyw):
-        user_details = keyw.pop("user_details")
-        super(AddMyLayerForm, self).__init__(data, **keyw)
+    def __init__(self, data=None, **kwargs):
+        user_details = kwargs.pop("user_details")
+        super(AddMyLayerForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, SixChamberDeposition)
 
 class DepositionForm(ModelForm):
@@ -54,18 +54,18 @@ class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
     operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, user_details, data=None, **keyw):
+    def __init__(self, user_details, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
         (``sample_list`` and ``operator``).
         """
-        deposition = keyw.get("instance")
-        initial = keyw.get("initial", {})
+        deposition = kwargs.get("instance")
+        initial = kwargs.get("initial", {})
         if deposition:
             # Mark the samples of the deposition in the choise field
             initial.update({"sample_list": deposition.samples.values_list("pk", flat=True)})
-        keyw["initial"] = initial
-        super(DepositionForm, self).__init__(data, **keyw)
+        kwargs["initial"] = initial
+        super(DepositionForm, self).__init__(data, **kwargs)
         # Connect the date/time fields with the JavaScript
         split_widget = forms.SplitDateTimeWidget()
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
@@ -78,10 +78,10 @@ class DepositionForm(ModelForm):
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def clean_number(self):
         return utils.clean_deposition_number_field(self.cleaned_data["number"], "B", self.cleaned_data["timestamp"])
-    def save(self, *args, **keyw):
+    def save(self, *args, **kwargs):
         u"""Additionally to the deposition itself, I must store the list of
         samples connected with the deposition."""
-        deposition = super(DepositionForm, self).save(*args, **keyw)
+        deposition = super(DepositionForm, self).save(*args, **kwargs)
         deposition.samples = self.cleaned_data["sample_list"]
         return deposition
     class Meta:
@@ -89,11 +89,11 @@ class DepositionForm(ModelForm):
 
 class LayerForm(DataModelForm):
     u"""Model form for a 6-chamber layer."""
-    def __init__(self, data=None, **keyw):
+    def __init__(self, data=None, **kwargs):
         u"""Model form constructor.  I do additional initialisation here, but
         very harmless: It's only about visual appearance and numerical limits.
         """
-        super(LayerForm, self).__init__(data, **keyw)
+        super(LayerForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"size": "2", "style": "text-align: center; font-size: xx-large"})
         self.fields["comments"].widget.attrs["cols"] = "30"
         for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
@@ -126,11 +126,11 @@ class LayerForm(DataModelForm):
 
 class ChannelForm(ModelForm):
     u"""Model form for channels in 6-chamber depositions."""
-    def __init__(self, data=None, **keyw):
+    def __init__(self, data=None, **kwargs):
         u"""Model form constructor.  I do additional initialisation here, but
         very harmless: It's only about visual appearance.
         """
-        super(ChannelForm, self).__init__(data, **keyw)
+        super(ChannelForm, self).__init__(data, **kwargs)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
     def clean_gas(self):

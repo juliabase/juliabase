@@ -91,8 +91,8 @@ class NewDataForm(Form):
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_responsible_person = utils.OperatorChoiceField(
         label=_(u"New responsible person"), queryset=django.contrib.auth.models.User.objects.all())
-    def __init__(self, readonly, data=None, **keyw):
-        super(NewDataForm, self).__init__(data, **keyw)
+    def __init__(self, readonly, data=None, **kwargs):
+        super(NewDataForm, self).__init__(data, **kwargs)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
         if readonly:
             self.fields["new_name"].widget.attrs["readonly"] = "readonly"
@@ -107,12 +107,12 @@ class GlobalNewDataForm(Form):
         help_text=_(u"(for all samples; overrides individual settings above)"), empty_label=_(u"(no global change)"))
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples; leave empty for no change)"))
-    def __init__(self, data=None, **keyw):
+    def __init__(self, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the field here, both heir
         value and their layout.
         """
-        deposition_instance = keyw.pop("deposition_instance")
-        super(GlobalNewDataForm, self).__init__(data, **keyw)
+        deposition_instance = kwargs.pop("deposition_instance")
+        super(GlobalNewDataForm, self).__init__(data, **kwargs)
         self.fields["new_location"].initial = \
             models.default_location_of_deposited_samples.get(deposition_instance.__class__, u"")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
