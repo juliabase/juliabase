@@ -1,6 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
@@ -41,7 +42,8 @@
     </tr>
     <tr>
       <td style="text-align: right">
-        <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:</label></td>
+        <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:<br/>
+          {% markdown_hint %}</label></td>
       <td>{{ deposition.comments }}</td>
     </tr>
   </table>

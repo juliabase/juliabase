@@ -89,3 +89,5 @@ p.submit-button { text-align: right; margin-bottom: 0px }
 a > img { border: none }
 
 optgroup { font-weight: bold; font-style: normal }
+
+span.markdown-hint { font-size: small }

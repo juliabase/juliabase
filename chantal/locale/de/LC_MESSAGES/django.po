@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 16:10+0100\n"
-"PO-Revision-Date: 2008-10-29 16:10+0100\n"
+"POT-Creation-Date: 2008-10-29 17:51+0100\n"
+"PO-Revision-Date: 2008-10-29 17:52+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -744,6 +744,10 @@ msgstr "Ja"
 
 msgid "No"
 msgstr "Nein"
+
+#, python-format
+msgid "(with %(markdown_link)s syntax)"
+msgstr "(mit %(markdown_link)s-Syntax)"
 
 msgid "%Y-%m-%d %H<sup>h</sup>"
 msgstr "%Y-%m-%d %H<sup>h</sup>"
@@ -2162,6 +2166,13 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid ""
+#~ "<span class=\"markdown-hint\">(with <a href=\"%s\">Markdown</a> syntax)</"
+#~ "span>"
+#~ msgstr ""
+#~ "<span class=\"markdown-hint\">(with <a href=\"%s\">Markdown</a> syntax)</"
+#~ "span>"
 
 #~ msgid "Mass renaming samples"
 #~ msgstr "Gemeinsame Benennung von Proben"

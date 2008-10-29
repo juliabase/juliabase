@@ -75,6 +75,12 @@ class DepositionForm(forms.ModelForm):
         wrong German (difficult to fix, even for the Django guys).
         """
         pass
+    def clean_comments(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        utils.check_markdown(comments)
+        return comments
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)
