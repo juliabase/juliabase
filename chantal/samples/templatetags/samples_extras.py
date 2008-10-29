@@ -141,7 +141,7 @@ def markdown_hint(parser, token):
         def render(self, context):
             return u"""<span class="markdown-hint">""" + _(u"""(with %(markdown_link)s syntax)""") \
                 % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-                   django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"""</span>"""
+                   django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
     return MarkdownHintNode()
 
 @register.filter
