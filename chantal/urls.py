@@ -56,6 +56,7 @@ urlpatterns = patterns("",
                        (r"^samples/(?P<sample_name>.+)/add_process/$", "samples.views.sample.add_process"),
                        (r"^samples/(?P<sample_name>.+)/edit/$", "samples.views.sample.edit"),
                        (r"^samples/(?P<sample_name>.+)", "samples.views.sample.show"),
+                       (r"^bulk_rename$", "samples.views.bulk_rename.bulk_rename"),
 
                        url(r"^6-chamber_depositions/add/$", "samples.views.six_chamber_deposition.edit",
                            {"deposition_number": None}, "add_6-chamber_deposition"),
