@@ -133,10 +133,11 @@ def show(request, sample_name, sample_id=None):
     :rtype: ``HttpResponse``
     """
     start = time.time()
-    if utils.parse_query_string(request).get("is_id") == "True":
+    is_remote_client = utils.is_remote_client(request)
+    if sample_id and not is_remote_client:
         sample_name = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_name))
-        return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.sample.show",
-                                                                           kwargs={"sample_name": sample_name}))
+        return utils.HttpResponseSeeOther(
+            django.core.urlresolvers.reverse("samples.views.sample.show", kwargs={"sample_name": sample_name}))
     sample = \
         utils.lookup_sample(sample_name, request) if sample_id is None else get_object_or_404(models.Sample, pk=sample_id)
     user_details = utils.get_profile(request.user)
@@ -145,13 +146,13 @@ def show(request, sample_name, sample_id=None):
         if is_my_sample_form.is_valid():
             if is_my_sample_form.cleaned_data["is_my_sample"]:
                 user_details.my_samples.add(sample)
-                if utils.is_remote_client(request):
+                if is_remote_client:
                     return utils.respond_to_remote_client(True)
                 else:
                     request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample.name
             else:
                 user_details.my_samples.remove(sample)
-                if utils.is_remote_client(request):
+                if is_remote_client:
                     return utils.respond_to_remote_client(True)
                 else:
                     request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
@@ -170,7 +171,7 @@ def show(request, sample_name, sample_id=None):
     can_edit = permissions.has_permission_to_edit_sample(request.user, sample)
     number_for_rename = sample.name[1:] if sample.name.startswith("*") and can_edit else None
     sample_url_by_id = django.core.urlresolvers.reverse(
-        "samples.views.sample.show", kwargs={"sample_name": str(sample.pk)}) + "?is_id=True" if number_for_rename else None
+        "samples.views.sample.show", kwargs={"sample_id": str(sample.pk)}) if number_for_rename else None
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
                                                    "can_edit": can_edit,
                                                    "number_for_rename": number_for_rename,
