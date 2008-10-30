@@ -431,8 +431,6 @@ def forms_from_database(deposition):
              for channel_index, channel in enumerate(layer.channels.all())])
     return layer_forms, channel_form_lists
 
-query_string_pattern = re.compile(r"^copy_from=(?P<copy_from>.+)$")
-
 @login_required
 def edit(request, deposition_number):
     u"""Central view for editing, creating, and duplicating 6-chamber
@@ -480,11 +478,10 @@ def edit(request, deposition_number):
                             kwargs={"deposition_number": deposition.number}))
     else:
         deposition_form = None
-        # FixMe: Must make use of utils.parse_query_string
-        match = query_string_pattern.match(request.META["QUERY_STRING"] or "")
-        if not deposition and match:
+        copy_from = utils.parse_query_string(request).get("copy_from")
+        if not deposition and copy_from:
             # Duplication of a deposition
-            copy_from_query = models.SixChamberDeposition.objects.filter(number=match.group("copy_from"))
+            copy_from_query = models.SixChamberDeposition.objects.filter(number=copy_from)
             if copy_from_query.count() == 1:
                 deposition_data = copy_from_query.values()[0]
                 del deposition_data["timestamp"]
