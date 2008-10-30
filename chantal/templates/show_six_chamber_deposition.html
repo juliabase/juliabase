@@ -10,7 +10,7 @@
 
 {% if process.comments %}
   <p>
-    <span class="label">{% verbose_name SixChamberDeposition.comments %}:</span>{{ process.comments }}
+    <span class="label">{% verbose_name SixChamberDeposition.comments %}:</span>{{ process.comments|markdown }}
   </p>
 {% endif %}
 
@@ -93,7 +93,7 @@
                   <tr>
                     {% if layer.comments %}
                     <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
-                        {{ layer.comments|linebreaksbr }}
+                        {{ layer.comments|markdown }}
                     </td>
                     {% else %}
                     <td> </td>

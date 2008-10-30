@@ -1,6 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% samples_extras %}
 
 {% block content %}
 <form method="post" action="">
@@ -73,7 +74,7 @@
     </tr>
     <tr>
       <td style="text-align: right; vertical-align: top"><label for="id_{{ pds_measurement.comments.html_name }}"
-           >{{ pds_measurement.comments.label }}:</label></td>
+           >{{ pds_measurement.comments.label }}:</label><br/>{% markdown_hint %}</td>
       <td colspan="3">{{ pds_measurement.comments }}</td>
     </tr>
   </table>

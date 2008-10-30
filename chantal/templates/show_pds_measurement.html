@@ -28,7 +28,7 @@
   {% if process.comments %}
     <tr>
       <td class="label" style="vertical-align: top">{% verbose_name PDSMeasurement.comments %}:</td>
-      <td class="value" style="font-weight: normal">{{ process.comments|linebreaksbr }}</td>
+      <td class="value" style="font-weight: normal">{{ process.comments|markdown }}</td>
     </tr>
   {% endif %}
 </table>

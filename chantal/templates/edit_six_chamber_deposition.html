@@ -62,7 +62,7 @@
 
   <p>
     <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:</label
-       ><br />{{ deposition.comments }}
+       ><br />{% markdown_hint %}<br/>{{ deposition.comments }}
   </p>
 
   {% if layers_and_channels %}
@@ -222,7 +222,8 @@
                     <tr>
                       {% if layer.comments %}
                       <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
-                        <div><label for="id_{{ layer.comments.html_name }}">{{ layer.comments.label }}:</label></div>
+                        <div><label for="id_{{ layer.comments.html_name }}">{{ layer.comments.label }}:<br/>
+                            {% markdown_hint %}</label></div>
                           {{ layer.comments }}
                       </td>
                       {% else %}
