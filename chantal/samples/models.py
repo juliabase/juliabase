@@ -784,7 +784,10 @@ class Sample(models.Model):
                       split_origin=self.split_origin, group=self.group)
     @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.sample.show", [urlquote(self.name, safe="")])
+        if self.name.startswith("*"):
+            return ("show_sample_by_id", (), {"sample_id": str(self.pk)})
+        else:
+            return ("show_sample_by_name", [urlquote(self.name, safe="")])
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")

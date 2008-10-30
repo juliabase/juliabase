@@ -135,7 +135,7 @@ def show(request, sample_name, sample_id=None):
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
     if sample_id and not is_remote_client:
-        sample_name = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_name))
+        sample_name = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
         return utils.HttpResponseSeeOther(
             django.core.urlresolvers.reverse("samples.views.sample.show", kwargs={"sample_name": sample_name}))
     sample = \
@@ -170,12 +170,9 @@ def show(request, sample_name, sample_id=None):
         can_add_process = False
     can_edit = permissions.has_permission_to_edit_sample(request.user, sample)
     number_for_rename = sample.name[1:] if sample.name.startswith("*") and can_edit else None
-    sample_url_by_id = django.core.urlresolvers.reverse(
-        "samples.views.sample.show", kwargs={"sample_id": str(sample.pk)}) if number_for_rename else None
     return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
                                                    "can_edit": can_edit,
                                                    "number_for_rename": number_for_rename,
-                                                   "sample_url_by_id": sample_url_by_id,
                                                    "can_add_process": can_add_process,
                                                    "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))
@@ -239,7 +236,7 @@ def add_samples_to_database(add_samples_form, user):
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = utils.get_profile(add_samples_form.cleaned_data["currently_responsible_person"])
     new_names = [u"*%d" % i for i in range(starting_number, starting_number + number_of_samples)]
-    ids = []
+    samples = []
     for new_name in new_names:
         sample_group = add_samples_form.cleaned_data["group"]
         sample = models.Sample(name=new_name,
@@ -249,13 +246,13 @@ def add_samples_to_database(add_samples_form, user):
                                tags=add_samples_form.cleaned_data["tags"],
                                group=sample_group)
         sample.save()
-        ids.append(sample.pk)
+        samples.append(sample)
         sample.processes.add(substrate)
         user_details.my_samples.add(sample)
         if sample_group:
             for watcher in sample_group.auto_adders.all():
                 watcher.my_samples.add(sample)
-    return new_names, ids
+    return new_names, samples
 
 @login_required
 def add(request):
@@ -275,7 +272,11 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
         if add_samples_form.is_valid():
-            new_names, ids = add_samples_to_database(add_samples_form, request.user)
+            new_names, samples = add_samples_to_database(add_samples_form, request.user)
+            ids = [sample.pk for sample in samples]
+            feed_entry = models.FeedNewSamples.objects.create(originator=request.user)
+            feed_entry.samples = samples
+            feed_entry.users.add(user_details)
             if len(new_names) > 1:
                 success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "

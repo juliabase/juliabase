@@ -1,11 +1,15 @@
+{% load i18n %}
 {% load samples_extras %}
 
-<p>{{ entry.originator|get_really_full_name:"email" }} has added the following
-  samples to the database:</p>
+<p>
+  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator %}
+    {{ originator }} has added the following samples to the database:
+  {% endblocktrans %}
+</p>
 
 <ul>
   {% for sample in entry.samples.all %}
-    <li>{{ sample.name }}</li>
+    <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
   {% endfor %}
 </ul>
 
