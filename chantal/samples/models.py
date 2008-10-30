@@ -990,6 +990,73 @@ class Initials(models.Model):
         verbose_name_plural = _(u"initialses")
 admin.site.register(Initials)
 
+class FeedEntry(models.Model):
+    u"""Abstract base model for newsfeed entries.  This is also not really
+    abstract as it has a table in the database, however, it is never
+    instantiated itself.  Instead, see `find_actual_instance` which is also
+    injected into this class.
+    """
+    originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
+    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
+    link = models.CharField(_(u"link"), max_length=128, help_text=_(u"without domain and the leading \"/\""), blank=True)
+    sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
+    u"""You'll never calculate the SHA-1 hash yourself.  It is done in
+    `save`."""
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"feed entry #%d") % self.pk
+    def get_title(self):
+        u"""Return the title of this feed entry, as a plain string (no HTML).
+
+        :Return:
+          The title of this feed entry without any markup.
+
+        :rtype: unicode
+        """
+        raise NotImplementedError
+    def save(self, *args, **kwargs):
+        u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
+        the timestamp, the username of the originator, the object's ID, and the
+        link (if given).  It is used for the GUID of this entry.
+
+        Note that I have to call the parent's ``save()`` method twice and I
+        pass the parameter only to the first call.
+
+        :Return:
+          ``None``
+        """
+        super(FeedEntry, self).save(*args, **kwargs)
+        entry_hash = hashlib.sha1()
+        entry_hash.update(repr(self.timestamp))
+        entry_hash.update(repr(self.originator))
+        entry_hash.update(repr(self.link))
+        entry_hash.update(repr(self.pk))
+        self.sha1_hash = entry_hash.hexdigest()
+        super(FeedEntry, self).save()
+    class Meta:
+        verbose_name = _(u"feed entry")
+        verbose_name_plural = _(u"feed entries")
+        ordering = ["-timestamp"]
+
+class FeedNewSamples(FeedEntry):
+    u"""Model for feed entries about new samples having been added to the database.
+    """
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
+    u"""The person who added the sample(s)."""
+    def get_title(self):
+        _ = ugettext
+        # FixMe: Must distinguish between one or more samples.
+        if self.group:
+            return _(u"%(originator)s has added new samples in group %(group)s") % \
+                {"originator": get_really_full_name(self.originator), "group": self.group}
+        else:
+            return _(u"%s has added new samples") % get_really_full_name(self.originator)
+    class Meta:
+        verbose_name = _(u"new samples feed entry")
+        verbose_name_plural = _(u"new samples feed entries")
+admin.site.register(FeedNewSamples)
+
 languages = (
     ("de", u"Deutsch"),
     ("en", u"English"),
@@ -1009,6 +1076,7 @@ class UserDetails(models.Model):
         django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),
         help_text=_(u"new samples in these groups are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False, null=True, blank=True)
+    feed_entries = models.ManyToManyField(FeedEntry, verbose_name=_(u"feed enties"), related_name="users")
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
     deposition2-layer2, ..."``, where “nickname” can be chosen freely except
@@ -1024,69 +1092,6 @@ class UserDetails(models.Model):
         _ = lambda x: x
         permissions = (("edit_group_memberships", _("Can edit group memberships and add new groups")),)
 admin.site.register(UserDetails)
-
-class FeedEntry(models.Model):
-    u"""Abstract base model for newsfeed entries.  This is also not really
-    abstract as it has a table in the database, however, it is never
-    instantiated itself.  Instead, see `find_actual_instance` which is also
-    injected into this class.
-    """
-    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
-    link = models.CharField(_(u"link"), max_length=128, help_text=_(u"without domain and the leading \"/\""), blank=True)
-    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="feed_entries")
-    sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
-    u"""You'll never calculate the SHA-1 hash yourself.  It is done in
-    `save`."""
-    def __unicode__(self):
-        _ = ugettext
-        return _(u"feed entry #%d") % self.pk
-    def get_title(self):
-        u"""Return the title of this feed entry, as a plain string (no HTML).
-
-        :Return:
-          The title of this feed entry without any markup.
-
-        :rtype: unicode
-        """
-        raise NotImplementedError
-    def save(self, *args, **kwargs):
-        u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
-        the timestamp, the username, and the link (if given).  It is used for
-        the GUID of this entry.
-
-        :Return:
-          ``None``
-        """
-        entry_hash = hashlib.sha1()
-        entry_hash.update(repr(self.timestamp))
-        entry_hash.update(repr(self.user))
-        entry_hash.update(repr(self.link))
-        self.sha1_hash = entry_hash.hexdigest()
-        super(FeedEntry, self).save(*args, **kwargs)
-    class Meta:
-        verbose_name = _(u"feed entry")
-        verbose_name_plural = _(u"feed entries")
-        ordering = ["-timestamp"]
-
-class FeedNewSamples(FeedEntry):
-    u"""Model for feed entries about new samples having been added to the database.
-    """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
-    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
-    originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
-    u"""The person who added the sample(s)."""
-    def get_title(self):
-        _ = ugettext
-        # FixMe: Must distinguish between one or more samples.
-        if self.group:
-            return _(u"%(originator)s has added new samples in group %(group)s") % \
-                {"originator": get_really_full_name(self.originator), "group": self.group}
-        else:
-            return _(u"%s has added new samples") % get_really_full_name(self.originator)
-    class Meta:
-        verbose_name = _(u"new samples feed entry")
-        verbose_name_plural = _(u"new samples feed entries")
-admin.site.register(FeedNewSamples)
 
 import copy, inspect
 _globals = copy.copy(globals())

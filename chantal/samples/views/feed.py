@@ -105,7 +105,7 @@ def format_timestamp(timestamp):
     """
     return timestamp.strftime("%Y-%m-%dT%H:%M:%S") + get_timezone_string(timestamp)
 
-@cache_page(600)
+#@cache_page(600)
 def show(request, username):
     u"""View which doesn't generate an HTML page but an Atom 1.0 feed with
     current news for the user.
@@ -141,7 +141,8 @@ def show(request, username):
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % models.get_really_full_name(user)
-    entries = [entry.find_actual_instance() for entry in models.FeedEntry.objects.filter(user=user).all()]
+    user_details = utils.get_profile(user)
+    entries = [entry.find_actual_instance() for entry in user_details.feed_entries.all()]
     if entries:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)
     else:
