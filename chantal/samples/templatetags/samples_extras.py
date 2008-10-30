@@ -242,8 +242,8 @@ sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-
 def markdown(value):
     u"""Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
-    clickable links.  Embedded HTML is always escaped.  Warning: You need at
-    least Python Markdown 1.7 or later so that this works.
+    clickable links.  Embedded HTML tags are always escaped.  Warning: You need
+    at least Python Markdown 1.7 or later so that this works.
     """
     value = unicode(escape(value))
     position = 0
