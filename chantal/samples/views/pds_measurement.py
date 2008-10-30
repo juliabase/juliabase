@@ -174,6 +174,12 @@ class PDSMeasurementForm(forms.ModelForm):
         filename = self.cleaned_data["evaluated_datafile"]
         self.test_for_datafile(filename)
         return filename
+    def clean_comments(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        utils.check_markdown(comments)
+        return comments
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own

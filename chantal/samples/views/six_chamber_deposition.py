@@ -78,6 +78,12 @@ class DepositionForm(ModelForm):
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def clean_number(self):
         return utils.clean_deposition_number_field(self.cleaned_data["number"], "B", self.cleaned_data["timestamp"])
+    def clean_comments(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        utils.check_markdown(comments)
+        return comments
     def save(self, *args, **kwargs):
         u"""Additionally to the deposition itself, I must store the list of
         samples connected with the deposition."""
@@ -120,6 +126,12 @@ class LayerForm(DataModelForm):
         return utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
     def clean_gas_pre_heat_pressure(self):
         return utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
+    def clean_comments(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        utils.check_markdown(comments)
+        return comments
     class Meta:
         model = SixChamberLayer
         exclude = ("deposition",)

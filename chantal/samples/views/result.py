@@ -84,6 +84,12 @@ class NewResultForm(forms.Form):
                                                  Q(timestamp__range=(three_months_ago, now)))
                                                | Q(name=query_string_dict.get("sample_series"))).distinct()
         self.fields["sample_series"].initial = [query_string_dict.get("sample_series")]
+    def clean_comments(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        utils.check_markdown(comments)
+        return comments
 
 def is_referentially_valid(result_form, user):
     u"""Test whether the result form is consistent with the database.  In
