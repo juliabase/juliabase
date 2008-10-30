@@ -62,7 +62,7 @@
 
   <p>
     <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:</label
-       ><br />{% markdown_hint %}<br/>{{ deposition.comments }}
+       ><br/>{% markdown_hint %}<br/>{{ deposition.comments }}
   </p>
 
   {% if layers_and_channels %}
@@ -105,12 +105,12 @@
                             <td colspan="2">
                               <p><input type="checkbox"
                                         id="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
-                                        name="structural-change-duplicate-layerindex-{{ forloop.counter0 }}" />
+                                        name="structural-change-duplicate-layerindex-{{ forloop.counter0 }}"/>
                                 <label for="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
-                                       >{% trans 'duplicate this layer' %}</label><br />
+                                       >{% trans 'duplicate this layer' %}</label><br/>
                               <input type="checkbox"
                                         id="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
-                                        name="structural-change-delete-layerindex-{{ forloop.counter0 }}" />
+                                        name="structural-change-delete-layerindex-{{ forloop.counter0 }}"/>
                                 <label for="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
                                        >{% trans 'delete this layer' %}</label></p>
                             </td>
@@ -126,7 +126,7 @@
                         <label for="id_{{ layer.plasma_start_power.html_name }}"
                                >{{ layer.plasma_start_power.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.plasma_start_power }}<br />
+                      <td class="value">{{ layer.plasma_start_power }}<br/>
                         <span class="help">({{ layer.plasma_start_power.help_text }})</span></td>
                     </tr>
                     <tr>
@@ -134,7 +134,7 @@
                         <label for="id_{{ layer.pre_heat.html_name }}"
                                >{{ layer.pre_heat.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.pre_heat }}<br />
+                      <td class="value">{{ layer.pre_heat }}<br/>
                         <span class="help">({{ layer.pre_heat.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.plasma_start_with_carrier.html_name }}"
@@ -147,13 +147,13 @@
                         <label for="id_{{ layer.heating_temperature.html_name }}"
                                >{{ layer.heating_temperature.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.heating_temperature }}<br />
+                      <td class="value">{{ layer.heating_temperature }}<br/>
                         <span class="help">({{ layer.heating_temperature.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.deposition_frequency.html_name }}"
                                >{{ layer.deposition_frequency.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.deposition_frequency }}<br />
+                      <td class="value">{{ layer.deposition_frequency }}<br/>
                         <span class="help">({{ layer.deposition_frequency.help_text }})</span></td>
                     </tr>
                     <tr>
@@ -166,13 +166,13 @@
                         <label for="id_{{ layer.gas_pre_heat_pressure.html_name }}"
                                >{{ layer.gas_pre_heat_pressure.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.gas_pre_heat_pressure }}<br />
+                      <td class="value">{{ layer.gas_pre_heat_pressure }}<br/>
                         <span class="help">({{ layer.gas_pre_heat_pressure.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.gas_pre_heat_time.html_name }}"
                                >{{ layer.gas_pre_heat_time.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.gas_pre_heat_time }}<br />
+                      <td class="value">{{ layer.gas_pre_heat_time }}<br/>
                         <span class="help">({{ layer.gas_pre_heat_time.help_text }})</span></td>
                     </tr>
                     <tr>
@@ -180,7 +180,7 @@
                         <label for="id_{{ layer.pressure.html_name }}"
                                >{{ layer.pressure.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.pressure }}<br />
+                      <td class="value">{{ layer.pressure }}<br/>
                         <span class="help">({{ layer.pressure.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.transfer_out_of_chamber.html_name }}"
@@ -191,7 +191,7 @@
                         <label for="id_{{ layer.deposition_power.html_name }}"
                                >{{ layer.deposition_power.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.deposition_power }}<br />
+                      <td class="value">{{ layer.deposition_power }}<br/>
                         <span class="help">({{ layer.deposition_power.help_text }})</span></td>
                     </tr>
                     <tr>
@@ -199,18 +199,18 @@
                         <label for="id_{{ layer.time.html_name }}"
                                >{{ layer.time.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.time }}<br /><span class="help">({{ layer.time.help_text }})</span></td>
+                      <td class="value">{{ layer.time }}<br/><span class="help">({{ layer.time.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.substrate_electrode_distance.html_name }}"
                                >{{ layer.substrate_electrode_distance.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.substrate_electrode_distance }}<br />
+                      <td class="value">{{ layer.substrate_electrode_distance }}<br/>
                         <span class="help">({{ layer.substrate_electrode_distance.help_text }})</span></td>
                       <td class="label">
                         <label for="id_{{ layer.base_pressure.html_name }}"
                                >{{ layer.base_pressure.label }}:</label>
                       </td>
-                      <td class="value">{{ layer.base_pressure }}<br />
+                      <td class="value">{{ layer.base_pressure }}<br/>
                         <span class="help">({{ layer.base_pressure.help_text }})</span></td>
                     </tr>
                   </table>
@@ -235,7 +235,7 @@
                             <tr>
                               <th>{{ channels.0.number.label }}</th>
                               <th>{{ channels.0.gas.label }}</th>
-                              <th>{{ channels.0.flow_rate.label }}<br /><span class="help"
+                              <th>{{ channels.0.flow_rate.label }}<br/><span class="help"
                                         >({{ channels.0.flow_rate.help_text }})</span></th>
                               <th>{% trans 'delete' %}</th>
                             </tr>
@@ -257,7 +257,7 @@
                                 <td>{{ channel.gas }}</td>
                                 <td>{{ channel.flow_rate }}</td>
                                 <td><input type="checkbox" 
-name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}" /></td>
+name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}"/></td>
                               </tr>
                             {% endfor %}
                           </table>
@@ -266,7 +266,7 @@ name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerinde
                                   >{% trans 'Number of channels to be added:' %}</label> <input
                           id="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
                           name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                          type="text" size="3" /></p>
+                          type="text" size="3"/></p>
                       </td>
                     </tr>
                   </table>
@@ -280,14 +280,14 @@ name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerinde
   {% endif %}
 
   <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
-    > <input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3" /></p>
+    > <input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3"/></p>
   {{ add_my_layer.as_p }}
 
   {{ remove_from_my_samples.as_p }}
 
   {{ deposition.timestamp_inaccuracy }}
 
-  <p class="submit-button"><input type="submit" /></p>
+  <p class="submit-button"><input type="submit"/></p>
 </form>
 
 

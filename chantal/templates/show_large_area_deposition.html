@@ -52,28 +52,28 @@
           <td class="value">{{ layer.get_hf_frequency_display }}</td>
         </tr>
         <tr>
-          <td colspan="2" />
+          <td colspan="2"/>
           <td class="label">CH<sub>4</sub>:</td>
           <td class="value">{{ layer.ch4|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.time %}:</td>
           <td class="value">{{ layer.time|quantity:"sec"|default_if_none:"—" }}</td>
         </tr>
         <tr>
-          <td colspan="2" />
+          <td colspan="2"/>
           <td class="label">CO<sub>2</sub>:</td>
           <td class="value">{{ layer.co2|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.dc_bias %}:</td>
           <td class="value">{{ layer.dc_bias|quantity:"V"|default_if_none:"—" }}</td>
         </tr>
         <tr>
-          <td colspan="2" />
+          <td colspan="2"/>
           <td class="label">PH<sub>3</sub>:</td>
           <td class="value">{{ layer.ph3|quantity:"sccm"|default_if_none:"—" }}</td>
           <td class="label">{% verbose_name LargeAreaLayer.electrode %}:</td>
           <td class="value">{{ layer.get_electrode_display }}</span></td>
         </tr>
         <tr>
-          <td colspan="4" />
+          <td colspan="4"/>
           <td class="label">{% verbose_name LargeAreaLayer.electrodes_distance %}:</td>
           <td class="value">{{ layer.electrodes_distance|quantity:"mm"|default_if_none:"—" }}</td>
         </tr>
