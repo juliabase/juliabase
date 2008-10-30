@@ -142,6 +142,19 @@ class InitialsForm(forms.Form):
                 if models.Initials.objects.filter(external_operator=self.person).count() == 0:
                     models.Initials.objects.create(initials=initials, external_operator=self.person)
 
+class EditDescriptionForm(forms.Form):
+    description = forms.CharField(label=_(u"Description of edit"), widget=forms.Textarea)
+    important = forms.BooleanField(label=_(u"Important edit"), required=False)
+    def __init__(self, *args, **kwargs):
+        super(EditDescriptionForm, self).__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["rows"] = 3
+    def clean_description(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        description = self.cleaned_data["description"]
+        check_markdown(description)
+        return description
+    
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
 HH:MM:SS, where hours can also be 3-digit and are optional."""

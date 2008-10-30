@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 17:51+0100\n"
-"PO-Revision-Date: 2008-10-29 17:52+0100\n"
+"POT-Creation-Date: 2008-10-30 12:56+0100\n"
+"PO-Revision-Date: 2008-10-30 12:56+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -863,6 +863,9 @@ msgstr "Proben"
 msgid "Operator"
 msgstr "Operator"
 
+msgid "The first two digits must match the year of the deposition."
+msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
+
 msgid "Remove deposited samples from My Samples"
 msgstr "Entferne deponierte Proben von Meine Proben"
 
@@ -1456,6 +1459,12 @@ msgstr ""
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
 
+msgid "Description of edit"
+msgstr "Beschreibung der Änderung"
+
+msgid "Important edit"
+msgstr "Wichtige Änderung"
+
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
@@ -1476,9 +1485,6 @@ msgstr ""
 #, python-format
 msgid "The deposition letter must be an uppercase “%s”."
 msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
-
-msgid "The first two digits must match the year of the deposition."
-msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."

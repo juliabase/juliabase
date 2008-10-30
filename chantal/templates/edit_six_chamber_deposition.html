@@ -280,6 +280,26 @@ name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerinde
     </table>
   {% endif %}
 
+  {% if edit_description %}
+    <table class="edit-description">
+      <tr>
+        <td>
+          <label for="id_{{ edit_description.description.html_name }}"
+                 >{{ edit_description.description.label }}:</label>
+        </td>
+      </tr>
+      <tr>
+        <td class="value">{{ edit_description.description }}</td>
+      </tr>
+      <tr>
+        <td class="label">
+          <label for="id_{{ edit_description.important.html_name }}"
+                 >{{ edit_description.important.label }}:</label>
+        {{ edit_description.important }}</td>
+      </tr>
+    </table>
+  {% endif %}
+
   <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
     > <input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3"/></p>
   {{ add_my_layer.as_p }}

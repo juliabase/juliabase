@@ -159,7 +159,8 @@ class ChannelForm(ModelForm):
         model = SixChamberChannel
         exclude = ("layer",)
 
-def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form):
+def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form,
+                 edit_description_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
@@ -173,10 +174,16 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
       - `channel_form_lists`: all bound channel forms of this deposition.  It
         is a list, and every item is again a list containing all the channels
         of the layer with the same index in ``layer forms``.
+      - `remove_from_my_samples_form`: a bound form for the checkbox for
+        removing deposited samples from My Samples
+      - `edit_description_from`: a bound form with description of edit changes
+        if editing an existing deposition, or ``None`` if a new one is created
 
     :type deposition_form: `DepositionForm`
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
+    :type remove_from_my_samples_form: `RemoveFromMySamplesForm`
+    :type edit_description_form: `utils.EditDescriptionForm` or ``NoneType``
 
     :Return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
@@ -185,6 +192,7 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
     :rtype: bool
     """
     valid = deposition_form.is_valid() and remove_from_my_samples_form.is_valid()
+    valid = (edit_description_form.is_valid() if edit_description_form else True) and valid
     # Don't use a generator expression here because I want to call ``is_valid``
     # for every form
     valid = valid and all([layer_form.is_valid() for layer_form in layer_forms])
@@ -461,7 +469,9 @@ def edit(request, deposition_number):
         deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         remove_from_my_samples_form = RemoveFromMySamples(request.POST)
-        all_valid = is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form)
+        edit_description_form = utils.EditDescriptionForm(request.POST) if deposition else None
+        all_valid = is_all_valid(
+            deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form, edit_description_form)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
         referentially_valid = is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referentially_valid and not structure_changed:
@@ -503,13 +513,15 @@ def edit(request, deposition_number):
                 deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B")})
                 layer_forms, channel_form_lists = [], []
         remove_from_my_samples_form = RemoveFromMySamples(initial={"remove_deposited_from_my_samples": not deposition})
+        edit_description_form = utils.EditDescriptionForm() if deposition else None
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists),
                                "add_my_layer": add_my_layer_form,
-                               "remove_from_my_samples": remove_from_my_samples_form},
+                               "remove_from_my_samples": remove_from_my_samples_form,
+                               "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
 @login_required
