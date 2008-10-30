@@ -973,7 +973,7 @@ def get_profile(user):
         user_details.save()
         return user_details
 
-dangerous_markup_pattern = re.compile(r"[^\\]!\[|[\n\r][-=]")
+dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r][-=]")
 def check_markdown(text):
     u"""Checks whether the Markdown input by the user contains only permitted
     syntax elements.  I forbid images and headings so far.
