@@ -217,7 +217,7 @@ def clean_quantity_field(value, units):
     return match.group("number") + " " + unit
 
 deposition_number_pattern = re.compile("\d\d[A-Za-z]-\d{3,4}$")
-def clean_deposition_number_field(value, letter, timestamp):
+def clean_deposition_number_field(value, letter):
     u"""Checks wheter a deposition number given by the user in a form is a
     valid one.  Note that it does not check whether a deposition with this
     number already exists in the database.  It just checks the syntax of the
@@ -226,11 +226,9 @@ def clean_deposition_number_field(value, letter, timestamp):
     :Parameters:
       - `value`: the deposition number entered by the user
       - `letter`: the single uppercase letter denoting the deposition system
-      - `timestamp`: the timestamp of the deposition; only the year is used
 
     :type value: unicode
     :type letter: unicode
-    :type timestamp: ``datetime.datetime``
 
     :Return:
       the original ``value`` (unchanged)
@@ -245,8 +243,6 @@ def clean_deposition_number_field(value, letter, timestamp):
         raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
     if value[2] != letter:
         raise ValidationError(_(u"The deposition letter must be an uppercase “%s”.") % letter)
-    if int(value[:2]) != timestamp.year % 100:
-        raise ValidationError(_(u"The first two digits must match the year of the deposition."))
     return value
 
 def append_error(form, error_message, fieldname="__all__"):

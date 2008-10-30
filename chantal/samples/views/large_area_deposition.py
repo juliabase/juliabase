@@ -66,7 +66,7 @@ class DepositionForm(forms.ModelForm):
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def clean_number(self):
-        return utils.clean_deposition_number_field(self.cleaned_data["number"], "L", self.cleaned_data["timestamp"])
+        return utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -81,6 +81,12 @@ class DepositionForm(forms.ModelForm):
         comments = self.cleaned_data["comments"]
         utils.check_markdown(comments)
         return comments
+    def clean(self):
+        if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
+            if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
+                utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
+                del self.cleaned_data["number"]
+        return self.cleaned_data
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)

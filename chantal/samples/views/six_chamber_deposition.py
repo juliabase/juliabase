@@ -77,13 +77,19 @@ class DepositionForm(ModelForm):
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
         self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def clean_number(self):
-        return utils.clean_deposition_number_field(self.cleaned_data["number"], "B", self.cleaned_data["timestamp"])
+        return utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
         utils.check_markdown(comments)
         return comments
+    def clean(self):
+        if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
+            if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
+                utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
+                del self.cleaned_data["number"]
+        return self.cleaned_data
     def save(self, *args, **kwargs):
         u"""Additionally to the deposition itself, I must store the list of
         samples connected with the deposition."""
