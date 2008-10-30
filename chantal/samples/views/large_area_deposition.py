@@ -64,7 +64,6 @@ class DepositionForm(forms.ModelForm):
         field."""
         super(DepositionForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
-        self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def clean_number(self):
         return utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
     def validate_unique(self):

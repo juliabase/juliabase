@@ -140,7 +140,6 @@ class PDSMeasurementForm(forms.ModelForm):
         super(PDSMeasurementForm, self).__init__(*args, **kwargs)
         self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
-        self.fields["timestamp_inaccuracy"].widget.attrs["style"] = "display: none"
     def test_for_datafile(self, filename):
         u"""Test whether a certain file is openable by Chantal.
 
