@@ -137,7 +137,7 @@ def show(request, sample_name, sample_id=None):
     if sample_id and not is_remote_client:
         sample_name = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
         return utils.HttpResponseSeeOther(
-            django.core.urlresolvers.reverse("samples.views.sample.show", kwargs={"sample_name": sample_name}))
+            django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample_name}))
     sample = \
         utils.lookup_sample(sample_name, request) if sample_id is None else get_object_or_404(models.Sample, pk=sample_id)
     user_details = utils.get_profile(request.user)
