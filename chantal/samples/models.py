@@ -1081,6 +1081,28 @@ class FeedNewSamples(FeedEntry):
         verbose_name_plural = _(u"new samples feed entries")
 admin.site.register(FeedNewSamples)
 
+class FeedNewPhysicalProcess(FeedEntry):
+    u"""Model for feed entries about new physical processes.
+    """
+    process = models.OneToOneField(Process, verbose_name=_(u"process"))
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
+    def get_metadata(self):
+        _ = ugettext
+        result = {}
+        if samples.count() == 1:
+            result["title"] = _(u"New %(process)s for %(sample)s") % {"process": self, "sample": samples.all()[0]}
+        else:
+            result["title"] = _(u"New %s") % self
+        result["category term"] = "new physical process"
+        result["category label"] = _(u"new physical process")
+        return result
+    def get_additional_template_context(self, user_details):
+        return {}
+    class Meta:
+        verbose_name = _(u"new physical process feed entry")
+        verbose_name_plural = _(u"new physical process feed entries")
+admin.site.register(FeedNewPhysicalProcess)
+
 languages = (
     ("de", u"Deutsch"),
     ("en", u"English"),

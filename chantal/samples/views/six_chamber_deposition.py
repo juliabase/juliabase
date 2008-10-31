@@ -22,7 +22,7 @@ import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, feed_utils
 from chantal.samples.views.utils import DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
@@ -476,6 +476,7 @@ def edit(request, deposition_number):
         referentially_valid = is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referentially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
+            feed_utils.generate_feed_for_edit_physical_process(deposition, request.user, edit_description_form)
             if remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
             if deposition_number:
