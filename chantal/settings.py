@@ -99,7 +99,10 @@ URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login"
 LOGIN_REDIRECT_URL = URL_PREFIX
-DOMAIN_NAME = "bob.ipv.kfa-juelich.de" if socket.gethostname() != "wilson" else "wilson.homeunix.com"
+if socket.gethostname() == "wilson":
+    DOMAIN_NAME = "0.0.0.0:8000" if IS_TESTSERVER else "wilson.homeunix.com"
+else:
+    DOMAIN_NAME = "bob.ipv.kfa-juelich.de"
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",

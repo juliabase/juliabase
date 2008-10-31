@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-31 10:49+0100\n"
-"PO-Revision-Date: 2008-10-31 10:50+0100\n"
+"POT-Creation-Date: 2008-10-31 19:51+0100\n"
+"PO-Revision-Date: 2008-10-31 19:52+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -538,11 +538,8 @@ msgstr "Kürzel"
 msgid "originator"
 msgstr "Ersteller"
 
-msgid "link"
-msgstr "Link"
-
-msgid "without domain and the leading \"/\""
-msgstr "ohne die Domain und den \"/\" am Anfang."
+msgid "is important"
+msgstr "ist wichtig"
 
 msgid "SHA1 hex digest"
 msgstr "SHA1 Hex-Digest"
@@ -574,6 +571,19 @@ msgstr "Feed-Eintrag für neue Proben"
 
 msgid "new samples feed entries"
 msgstr "Feed-Einträge für neue Proben"
+
+#, python-format
+msgid "New %s"
+msgstr "Neu: %s"
+
+msgid "new physical process"
+msgstr "neuer physikalischer Prozess"
+
+msgid "new physical process feed entry"
+msgstr "Feed-Eintrag für neue physikalische Prozesse"
+
+msgid "new physical process feed entries"
+msgstr "Feed-Einträge für neue physikalische Prozesse"
 
 msgid "language"
 msgstr "Sprache"
@@ -1742,6 +1752,31 @@ msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 #, python-format
 msgid ""
 "\n"
+"    %(originator)s finished <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+msgstr ""
+"\n"
+"    %(originator)s führte <a href=\"%(url)s\">%(process)s</a> aus.\n"
+"  "
+
+msgid ""
+"\n"
+"    This affected the following sample:\n"
+"  "
+msgid_plural ""
+"\n"
+"    This affected the following samples:\n"
+"  "
+msgstr[0] ""
+"\n"
+"Das betraf die folgende Probe:"
+msgstr[1] ""
+"\n"
+"Das betraf die folgenden Proben:"
+
+#, python-format
+msgid ""
+"\n"
 "      %(originator)s has added the following sample in the group “%(group)s” "
 "to the database:\n"
 "    "
@@ -2233,6 +2268,15 @@ msgstr "Inspizierte Objekte"
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
 
+#~ msgid "New %(process)s for %(sample)s"
+#~ msgstr "Neu: %(process)s für %(sample)s"
+
+#~ msgid "link"
+#~ msgstr "Link"
+
+#~ msgid "without domain and the leading \"/\""
+#~ msgstr "ohne die Domain und den \"/\" am Anfang."
+
 #~ msgid "New sample"
 #~ msgid_plural "New samples"
 #~ msgstr[0] "Neue Probe"
@@ -2294,9 +2338,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "Add result"
 #~ msgstr "Ergebnis hinzufügen"
-
-#~ msgid "Search for samples"
-#~ msgstr "Nach Proben suchen"
 
 #~ msgid "Search for depositions"
 #~ msgstr "Nach Depositionen suchen"

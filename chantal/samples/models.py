@@ -1050,7 +1050,6 @@ class FeedEntry(models.Model):
         entry_hash = hashlib.sha1()
         entry_hash.update(repr(self.timestamp))
         entry_hash.update(repr(self.originator))
-        entry_hash.update(repr(self.link))
         entry_hash.update(repr(self.pk))
         self.sha1_hash = entry_hash.hexdigest()
         super(FeedEntry, self).save()
@@ -1084,19 +1083,17 @@ class FeedNewPhysicalProcess(FeedEntry):
     u"""Model for feed entries about new physical processes.
     """
     process = models.OneToOneField(Process, verbose_name=_(u"process"))
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
     def get_metadata(self):
         _ = ugettext
         result = {}
-        if samples.count() == 1:
-            result["title"] = _(u"New %(process)s for %(sample)s") % {"process": self, "sample": samples.all()[0]}
-        else:
-            result["title"] = _(u"New %s") % self
+        process = self.process.find_actual_instance()
+        result["title"] = _(u"New %s") % process
         result["category term"] = "new physical process"
         result["category label"] = _(u"new physical process")
+        result["link"] = process.get_absolute_url()
         return result
     def get_additional_template_context(self, user_details):
-        return {}
+        return {"process": self.process.find_actual_instance()}
     class Meta:
         verbose_name = _(u"new physical process feed entry")
         verbose_name_plural = _(u"new physical process feed entries")
