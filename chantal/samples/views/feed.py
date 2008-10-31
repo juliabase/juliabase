@@ -171,8 +171,8 @@ def show(request, username):
         ElementTree.SubElement(author, "email").text = entry.originator.email
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
-        if entry.link:
-            ElementTree.SubElement(entry_element, "link", rel="alternate", href=url_prefix + entry.link)
+        if "link" in metadata:
+            ElementTree.SubElement(entry_element, "link", rel="alternate", href=url_prefix + metadata["link"])
         else:
             # Add bogus <link> tags for Thunderbird, see
             # https://bugzilla.mozilla.org/show_bug.cgi?id=462511
