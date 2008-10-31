@@ -254,7 +254,7 @@ def add_samples_to_database(add_samples_form, user):
                 watcher.my_samples.add(sample)
     return new_names, samples
 
-def generate_feed_entry(samples, group, purpose, user):
+def generate_feed_entry_and_my_samples(samples, group, purpose, user):
     u"""Generate one feed entry for the new samples, and add the sample to “My
     Samples” of interested users.
 
@@ -301,7 +301,7 @@ def add(request):
             cleaned_data = add_samples_form.cleaned_data
             new_names, samples = add_samples_to_database(add_samples_form, request.user)
             ids = [sample.pk for sample in samples]
-            generate_feed_entry(samples, cleaned_data["group"], cleaned_data["purpose"], request.user)
+            generate_feed_entry_and_my_samples(samples, cleaned_data["group"], cleaned_data["purpose"], request.user)
             if len(new_names) > 1:
                 success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "
