@@ -155,6 +155,8 @@ def show(request, username):
     ElementTree.SubElement(feed, "icon").text = "http://" + settings.DOMAIN_NAME + "/media/sonne.png"
     ElementTree.SubElement(feed, "logo").text = "http://" + settings.DOMAIN_NAME + "/media/juelich.png"
     for entry in entries:
+        if entry.originator == user:
+            continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
             "tag:%s,%s:%s" % (settings.DOMAIN_NAME, entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
