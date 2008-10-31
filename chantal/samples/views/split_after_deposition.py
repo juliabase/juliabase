@@ -352,12 +352,12 @@ def forms_from_post_data(post_data, deposition, remote_client):
             prefix = "%d_%d" % (sample_index, new_name_index)
             new_data_form = \
                 NewDataForm(readonly=number_of_pieces==1, data=post_data, prefix=prefix)
-            if number_of_pieces == 1 and new_data_form.is_valid() and original_data_form.is_valid():
+            if number_of_pieces == 1 and new_data_form.is_valid() and original_data_form.is_valid() \
+                    and new_data_form.cleaned_data["new_name"] != original_data_form.cleaned_data["new_name"]:
                 piece_data = {}
                 piece_data["new_name"] = original_data_form.cleaned_data["new_name"]
                 piece_data["new_responsible_person"] = new_data_form.cleaned_data["new_responsible_person"].pk
                 new_data_form = NewDataForm(readonly=True, initial=piece_data, prefix=prefix)
-                print piece_data
             new_data_forms.append(new_data_form)
         new_data_form_lists.append(new_data_forms)
     global_new_data_form = GlobalNewDataForm(post_data, deposition_instance=deposition)
