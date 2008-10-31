@@ -120,10 +120,14 @@ def edit(request, name):
         change_memberships_form = ChangeMembershipsForm(request.POST)
         if change_memberships_form.is_valid():
             old_members = list(group.user_set.all())
-            group.user_set = change_memberships_form.cleaned_data["members"]
-            for user in change_memberships_form.cleaned_data["members"]:
+            new_members = change_memberships_form.cleaned_data["members"]
+            group.user_set = new_members
+            for user in new_members:
                 if user not in old_members:
                     group.auto_adders.add(utils.get_profile(user))
+            for user in old_members:
+                if user not in new_members:
+                    group.auto_adders.remove(utils.get_profile(user))
             return utils.successful_response(request, _(u"Members of group “%s” were successfully updated.") % group.name)
     else:
         change_memberships_form = ChangeMembershipsForm(initial={"members": group.user_set.values_list("pk", flat=True)})
