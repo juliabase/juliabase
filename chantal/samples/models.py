@@ -998,7 +998,9 @@ class FeedEntry(models.Model):
     """
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
-    link = models.CharField(_(u"link"), max_length=128, help_text=_(u"without domain and the leading \"/\""), blank=True)
+    link = models.CharField(
+        _(u"link"), max_length=128, help_text=_(u"without domain but with the leading \"/\""), blank=True)
+    important = models.BooleanField(_(u"is important"), default=True, null=True, blank=True)
     sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
     u"""You'll never calculate the SHA-1 hash yourself.  It is done in
     `save`."""

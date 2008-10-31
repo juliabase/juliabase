@@ -136,8 +136,8 @@ def show(request, username):
     except KeyError:
         raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
     permissions.assert_can_view_feed(user_hash, user)
-    feed_absolute_url = \
-        "http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse(show, kwargs={"username": username})
+    url_prefix = "http://" + settings.DOMAIN_NAME
+    feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show, kwargs={"username": username})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % models.get_really_full_name(user)
@@ -152,10 +152,13 @@ def show(request, username):
     ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
     ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url+"?hash="+user_hash)
     ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
-    ElementTree.SubElement(feed, "icon").text = "http://" + settings.DOMAIN_NAME + "/media/sonne.png"
-    ElementTree.SubElement(feed, "logo").text = "http://" + settings.DOMAIN_NAME + "/media/juelich.png"
+    ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/sonne.png"
+    ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/juelich.png"
+    only_important = user_details.only_important_news
     for entry in entries:
         if entry.originator == user and not settings.DEBUG:
+            continue
+        if only_important and not entry.important:
             continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
@@ -168,14 +171,16 @@ def show(request, username):
         ElementTree.SubElement(author, "email").text = entry.originator.email
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
-        # Add bogus <link> tags for Thunderbird, see
-        # https://bugzilla.mozilla.org/show_bug.cgi?id=462511
-        user_agent = request.META.get("HTTP_USER_AGENT", "")
-        if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
-            ElementTree.SubElement(
-                entry_element, "link", rel="alternate",
-                href="http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse("samples.views.main.main_menu"))
-
+        if entry.link:
+            ElementTree.SubElement(entry_element, "link", rel="alternate", href=url_prefix + entry.link)
+        else:
+            # Add bogus <link> tags for Thunderbird, see
+            # https://bugzilla.mozilla.org/show_bug.cgi?id=462511
+            user_agent = request.META.get("HTTP_USER_AGENT", "")
+            if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
+                ElementTree.SubElement(
+                    entry_element, "link", rel="alternate",
+                    href=url_prefix + django.core.urlresolvers.reverse("samples.views.main.main_menu"))
         template = loader.get_template(utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
