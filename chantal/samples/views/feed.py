@@ -155,13 +155,27 @@ def show(request, username):
     ElementTree.SubElement(feed, "icon").text = "http://" + settings.DOMAIN_NAME + "/media/sonne.png"
     ElementTree.SubElement(feed, "logo").text = "http://" + settings.DOMAIN_NAME + "/media/juelich.png"
     for entry in entries:
-        if entry.originator == user:
+        if entry.originator == user and not settings.DEBUG:
             continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
             "tag:%s,%s:%s" % (settings.DOMAIN_NAME, entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
-        ElementTree.SubElement(entry_element, "title").text = entry.get_title()
+        metadata = entry.get_metadata()
+        ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
+        author = ElementTree.SubElement(entry_element, "author")
+        ElementTree.SubElement(author, "name").text = models.get_really_full_name(entry.originator)
+        ElementTree.SubElement(author, "email").text = entry.originator.email
+        category = ElementTree.SubElement(
+            entry_element, "category", term=metadata["category term"], label=metadata["category label"])
+        # Add bogus <link> tags for Thunderbird, see
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=462511
+        user_agent = request.META.get("HTTP_USER_AGENT", "")
+        if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
+            ElementTree.SubElement(
+                entry_element, "link", rel="alternate",
+                href="http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+
         template = loader.get_template(utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}

@@ -33,7 +33,7 @@ the new tables are automatically created.
 import hashlib, os.path, codecs
 from django.db import models
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
@@ -1005,13 +1005,16 @@ class FeedEntry(models.Model):
     def __unicode__(self):
         _ = ugettext
         return _(u"feed entry #%d") % self.pk
-    def get_title(self):
-        u"""Return the title of this feed entry, as a plain string (no HTML).
+    def get_metadata(self):
+        u"""Return the title of this feed entry, as a plain string (no HTML),
+        and the categorisation (see the Atom feed specification, :RFC:`4646`,
+        section 4.2.2).
 
         :Return:
-          The title of this feed entry without any markup.
+          a dictionary with the keys ``"title"``, ``"category term"``, and
+          ``"category label"``.
 
-        :rtype: unicode
+        :rtype: dict mapping str to unicode
         """
         raise NotImplementedError
     def get_additional_template_context(self, user_details):
@@ -1059,12 +1062,16 @@ class FeedNewSamples(FeedEntry):
     u"""Model for feed entries about new samples having been added to the database.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
-    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField("UserDetails", verbose_name=_(u"auto adders"), blank=True)
-    def get_title(self):
+    def get_metadata(self):
         _ = ugettext
-        return _(u"%s has added new samples") % get_really_full_name(self.originator)
+        result = {}
+        result["title"] = ungettext(u"New sample in “%s”", u"New samples in “%s”", self.samples.count()) % self.group
+        result["category term"] = "new samples"
+        result["category label"] = _(u"new samples")
+        return result
     def get_additional_template_context(self, user_details):
         return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
     class Meta:
