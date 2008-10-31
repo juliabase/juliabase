@@ -254,6 +254,32 @@ def add_samples_to_database(add_samples_form, user):
                 watcher.my_samples.add(sample)
     return new_names, samples
 
+def generate_feed_entry(samples, group, purpose, user):
+    u"""Generate one feed entry for the new samples, and add the sample to “My
+    Samples” of interested users.
+
+    :Parameters:
+      - `samples`: the samples that were added
+      - `group`: the group to which the samples were added
+      - `purpose`: the optional purpose of the samples
+      - `user`: the user who added the samples
+
+    :type samples: list of `models.Sample`
+    :type group: ``django.contrib.auth.models.Group``
+    :type purpose: unicode
+    :type user: ``django.contrib.auth.models.User``
+    """
+    sample_group = group
+    if sample_group:
+        feed_entry = models.FeedNewSamples.objects.create(originator=user, group=sample_group, purpose=purpose)
+        feed_entry.samples = samples
+        feed_entry.users = [utils.get_profile(user) for user in sample_group.user_set.all()]
+        auto_adders = sample_group.auto_adders.all()
+        feed_entry.auto_adders = auto_adders
+        for watcher in auto_adders:
+            for sample in samples:
+                watcher.my_samples.add(sample)
+
 @login_required
 def add(request):
     u"""View for adding new samples.
@@ -272,11 +298,10 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user_details, request.POST)
         if add_samples_form.is_valid():
+            cleaned_data = add_samples_form.cleaned_data
             new_names, samples = add_samples_to_database(add_samples_form, request.user)
             ids = [sample.pk for sample in samples]
-            feed_entry = models.FeedNewSamples.objects.create(originator=request.user)
-            feed_entry.samples = samples
-            feed_entry.users.add(user_details)
+            generate_feed_entry(samples, cleaned_data["group"], cleaned_data["purpose"], request.user)
             if len(new_names) > 1:
                 success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "
@@ -284,7 +309,7 @@ def add(request):
                       {"first_name": new_names[0], "last_name": new_names[-1]}
             else:
                 success_report = _(u"Your sample has the provisional name %s.  It was added to “My Samples”.") % new_names[0]
-            if add_samples_form.cleaned_data["bulk_rename"]:
+            if cleaned_data["bulk_rename"]:
                 return utils.successful_response(request, success_report, "samples.views.bulk_rename.bulk_rename",
                                                  query_string="numbers=" + ",".join(new_name[1:] for new_name in new_names),
                                                  forced=True, remote_client_response=ids)

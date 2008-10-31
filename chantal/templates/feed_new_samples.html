@@ -1,15 +1,38 @@
 {% load i18n %}
 {% load samples_extras %}
 
-<p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator %}
-    {{ originator }} has added the following samples to the database:
-  {% endblocktrans %}
-</p>
+{% with entry.samples.all as samples %}
+  <p>
+    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.group as group %}
+      {{ originator }} has added the following sample in the group “{{ group }}” to the database:
+    {% plural %}
+      {{ originator }} has added the following samples in the group “{{ group }}” to the database:
+    {% endblocktrans %}
+  </p>
 
-<ul>
-  {% for sample in entry.samples.all %}
-    <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
-  {% endfor %}
-</ul>
+  <ul>
+    {% for sample in entry.samples.all %}
+      <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+    {% endfor %}
+  </ul>
 
+  <p>
+    {% if entry.purpose %}
+      {% blocktrans with entry.purpose as purpose %}The given purpose is “{{ purpose }}”.{% endblocktrans %}
+    {% endif %}
+    {% if auto_added %}
+      {% blocktrans count samples|length as counter %}
+        The sample was added to “My Samples”.
+      {% plural %}
+        The samples were added to “My Samples”.
+      {% endblocktrans %}
+    {% else %}
+      {% blocktrans count samples|length as counter %}
+        The sample was not added to “My Samples”.
+      {% plural %}
+        The samples were not added to “My Samples”.
+      {% endblocktrans %}
+    {% endif %}
+  </p>
+
+{% endwith %}

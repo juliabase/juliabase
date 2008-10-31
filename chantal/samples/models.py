@@ -1014,6 +1014,23 @@ class FeedEntry(models.Model):
         :rtype: unicode
         """
         raise NotImplementedError
+    def get_additional_template_context(self, user_details):
+        u"""Return a dictionary with additional context that should be
+        available in the template.  It is similar to
+        `Process.get_additional_context`.
+
+        :Parameters:
+          - `user_details`: the details of the user fetching the feed
+
+        :type user_details: `UserDetails`
+
+        :Return:
+          dict with additional fields that are supposed to be given to the
+          templates.
+
+        :rtype: dict mapping str to arbitrary objects
+        """
+        raise NotImplementedError
     def save(self, *args, **kwargs):
         u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
         the timestamp, the username of the originator, the object's ID, and the
@@ -1041,17 +1058,15 @@ class FeedEntry(models.Model):
 class FeedNewSamples(FeedEntry):
     u"""Model for feed entries about new samples having been added to the database.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, verbose_name=_(u"group"))
-    u"""The person who added the sample(s)."""
+    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
+    auto_adders = models.ManyToManyField("UserDetails", verbose_name=_(u"auto adders"), blank=True)
     def get_title(self):
         _ = ugettext
-        # FixMe: Must distinguish between one or more samples.
-        if self.group:
-            return _(u"%(originator)s has added new samples in group %(group)s") % \
-                {"originator": get_really_full_name(self.originator), "group": self.group}
-        else:
-            return _(u"%s has added new samples") % get_really_full_name(self.originator)
+        return _(u"%s has added new samples") % get_really_full_name(self.originator)
+    def get_additional_template_context(self, user_details):
+        return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
     class Meta:
         verbose_name = _(u"new samples feed entry")
         verbose_name_plural = _(u"new samples feed entries")

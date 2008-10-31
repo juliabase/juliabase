@@ -162,7 +162,9 @@ def show(request, username):
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
         template = loader.get_template(utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
-        content.text = template.render(Context({"entry": entry}))
+        context_dict = {"entry": entry}
+        context_dict.update(entry.get_additional_template_context(user_details))
+        content.text = template.render(Context(context_dict))
         content.attrib["type"] = "html"
     indent(feed)
     return HttpResponse(ElementTree.tostring(feed,"utf-8"), content_type="application/atom+xml; charset=utf-8")
