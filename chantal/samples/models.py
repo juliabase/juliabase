@@ -942,11 +942,20 @@ class Result(Process):
         depending on the original file type.
         
         :Return:
-          the full path to the original image in the local filesystem, the full
-          path to the processed file in the local filesystem, and the full
-          relative URL to the image on the website (i.e., only the domain is
-          missing).  Note that the latter two are without file extension to
-          remain flexible (even without the dot).
+          a dictionary containing the following keys:
+        
+          =====================  =========================================
+                 key                           meaning
+          =====================  =========================================
+          ``"original"``         full path to the original image file
+          ``"image_directory"``  full path to the directory containing the
+                                 processed images
+          ``"thumbnail_file"``   full path to the thumbnail file
+          ``"image_file"``       full path to the image (always a PDF)
+          ``"thumbnail_url"``    full relative URL to the thumbnail (i.e.,
+                                 without domain)
+          ``"image_url"``        full relative URL to the image
+          =====================  =========================================
 
         :rtype: dict mapping str to str
         """
