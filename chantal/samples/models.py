@@ -902,10 +902,17 @@ class SampleDeath(Process):
         verbose_name_plural = _(u"ceases of existence")
 admin.site.register(SampleDeath)
 
+image_type_choices=(("none", _(u"none")),
+                    ("PDF", "PDF"),
+                    ("PNG", "PNG"),
+                    ("JPEG", "JPEG"),
+                    )
 class Result(Process):
     u"""Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
+    title = models.CharField(_(u"title"), max_length=50)
+    image = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
     def __unicode__(self):
         _ = ugettext
         try:
