@@ -100,7 +100,7 @@ URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 LOGIN_URL = URL_PREFIX + "login"
 LOGIN_REDIRECT_URL = URL_PREFIX
 if socket.gethostname() == "wilson":
-    DOMAIN_NAME = "0.0.0.0:8000" if IS_TESTSERVER else "wilson.homeunix.com"
+    DOMAIN_NAME = "127.0.0.1:8000" if IS_TESTSERVER else "wilson.homeunix.com"
 else:
     DOMAIN_NAME = "bob.ipv.kfa-juelich.de"
 

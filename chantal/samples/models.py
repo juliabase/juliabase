@@ -1099,6 +1099,27 @@ class FeedNewPhysicalProcess(FeedEntry):
         verbose_name_plural = _(u"new physical process feed entries")
 admin.site.register(FeedNewPhysicalProcess)
 
+class FeedEditedPhysicalProcess(FeedEntry):
+    u"""Model for feed entries about edited physical processes.
+    """
+    process = models.ForeignKey(Process, verbose_name=_(u"process"))
+    description = models.TextField(_(u"description"))
+    def get_metadata(self):
+        _ = ugettext
+        result = {}
+        process = self.process.find_actual_instance()
+        result["title"] = _(u"Edited %s") % process
+        result["category term"] = "new physical process"
+        result["category label"] = _(u"new physical process")
+        result["link"] = process.get_absolute_url()
+        return result
+    def get_additional_template_context(self, user_details):
+        return {"process": self.process.find_actual_instance()}
+    class Meta:
+        verbose_name = _(u"edited physical process feed entry")
+        verbose_name_plural = _(u"edited physical process feed entries")
+admin.site.register(FeedEditedPhysicalProcess)
+
 languages = (
     ("de", u"Deutsch"),
     ("en", u"English"),

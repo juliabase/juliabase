@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-31 19:51+0100\n"
-"PO-Revision-Date: 2008-10-31 19:54+0100\n"
+"POT-Creation-Date: 2008-11-01 08:11+0100\n"
+"PO-Revision-Date: 2008-11-01 08:13+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -584,6 +584,19 @@ msgstr "Feed-Eintrag für neue physikalische Prozesse"
 
 msgid "new physical process feed entries"
 msgstr "Feed-Einträge für neue physikalische Prozesse"
+
+msgid "description"
+msgstr "Beschreibung"
+
+#, python-format
+msgid "Edited %s"
+msgstr "%s geändert"
+
+msgid "edited physical process feed entry"
+msgstr "Feed-Eintrag für geänderte physikalische Prozesse"
+
+msgid "edited physical process feed entries"
+msgstr "Feed-Einträge für geänderte physikalische Prozesse"
 
 msgid "language"
 msgstr "Sprache"
@@ -1752,11 +1765,11 @@ msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 #, python-format
 msgid ""
 "\n"
-"    %(originator)s finished <a href=\"%(url)s\">%(process)s</a>.\n"
+"    %(originator)s changed <a href=\"%(url)s\">%(process)s</a>.\n"
 "  "
 msgstr ""
 "\n"
-"    %(originator)s führte <a href=\"%(url)s\">%(process)s</a> durch.\n"
+"    %(originator)s änderte <a href=\"%(url)s\">%(process)s</a>.\n"
 "  "
 
 msgid ""
@@ -1773,6 +1786,25 @@ msgstr[0] ""
 msgstr[1] ""
 "\n"
 "Das betraf die folgenden Proben:"
+
+msgid "The change was significant."
+msgstr "Die Änderung war signifikant."
+
+msgid "The change was minor."
+msgstr "Die Änderung war kleinerer Natur."
+
+msgid "Description of the change:"
+msgstr "Beschreibung der Änderung:"
+
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s finished <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+msgstr ""
+"\n"
+"    %(originator)s führte <a href=\"%(url)s\">%(process)s</a> durch.\n"
+"  "
 
 #, python-format
 msgid ""
@@ -2371,9 +2403,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "edit the process “%s”"
 #~ msgstr "den Prozess „%s“ zu ändern"
-
-#~ msgid "add %s"
-#~ msgstr "%s hinzuzufügen"
 
 #~ msgid "You are not allowed to %s."
 #~ msgstr "Ihnen ist es nicht erlaubt, %s."

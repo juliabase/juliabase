@@ -22,7 +22,20 @@ def generate_feed_for_physical_process(process, user, edit_description_form=None
     :type edit_description_form: `utils.EditDescriptionForm`
     """
     if edit_description_form:
-        pass
+        print edit_description_form.cleaned_data["important"]
+        entry = models.FeedEditedPhysicalProcess.objects.create(
+            originator=user, process=process,
+            description=edit_description_form.cleaned_data["description"],
+            important=edit_description_form.cleaned_data["important"])
+        users = []
+        for sample in process.samples.all():
+            if entry.important:
+                users.extend(sample.watchers.all())
+            else:
+                for user in sample.watchers.all():
+                    if not user.only_important_news:
+                        users.append(user)
+        entry.users = users
     else:
         entry = models.FeedNewPhysicalProcess.objects.create(originator=user, process=process)
         users = []
