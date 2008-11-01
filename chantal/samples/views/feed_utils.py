@@ -17,7 +17,7 @@ def generate_feed_for_physical_process(process, user, edit_description_form=None
       - `edit_description_form`: the form containing data about what was edited
         in the process.  ``None`` if the process was newly created.
 
-    :type process: `models.process`
+    :type process: `models.Process`
     :type user: `models.UserDetails`
     :type edit_description_form: `utils.EditDescriptionForm`
     """

@@ -948,7 +948,7 @@ class Result(Process):
           missing).  Note that the latter two are without file extension to
           remain flexible (even without the dot).
 
-        :rtype: str, str, str
+        :rtype: dict mapping str to str
         """
         assert self.image_type != "none"
         hash_ = hashlib.sha1()
@@ -956,18 +956,24 @@ class Result(Process):
         hash_.update(repr(self.pk))
         basename = str(self.pk) + "-" + hash_.hexdigest()
         dirname = os.path.join("results", basename)
-        try:
-            os.makedirs(os.path.join(settings.MEDIA_ROOT, dirname))
-        except OSError:
-            pass
         filename = defaultfilters.slugify(unicode(self))
         relative_path = os.path.join(dirname, filename)
         file_path = os.path.join(settings.MEDIA_ROOT, relative_path)
         url_path = os.path.join(settings.MEDIA_URL, relative_path)
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
         return {"original": os.path.join(settings.UPLOADED_RESULT_IMAGES_ROOT, basename + "." + self.image_type),
-                "thumbnail_file": file_path + thumbnail_extension, "image_file":  file_path + "." + self.image_type,
+                "image_directory": os.path.join(settings.MEDIA_ROOT, dirname),
+                "thumbnail_file": file_path + thumbnail_extension, "image_file": file_path + "." + self.image_type,
                 "thumbnail_url": url_path + thumbnail_extension, "image_url": url_path + ".pdf"}
+    def get_image(self):
+        if self.image_type == "none":
+            return None
+        image_locations = self.get_image_locations()
+        try:
+            os.makedirs(image_locations["image_directory"])
+        except OSError:
+            pass
+        
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
@@ -1062,7 +1068,7 @@ class FeedEntry(models.Model):
         u"""Return the title of this feed entry, as a plain string (no HTML),
         and the categorisation (see the Atom feed specification, :RFC:`4646`,
         section 4.2.2).  It also returns a link if approriate (without domain
-        but with the leading ``/``).
+        but with the leading ``/``).
 
         :Return:
           a dictionary with the keys ``"title"``, ``"category term"``,
@@ -1074,7 +1080,7 @@ class FeedEntry(models.Model):
     def get_additional_template_context(self, user_details):
         u"""Return a dictionary with additional context that should be
         available in the template.  It is similar to
-        `Process.get_additional_context`.
+        `SixChamberDeposition.get_additional_template_context`.
 
         :Parameters:
           - `user_details`: the details of the user fetching the feed

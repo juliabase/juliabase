@@ -196,7 +196,7 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
     :type original_data_forms: list of `OriginalDataForm`
     :type new_data_form_lists: list of list of `NewDataForm`
     :type global_new_data_form: `GlobalNewDataForm`
-    :type depositon: `models.Deposition`
+    :type deposition: `models.Deposition`
     """
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]

@@ -249,8 +249,8 @@ def clean_deposition_number_field(value, letter):
     :rtype: unicode
 
     :Exceptions:
-      `ValidationError`: if the deposition number was not a valid deposition
-      number
+      - `ValidationError`: if the deposition number was not a valid deposition
+        number
     """
     if not deposition_number_pattern.match(value):
         raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
@@ -890,7 +890,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
-    :type remote_client_respone: ``object``
+    :type remote_client_response: ``object``
 
     :Return:
       the HTTP response object to be returned to the view's caller

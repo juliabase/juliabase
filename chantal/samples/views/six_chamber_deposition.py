@@ -29,7 +29,7 @@ from django.conf import settings
 import django.contrib.auth.models
 from django.db.models import Q
 
-class RemoveFromMySamples(Form):
+class RemoveFromMySamplesForm(Form):
     u"""Form class for one single checkbox for removing deposited samples from
     “My Samples”.
     """
@@ -176,7 +176,7 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
         of the layer with the same index in ``layer forms``.
       - `remove_from_my_samples_form`: a bound form for the checkbox for
         removing deposited samples from My Samples
-      - `edit_description_from`: a bound form with description of edit changes
+      - `edit_description_form`: a bound form with description of edit changes
         if editing an existing deposition, or ``None`` if a new one is created
 
     :type deposition_form: `DepositionForm`
@@ -468,7 +468,7 @@ def edit(request, deposition_number):
     if request.method == "POST":
         deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
-        remove_from_my_samples_form = RemoveFromMySamples(request.POST)
+        remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
         edit_description_form = utils.EditDescriptionForm(request.POST) if deposition else None
         all_valid = is_all_valid(
             deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form, edit_description_form)
@@ -513,7 +513,7 @@ def edit(request, deposition_number):
                 # New deposition, or duplication has failed
                 deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B")})
                 layer_forms, channel_form_lists = [], []
-        remove_from_my_samples_form = RemoveFromMySamples(initial={"remove_deposited_from_my_samples": not deposition})
+        remove_from_my_samples_form = RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition})
         edit_description_form = utils.EditDescriptionForm() if deposition else None
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
