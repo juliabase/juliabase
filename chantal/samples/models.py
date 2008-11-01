@@ -38,6 +38,7 @@ from django.utils import translation
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.contrib import admin
+from django.template import defaultfilters
 from chantal import settings
 from chantal.samples import permissions
 
@@ -903,16 +904,16 @@ class SampleDeath(Process):
 admin.site.register(SampleDeath)
 
 image_type_choices=(("none", _(u"none")),
-                    ("PDF", "PDF"),
-                    ("PNG", "PNG"),
-                    ("JPEG", "JPEG"),
+                    ("pdf", "PDF"),
+                    ("png", "PNG"),
+                    ("jpeg", "JPEG"),
                     )
 class Result(Process):
     u"""Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
     title = models.CharField(_(u"title"), max_length=50)
-    image = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
+    image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
     def __unicode__(self):
         _ = ugettext
         try:
@@ -922,6 +923,51 @@ class Result(Process):
                 return _(u"result for %s") % self.sample_series.get()
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
                 return _(u"result #%d") % self.pk
+    def get_image_locations(self):
+        u"""Get the location of the image in the local filesystem as well
+        as on the webpage.  The results are without file extension so that you
+        can append ``".jpeg"`` or ``".png"`` (for the thumbnails) or ``".pdf"``
+        (for the high-quality figure) yourself.
+
+        Every image exist three times on the local filesystem.  First, it is in
+        ``/var/lib/chantal_images``.  This is the original file, uploaded by
+        the user.  Its filename is the hash plus the respective file extension
+        (jpeg, png, or pdf).
+
+        Secondly, there are the *processed* images in the ``MEDIA_ROOT``.  This
+        is very similar to plots, see
+        `Process.calculate_image_filename_and_url`.  There are two of them, the
+        thumbnail and the full version.  The full version is always a PDF (not
+        necessarily A4), whereas the thumbnail is either a JPEG or a PNG,
+        depending on the original file type.
+        
+        :Return:
+          the full path to the original image in the local filesystem, the full
+          path to the processed file in the local filesystem, and the full
+          relative URL to the image on the website (i.e., only the domain is
+          missing).  Note that the latter two are without file extension to
+          remain flexible (even without the dot).
+
+        :rtype: str, str, str
+        """
+        assert self.image_type != "none"
+        hash_ = hashlib.sha1()
+        hash_.update(settings.SECRET_KEY)
+        hash_.update(repr(self.pk))
+        basename = str(self.pk) + "-" + hash_.hexdigest()
+        dirname = os.path.join("results", basename)
+        try:
+            os.makedirs(os.path.join(settings.MEDIA_ROOT, dirname))
+        except OSError:
+            pass
+        filename = defaultfilters.slugify(unicode(self))
+        relative_path = os.path.join(dirname, filename)
+        file_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        url_path = os.path.join(settings.MEDIA_URL, relative_path)
+        thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
+        return {"original": os.path.join(settings.UPLOADED_RESULT_IMAGES_ROOT, basename + "." + self.image_type),
+                "thumbnail_file": file_path + thumbnail_extension, "image_file":  file_path + "." + self.image_type,
+                "thumbnail_url": url_path + thumbnail_extension, "image_url": url_path + ".pdf"}
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
