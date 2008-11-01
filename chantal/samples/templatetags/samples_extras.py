@@ -5,7 +5,7 @@ u"""Collection of tags and filters that I found useful for Chantal.
 """
 
 from __future__ import division
-import string, re
+import string, re, codecs, os.path
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import conditional_escape, escape
@@ -233,6 +233,41 @@ def timestamp(value):
     """
     return mark_safe(value["timestamp"].strftime(str(unicode(timestamp_formats[value["timestamp_inaccuracy"]]))))
 
+entities = {}
+for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
+    entities[line[:12].rstrip()] = line[12]
+entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
+def substitute_html_entities(text):
+    u"""Searches for all ``&entity;`` named entities in the input and replaces
+    them by their unicode counterparts.  For example, ``&alpha;``
+    becomes ``α``.  Escaping is not possible unless you spoil the pattern with
+    a character that is later removed.  But this routine doesn't have an
+    escaping mechanism.
+
+    :Parameters:
+      - `text`: the user's input to be processed
+
+    :type text: unicode
+
+    :Return:
+      ``text`` with all named entities replaced by single unicode characters
+
+    :rtype: unicode
+    """
+    result = u""
+    position = 0
+    while position < len(text):
+        match = entity_pattern.search(text, position)
+        if match:
+            start, end = match.span()
+            character = entities.get(text[start+1:end-1])
+            result += text[position:start] + character if character else text[position:end]
+            position = end
+        else:
+            result += text[position:]
+            break
+    return result
+
 sample_name_pattern = \
     re.compile(ur"(\W|\A)(?P<name>[0-9][0-9](([BVHLCS]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?)|"
                ur"(-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})-[-A-Za-z_/0-9]+)))(\W|\Z)", re.UNICODE)
@@ -244,8 +279,14 @@ def markdown(value):
     Additionally, sample names and sample series names are converted to
     clickable links.  Embedded HTML tags are always escaped.  Warning: You need
     at least Python Markdown 1.7 or later so that this works.
+
+    FixMe: Before Markdown sees the text, all named entities are replaced, see
+    `substitute_html_entities`.  This creates a mild escaping problem.
+    ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.  It can only be
+    solved by getting python-markdown to replace the entities, however, I can't
+    easily do that without allowing HTML tags, too.
     """
-    value = unicode(escape(value))
+    value = escape(substitute_html_entities(unicode(value)))
     position = 0
     result = u""
     while position < len(value):
