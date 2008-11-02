@@ -6,7 +6,8 @@
 {% block content %}
   <ul>
     {% for external_operator in external_operators %}
-      <li><a href="{{ external_operator.get_absolute_url }}/edit/">{{ external_operator }}</a></li>
+      <li><a href="{% url samples.views.external_operator.edit external_operator_id=external_operator.pk %}"
+             >{{ external_operator }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}

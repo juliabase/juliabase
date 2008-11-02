@@ -4,7 +4,7 @@
 {% load samples_extras %}
 
 {% block content_title %}<h1>{{ title|escape }}
-  {% if can_edit %}<a class="edit-button" href="{{ sample_series.get_absolute_url }}/edit/"
+  {% if can_edit %}<a class="edit-button" href="{% url samples.views.sample_series.edit name=sample_series.name %}"
                       >{% trans 'edit' %}</a>{% endif %}
   {% if can_add_result %}<a class="edit-button" 
  href="{% url samples.views.result.new %}?sample_series={{ sample_series.name|urlquote_plus }}&next={{ sample_series.get_absolute_url|urlquote_plus }}"

@@ -8,13 +8,13 @@
   <span class="aliases">{% for alias in sample.aliases.all %}
     alias <strong>{{ alias }}</strong> {% endfor %}</span>
   {% if can_edit %}<a class="edit-button"
-                      href="{{ sample.get_absolute_url }}/edit/?next={{ sample.get_absolute_url|urlquote_plus }}"
+                      href="{% url samples.views.sample.edit sample_name=sample.name %}?next={{ sample.get_absolute_url|urlquote_plus }}"
                       >{% trans 'edit' %}</a>
     {% if number_for_rename %}<a class="edit-button"
                         href="{% url samples.views.bulk_rename.bulk_rename %}?numbers={{ number_for_rename }}&next={{ sample.get_absolute_url|urlquote_plus }}"
                         >{% trans 'give name' %}</a>{% endif %}
   {% endif %}
-  {% if can_add_process %}<a class="edit-button" href="{{ sample.get_absolute_url }}/add_process/"
+  {% if can_add_process %}<a class="edit-button" href="{% url samples.views.sample.add_process sample_name=sample.name %}"
                              >{% trans 'add process' %}</a>{% endif %}</h1>{% endblock %}
 
 {% block css %}
