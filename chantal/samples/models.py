@@ -30,7 +30,7 @@ the new tables are automatically created.
 :type all_physical_process_models: list of ``class``.
 """
 
-import hashlib, os.path, codecs
+import hashlib, os.path, codecs, shutil, subprocess
 from django.db import models
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
@@ -969,20 +969,39 @@ class Result(Process):
         relative_path = os.path.join(dirname, filename)
         file_path = os.path.join(settings.MEDIA_ROOT, relative_path)
         url_path = os.path.join(settings.MEDIA_URL, relative_path)
+        original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
-        return {"original": os.path.join(settings.UPLOADED_RESULT_IMAGES_ROOT, basename + "." + self.image_type),
+        return {"original": os.path.join(settings.UPLOADED_RESULT_IMAGES_ROOT, basename + original_extension),
                 "image_directory": os.path.join(settings.MEDIA_ROOT, dirname),
-                "thumbnail_file": file_path + thumbnail_extension, "image_file": file_path + "." + self.image_type,
-                "thumbnail_url": url_path + thumbnail_extension, "image_url": url_path + ".pdf"}
+                "thumbnail_file": file_path + thumbnail_extension, "image_file": file_path + original_extension,
+                "thumbnail_url": url_path + thumbnail_extension, "image_url": url_path + original_extension}
     def get_image(self):
+        u"""Assures that the images of this result process are generated and
+        returns their URLs.
+
+        :Return:
+          The full relative URL (i.e. without the domain, but with the leading
+          ``/``) to the thumbnail, and the full relative URL to the “real”
+          image.  ``None`` if there is no image connected with this result, or
+          the original image couldn't be found.
+
+        :rtype: (str, str) or ``NoneType``
+        """
         if self.image_type == "none":
             return None
         image_locations = self.get_image_locations()
-        try:
-            os.makedirs(image_locations["image_directory"])
-        except OSError:
-            pass
-        
+        if not os.path.exists(image_location["thumbnail_file"]) or not os.path.exists(image_location["image_file"]):
+            if not os.path.exists(image_location["original"]):
+                return None
+            try:
+                os.makedirs(image_locations["image_directory"])
+            except OSError:
+                pass
+            if not os.path.exists(image_location["thumbnail_file"]):
+                subprocess.call(["convert", image_location["original"], image_location["thumbnail_file"]])
+            if not os.path.exists(image_location["image_file"]):
+                shutil.copy(image_location["original"], image_location["image_file"])
+        return image_locations["thumbnail_url"], image_locations["image_url"]
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
@@ -994,8 +1013,8 @@ class Result(Process):
         :type process_context: `views.utils.ProcessContext`
 
         :Return:
-          dict with one additional fields that is supposed to be given to the
-          sample split template, namely ``"edit_url"``.
+          dict with additional fields that are supposed to be given to the
+          result process template, namely ``"edit_url"``.
 
         :rtype: dict mapping str to str
         """
