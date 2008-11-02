@@ -159,7 +159,6 @@ def show(request, sample_name, sample_id=None):
     else:
         is_my_sample_form = IsMySampleForm(
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
-    print utils.ProcessContext(request.user, sample).latest_descendant
     processes = utils.ProcessContext(request.user, sample).collect_processes()
     request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
     try:
