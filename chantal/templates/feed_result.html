@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  {% with entry.originator|get_really_full_name:"mailto" as originator and result.get_absolute_url as url %}
+    {% if entry.is_new %}
+      {% blocktrans %}
+        {{ originator }} added a new <a href="{{ url }}">result</a>.
+  {% endwith %}
+  {% blocktrans count process.samples.all.count as counter %}
+    This affected the following sample:
+  {% plural %}
+    This affected the following samples:
+  {% endblocktrans %}
+</p>
+
+<ul>
+  {% for sample in process.samples.all %}
+    <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+  {% endfor %}
+</ul>
+
+<p>
+  {% if entry.important %}
+    {% trans 'The change was significant.' %}
+  {% else %}
+    {% trans 'The change was minor.' %}
+  {% endif %}
+  {% trans 'Description of the change:' %}
+</p>
+
+<blockquote>
+  {{ entry.description|markdown }}
+</blockquote>
