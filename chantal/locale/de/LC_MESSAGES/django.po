@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-01 11:53+0100\n"
-"PO-Revision-Date: 2008-11-01 11:53+0100\n"
+"POT-Creation-Date: 2008-11-03 21:18+0100\n"
+"PO-Revision-Date: 2008-11-03 21:21+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -503,6 +503,15 @@ msgstr "Beendigung der Existenz"
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
+msgid "none"
+msgstr "keine"
+
+msgid "title"
+msgstr "Überschrift"
+
+msgid "image file type"
+msgstr "Typ der Bilddatei"
+
 #, python-format
 msgid "result for %s"
 msgstr "Ergebnis für %s"
@@ -597,6 +606,21 @@ msgstr "Feed-Eintrag für geänderte physikalische Prozesse"
 
 msgid "edited physical process feed entries"
 msgstr "Feed-Einträge für geänderte physikalische Prozesse"
+
+msgid "result is new"
+msgstr "Ergebnis ist neu"
+
+msgid "new result"
+msgstr "neues Ergebnis"
+
+msgid "edited result"
+msgstr "geändertes Ergebnis"
+
+msgid "result feed entry"
+msgstr "Feed-Eintrag für Ergebnis"
+
+msgid "result feed entries"
+msgstr "Feed-Einträge für Ergebnisse"
 
 msgid "language"
 msgstr "Sprache"
@@ -1181,14 +1205,17 @@ msgstr "%s wurde erfolgreich zur Datenbank hinzugefügt."
 msgid "PDS measurement %s"
 msgstr "PDS-Messung %s"
 
-msgid "Comments"
-msgstr "Kommentare"
+msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
+msgstr "Ungültiges Dateiformat.  Nur PFD, PNG und JPEG sind erlaubt."
+
+msgid "Sample serieses"
+msgstr "Probenserien"
+
+msgid "Image file"
+msgstr "Bilddatei"
 
 msgid "Edit result"
 msgstr "Ergebnis ändern"
-
-msgid "Sample series"
-msgstr "Probenserie"
 
 msgid ""
 "You don't have the permission to add the result to all selected samples/"
@@ -1435,6 +1462,9 @@ msgstr "Alle Stücke vollständig eingegeben"
 
 msgid "Sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
+
+msgid "Sample series"
+msgstr "Probenserie"
 
 msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
@@ -1744,6 +1774,9 @@ msgstr ""
 msgid "(Once set, you can't change this anymore.)"
 msgstr "(Einmal gesetzt, kann es nie mehr geändert werden.)"
 
+msgid "Result error"
+msgstr "Ergebnis-Fehler"
+
 msgid "Sample series error"
 msgstr "Fehler in der Probenserie"
 
@@ -1862,6 +1895,16 @@ msgstr[1] ""
 "\n"
 "Die Proben wurden nicht zu „Meine Proben“ hinzugefügt."
 
+#, python-format
+msgid ""
+"\n"
+"        %(originator)s added a new <a href=\"%(url)s\">result</a>.\n"
+"      "
+msgstr ""
+"\n"
+"    %(originator)s fügte ein neues <a href=\"%(url)s\">Ergebnis</a> hinzu.\n"
+"  "
+
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -1936,9 +1979,6 @@ msgstr "besondere Berechtigungen, die Sie haben"
 
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
-
-msgid "none"
-msgstr "keine"
 
 msgid "No groups available."
 msgstr "Keine Gruppen vorhanden."
@@ -2040,9 +2080,14 @@ msgid ""
 "  saved.</p>\n"
 msgstr ""
 "\n"
-"  <p>Chantal benutzt die einfache Auszeichnungssprache „Markdown“ für Kommentare.  Es unterstützt allerdings weder Bilder noch Überschriften.  Dafür fügt es automatische Verlinkung von Proben- und Probenseriennamen hinzu.  Folgen Sie dem Hilfe-Link oben auf der Seite für weitere Informationen.</p>\n"
+"  <p>Chantal benutzt die einfache Auszeichnungssprache „Markdown“ für "
+"Kommentare.  Es unterstützt allerdings weder Bilder noch Überschriften.  "
+"Dafür fügt es automatische Verlinkung von Proben- und Probenseriennamen "
+"hinzu.  Folgen Sie dem Hilfe-Link oben auf der Seite für weitere "
+"Informationen.</p>\n"
 "\n"
-"  <p>Hier können Sie die Syntax nach Belieben testen.  Nichts, was Sie hier eingeben, wird gespeichert.</p>\n"
+"  <p>Hier können Sie die Syntax nach Belieben testen.  Nichts, was Sie hier "
+"eingeben, wird gespeichert.</p>\n"
 
 msgid "Sandbox error"
 msgstr "Sandkasten-Fehler"
@@ -2297,6 +2342,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "Comments"
+#~ msgstr "Kommentare"
 
 #~ msgid "New %(process)s for %(sample)s"
 #~ msgstr "Neu: %(process)s für %(sample)s"
