@@ -59,9 +59,11 @@ def save_image_file(image_data, result, related_data_form):
     result.save()
 
 class ResultForm(forms.ModelForm):
-    u"""Model form for adding a new result.  It is more complicated than the
-    form for editing existing results because the samples and sample series a
-    result is connected with can't be changed anymore.
+    u"""Model form for a result process.  Note that I exclude many fields
+    because they are not used in results or explicitly set.
+
+    FixMe: Possibly, the external operator should be made editable for result
+    processes.
     """
     _ = ugettext_lazy
     def __init__(self, *args, **kwargs):
@@ -79,6 +81,15 @@ class ResultForm(forms.ModelForm):
         exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type")
 
 class RelatedDataForm(forms.Form):
+    u"""Form for samples, sample series, and the image connected with this
+    result process.  Since all these things are not part of the result process
+    model itself, they are in a form of its own.  Note that „image file“ is a
+    special case here because it's the only editable thing when *editing* a
+    view.  In contrast, samples and sample series can only be set when creating
+    a new result process.  The non-editability is realised by not showing the
+    fields in the template, and by ignoring possibly submitted values when
+    writing to the database.
+    """
     _ = ugettext_lazy
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
