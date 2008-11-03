@@ -113,7 +113,7 @@ def is_referentially_valid(related_data_form, user):
     :type related_data_form: `RelatedDataForm`
     
     :Return:
-      whether all forms are consistent with each other and the database
+      whether the form is consistent with the database
 
     :rtype: bool
     """
@@ -129,6 +129,25 @@ def is_referentially_valid(related_data_form, user):
     return referentially_valid
 
 def save_image_file(image_data, result, related_data_form):
+    u"""Saves un uploaded image file stream to its final destination in
+    `settings.UPLOADED_RESULT_IMAGES_ROOT`.
+
+    :Parameters:
+      - `image_data`: the file-like object which contains the uploaded data
+        stream
+      - `result`: The result object for which the image was uploaded.  It is
+        not necessary that all its fields are already there.  But it must have
+        been written already to the database because the only necessary field
+        is the primary key, which I need for the hash digest for generating the
+        file names.
+      - `related_data_form`: A bound form with the image filename that was
+        uploaded.  This is only needed to dumping error messages into it if
+        something went wrong.
+
+    :type image_data: ``django.core.files.uploadedfile.InMemoryUploadedFile``
+    :type result: `models.Result`
+    :type related_data_form: `RelatedDataForm`
+    """
     for i, chunk in enumerate(image_data.chunks()):
         if i == 0:
             if chunk.startswith("\211PNG\r\n\032\n"):
