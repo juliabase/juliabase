@@ -16,7 +16,7 @@ from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
 def save_image_file(image_data, result, related_data_form):
-    u"""Saves un uploaded image file stream to its final destination in
+    u"""Saves an uploaded image file stream to its final destination in
     `settings.UPLOADED_RESULT_IMAGES_ROOT`.  If the given result has already an
     image connected with it, it is removed first.
 
