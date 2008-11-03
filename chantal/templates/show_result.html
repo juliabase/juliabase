@@ -2,7 +2,7 @@
 {% load samples_extras %}
 
 {% if thumbnail_url and image_url %}
-  <div style="float: right"><a href="{{ image_url }}"><img src="{{ thumbnail_url }}" alt="{{ process }}"/></a></div>
+  <div style="float: right"><a style="display: block" href="{{ image_url }}"><img style="display: block" src="{{ thumbnail_url }}" alt="{{ process }}"/></a></div>
 {% endif %}
 
 {{ process.comments|markdown }}

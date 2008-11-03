@@ -50,13 +50,8 @@ def edit(request, process_id):
     return render_to_response("edit_result.html", {"title": _(u"Edit result"), "is_new": False, "result": result_form},
                               context_instance=RequestContext(request))
 
-class NewResultForm(forms.Form):
-    u"""Form for adding a new result.  It is more complicated than the form
-    for editing existing results because the samples and sample series a
-    result is connected with can't be changed anymore.
-    """
+class RelatedDataForm(forms.Form):
     _ = ugettext_lazy
-    comments = forms.CharField(label=_(u"Comments"), widget=forms.Textarea)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample series"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
@@ -69,7 +64,7 @@ class NewResultForm(forms.Form):
         electable sample series, but unallowed series will be rejected by
         `is_referentially_valid` anyway.
         """
-        super(NewResultForm, self).__init__(data, files, **kwargs)
+        super(RelatedDataForm, self).__init__(data, files, **kwargs)
         self.fields["samples"].queryset = \
             models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample"))).distinct()
         if "sample" in query_string_dict:
@@ -85,35 +80,55 @@ class NewResultForm(forms.Form):
                                                  Q(timestamp__range=(three_months_ago, now)))
                                                | Q(name=query_string_dict.get("sample_series"))).distinct()
         self.fields["sample_series"].initial = [query_string_dict.get("sample_series")]
+        self.fields["image_file"].widget.attrs["size"] = 60
+    
+class ResultForm(forms.ModelForm):
+    u"""Model form for adding a new result.  It is more complicated than the
+    form for editing existing results because the samples and sample series a
+    result is connected with can't be changed anymore.
+    """
+    _ = ugettext_lazy
+    def __init__(self, *args, **kwargs):
+        super(ResultForm, self).__init__(*args, **kwargs)
+        self.fields["comments"].required = True
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
         utils.check_markdown(comments)
         return comments
+    class Meta:
+        model = models.Result
+        exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type")
 
-def is_referentially_valid(result_form, user):
-    u"""Test whether the result form is consistent with the database.  In
+def is_referentially_valid(related_data_form, user):
+    u"""Test whether the related_data form is consistent with the database.  In
     particular, it tests whether the user is allowed to add the result to all
     selected samples and sample series.
 
+    :Parameters:
+      - `related_data_form`: bound form with all samples and sample series the
+        user wants to add the result to
+
+    :type related_data_form: `RelatedDataForm`
+    
     :Return:
       whether all forms are consistent with each other and the database
 
     :rtype: bool
     """
     referentially_valid = True
-    for sample_or_series in result_form.cleaned_data["samples"] + result_form.cleaned_data["sample_series"]:
+    for sample_or_series in related_data_form.cleaned_data["samples"] + related_data_form.cleaned_data["sample_series"]:
         if not permissions.has_permission_to_add_result_process(user, sample_or_series):
             referentially_valid = False
-            utils.append_error(result_form,
+            utils.append_error(related_data_form,
                                _(u"You don't have the permission to add the result to all selected samples/series."))
-    if not result_form.cleaned_data["samples"] and not result_form.cleaned_data["sample_series"]:
+    if not related_data_form.cleaned_data["samples"] and not related_data_form.cleaned_data["sample_series"]:
         referentially_valid = False
-        utils.append_error(result_form, _(u"You must select at least one samples/series."))
+        utils.append_error(related_data_form, _(u"You must select at least one samples/series."))
     return referentially_valid
 
-def save_image_file(image_data, result, result_form):
+def save_image_file(image_data, result, related_data_form):
     for i, chunk in enumerate(image_data.chunks()):
         if i == 0:
             if chunk.startswith("\211PNG\r\n\032\n"):
@@ -123,7 +138,7 @@ def save_image_file(image_data, result, result_form):
             elif chunk.startswith("%PDF"):
                 result.image_type = "pdf"
             else:
-                utils.append_error(result_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
+                utils.append_error(related_data_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
                                    "image_file")
                 return
             destination = open(result.get_image_locations()["original"], "wb+")
@@ -150,19 +165,26 @@ def new(request):
     user_details = utils.get_profile(request.user)
     query_string_dict = utils.parse_query_string(request)
     if request.method == "POST":
-        result_form = NewResultForm(user_details, query_string_dict, request.POST, request.FILES)
-        if result_form.is_valid() and is_referentially_valid(result_form, request.user):
-            result = models.Result.objects.create(operator=request.user, timestamp=datetime.datetime.now(),
-                                                  comments=result_form.cleaned_data["comments"])
-            if result_form.cleaned_data["image_file"]:
-                save_image_file(request.FILES["image_file"], result, result_form)
-            if result_form.is_valid():
-                result.samples = result_form.cleaned_data["samples"]
-                result.sample_series = result_form.cleaned_data["sample_series"]
+        related_data_form = RelatedDataForm(user_details, query_string_dict, request.POST, request.FILES)
+        result_form = ResultForm(request.POST)
+        all_valid = related_data_form.is_valid()
+        all_valid = result_form.is_valid() and all_valid
+        if all_valid and is_referentially_valid(related_data_form, request.user):
+            result = result_form.save(commit=False)
+            result.operator = request.user
+            result.timestamp = datetime.datetime.now()
+            result.save()
+            if related_data_form.cleaned_data["image_file"]:
+                save_image_file(request.FILES["image_file"], result, related_data_form)
+            if related_data_form.is_valid():
+                result.samples = related_data_form.cleaned_data["samples"]
+                result.sample_series = related_data_form.cleaned_data["sample_series"]
                 return utils.successful_response(request)
             else:
                 result.delete()
     else:
-        result_form = NewResultForm(user_details, query_string_dict)
-    return render_to_response("edit_result.html", {"title": _(u"New result"), "is_new": True, "result": result_form},
+        related_data_form = RelatedDataForm(user_details, query_string_dict)
+        result_form = ResultForm()
+    return render_to_response("edit_result.html", {"title": _(u"New result"), "is_new": True, "result": result_form,
+                                                   "related_data": related_data_form},
                               context_instance=RequestContext(request))

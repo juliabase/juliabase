@@ -619,9 +619,9 @@ class ResultContext(object):
         """
         process = process.find_actual_instance()
         template = loader.get_template("show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
-        name = unicode(process._meta.verbose_name)
+        name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
         template_context = self.get_template_context(process)
-        context_dict = {"name": name[0].upper()+name[1:], "operator": process.operator,
+        context_dict = {"name": name[:1].upper()+name[1:], "operator": process.operator,
                         "timestamp": process.timestamp, "timestamp_inaccuracy": process.timestamp_inaccuracy,
                         "html_body": template.render(Context(template_context))}
         for key in ["edit_url", "duplicate_url"]:
