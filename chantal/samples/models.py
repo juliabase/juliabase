@@ -970,7 +970,7 @@ class Result(Process):
         file_path = os.path.join(settings.MEDIA_ROOT, relative_path)
         url_path = os.path.join(settings.MEDIA_URL, relative_path)
         original_extension = "." + self.image_type
-        thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
+        thumbnail_extension = "_thumbnail.jpeg" if self.image_type == "jpeg" else "_thumbnail.png"
         return {"original": os.path.join(settings.UPLOADED_RESULT_IMAGES_ROOT, basename + original_extension),
                 "image_directory": os.path.join(settings.MEDIA_ROOT, dirname),
                 "thumbnail_file": file_path + thumbnail_extension, "image_file": file_path + original_extension,
@@ -982,26 +982,29 @@ class Result(Process):
         :Return:
           The full relative URL (i.e. without the domain, but with the leading
           ``/``) to the thumbnail, and the full relative URL to the “real”
-          image.  ``None`` if there is no image connected with this result, or
-          the original image couldn't be found.
+          image.  Both strings are ``None`` if there is no image connected with
+          this result, or the original image couldn't be found.  They are
+          returned in a dictionary with the keys ``"thumbnail_url"`` and
+          ``"image_url"``, respectively.
 
-        :rtype: (str, str) or ``NoneType``
+        :rtype: dict mapping str to (str or ``NoneType``)
         """
         if self.image_type == "none":
-            return None
+            return {"thumbnail_url": None, "image_url": None}
         image_locations = self.get_image_locations()
-        if not os.path.exists(image_location["thumbnail_file"]) or not os.path.exists(image_location["image_file"]):
-            if not os.path.exists(image_location["original"]):
-                return None
+        if not os.path.exists(image_locations["thumbnail_file"]) or not os.path.exists(image_locations["image_file"]):
+            if not os.path.exists(image_locations["original"]):
+                return {"thumbnail_url": None, "image_url": None}
             try:
                 os.makedirs(image_locations["image_directory"])
             except OSError:
                 pass
-            if not os.path.exists(image_location["thumbnail_file"]):
-                subprocess.call(["convert", image_location["original"], image_location["thumbnail_file"]])
-            if not os.path.exists(image_location["image_file"]):
-                shutil.copy(image_location["original"], image_location["image_file"])
-        return image_locations["thumbnail_url"], image_locations["image_url"]
+            if not os.path.exists(image_locations["thumbnail_file"]):
+                subprocess.call(["convert", image_locations["original"] + ("[0]" if self.image_type == "pdf" else ""),
+                                 "-resize", "200x200", image_locations["thumbnail_file"]])
+            if not os.path.exists(image_locations["image_file"]):
+                shutil.copy(image_locations["original"], image_locations["image_file"])
+        return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context` for
         general information.
@@ -1014,15 +1017,15 @@ class Result(Process):
 
         :Return:
           dict with additional fields that are supposed to be given to the
-          result process template, namely ``"edit_url"``.
+          result process template, e.g. ``"edit_url"``.
 
         :rtype: dict mapping str to str
         """
+        result = self.result.get_image()
         if permissions.has_permission_to_edit_result_process(process_context.user, self):
-            return {"edit_url":
-                        django.core.urlresolvers.reverse("samples.views.result.edit", kwargs={"process_id": self.pk})}
-        else:
-            return {}
+            result["edit_url"] = \
+                django.core.urlresolvers.reverse("samples.views.result.edit", kwargs={"process_id": self.pk})
+        return result
     class Meta:
         verbose_name = _(u"result")
         verbose_name_plural = _(u"results")
@@ -1206,6 +1209,32 @@ class FeedEditedPhysicalProcess(FeedEntry):
         verbose_name = _(u"edited physical process feed entry")
         verbose_name_plural = _(u"edited physical process feed entries")
 admin.site.register(FeedEditedPhysicalProcess)
+
+class FeedResult(FeedEntry):
+    u"""Model for feed entries about new or edited result processes.
+    """
+    result = models.ForeignKey(Result, verbose_name=_(u"result"))
+    description = models.TextField(_(u"description"), blank=True)
+    is_new = models.BooleanField(_(u"result is new"), null=True, blank=True)
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        if self.is_new:
+            metadata["title"] = _(u"New %s") % result
+            metadata["category term"] = "new result"
+            metadata["category label"] = _(u"new result")
+        else:
+            metadata["title"] = _(u"Edited %s") % result
+            metadata["category term"] = "edited result"
+            metadata["category label"] = _(u"edited result")
+        metadata["link"] = result.get_absolute_url()
+        return metadata
+    def get_additional_template_context(self, user_details):
+        return self.result.get_image()
+    class Meta:
+        verbose_name = _(u"result feed entry")
+        verbose_name_plural = _(u"result feed entries")
+admin.site.register(FeedResult)
 
 languages = (
     ("de", u"Deutsch"),

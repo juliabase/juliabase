@@ -59,7 +59,8 @@ class NewResultForm(forms.Form):
     comments = forms.CharField(label=_(u"Comments"), widget=forms.Textarea)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample series"), queryset=None, required=False)
-    def __init__(self, user_details, query_string_dict, data=None, **kwargs):
+    image_file = forms.FileField(label=_(u"Image file"), required=False)
+    def __init__(self, user_details, query_string_dict, data=None, files=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
 
@@ -68,7 +69,7 @@ class NewResultForm(forms.Form):
         electable sample series, but unallowed series will be rejected by
         `is_referentially_valid` anyway.
         """
-        super(NewResultForm, self).__init__(data, **kwargs)
+        super(NewResultForm, self).__init__(data, files, **kwargs)
         self.fields["samples"].queryset = \
             models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample"))).distinct()
         if "sample" in query_string_dict:
@@ -111,7 +112,25 @@ def is_referentially_valid(result_form, user):
         referentially_valid = False
         utils.append_error(result_form, _(u"You must select at least one samples/series."))
     return referentially_valid
-            
+
+def save_image_file(image_data, result, result_form):
+    for i, chunk in enumerate(image_data.chunks()):
+        if i == 0:
+            if chunk.startswith("\211PNG\r\n\032\n"):
+                result.image_type = "png"
+            elif chunk.startswith("\xff\xd8\xff\xe0\x00\x10JFIF"):
+                result.image_type = "jpeg"
+            elif chunk.startswith("%PDF"):
+                result.image_type = "pdf"
+            else:
+                utils.append_error(result_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
+                                   "image_file")
+                return
+            destination = open(result.get_image_locations()["original"], "wb+")
+        destination.write(chunk)
+    destination.close()
+    result.save()
+
 @login_required
 def new(request):
     u"""View for adding a new result.  This routine also contains the full
@@ -131,14 +150,18 @@ def new(request):
     user_details = utils.get_profile(request.user)
     query_string_dict = utils.parse_query_string(request)
     if request.method == "POST":
-        result_form = NewResultForm(user_details, query_string_dict, request.POST)
+        result_form = NewResultForm(user_details, query_string_dict, request.POST, request.FILES)
         if result_form.is_valid() and is_referentially_valid(result_form, request.user):
-            result = models.Result(operator=request.user, timestamp=datetime.datetime.now(),
-                                   comments=result_form.cleaned_data["comments"])
-            result.save()
-            result.samples = result_form.cleaned_data["samples"]
-            result.sample_series = result_form.cleaned_data["sample_series"]
-            return utils.successful_response(request)
+            result = models.Result.objects.create(operator=request.user, timestamp=datetime.datetime.now(),
+                                                  comments=result_form.cleaned_data["comments"])
+            if result_form.cleaned_data["image_file"]:
+                save_image_file(request.FILES["image_file"], result, result_form)
+            if result_form.is_valid():
+                result.samples = result_form.cleaned_data["samples"]
+                result.sample_series = result_form.cleaned_data["sample_series"]
+                return utils.successful_response(request)
+            else:
+                result.delete()
     else:
         result_form = NewResultForm(user_details, query_string_dict)
     return render_to_response("edit_result.html", {"title": _(u"New result"), "is_new": True, "result": result_form},

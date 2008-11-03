@@ -42,10 +42,6 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(ROOTDIR, 'media/')
 
-# Absolute path to the directory that holds uploaded images for result
-# processes.
-UPLOADED_RESULT_IMAGES_ROOT = os.path.join('/var/lib/chantal_images/')
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
@@ -118,6 +114,10 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
 AUTH_PROFILE_MODULE = 'samples.userdetails'
 
 LOCALES_DICT = {"en": "en_US.utf8", "de": "de_DE.utf8"}
+
+# Absolute path to the directory that holds uploaded images for result
+# processes.
+UPLOADED_RESULT_IMAGES_ROOT = "/home/bronger/temp/chantal_images/" if IS_TESTSERVER else "/var/lib/chantal_images/"
 
 import subprocess, re, time
 def _scan_version(package):

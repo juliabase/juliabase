@@ -1,4 +1,9 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% load samples_extras %}
 
+{% if thumbnail_url and image_url %}
+  <div style="float: right"><a href="{{ image_url }}"><img src="{{ thumbnail_url }}" alt="{{ process }}"/></a></div>
+{% endif %}
+
 {{ process.comments|markdown }}
+
