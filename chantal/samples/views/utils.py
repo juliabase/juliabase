@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 u"""General helper functions for the views.  Try to avoid using it outside the
-views package.
+views package.  All symbols from `shared_utils` are also available here.  So
+`shared_utils` should be useful only for the Remote Client.
 """
 
 import re, string, copy, datetime, pickle
