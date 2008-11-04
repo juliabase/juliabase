@@ -212,6 +212,6 @@ def edit(request, username):
         my_samples_form = MySamplesForm(user)
         action_form = ActionForm(user)
     return render_to_response("edit_my_samples.html",
-                              {"title": _(u"Edit “My Samples” of %s") % models.get_really_full_name(user),
+                              {"title": _(u"Edit “My Samples” of %s") % utils.get_really_full_name(user),
                                "my_samples": my_samples_form, "action": action_form},
                               context_instance=RequestContext(request))

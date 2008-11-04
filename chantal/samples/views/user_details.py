@@ -36,7 +36,7 @@ def show_user(request, login_name):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     userdetails = utils.get_profile(user)
-    username = models.get_really_full_name(user)
+    username = utils.get_really_full_name(user)
     return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
 
@@ -96,7 +96,7 @@ def edit_preferences(request, login_name):
         user_details_form = UserDetailsForm(user, instance=user_details)
         initials_form = utils.InitialsForm(user, initials_mandatory)
     return render_to_response("edit_preferences.html",
-                              {"title": _(u"Change preferences for %s") % models.get_really_full_name(request.user),
+                              {"title": _(u"Change preferences for %s") % utils.get_really_full_name(request.user),
                                "user_details": user_details_form, "initials": initials_form},
                               context_instance=RequestContext(request))
 
@@ -107,7 +107,7 @@ def groups_and_permissions(request, login_name):
         raise permissions.PermissionError(
             request.user, _(u"You can't access the list of groups and permissions of another user."))
     return render_to_response("groups_and_permissions.html",
-                              {"title": _(u"Groups and permissions for %s") % models.get_really_full_name(request.user),
+                              {"title": _(u"Groups and permissions for %s") % utils.get_really_full_name(request.user),
                                "groups": user.groups.all(), "permissions": permissions.get_user_permissions(user),
-                               "full_user_name": models.get_really_full_name(request.user)},
+                               "full_user_name": utils.get_really_full_name(request.user)},
                               context_instance=RequestContext(request))

@@ -12,7 +12,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
-from chantal.samples import models, permissions
+from chantal.samples import permissions
 from django.conf import settings
 import django.core.urlresolvers
 from chantal.samples.views import utils
@@ -140,7 +140,7 @@ def show(request, username):
     feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show, kwargs={"username": username})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
-    ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % models.get_really_full_name(user)
+    ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % utils.get_really_full_name(user)
     user_details = utils.get_profile(user)
     entries = [entry.find_actual_instance() for entry in user_details.feed_entries.all()]
     if entries:
@@ -167,7 +167,7 @@ def show(request, username):
         ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
         author = ElementTree.SubElement(entry_element, "author")
-        ElementTree.SubElement(author, "name").text = models.get_really_full_name(entry.originator)
+        ElementTree.SubElement(author, "name").text = utils.get_really_full_name(entry.originator)
         ElementTree.SubElement(author, "email").text = entry.originator.email
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])

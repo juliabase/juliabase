@@ -21,6 +21,22 @@ import django.core.urlresolvers
 from chantal.samples import models, permissions
 from chantal.samples.views.shared_utils import *
 
+def get_really_full_name(user):
+    u"""Unfortunately, Django's ``get_full_name`` method for users returns the
+    empty string if the user has no first and surname set.  However, it'd be
+    sensible to use the login name as a fallback then.  This is realised here.
+
+    :Parameters:
+      - `user`: the user instance
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      The full, human-friendly name of the user
+
+    :rtype: unicode
+    """
+    return user.get_full_name() or unicode(user)
+
 class HttpResponseSeeOther(HttpResponse):
     u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
     same wrong thing as most other web frameworks: it knows only one type of
@@ -68,7 +84,7 @@ class OperatorChoiceField(ModelChoiceField):
     then, but the beautiful full name of the user.
     """
     def label_from_instance(self, operator):
-        return models.get_really_full_name(operator)
+        return get_really_full_name(operator)
 
 class AddLayersForm(forms.Form):
     _ = ugettext_lazy

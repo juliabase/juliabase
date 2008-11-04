@@ -173,7 +173,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     u"""Unfortunately, Django's get_full_name method for users returns the
     empty string if the user has no first and surname set. However, it'd be
     sensible to use the login name as a fallback then. This is realised here.
-    See also `models.get_really_full_name`.
+    See also `chantal.samples.views.utils.get_really_full_name`.
 
     The optional parameter to this filter determines whether the name should be
     linked or not, and if so, how.  There are three possible parameter values:
@@ -192,7 +192,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     # anchor_type may be "http", "mailto", or "plain".
     if not isinstance(user, django.contrib.auth.models.User):
         return u""
-    full_name = chantal.samples.models.get_really_full_name(user)
+    full_name = chantal.samples.views.utils.get_really_full_name(user)
     if autoescape:
         full_name = conditional_escape(full_name)
     if anchor_type == "http":

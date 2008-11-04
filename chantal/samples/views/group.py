@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
-from chantal.samples import models, permissions
+from chantal.samples import permissions
 from chantal.samples.views import utils
 
 class NewGroupForm(forms.Form):
@@ -88,7 +88,7 @@ class OperatorMultipleChoiceField(forms.ModelMultipleChoiceField):
     the dull username then, but the beautiful full name of the user.
     """
     def label_from_instance(self, operator):
-        return models.get_really_full_name(operator)
+        return utils.get_really_full_name(operator)
 
 class ChangeMembershipsForm(forms.Form):
     u"""Form for the member list of a group.  Note that it is allowed to have
