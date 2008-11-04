@@ -6,6 +6,8 @@
     {% if entry.is_new %}
       {% blocktrans %}
         {{ originator }} added a new <a href="{{ url }}">result</a>.
+      {% endblocktrans %}
+    {% endif %}
   {% endwith %}
   {% blocktrans count process.samples.all.count as counter %}
     This affected the following sample:
