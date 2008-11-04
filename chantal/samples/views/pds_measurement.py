@@ -15,7 +15,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 import django.contrib.auth.models
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 from chantal.samples import models, permissions
 from chantal import settings
 
@@ -133,7 +133,7 @@ class PDSMeasurementForm(forms.ModelForm):
     ``operator`` field here in oder to have the full names of the users.
     """
     _ = ugettext_lazy
-    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, *args, **kwargs):
         u"""Form constructor.  I just adjust layout here.
         """
@@ -177,7 +177,7 @@ class PDSMeasurementForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        utils.check_markdown(comments)
+        form_utils.check_markdown(comments)
         return comments
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
@@ -280,7 +280,7 @@ def edit(request, pd_number):
         if pds_measurement_form.is_valid():
             number = pds_measurement_form.cleaned_data["number"]
             if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
-                utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
+                form_utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
         if is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form):
             pds_measurement = pds_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]

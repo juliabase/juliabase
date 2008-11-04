@@ -22,8 +22,8 @@ import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from chantal.samples import models, permissions
-from chantal.samples.views import utils, feed_utils
-from chantal.samples.views.utils import DataModelForm
+from chantal.samples.views import utils, feed_utils, form_utils
+from chantal.samples.views.form_utils import DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 import django.contrib.auth.models
@@ -46,14 +46,14 @@ class AddMyLayerForm(Form):
     def __init__(self, data=None, **kwargs):
         user_details = kwargs.pop("user_details")
         super(AddMyLayerForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, SixChamberDeposition)
+        self.fields["my_layer_to_be_added"].choices = form_utils.get_my_layers(user_details, SixChamberDeposition)
 
 class DepositionForm(ModelForm):
     u"""Model form for the basic deposition data.
     """
     _ = ugettext_lazy
     sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, user_details, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
@@ -76,17 +76,17 @@ class DepositionForm(ModelForm):
             else user_details.my_samples
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
     def clean_number(self):
-        return utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
+        return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        utils.check_markdown(comments)
+        form_utils.check_markdown(comments)
         return comments
     def clean(self):
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
-                utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
+                form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
     def save(self, *args, **kwargs):
@@ -122,20 +122,20 @@ class LayerForm(DataModelForm):
             raise ValidationError(_(u"Name is unknown."))
         return self.cleaned_data["chamber"]
     def clean_time(self):
-        return utils.clean_time_field(self.cleaned_data["time"])
+        return form_utils.clean_time_field(self.cleaned_data["time"])
     def clean_pre_heat(self):
-        return utils.clean_time_field(self.cleaned_data["pre_heat"])
+        return form_utils.clean_time_field(self.cleaned_data["pre_heat"])
     def clean_gas_pre_heat_time(self):
-        return utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
+        return form_utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
     def clean_pressure(self):
-        return utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
+        return form_utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
     def clean_gas_pre_heat_pressure(self):
-        return utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
+        return form_utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        utils.check_markdown(comments)
+        form_utils.check_markdown(comments)
         return comments
     class Meta:
         model = SixChamberLayer
@@ -183,7 +183,7 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
     :type remove_from_my_samples_form: `RemoveFromMySamplesForm`
-    :type edit_description_form: `utils.EditDescriptionForm` or ``NoneType``
+    :type edit_description_form: `form_utils.EditDescriptionForm` or ``NoneType``
 
     :Return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
@@ -340,16 +340,16 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     if deposition_form.is_valid() and (
         not deposition or deposition.number != deposition_form.cleaned_data["number"]):
         if models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
-            utils.append_error(deposition_form, _(u"This deposition number exists already."))
+            form_utils.append_error(deposition_form, _(u"This deposition number exists already."))
             referentially_valid = False
     if not layer_forms:
-        utils.append_error(deposition_form, _(u"No layers given."))
+        form_utils.append_error(deposition_form, _(u"No layers given."))
         referentially_valid = False
     layer_numbers = set()
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         if layer_form.is_valid():
             if layer_form.cleaned_data["number"] in layer_numbers:
-                utils.append_error(layer_form, _(u"Number is a duplicate."))
+                form_utils.append_error(layer_form, _(u"Number is a duplicate."))
                 referentially_valid = False
             else:
                 layer_numbers.add(layer_form.cleaned_data["number"])
@@ -357,7 +357,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
         for channel_form in channel_forms:
             if channel_form.is_valid():
                 if channel_form.cleaned_data["number"] in channel_numbers:
-                    utils.append_error(channel_form, _(u"Number is a duplicate."))
+                    form_utils.append_error(channel_form, _(u"Number is a duplicate."))
                     referentially_valid = False
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
@@ -411,7 +411,7 @@ def forms_from_post_data(post_data):
 
     :rtype: list of `LayerForm`, list of lists of `ChannelForm`
     """
-    post_data, number_of_layers, list_of_number_of_channels = utils.normalize_prefixes(post_data)
+    post_data, number_of_layers, list_of_number_of_channels = form_utils.normalize_prefixes(post_data)
     layer_forms = [LayerForm(post_data, prefix=str(layer_index)) for layer_index in range(number_of_layers)]
     channel_form_lists = []
     for layer_index in range(number_of_layers):
@@ -469,7 +469,7 @@ def edit(request, deposition_number):
         deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
-        edit_description_form = utils.EditDescriptionForm(request.POST) if deposition else None
+        edit_description_form = form_utils.EditDescriptionForm(request.POST) if deposition else None
         all_valid = is_all_valid(
             deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form, edit_description_form)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
@@ -514,7 +514,7 @@ def edit(request, deposition_number):
                 deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B")})
                 layer_forms, channel_form_lists = [], []
         remove_from_my_samples_form = RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition})
-        edit_description_form = utils.EditDescriptionForm() if deposition else None
+        edit_description_form = form_utils.EditDescriptionForm() if deposition else None
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",

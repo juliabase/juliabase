@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
@@ -45,8 +45,8 @@ def save_image_file(image_data, result, related_data_form):
             elif chunk.startswith("%PDF"):
                 new_image_type = "pdf"
             else:
-                utils.append_error(related_data_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
-                                   "image_file")
+                form_utils.append_error(related_data_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
+                                        "image_file")
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
                 os.remove(result.get_image_locations()["original"])
@@ -74,7 +74,7 @@ class ResultForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        utils.check_markdown(comments)
+        form_utils.check_markdown(comments)
         return comments
     class Meta:
         model = models.Result
@@ -180,11 +180,11 @@ def is_referentially_valid(related_data_form, user):
     for sample_or_series in related_data_form.cleaned_data["samples"] + related_data_form.cleaned_data["sample_series"]:
         if not permissions.has_permission_to_add_result_process(user, sample_or_series):
             referentially_valid = False
-            utils.append_error(related_data_form,
-                               _(u"You don't have the permission to add the result to all selected samples/series."))
+            form_utils.append_error(related_data_form,
+                                    _(u"You don't have the permission to add the result to all selected samples/series."))
     if not related_data_form.cleaned_data["samples"] and not related_data_form.cleaned_data["sample_series"]:
         referentially_valid = False
-        utils.append_error(related_data_form, _(u"You must select at least one samples/series."))
+        form_utils.append_error(related_data_form, _(u"You must select at least one samples/series."))
     return referentially_valid
 
 @login_required

@@ -15,7 +15,7 @@ from django.forms.util import ValidationError
 from django.db.models import Q
 from chantal.samples import models, permissions
 import django.core.urlresolvers
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class NewNameForm(forms.Form):
     u"""Form for data of one new sample piece.
@@ -160,17 +160,17 @@ def is_referentially_valid(new_name_forms, global_data_form):
     """
     referentially_valid = global_data_form.cleaned_data["finished"]
     if not new_name_forms:
-        utils.append_error(global_data_form, _(u"You must split into at least one piece."))
+        form_utils.append_error(global_data_form, _(u"You must split into at least one piece."))
         referentially_valid = False
     if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and len(new_name_forms) < 2:
-        utils.append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
+        form_utils.append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
         referentially_valid = False
     new_names = set()
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
             if new_name in new_names or utils.does_sample_exist(new_name):
-                utils.append_error(new_name_form, _(u"Name is already given."))
+                form_utils.append_error(new_name_form, _(u"Name is already given."))
                 referentially_valid = False
             new_names.add(new_name)
     return referentially_valid

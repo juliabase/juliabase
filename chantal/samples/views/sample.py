@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
@@ -33,8 +33,8 @@ class SampleForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     # FixMe: What about inactive users?
-    currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                             queryset=django.contrib.auth.models.User.objects.all())
+    currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
+                                                                  queryset=django.contrib.auth.models.User.objects.all())
     class Meta:
         model = models.Sample
         exclude = ("name", "split_origin", "processes")
@@ -189,12 +189,12 @@ class AddSamplesForm(forms.Form):
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
-    currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                             queryset=django.contrib.auth.models.User.objects)
+    currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
+                                                                  queryset=django.contrib.auth.models.User.objects)
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
                            help_text=_(u"separated with commas, no whitespace"))
-    group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects, required=False)
+    group = forms.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects, required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
     def __init__(self, user_details, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)

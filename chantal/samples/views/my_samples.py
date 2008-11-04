@@ -14,7 +14,7 @@ from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class _MySeries(object):
     u"""Helper class for building the HTML ``<OPTGROUP>`` structure used in
@@ -68,12 +68,12 @@ class ActionForm(forms.Form):
     u"""Form for all the things you can do with the selected samples.
     """
     _ = ugettext_lazy
-    new_currently_responsible_person = utils.OperatorChoiceField(
+    new_currently_responsible_person = form_utils.OperatorChoiceField(
         label=_(u"New currently responsible person"), required=False, queryset=None)
-    new_group = utils.ModelChoiceField(label=_(u"New Group"), queryset=django.contrib.auth.models.Group.objects,
+    new_group = forms.ModelChoiceField(label=_(u"New Group"), queryset=django.contrib.auth.models.Group.objects,
                                        required=False)
     new_current_location = forms.CharField(label=_(u"New current location"), required=False, max_length=50)
-    copy_to_user = utils.OperatorChoiceField(label=_(u"Copy to user"), required=False, queryset=None)
+    copy_to_user = form_utils.OperatorChoiceField(label=_(u"Copy to user"), required=False, queryset=None)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
     def __init__(self, user, *args, **kwargs):
@@ -91,7 +91,7 @@ class ActionForm(forms.Form):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comment = self.cleaned_data["comment"]
-        utils.check_markdown(comment)
+        form_utils.check_markdown(comment)
         return comment
     def clean(self):
         action_data = self.cleaned_data
@@ -129,8 +129,8 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 for sample in my_samples_form.cleaned_data["samples"]:
                     permissions.assert_can_edit_sample(current_user, sample)
             except permissions.PermissionError:
-                utils.append_error(action_form,
-                                   _(u"You must be the currently responsible person for samples you'd like to change."))
+                form_utils.append_error(
+                    action_form, _(u"You must be the currently responsible person for samples you'd like to change."))
                 referentially_valid = False
     return referentially_valid
 

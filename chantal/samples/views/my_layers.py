@@ -14,7 +14,7 @@ from django.template import RequestContext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class MyLayerForm(forms.Form):
     u"""Form for editing the “My Layers” structure.
@@ -122,7 +122,7 @@ def is_referentially_valid(my_layer_forms):
         if my_layer_form.is_valid():
             nickname = my_layer_form.cleaned_data["nickname"]
             if nickname in nicknames:
-                utils.append_error(my_layer_form, _(u"Nickname is already given."))
+                form_utils.append_error(my_layer_form, _(u"Nickname is already given."))
                 referentially_valid = False
             else:
                 nicknames.add(nickname)

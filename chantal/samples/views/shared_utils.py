@@ -9,6 +9,22 @@ of Django with the Remove Client (which uses this module).
 
 import re, string
 
+def get_really_full_name(user):
+    u"""Unfortunately, Django's ``get_full_name`` method for users returns the
+    empty string if the user has no first and surname set.  However, it'd be
+    sensible to use the login name as a fallback then.  This is realised here.
+
+    :Parameters:
+      - `user`: the user instance
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      The full, human-friendly name of the user
+
+    :rtype: unicode
+    """
+    return user.get_full_name() or unicode(user)
+
 def int_or_zero(number):
     u"""
     :Parameters:

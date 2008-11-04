@@ -22,16 +22,16 @@ from django.forms.util import ValidationError
 from django.db.models import Q
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class SampleSeriesForm(Form):
     u"""Form for editing and creating sample series.
     """
     _ = ugettext_lazy
     name = forms.CharField(label=_(u"Name"), max_length=40)
-    currently_responsible_person = utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                             queryset=django.contrib.auth.models.User.objects)
-    group = utils.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects)
+    currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
+                                                                  queryset=django.contrib.auth.models.User.objects)
+    group = ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects)
     samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
     def __init__(self, user_details, sample_series, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the form here, especially
@@ -147,7 +147,7 @@ def new(request):
             full_name = \
                 u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["name"])
             if models.SampleSeries.objects.filter(name=full_name).count():
-                utils.append_error(sample_series_form, _("This sample series name is already given."), "name")
+                form_utils.append_error(sample_series_form, _("This sample series name is already given."), "name")
             else:
                 sample_series = models.SampleSeries(name=full_name, timestamp=timestamp,
                                                     currently_responsible_person= \

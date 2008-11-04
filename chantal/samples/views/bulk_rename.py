@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class InitialsForm(forms.Form):
     u"""Form for giving the initials to be used for the new names.  This form
@@ -78,7 +78,7 @@ def is_referentially_valid(new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
             if new_name in new_names:
-                utils.append_error(new_name_form, _(u"This sample name has been used already on this page."), "name")
+                form_utils.append_error(new_name_form, _(u"This sample name has been used already on this page."), "name")
                 referentially_valid = False
             else:
                 new_names.add(new_name)

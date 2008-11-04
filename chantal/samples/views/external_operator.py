@@ -12,7 +12,7 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class AddExternalOperatorForm(forms.ModelForm):
     u"""Model form for creating a new external operator.  The
@@ -67,8 +67,8 @@ class EditExternalOperatorForm(forms.ModelForm):
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_person = utils.OperatorChoiceField(label=_(u"Concact person"),
-                                               queryset=django.contrib.auth.models.User.objects.all())
+    contact_person = form_utils.OperatorChoiceField(label=_(u"Concact person"),
+                                                    queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
         for fieldname in ["name", "email", "alternative_email"]:
@@ -98,7 +98,7 @@ def edit(request, external_operator_id):
     permissions.assert_can_edit_external_operator(request.user, external_operator)
     if request.method == "POST":
         external_operator_form = EditExternalOperatorForm(request.POST, instance=external_operator)
-        initials_form = utils.InitialsForm(external_operator, initials_mandatory=False, data=request.POST)
+        initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=False, data=request.POST)
         if external_operator_form.is_valid() and initials_form.is_valid():
             external_operator = external_operator_form.save()
             initials_form.save()
@@ -106,7 +106,7 @@ def edit(request, external_operator_id):
                                                         external_operator.name)
     else:
         external_operator_form = EditExternalOperatorForm(instance=external_operator)
-        initials_form = utils.InitialsForm(external_operator, initials_mandatory=False)
+        initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=False)
     return render_to_response("edit_external_operator.html",
                               {"title": _(u"Edit external operator “%s”") % external_operator.name,
                                "external_operator": external_operator_form,

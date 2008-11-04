@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 import django.core.urlresolvers
 import django.contrib.auth.models
 from django.db.models import Q
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 
 class SamplesForm(forms.Form):
     u"""Form for the list selection of samples that took part in the
@@ -58,14 +58,14 @@ class DepositionForm(forms.ModelForm):
     in order to have full real names.
     """
     _ = ugettext_lazy
-    operator = utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
     def __init__(self, data=None, **kwargs):
         u"""Class constructor just for changing the appearance of the number
         field."""
         super(DepositionForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
     def clean_number(self):
-        return utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
+        return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -78,12 +78,12 @@ class DepositionForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        utils.check_markdown(comments)
+        form_utils.check_markdown(comments)
         return comments
     def clean(self):
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
-                utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
+                form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
     class Meta:
@@ -185,10 +185,10 @@ class FormSet(object):
         self.deposition_form = DepositionForm(self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                                        "number": utils.get_next_deposition_number("L")})
-        self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
-        indices = utils.collect_subform_indices(self.post_data)
+        indices = form_utils.collect_subform_indices(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
@@ -255,7 +255,7 @@ class FormSet(object):
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = SamplesForm(self.user_details, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
-        self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm()
     def _change_structure(self):
         u"""Apply any layer-based rearrangements the user has requested.  This
@@ -279,8 +279,8 @@ class FormSet(object):
         *number*, whereas the internal numbers used as prefixes in the HTML
         names are called *indices*.  The index (and thus prefix) of a layer
         form does never change (in contrast to the 6-chamber deposition, see
-        `utils.normalize_prefixes`), not even across many “post cycles”.  Only
-        the layer numbers are used for determining the order of layers.
+        `form_utils.normalize_prefixes`), not even across many “post cycles”.
+        Only the layer numbers are used for determining the order of layers.
 
         :Return:
           whether the structure was changed in any way.
@@ -327,7 +327,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
+            self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
                 
         # Delete layers
         for i in range(len(new_layers)-1, -1, -1):
@@ -425,7 +425,7 @@ class FormSet(object):
         """
         referentially_valid = True
         if not self.layer_forms:
-            utils.append_error(self.deposition_form, _(u"No layers given."))
+            form_utils.append_error(self.deposition_form, _(u"No layers given."))
             referentially_valid = False
         if self.deposition_form.is_valid():
             match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
@@ -438,7 +438,7 @@ class FormSet(object):
             if self.deposition:
                 if self.layer_forms and self.layer_forms[0].is_valid() and \
                         self.layer_forms[0].cleaned_data["number"] != self.deposition.layers.all()[0].number:
-                    utils.append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
+                    form_utils.append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
                     referentially_valid = False
                 old_number_only = int(self.deposition_number_pattern.match(self.deposition.number).group("number"))
                 higher_deposition_numbers = [number for number in deposition_numbers if number > old_number_only]
@@ -447,17 +447,17 @@ class FormSet(object):
                     number_of_next_layers = models.LargeAreaDeposition.objects.get(
                         number=deposition_prefix+utils.three_digits(next_number)).layers.count()
                     if number_only + number_of_next_layers > next_number:
-                        utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
+                        form_utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
                         referentially_valid = False
             else:
                 if self.layer_forms and self.layer_forms[0].is_valid() and \
                         self.layer_forms[0].cleaned_data["number"] <= max_deposition_number:
-                    utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
+                    form_utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
                     referentially_valid = False
             for i, layer_form in enumerate(self.layer_forms):
                 if layer_form.is_valid() and \
                         layer_form.cleaned_data["number"] - i + len(self.layer_forms) - 1 != number_only:
-                    utils.append_error(layer_form, _(u"Layer number is not consecutive."))
+                    form_utils.append_error(layer_form, _(u"Layer number is not consecutive."))
                     referentially_valid = False
         return referentially_valid
     def save_to_database(self):

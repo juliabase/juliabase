@@ -8,7 +8,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal.samples.views import utils
+from chantal.samples.views import utils, form_utils
 from chantal.samples.views.utils import help_link
 
 class SandboxForm(forms.Form):
@@ -20,7 +20,7 @@ class SandboxForm(forms.Form):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         sandbox = self.cleaned_data["sandbox"]
-        utils.check_markdown(sandbox)
+        form_utils.check_markdown(sandbox)
         return sandbox
 
 @help_link(_(u"MarkdownMarkup"))

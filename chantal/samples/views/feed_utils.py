@@ -19,7 +19,7 @@ def generate_feed_for_physical_process(process, user, edit_description_form=None
 
     :type process: `models.Process`
     :type user: `models.UserDetails`
-    :type edit_description_form: `utils.EditDescriptionForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm`
     """
     if edit_description_form:
         print edit_description_form.cleaned_data["important"]
