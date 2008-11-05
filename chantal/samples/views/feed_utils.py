@@ -43,6 +43,19 @@ def generate_feed_for_physical_process(process, user, edit_description_form=None
         entry.users = get_watchers(process, important=True)
 
 def generate_feed_for_result_process(result, user, edit_description_form=None):
+    u"""Generate a feed entry for a physical process (deposition, measurement,
+    etching etc) which was recently edited or created.
+
+    :Parameters:
+      - `result`: the result process which was added/edited recently
+      - `user`: the user who added/edited the result (actually, his details)
+      - `edit_description_form`: the form containing data about what was edited
+        in the result.  ``None`` if the process was newly created.
+
+    :type result: `models.Result`
+    :type user: `models.UserDetails`
+    :type edit_description_form: `form_utils.EditDescriptionForm`
+    """
     if edit_description_form:
         entry = models.FeedResult.objects.create(
             originator=user, result=result, is_new=False,
