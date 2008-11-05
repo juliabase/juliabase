@@ -229,3 +229,12 @@ def new(request):
     return render_to_response("edit_result.html", {"title": _(u"New result"), "is_new": True, "result": result_form,
                                                    "related_data": related_data_form},
                               context_instance=RequestContext(request))
+
+@login_required
+def show(request, process_id):
+    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
+    permissions.assert_can_view_result_process(request.user, result)
+    template_context = {"title": _(u"Result “%s”") % result.title, "result": result,
+                        "samples": result.samples.all(), "sample_series": result.sample_series.all()}
+    template_context.update(utils.ResultContext(request.user, sample_series=None).digest_process(result))
+    return render_to_response("show_single_result.html", template_context, context_instance=RequestContext(request))

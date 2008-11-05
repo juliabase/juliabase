@@ -82,6 +82,7 @@ urlpatterns = patterns("",
 
                        (r"^results/add/$", "samples.views.result.new"),
                        (r"^results/(?P<process_id>.+)/edit/$", "samples.views.result.edit"),
+                       (r"^results/(?P<process_id>.+)", "samples.views.result.show"),
 
                        url(r"^pds_measurements/add/$", "samples.views.pds_measurement.edit", {"pd_number": None},
                            "add_pds_measurement"),

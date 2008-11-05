@@ -6,15 +6,15 @@
 {% block content %}
   <div class="process">
     <p class="operator_and_timestamp">
-      {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
+      {{ result.operator|get_really_full_name }}, {{ result.timestamp }}
     </p>
     {% if samples or sample_series %}
       <p>
         {% if samples %}
           {% blocktrans count samples|length as counter and samples.0.get_absolute_url as link and samples.0.name as name %}
-            This process was applied to the sample <a href="{{ link }}">{{ name }}</a>.
+            This result belongs to the sample <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
-            This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
+            This result belongs to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktrans %}
           {% if not samples|length_is:"1" %}
             <ul>
@@ -26,9 +26,9 @@
         {% endif %}
         {% if sample_series %}
           {% blocktrans count sample_series|length as counter and sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
-            This process was applied to the sample series <a href="{{ link }}">{{ name }}</a>.
+            This result belongs to the sample series <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
-            This process was applied to the following sample_series:  
+            This result belongs to the following sample_series:  
             <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktrans %}
           {% if not sample_series|length_is:"1" %}
@@ -44,8 +44,6 @@
               
     {{ html_body }}
 
-    {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% trans 'Edit this process' %}</a></p>{% endif %}
-    {% if duplicate_url %}<p><a class="duplicate-button" href="{{ duplicate_url }}"
-                                >{% trans 'Duplicate this process' %}</a></p>{% endif %}
+    {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% trans 'Edit this result' %}</a></p>{% endif %}
   </div>
 {% endblock %}

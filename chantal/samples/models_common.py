@@ -434,6 +434,9 @@ class Result(Process):
                 return _(u"result for %s") % self.sample_series.get()
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
                 return _(u"result #%d") % self.pk
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.result.show", (self.pk,))
     def get_image_locations(self):
         u"""Get the location of the image in the local filesystem as well
         as on the webpage.  The results are without file extension so that you
