@@ -22,8 +22,9 @@
   </ul>
 {% endif %}
 {% if entry.result.sample_series.count %}
+  <p>{% trans 'Series:' %}</p>
   <ul>
-    {% for sample in entry.result.sample_series.all %}
+    {% for sample_series in entry.result.sample_series.all %}
       <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series.name }}</a></li>
     {% endfor %}
   </ul>
