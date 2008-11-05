@@ -245,7 +245,6 @@ class ResultContext(object):
         """
         results = []
         for result in self.sample_series.results.all():
-            assert result.find_actual_instance().__class__ in models.result_process_classes
             results.append(self.digest_process(result))
         return results
 
