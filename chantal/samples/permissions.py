@@ -270,7 +270,7 @@ def assert_can_view_result_process(user, result_process):
                 for sample_series in result_process.sample_series.all()):
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
-        raise PermissionError(user, description)
+        raise PermissionError(user, description, new_group_would_help=True)
 
 def assert_can_add_result_process(user, sample_or_series):
     u"""Tests whether the user can add a result process.
