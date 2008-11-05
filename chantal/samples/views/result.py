@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
@@ -220,6 +220,7 @@ def new(request):
             if related_data_form.is_valid():
                 result.samples = related_data_form.cleaned_data["samples"]
                 result.sample_series = related_data_form.cleaned_data["sample_series"]
+                feed_utils.generate_feed_for_result_process(result, request.user, edit_description_form=None)
                 return utils.successful_response(request)
             else:
                 result.delete()

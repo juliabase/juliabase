@@ -151,14 +151,14 @@ class FeedResult(FeedEntry):
         _ = ugettext
         metadata = {}
         if self.is_new:
-            metadata["title"] = _(u"New %s") % result
+            metadata["title"] = _(u"New: %s") % self.result.title
             metadata["category term"] = "new result"
             metadata["category label"] = _(u"new result")
         else:
-            metadata["title"] = _(u"Edited %s") % result
+            metadata["title"] = _(u"Edited: %s") % self.result.title
             metadata["category term"] = "edited result"
             metadata["category label"] = _(u"edited result")
-        metadata["link"] = result.get_absolute_url()
+        metadata["link"] = self.result.get_absolute_url()
         return metadata
     def get_additional_template_context(self, user_details):
         return self.result.get_image()
