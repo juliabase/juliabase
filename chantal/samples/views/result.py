@@ -145,19 +145,24 @@ def edit(request, process_id):
     if request.method == "POST":
         result_form = ResultForm(request.POST, instance=result)
         related_data_form = RelatedDataForm(user_details, None, request.POST, request.FILES)
+        edit_description_form = form_utils.EditDescriptionForm(request.POST)
         all_valid = result_form.is_valid()
         all_valid = related_data_form.is_valid() and all_valid
+        all_valid = edit_description_form.is_valid() and all_valid
         if all_valid:
             result_form.save()
             if related_data_form.cleaned_data["image_file"]:
                 save_image_file(request.FILES["image_file"], result, related_data_form)
             if related_data_form.is_valid():
+                feed_utils.generate_feed_for_result_process(result, request.user, edit_description_form)
                 return utils.successful_response(request)
     else:
         result_form = ResultForm(instance=result)
         related_data_form = RelatedDataForm(user_details, None)
+        edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("edit_result.html", {"title": _(u"Edit result"), "is_new": False, "result": result_form,
-                                                   "related_data": related_data_form},
+                                                   "related_data": related_data_form,
+                                                   "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
 def is_referentially_valid(related_data_form, user):
@@ -233,6 +238,22 @@ def new(request):
 
 @login_required
 def show(request, process_id):
+    u"""Shows a particular result process.  The main purpose of this view is to
+    be able to visit a result directly from a feed entry about a new/edited
+    result.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the database ID of the result to show
+
+    :type request: ``HttpRequest``
+    :type process_id: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     template_context = {"title": _(u"Result “%s”") % result.title, "result": result,
