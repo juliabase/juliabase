@@ -239,7 +239,7 @@ def assert_can_edit_result_process(user, result_process):
       - `result_process`: The result process to edit.
 
     :type user: ``django.contrib.auth.models.User``
-    :type result_process: `models.Process`  FixMe: Should be ResultProcess
+    :type result_process: `models.Result`
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit the result
@@ -248,6 +248,28 @@ def assert_can_edit_result_process(user, result_process):
     if result_process.operator != user:
         description = _(u"You are not allowed to edit the result “%s” because you didn't create this result.") \
             % unicode(result_process)
+        raise PermissionError(user, description)
+
+def assert_can_view_result_process(user, result_process):
+    u"""Tests whether the user can view a result process.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `result_process`: The result process to edit.
+
+    :type user: ``django.contrib.auth.models.User``
+    :type result_process: `models.Result`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to view the result
+        process.
+    """
+    if result_process.operator != user and \
+            all(not has_permission_to_view_sample(user, sample) for sample in result_process.samples.all()) and \
+            all(not has_permission_to_view_sample_series(user, sample_series)
+                for sample_series in result_process.sample_series.all()):
+        description = _(u"You are not allowed to view the result “%s” because neither did you create this result,"
+                        u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
         raise PermissionError(user, description)
 
 def assert_can_add_result_process(user, sample_or_series):
