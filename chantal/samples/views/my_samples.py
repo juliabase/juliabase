@@ -14,7 +14,7 @@ from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 
 class _MySeries(object):
     u"""Helper class for building the HTML ``<OPTGROUP>`` structure used in
@@ -152,7 +152,8 @@ def save_to_database(user, my_samples_form, action_form):
         recipient_my_samples = utils.get_profile(action_data["copy_to_user"]).my_samples
     if action_data["remove_from_my_samples"]:
         current_user_my_samples = utils.get_profile(user).my_samples
-    for sample in my_samples_form.cleaned_data["samples"]:
+    samples = my_samples_form.cleaned_data["samples"]
+    for sample in samples:
         old_group, old_responsible_person = sample.group, sample.currently_responsible_person
         if action_data["new_currently_responsible_person"]:
             sample.currently_responsible_person = action_data["new_currently_responsible_person"]
@@ -170,6 +171,7 @@ def save_to_database(user, my_samples_form, action_form):
             recipient_my_samples.add(sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
+    feed_utils.generate_feed_for_copied_my_samples(samples, user, action_data["copy_to_user"], action_data["comment"])
 
 @login_required
 def edit(request, username):

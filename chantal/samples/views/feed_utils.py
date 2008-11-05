@@ -6,6 +6,7 @@ views shortly after the database was changed in one way or another.
 """
 
 from chantal.samples import models
+from chantal.samples.views import utils
 
 def get_watchers(process_or_sample_series, important):
     users = []
@@ -70,3 +71,8 @@ def generate_feed_for_result_process(result, user, edit_description_form=None):
         for sample_series in result.sample_series.all():
             users.extend(get_watchers(sample_series, important=True))
         entry.users = get_watchers(result, important=True)
+
+def generate_feed_for_copied_my_samples(samples, from_user, to_user, comments):
+    entry = models.FeedCopiedMySamples.objects.create(originator=from_user, comments=comments, recipient=to_user)
+    entry.samples = samples
+    entry.users.add(utils.get_profile(to_user))
