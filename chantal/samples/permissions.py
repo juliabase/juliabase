@@ -268,7 +268,7 @@ def assert_can_view_result_process(user, result_process):
             all(not has_permission_to_view_sample(user, sample) for sample in result_process.samples.all()) and \
             all(not has_permission_to_view_sample_series(user, sample_series)
                 for sample_series in result_process.sample_series.all()):
-        description = _(u"You are not allowed to view the result “%s” because neither did you create this result,"
+        description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
         raise PermissionError(user, description)
 
