@@ -44,6 +44,11 @@ class FeedEntry(models.Model):
         u"""Return a dictionary with additional context that should be
         available in the template.  It is similar to
         `models_depositions.SixChamberDeposition.get_additional_template_context`.
+        However, in contrast to this other method, the feed version is
+        implemented in the abstract base class, so it is defined in all feed
+        models.  The rationale for this is that it is used in almost every feed
+        model anyway.  If not overridden, this method returns an empty
+        dictionary.
 
         :Parameters:
           - `user_details`: the details of the user fetching the feed
@@ -56,7 +61,7 @@ class FeedEntry(models.Model):
 
         :rtype: dict mapping str to arbitrary objects
         """
-        raise NotImplementedError
+        return {}
     def save(self, *args, **kwargs):
         u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
         the timestamp, the username of the originator, the object's ID, and the
@@ -178,8 +183,6 @@ class FeedCopiedMySamples(FeedEntry):
         metadata["category term"] = "copied samples"
         metadata["category label"] = _(u"copied My Samples")
         return metadata
-    def get_additional_template_context(self, user_details):
-        return {}
     class Meta:
         verbose_name = _(u"copied My Samples feed entry")
         verbose_name_plural = _(u"copied My Samples feed entries")
