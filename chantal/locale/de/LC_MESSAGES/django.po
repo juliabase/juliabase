@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-05 23:55+0100\n"
-"PO-Revision-Date: 2008-11-05 23:57+0100\n"
+"POT-Creation-Date: 2008-11-06 09:14+0100\n"
+"PO-Revision-Date: 2008-11-06 09:15+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -600,9 +600,6 @@ msgstr "Feed-Eintrag für Ergebnis"
 
 msgid "result feed entries"
 msgstr "Feed-Einträge für Ergebnisse"
-
-msgid "recipient"
-msgstr "Empfänger"
 
 #, python-format
 msgid "%s copied samples to you"
@@ -1839,6 +1836,71 @@ msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 #, python-format
 msgid ""
 "\n"
+"      %(originator)s has copied the following sample to your “My Samples” "
+"list:\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(originator)s has copied the following samples to your “My Samples” "
+"list:\n"
+"    "
+msgstr[0] "\n%(originator)s hat die folgende Probe zu Ihrer „Meine-Proben“-Liste hinzugefügt:"
+msgstr[1] "\n%(originator)s hat die folgenden Proben zu Ihrer „Meine-Proben“-Liste hinzugefügt:"
+
+#, python-format
+msgid ""
+"\n"
+"    Further information given by %(originator)s:\n"
+"  "
+msgstr "\nWeitere Informationen, die %(originator)s gab:"
+
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s changed <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+msgstr ""
+"\n"
+"    %(originator)s änderte <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+
+msgid ""
+"\n"
+"    This affected the following sample:\n"
+"  "
+msgid_plural ""
+"\n"
+"    This affected the following samples:\n"
+"  "
+msgstr[0] ""
+"\n"
+"Das betraf die folgende Probe:"
+msgstr[1] ""
+"\n"
+"Das betraf die folgenden Proben:"
+
+msgid "The change was significant."
+msgstr "Die Änderung war signifikant."
+
+msgid "The change was minor."
+msgstr "Die Änderung war kleinerer Natur."
+
+msgid "Description of the change:"
+msgstr "Beschreibung der Änderung:"
+
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s finished <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+msgstr ""
+"\n"
+"    %(originator)s führte <a href=\"%(url)s\">%(process)s</a> durch.\n"
+"  "
+
+#, python-format
+msgid ""
+"\n"
 "      %(originator)s has added the following sample in the group “%(group)s” "
 "to the database:\n"
 "    "
@@ -1888,50 +1950,6 @@ msgstr[0] ""
 msgstr[1] ""
 "\n"
 "Die Proben wurden nicht zu „Meine Proben“ hinzugefügt."
-
-#, python-format
-msgid ""
-"\n"
-"    %(originator)s changed <a href=\"%(url)s\">%(process)s</a>.\n"
-"  "
-msgstr ""
-"\n"
-"    %(originator)s änderte <a href=\"%(url)s\">%(process)s</a>.\n"
-"  "
-
-msgid ""
-"\n"
-"    This affected the following sample:\n"
-"  "
-msgid_plural ""
-"\n"
-"    This affected the following samples:\n"
-"  "
-msgstr[0] ""
-"\n"
-"Das betraf die folgende Probe:"
-msgstr[1] ""
-"\n"
-"Das betraf die folgenden Proben:"
-
-msgid "The change was significant."
-msgstr "Die Änderung war signifikant."
-
-msgid "The change was minor."
-msgstr "Die Änderung war kleinerer Natur."
-
-msgid "Description of the change:"
-msgstr "Beschreibung der Änderung:"
-
-#, python-format
-msgid ""
-"\n"
-"    %(originator)s finished <a href=\"%(url)s\">%(process)s</a>.\n"
-"  "
-msgstr ""
-"\n"
-"    %(originator)s führte <a href=\"%(url)s\">%(process)s</a> durch.\n"
-"  "
 
 #, python-format
 msgid ""
@@ -2457,6 +2475,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "recipient"
+#~ msgstr "Empfänger"
 
 #~ msgid "Comments"
 #~ msgstr "Kommentare"

@@ -73,6 +73,6 @@ def generate_feed_for_result_process(result, user, edit_description_form=None):
         entry.users = get_watchers(result, important=True)
 
 def generate_feed_for_copied_my_samples(samples, from_user, to_user, comments):
-    entry = models.FeedCopiedMySamples.objects.create(originator=from_user, comments=comments, recipient=to_user)
+    entry = models.FeedCopiedMySamples.objects.create(originator=from_user, comments=comments)
     entry.samples = samples
     entry.users.add(utils.get_profile(to_user))

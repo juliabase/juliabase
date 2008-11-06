@@ -171,15 +171,12 @@ admin.site.register(FeedResult)
 class FeedCopiedMySamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     comments = models.TextField(_(u"comments"))
-    recipient = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"recipient"))
     def get_metadata(self):
         _ = ugettext
         metadata = {}
         metadata["title"] = _(u"%s copied samples to you") % self.originator
         metadata["category term"] = "copied samples"
         metadata["category label"] = _(u"copied My Samples")
-        metadata["link"] = django.core.urlresolvers.reverse(
-            "samples.views.my_samples.edit", kwargs={"username": self.recipient.username})
         return metadata
     def get_additional_template_context(self, user_details):
         return {}
