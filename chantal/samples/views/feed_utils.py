@@ -8,9 +8,9 @@ views shortly after the database was changed in one way or another.
 from chantal.samples import models
 from chantal.samples.views import utils
 
-def get_watchers(process_or_sample_series, important):
+def get_interested_users(samples, important=True):
     users = []
-    for sample in process_or_sample_series.samples.all():
+    for sample in samples:
         if important:
             users.extend(sample.watchers.all())
         else:
@@ -18,6 +18,9 @@ def get_watchers(process_or_sample_series, important):
                 if not user.only_important_news:
                     users.append(user)
     return users
+
+def get_watchers(process_or_sample_series, important=True):
+    return get_interested_users(process_or_sample_series.samples.all(), important)
     
 def generate_feed_for_physical_process(process, user, edit_description_form=None):
     u"""Generate a feed entry for a physical process (deposition, measurement,
@@ -41,7 +44,7 @@ def generate_feed_for_physical_process(process, user, edit_description_form=None
         entry.users = get_watchers(process, entry.important)
     else:
         entry = models.FeedNewPhysicalProcess.objects.create(originator=user, process=process)
-        entry.users = get_watchers(process, important=True)
+        entry.users = get_watchers(process)
 
 def generate_feed_for_result_process(result, user, edit_description_form=None):
     u"""Generate a feed entry for a physical process (deposition, measurement,
@@ -69,10 +72,17 @@ def generate_feed_for_result_process(result, user, edit_description_form=None):
     else:
         entry = models.FeedResult.objects.create(originator=user, result=result, is_new=True)
         for sample_series in result.sample_series.all():
-            users.extend(get_watchers(sample_series, important=True))
-        entry.users = get_watchers(result, important=True)
+            users.extend(get_watchers(sample_series))
+        entry.users = get_watchers(result)
 
 def generate_feed_for_copied_my_samples(samples, from_user, to_user, comments):
     entry = models.FeedCopiedMySamples.objects.create(originator=from_user, comments=comments)
     entry.samples = samples
     entry.users.add(utils.get_profile(to_user))
+
+def generate_feed_for_edited_samples(samples, user, formerly_interested_users, edit_description_form):
+    important = edit_description_form.cleaned_data["important"]
+    entry = models.FeedEditedSamples.objects.create(
+        originator=user, description=edit_description_form.cleaned_data["description"], important=important)
+    entry.samples = samples
+    entry.users = list(set(get_interested_users(samples, important) + formerly_interested_users))

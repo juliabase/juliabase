@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load samples_extras %}
+
+{% with entry.samples.all as samples %}
+  <p>
+    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and samples.0 as first_sample and samples.0.get_absolute_url as first_url %}
+      {{ originator }} has edited the sample <a href="{{ first_url }}">{{ first_sample }}</a>.
+    {% plural %}
+      {{ originator }} has edited the following samples:  <!-- {{ first_url }} {{ first_sample }} (to appease gettext) -->
+    {% endblocktrans %}
+  </p>
+
+  {% if not samples|length_is:"1" %}
+    <ul>
+      {% for sample in samples %}
+	<li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<p>
+  {% if entry.important %}
+    {% trans 'The change was significant.' %}
+  {% else %}
+    {% trans 'The change was minor.' %}
+  {% endif %}
+  {% trans 'Description of the change:' %}
+</p>
+
+<blockquote>
+  {{ entry.description|markdown }}
+</blockquote>

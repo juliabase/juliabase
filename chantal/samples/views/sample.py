@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
@@ -61,20 +61,27 @@ def edit(request, sample_name):
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         sample_form = SampleForm(request.POST, instance=sample)
-        if sample_form.is_valid():
+        edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        if all([sample_form.is_valid(), edit_description_form.is_valid()]):
+            formerly_interested_users = \
+                feed_utils.get_interested_users([sample], edit_description_form.cleaned_data["important"])
             sample = sample_form.save()
             if sample.group and sample.group != old_group:
                 for watcher in sample.group.auto_adders.all():
                     watcher.my_samples.add(sample)
             if sample.currently_responsible_person != old_responsible_person:
                 utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
+            feed_utils.generate_feed_for_edited_samples(
+                [sample], request.user, formerly_interested_users, edit_description_form)
             return utils.successful_response(request,
                                              _(u"Sample %s was successfully changed in the database.") % sample.name,
                                              sample.get_absolute_url())
     else:
         sample_form = SampleForm(instance=sample)
+        edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
-                                                   "sample_name": sample.name, "sample": sample_form},
+                                                   "sample_name": sample.name, "sample": sample_form,
+                                                   "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
 def get_allowed_processes(user, sample):

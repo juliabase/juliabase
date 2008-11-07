@@ -187,3 +187,21 @@ class FeedCopiedMySamples(FeedEntry):
         verbose_name = _(u"copied My Samples feed entry")
         verbose_name_plural = _(u"copied My Samples feed entries")
 admin.site.register(FeedCopiedMySamples)
+
+class FeedEditedSamples(FeedEntry):
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
+    description = models.TextField(_(u"description"))
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        if self.samples.count() == 1:
+            metadata["title"] = _(u"Sample %s was edited") % self.samples.all()[0]
+        else:
+            metadata["title"] = _(u"Samples were edited")
+        metadata["category term"] = "edited samples"
+        metadata["category label"] = _(u"edited samples")
+        return metadata
+    class Meta:
+        verbose_name = _(u"edited samples feed entry")
+        verbose_name_plural = _(u"edit samples feed entries")
+admin.site.register(FeedEditedSamples)
