@@ -30,7 +30,7 @@ class Reporter(object):
         self.add_interested_users(process_or_sample_series.samples.all(), important)
     def add_group_members(self, group):
         self.interested_users.update(utils.get_profile(user) for user in group.user_set.all())
-    def generate_feed_new_samples(self, samples):
+    def report_new_samples(self, samples):
         u"""Generate one feed entry for new samples.
 
         :Parameters:
@@ -46,7 +46,7 @@ class Reporter(object):
             entry.auto_adders = group.auto_adders.all()
             self.add_group_members(group)
             self.inform_users(entry)
-    def generate_feed_for_physical_process(self, process, edit_description_form=None):
+    def report_physical_process(self, process, edit_description_form=None):
         u"""Generate a feed entry for a physical process (deposition, measurement,
         etching etc) which was recently edited or created.
 
@@ -58,18 +58,16 @@ class Reporter(object):
         :type process: `models.Process`
         :type edit_description_form: `form_utils.EditDescriptionForm`
         """
+        important = edit_description_form.cleaned_data["important"] if edit_description_form else True
         if edit_description_form:
             entry = models.FeedEditedPhysicalProcess.objects.create(
                 originator=self.originator, process=process,
-                description=edit_description_form.cleaned_data["description"],
-                important=edit_description_form.cleaned_data["important"])
-            self.add_watchers(process, entry.important)
-            self.inform_users(entry)
+                description=edit_description_form.cleaned_data["description"], important=important)
         else:
             entry = models.FeedNewPhysicalProcess.objects.create(originator=user, process=process)
-            self.add_watchers(process)
-            self.inform_users(entry)
-    def generate_feed_for_result_process(self, result, edit_description_form=None):
+        self.add_watchers(process, important)
+        self.inform_users(entry)
+    def report_result_process(self, result, edit_description_form=None):
         u"""Generate a feed entry for a physical process (deposition, measurement,
         etching etc) which was recently edited or created.
 
@@ -92,19 +90,19 @@ class Reporter(object):
         for sample_series in result.sample_series.all():
             self.add_watchers(sample_series)
         self.inform_users(entry)
-    def generate_feed_for_copied_my_samples(self, samples, recipient, comments):
+    def report_copied_my_samples(self, samples, recipient, comments):
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
         entry.samples = samples
         self.interested_users.add(utils.get_profile(recipient))
         self.inform_users(entry)
-    def generate_feed_for_new_responsible_person_samples(self, samples, old_responsible_person, edit_description_form):
+    def report_new_responsible_person_samples(self, samples, old_responsible_person, edit_description_form):
         entry = models.FeedEditedSamples.objects.create(
             originator=self.originator, description=edit_description_form.cleaned_data["description"],
             important=edit_description_form.cleaned_data["important"], responsible_person_changed=True)
         entry.samples = samples
         self.interested_users.add(utils.get_profile(samples[0].currently_responsible_person))
         self.inform_users(entry)
-    def generate_feed_changed_sample_group(self, samples, old_group, edit_description_form):
+    def report_changed_sample_group(self, samples, old_group, edit_description_form):
         important = edit_description_form.cleaned_data["important"]
         group = samples[0].group
         entry = models.FeedMovedSamples.objects.create(
@@ -116,7 +114,7 @@ class Reporter(object):
             self.add_group_members(old_group)
         self.add_group_members(group)
         self.inform_users(entry)
-    def generate_feed_for_edited_samples(self, samples, edit_description_form):
+    def report_edited_samples(self, samples, edit_description_form):
         important = edit_description_form.cleaned_data["important"]
         entry = models.FeedEditedSamples.objects.create(
             originator=self.originator, description=edit_description_form.cleaned_data["description"], important=important)

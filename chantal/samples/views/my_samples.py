@@ -171,8 +171,7 @@ def save_to_database(user, my_samples_form, action_form):
             recipient_my_samples.add(sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
-    feed_utils.Reporter(user).generate_feed_for_copied_my_samples(
-        samples, action_data["copy_to_user"], action_data["comment"])
+    feed_utils.Reporter(user).report_copied_my_samples(samples, action_data["copy_to_user"], action_data["comment"])
 
 @login_required
 def edit(request, username):
