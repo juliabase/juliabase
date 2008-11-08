@@ -116,7 +116,6 @@ class Reporter(object):
         if old_group:
             self.add_group_members(old_group)
         self.add_group_members(group)
-        self.add_interested_users(samples, important)
         self.inform_users(entry)
     def generate_feed_for_edited_samples(self, samples, edit_description_form):
         important = edit_description_form.cleaned_data["important"]
