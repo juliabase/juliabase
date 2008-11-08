@@ -7,6 +7,7 @@ views shortly after the database was changed in one way or another.
 
 from chantal.samples import models
 from chantal.samples.views import utils
+from chantal.samples import permissions
 
 class Reporter(object):
     def __init__(self, originator):
@@ -21,12 +22,10 @@ class Reporter(object):
         self.interested_users = set()
     def add_interested_users(self, samples, important=True):
         for sample in samples:
-            if important:
-                self.interested_users.update(sample.watchers.all())
-            else:
-                for user in sample.watchers.all():
-                    if not user.only_important_news:
-                        self.interested_users.add(user)
+            for user in sample.watchers.all():
+                if (important or not user.only_important_news) and \
+                        permissions.has_permission_to_view_sample(user.user, sample):
+                    self.interested_users.add(user)
     def add_watchers(self, process_or_sample_series, important=True):
         self.add_interested_users(process_or_sample_series.samples.all(), important)
     def add_group_members(self, group):
