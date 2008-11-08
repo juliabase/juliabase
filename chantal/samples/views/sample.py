@@ -35,9 +35,23 @@ class SampleForm(forms.ModelForm):
     # FixMe: What about inactive users?
     currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
                                                                   queryset=django.contrib.auth.models.User.objects.all())
+    def __init__(self, *args, **kwargs):
+        super(SampleForm, self).__init__(*args, **kwargs)
+        self.fields["group"].required = True
     class Meta:
         model = models.Sample
         exclude = ("name", "split_origin", "processes")
+
+def is_referentially_valid(sample, sample_form, edit_description_form):
+    referentially_valid = True
+    if sample_form.is_valid() and edit_description_form.is_valid() and \
+            (sample_form.cleaned_data["group"] != sample.group or
+             sample_form.cleaned_data["currently_responsible_person"] != sample.currently_responsible_person) and \
+             not edit_description_form.cleaned_data["important"]:
+        referentially_valid = False
+        form_utils.append_error(edit_description_form,
+                                _(u"Changing the group or the responsible person must be marked as important."), "important")
+    return referentially_valid
 
 @login_required
 def edit(request, sample_name):
@@ -62,17 +76,19 @@ def edit(request, sample_name):
     if request.method == "POST":
         sample_form = SampleForm(request.POST, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
-        if all([sample_form.is_valid(), edit_description_form.is_valid()]):
-            formerly_interested_users = \
-                feed_utils.get_interested_users([sample], edit_description_form.cleaned_data["important"])
+        referentially_valid = is_referentially_valid(sample, sample_form, edit_description_form)
+        if all([sample_form.is_valid(), edit_description_form.is_valid()]) and referentially_valid:
             sample = sample_form.save()
+            feed_reporter = feed_utils.Reporter(request.user)
+            if sample.currently_responsible_person != old_responsible_person:
+                utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
+                feed_reporter.generate_feed_for_new_responsible_person_samples(
+                    [sample], old_responsible_person, edit_description_form)
             if sample.group and sample.group != old_group:
                 for watcher in sample.group.auto_adders.all():
                     watcher.my_samples.add(sample)
-            if sample.currently_responsible_person != old_responsible_person:
-                utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
-            feed_utils.generate_feed_for_edited_samples(
-                [sample], request.user, formerly_interested_users, edit_description_form)
+                feed_reporter.generate_feed_changed_sample_group([sample], old_group, edit_description_form)
+            feed_reporter.generate_feed_for_edited_samples([sample], edit_description_form)
             return utils.successful_response(request,
                                              _(u"Sample %s was successfully changed in the database.") % sample.name,
                                              sample.get_absolute_url())
@@ -260,32 +276,6 @@ def add_samples_to_database(add_samples_form, user):
                 watcher.my_samples.add(sample)
     return new_names, samples
 
-def generate_feed_entry_and_my_samples(samples, group, purpose, user):
-    u"""Generate one feed entry for the new samples, and add the sample to “My
-    Samples” of interested users.
-
-    :Parameters:
-      - `samples`: the samples that were added
-      - `group`: the group to which the samples were added
-      - `purpose`: the optional purpose of the samples
-      - `user`: the user who added the samples
-
-    :type samples: list of `models.Sample`
-    :type group: ``django.contrib.auth.models.Group``
-    :type purpose: unicode
-    :type user: ``django.contrib.auth.models.User``
-    """
-    sample_group = group
-    if sample_group:
-        feed_entry = models.FeedNewSamples.objects.create(originator=user, group=sample_group, purpose=purpose)
-        feed_entry.samples = samples
-        feed_entry.users = [utils.get_profile(user) for user in sample_group.user_set.all()]
-        auto_adders = sample_group.auto_adders.all()
-        feed_entry.auto_adders = auto_adders
-        for watcher in auto_adders:
-            for sample in samples:
-                watcher.my_samples.add(sample)
-
 @login_required
 def add(request):
     u"""View for adding new samples.
@@ -307,7 +297,10 @@ def add(request):
             cleaned_data = add_samples_form.cleaned_data
             new_names, samples = add_samples_to_database(add_samples_form, request.user)
             ids = [sample.pk for sample in samples]
-            generate_feed_entry_and_my_samples(samples, cleaned_data["group"], cleaned_data["purpose"], request.user)
+            feed_utils.Reporter(request.user).generate_feed_new_samples(samples)
+            for watcher in cleaned_data["group"].auto_adders.all():
+                for sample in samples:
+                    watcher.my_samples.add(sample)
             if len(new_names) > 1:
                 success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "

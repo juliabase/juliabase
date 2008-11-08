@@ -40,7 +40,7 @@ def save_image_file(image_data, result, related_data_form):
         if i == 0:
             if chunk.startswith("\211PNG\r\n\032\n"):
                 new_image_type = "png"
-            elif chunk.startswith("\xff\xd8\xff\xe0\x00\x10JFIF"):
+            elif chunk.startswith("\xff\xd8\xff"):
                 new_image_type = "jpeg"
             elif chunk.startswith("%PDF"):
                 new_image_type = "pdf"
@@ -154,7 +154,7 @@ def edit(request, process_id):
             if related_data_form.cleaned_data["image_file"]:
                 save_image_file(request.FILES["image_file"], result, related_data_form)
             if related_data_form.is_valid():
-                feed_utils.generate_feed_for_result_process(result, request.user, edit_description_form)
+                feed_utils.Reporter(request.user).generate_feed_for_result_process(result, edit_description_form)
                 return utils.successful_response(request)
     else:
         result_form = ResultForm(instance=result)
@@ -225,7 +225,7 @@ def new(request):
             if related_data_form.is_valid():
                 result.samples = related_data_form.cleaned_data["samples"]
                 result.sample_series = related_data_form.cleaned_data["sample_series"]
-                feed_utils.generate_feed_for_result_process(result, request.user, edit_description_form=None)
+                feed_utils.Reporter(request.user).generate_feed_for_result_process(result, edit_description_form=None)
                 return utils.successful_response(request)
             else:
                 result.delete()

@@ -156,8 +156,6 @@ def show(request, username):
     ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/juelich.png"
     only_important = user_details.only_important_news
     for entry in entries:
-        if entry.originator == user and not settings.DEBUG:
-            continue
         if only_important and not entry.important:
             continue
         entry_element = ElementTree.SubElement(feed, "entry")

@@ -86,10 +86,11 @@ class FeedEntry(models.Model):
         ordering = ["-timestamp"]
 
 class FeedNewSamples(FeedEntry):
-    u"""Model for feed entries about new samples having been added to the database.
+    u"""Model for feed entries about new samples having been added to the
+    database.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
-    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"), related_name="new_samples_news")
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
     def get_metadata(self):
@@ -105,6 +106,29 @@ class FeedNewSamples(FeedEntry):
         verbose_name = _(u"new samples feed entry")
         verbose_name_plural = _(u"new samples feed entries")
 admin.site.register(FeedNewSamples)
+
+class FeedMovedSamples(FeedEntry):
+    u"""Model for feed entries about samples moved to a new group.
+    """
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
+    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"), related_name="moved_samples_news")
+    old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"))
+    auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
+    description = models.TextField(_(u"description"))
+    def get_metadata(self):
+        _ = ugettext
+        result = {}
+        result["title"] = ungettext(u"New sample moved to “%s”", u"New samples moved to “%s”",
+                                    self.samples.count()) % self.group
+        result["category term"] = "moved samples"
+        result["category label"] = _(u"moved samples")
+        return result
+    def get_additional_template_context(self, user_details):
+        return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
+    class Meta:
+        verbose_name = _(u"moved samples feed entry")
+        verbose_name_plural = _(u"moved samples feed entries")
+admin.site.register(FeedMovedSamples)
 
 class FeedNewPhysicalProcess(FeedEntry):
     u"""Model for feed entries about new physical processes.
@@ -191,6 +215,9 @@ admin.site.register(FeedCopiedMySamples)
 class FeedEditedSamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     description = models.TextField(_(u"description"))
+    old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"), null=True, blank=True)
+    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False,
+                                                     null=True, blank=True)
     def get_metadata(self):
         _ = ugettext
         metadata = {}
