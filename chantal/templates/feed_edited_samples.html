@@ -17,16 +17,27 @@
       {% endfor %}
     </ul>
   {% endif %}
-{% endwith %}
 
-<p>
-  {% if entry.important %}
-    {% trans 'The change was significant.' %}
-  {% else %}
-    {% trans 'The change was minor.' %}
-  {% endif %}
-  {% trans 'Description of the change:' %}
-</p>
+  <p>
+    {% if entry.responsible_person_changed %}
+      <em>
+	{% blocktrans count samples|length as counter %}
+	  You are now the new responsible person for this sample.
+	{% plural %}
+	  You are now the new responsible person for these samples.
+	{% endblocktrans %}
+      </em>
+    {% else %}
+      {% if entry.important %}
+	{% trans 'The change was significant.' %}
+      {% else %}
+	{% trans 'The change was minor.' %}
+      {% endif %}
+    {% endif %}
+    {% trans 'Description of the change:' %}
+  </p>
+
+{% endwith %}
 
 <blockquote>
   {{ entry.description|markdown }}
