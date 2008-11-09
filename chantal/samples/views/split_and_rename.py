@@ -15,7 +15,7 @@ from django.forms.util import ValidationError
 from django.db.models import Q
 from chantal.samples import models, permissions
 import django.core.urlresolvers
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 
 class NewNameForm(forms.Form):
     u"""Form for data of one new sample piece.
@@ -197,9 +197,10 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
     :type user: ``django.contrib.auth.models.User``
 
     :Return:
-      the new pieces as a dictionary mapping the new names to the sample IDs
+      the sample split instance, new pieces as a dictionary mapping the new
+      names to the sample IDs
 
-    :rtype: dict mapping unicode to int
+    :rtype: `models.SampleSplit`, dict mapping unicode to int
     """
     now = datetime.datetime.now()
     if not sample_split:
@@ -231,7 +232,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         death = models.SampleDeath(timestamp=now+datetime.timedelta(seconds=5), operator=user, reason="split")
         death.save()
         parent.processes.add(death)
-    return new_pieces
+    return sample_split, new_pieces
         
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
@@ -269,7 +270,8 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
-            new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
+            sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
+            feed_utils.Reporter(request.user).report_sample_split(sample_split)
             return utils.successful_response(request, remote_client_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)

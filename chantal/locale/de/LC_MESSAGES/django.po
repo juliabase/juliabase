@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-08 13:58+0100\n"
-"PO-Revision-Date: 2008-11-08 13:57+0100\n"
+"POT-Creation-Date: 2008-11-09 23:08+0100\n"
+"PO-Revision-Date: 2008-11-09 23:09+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -650,6 +650,19 @@ msgstr "Feed-Eintrag für geänderte Proben"
 
 msgid "edit samples feed entries"
 msgstr "Feed-Einträge für geänderte Proben"
+
+#, python-format
+msgid "Sample “%s” was split"
+msgstr "Probe „%s“ wurde gespalten"
+
+msgid "split sample"
+msgstr "gespaltene Proben"
+
+msgid "sample split feed entry"
+msgstr "Feed-Eintrag für gespaltene Probe"
+
+msgid "sample split feed entries"
+msgstr "Feed-Einträge für gespaltene Probe"
 
 #, python-format
 msgid "hall measurement of %s"
@@ -2108,6 +2121,32 @@ msgstr "Das betraf die folgenden Proben bzw. Probenserien:"
 
 msgid "Series:"
 msgstr "Serien:"
+
+#, python-format
+msgid ""
+"\n"
+"    From the sample <a href=\"%(url)s\">%(parent)s</a>, the following piece "
+"was split:\n"
+"  "
+msgid_plural ""
+"\n"
+"    The sample <a href=\"%(url)s\">%(parent)s</a> was split in the following "
+"pieces:\n"
+"  "
+msgstr[0] ""
+"\n"
+"Von der Probe <a href=\"%(url)s\">%(parent)s</a> wurde das folgende Stück "
+"abgespalten:"
+msgstr[1] ""
+"\n"
+"Die Probe <a href=\\\"%(url)s\\\">%(parent)s</a> wurde in die folgenden "
+"Stücke zerlegt:"
+
+msgid "purpose:"
+msgstr "Zweck:"
+
+msgid "All the child samples are added automatically to “My Samples”."
+msgstr "Alle Kind-Proben werden automatisch zu „Meine Proben“ hinzugefügt."
 
 msgid "Groups"
 msgstr "Gruppen"

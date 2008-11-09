@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.contrib import admin
 from django.db import models
 import django.core.urlresolvers
-from chantal.samples.models_common import Sample, UserDetails, Process, Result
+from chantal.samples.models_common import Sample, UserDetails, Process, Result, SampleSplit
 
 class FeedEntry(models.Model):
     u"""Abstract base model for newsfeed entries.  This is also not really
@@ -232,3 +232,17 @@ class FeedEditedSamples(FeedEntry):
         verbose_name = _(u"edited samples feed entry")
         verbose_name_plural = _(u"edit samples feed entries")
 admin.site.register(FeedEditedSamples)
+
+class FeedSampleSplit(FeedEntry):
+    sample_split = models.ForeignKey(SampleSplit, verbose_name=_(u"sample split"))
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Sample “%s” was split") % self.sample_split.parent
+        metadata["category term"] = "split sample"
+        metadata["category label"] = _(u"split sample")
+        return metadata
+    class Meta:
+        verbose_name = _(u"sample split feed entry")
+        verbose_name_plural = _(u"sample split feed entries")
+admin.site.register(FeedSampleSplit)

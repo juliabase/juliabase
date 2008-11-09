@@ -85,9 +85,10 @@ class Reporter(object):
         entry.users = self.interested_users
         self.interested_users = set()
     def __add_interested_users(self, samples, important=True):
-        u"""Add users interested in news about the given samples.  They are
-        added to the set of users connected with the next generated feed entry
-        by `__inform_users`.
+        u"""Add users interested in news about the given samples.  These are
+        all users that have one of ``samples`` on their “My Samples” list,
+        *and* the level of importance is enough.  They are added to the set of
+        users connected with the next generated feed entry by `__inform_users`.
 
         :Parameters:
           - `samples`: the samples involved in the database change
@@ -287,4 +288,15 @@ class Reporter(object):
             originator=self.originator, description=edit_description_form.cleaned_data["description"], important=important)
         entry.samples = samples
         self.__add_interested_users(samples, important)
+        self.__inform_users(entry)
+    def report_sample_split(self, sample_split):
+        u"""Generate a feed entry for a sample split.
+
+        :Parameters:
+          - `sample_split`: sample split that is to be reported
+
+        :type sample_split: `models.SampleSplit`
+        """
+        entry = models.FeedSampleSplit.objects.create(originator=self.originator, sample_split=sample_split)
+        self.__add_interested_users([sample_split.parent])
         self.__inform_users(entry)
