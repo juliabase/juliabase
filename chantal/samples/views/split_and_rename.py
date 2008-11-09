@@ -271,7 +271,8 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
         if all_valid and referentially_valid and not structure_changed:
             sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            feed_utils.Reporter(request.user).report_sample_split(sample_split)
+            feed_utils.Reporter(request.user).report_sample_split(
+                sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(request, remote_client_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)

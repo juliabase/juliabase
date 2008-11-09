@@ -235,6 +235,7 @@ admin.site.register(FeedEditedSamples)
 
 class FeedSampleSplit(FeedEntry):
     sample_split = models.ForeignKey(SampleSplit, verbose_name=_(u"sample split"))
+    sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False, null=True, blank=True)
     def get_metadata(self):
         _ = ugettext
         metadata = {}

@@ -19,4 +19,14 @@
   {% endfor %}
 </ul>
 
-<p>{% trans 'All the child samples are added automatically to “My Samples”.' %}</p>
+<p>
+  {% blocktrans count entry.sample_split.pieces.count as counter %}
+    The piece was added to “My Samples”.
+  {% plural %}
+    All pieces were added to “My Samples”.
+  {% endblocktrans %}
+  {% if entry.sample_completely_split %}
+    {% trans 'The sample was completely split, i.e. no piece of the parent is left.' %}
+  {% endif %}
+</p>
+

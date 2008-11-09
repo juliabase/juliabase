@@ -289,14 +289,20 @@ class Reporter(object):
         entry.samples = samples
         self.__add_interested_users(samples, important)
         self.__inform_users(entry)
-    def report_sample_split(self, sample_split):
+    def report_sample_split(self, sample_split, sample_completely_split):
         u"""Generate a feed entry for a sample split.
 
         :Parameters:
           - `sample_split`: sample split that is to be reported
+          - `sample_completely_split`: whether the sample was completely split,
+            i.e. no piece of the parent sample is left
 
         :type sample_split: `models.SampleSplit`
+        :type sample_completely_split: bool
         """
-        entry = models.FeedSampleSplit.objects.create(originator=self.originator, sample_split=sample_split)
-        self.__add_interested_users([sample_split.parent])
+        entry = models.FeedSampleSplit.objects.create(originator=self.originator, sample_split=sample_split,
+                                                      sample_completely_split=sample_completely_split)
+        # I can't use the parent sample for this because if it was completely
+        # split, it is already removed from “My Samples”.
+        self.__add_interested_users([sample_split.pieces.all()[0]])
         self.__inform_users(entry)
