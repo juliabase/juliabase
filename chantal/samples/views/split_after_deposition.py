@@ -108,7 +108,7 @@ class GlobalNewDataForm(Form):
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples; leave empty for no change)"))
     def __init__(self, data=None, **kwargs):
-        u"""Form constructor.  I have to initialise the field here, both heir
+        u"""Form constructor.  I have to initialise the field here, both their
         value and their layout.
         """
         deposition_instance = kwargs.pop("deposition_instance")
