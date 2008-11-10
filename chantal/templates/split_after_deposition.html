@@ -9,7 +9,7 @@
       <th>{{ samples.0.0.sample.label }}</th>
       <th>{{ samples.0.0.new_name.label }}</th>
       <th>{{ samples.0.0.number_of_pieces.label }}</th>
-      <th>{{ samples.0.1.0.new_name.label }}<br/>{{ samples.0.1.0.new_responsible_person.label }}</th>
+      <th>{{ samples.0.1.0.new_name.label }}</th>
     </tr>
     {% for sample, new_names in samples %}
       {% if sample.errors or sample.non_field_errors %}
@@ -51,7 +51,7 @@
               {% endif %}
               <tr>
                 <td>
-                  {{ new_name.new_name }}{{ new_name.new_responsible_person }}
+                  {{ new_name.new_name }}
                 </td>
               </tr>
             {% endfor %}
