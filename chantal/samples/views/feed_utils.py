@@ -215,7 +215,7 @@ class Reporter(object):
         entry.samples = samples
         self.interested_users.add(utils.get_profile(recipient))
         self.__inform_users(entry)
-    def report_new_responsible_person_samples(self, samples, old_responsible_person, edit_description_form):
+    def report_new_responsible_person_samples(self, samples, edit_description_form):
         u"""Generate a feed entry for samples that changed their currently
         responsible person.  This feed entry is only sent to that new
         responsible person.  Note that it is possible that further things were
@@ -225,14 +225,11 @@ class Reporter(object):
 
         :Parameters:
           - `samples`: the samples that got a new responsible person
-          - `old_responsible_person`: the formerly responsible person of the
-            samples
           - `edit_description_form`: the form containing data about what was
             edited in the samples (besides the change of the responsible
             person)
 
         :type samples: list of `models.Sample`
-        :type old_responsible_person: ``django.contrib.auth.models.User``
         :type edit_description_form: `form_utils.EditDescriptionForm`
         """
         entry = models.FeedEditedSamples.objects.create(

@@ -82,7 +82,7 @@ def edit(request, sample_name):
             feed_reporter = feed_utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
                 utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
-                feed_reporter.report_new_responsible_person_samples([sample], old_responsible_person, edit_description_form)
+                feed_reporter.report_new_responsible_person_samples([sample], edit_description_form)
             if sample.group and sample.group != old_group:
                 for watcher in sample.group.auto_adders.all():
                     watcher.my_samples.add(sample)
