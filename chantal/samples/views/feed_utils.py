@@ -36,7 +36,7 @@ class Reporter(object):
     ``Reporter`` to a name, as in::
 
         feed_utils.Reporter(request.user).report_result_process(
-                result, edit_description_form=None)
+                result, edit_description=None)
 
     Note that some internal data structures here seem to contain users but in
     fact they contains user *details*.
@@ -154,44 +154,48 @@ class Reporter(object):
             entry.auto_adders = group.auto_adders.all()
             self.__add_group_members(group)
             self.__inform_users(entry)
-    def report_physical_process(self, process, edit_description_form=None):
+    def report_physical_process(self, process, edit_description=None):
         u"""Generate a feed entry for a physical process (deposition, measurement,
         etching etc) which was recently edited or created.
 
         :Parameters:
           - `process`: the process which was added/edited recently
-          - `edit_description_form`: the form containing data about what was edited
-            in the process.  ``None`` if the process was newly created.
+          - `edit_description`: The dictionary containing data about what was
+            edited in the process.  Its keys correspond to the fields of
+            `form_utils.EditDescriptionForm`.  ``None`` if the process was
+            newly created.
 
         :type process: `models.Process`
-        :type edit_description_form: `form_utils.EditDescriptionForm`
+        :type edit_description: dict mapping str to ``object``
         """
-        important = edit_description_form.cleaned_data["important"] if edit_description_form else True
-        if edit_description_form:
+        important = edit_description["important"] if edit_description else True
+        if edit_description:
             entry = models.FeedEditedPhysicalProcess.objects.create(
                 originator=self.originator, process=process,
-                description=edit_description_form.cleaned_data["description"], important=important)
+                description=edit_description["description"], important=important)
         else:
             entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
         self.__add_watchers(process, important)
         self.__inform_users(entry)
-    def report_result_process(self, result, edit_description_form=None):
+    def report_result_process(self, result, edit_description=None):
         u"""Generate a feed entry for a physical process (deposition, measurement,
         etching etc) which was recently edited or created.
 
         :Parameters:
           - `result`: the result process which was added/edited recently
-          - `edit_description_form`: the form containing data about what was
-            edited in the result.  ``None`` if the process was newly created.
+          - `edit_description`: The dictionary containing data about what was
+            edited in the result.  Its keys correspond to the fields of
+            `form_utils.EditDescriptionForm`.  ``None`` if the process was
+            newly created.
 
         :type result: `models.Result`
-        :type edit_description_form: `form_utils.EditDescriptionForm`
+        :type edit_description: dict mapping str to ``object``
         """
-        if edit_description_form:
+        if edit_description:
             entry = models.FeedResult.objects.create(
                 originator=self.originator, result=result, is_new=False,
-                description=edit_description_form.cleaned_data["description"],
-                important=edit_description_form.cleaned_data["important"])
+                description=edit_description["description"],
+                important=edit_description["important"])
         else:
             entry = models.FeedResult.objects.create(originator=self.originator, result=result, is_new=True)
         self.__add_watchers(result, entry.important)
@@ -215,7 +219,7 @@ class Reporter(object):
         entry.samples = samples
         self.interested_users.add(utils.get_profile(recipient))
         self.__inform_users(entry)
-    def report_new_responsible_person_samples(self, samples, edit_description_form):
+    def report_new_responsible_person_samples(self, samples, edit_description):
         u"""Generate a feed entry for samples that changed their currently
         responsible person.  This feed entry is only sent to that new
         responsible person.  Note that it is possible that further things were
@@ -225,20 +229,21 @@ class Reporter(object):
 
         :Parameters:
           - `samples`: the samples that got a new responsible person
-          - `edit_description_form`: the form containing data about what was
+          - `edit_description`: Dictionary containing data about what was
             edited in the samples (besides the change of the responsible
-            person)
+            person).  Its keys correspond to the fields of
+            `form_utils.EditDescriptionForm`.
 
         :type samples: list of `models.Sample`
-        :type edit_description_form: `form_utils.EditDescriptionForm`
+        :type edit_description: dict mapping str to ``object``
         """
         entry = models.FeedEditedSamples.objects.create(
-            originator=self.originator, description=edit_description_form.cleaned_data["description"],
-            important=edit_description_form.cleaned_data["important"], responsible_person_changed=True)
+            originator=self.originator, description=edit_description["description"],
+            important=edit_description["important"], responsible_person_changed=True)
         entry.samples = samples
         self.interested_users.add(utils.get_profile(samples[0].currently_responsible_person))
         self.__inform_users(entry)
-    def report_changed_sample_group(self, samples, old_group, edit_description_form):
+    def report_changed_sample_group(self, samples, old_group, edit_description):
         u"""Generate a feed entry about a group change for sample(s).  All
         members of the former group (if any) and the new group are informed.
         Note that it is possible that further things were changed in the
@@ -249,17 +254,18 @@ class Reporter(object):
           - `samples`: the samples that went into a new group
           - `old_group`: the old group of the samples; may be ``None`` if they
             weren't in any group before
-          - `edit_description_form`: the form containing data about what was
-            edited in the samples (besides the change of the group)
+          - `edit_description`: The dictionary containing data about what was
+            edited in the samples (besides the change of the group).  Its keys
+            correspond to the fields of `form_utils.EditDescriptionForm`.
 
         :type samples: list of `models.Sample`
         :type old_group: ``django.contrib.auth.models.Group``
-        :type edit_description_form: `form_utils.EditDescriptionForm`
+        :type edit_description: dict mapping str to ``object``
         """
-        important = edit_description_form.cleaned_data["important"]
+        important = edit_description["important"]
         group = samples[0].group
         entry = models.FeedMovedSamples.objects.create(
-            originator=self.originator, description=edit_description_form.cleaned_data["description"],
+            originator=self.originator, description=edit_description["description"],
             important=important, group=group, old_group=old_group)
         entry.samples = samples
         entry.auto_adders = group.auto_adders.all()
@@ -267,22 +273,23 @@ class Reporter(object):
             self.__add_group_members(old_group)
         self.__add_group_members(group)
         self.__inform_users(entry)
-    def report_edited_samples(self, samples, edit_description_form):
+    def report_edited_samples(self, samples, edit_description):
         u"""Generate a feed entry about a general edit of sample(s).  All users
         who are allowed to see the sample and who have the sample on their “My
         Samples” list are informed.
 
         :Parameters:
           - `samples`: the samples that went into a new group
-          - `edit_description_form`: the form containing data about what was
-            edited in the samples (besides the change of the group)
+          - `edit_description`: The dictionary containing data about what was
+            edited in the samples (besides the change of the group).  Its keys
+            correspond to the fields of `form_utils.EditDescriptionForm`.
 
         :type samples: list of `models.Sample`
-        :type edit_description_form: `form_utils.EditDescriptionForm`
+        :type edit_description: dict mapping str to ``object``
         """
-        important = edit_description_form.cleaned_data["important"]
+        important = edit_description["important"]
         entry = models.FeedEditedSamples.objects.create(
-            originator=self.originator, description=edit_description_form.cleaned_data["description"], important=important)
+            originator=self.originator, description=edit_description["description"], important=important)
         entry.samples = samples
         self.__add_interested_users(samples, important)
         self.__inform_users(entry)

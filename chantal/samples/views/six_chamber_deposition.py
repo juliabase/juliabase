@@ -476,7 +476,8 @@ def edit(request, deposition_number):
         referentially_valid = is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
         if all_valid and referentially_valid and not structure_changed:
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
-            feed_utils.Reporter(request.user).report_physical_process(deposition, edit_description_form)
+            feed_utils.Reporter(request.user).report_physical_process(
+                deposition, edit_description_form.cleaned_data if edit_description_form else None)
             if remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
             if deposition_number:

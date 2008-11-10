@@ -154,7 +154,7 @@ def edit(request, process_id):
             if related_data_form.cleaned_data["image_file"]:
                 save_image_file(request.FILES["image_file"], result, related_data_form)
             if related_data_form.is_valid():
-                feed_utils.Reporter(request.user).report_result_process(result, edit_description_form)
+                feed_utils.Reporter(request.user).report_result_process(result, edit_description_form.cleaned_data)
                 return utils.successful_response(request)
     else:
         result_form = ResultForm(instance=result)
@@ -225,7 +225,7 @@ def new(request):
             if related_data_form.is_valid():
                 result.samples = related_data_form.cleaned_data["samples"]
                 result.sample_series = related_data_form.cleaned_data["sample_series"]
-                feed_utils.Reporter(request.user).report_result_process(result, edit_description_form=None)
+                feed_utils.Reporter(request.user).report_result_process(result, edit_description=None)
                 return utils.successful_response(request)
             else:
                 result.delete()
