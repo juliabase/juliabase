@@ -172,7 +172,7 @@ class Reporter(object):
                 originator=self.originator, process=process,
                 description=edit_description_form.cleaned_data["description"], important=important)
         else:
-            entry = models.FeedNewPhysicalProcess.objects.create(originator=user, process=process)
+            entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
         self.__add_watchers(process, important)
         self.__inform_users(entry)
     def report_result_process(self, result, edit_description_form=None):

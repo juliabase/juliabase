@@ -18,7 +18,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 
 class OriginalDataForm(Form):
     u"""Form holding the old sample and the number of pieces it is about to be
@@ -197,9 +197,16 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
     :type new_data_form_lists: list of list of `NewDataForm`
     :type global_new_data_form: `GlobalNewDataForm`
     :type deposition: `models.Deposition`
+
+    :Return:
+      all sample splits that were performed; note that they are always
+      complete, i.e. a sample death objects is always created, too
+
+    :rtype: list of `models.SampleSplit`
     """
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     global_new_responsible_person = global_new_data_form.cleaned_data["new_responsible_person"]
+    sample_splits = []
     for original_data_form, new_data_forms in zip(original_data_forms, new_data_form_lists):
         sample = original_data_form.cleaned_data["sample"]
         new_name = original_data_form.cleaned_data["new_name"]
@@ -213,6 +220,7 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
                                               operator=deposition.operator, parent=sample)
             sample_split.save()
             sample.processes.add(sample_split)
+            sample_splits.append(sample_split)
             for new_data_form in new_data_forms:
                 child_sample = sample.duplicate()
                 child_sample.name = new_data_form.cleaned_data["new_name"]
@@ -238,6 +246,7 @@ def save_to_database(original_data_forms, new_data_form_lists, global_new_data_f
             sample.save()
             if formerly_responsible_person != sample.currently_responsible_person:
                 utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
+    return sample_splits
 
 def is_referentially_valid(original_data_forms, new_data_form_lists, deposition):
     u"""Test whether all forms are consistent with each other and with the
@@ -423,7 +432,9 @@ def split_and_rename_after_deposition(request, deposition_number):
         structure_changed = change_structure(original_data_forms, new_data_form_lists)
         referentially_valid = is_referentially_valid(original_data_forms, new_data_form_lists, deposition)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition)
+            sample_splits = save_to_database(original_data_forms, new_data_form_lists, global_new_data_form, deposition)
+            for sample_split in sample_splits:
+                feed_utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
             if not remote_client:
                 request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
                 return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
