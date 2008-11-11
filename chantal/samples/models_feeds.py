@@ -172,7 +172,9 @@ class FeedEditedPhysicalProcess(FeedEntry):
 admin.site.register(FeedEditedPhysicalProcess)
 
 class FeedResult(FeedEntry):
-    u"""Model for feed entries about new or edited result processes.
+    u"""Model for feed entries about new or edited result processes.  Note that
+    this model doesn't care whether the result is connected with samples or
+    sample series or both.  This is distinguished in the HTML template.
     """
     result = models.ForeignKey(Result, verbose_name=_(u"result"))
     description = models.TextField(_(u"description"), blank=True)
@@ -198,6 +200,9 @@ class FeedResult(FeedEntry):
 admin.site.register(FeedResult)
 
 class FeedCopiedMySamples(FeedEntry):
+    u"""Model for feed entries about samples copied from one user to the “My
+    Samples” list of another user.
+    """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     comments = models.TextField(_(u"comments"))
     def get_metadata(self):
@@ -213,6 +218,12 @@ class FeedCopiedMySamples(FeedEntry):
 admin.site.register(FeedCopiedMySamples)
 
 class FeedEditedSamples(FeedEntry):
+    u"""Model for feed entries for edited samples.  This includes group changes
+    and changed currently responsible persons.  The respective view generates
+    three entry for that, however, see `chantal.samples.views.sample.edit`.
+
+    FixMe: This should also include sample deaths.
+    """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     description = models.TextField(_(u"description"))
     old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"), null=True, blank=True)
@@ -234,6 +245,8 @@ class FeedEditedSamples(FeedEntry):
 admin.site.register(FeedEditedSamples)
 
 class FeedSampleSplit(FeedEntry):
+    u"""Model for feed entries for sample splits.
+    """
     sample_split = models.ForeignKey(SampleSplit, verbose_name=_(u"sample split"))
     sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False, null=True, blank=True)
     def get_metadata(self):
