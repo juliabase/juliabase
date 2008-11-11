@@ -94,11 +94,13 @@ class ActionForm(forms.Form):
         form_utils.check_markdown(comment)
         return comment
     def clean(self):
-        action_data = self.cleaned_data
-        if (self.cleaned_data["new_currently_responsible_person"] or self.cleaned_data["copy_to_user"]) and \
-                not self.cleaned_data["comment"]:
-            raise ValidationError(_(u"If you move samples over to another person, you must enter a short comment."))
-        return action_data
+        cleaned_data = self.cleaned_data
+        if cleaned_data["copy_to_user"] and not cleaned_data["comment"]:
+            raise ValidationError(_(u"If you copy samples over to another person, you must enter a short comment."))
+        if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_group"] or
+            cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
+            raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
+        return cleaned_data
 
 def is_referentially_valid(current_user, my_samples_form, action_form):
     u"""Test whether all forms are consistent with each other and with the
@@ -136,6 +138,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
 
 def save_to_database(user, my_samples_form, action_form):
     u"""Execute the things that should be done with the selected “My Samples”.
+    I do also the feed generation here.
 
     :Parameters:
       - `user`: the user whose “My Samples” should be edited
@@ -153,11 +156,19 @@ def save_to_database(user, my_samples_form, action_form):
     if action_data["remove_from_my_samples"]:
         current_user_my_samples = utils.get_profile(user).my_samples
     samples = my_samples_form.cleaned_data["samples"]
+    samples_with_new_responsible_person = []
+    samples_with_new_group = {}
     for sample in samples:
         old_group, old_responsible_person = sample.group, sample.currently_responsible_person
-        if action_data["new_currently_responsible_person"]:
+        if action_data["new_currently_responsible_person"] and \
+                action_data["new_currently_responsible_person"] != sample.currently_responsible_person:
             sample.currently_responsible_person = action_data["new_currently_responsible_person"]
-        if action_data["new_group"]:
+            samples_with_new_responsible_person.append(sample)
+        if action_data["new_group"] and action_data["new_group"] != sample.group:
+            if sample.group not in samples_with_new_group:
+                samples_with_new_group[sample.group] = [sample]
+            else:
+                samples_with_new_group[sample.group].append(sample)
             sample.group = action_data["new_group"]
         if action_data["new_current_location"]:
             sample.current_location = action_data["new_current_location"]
@@ -171,6 +182,15 @@ def save_to_database(user, my_samples_form, action_form):
             recipient_my_samples.add(sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
+    feed_reporter = feed_utils.Reporter(user)
+    edit_description = {"important": True, "description": action_data["comment"]}
+    if samples_with_new_responsible_person:
+        feed_reporter.report_new_responsible_person_samples(samples_with_new_responsible_person, edit_description)
+    for old_group, samples in samples_with_new_group.iteritems():
+        feed_reporter.report_changed_sample_group(samples, old_group, edit_description)
+    if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_group"]:
+        feed_reporter.report_edited_samples(samples, edit_description)
+    # Now a separate(!) message for copied samples
     feed_utils.Reporter(user).report_copied_my_samples(samples, action_data["copy_to_user"], action_data["comment"])
 
 @login_required
