@@ -191,7 +191,8 @@ def save_to_database(user, my_samples_form, action_form):
     if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_group"]:
         feed_reporter.report_edited_samples(samples, edit_description)
     # Now a separate(!) message for copied samples
-    feed_utils.Reporter(user).report_copied_my_samples(samples, action_data["copy_to_user"], action_data["comment"])
+    if action_data["copy_to_user"]:
+        feed_utils.Reporter(user).report_copied_my_samples(samples, action_data["copy_to_user"], action_data["comment"])
 
 @login_required
 def edit(request, username):
