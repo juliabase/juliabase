@@ -41,3 +41,11 @@
   </p>
 
 {% endwith %}
+
+<p>
+  {% trans 'Further description of the change:' %}
+</p>
+
+<blockquote>
+  {{ entry.description|markdown }}
+</blockquote>
