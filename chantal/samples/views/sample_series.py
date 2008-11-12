@@ -200,6 +200,7 @@ def new(request):
                                                     group=sample_series_form.cleaned_data["group"])
                 sample_series.save()
                 sample_series.samples=sample_series_form.cleaned_data["samples"]
+                feed_utils.Reporter(request.user).report_new_sample_series(sample_series)
                 request.session["success_report"] = \
                     _(u"Sample series %s was successfully added to the database.") % full_name
                 return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))

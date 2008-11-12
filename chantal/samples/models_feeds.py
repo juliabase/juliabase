@@ -294,15 +294,18 @@ class FeedNewSampleSeries(FeedEntry):
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
     group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
+    subscribers = models.ManyToManyField(UserDetails, verbose_name=_(u"subscribers"), blank=True)
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample series %(sample_series)s was created in group “%(group)s”") % \
+        metadata["title"] = _(u"New sample series “%(sample_series)s” in group “%(group)s”") % \
             {"sample_series": self.sample_series, "group": self.group}
         metadata["category term"] = "new sample series"
         metadata["category label"] = _(u"new sample series")
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
+    def get_additional_template_context(self, user_details):
+        return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
     class Meta:
         verbose_name = _(u"new sample series feed entry")
         verbose_name_plural = _(u"new sample series feed entries")
@@ -316,6 +319,7 @@ class FeedMovedSampleSeries(FeedEntry):
     old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"), null=True, blank=True,
                                   related_name="news_ex_sample_series")
     description = models.TextField(_(u"description"))
+    subscribers = models.ManyToManyField(UserDetails, verbose_name=_(u"subscribers"), blank=True)
     def get_metadata(self):
         _ = ugettext
         metadata = {}
@@ -325,6 +329,8 @@ class FeedMovedSampleSeries(FeedEntry):
         metadata["category label"] = _(u"moved sample series")
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
+    def get_additional_template_context(self, user_details):
+        return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
     class Meta:
         verbose_name = _(u"moved sample series feed entry")
         verbose_name_plural = _(u"moved sample series feed entries")

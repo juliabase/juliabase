@@ -139,6 +139,28 @@ class Reporter(object):
         :type group: ``django.contrib.auth.models.Group``
         """
         self.interested_users.update(utils.get_profile(user) for user in group.user_set.all())
+    def __get_subscribers(self, sample_series):
+        u"""
+        :Parameters:
+          - `sample_series`: the sample series whose subscribers should be
+            determined
+
+        :type sample_series: `models.SampleSeries`
+
+        :Return:
+          all user who watch a sample in this sample series, and therefore, the
+          sample series itself, too
+
+        :rtype: list of `models.UserDetails`
+        """
+        # This is a hack but I think it's okay.  I save
+        # ``self.interested_users``, fill it with the subscribers, and restore
+        # the old value for ``self.interested_users`` again.
+        interested_users = self.interested_users
+        self.__add_watchers(sample_series)
+        subscribers = self.interested_users
+        self.interested_users = interested_users
+        return subscribers
     def report_new_samples(self, samples):
         u"""Generate one feed entry for new samples.  If more than one sample
         is in the given list, they are assumed to have been generated at the
@@ -384,6 +406,21 @@ class Reporter(object):
         entry = models.FeedMovedSampleSeries.objects.create(
             originator=self.originator, description=edit_description["description"],
             important=important, sample_series=sample_series, old_group=old_group, group=sample_series.group)
+        entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_group_members(old_group)
+        self.__add_group_members(group)
+        self.__connect_with_users(entry)
+    def report_new_sample_series(self, sample_series):
+        u"""Generate one feed entry for a new sample series.
+
+        :Parameters:
+          - `sample_series`: the sample series that was added
+
+        :type samples: `models.SampleSeries`
+        """
+        group = sample_series.group
+        entry = \
+            models.FeedNewSampleSeries.objects.create(originator=self.originator, sample_series=sample_series, group=group)
+        entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_group_members(group)
         self.__connect_with_users(entry)
