@@ -66,11 +66,9 @@ class MySeries(object):
 @help_link(_(u"MainMenu"))
 @login_required
 def main_menu(request):
-    u"""The main menu view.  So far, it displays only the sample series in a
-    dynamic way.  The rest is served static, which must be changed: The
-    processes that are offered to you “for addition” must be according to your
-    permissions for processes.  The same is true for “add samples” – this also
-    is not allowed for everyone.
+    u"""The main menu view.  It displays the sample series in a dynamic way,
+    and the actions that depend on the specific permissions a user has.  The
+    rest is served static.
     
     :Parameters:
       - `request`: the current HTTP Request object
