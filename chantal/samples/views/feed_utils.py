@@ -390,7 +390,7 @@ class Reporter(object):
         mentioned in the description by the one who changed it.
 
         :Parameters:
-          - `samples`: the samples that went into a new group
+          - `sample_series`: the sample series that went into a new group
           - `old_group`: the old group of the samples; may be ``None`` if they
             weren't in any group before
           - `edit_description`: The dictionary containing data about what was
@@ -416,7 +416,7 @@ class Reporter(object):
         :Parameters:
           - `sample_series`: the sample series that was added
 
-        :type samples: `models.SampleSeries`
+        :type sample_series: `models.SampleSeries`
         """
         group = sample_series.group
         entry = \

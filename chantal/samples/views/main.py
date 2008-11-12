@@ -81,18 +81,7 @@ def main_menu(request):
     :rtype: ``HttpResponse``
     """
     user_details = utils.get_profile(request.user)
-    my_series = {}
-    seriesless_samples = []
-    for sample in user_details.my_samples.all():
-        containing_series = sample.series.all()
-        if not containing_series:
-            seriesless_samples.append(sample)
-        else:
-            for series in containing_series:
-                if series.name not in my_series:
-                    my_series[series.name] = MySeries(series)
-                my_series[series.name].append(sample)
-    my_series = sorted(my_series.itervalues(), key=lambda series: series.timestamp, reverse=True)
+    my_groups, groupless_samples = utils.build_my_samples(user_details)
     physical_processes = []
     for cls in permissions.get_allowed_physical_processes(request.user):
         # FixMe: This try block should vanish
@@ -104,8 +93,8 @@ def main_menu(request):
     return render_to_response(
         "main_menu.html",
         {"title": _(u"Main menu"),
-         "my_series": my_series,
-         "seriesless_samples": seriesless_samples,
+         "my_groups": my_groups,
+         "groupless_samples": groupless_samples,
          "user_hash": permissions.get_user_hash(request.user),
          "can_edit_group_memberships": permissions.has_permission_to_edit_group_memberships(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),

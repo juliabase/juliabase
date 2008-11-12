@@ -88,7 +88,7 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
       - `edit_description_form`: a bound form with description of edit changes
 
     :type sample_series: `models.SampleSeries`
-    :type sampleseries_form: `SampleSeriesForm`
+    :type sample_series_form: `SampleSeriesForm`
     :type edit_description_form: `form_utils.EditDescriptionForm`
 
     :Return:

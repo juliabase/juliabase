@@ -21,27 +21,42 @@
     <li><a href="{% url samples.views.main.deposition_search %}">{% trans 'Depositions' %}</a></li>
   </ul>
 
-  {% if seriesless_samples or my_series %}
+  {% if groupless_samples or my_groups %}
     <h2>{% trans 'My Samples' %} <a class="edit-button" 
                href="{% url samples.views.my_samples.edit username=user.username %}">{% trans 'edit' %}</a></h2>
 
-    {% if seriesless_samples %}
+    {% if groupless_samples %}
       <ul>
-        {% for sample in seriesless_samples %}
+        {% for sample in groupless_samples %}
           <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
-    {% for series in my_series %}
-      <h3><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h3>
-      {% if not series.is_complete %}
-        <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
+    {% for group in my_groups %}
+
+      <h3>{{ group.group }}</h3>
+
+      {% if group.samples %}
+        <ul>
+          {% for sample in group.samples %}
+            <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+          {% endfor %}
+        </ul>
       {% endif %}
-      <ul>
-        {% for sample in series.samples %}
-          <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
-        {% endfor %}
-      </ul>
+
+      {% for series in group.sample_series %}
+
+        <h4><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
+
+        {% if not series.is_complete %}
+          <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
+        {% endif %}
+        <ul>
+          {% for sample in series.samples %}
+            <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
     {% endfor %}
   {% endif %}
 
