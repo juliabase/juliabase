@@ -424,3 +424,20 @@ class Reporter(object):
         entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_group_members(group)
         self.__connect_with_users(entry)
+    def report_changed_group_membership(self, users, group, action):
+        u"""Generate one feed entry for changed group memberships, i.e. added
+        or removed users in a group.
+
+        :Parameters:
+          - `users`: the affected users
+          - `group`: the group whose memberships have changed
+          - `action`: what was done; ``"added"`` for added users, ``"removed"``
+            for removed users
+
+        :type users: ``django.contrib.auth.models.User``
+        :type group: ``django.contrib.auth.models.Group``
+        :type action: str
+        """
+        entry = models.FeedChangedGroup.objects.create(originator=self.originator, group=group, action=action)
+        self.interested_users = set(utils.get_profile(user) for user in users)
+        self.__connect_with_users(entry)

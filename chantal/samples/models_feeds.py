@@ -335,3 +335,27 @@ class FeedMovedSampleSeries(FeedEntry):
         verbose_name = _(u"moved sample series feed entry")
         verbose_name_plural = _(u"moved sample series feed entries")
 admin.site.register(FeedMovedSampleSeries)
+
+changed_group_action_choices = (
+    ("added", _(u"added")),
+    ("removed", _(u"removed")),
+    )
+class FeedChangedGroup(FeedEntry):
+    u"""Model for feed entries for sample series moved to a new group.
+    """
+    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
+    action = models.CharField(_("action"), max_length=7, choices=changed_group_action_choices)
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        if self.action == "added":
+            metadata["title"] = _(u"Now in group “%s”") % self.group
+        else:
+            metadata["title"] = _(u"Not anymore in group “%s”") % self.group
+        metadata["category term"] = "changed group membership"
+        metadata["category label"] = _(u"changed group membership")
+        return metadata
+    class Meta:
+        verbose_name = _(u"changed group feed entry")
+        verbose_name_plural = _(u"changed group feed entries")
+admin.site.register(FeedChangedGroup)

@@ -15,7 +15,7 @@ import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from chantal.samples import permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, feed_utils
 
 class NewGroupForm(forms.Form):
     u"""Form for adding a new group.  I need only its new name.
@@ -118,16 +118,24 @@ def edit(request, name):
     group = get_object_or_404(django.contrib.auth.models.Group, name=name)
     if request.method == "POST":
         change_memberships_form = ChangeMembershipsForm(request.POST)
+        added_members = []
+        removed_members = []
         if change_memberships_form.is_valid():
             old_members = list(group.user_set.all())
             new_members = change_memberships_form.cleaned_data["members"]
             group.user_set = new_members
             for user in new_members:
                 if user not in old_members:
+                    added_members.append(user)
                     group.auto_adders.add(utils.get_profile(user))
             for user in old_members:
                 if user not in new_members:
+                    removed_members.append(user)
                     group.auto_adders.remove(utils.get_profile(user))
+            if added_members:
+                feed_utils.Reporter(request.user).report_changed_group_membership(added_members, group, "added")
+            if removed_members:
+                feed_utils.Reporter(request.user).report_changed_group_membership(removed_members, group, "removed")
             return utils.successful_response(request, _(u"Members of group “%s” were successfully updated.") % group.name)
     else:
         change_memberships_form = ChangeMembershipsForm(initial={"members": group.user_set.values_list("pk", flat=True)})

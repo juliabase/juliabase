@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-12 13:49+0100\n"
-"PO-Revision-Date: 2008-11-12 13:52+0100\n"
+"POT-Creation-Date: 2008-11-12 14:47+0100\n"
+"PO-Revision-Date: 2008-11-12 14:48+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -709,6 +709,32 @@ msgstr "Feed-Eintrag für verschobene Probenserie"
 
 msgid "moved sample series feed entries"
 msgstr "Feed-Einträge für verschobene Probenserien"
+
+msgid "added"
+msgstr "hinzugefügt"
+
+msgid "removed"
+msgstr "entfernt"
+
+msgid "action"
+msgstr "Aktion"
+
+#, python-format
+msgid "Now in group “%s”"
+msgstr "Jetzt in Gruppe „%s“"
+
+#, python-format
+msgid "Not anymore in group “%s”"
+msgstr "Nicht mehr in Gruppe „%s“"
+
+msgid "changed group membership"
+msgstr "geänderte Gruppen-Mitgliedschaft"
+
+msgid "changed group feed entry"
+msgstr "Feed-Eintrag für geänderte Gruppen"
+
+msgid "changed group feed entries"
+msgstr "Feed-Einträge für geänderte Gruppen"
 
 #, python-format
 msgid "hall measurement of %s"
@@ -1932,6 +1958,22 @@ msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
 #, python-format
 msgid ""
 "\n"
+"      You were added to group “%(group)s”.\n"
+"    "
+msgstr ""
+"\n"
+"Sie wurden zur Gruppe „%(group)s“ hinzugefügt."
+
+#, python-format
+msgid ""
+"\n"
+"      You are no longer a member of group “%(group)s”.\n"
+"    "
+msgstr "\nSie sind nicht mehr Mitglied der Gruppe „%(group)s“."
+
+#, python-format
+msgid ""
+"\n"
 "      %(originator)s has copied the following sample to your “My Samples” "
 "list:\n"
 "    "
@@ -2055,12 +2097,16 @@ msgstr ""
 msgid ""
 "You are subscribed to this sample series because you have at least one of "
 "its samples amongst “My Samples”."
-msgstr "Sie sind Abonnent dieser Probenserie, weil wenigstens eine der Proben dieser Probenserie unter „Meine Proben“ aufgeführt ist."
+msgstr ""
+"Sie sind Abonnent dieser Probenserie, weil wenigstens eine der Proben dieser "
+"Probenserie unter „Meine Proben“ aufgeführt ist."
 
 msgid ""
 "You are not subscribed to this sample series because you have none of its "
 "samples amongst “My Samples”."
-msgstr "Sie sind kein Abonnent dieser Probenserie, weil Sie keine der Proben dieser Probenserie in „Meine Proben“ haben."
+msgstr ""
+"Sie sind kein Abonnent dieser Probenserie, weil Sie keine der Proben dieser "
+"Probenserie in „Meine Proben“ haben."
 
 msgid "Full description of the change:"
 msgstr "Volle Beschreibung der Änderung:"
@@ -2156,7 +2202,10 @@ msgid ""
 "(sample_series)s</a>” to the group \n"
 "    “%(group)s”.\n"
 "  "
-msgstr "\n%(originator)s hat die Probenserie „<a href=\"%(url)s\">%(sample_series)s</a>“ zur Gruppe „%(group)s“ hinzugefügt."
+msgstr ""
+"\n"
+"%(originator)s hat die Probenserie „<a href=\"%(url)s\">%(sample_series)s</"
+"a>“ zur Gruppe „%(group)s“ hinzugefügt."
 
 #, python-format
 msgid ""
@@ -2749,6 +2798,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "You were removed from group “%s”"
+#~ msgstr "Sie wurden von der Gruppe „%s“ entfernt"
 
 #~ msgid "New responsible person"
 #~ msgstr "Neuer Proben-Verantwortlicher"
