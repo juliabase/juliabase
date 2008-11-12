@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.group as group and entry.old_group as old_group and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url%}
+    {{ originator }} has moved the sample series “<a href="{{ url }}">{{ sample_series }}</a>” from group 
+    “{{ old_group }}” to the group “{{ group }}”.
+  {% endblocktrans %}
+  {% trans 'Full description of the change:' %}
+</p>
+
+<blockquote>
+  {{ entry.description|markdown }}
+</blockquote>

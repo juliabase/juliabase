@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 
 u"""Models for feed entries.
+
+It is important to note that in some case, you may wonder why certain fields
+are included into the model.  For example, if I report a new sample in the
+feed, it seems to be superfluous to include the group it has been added since
+it is already stored in the new sample itself.  However, the group may change
+afterwards which would render old feed entries incorrect.  Therefor, the feed
+entries are self-contained.
 """
 
 import hashlib
@@ -10,7 +17,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.contrib import admin
 from django.db import models
 import django.core.urlresolvers
-from chantal.samples.models_common import Sample, UserDetails, Process, Result, SampleSplit
+from chantal.samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
 
 class FeedEntry(models.Model):
     u"""Abstract base model for newsfeed entries.  This is also not really
@@ -112,7 +119,7 @@ class FeedMovedSamples(FeedEntry):
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
     group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"), related_name="moved_samples_news")
-    old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"))
+    old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"), null=True, blank=True)
     auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
     description = models.TextField(_(u"description"))
     def get_metadata(self):
@@ -157,13 +164,13 @@ class FeedEditedPhysicalProcess(FeedEntry):
     description = models.TextField(_(u"description"))
     def get_metadata(self):
         _ = ugettext
-        result = {}
+        metadata = {}
         process = self.process.find_actual_instance()
-        result["title"] = _(u"Edited %s") % process
-        result["category term"] = "new physical process"
-        result["category label"] = _(u"new physical process")
-        result["link"] = process.get_absolute_url()
-        return result
+        metadata["title"] = _(u"Edited %s") % process
+        metadata["category term"] = "new physical process"
+        metadata["category label"] = _(u"new physical process")
+        metadata["link"] = process.get_absolute_url()
+        return metadata
     def get_additional_template_context(self, user_details):
         return {"process": self.process.find_actual_instance()}
     class Meta:
@@ -218,15 +225,14 @@ class FeedCopiedMySamples(FeedEntry):
 admin.site.register(FeedCopiedMySamples)
 
 class FeedEditedSamples(FeedEntry):
-    u"""Model for feed entries for edited samples.  This includes group changes
-    and changed currently responsible persons.  The respective view generates
-    three entry for that, however, see `chantal.samples.views.sample.edit`.
+    u"""Model for feed entries for edited samples.  This includes changed
+    currently responsible persons.  The respective view generates three entries
+    for that, however, see `chantal.samples.views.sample.edit`.
 
     FixMe: This should also include sample deaths.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     description = models.TextField(_(u"description"))
-    old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"), null=True, blank=True)
     responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False,
                                                      null=True, blank=True)
     def get_metadata(self):
@@ -241,7 +247,7 @@ class FeedEditedSamples(FeedEntry):
         return metadata
     class Meta:
         verbose_name = _(u"edited samples feed entry")
-        verbose_name_plural = _(u"edit samples feed entries")
+        verbose_name_plural = _(u"edited samples feed entries")
 admin.site.register(FeedEditedSamples)
 
 class FeedSampleSplit(FeedEntry):
@@ -260,3 +266,66 @@ class FeedSampleSplit(FeedEntry):
         verbose_name = _(u"sample split feed entry")
         verbose_name_plural = _(u"sample split feed entries")
 admin.site.register(FeedSampleSplit)
+
+class FeedEditedSampleSeries(FeedEntry):
+    u"""Model for feed entries for edited sample series.  This includes changed
+    currently responsible persons.  The respective view generates two entries
+    for that, however, see `chantal.samples.views.sample_series.edit`.
+    """
+    sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
+    description = models.TextField(_(u"description"))
+    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False,
+                                                     null=True, blank=True)
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Sample series %s was edited") % self.sample_series
+        metadata["category term"] = "edited sample series"
+        metadata["category label"] = _(u"edited sample series")
+        metadata["link"] = self.sample_series.get_absolute_url()
+        return metadata
+    class Meta:
+        verbose_name = _(u"edited sample series feed entry")
+        verbose_name_plural = _(u"edited sample series feed entries")
+admin.site.register(FeedEditedSampleSeries)
+
+class FeedNewSampleSeries(FeedEntry):
+    u"""Model for feed entries for new sample series.
+    """
+    sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Sample series %(sample_series)s was created in group “%(group)s”") % \
+            {"sample_series": self.sample_series, "group": self.group}
+        metadata["category term"] = "new sample series"
+        metadata["category label"] = _(u"new sample series")
+        metadata["link"] = self.sample_series.get_absolute_url()
+        return metadata
+    class Meta:
+        verbose_name = _(u"new sample series feed entry")
+        verbose_name_plural = _(u"new sample series feed entries")
+admin.site.register(FeedNewSampleSeries)
+
+class FeedMovedSampleSeries(FeedEntry):
+    u"""Model for feed entries for sample series moved to a new group.
+    """
+    sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
+    group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
+    old_group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"old group"), null=True, blank=True,
+                                  related_name="news_ex_sample_series")
+    description = models.TextField(_(u"description"))
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Sample series %(sample_series)s was moved to group “%(group)s”") % \
+            {"sample_series": self.sample_series, "group": self.group}
+        metadata["category term"] = "moved sample series"
+        metadata["category label"] = _(u"moved sample series")
+        metadata["link"] = self.sample_series.get_absolute_url()
+        return metadata
+    class Meta:
+        verbose_name = _(u"moved sample series feed entry")
+        verbose_name_plural = _(u"moved sample series feed entries")
+admin.site.register(FeedMovedSampleSeries)

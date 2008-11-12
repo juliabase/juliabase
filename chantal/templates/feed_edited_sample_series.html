@@ -1,0 +1,31 @@
+{% load i18n %}
+{% load samples_extras %}
+
+  <p>
+    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url %}
+      {{ originator }} has edited the sample series “<a href="{{ url }}">{{ sample_series }}</a>”.
+    {% endblocktrans %}
+  </p>
+
+  <p>
+    {% if entry.responsible_person_changed %}
+      <em>
+	{% blocktrans count samples|length as counter %}
+	  You are now the new responsible person for this sample.
+	{% plural %}
+	  You are now the new responsible person for these samples.
+	{% endblocktrans %}
+      </em>
+    {% else %}
+      {% if entry.important %}
+	{% trans 'The change was significant.' %}
+      {% else %}
+	{% trans 'The change was minor.' %}
+      {% endif %}
+    {% endif %}
+    {% trans 'Description of the change:' %}
+  </p>
+
+<blockquote>
+  {{ entry.description|markdown }}
+</blockquote>

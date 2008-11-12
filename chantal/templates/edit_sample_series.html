@@ -1,6 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block css %}
 <style type="text/css">
@@ -51,6 +52,36 @@
     <label for="id_{{ sample_series.samples.html_name }}" style="margin-right: 0.5em"
            >{{ sample_series.samples.label }}:</label>{{ sample_series.samples }}
   </div>
+
+  {% if not is_new %}
+    <table class="edit-description">
+      {% if edit_description.errors or edit_description.non_field_errors %}
+        <tr><td class="error-messages">
+          {% for field in edit_description %}
+            {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+          {% endfor %}
+          {% if edit_description.non_field_errors %}
+            <p>{% trans 'Change-description error' %}</p>{{ edit_description.non_field_errors }}
+          {% endif %}
+        </td></tr>
+      {% endif %}
+      <tr>
+        <td>
+          <label for="id_{{ edit_description.description.html_name }}"
+                 >{{ edit_description.description.label }}:<br/> {% markdown_hint %}</label>
+        </td>
+      </tr>
+      <tr>
+        <td class="value">{{ edit_description.description }}</td>
+      </tr>
+      <tr>
+        <td class="label">
+          <label for="id_{{ edit_description.important.html_name }}"
+                 >{{ edit_description.important.label }}:</label>
+        {{ edit_description.important }}</td>
+      </tr>
+    </table>
+  {% endif %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-11 09:36+0100\n"
-"PO-Revision-Date: 2008-11-11 09:37+0100\n"
+"POT-Creation-Date: 2008-11-12 11:45+0100\n"
+"PO-Revision-Date: 2008-11-12 11:46+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -648,7 +648,7 @@ msgstr "geänderte Proben"
 msgid "edited samples feed entry"
 msgstr "Feed-Eintrag für geänderte Proben"
 
-msgid "edit samples feed entries"
+msgid "edited samples feed entries"
 msgstr "Feed-Einträge für geänderte Proben"
 
 msgid "sample was completely split"
@@ -666,6 +666,46 @@ msgstr "Feed-Eintrag für gespaltene Probe"
 
 msgid "sample split feed entries"
 msgstr "Feed-Einträge für gespaltene Probe"
+
+#, python-format
+msgid "Sample series %s was edited"
+msgstr "Probenserie „%s“ wurde geändert"
+
+msgid "edited sample series"
+msgstr "geänderte Probenserie"
+
+msgid "edited sample series feed entry"
+msgstr "Feed-Eintrag für geänderte Probenserie"
+
+msgid "edited sample series feed entries"
+msgstr "Feed-Einträge für geänderte Probenserien"
+
+#, python-format
+msgid "Sample series %(sample_series)s was created in group “%(group)s”"
+msgstr "Probenserie %(sample_series)s wurde zur Gruppe „%(group)s“ hinzugefügt"
+
+msgid "new sample series"
+msgstr "neue Probenserie"
+
+msgid "new sample series feed entry"
+msgstr "Feed-Eintrag für neue Probenserie"
+
+msgid "new sample series feed entries"
+msgstr "Feed-Einträge für neue Probenserien"
+
+#, python-format
+msgid "Sample series %(sample_series)s was moved to group “%(group)s”"
+msgstr ""
+"Probenserie „%(sample_series)s“ wurde zur Gruppe „%(group)s“ verschoben"
+
+msgid "moved sample series"
+msgstr "verschobene Probenserie"
+
+msgid "moved sample series feed entry"
+msgstr "Feed-Eintrag für verschobene Probenserie"
+
+msgid "moved sample series feed entries"
+msgstr "Feed-Einträge für verschobene Probenserien"
 
 #, python-format
 msgid "hall measurement of %s"
@@ -1182,7 +1222,9 @@ msgstr "Entferne von „Meine Proben“"
 
 msgid ""
 "If you copy samples over to another person, you must enter a short comment."
-msgstr "Wenn Sie Proben zu einer anderen Person kopieren, müssen Sie einen kurzen Kommentar eingeben."
+msgstr ""
+"Wenn Sie Proben zu einer anderen Person kopieren, müssen Sie einen kurzen "
+"Kommentar eingeben."
 
 msgid "If you edit samples, you must enter a short comment."
 msgstr "Wenn Sie Proben ändern, müssen Sie einen kurzen Kommentar eingeben."
@@ -1950,6 +1992,33 @@ msgstr "Beschreibung der Änderung:"
 #, python-format
 msgid ""
 "\n"
+"      %(originator)s has edited the sample series “<a href=\"%(url)s\">%"
+"(sample_series)s</a>”.\n"
+"    "
+msgstr ""
+"\n"
+"    %(originator)s änderte die Probenserie „<a href=\"%(url)s\">%"
+"(sample_series)s</a>“.\n"
+"  "
+
+msgid ""
+"\n"
+"\t  You are now the new responsible person for this sample.\n"
+"\t"
+msgid_plural ""
+"\n"
+"\t  You are now the new responsible person for these samples.\n"
+"\t"
+msgstr[0] ""
+"\n"
+"Sie sind nun der neue Verantwortliche für diese Probe."
+msgstr[1] ""
+"\n"
+"Sie sind nun der neue Verantwortliche für diese Proben."
+
+#, python-format
+msgid ""
+"\n"
 "      %(originator)s has edited the sample <a href=\"%(first_url)s\">%"
 "(first_sample)s</a>.\n"
 "    "
@@ -1968,20 +2037,17 @@ msgstr[1] ""
 "    %(originator)s änderte die folgenden Proben: <!-- %(first_url)s %"
 "(first_sample)s (to appease gettext) -->"
 
+#, python-format
 msgid ""
 "\n"
-"\t  You are now the new responsible person for this sample.\n"
-"\t"
-msgid_plural ""
-"\n"
-"\t  You are now the new responsible person for these samples.\n"
-"\t"
-msgstr[0] ""
-"\n"
-"Sie sind nun der neue Verantwortliche für diese Probe."
-msgstr[1] ""
-"\n"
-"Sie sind nun der neue Verantwortliche für diese Proben."
+"    %(originator)s has moved the sample series “<a href=\"%(url)s\">%"
+"(sample_series)s</a>” from group \n"
+"    “%(old_group)s” to the group “%(group)s”.\n"
+"  "
+msgstr "\n%(originator)s hat die Probenserie „<a href=\"%(url)s\">%(sample_series)s</a>“ von der Gruppe „%(old_group)s“ in die Gruppe „%(group)s“ verschoben."
+
+msgid "Full description of the change:"
+msgstr "Volle Beschreibung der Änderung:"
 
 #, python-format
 msgid ""
@@ -2700,9 +2766,6 @@ msgstr "Fehlgeschlagene Objekte"
 #~ msgid "%(originator)s has added new samples in group %(group)s"
 #~ msgstr "%(originator)s hat neue Proben in der Gruppe %(group)s hinzugefügt"
 
-#~ msgid "They were added to the group “%(group)s”."
-#~ msgstr "Sie wurden zur Gruppe „%(group)s“ hinzugefügt."
-
 #~ msgid "feed_enties"
 #~ msgstr "Feed-Einträge"
 
@@ -2724,9 +2787,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "Year in deposition number doesn't match deposition timestamp."
 #~ msgstr "Das Jahr in der Depositionsnummer passt nicht zum Depositionsdatum."
-
-#~ msgid "Add sample series"
-#~ msgstr "Probenserie hinzufügen"
 
 #~ msgid "Add result"
 #~ msgstr "Ergebnis hinzufügen"

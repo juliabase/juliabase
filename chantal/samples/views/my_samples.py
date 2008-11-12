@@ -8,6 +8,7 @@ removing them from the list.
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
@@ -222,6 +223,8 @@ def edit(request, username):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
+    if not utils.get_profile(user).my_samples.count():
+        raise Http404(u"No “My Samples” found.")
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     if request.method == "POST":

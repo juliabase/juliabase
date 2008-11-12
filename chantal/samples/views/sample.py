@@ -43,6 +43,24 @@ class SampleForm(forms.ModelForm):
         exclude = ("name", "split_origin", "processes")
 
 def is_referentially_valid(sample, sample_form, edit_description_form):
+    u"""Checks that the “important” checkbox is marked if the group or the
+    currently responsible person were changed.
+
+    :Parameters:
+      - `sample`: the currently edited sample
+      - `sample_form`: the bound sample form
+      - `edit_description_form`: a bound form with description of edit changes
+
+    :type sample: `models.Sample`
+    :type sample_form: `SampleForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm` or ``NoneType``
+
+    :Return:
+      whether the “important” tickbox was really marked in case of significant
+      changes
+
+    :rtype: bool
+    """
     referentially_valid = True
     if sample_form.is_valid() and edit_description_form.is_valid() and \
             (sample_form.cleaned_data["group"] != sample.group or
@@ -297,9 +315,10 @@ def add(request):
             new_names, samples = add_samples_to_database(add_samples_form, request.user)
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(request.user).report_new_samples(samples)
-            for watcher in cleaned_data["group"].auto_adders.all():
-                for sample in samples:
-                    watcher.my_samples.add(sample)
+            if cleaned_data["group"]:
+                for watcher in cleaned_data["group"].auto_adders.all():
+                    for sample in samples:
+                        watcher.my_samples.add(sample)
             if len(new_names) > 1:
                 success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "

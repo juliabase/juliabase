@@ -22,13 +22,13 @@ from django.forms.util import ValidationError
 from django.db.models import Q
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 
 class SampleSeriesForm(Form):
     u"""Form for editing and creating sample series.
     """
     _ = ugettext_lazy
-    name = forms.CharField(label=_(u"Name"), max_length=40)
+    name = forms.CharField(label=_(u"Name"), max_length=50)
     currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
                                                                   queryset=django.contrib.auth.models.User.objects)
     group = ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects)
@@ -78,6 +78,36 @@ def show(request, name):
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
 
+def is_referentially_valid(sample_series, sample_series_form, edit_description_form):
+    u"""Checks that the “important” checkbox is marked if the group or the
+    currently responsible person were changed.
+
+    :Parameters:
+      - `sample_series`: the currently edited sample series
+      - `sample_series_form`: the bound sample series form
+      - `edit_description_form`: a bound form with description of edit changes
+
+    :type sample_series: `models.SampleSeries`
+    :type sampleseries_form: `SampleSeriesForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm`
+
+    :Return:
+      whether the “important” tickbox was really marked in case of significant
+      changes
+
+    :rtype: bool
+    """
+    referentially_valid = True
+    cleaned_data = sample_series_form.cleaned_data
+    if sample_series_form.is_valid() and edit_description_form.is_valid() and \
+            (cleaned_data["group"] != sample_series.group or
+             cleaned_data["currently_responsible_person"] != sample_series.currently_responsible_person) and \
+             not edit_description_form.cleaned_data["important"]:
+        referentially_valid = False
+        form_utils.append_error(edit_description_form,
+                                _(u"Changing the group or the responsible person must be marked as important."), "important")
+    return referentially_valid
+
 @login_required
 def edit(request, name):
     u"""View for editing an existing sample series.  Only the currently
@@ -100,11 +130,24 @@ def edit(request, name):
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(user_details, sample_series, request.POST)
-        if sample_series_form.is_valid():
-            sample_series.currently_responsible_person = sample_series_form.cleaned_data["currently_responsible_person"]
-            sample_series.group = sample_series_form.cleaned_data["group"]
+        edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        all_valid = sample_series_form.is_valid()
+        all_valid = edit_description_form.is_valid() and all_valid
+        referentially_valid = is_referentially_valid(sample_series, sample_series_form, edit_description_form)
+        if all_valid and referentially_valid:
+            edit_description = edit_description_form.cleaned_data
+            feed_reporter = feed_utils.Reporter(request.user)
+            if sample_series.currently_responsible_person != sample_series_form.cleaned_data["currently_responsible_person"]:
+                sample_series.currently_responsible_person = sample_series_form.cleaned_data["currently_responsible_person"]
+                feed_reporter.report_new_responsible_person_sample_series(sample_series, edit_description)
+            old_group = sample_series.group
+            if old_group != sample_series_form.cleaned_data["group"]:
+                sample_series.group = sample_series_form.cleaned_data["group"]
+                feed_reporter.report_changed_sample_series_group(sample_series, old_group, edit_description)
             sample_series.save()
+            feed_reporter.report_edited_sample_series(sample_series, edit_description)
             sample_series.samples = sample_series_form.cleaned_data["samples"]
+            feed_reporter.report_edited_sample_series(sample_series, edit_description)
             request.session["success_report"] = \
                 _(u"Sample series %s was successfully updated in the database.") % sample_series.name
             return utils.HttpResponseSeeOther(sample_series.get_absolute_url())
@@ -116,11 +159,13 @@ def edit(request, name):
                                           sample_series.currently_responsible_person._get_pk_val(),
                                       "group": sample_series.group._get_pk_val(),
                                       "samples": [sample._get_pk_val() for sample in sample_series.samples.all()]})
+        edit_description_form = form_utils.EditDescriptionForm()
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("edit_sample_series.html",
                               {"title": _(u"Edit sample series “%s”") % sample_series.name,
                                "sample_series": sample_series_form,
                                "is_new": False,
+                               "edit_description": edit_description_form,
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
 
