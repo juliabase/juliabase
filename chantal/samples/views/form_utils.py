@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Helper classes and function which have something to do with form generation
+and validation.
+"""
+
 import re
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict
@@ -9,7 +13,7 @@ from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
 from chantal.samples import models
-from chantal.samples.views import shared_utils
+from chantal.samples.views import utils
 
 class DataModelForm(ModelForm):
     _ = ugettext_lazy
@@ -44,7 +48,7 @@ class OperatorChoiceField(ModelChoiceField):
     then, but the beautiful full name of the user.
     """
     def label_from_instance(self, operator):
-        return shared_utils.get_really_full_name(operator)
+        return utils.get_really_full_name(operator)
 
 def get_my_layers(user_details, deposition_model):
     u"""Parse the ``my_layers`` string of a user and convert it to valid input
@@ -98,7 +102,7 @@ class AddLayersForm(forms.Form):
         self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
         self.model = model
     def clean_number_of_layers_to_add(self):
-        return shared_utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+        return utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
     def clean_my_layer_to_be_added(self):
         nickname = self.cleaned_data["my_layer_to_be_added"]
         if nickname and "-" in nickname:
@@ -175,6 +179,36 @@ class EditDescriptionForm(forms.Form):
         check_markdown(description)
         return description
     
+class MySamplesForm(forms.Form):
+    u"""Form for the “My Samples” selection box.  The clever bit here is that I
+    use the ``<OPTGROUP>`` feature of HTML in order to have a structured list.
+    Some samples may occur twice in the list because of this; you may select
+    both without a negative effect.
+    """
+    _ = ugettext_lazy
+    samples = forms.MultipleChoiceField(label=_(u"My Samples"))
+    def __init__(self, user, *args, **kwargs):
+        u"""Form constructor.
+
+        :Parameters:
+          - `user`: the user whose “My Samples” list should be generated
+
+        :type user: ``django.contrib.auth.models.User``
+        """
+        super(MySamplesForm, self).__init__(*args, **kwargs)
+        user_details = utils.get_profile(user)
+        my_groups, groupless_samples = utils.build_my_samples(user_details)
+        choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
+        for group in my_groups:
+            seriesless_samples = [(sample.pk, unicode(sample)) for sample in group.samples]
+            choices.append((group.group.name, seriesless_samples))
+            for series in group.sample_series:
+                samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
+                choices.append((4*u" " + series.name, samples))
+        self.fields["samples"].choices = choices
+    def clean_samples(self):
+        return models.Sample.objects.in_bulk([int(pk) for pk in set(self.cleaned_data["samples"])]).values()
+
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
 HH:MM:SS, where hours can also be 3-digit and are optional."""

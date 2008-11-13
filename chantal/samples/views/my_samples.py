@@ -17,36 +17,6 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils, feed_utils
 
-class MySamplesForm(forms.Form):
-    u"""Form for the “My Samples” selection box.  The clever bit here is that I
-    use the ``<OPTGROUP>`` feature of HTML in order to have a structured list.
-    Some samples may occur twice in the list because of this; you may select
-    both without a negative effect.
-    """
-    _ = ugettext_lazy
-    samples = forms.MultipleChoiceField(label=_(u"My Samples"))
-    def __init__(self, user, *args, **kwargs):
-        u"""Form constructor.
-
-        :Parameters:
-          - `user`: the user whose “My Samples” list should be generated
-
-        :type user: ``django.contrib.auth.models.User``
-        """
-        super(MySamplesForm, self).__init__(*args, **kwargs)
-        user_details = utils.get_profile(user)
-        my_groups, groupless_samples = utils.build_my_samples(user_details)
-        choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
-        for group in my_groups:
-            seriesless_samples = [(sample.pk, unicode(sample)) for sample in group.samples]
-            choices.append((group.group.name, seriesless_samples))
-            for series in group.sample_series:
-                samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
-                choices.append((4*u" " + series.name, samples))
-        self.fields["samples"].choices = choices
-    def clean_samples(self):
-        return models.Sample.objects.in_bulk([int(pk) for pk in set(self.cleaned_data["samples"])]).values()
-
 class ActionForm(forms.Form):
     u"""Form for all the things you can do with the selected samples.
     """
@@ -97,7 +67,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
         samples.
 
     :type current_user: ``django.contrib.auth.models.User``
-    :type my_samples_form: `MySamplesForm`
+    :type my_samples_form: `form_utils.MySamplesForm`
     :type action_form: `ActionForm`
 
     :Return:
@@ -130,7 +100,7 @@ def save_to_database(user, my_samples_form, action_form):
         samples.
 
     :type user: ``django.contrib.auth.models.User``
-    :type my_samples_form: `MySamplesForm`
+    :type my_samples_form: `form_utils.MySamplesForm`
     :type action_form: `ActionForm`
     """
     action_data = action_form.cleaned_data
@@ -210,14 +180,14 @@ def edit(request, username):
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     if request.method == "POST":
-        my_samples_form = MySamplesForm(user, request.POST)
+        my_samples_form = form_utils.MySamplesForm(user, request.POST)
         action_form = ActionForm(user, request.POST)
         referentially_valid = is_referentially_valid(request.user, my_samples_form, action_form)
         if my_samples_form.is_valid() and action_form.is_valid() and referentially_valid:
             save_to_database(user, my_samples_form, action_form)
             return utils.successful_response(request, _(u"Successfully processed “My Samples”."))
     else:
-        my_samples_form = MySamplesForm(user)
+        my_samples_form = form_utils.MySamplesForm(user)
         action_form = ActionForm(user)
     return render_to_response("edit_my_samples.html",
                               {"title": _(u"Edit “My Samples” of %s") % utils.get_really_full_name(user),
