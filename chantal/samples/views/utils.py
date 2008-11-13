@@ -586,18 +586,18 @@ def get_profile(user):
         user_details.save()
         return user_details
 
-class MySeries(object):
+class StructuredSeries(object):
     u"""Helper class to pass sample series data to the main menu template.
     This is *not* a data strcuture for sample series.  It just stores all data
     needed to display a certain sample series to a certain user.  It is used in
-    `MyGroup` and `build_my_samples`.
+    `StructuredGroup` and `build_structured_sample_list`.
 
     :ivar sample_series: the sample series for which data should be collected
       in this object
     :ivar name: the name of the sample series
     :ivar timestamp: the creation timestamp of the sample series
     :ivar samples: all samples belonging to this sample series, *and* being
-      part of “My Samples” of the current user
+      part the list of samples to be processed
     :ivar is_complete: a read-only property.  If ``False``, there are samples
       in the sample series not included into the list because they were missing
       on “My Samples”.  In other words, the user deliberately gets an
@@ -633,9 +633,9 @@ class MySeries(object):
             self.__is_complete = sample_series_length == len(self.samples)
         return self.__is_complete
 
-class MyGroup(object):
-    u"""Class that represents one group which contains samples of a particular
-    user.
+class StructuredGroup(object):
+    u"""Class that represents one group which contains samples and sample
+    series, used for `build_structured_sample_list`.
 
     :ivar group: the underlying Chantal group which is represented by this
       instance.
@@ -645,11 +645,11 @@ class MyGroup(object):
 
     :ivar sample_series: the sample series which belong to this group and which
       contain “My Samples” of the user.  They themselves contain a list of
-      their samples.  See `MySeries` for further information.
+      their samples.  See `StructuredSeries` for further information.
 
     :type group: ``django.contrib.auth.models.Group``
     :type samples: list of `models.Sample`
-    :type sample_series: list of `MySeries`
+    :type sample_series: list of `StructuredSeries`
     """
     def __init__(self, group):
         self.group = group
@@ -658,50 +658,51 @@ class MyGroup(object):
     def sort_sample_series(self):
         self.sample_series.sort(key=lambda series: series.timestamp, reverse=True)
 
-def build_my_samples(user_details):
-    u"""Generate a nested datastructure which contains the “My Samples” of a
-    user in a handy way to be leyouted in a way.  This routine is used for the
+def build_structured_sample_list(samples):
+    u"""Generate a nested datastructure which contains the given samples in a
+    handy way to be layouted in a certain way.  This routine is used for the
     “My Samples” list in the main menu, and for the multiple-selection box for
-    samples in various views.  It is a list of `MyGroup` at the top-level.
+    samples in various views.  It is a list of `StructuredGroup` at the
+    top-level.
 
     As far as sorting is concerned, all groups are sorted by alphabet, all
     sample series by reverse timestamp of origin, and all samples by the
     sorting oder defined in `models.Sample`.
 
     :Parameters:
-      - `user_details`: user details of the user whose “My Samples” are to be
-        processed
+      - `samples`: the samples to be processed; it doesn't matter if a sample
+        occurs twice because this list is made unique first
 
-    :type user_details: `models.UserDetails`
+    :type samples: list of `models.Sample`
 
     :Return:
       all groups of the user with his series and samples in them, all groupless
       samples; both is sorted
 
-    :rtype: list of `MyGroup`, list of `models.Sample`
+    :rtype: list of `StructuredGroup`, list of `models.Sample`
     """
-    my_series = {}
-    my_groups = {}
+    structured_series = {}
+    structured_groups = {}
     groupless_samples = []
-    for sample in user_details.my_samples.all():
+    for sample in set(samples):
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:
-                if series.name not in my_series:
-                    my_series[series.name] = MySeries(series)
+                if series.name not in structured_series:
+                    structured_series[series.name] = StructuredSeries(series)
                     groupname = series.group.name
-                    if groupname not in my_groups:
-                        my_groups[groupname] = MyGroup(series.group)
-                    my_groups[groupname].sample_series.append(my_series[series.name])
-                my_series[series.name].append(sample)
+                    if groupname not in structured_groups:
+                        structured_groups[groupname] = StructuredGroup(series.group)
+                    structured_groups[groupname].sample_series.append(structured_series[series.name])
+                structured_series[series.name].append(sample)
         elif sample.group:
             groupname = sample.group.name
-            if groupname not in my_groups:
-                my_groups[groupname] = MyGroup(sample.group)
-            my_groups[groupname].samples.append(sample)
+            if groupname not in structured_groups:
+                structured_groups[groupname] = StructuredGroup(sample.group)
+            structured_groups[groupname].samples.append(sample)
         else:
             groupless_samples.append(sample)
-    my_groups = sorted(my_groups.itervalues(), key=lambda my_group: my_group.group.name)
-    for my_group in my_groups:
-        my_group.sort_sample_series()
-    return my_groups, groupless_samples
+    structured_groups = sorted(structured_groups.itervalues(), key=lambda structured_group: structured_group.group.name)
+    for structured_group in structured_groups:
+        structured_group.sort_sample_series()
+    return structured_groups, groupless_samples

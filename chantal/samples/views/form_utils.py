@@ -179,26 +179,28 @@ class EditDescriptionForm(forms.Form):
         check_markdown(description)
         return description
     
-class MultipleMySamplesField(forms.MultipleChoiceField):
-    u"""Form field for the “My Samples” selection box.  The clever bit here is
+class MultipleSamplesField(forms.MultipleChoiceField):
+    u"""Form field for the samples selection box.  The clever bit here is
     that I use the ``<OPTGROUP>`` feature of HTML in order to have a structured
     list.  Some samples may occur twice in the list because of this; you may
     select both without a negative effect.
     """
-    def set_user(self, user_details):
-        u"""Set the sample list to the “My Samples” of the given user.  You
-        *must* call this method in the constructor of the form in which you use
-        this field, otherwise the selection box will remain emtpy.
+    def set_samples(self, samples):
+        u"""Set the sample list shown in the widget.  You *must* call this
+        method in the constructor of the form in which you use this field,
+        otherwise the selection box will remain emtpy.
 
         :Parameters:
-          - `user_details`: the details of the user whose “My Samples” list
-            should be generated
+          - `samples`: Samples to be included into the list”.  Typically, these
+            are thecurrent user's “My Samples”, plus the samples that were
+            already connected with the deposition or measurement when you edit
+            it.
 
-        :type user_details: `models.UserDetails`
+        :type samples: list of `models.Sample`
         """
-        my_groups, groupless_samples = utils.build_my_samples(user_details)
+        groups, groupless_samples = utils.build_structured_sample_list(samples)
         self.choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
-        for group in my_groups:
+        for group in groups:
             seriesless_samples = [(sample.pk, unicode(sample)) for sample in group.samples]
             self.choices.append((group.group.name, seriesless_samples))
             for series in group.sample_series:

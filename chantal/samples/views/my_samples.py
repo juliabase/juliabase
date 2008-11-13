@@ -19,10 +19,10 @@ from chantal.samples.views import utils, form_utils, feed_utils
 
 class MySamplesForm(forms.Form):
     _ = ugettext_lazy
-    samples = form_utils.MultipleMySamplesField(label=_(u"My Samples"))
+    samples = form_utils.MultipleSamplesField(label=_(u"My Samples"))
     def __init__(self, user_details, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
-        self.fields["samples"].set_user(user_details)
+        self.fields["samples"].set_samples(user_details.my_samples.all())
 
 class ActionForm(forms.Form):
     u"""Form for all the things you can do with the selected samples.

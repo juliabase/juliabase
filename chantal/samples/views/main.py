@@ -81,7 +81,7 @@ def main_menu(request):
     :rtype: ``HttpResponse``
     """
     user_details = utils.get_profile(request.user)
-    my_groups, groupless_samples = utils.build_my_samples(user_details)
+    my_groups, groupless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
     physical_processes = []
     for cls in permissions.get_allowed_physical_processes(request.user):
         # FixMe: This try block should vanish
