@@ -110,7 +110,7 @@ class SampleForm(forms.Form):
     per PDS measurement (in contrast to depositions).
     """
     _ = ugettext_lazy
-    sample = forms.ModelChoiceField(label=_(u"Sample"), queryset=None)
+    sample = form_utils.SampleField(label=_(u"Sample"))
     def __init__(self, user_details, pds_measurement, *args, **kwargs):
         u"""Form constructor.  I only set the selection of samples to the
         current user's “My Samples”.
@@ -124,9 +124,10 @@ class SampleForm(forms.Form):
         :type pds_measurement: `models.PDSMeasurement`
         """
         super(SampleForm, self).__init__(*args, **kwargs)
-        self.fields["sample"].queryset = \
-            models.Sample.objects.filter(Q(processes=pds_measurement) | Q(watchers=user_details)).distinct() \
-            if pds_measurement else user_details.my_samples
+        samples = user_details.my_samples.all()
+        if pds_measurement:
+            samples = list(samples) + pds_measurement.samples.all()[:1]
+        self.fields["sample"].set_samples(samples)
     
 class PDSMeasurementForm(forms.ModelForm):
     u"""Model form for the core PDS measurement data.  I only redefine the

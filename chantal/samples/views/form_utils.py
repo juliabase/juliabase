@@ -178,12 +178,15 @@ class EditDescriptionForm(forms.Form):
         description = self.cleaned_data["description"]
         check_markdown(description)
         return description
-    
-class MultipleSamplesField(forms.MultipleChoiceField):
-    u"""Form field for the samples selection box.  The clever bit here is
-    that I use the ``<OPTGROUP>`` feature of HTML in order to have a structured
-    list.  Some samples may occur twice in the list because of this; you may
-    select both without a negative effect.
+
+class GeneralSampleField(object):
+    u"""Mixin class for the samples selection box.  It is used in the two form
+    field classes `SampleField` and `MultipleSamplesField`.  Never instantiate
+    this class.
+
+    The clever bit here is that I use the ``<OPTGROUP>`` feature of HTML in
+    order to have a structured list.  Some samples may occur twice in the list
+    because of this; you may select both without a negative effect.
     """
     def set_samples(self, samples):
         u"""Set the sample list shown in the widget.  You *must* call this
@@ -206,6 +209,20 @@ class MultipleSamplesField(forms.MultipleChoiceField):
             for series in group.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
+    
+class SampleField(GeneralSampleField, forms.ChoiceField):
+    u"""Form field class for sample selection boxes where you can select a
+    single sample.  This is typically used in measurement forms because
+    normally, one measures only *one* sample at a time.
+    """
+    def clean(self, value):
+        return models.Sample.objects.get(pk=value)
+
+class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
+    u"""Form field class for sample selection boxes where you can select many
+    samples at once.  This is typically used in deposition forms because most
+    deposition systems can deposit more than one sample in a single run.
+    """
     def clean(self, value):
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
