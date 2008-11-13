@@ -19,7 +19,6 @@ import django.core.urlresolvers
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
-from django.db.models import Q
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 from chantal.samples.views import utils, form_utils, feed_utils

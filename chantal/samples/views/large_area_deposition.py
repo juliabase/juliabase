@@ -26,7 +26,6 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 import django.core.urlresolvers
 import django.contrib.auth.models
-from django.db.models import Q
 from chantal.samples.views import utils, form_utils
 
 class SamplesForm(forms.Form):
@@ -34,7 +33,7 @@ class SamplesForm(forms.Form):
     deposition.
     """
     _ = ugettext_lazy
-    sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
+    sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
     def __init__(self, user_details, deposition, data=None, **kwargs):
         u"""Class constructor.  Note that I have to distinguish clearly here
         between new and existing depositions.
@@ -46,11 +45,10 @@ class SamplesForm(forms.Form):
             # below)
             super(SamplesForm, self).__init__(**kwargs)
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-            self.fields["sample_list"].queryset = \
-                models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct()
+            self.fields["sample_list"].set_samples(list(user_details.my_samples.all()) + list(deposition.samples.all()))
         else:
             super(SamplesForm, self).__init__(data, **kwargs)
-            self.fields["sample_list"].queryset = user_details.my_samples
+            self.fields["sample_list"].set_samples(user_details.my_samples.all())
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 class DepositionForm(forms.ModelForm):

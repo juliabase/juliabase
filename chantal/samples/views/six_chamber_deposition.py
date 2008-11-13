@@ -27,7 +27,6 @@ from chantal.samples.views.form_utils import DataModelForm
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 import django.contrib.auth.models
-from django.db.models import Q
 
 class RemoveFromMySamplesForm(Form):
     u"""Form class for one single checkbox for removing deposited samples from
@@ -52,8 +51,8 @@ class DepositionForm(ModelForm):
     u"""Model form for the basic deposition data.
     """
     _ = ugettext_lazy
-    sample_list = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None)
-    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
+    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects)
     def __init__(self, user_details, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
@@ -71,9 +70,10 @@ class DepositionForm(ModelForm):
         split_widget.widgets[0].attrs = {'class': 'vDateField'}
         split_widget.widgets[1].attrs = {'class': 'vTimeField'}
         self.fields["timestamp"].widget = split_widget
-        self.fields["sample_list"].queryset = \
-            models.Sample.objects.filter(Q(processes=deposition) | Q(watchers=user_details)).distinct() if deposition \
-            else user_details.my_samples
+        samples = user_details.my_samples.all()
+        if deposition:
+            samples = list(samples) + list(deposition.samples.all())
+        self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")

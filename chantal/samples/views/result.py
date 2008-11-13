@@ -91,7 +91,7 @@ class RelatedDataForm(forms.Form):
     writing to the database.
     """
     _ = ugettext_lazy
-    samples = forms.ModelMultipleChoiceField(label=_(u"Samples"), queryset=None, required=False)
+    samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
     def __init__(self, user_details, query_string_dict, data=None, files=None, **kwargs):
@@ -105,8 +105,8 @@ class RelatedDataForm(forms.Form):
         """
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
         if query_string_dict is not None:
-            self.fields["samples"].queryset = \
-                models.Sample.objects.filter(Q(watchers=user_details) | Q(name=query_string_dict.get("sample"))).distinct()
+            self.fields["samples"].set_samples(list(user_details.my_samples.all()) +
+                                               list(models.Sample.objects.filter(name=query_string_dict.get("sample"))))
             if "sample" in query_string_dict:
                 try:
                     self.fields["samples"].initial = \
