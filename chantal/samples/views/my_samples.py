@@ -17,19 +17,6 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils, feed_utils
 
-class _MySeries(object):
-    u"""Helper class for building the HTML ``<OPTGROUP>`` structure used in
-    `MySamplesForm`.
-    """
-    def __init__(self, series):
-        self.name, self.timestamp = series.name, series.timestamp
-        self.samples = []
-    def get_choices(self):
-        self.samples.sort(key=lambda sample: sample.name)
-        return (self.name, [(sample.pk, unicode(sample)) for sample in self.samples])
-    def __cmp__(self, other):
-        return self.timestamp > other.timestamp
-
 class MySamplesForm(forms.Form):
     u"""Form for the “My Samples” selection box.  The clever bit here is that I
     use the ``<OPTGROUP>`` feature of HTML in order to have a structured list.
@@ -48,20 +35,15 @@ class MySamplesForm(forms.Form):
         """
         super(MySamplesForm, self).__init__(*args, **kwargs)
         user_details = utils.get_profile(user)
-        my_series = {}
-        seriesless_samples = []
-        for sample in user_details.my_samples.all():
-            containing_series = sample.series.all()
-            if not containing_series:
-                seriesless_samples.append(sample)
-            else:
-                for series in containing_series:
-                    if series.name not in my_series:
-                        my_series[series.name] = _MySeries(series)
-                    my_series[series.name].samples.append(sample)
-        my_series = sorted(my_series.values(), key=lambda series: series.timestamp, reverse=True)
-        my_series = [series.get_choices() for series in sorted(my_series, reverse=True)]
-        self.fields["samples"].choices = [(sample.pk, unicode(sample)) for sample in seriesless_samples] + my_series
+        my_groups, groupless_samples = utils.build_my_samples(user_details)
+        choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
+        for group in my_groups:
+            seriesless_samples = [(sample.pk, unicode(sample)) for sample in group.samples]
+            choices.append((group.group.name, seriesless_samples))
+            for series in group.sample_series:
+                samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
+                choices.append((4*u" " + series.name, samples))
+        self.fields["samples"].choices = choices
     def clean_samples(self):
         return models.Sample.objects.in_bulk([int(pk) for pk in set(self.cleaned_data["samples"])]).values()
 
