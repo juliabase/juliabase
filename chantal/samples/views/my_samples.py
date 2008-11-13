@@ -17,6 +17,13 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils, feed_utils
 
+class MySamplesForm(forms.Form):
+    _ = ugettext_lazy
+    samples = form_utils.MultipleMySamplesField(label=_(u"My Samples"))
+    def __init__(self, user_details, *args, **kwargs):
+        super(MySamplesForm, self).__init__(*args, **kwargs)
+        self.fields["samples"].set_user(user_details)
+
 class ActionForm(forms.Form):
     u"""Form for all the things you can do with the selected samples.
     """
@@ -67,7 +74,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
         samples.
 
     :type current_user: ``django.contrib.auth.models.User``
-    :type my_samples_form: `form_utils.MySamplesForm`
+    :type my_samples_form: `MySamplesForm`
     :type action_form: `ActionForm`
 
     :Return:
@@ -100,7 +107,7 @@ def save_to_database(user, my_samples_form, action_form):
         samples.
 
     :type user: ``django.contrib.auth.models.User``
-    :type my_samples_form: `form_utils.MySamplesForm`
+    :type my_samples_form: `MySamplesForm`
     :type action_form: `ActionForm`
     """
     action_data = action_form.cleaned_data
@@ -175,19 +182,20 @@ def edit(request, username):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    if not utils.get_profile(user).my_samples.count():
+    user_details = utils.get_profile(user)
+    if not user_details.my_samples.count():
         raise Http404(u"No “My Samples” found.")
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     if request.method == "POST":
-        my_samples_form = form_utils.MySamplesForm(user, request.POST)
+        my_samples_form = MySamplesForm(user_details, request.POST)
         action_form = ActionForm(user, request.POST)
         referentially_valid = is_referentially_valid(request.user, my_samples_form, action_form)
         if my_samples_form.is_valid() and action_form.is_valid() and referentially_valid:
             save_to_database(user, my_samples_form, action_form)
             return utils.successful_response(request, _(u"Successfully processed “My Samples”."))
     else:
-        my_samples_form = form_utils.MySamplesForm(user)
+        my_samples_form = MySamplesForm(user_details)
         action_form = ActionForm(user)
     return render_to_response("edit_my_samples.html",
                               {"title": _(u"Edit “My Samples” of %s") % utils.get_really_full_name(user),

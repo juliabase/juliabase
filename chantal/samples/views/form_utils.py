@@ -179,35 +179,33 @@ class EditDescriptionForm(forms.Form):
         check_markdown(description)
         return description
     
-class MySamplesForm(forms.Form):
-    u"""Form for the “My Samples” selection box.  The clever bit here is that I
-    use the ``<OPTGROUP>`` feature of HTML in order to have a structured list.
-    Some samples may occur twice in the list because of this; you may select
-    both without a negative effect.
+class MultipleMySamplesField(forms.MultipleChoiceField):
+    u"""Form field for the “My Samples” selection box.  The clever bit here is
+    that I use the ``<OPTGROUP>`` feature of HTML in order to have a structured
+    list.  Some samples may occur twice in the list because of this; you may
+    select both without a negative effect.
     """
-    _ = ugettext_lazy
-    samples = forms.MultipleChoiceField(label=_(u"My Samples"))
-    def __init__(self, user, *args, **kwargs):
-        u"""Form constructor.
+    def set_user(self, user_details):
+        u"""Set the sample list to the “My Samples” of the given user.  You
+        *must* call this method in the constructor of the form in which you use
+        this field, otherwise the selection box will remain emtpy.
 
         :Parameters:
-          - `user`: the user whose “My Samples” list should be generated
+          - `user_details`: the details of the user whose “My Samples” list
+            should be generated
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user_details: `models.UserDetails`
         """
-        super(MySamplesForm, self).__init__(*args, **kwargs)
-        user_details = utils.get_profile(user)
         my_groups, groupless_samples = utils.build_my_samples(user_details)
-        choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
+        self.choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
         for group in my_groups:
             seriesless_samples = [(sample.pk, unicode(sample)) for sample in group.samples]
-            choices.append((group.group.name, seriesless_samples))
+            self.choices.append((group.group.name, seriesless_samples))
             for series in group.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
-                choices.append((4*u" " + series.name, samples))
-        self.fields["samples"].choices = choices
-    def clean_samples(self):
-        return models.Sample.objects.in_bulk([int(pk) for pk in set(self.cleaned_data["samples"])]).values()
+                self.choices.append((4*u" " + series.name, samples))
+    def clean(self, value):
+        return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
