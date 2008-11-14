@@ -132,17 +132,14 @@ def verbose_name(parser, token):
     tag_name, var = token.split_contents()
     return VerboseNameNode(var)
 
-@register.tag
-def markdown_hint(parser, token):
+@register.simple_tag
+def markdown_hint():
     u"""Tag for inserting a short remark that Markdown syntax must be used
     here, with a link to further information.
     """
-    class MarkdownHintNode(template.Node):
-        def render(self, context):
-            return u"""<span class="markdown-hint">""" + _(u"""(with %(markdown_link)s syntax)""") \
-                % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-                   django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
-    return MarkdownHintNode()
+    return u"""<span class="markdown-hint">""" + _(u"""(with %(markdown_link)s syntax)""") \
+        % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
+           django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
 
 @register.filter
 @stringfilter
