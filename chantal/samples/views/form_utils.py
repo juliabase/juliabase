@@ -209,6 +209,8 @@ class GeneralSampleField(object):
             for series in group.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
+        if not isinstance(self, forms.MultipleChoiceField):
+            self.choices.insert(0, (u"", 9*u"-"))
     
 class SampleField(GeneralSampleField, forms.ChoiceField):
     u"""Form field class for sample selection boxes where you can select a
@@ -216,7 +218,9 @@ class SampleField(GeneralSampleField, forms.ChoiceField):
     normally, one measures only *one* sample at a time.
     """
     def clean(self, value):
-        return models.Sample.objects.get(pk=value)
+        value = super(SampleField, self).clean(value)
+        if value:
+            return models.Sample.objects.get(pk=int(value))
 
 class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
     u"""Form field class for sample selection boxes where you can select many
@@ -224,6 +228,7 @@ class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
     deposition systems can deposit more than one sample in a single run.
     """
     def clean(self, value):
+        value = super(MultipleSamplesField, self).clean(value)
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
