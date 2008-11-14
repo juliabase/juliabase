@@ -62,8 +62,9 @@ span.aliases { font-size: x-small; font-weight: normal }
 
 span.label { margin-right: 0.5em }
 span.value { font-weight: bold }
-td.value { font-weight: bold; text-align: left; vertical-align: bottom }
-td.label { text-align: right; vertical-align: bottom; padding-right: 0.3em }
+td.value, td.input { text-align: left; vertical-align: top }
+td.value { font-weight: bold }
+td.label { text-align: right; vertical-align: top; padding-right: 0.3em }
 span.help { font-size: small; font-weight: normal }
 
 /* MESSAGES & ERRORS */

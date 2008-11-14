@@ -1,12 +1,17 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
+  {% error_list new_group _("Name of new group") %}
   <table>
-    {{ new_group }}
+    <tr>
+      <td class="label"><label for="id_{{ new_group.new_group_name.html_name }}"
+                 >{{ new_group.new_group_name.label }}:</label></td>
+      <td class="input">{{ new_group.new_group_name }}</td>
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

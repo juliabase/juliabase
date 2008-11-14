@@ -314,3 +314,21 @@ def markdown(value):
             result += value[position:]
             break
     return markup.markdown(result)
+
+@register.inclusion_tag("error_list.html")
+def error_list(form, form_error_title):
+    u"""Includes a comprehensive error list for one particular form into the
+    page.  It is an HTML table, so take care that the tags are nested
+    properly.  Its template can be found in the file ``"error_list.html"``.
+
+    :Parameters:
+      - `form`: the bound form whose errors should be displayed
+      - `form_error_title`: The title used for general error messages.  These
+        are not connected to one particular field but the form as a
+        whole. Typically, they are generated in the ``is_referentially_valid``
+        functions.
+
+    :type form: ``forms.Form``
+    :type form_error_title: unicode
+    """
+    return {"form": form, "form_error_title": form_error_title}
