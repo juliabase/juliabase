@@ -56,7 +56,7 @@ class DepositionForm(forms.ModelForm):
     in order to have full real names.
     """
     _ = ugettext_lazy
-    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects)
     def __init__(self, data=None, **kwargs):
         u"""Class constructor just for changing the appearance of the number
         field."""

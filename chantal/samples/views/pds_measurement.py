@@ -134,7 +134,7 @@ class PDSMeasurementForm(forms.ModelForm):
     ``operator`` field here in oder to have the full names of the users.
     """
     _ = ugettext_lazy
-    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects.all())
+    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects)
     def __init__(self, *args, **kwargs):
         u"""Form constructor.  I just adjust layout here.
         """

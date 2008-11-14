@@ -34,7 +34,7 @@ class SampleForm(forms.ModelForm):
     _ = ugettext_lazy
     # FixMe: What about inactive users?
     currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                                  queryset=django.contrib.auth.models.User.objects.all())
+                                                                  queryset=django.contrib.auth.models.User.objects)
     def __init__(self, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
         self.fields["group"].required = True

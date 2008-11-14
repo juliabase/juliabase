@@ -94,7 +94,7 @@ class ChangeMembershipsForm(forms.Form):
     u"""Form for the member list of a group.  Note that it is allowed to have
     no members at all in a group.
     """
-    members = OperatorMultipleChoiceField(label=_(u"Members"), queryset=django.contrib.auth.models.User.objects.all(),
+    members = OperatorMultipleChoiceField(label=_(u"Members"), queryset=django.contrib.auth.models.User.objects,
                                           required=False)
 
 @login_required
