@@ -12,7 +12,7 @@ should be exported into forms of their own, so that I needn't rely on the
 validity of the main forms.
 """
 
-import re
+import re, datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms import ModelForm, Form
@@ -65,11 +65,6 @@ class DepositionForm(ModelForm):
             initial.update({"sample_list": deposition.samples.values_list("pk", flat=True)})
         kwargs["initial"] = initial
         super(DepositionForm, self).__init__(data, **kwargs)
-        # Connect the date/time fields with the JavaScript
-        split_widget = forms.SplitDateTimeWidget()
-        split_widget.widgets[0].attrs = {'class': 'vDateField'}
-        split_widget.widgets[1].attrs = {'class': 'vTimeField'}
-        self.fields["timestamp"].widget = split_widget
         samples = user_details.my_samples.all()
         if deposition:
             samples = list(samples) + list(deposition.samples.all())
@@ -501,7 +496,7 @@ def edit(request, deposition_number):
             copy_from_query = models.SixChamberDeposition.objects.filter(number=copy_from)
             if copy_from_query.count() == 1:
                 deposition_data = copy_from_query.values()[0]
-                del deposition_data["timestamp"]
+                deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["number"] = utils.get_next_deposition_number("B")
                 deposition_form = DepositionForm(user_details, initial=deposition_data)
                 layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
@@ -512,7 +507,8 @@ def edit(request, deposition_number):
                 layer_forms, channel_form_lists = forms_from_database(deposition)
             else:
                 # New deposition, or duplication has failed
-                deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B")})
+                deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B"),
+                                                                        "timestamp": datetime.datetime.now()})
                 layer_forms, channel_form_lists = [], []
         remove_from_my_samples_form = RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition})
         edit_description_form = form_utils.EditDescriptionForm() if deposition else None

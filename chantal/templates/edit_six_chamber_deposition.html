@@ -1,7 +1,6 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-{% load adminmedia %}
 {% load samples_extras %}
 
 {% block css %}
@@ -9,14 +8,6 @@
   th { text-align: right; vertical-align: top; padding-right: 1em }
   table.channels * th { text-align: center; padding: 0pt }
 </style>
-{% endblock %}
-
-{% block extrahead %}
-<script type="text/javascript" src="../../admin/jsi18n/"></script>
-<script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script>
-<script type="text/javascript" src="{% admin_media_prefix %}js/admin/RelatedObjectLookups.js"></script>
-<script type="text/javascript" src="{% admin_media_prefix %}js/calendar.js"></script>
-<script type="text/javascript" src="{% admin_media_prefix %}js/admin/DateTimeShortcuts.js"></script>
 {% endblock %}
 
 {% block content %}
