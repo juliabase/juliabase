@@ -23,16 +23,7 @@
 {% endblocktrans %}
 
 <form method="post" action="">
-  {% if sandbox.errors or sandbox.non_field_errors %}
-    <table width="100%"><tr><td class="error-messages">
-      {% for field in sandbox %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if sandbox.non_field_errors %}
-        <p>{% trans 'Sandbox error' %}</p>{{ sandbox.non_field_errors }}
-      {% endif %}
-    </td></tr></table>
-  {% endif %}
+  {% error_list sandbox _("Error in markup") %}
   <table border="1" width="100%" cellpadding="10">
     <thead>
       <tr>

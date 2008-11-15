@@ -18,16 +18,7 @@
         {% if single_initials %}
           {{ year }}-{{ single_initials }}-…
         {% else %}
-          {% if initials.errors or initials.non_field_errors %}
-            <table width="100%"><tr><td class="error-messages">
-              {% for field in initials %}
-                {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-              {% endfor %}
-              {% if initials.non_field_errors %}
-                <p>{% trans 'Initials error' %}</p>{{ initials.non_field_errors }}
-              {% endif %}
-            </td></tr></table>
-          {% endif %}
+          {% error_list initials _("Error in initials") %}
           <div>
             {{ year }}-{{ initials.initials }}-…
           </div>
@@ -40,16 +31,7 @@
         <td class="{% if forloop.last %}last{% else %}row{% endif %}">{{ sample.name }}</td>
         <td class="{% if forloop.last %}last{% else %}row{% endif %}" style="text-align: center">→</td>
         <td class="{% if forloop.last %}last{% else %}row{% endif %}">
-          {% if new_name.errors or new_name.non_field_errors %}
-            <table width="100%"><tr><td class="error-messages">
-              {% for field in new_name %}
-                {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-              {% endfor %}
-              {% if new_name.non_field_errors %}
-                <p>{% trans 'New name error' %}</p>{{ new_name.non_field_errors }}
-              {% endif %}
-            </td></tr></table>
-          {% endif %}
+          {% error_list new_name _("Error in new name") %}
           <div>
             …{{ new_name.name }}
           </div>

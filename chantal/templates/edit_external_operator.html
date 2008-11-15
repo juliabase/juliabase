@@ -1,13 +1,26 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
   <table>
-    {{ external_operator }}
-    {{ initials }}
+    <tr>
+      {% input_field external_operator.name %}
+    </tr><tr>
+      {% input_field external_operator.institution %}
+    </tr><tr>
+      {% input_field external_operator.email %}
+    </tr><tr>
+      {% input_field external_operator.alternative_email %}
+    </tr><tr>
+      {% input_field external_operator.phone %}
+    </tr><tr>
+      {% input_field external_operator.contact_person %}
+    </tr><tr>
+      {% input_field initials.initials %}
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

@@ -1,12 +1,14 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
   <table>
-    {{ change_memberships }}
+    <tr>
+      {% input_field change_memberships.members %}
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

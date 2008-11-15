@@ -5,27 +5,11 @@
 
 {% block content %}
 <form enctype="multipart/form-data" method="post" action="">
-  {% if result.errors or result.non_field_errors or related_data.errors or related_data.non_field_errors %}
-    <table width="100%"><tr><td class="error-messages">
-      {% for field in result %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if result.non_field_errors %}
-        <p>{% trans 'Result error' %}</p>{{ result.non_field_errors }}
-      {% endif %}
-      {% for field in related_data %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if related_data.non_field_errors %}
-        <p>{% trans 'Result error' %}</p>{{ related_data.non_field_errors }}
-      {% endif %}
-    </td></tr></table>
-  {% endif %}
+  {% error_list result _("Error in result") %}
+  {% error_list related_data _("General error") %}
   <table cellpadding="5">
     <tr>
-      <td class="label"><label for="id_{{ result.title.html_name }}"
-                 >{{ result.title.label }}:</label></td>
-      <td class="value">{{ result.title }}</td>
+      {% input_field result.title %}
       <td rowspan="2" style="vertical-align: top">{% if is_new %}<label for="id_{{ related_data.samples.html_name }}"
                                 >{{ related_data.samples.label }}:</label><br/>
         {{ related_data.samples }}
@@ -42,46 +26,16 @@
       </td>
     </tr>
     <tr>
-      <td class="label" style="vertical-align: top"><label for="id_{{ result.comments.html_name }}"
-                 >{{ result.comments.label }}:</label><br/>{% markdown_hint %}</td>
-      <td class="value">{{ result.comments }}</td>
+      {% input_field result.comments %}
     </tr>
     <tr>
       <td class="label"><label for="id_{{ related_data.image_file.html_name }}"
                  >{{ related_data.image_file.label }}:</label></td>
-      <td class="value" colspan="0">{{ related_data.image_file }}</td>
+      <td class="input" colspan="0">{{ related_data.image_file }}</td>
     </tr>
   </table>
 
-  {% if edit_description %}
-    <table class="edit-description">
-      {% if edit_description.errors or edit_description.non_field_errors %}
-        <tr><td class="error-messages">
-          {% for field in edit_description %}
-            {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-          {% endfor %}
-          {% if edit_description.non_field_errors %}
-            <p>{% trans 'Change-description error' %}</p>{{ edit_description.non_field_errors }}
-          {% endif %}
-        </td></tr>
-      {% endif %}
-      <tr>
-        <td>
-          <label for="id_{{ edit_description.description.html_name }}"
-                 >{{ edit_description.description.label }}:<br/> {% markdown_hint %}</label>
-        </td>
-      </tr>
-      <tr>
-        <td class="value">{{ edit_description.description }}</td>
-      </tr>
-      <tr>
-        <td class="label">
-          <label for="id_{{ edit_description.important.html_name }}"
-                 >{{ edit_description.important.label }}:</label>
-        {{ edit_description.important }}</td>
-      </tr>
-    </table>
-  {% endif %}
+  {% include "edit_description.html" %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

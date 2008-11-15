@@ -5,37 +5,22 @@
 
 {% block content %}
 <form method="post" action="">
+  {% error_list sample _("Error in sample") %}
   <table>
-    {{ sample }}
+    <tr>
+      {% input_field sample.current_location %}
+    </tr><tr>
+      {% input_field sample.currently_responsible_person %}
+    </tr><tr>
+      {% input_field sample.purpose %}
+    </tr><tr>
+      {% input_field sample.tags %}
+    </tr><tr>
+      {% input_field sample.group %}
+    </tr>
   </table>
 
-  <table class="edit-description">
-    {% if edit_description.errors or edit_description.non_field_errors %}
-      <tr><td class="error-messages">
-        {% for field in edit_description %}
-          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-        {% endfor %}
-        {% if edit_description.non_field_errors %}
-          <p>{% trans 'Change-description error' %}</p>{{ edit_description.non_field_errors }}
-        {% endif %}
-      </td></tr>
-    {% endif %}
-    <tr>
-      <td>
-        <label for="id_{{ edit_description.description.html_name }}"
-               >{{ edit_description.description.label }}:<br/> {% markdown_hint %}</label>
-      </td>
-    </tr>
-    <tr>
-      <td class="value">{{ edit_description.description }}</td>
-    </tr>
-    <tr>
-      <td class="label">
-        <label for="id_{{ edit_description.important.html_name }}"
-               >{{ edit_description.important.label }}:</label>
-      {{ edit_description.important }}</td>
-    </tr>
-  </table>
+  {% include "edit_description.html" %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

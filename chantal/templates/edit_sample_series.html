@@ -3,48 +3,24 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block css %}
-<style type="text/css">
-  td.value { text-align: left; vertical-align: middle; font-weight: normal }
-  td.label { text-align: right; vertical-align: middle }
-  a img { border: none }
-  th { text-align: right; vertical-align: top; padding-right: 1em }
-  table.channels * th { text-align: center; padding: 0pt }
-  td { vertical-align: top }
-</style>
-{% endblock %}
-
 {% block content %}
 <form method="post" action="">
 
-  {% if sample_series.errors or sample_series.non_field_errors %}
-    <table width="100%"><tr><td class="error-messages">
-      {% for field in sample_series %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if sample_series.non_field_errors %}
-        <p>{% trans 'Sample series error' %}</p>{{ sample_series.non_field_errors }}
-      {% endif %}
-    </td></tr></table>
-  {% endif %}
+  {% error_list sample_series _("Error in sample series") %}
 
   <table cellpadding="5" style="float: left; margin-bottom: 3ex; width: 45%">
     {% if is_new %}
       <tr>
-        <td style="text-align: right"><label for="id_{{ sample_series.name.html_name }}"
+        <td class="label"><label for="id_{{ sample_series.name.html_name }}"
              >{{ sample_series.name.label }}:</label></td>
-        <td>{{name_prefix}}-{{ sample_series.name }}</td>
+        <td class="input">{{name_prefix}}-{{ sample_series.name }}</td>
       </tr>
     {% endif %}
     <tr>
-      <td style="text-align: right"><label for="id_{{ sample_series.currently_responsible_person.html_name }}"
-                                           >{{ sample_series.currently_responsible_person.label }}:</label></td>
-      <td>{{ sample_series.currently_responsible_person }}</td>
+      {% input_field sample_series.currently_responsible_person %}
     </tr>
     <tr>
-      <td style="text-align: right"><label for="id_{{ sample_series.group.html_name }}"
-                                           >{{ sample_series.group.label }}:</label></td>
-      <td>{{ sample_series.group }}</td>
+      {% input_field sample_series.group %}
     </tr>
   </table>
 
@@ -53,35 +29,7 @@
            >{{ sample_series.samples.label }}:</label>{{ sample_series.samples }}
   </div>
 
-  {% if not is_new %}
-    <table class="edit-description">
-      {% if edit_description.errors or edit_description.non_field_errors %}
-        <tr><td class="error-messages">
-          {% for field in edit_description %}
-            {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-          {% endfor %}
-          {% if edit_description.non_field_errors %}
-            <p>{% trans 'Change-description error' %}</p>{{ edit_description.non_field_errors }}
-          {% endif %}
-        </td></tr>
-      {% endif %}
-      <tr>
-        <td>
-          <label for="id_{{ edit_description.description.html_name }}"
-                 >{{ edit_description.description.label }}:<br/> {% markdown_hint %}</label>
-        </td>
-      </tr>
-      <tr>
-        <td class="value">{{ edit_description.description }}</td>
-      </tr>
-      <tr>
-        <td class="label">
-          <label for="id_{{ edit_description.important.html_name }}"
-                 >{{ edit_description.important.label }}:</label>
-        {{ edit_description.important }}</td>
-      </tr>
-    </table>
-  {% endif %}
+  {% include "edit_description.html" %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

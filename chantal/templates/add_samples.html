@@ -1,12 +1,30 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
-
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
   <table>
-    {{ add_samples }}
+    <tr>
+      {% input_field add_samples.number_of_samples %}
+    </tr><tr>
+      {% input_field add_samples.substrate %}
+    </tr><tr>
+      {% input_field add_samples.timestamp %}
+    </tr><tr>
+      {% input_field add_samples.current_location %}
+    </tr><tr>
+      {% input_field add_samples.currently_responsible_person %}
+    </tr><tr>
+      {% input_field add_samples.purpose %}
+    </tr><tr>
+      {% input_field add_samples.tags %}
+    </tr><tr>
+      {% input_field add_samples.group %}
+    </tr><tr>
+      {% input_field add_samples.bulk_rename %}
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

@@ -156,7 +156,7 @@ class SixChamberLayer(Layer):
     time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
     substrate_electrode_distance = \
         models.DecimalField(_(u"substrate–electrode distance"), null=True, blank=True, max_digits=4,
-                            decimal_places=1, help_text=_(u"in mm"))
+                            decimal_places=1, help_text=_(u"in mm"))
     comments = models.TextField(_(u"comments"), blank=True)
     transfer_in_chamber = models.CharField(_(u"transfer in the chamber"), max_length=10, default="Ar", blank=True)
     pre_heat = models.CharField(_(u"pre-heat"), max_length=9, blank=True, help_text=_(u"format HH:MM:SS"))
@@ -165,17 +165,17 @@ class SixChamberLayer(Layer):
                                              help_text=_(u"with unit"))
     gas_pre_heat_time = models.CharField(_(u"time of gas pre-heat"), max_length=15, blank=True,
                                          help_text=_(u"format HH:MM:SS"))
-    heating_temperature = models.IntegerField(_(u"heating temperature"), help_text=_(u"in ℃"), null=True, blank=True)
+    heating_temperature = models.IntegerField(_(u"heating temperature"), help_text=_(u"in ℃"), null=True, blank=True)
     transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
     plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                             help_text=_(u"in W"))
+                                             help_text=_(u"in W"))
     # FixMe:  Maybe NullBooleanField?
     plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False, null=True, blank=True)
     deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
-                                               null=True, blank=True, help_text=_(u"in MHz"))
+                                               null=True, blank=True, help_text=_(u"in MHz"))
     deposition_power = models.DecimalField(_(u"deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                           help_text=_(u"in W"))
-    base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
+                                           help_text=_(u"in W"))
+    base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
     def __unicode__(self):
         _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
@@ -205,7 +205,7 @@ class SixChamberChannel(models.Model):
     number = models.IntegerField(_(u"channel"))
     layer = models.ForeignKey(SixChamberLayer, related_name="channels", verbose_name=_(u"layer"))
     gas = models.CharField(_(u"gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
-    flow_rate = models.DecimalField(_(u"flow rate"), max_digits=4, decimal_places=1, help_text=_(u"in sccm"))
+    flow_rate = models.DecimalField(_(u"flow rate"), max_digits=4, decimal_places=1, help_text=_(u"in sccm"))
     def __unicode__(self):
         _ = ugettext
         return _(u"channel %(number)d of %(layer)s") % {"number": self.number, "layer": self.layer}
@@ -300,23 +300,23 @@ class LargeAreaLayer(Layer):
     date = models.DateField(_(u"date"))
     layer_type = models.CharField(_(u"layer type"), max_length=2, choices=large_area_layer_type_choices)
     station = models.CharField(_(u"station"), max_length=2, choices=large_area_station_choices)
-    sih4 = models.DecimalField(_(u"SiH₄ flow rate"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
-    h2 = models.DecimalField(_(u"H₂ flow rate"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
-    tmb = models.DecimalField(u"TMB", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
-    ch4 = models.DecimalField(u"CH₄", max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
-    co2 = models.DecimalField(u"CO₂", max_digits=4, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
-    ph3 = models.DecimalField(u"PH₃", max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
-    power = models.DecimalField(_(u"power"), max_digits=5, decimal_places=1, help_text=_(u"in W"))
-    pressure = models.DecimalField(_(u"pressure"), max_digits=3, decimal_places=1, help_text=_(u"in Torr"))
-    temperature = models.DecimalField(_(u"temperature"), max_digits=4, decimal_places=1, help_text=_(u"in ℃"))
+    sih4 = models.DecimalField(_(u"SiH₄"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
+    h2 = models.DecimalField(_(u"H₂"), max_digits=5, decimal_places=1, help_text=_(u"in sccm"))
+    tmb = models.DecimalField(u"TMB", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    ch4 = models.DecimalField(u"CH₄", max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    co2 = models.DecimalField(u"CO₂", max_digits=4, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    ph3 = models.DecimalField(u"PH₃", max_digits=3, decimal_places=1, help_text=_(u"in sccm"), null=True, blank=True)
+    power = models.DecimalField(_(u"power"), max_digits=5, decimal_places=1, help_text=_(u"in W"))
+    pressure = models.DecimalField(_(u"pressure"), max_digits=3, decimal_places=1, help_text=_(u"in Torr"))
+    temperature = models.DecimalField(_(u"temperature"), max_digits=4, decimal_places=1, help_text=_(u"in ℃"))
     hf_frequency = models.DecimalField(_(u"HF frequency"), max_digits=5, decimal_places=2,
-                                       choices=large_area_hf_frequency_choices, help_text=_(u"in MHz"))
-    time = models.IntegerField(_(u"time"), help_text=_(u"in sec"))
-    dc_bias = models.DecimalField(_(u"DC bias"), max_digits=3, decimal_places=1, help_text=_(u"in V"), null=True, blank=True)
+                                       choices=large_area_hf_frequency_choices, help_text=_(u"in MHz"))
+    time = models.IntegerField(_(u"time"), help_text=_(u"in sec"))
+    dc_bias = models.DecimalField(_(u"DC bias"), max_digits=3, decimal_places=1, help_text=_(u"in V"), null=True, blank=True)
     electrode = models.CharField(_(u"electrode"), max_length=30, choices=large_area_electrode_choices)
     # FixMe: Must be called "electrodes_distance".  Also in other modules.
     electrodes_distance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
-                                               help_text=_(u"in mm"))
+                                               help_text=_(u"in mm"))
     def __unicode__(self):
         _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}

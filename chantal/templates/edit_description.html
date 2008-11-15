@@ -2,16 +2,7 @@
   {% load i18n %}
   {% load samples_extras %}
   <table class="edit-description">
-    {% if edit_description.errors or edit_description.non_field_errors %}
-      <tr><td class="error-messages">
-	{% for field in edit_description %}
-	  {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-	{% endfor %}
-	{% if edit_description.non_field_errors %}
-	  <p>{% trans 'Change-description error' %}</p>{{ edit_description.non_field_errors }}
-	{% endif %}
-      </td></tr>
-    {% endif %}
+    {% error_list edit_description _("General error") %}
     <tr>
       <td>
 	<label for="id_{{ edit_description.description.html_name }}"

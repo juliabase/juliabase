@@ -5,22 +5,8 @@
 
 {% block content %}
 <form method="post" action="">
-  {% if deposition.errors or deposition.non_field_errors or samples.errors or samples.non_field_errors %}
-    <table width="100%"><tr><td class="error-messages">
-      {% for field in deposition %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if deposition.non_field_errors %}
-        <p>{% trans 'Deposition error' %}</p>{{ deposition.non_field_errors }}
-      {% endif %}
-      {% for field in samples %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if samples.non_field_errors %}
-        <p>{% trans 'Samples error' %}</p>{{ samples.non_field_errors }}
-      {% endif %}
-    </td></tr></table>
-  {% endif %}
+  {% error_list deposition _("Error in deposition") %}
+  {% error_list samples _("Error in sample list") %}
   <table cellpadding="5">
     <tr>
       <td style="text-align: right"><label for="id_{{ deposition.number.html_name }}"
@@ -31,17 +17,13 @@
                              >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
     </tr>
     <tr>
-      <td style="text-align: right"><label for="id_{{ deposition.timestamp.html_name }}"
-                 >{{ deposition.timestamp.label }}:</label></td>
-      <td style="width: 0pt">{{ deposition.timestamp }}</td>
+      {% input_field deposition.timestamp %}
     </tr>
     <tr>
-      <td style="text-align: right">
-        <label for="id_{{ deposition.operator.html_name }}">{{ deposition.operator.label }}:</label></td>
-      <td>{{ deposition.operator }}</td>
+      {% input_field deposition.operator %}
     </tr>
     <tr>
-      <td style="text-align: right">
+     <td style="text-align: right">
         <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:<br/>
           {% markdown_hint %}</label></td>
       <td>{{ deposition.comments }}</td>
@@ -53,166 +35,51 @@
       {% for layer, change_layer in layers_and_change_layers %}
         <tr>
           <td style="border-style: solid; border-color: black; border-width: thin">
+            {% error_list layer _("Error in layer") %}
+            {% error_list change_layer _("Error in layer") %}
             <table width="100%">
-              {% if layer.errors or layer.non_field_errors %}
-                <tr>
-                  <td colspan="0" class="error-messages">
-                    {% for field in layer %}
-                      {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-                    {% endfor %}
-                    {% if layer.non_field_errors %}
-                      <p>{% trans 'Layer error' %}</p>{{ layer.non_field_errors }}
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endif %}
-              {% if change_layer.errors or change_layer.non_field_errors %}
-                <tr>
-                  <td colspan="0" class="error-messages">
-                    {% for field in change_layer %}
-                      {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-                    {% endfor %}
-                    {% if change_layer.non_field_errors %}
-                      <p>{% trans 'Layer error' %}</p>{{ change_layer.non_field_errors }}
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endif %}
               <tr>
                 <td class="label">
                   <label for="id_{{ layer.number.html_name }}"
                          >{{ layer.number.label }}:</label>
                 </td>
                 <td class="value">{{ layer.number }}</td>
-                <td class="label">
-                  <label for="id_{{ layer.sih4.html_name }}"
-                         >SiH<sub>4</sub>:</label>
-                </td>
-                <td class="value">{{ layer.sih4 }}
-                  <span class="help">({{ layer.sih4.help_text }})</span></td>
-                <td class="label">
-                  <label for="id_{{ layer.power.html_name }}"
-                         >{{ layer.power.label }}:</label>
-                </td>
-                <td class="value">{{ layer.power }}
-                  <span class="help">({{ layer.power.help_text }})</span></td>
+                {% input_field layer.sih4 %}
+                {% input_field layer.power %}
               </tr>
               <tr>
-                <td class="label">
-                  <label for="id_{{ layer.layer_type.html_name }}"
-                         >{{ layer.layer_type.label }}:</label>
-                </td>
-                <td class="value">{{ layer.layer_type }}</td>
-                <td class="label">
-                  <label for="id_{{ layer.h2.html_name }}"
-                         >H<sub>2</sub>:</label>
-                </td>
-                <td class="value">{{ layer.h2 }}
-                  <span class="help">({{ layer.h2.help_text }})</span></td>
-                <td class="label">
-                  <label for="id_{{ layer.pressure.html_name }}"
-                         >{{ layer.pressure.label }}:</label>
-                </td>
-                <td class="value">{{ layer.pressure }}
-                  <span class="help">({{ layer.pressure.help_text }})</span></td>
+                {% input_field layer.layer_type %}
+                {% input_field layer.h2 %}
+                {% input_field layer.pressure %}
               </tr>
               <tr>
-                <td class="label">
-                  <label for="id_{{ layer.station.html_name }}"
-                         >{{ layer.station.label }}:</label>
-                </td>
-                <td class="value">{{ layer.station }}</td>
+                {% input_field layer.station %}
                 <td colspan="2"/>
-                <td class="label">
-                  <label for="id_{{ layer.temperature.html_name }}"
-                         >{{ layer.temperature.label }}:</label>
-                </td>
-                <td class="value">{{ layer.temperature }}
-                  <span class="help">({{ layer.temperature.help_text }})</span></td>
+                {% input_field layer.temperature %}
               </tr>
               <tr>
-                <td class="label">
-                  <label for="id_{{ layer.date.html_name }}"
-                         >{{ layer.date.label }}:</label>
-                </td>
-                <td class="value">{{ layer.date }}</td>
-                <td class="label">
-                  <label for="id_{{ layer.tmb.html_name }}"
-                         >TMB:</label>
-                </td>
-                <td class="value">{{ layer.tmb }}
-                  <span class="help">({{ layer.tmb.help_text }})</span></td>
-                <td class="label">
-                  <label for="id_{{ layer.hf_frequency.html_name }}"
-                         >{{ layer.hf_frequency.label }}:</label>
-                </td>
-                <td class="value">{{ layer.hf_frequency }}
-                  <span class="help">({{ layer.hf_frequency.help_text }})</span></td>
+                {% input_field layer.date %}
+                {% input_field layer.tmb %}
+                {% input_field layer.hf_frequency %}
               </tr>
               <tr>
-                <td class="label">
-                  <label for="id_{{ change_layer.duplicate_this_layer.html_name }}"
-                         >{{ change_layer.duplicate_this_layer.label }}:</label>
-                </td>
-                <td class="value">{{ change_layer.duplicate_this_layer }}</td>
-                <td class="label">
-                  <label for="id_{{ layer.ch4.html_name }}"
-                         >CH<sub>4</sub>:</label>
-                </td>
-                <td class="value">{{ layer.ch4 }}
-                  <span class="help">({{ layer.ch4.help_text }})</span></td>
-                <td class="label">
-                  <label for="id_{{ layer.time.html_name }}"
-                         >{{ layer.time.label }}:</label>
-                </td>
-                <td class="value">{{ layer.time }}
-                  <span class="help">({{ layer.time.help_text }})</span></td>
+                {% input_field change_layer.duplicate_this_layer %}
+                {% input_field layer.ch4 %}
+                {% input_field layer.time %}
               </tr>
               <tr>
-                <td class="label">
-                  <label for="id_{{ change_layer.remove_this_layer.html_name }}"
-                         >{{ change_layer.remove_this_layer.label }}:</label>
-                </td>
-                <td class="value">{{ change_layer.remove_this_layer }}</td>
-                <td class="label">
-                  <label for="id_{{ layer.co2.html_name }}"
-                         >CO<sub>2</sub>:</label>
-                </td>
-                <td class="value">{{ layer.co2 }}
-                  <span class="help">({{ layer.co2.help_text }})</span></td>
-                <td class="label">
-                  <label for="id_{{ layer.dc_bias.html_name }}"
-                         >{{ layer.dc_bias.label }}:</label>
-                </td>
-                <td class="value">{{ layer.dc_bias }}
-                  <span class="help">({{ layer.dc_bias.help_text }})</span></td>
+                {% input_field change_layer.remove_this_layer %}
+                {% input_field layer.co2 %}
+                {% input_field layer.dc_bias %}
               </tr>
               <tr>
-                <td class="label">
-                  <label for="id_{{ change_layer.move_this_layer.html_name }}"
-                         >{{ change_layer.move_this_layer.label }}:</label>
-                </td>
-                <td style="font-weight: normal">{{ change_layer.move_this_layer }}</td>
-                <td class="label">
-                  <label for="id_{{ layer.ph3.html_name }}"
-                         >PH<sub>3</sub>:</label>
-                </td>
-                <td class="value">{{ layer.ph3 }}
-                  <span class="help">({{ layer.ph3.help_text }})</span></td>
-                <td class="label">
-                  <label for="id_{{ layer.electrode.html_name }}"
-                         >{{ layer.electrode.label }}:</label>
-                </td>
-                <td class="value">{{ layer.electrode }}</span></td>
+                {% input_field change_layer.move_this_layer %}
+                {% input_field layer.ph3 %}
+                {% input_field layer.electrode %}
               </tr>
               <tr>
                 <td colspan="4"/>
-                <td class="label">
-                  <label for="id_{{ layer.electrodes_distance.html_name }}"
-                         >{{ layer.electrodes_distance.label }}:</label>
-                </td>
-                <td class="value">{{ layer.electrodes_distance }}
-                  <span class="help">({{ layer.electrodes_distance.help_text }})</span></td>
+                {% input_field layer.electrodes_distance %}
               </tr>
             </table>
           </td>
@@ -221,47 +88,17 @@
     </table>
   {% endif %}
 
+  {% error_list add_layers _("Error with adding layers") %}
+  {% error_list remove_from_my_samples _("Error with removing from My Samples") %}
   <table>
-    {% if add_layers.errors or add_layers.non_field_errors %}
-      <tr><td class="error-messages">
-        {% for field in add_layers %}
-          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-        {% endfor %}
-        {% if add_layers.non_field_errors %}
-          <p>{% trans 'Error with adding layers' %}</p>{{ add_layers.non_field_errors }}
-        {% endif %}
-      </td></tr>
-    {% endif %}
     <tr>
-      <td class="label">
-        <label for="id_{{ add_layers.number_of_layers_to_add.html_name }}"
-               >{{ add_layers.number_of_layers_to_add.label }}:</label>
-      </td>
-      <td class="value">{{ add_layers.number_of_layers_to_add }}</td>
+      {% input_field add_layers.number_of_layers_to_add %}
     </tr>
     <tr>
-      <td class="label">
-        <label for="id_{{ add_layers.my_layer_to_be_added.html_name }}"
-               >{{ add_layers.my_layer_to_be_added.label }}:</label>
-      </td>
-      <td class="value">{{ add_layers.my_layer_to_be_added }}</td>
+      {% input_field add_layers.my_layer_to_be_added %}
     </tr>
-    {% if remove_from_my_samples.errors or remove_from_my_samples.non_field_errors %}
-      <tr><td class="error-messages">
-        {% for field in remove_from_my_samples %}
-          {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-        {% endfor %}
-        {% if remove_from_my_samples.non_field_errors %}
-          <p>{% trans 'Error with removing from My Samples' %}</p>{{ remove_from_my_samples.non_field_errors }}
-        {% endif %}
-      </td></tr>
-    {% endif %}
     <tr>
-      <td class="label">
-        <label for="id_{{ remove_from_my_samples.remove_deposited_from_my_samples.html_name }}"
-               >{{ remove_from_my_samples.remove_deposited_from_my_samples.label }}:</label>
-      </td>
-      <td class="value">{{ remove_from_my_samples.remove_deposited_from_my_samples }}</td>
+      {% input_field remove_from_my_samples.remove_deposited_from_my_samples %}
     </tr>
   </table>
 

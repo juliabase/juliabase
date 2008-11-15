@@ -1,6 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
@@ -13,13 +14,8 @@
     {% for layer in my_layers %}
       {% if layer.errors %}
         <tr>
-          <td colspan="0" class="error-messages">
-            {% for field in layer %}
-              {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-            {% endfor %}
-            {% if layer.non_field_errors %}
-              <p>{% trans 'My Layer error' %}</p>{{ layer.non_field_errors }}
-            {% endif %}
+          <td>
+            {% error_list layer _("Error in My Layer") %}
           </td>
         </tr>
       {% endif %}

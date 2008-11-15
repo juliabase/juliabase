@@ -1,13 +1,11 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
-  {% if global_data.non_field_errors %}
-    <div class="errorlist">{% trans 'General error' %}
-      {{ global_data.non_field_errors }}</div>
-  {% endif %}
+  {% error_list global_data _("General error") %}
   <table style="margin-left: auto; margin-right: auto; margin-bottom: 2ex" cellpadding="10" border="1">
     <tr>
       <th>{% trans 'Piece number' %}</th>
@@ -28,13 +26,8 @@
     {% for number, new_name in new_names %}
       {% if new_name.errors or new_name.non_field_errors %}
         <tr>
-          <td colspan="0" class="error-messages">
-            {% for field in new_name %}
-              {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-            {% endfor %}
-            {% if new_name.non_field_errors %}
-              <p>{% trans 'New name error' %}</p>{{ new_name.non_field_errors }}
-            {% endif %}
+          <td colspan="0">
+            {% error_list new_name _("Error in new name") %}
           </td>
         </tr>
       {% endif %}
@@ -61,17 +54,14 @@
       </tr>
     {% endfor %}
   </table>
+
   <p>
     <label for="id_{{ global_data.sample_completely_split.html_name }}"
            >{{ global_data.sample_completely_split.label }}:</label>
     {{ global_data.sample_completely_split }}
   </p>
-  {% if global_data.sample_series.errors %}
-    <div class="errorlist">{{ global_data.sample_series.label }} {{ global_data.sample_series.errors }}</div>
-  {% endif %}
   <p style="margin-bottom: 0pt">
-    <label for="id_{{ global_data.sample_series.html_name }}"
-           >{{ global_data.sample_series.label }}:</label>
+    <label for="id_{{ global_data.sample_series.html_name }}">{{ global_data.sample_series.label }}:</label>
     {{ global_data.sample_series }}
   </p>
   <p class="submit-button" style="margin-top: 0pt">

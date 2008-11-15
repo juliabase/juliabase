@@ -5,11 +5,27 @@
 
 {% block content %}
 <form method="post" action="">
+  {% error_list action _("General error") %}
+  {% error_list my_samples _("Error in “My Samples”") %}
   <table style="float: right">
-    {{ action }}
+    <tr>
+      {% input_field action.new_currently_responsible_person %}
+    </tr><tr>
+      {% input_field action.new_group %}
+    </tr><tr>
+      {% input_field action.new_current_location %}
+    </tr><tr>
+      {% input_field action.copy_to_user %}
+    </tr><tr>
+      {% input_field action.comment %}
+    </tr><tr>
+      {% input_field action.remove_from_my_samples %}
+    </tr>
   </table>
   <table cellspacing="10">
-    {{ my_samples }}
+    <tr>
+      {% input_field my_samples.samples %}
+    </tr>
   </table>
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

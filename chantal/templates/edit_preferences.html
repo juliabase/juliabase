@@ -1,35 +1,18 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "base.html" %}
 {% load i18n %}
+{% load samples_extras %}
 
 {% block content %}
 <form method="post" action="">
-  {% if user_details.errors or user_details.non_field_errors or initials.errors or initials.non_field_errors %}
-    <table width="100%"><tr><td class="error-messages">
-      {% for field in user_details %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if user_details.non_field_errors %}
-        <p>{% trans 'Preferences error' %}</p>{{ user_details.non_field_errors }}
-      {% endif %}
-      {% for field in initials %}
-        {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if initials.non_field_errors %}
-        <p>{% trans 'Initials error' %}</p>{{ initials.non_field_errors }}
-      {% endif %}
-    </td></tr></table>
-  {% endif %}
+  {% error_list user_details _("Error in preferences") %}
+  {% error_list initials _("Error in initials") %}
   <table cellspacing="10">
     <tr>
-      <td class="label">
-        <label for="id_{{ user_details.only_important_news.html_name }}"
-               >{{ user_details.only_important_news.label }}:</label>
-      </td>
-      <td class="value">{{ user_details.only_important_news }}</td>
+      {% input_field user_details.only_important_news %}
     </tr>
     <tr>
-      <td class="label" style="vertical-align: top">
+      <td class="label">
         <label for="id_{{ user_details.auto_addition_groups.html_name }}"
                >{{ user_details.auto_addition_groups.label }}:</label>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
@@ -37,16 +20,15 @@
           all groups you are a member of.  You can mark those groups that you want all new samples of which to be
           implicitly added to “My Samples”.){% endblocktrans %}</div>
       </td>
-      <td class="value" style="vertical-align: top">{{ user_details.auto_addition_groups }}</td>
+      <td class="input">{{ user_details.auto_addition_groups }}</td>
     </tr>
     <tr>
-      <td class="label" style="vertical-align: top">
-        <label for="id_{{ initials.initials.html_name }}"
-               >{{ initials.initials.label }}:</label>
+      <td class="label">
+        <label for="id_{{ initials.initials.html_name }}">{{ initials.initials.label }}:</label>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
       </td>
-      <td class="value" style="vertical-align: top">{{ initials.initials }}</td>
+      <td class="input">{{ initials.initials }}</td>
     </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

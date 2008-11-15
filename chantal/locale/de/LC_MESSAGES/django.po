@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-14 19:33+0100\n"
-"PO-Revision-Date: 2008-11-14 19:21+0100\n"
+"POT-Creation-Date: 2008-11-15 21:47+0100\n"
+"PO-Revision-Date: 2008-11-15 21:51+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -324,8 +324,8 @@ msgstr "Format HH:MM:SS"
 msgid "substrate–electrode distance"
 msgstr "Abstand Substrat–Elektrode"
 
-msgid "in mm"
-msgstr "in mm"
+msgid "in mm"
+msgstr "in mm"
 
 msgid "transfer in the chamber"
 msgstr "Transfer in die Kammer"
@@ -345,8 +345,8 @@ msgstr "Zeit des Gas-Pre-Heats"
 msgid "heating temperature"
 msgstr "Heiztemperatur"
 
-msgid "in ℃"
-msgstr "in ℃"
+msgid "in ℃"
+msgstr "in ℃"
 
 msgid "transfer out of the chamber"
 msgstr "Transfer aus der Kammer"
@@ -354,8 +354,8 @@ msgstr "Transfer aus der Kammer"
 msgid "plasma start power"
 msgstr "Startleistung Plasma"
 
-msgid "in W"
-msgstr "in W"
+msgid "in W"
+msgstr "in W"
 
 msgid "plasma start with carrier"
 msgstr "Plasma startet mit Carrier"
@@ -363,8 +363,8 @@ msgstr "Plasma startet mit Carrier"
 msgid "deposition frequency"
 msgstr "Depositionsfrequenz"
 
-msgid "in MHz"
-msgstr "in MHz"
+msgid "in MHz"
+msgstr "in MHz"
 
 msgid "deposition power"
 msgstr "Depositionsleistung"
@@ -372,8 +372,8 @@ msgstr "Depositionsleistung"
 msgid "base pressure"
 msgstr "Basisdruck"
 
-msgid "in Torr"
-msgstr "in Torr"
+msgid "in Torr"
+msgstr "in Torr"
 
 #, python-format
 msgid "layer %(number)d of %(deposition)s"
@@ -406,8 +406,8 @@ msgstr "Gas und Verdünnung"
 msgid "flow rate"
 msgstr "Flussrate"
 
-msgid "in sccm"
-msgstr "in sccm"
+msgid "in sccm"
+msgstr "in sccm"
 
 #, python-format
 msgid "channel %(number)d of %(layer)s"
@@ -473,11 +473,11 @@ msgstr "Schichttyp"
 msgid "station"
 msgstr "Station"
 
-msgid "SiH₄ flow rate"
-msgstr "SiH₄ Flussrate"
+msgid "SiH₄"
+msgstr "SiH₄"
 
-msgid "H₂ flow rate"
-msgstr "H₂ Flussrate"
+msgid "H₂"
+msgstr "H₂"
 
 msgid "power"
 msgstr "Leistung"
@@ -494,14 +494,14 @@ msgstr "HF-Frequenz"
 msgid "time"
 msgstr "Zeit"
 
-msgid "in sec"
-msgstr "in sec"
+msgid "in sec"
+msgstr "in sec"
 
 msgid "DC bias"
 msgstr "DC-Bias"
 
-msgid "in V"
-msgstr "in V"
+msgid "in V"
+msgstr "in V"
 
 msgid "electrode"
 msgstr "Elektrode"
@@ -1850,11 +1850,11 @@ msgstr "Logo des IEF-5"
 msgid "The samples database"
 msgstr "Die Probendatenbank"
 
-msgid "Initials error"
-msgstr "Kürzel-Fehler"
+msgid "Error in initials"
+msgstr "Fehler im Kürzel"
 
-msgid "New name error"
-msgstr "Fehler im neuen Namen"
+msgid "Error in new name"
+msgstr "Fehler in neuen Namen"
 
 msgid "Password change"
 msgstr "Passwort ändern"
@@ -1888,14 +1888,17 @@ msgstr ""
 "\n"
 "Der Name %(alias)s ist ein Alias für die folgenden Proben:"
 
-msgid "Deposition error"
-msgstr "Fehler in Deposition"
+msgid "General error"
+msgstr "Allgemeiner Fehler"
 
-msgid "Samples error"
-msgstr "Fehler in der Probe"
+msgid "Error in deposition"
+msgstr "Fehler in der Deposition"
 
-msgid "Layer error"
-msgstr "Fehler in Schicht"
+msgid "Error in sample list"
+msgstr "Fehler in Probenliste"
+
+msgid "Error in layer"
+msgstr "Fehler in der Schicht"
 
 msgid "Error with adding layers"
 msgstr "Fehler beim hinzufügen von Schichten"
@@ -1903,20 +1906,26 @@ msgstr "Fehler beim hinzufügen von Schichten"
 msgid "Error with removing from My Samples"
 msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 
-msgid "My Layer error"
-msgstr "Fehler in Meiner Schicht"
+msgid "Error in My Layer"
+msgstr "Fehler in „Meinem Layer“"
 
-msgid "PDS data error"
-msgstr "Fehler mit PDS-Daten"
+msgid "Error in “My Samples”"
+msgstr "Fehler in „Meine Proben“"
 
-msgid "Sample error"
-msgstr "Fehler in Probe"
+msgid "Error in PDS data"
+msgstr "Fehler in den PDS-Daten"
+
+msgid "Error in sample"
+msgstr "Fehler in den Proben"
 
 msgid "Extract from datafile error"
 msgstr "Fehler mit dem extrahieren aus der Datendatei"
 
-msgid "Preferences error"
-msgstr "Einstellungen-Fehler"
+msgid "Error with removal from “My Samples”"
+msgstr "Fehler beim Entfernen von „Meine Proben“"
+
+msgid "Error in preferences"
+msgstr "Fehler in Einstellungen"
 
 msgid ""
 "(This list shows\n"
@@ -1931,14 +1940,11 @@ msgstr ""
 msgid "(Once set, you can't change this anymore.)"
 msgstr "(Einmal gesetzt, kann es nie mehr geändert werden.)"
 
-msgid "Result error"
-msgstr "Ergebnis-Fehler"
+msgid "Error in result"
+msgstr "Fehler im Ergebnis"
 
-msgid "Change-description error"
-msgstr "Fehler in Änderungsbeschreibung"
-
-msgid "Sample series error"
-msgstr "Fehler in der Probenserie"
+msgid "Error in sample series"
+msgstr "Fehler in Probenserie"
 
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
@@ -1946,8 +1952,8 @@ msgstr "diese Schicht löschen"
 msgid "delete"
 msgstr "löschen"
 
-msgid "Channel error"
-msgstr "Fehler in Channel"
+msgid "Error in channel"
+msgstr "Fehler im Channel"
 
 msgid "Number of channels to be added:"
 msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
@@ -2488,8 +2494,8 @@ msgstr ""
 "  <p>Hier können Sie die Syntax nach Belieben testen.  Nichts, was Sie hier "
 "eingeben, wird gespeichert.</p>\n"
 
-msgid "Sandbox error"
-msgstr "Sandkasten-Fehler"
+msgid "Error in markup"
+msgstr "Fehler im Markup"
 
 msgid "input"
 msgstr "Eingabe"
@@ -2678,11 +2684,8 @@ msgstr "Ergebnis ändern"
 msgid "Material"
 msgstr "Material"
 
-msgid "Sample name error"
+msgid "Error in sample name"
 msgstr "Fehler im Probennamen"
-
-msgid "General error"
-msgstr "Allgemeiner Fehler"
 
 msgid "Piece number"
 msgstr "Stück-Nr."
@@ -2801,8 +2804,56 @@ msgstr "Inspizierte Objekte"
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
 
-#~ msgid "Error in new group"
-#~ msgstr "Fehler in der neuen Gruppe"
+#~ msgid "SiH₄ flow rate"
+#~ msgstr "SiH₄ Flussrate"
+
+#~ msgid "H₂ flow rate"
+#~ msgstr "H₂ Flussrate"
+
+#~ msgid "Initials error"
+#~ msgstr "Kürzel-Fehler"
+
+#~ msgid "New name error"
+#~ msgstr "Fehler im neuen Namen"
+
+#~ msgid "Deposition error"
+#~ msgstr "Fehler in Deposition"
+
+#~ msgid "Samples error"
+#~ msgstr "Fehler in der Probe"
+
+#~ msgid "Layer error"
+#~ msgstr "Fehler in Schicht"
+
+#~ msgid "My Layer error"
+#~ msgstr "Fehler in Meiner Schicht"
+
+#~ msgid "PDS data error"
+#~ msgstr "Fehler mit PDS-Daten"
+
+#~ msgid "Sample error"
+#~ msgstr "Fehler in Probe"
+
+#~ msgid "Preferences error"
+#~ msgstr "Einstellungen-Fehler"
+
+#~ msgid "Result error"
+#~ msgstr "Ergebnis-Fehler"
+
+#~ msgid "Change-description error"
+#~ msgstr "Fehler in Änderungsbeschreibung"
+
+#~ msgid "Sample series error"
+#~ msgstr "Fehler in der Probenserie"
+
+#~ msgid "Channel error"
+#~ msgstr "Fehler in Channel"
+
+#~ msgid "Sandbox error"
+#~ msgstr "Sandkasten-Fehler"
+
+#~ msgid "Sample name error"
+#~ msgstr "Fehler im Probennamen"
 
 #~ msgid "New group error"
 #~ msgstr "Fehler mit der neuen Gruppe"
@@ -3017,9 +3068,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "%(name)s (%(originator)s %(year)s)"
 #~ msgstr "%(name)s (%(originator)s %(year)s)"
-
-#~ msgid "Sample list"
-#~ msgstr "Probenliste"
 
 #~ msgid "if more than one sample, separate them with commas"
 #~ msgstr "mehr als eine Probe durch Kommatas trennen"

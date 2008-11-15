@@ -64,7 +64,7 @@ span.label { margin-right: 0.5em }
 span.value { font-weight: bold }
 td.value, td.input { text-align: left }
 td.value { font-weight: bold; vertical-align: text-top }
-td.input { vertical-align: text-top }
+td.input { vertical-align: top }
 td.label { text-align: right; vertical-align: text-top; padding-right: 0.3em }
 span.help { font-size: small; font-weight: normal }
 
