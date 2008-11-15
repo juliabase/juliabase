@@ -335,10 +335,70 @@ def error_list(form, form_error_title):
 
 @register.simple_tag
 def input_field(field):
+    u"""Tag for inserting a field value into an HTML table as an editable
+    field.  It consists of two ``<td>`` elements, one for the label and one for
+    the value, so it spans two columns.  This tag is primarily used in
+    tamplates of edit views.  Example::
+
+        {% input_field deposition.number %}
+    """
     result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
         {"html_name": field.html_name, "label": field.label}
     help_text = u"""<br/><span class="help">(%s)</span>""" % field.help_text if field.help_text else u""
     result += u"""<td class="input">%(field)s%(help_text)s</td>""" % {"field": field, "help_text": help_text}
     return result
-        
 
+class ValueFieldNode(template.Node):
+    u"""Helper class to realise the `value_field` tag.
+    """
+    def __init__(self, field, unit):
+        self.field_name = field
+        self.field = template.Variable(field)
+        self.unit = unit
+    def render(self, context):
+        field = self.field.resolve(context)
+        if "." not in self.field_name:
+            verbose_name = unicode(context[self.field_name]._meta.verbose_name)
+        else:
+            instance, field_name = self.field_name.rsplit(".", 1)
+            model = context[instance].__class__.__name__
+            if model == "User":
+                model = django.contrib.auth.models.User
+            else:
+                model = chantal.samples.models.__dict__[model]
+            verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
+        verbose_name = verbose_name[0].upper() + verbose_name[1:]
+        if self.unit == "yes/no":
+            field = fancy_bool(field)
+            self.unit = None
+        elif not field and field != 0:
+            self.unit = None
+            field = u"—"
+        return u"""<td class="label">%(label)s:</td><td class="value">%(value)s</td>""" % \
+            {"label": verbose_name, "value": quantity(field, self.unit) if self.unit else field}
+        
+@register.tag
+def value_field(parser, token):
+    u"""Tag for inserting a field value into an HTML table.  It consists of two
+    ``<td>`` elements, one for the label and one for the value, so it spans two
+    columns.  This tag is primarily used in tamplates of show views, especially
+    those used to compile the sample history.  Example::
+
+        {% value_field layer.base_pressure "W" %}
+
+    The unit (``"W"`` for “Watt”) is optional.  If you have a boolean field,
+    you can give ``"yes/no"`` as the unit, which converts the boolean value to
+    a yes/no string (in the current language).
+    """
+    tokens = token.split_contents()
+    if len(tokens) == 3:
+        tag, field, unit = tokens
+        if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
+            raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
+        unit = unit[1:-1]
+    elif len(tokens) == 2:
+        tag, field = tokens
+        unit = None
+    else:
+        raise template.TemplateSyntaxError, "value_field requires one or two arguments"
+    return ValueFieldNode(field, unit)

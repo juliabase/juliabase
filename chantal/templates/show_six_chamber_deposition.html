@@ -41,46 +41,31 @@
                     </tr>
                   </table>
                 </td>
-                <td class="label">{% verbose_name SixChamberLayer.transfer_in_chamber %}:</td>
-                <td class="value">{{ layer.transfer_in_chamber|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.plasma_start_power %}:</td>
-                <td class="value">{{ layer.plasma_start_power|quantity:"W"|default_if_none:"—" }}</td>
+                {% value_field layer.transfer_in_chamber %}
+                {% value_field layer.plasma_start_power "W" %}
               </tr>
               <tr>
-                <td class="label">{% verbose_name SixChamberLayer.pre_heat %}:</td>
-                <td class="value">{{ layer.pre_heat|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.plasma_start_with_carrier %}:</td>
-                <td class="value">{{ layer.plasma_start_with_carrier|fancy_bool }}</td>
+                {% value_field layer.pre_heat %}
+                {% value_field layer.plasma_start_with_carrier "yes/no" %}
               </tr>
               <tr>
-                <td class="label">{% verbose_name SixChamberLayer.heating_temperature %}:</td>
-                <td class="value">{{ layer.heating_temperature|quantity:"℃"|default_if_none:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.deposition_frequency %}:</td>
-                <td class="value">{{ layer.deposition_frequency|quantity:"MHz"|default_if_none:"—" }}</td>
+                {% value_field layer.heating_temperature "℃" %}
+                {% value_field layer.deposition_frequency "MHz" %}
               </tr>
               <tr>
-                <td class="label">{% verbose_name SixChamberLayer.gas_pre_heat_gas %}:</td>
-                <td class="value">{{ layer.gas_pre_heat_gas|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.gas_pre_heat_pressure %}:</td>
-                <td class="value">{{ layer.gas_pre_heat_pressure|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.gas_pre_heat_time %}:</td>
-                <td class="value">{{ layer.gas_pre_heat_time|default:"—" }}</td>
+                {% value_field layer.gas_pre_heat_gas %}
+                {% value_field layer.gas_pre_heat_pressure %}
+                {% value_field layer.gas_pre_heat_time %}
               </tr>
               <tr>
-                <td class="label">{% verbose_name SixChamberLayer.pressure %}:</td>
-                <td class="value">{{ layer.pressure|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.transfer_out_of_chamber %}:</td>
-                <td class="value">{{ layer.transfer_out_of_chamber|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.deposition_power %}:</td>
-                <td class="value">{{ layer.deposition_power|quantity:"W"|default_if_none:"—" }}</td>
+                {% value_field layer.pressure %}
+                {% value_field layer.transfer_out_of_chamber %}
+                {% value_field layer.deposition_power "W" %}
               </tr>
               <tr>
-                <td class="label">{% verbose_name SixChamberLayer.time %}:</td>
-                <td class="value">{{ layer.time|default:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.substrate_electrode_distance %}:</td>
-                <td class="value">{{ layer.substrate_electrode_distance|quantity:"mm"|default_if_none:"—" }}</td>
-                <td class="label">{% verbose_name SixChamberLayer.base_pressure %}:</td>
-                <td class="value">{{ layer.base_pressure|quantity:"Torr"|default_if_none:"—" }}</td>
+                {% value_field layer.time %}
+                {% value_field layer.substrate_electrode_distance "mm" %}
+                {% value_field layer.base_pressure "Torr" %}
               </tr>
             </table>
           </td>
