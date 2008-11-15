@@ -332,3 +332,13 @@ def error_list(form, form_error_title):
     :type form_error_title: unicode
     """
     return {"form": form, "form_error_title": form_error_title}
+
+@register.simple_tag
+def input_field(field):
+    result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
+        {"html_name": field.html_name, "label": field.label}
+    help_text = u"""<br/><span class="help">(%s)</span>""" % field.help_text if field.help_text else u""
+    result += u"""<td class="input">%(field)s%(help_text)s</td>""" % {"field": field, "help_text": help_text}
+    return result
+        
+

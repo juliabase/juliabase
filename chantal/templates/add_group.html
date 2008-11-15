@@ -8,13 +8,9 @@
   {% error_list new_group _("Name of new group") %}
   <table>
     <tr>
-      <td class="label"><label for="id_{{ new_group.new_group_name.html_name }}"
-                 >{{ new_group.new_group_name.label }}:</label></td>
-      <td class="input">{{ new_group.new_group_name }}</td>
+      {% input_field new_group.new_group_name %}
     </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
-
-
 {% endblock %}
