@@ -5,6 +5,8 @@
 
 {% block content %}
 <form method="post" action="">
+  {% error_list external_operator _("Error in external operator") %}
+  {% error_list initials _("Error in initials") %}
   <table>
     <tr>
       {% input_field external_operator.name %}
