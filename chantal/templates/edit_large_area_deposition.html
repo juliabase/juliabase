@@ -35,9 +35,9 @@
       {% for layer, change_layer in layers_and_change_layers %}
         <tr>
           <td style="border-style: solid; border-color: black; border-width: thin">
-            {% error_list layer _("Error in layer") %}
-            {% error_list change_layer _("Error in layer") %}
             <table width="100%">
+              {% error_list layer _("Error in layer") "<tr>" %}
+              {% error_list change_layer _("Error in layer") "<tr>" %}
               <tr>
                 <td class="label">
                   <label for="id_{{ layer.number.html_name }}"

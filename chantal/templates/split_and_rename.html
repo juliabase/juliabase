@@ -24,13 +24,7 @@
       {% endfor %}
     {% endif %}
     {% for number, new_name in new_names %}
-      {% if new_name.errors or new_name.non_field_errors %}
-        <tr>
-          <td colspan="0">
-            {% error_list new_name _("Error in new name") %}
-          </td>
-        </tr>
-      {% endif %}
+      {% error_list new_name _("Error in new name") "<tr>" %}
       <tr {% if forloop.last %}style="background-color: darkgray"{% endif %}>
         <td style="text-align: center">
           {% if forloop.last %}

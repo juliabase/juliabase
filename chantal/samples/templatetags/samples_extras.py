@@ -316,7 +316,7 @@ def markdown(value):
     return markup.markdown(result)
 
 @register.inclusion_tag("error_list.html")
-def error_list(form, form_error_title):
+def error_list(form, form_error_title, outest_tag=u"<table>"):
     u"""Includes a comprehensive error list for one particular form into the
     page.  It is an HTML table, so take care that the tags are nested
     properly.  Its template can be found in the file ``"error_list.html"``.
@@ -327,11 +327,15 @@ def error_list(form, form_error_title):
         are not connected to one particular field but the form as a
         whole. Typically, they are generated in the ``is_referentially_valid``
         functions.
+      - `outest_tag`: May be ``"<table>"`` or ``"<tr>"``, with ``"<table>"`` as
+        the default.  It is the outmost HTML tag which is generated for the
+        error list.
 
     :type form: ``forms.Form``
     :type form_error_title: unicode
+    :type outest_tag: unicode
     """
-    return {"form": form, "form_error_title": form_error_title}
+    return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
 
 @register.simple_tag
 def input_field(field):

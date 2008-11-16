@@ -5,6 +5,7 @@
 
 {% block content %}
 <form method="post" action="">
+  {% error_list add_samples _("General error") %}
   <table>
     <tr>
       {% input_field add_samples.number_of_samples %}

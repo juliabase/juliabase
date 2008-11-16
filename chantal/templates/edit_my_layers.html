@@ -12,13 +12,7 @@
       <th>{{ my_layers.0.delete.label }}</th>
     </tr>
     {% for layer in my_layers %}
-      {% if layer.errors %}
-        <tr>
-          <td>
-            {% error_list layer _("Error in My Layer") %}
-          </td>
-        </tr>
-      {% endif %}
+      {% error_list layer _("Error in My Layer") "<tr>" %}
       <tr>
         <td>{{ layer.nickname }}</td>
         <td>{{ layer.deposition_and_layer }}</td>

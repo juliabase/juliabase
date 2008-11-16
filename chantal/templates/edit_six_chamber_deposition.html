@@ -45,7 +45,7 @@
               <tr>
                 <td>
                   <table width="100%">
-                    {% error_list layer _("Error in layer") %}
+                    {% error_list layer _("Error in layer") "<tr>" %}
                     <tr>
                       <td colspan="2" rowspan="3" style="vertical-align: top">
                         <table>
@@ -130,7 +130,7 @@
                               <th>{% trans 'delete' %}</th>
                             </tr>
                             {% for channel in channels %}
-                              {% error_list channel _("Error in channel") %}
+                              {% error_list channel _("Error in channel") "<tr>" %}
                               <tr>
                                 <td>{{ channel.number }}</td>
                                 <td>{{ channel.gas }}</td>
