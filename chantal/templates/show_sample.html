@@ -3,8 +3,8 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block title %}{% trans 'History of sample “' %}{{ sample.name }}{% trans '”' %}{% endblock %}
-{% block content_title %}<h1>{% trans 'History of sample “' %}{{ sample.name }}{% trans '”' %}
+{% block title %}{% trans 'History of sample “' %}{{ sample }}{% trans '”' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'History of sample “' %}{{ sample }}{% trans '”' %}
   <span class="aliases">{% for alias in sample.aliases.all %}
     alias <strong>{{ alias }}</strong> {% endfor %}</span>
   {% if can_edit %}<a class="edit-button"

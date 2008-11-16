@@ -279,7 +279,11 @@ class Sample(models.Model):
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, related_name="samples",
                               verbose_name=_(u"group"))
     def __unicode__(self):
-        return self.name
+        name = self.name
+        if name.startswith("*"):
+            return u"*" + name[1:].lstrip("0")
+        else:
+            return name
     def duplicate(self):
         u"""This is used to create a new `Sample` instance with the same data as
         the current one.  Note that the `processes` field is not set because
@@ -325,7 +329,7 @@ admin.site.register(SampleAlias)
 class SampleSplit(Process):
     u"""A process where a sample is split into many child samples.  The sample
     split itself is a process of the *parent*, whereas the children point to it
-    through `Sample.split_origin`.  This way one can walk though the path of
+    through `Sample.split_origin`.  This way one can walk through the path of
     relationship in both directions.
     """
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))

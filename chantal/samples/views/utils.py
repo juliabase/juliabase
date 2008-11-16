@@ -684,7 +684,12 @@ def build_structured_sample_list(samples):
     structured_series = {}
     structured_groups = {}
     groupless_samples = []
-    for sample in set(samples):
+    samples_already_processed = set()
+    for sample in samples:
+        if sample in samples_already_processed:
+            continue
+        else:
+            samples_already_processed.add(sample)
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:

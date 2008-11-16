@@ -177,7 +177,7 @@ def show(request, sample_name, sample_id=None):
     if sample_id and not is_remote_client:
         sample_name = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
         return utils.HttpResponseSeeOther(
-            django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample_name}))
+            django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample_name.name}))
     sample = \
         utils.lookup_sample(sample_name, request) if sample_id is None else get_object_or_404(models.Sample, pk=sample_id)
     user_details = utils.get_profile(request.user)
@@ -229,8 +229,8 @@ class AddSamplesForm(forms.Form):
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
-    currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                                  queryset=django.contrib.auth.models.User.objects)
+    currently_responsible_person = form_utils.OperatorChoiceField(
+        label=_(u"Currently responsible person"), queryset=django.contrib.auth.models.User.objects.filter(is_active=True))
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
                            help_text=_(u"separated with commas, no whitespace"))
@@ -274,9 +274,10 @@ def add_samples_to_database(add_samples_form, user):
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = utils.get_profile(add_samples_form.cleaned_data["currently_responsible_person"])
-    new_names = [u"*%d" % i for i in range(starting_number, starting_number + number_of_samples)]
+    names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
+    new_names = []
     samples = []
-    for new_name in new_names:
+    for new_name in names:
         sample_group = add_samples_form.cleaned_data["group"]
         sample = models.Sample(name=new_name,
                                current_location=add_samples_form.cleaned_data["current_location"],
@@ -291,6 +292,7 @@ def add_samples_to_database(add_samples_form, user):
         if sample_group:
             for watcher in sample_group.auto_adders.all():
                 watcher.my_samples.add(sample)
+        new_names.append(unicode(sample))
     return new_names, samples
 
 @login_required

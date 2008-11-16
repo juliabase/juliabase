@@ -28,7 +28,7 @@
     {% if groupless_samples %}
       <ul>
         {% for sample in groupless_samples %}
-          <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+          <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
@@ -39,7 +39,7 @@
       {% if group.samples %}
         <ul>
           {% for sample in group.samples %}
-            <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
           {% endfor %}
         </ul>
       {% endif %}
@@ -53,7 +53,7 @@
         {% endif %}
         <ul>
           {% for sample in series.samples %}
-            <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
           {% endfor %}
         </ul>
       {% endfor %}
