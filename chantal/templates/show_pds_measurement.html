@@ -8,8 +8,7 @@
 
 <table cellpadding="5">
   <tr>
-    <td class="label">{% verbose_name PDSMeasurement.number %}:</td>
-    <td class="value">{{ process.number }}</td>
+    {% value_field process.number %}
   </tr>
   {% if process.raw_datafile %}
     <tr>

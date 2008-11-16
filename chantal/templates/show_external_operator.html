@@ -3,12 +3,6 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block css %}
-<style type="text/css">
-  th { text-align: right }
-</style>
-{% endblock %}
-
 {% block content_title %}<h1
     >{% blocktrans with external_operator.name as name %}External operator “{{ name }}”{% endblocktrans %}
   {% if can_edit %}<a class="edit-button"
@@ -18,37 +12,36 @@
 {% block content %}
 <table cellspacing="10" style="margin-bottom: 2ex">
   <tr>
-    <th>{% verbose_name ExternalOperator.name %}:</th>
-    <td>{{ external_operator.name }}</td>
+    {% value_field external_operator.name %}
   </tr>
   <tr>
-    <th>{% verbose_name ExternalOperator.institution %}:</th>
-    <td>{{ external_operator.institution }}</td>
+    {% value_field external_operator.institution %}
   </tr>
   <tr>
-    <th>{% verbose_name ExternalOperator.email %}:</th>
-    <td><a href="mailto:{{ external_operator.email }}">{{ external_operator.email }}</a></td>
+    <td class="label">{% verbose_name ExternalOperator.email %}:</td>
+    <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.email }}"
+                                                     >{{ external_operator.email }}</a></td>
   </tr>
   {% if external_operator.alternative_email %}
     <tr>
-      <th>{% verbose_name ExternalOperator.alternative_email %}:</th>
-      <td>{{ external_operator.alternative_email }}</td>
+      <td class="label">{% verbose_name ExternalOperator.alternative_email %}:</td>
+      <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.alternative_email }}"
+                                                       >{{ external_operator.alternative_email }}</a></td>
     </tr>
   {% endif %}
   {% if external_operator.phone %}
     <tr>
-      <th>{% verbose_name ExternalOperator.phone %}:</th>
-      <td>{{ external_operator.phone }}</td>
+      {% value_field external_operator.phone %}
     </tr>
   {% endif %}
   <tr>
-    <th>{% verbose_name ExternalOperator.contact_person %}:</th>
-    <td>{{ external_operator.contact_person|get_really_full_name }}</td>
+    <td class="label">{% verbose_name ExternalOperator.contact_person %}:</td>
+    <td class="value" style="font-weight: normal">{{ external_operator.contact_person|get_really_full_name }}</td>
   </tr>
   {% if initials %}
     <tr>
-      <th>{% verbose_name Initials.initials %}:</th>
-      <td>{{ initials }}</td>
+      <td class="label">{% verbose_name Initials.initials %}:</td>
+      <td class="value">{{ initials }}</td>
     </tr>
   {% endif %}
 </table>

@@ -8,7 +8,7 @@ here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
-import hashlib, os.path, codecs, shutil, subprocess
+import hashlib, os.path, shutil, subprocess
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation

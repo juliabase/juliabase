@@ -3,21 +3,14 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block css %}
-<style type="text/css">
-  th { text-align: right }
-</style>
-{% endblock %}
-
 {% block content %}
 <table cellpadding="10" style="margin-bottom: 2ex">
   <tr>
-    <th>{% verbose_name django.contrib.auth.models.User.username %}:</th>
-    <td>{{ user.username }}</td>
+    {% value_field user.username %}
   </tr>
   <tr>
-    <th>{% verbose_name django.contrib.auth.models.User.email %}:</th>
-    <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+    <td class="label">{% verbose_name django.contrib.auth.models.User.email %}:</td>
+    <td class="value" style="font-weight: normal"><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
   </tr>
   {% if userdetails %}
     <!-- Phone number, picture, whatever.  Not used yet. -->

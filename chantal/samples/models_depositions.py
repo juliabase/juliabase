@@ -275,9 +275,9 @@ large_area_station_choices = (
     ("3", "3"),
 )
 large_area_hf_frequency_choices = (
-    ("13.56", _(u"13.56")),
-    ("27.12", _(u"27.12")),
-    ("40.68", _(u"40.68")),
+    ("13.56", u"13.56"),
+    ("27.12", u"27.12"),
+    ("40.68", u"40.68"),
 )
 # FixMe: should this really be made translatable?
 large_area_electrode_choices = (

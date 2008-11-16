@@ -22,60 +22,46 @@
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.number %}:</td>
           <td class="value">{{ layer.number|three_digits }}</td>
-          <td class="label">SiH<sub>4</sub>:</td>
-          <td class="value">{{ layer.sih4|quantity:"sccm"|default_if_none:"—" }}</td>
-          <td class="label">{% verbose_name LargeAreaLayer.power %}:</td>
-          <td class="value">{{ layer.power|quantity:"W"|default_if_none:"—" }}</td>
+          {% value_field layer.sih4 "sccm" %}
+          {% value_field layer.power "W" %}
         </tr>
         <tr>
           <td class="label">{% verbose_name LargeAreaLayer.layer_type %}:</td>
           <td class="value">{{ layer.get_layer_type_display }}</td>
-          <td class="label">H<sub>2</sub>:</td>
-          <td class="value">{{ layer.h2|quantity:"sccm"|default_if_none:"—" }}</td>
-          <td class="label">{% verbose_name LargeAreaLayer.pressure %}:</td>
-          <td class="value">{{ layer.pressure|quantity:"Torr"|default_if_none:"—" }}</td>
+          {% value_field layer.h2 "sccm" %}
+          {% value_field layer.pressure "Torr" %}
         </tr>
         <tr>
-          <td class="label">{% verbose_name LargeAreaLayer.station %}:</td>
-          <td class="value">{{ layer.station }}</td>
+          {% value_field layer.station %}
           <td class="label">{% trans 'Silane conc.' %}:</td>
           <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
-          <td class="label">{% verbose_name LargeAreaLayer.temperature %}:</td>
-          <td class="value">{{ layer.temperature|quantity:"℃"|default_if_none:"—" }}</td>
+          {% value_field layer.temperature "℃" %}
         </tr>
         <tr>
-          <td class="label">{% verbose_name LargeAreaLayer.date %}:</td>
-          <td class="value">{{ layer.date }}</td>
-          <td class="label">TMB:</td>
-          <td class="value">{{ layer.tmb|quantity:"sccm"|default_if_none:"—" }}</td>
+          {% value_field layer.date %}
+          {% value_field layer.tmb "sccm" %}
           <td class="label">{% verbose_name LargeAreaLayer.hf_frequency %}:</td>
-          <td class="value">{{ layer.get_hf_frequency_display }}</td>
+          <td class="value">{{ layer.get_hf_frequency_display }} MHz</td>
         </tr>
         <tr>
           <td colspan="2"/>
-          <td class="label">CH<sub>4</sub>:</td>
-          <td class="value">{{ layer.ch4|quantity:"sccm"|default_if_none:"—" }}</td>
-          <td class="label">{% verbose_name LargeAreaLayer.time %}:</td>
-          <td class="value">{{ layer.time|quantity:"sec"|default_if_none:"—" }}</td>
+          {% value_field layer.ch4 "sccm" %}
+          {% value_field layer.time "sec" %}
         </tr>
         <tr>
           <td colspan="2"/>
-          <td class="label">CO<sub>2</sub>:</td>
-          <td class="value">{{ layer.co2|quantity:"sccm"|default_if_none:"—" }}</td>
-          <td class="label">{% verbose_name LargeAreaLayer.dc_bias %}:</td>
-          <td class="value">{{ layer.dc_bias|quantity:"V"|default_if_none:"—" }}</td>
+          {% value_field layer.co2 "sccm" %}
+          {% value_field layer.dc_bias "V" %}
         </tr>
         <tr>
           <td colspan="2"/>
-          <td class="label">PH<sub>3</sub>:</td>
-          <td class="value">{{ layer.ph3|quantity:"sccm"|default_if_none:"—" }}</td>
+          {% value_field layer.ph3 "sccm" %}
           <td class="label">{% verbose_name LargeAreaLayer.electrode %}:</td>
           <td class="value">{{ layer.get_electrode_display }}</span></td>
         </tr>
         <tr>
           <td colspan="4"/>
-          <td class="label">{% verbose_name LargeAreaLayer.electrodes_distance %}:</td>
-          <td class="value">{{ layer.electrodes_distance|quantity:"mm"|default_if_none:"—" }}</td>
+          {% value_field layer.electrodes_distance "mm" %}
         </tr>
       </table>
     </td>

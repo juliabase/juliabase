@@ -7,7 +7,7 @@ measurements must get a module of their own if the number of Chantal models
 increases further.
 """
 
-import django.contrib.auth.models
+import django.contrib.auth.models, os, codecs
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib import admin
 from django.db import models
