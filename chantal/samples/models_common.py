@@ -279,9 +279,21 @@ class Sample(models.Model):
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, related_name="samples",
                               verbose_name=_(u"group"))
     def __unicode__(self):
+        u"""Here, I realise the peculiar naming scheme of provisional sample
+        names.  Provisional samples names always start with ``"*"``, followed
+        by a number.  The problem is ordering:  This way, ``"*2"`` and
+        ``"*10"`` are ordered ``("*10", "*2")``.  Therefore, I make all numbers
+        five-digit numbers.  However, for the sake of readability, I remove the
+        leading zeroes in this routine.
+
+        Thus be careful how to access the sample name.  If you want to get a
+        human-readable name, use ``unicode(sample)`` or simply ``{{ sample }}``
+        in templates.  If you need the *real* sample name in the database
+        (e.g. for creating a hyperlink), access it by ``sample.name``.
+        """
         name = self.name
         if name.startswith("*"):
-            return u"*" + name[1:].lstrip("0")
+            return u"*" + name.lstrip("*0")
         else:
             return name
     def duplicate(self):
