@@ -230,7 +230,6 @@ class AddSamplesForm(forms.Form):
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
-    currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
                            help_text=_(u"separated with commas, no whitespace"))
@@ -238,8 +237,6 @@ class AddSamplesForm(forms.Form):
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
     def __init__(self, user_details, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
-        self.fields["currently_responsible_person"].set_users()
-        self.fields["currently_responsible_person"].initial = user_details.user.pk
         self.fields["group"].set_groups()
 
 def add_samples_to_database(add_samples_form, user):
@@ -275,7 +272,7 @@ def add_samples_to_database(add_samples_form, user):
             break
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
-    user_details = utils.get_profile(add_samples_form.cleaned_data["currently_responsible_person"])
+    user_details = utils.get_profile(user)
     names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
     new_names = []
     samples = []
@@ -283,7 +280,7 @@ def add_samples_to_database(add_samples_form, user):
         sample_group = add_samples_form.cleaned_data["group"]
         sample = models.Sample(name=new_name,
                                current_location=add_samples_form.cleaned_data["current_location"],
-                               currently_responsible_person=add_samples_form.cleaned_data["currently_responsible_person"],
+                               currently_responsible_person=user,
                                purpose=add_samples_form.cleaned_data["purpose"],
                                tags=add_samples_form.cleaned_data["tags"],
                                group=sample_group)
