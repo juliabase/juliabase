@@ -16,7 +16,7 @@
         <td class="input">{{name_prefix}}-{{ sample_series.name }}</td>
       </tr>
     {% endif %}
-    <tr>
+    <tr {% if is_new %}style="display: none"{% endif %}>
       {% input_field sample_series.currently_responsible_person %}
     </tr>
     <tr>

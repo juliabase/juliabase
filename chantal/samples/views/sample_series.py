@@ -45,8 +45,10 @@ class SampleSeriesForm(Form):
         self.fields["name"].widget.attrs.update({"size": "50"})
         if sample_series:
             self.fields["name"].required = False
-        self.fields["currently_responsible_person"].set_users(
-            sample_series.currently_responsible_person if sample_series else None)
+        if sample_series:
+            self.fields["currently_responsible_person"].set_users(sample_series.currently_responsible_person)
+        else:
+            self.fields["currently_responsible_person"].choices = ((user_details.user.pk, unicode(user_details.user)),)
         self.fields["group"].set_groups(sample_series.group if sample_series else None)
 
 @login_required
