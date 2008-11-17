@@ -9,7 +9,6 @@ functions for it.
 from __future__ import division
 import pickle, time, datetime, re, locale
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
-from django.views.decorators.cache import cache_page
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
@@ -249,7 +248,6 @@ def statistics(request):
                                                   "last_db_backup": analyze_last_database_backup()},
                               context_instance=RequestContext(request))
 
-@cache_page(3600)
 def about(request):
     u"""The “about” view.  It displays general superficial information about
     Chantal.  This view is more or less static – it shows only the components

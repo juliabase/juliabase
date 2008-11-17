@@ -105,7 +105,7 @@ def format_timestamp(timestamp):
     """
     return timestamp.strftime("%Y-%m-%dT%H:%M:%S") + get_timezone_string(timestamp)
 
-#@cache_page(600)
+@cache_page(600)
 def show(request, username):
     u"""View which doesn't generate an HTML page but an Atom 1.0 feed with
     current news for the user.
