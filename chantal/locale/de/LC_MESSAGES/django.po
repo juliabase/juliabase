@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-16 17:29+0100\n"
+"POT-Creation-Date: 2008-11-17 17:44+0100\n"
 "PO-Revision-Date: 2008-11-16 17:29+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -534,9 +534,6 @@ msgid_plural "New samples in “%s”"
 msgstr[0] "Neue Probe in „%s“"
 msgstr[1] "Neue Proben in „%s“"
 
-msgid "new samples"
-msgstr "Neue Proben"
-
 msgid "new samples feed entry"
 msgstr "Feed-Eintrag für neue Proben"
 
@@ -555,9 +552,6 @@ msgid_plural "New samples moved to “%s”"
 msgstr[0] "Neue Probe in „%s“ verschoben"
 msgstr[1] "Neue Proben in „%s“ verschoben"
 
-msgid "moved samples"
-msgstr "verschobene Proben"
-
 msgid "moved samples feed entry"
 msgstr "Feed-Eintrag für verschobene Proben"
 
@@ -567,9 +561,6 @@ msgstr "Feed-Einträge für verschobene Proben"
 #, python-format
 msgid "New %s"
 msgstr "Neu: %s"
-
-msgid "new physical process"
-msgstr "neuer physikalischer Prozess"
 
 msgid "new physical process feed entry"
 msgstr "Feed-Eintrag für neue physikalische Prozesse"
@@ -594,15 +585,9 @@ msgstr "Ergebnis ist neu"
 msgid "New: %s"
 msgstr "Neu: %s"
 
-msgid "new result"
-msgstr "neues Ergebnis"
-
 #, python-format
 msgid "Edited: %s"
 msgstr "Geändert: %s"
-
-msgid "edited result"
-msgstr "geändertes Ergebnis"
 
 msgid "result feed entry"
 msgstr "Feed-Eintrag für Ergebnis"
@@ -613,9 +598,6 @@ msgstr "Feed-Einträge für Ergebnisse"
 #, python-format
 msgid "%s copied samples to you"
 msgstr "%s hat Proben zu Ihnen kopiert"
-
-msgid "copied My Samples"
-msgstr "kopierte Meine Proben"
 
 msgid "copied My Samples feed entry"
 msgstr "Feed-Eintrag für kopierte Meine Proben"
@@ -633,9 +615,6 @@ msgstr "Probe %s wurde geändert"
 msgid "Samples were edited"
 msgstr "Proben wurden geändert"
 
-msgid "edited samples"
-msgstr "geänderte Proben"
-
 msgid "edited samples feed entry"
 msgstr "Feed-Eintrag für geänderte Proben"
 
@@ -649,9 +628,6 @@ msgstr "Probe wurde vollständig gespalten"
 msgid "Sample “%s” was split"
 msgstr "Probe „%s“ wurde gespalten"
 
-msgid "split sample"
-msgstr "gespaltene Proben"
-
 msgid "sample split feed entry"
 msgstr "Feed-Eintrag für gespaltene Probe"
 
@@ -661,9 +637,6 @@ msgstr "Feed-Einträge für gespaltene Probe"
 #, python-format
 msgid "Sample series %s was edited"
 msgstr "Probenserie „%s“ wurde geändert"
-
-msgid "edited sample series"
-msgstr "geänderte Probenserie"
 
 msgid "edited sample series feed entry"
 msgstr "Feed-Eintrag für geänderte Probenserie"
@@ -678,9 +651,6 @@ msgstr "Abonnenten"
 msgid "New sample series “%(sample_series)s” in group “%(group)s”"
 msgstr "Neue Probenserie „%(sample_series)s“ in Gruppe „%(group)s“"
 
-msgid "new sample series"
-msgstr "neue Probenserie"
-
 msgid "new sample series feed entry"
 msgstr "Feed-Eintrag für neue Probenserie"
 
@@ -691,9 +661,6 @@ msgstr "Feed-Einträge für neue Probenserien"
 msgid "Sample series %(sample_series)s was moved to group “%(group)s”"
 msgstr ""
 "Probenserie „%(sample_series)s“ wurde zur Gruppe „%(group)s“ verschoben"
-
-msgid "moved sample series"
-msgstr "verschobene Probenserie"
 
 msgid "moved sample series feed entry"
 msgstr "Feed-Eintrag für verschobene Probenserie"
@@ -717,9 +684,6 @@ msgstr "Jetzt in Gruppe „%s“"
 #, python-format
 msgid "Not anymore in group “%s”"
 msgstr "Nicht mehr in Gruppe „%s“"
-
-msgid "changed group membership"
-msgstr "geänderte Gruppen-Mitgliedschaft"
 
 msgid "changed group feed entry"
 msgstr "Feed-Eintrag für geänderte Gruppen"
@@ -1328,6 +1292,9 @@ msgstr "gehört zu Meinen Proben"
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
+msgid "Group"
+msgstr "Gruppe"
+
 msgid ""
 "Changing the group or the responsible person must be marked as important."
 msgstr ""
@@ -1377,9 +1344,6 @@ msgstr "Zweck"
 
 msgid "Tags"
 msgstr "Tags"
-
-msgid "Group"
-msgstr "Gruppe"
 
 msgid "Give names"
 msgstr "Namen vergeben"
@@ -2797,6 +2761,42 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "new samples"
+#~ msgstr "Neue Proben"
+
+#~ msgid "moved samples"
+#~ msgstr "verschobene Proben"
+
+#~ msgid "new physical process"
+#~ msgstr "neuer physikalischer Prozess"
+
+#~ msgid "new result"
+#~ msgstr "neues Ergebnis"
+
+#~ msgid "edited result"
+#~ msgstr "geändertes Ergebnis"
+
+#~ msgid "copied My Samples"
+#~ msgstr "kopierte Meine Proben"
+
+#~ msgid "edited samples"
+#~ msgstr "geänderte Proben"
+
+#~ msgid "split sample"
+#~ msgstr "gespaltene Proben"
+
+#~ msgid "edited sample series"
+#~ msgstr "geänderte Probenserie"
+
+#~ msgid "new sample series"
+#~ msgstr "neue Probenserie"
+
+#~ msgid "moved sample series"
+#~ msgstr "verschobene Probenserie"
+
+#~ msgid "changed group membership"
+#~ msgstr "geänderte Gruppen-Mitgliedschaft"
 
 #~ msgid "13.56"
 #~ msgstr "13,56"

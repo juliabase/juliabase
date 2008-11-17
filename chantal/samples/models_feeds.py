@@ -105,7 +105,7 @@ class FeedNewSamples(FeedEntry):
         result = {}
         result["title"] = ungettext(u"New sample in “%s”", u"New samples in “%s”", self.samples.count()) % self.group
         result["category term"] = "new samples"
-        result["category label"] = _(u"new samples")
+        result["category label"] = "new samples"
         return result
     def get_additional_template_context(self, user_details):
         return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
@@ -128,7 +128,7 @@ class FeedMovedSamples(FeedEntry):
         result["title"] = ungettext(u"New sample moved to “%s”", u"New samples moved to “%s”",
                                     self.samples.count()) % self.group
         result["category term"] = "moved samples"
-        result["category label"] = _(u"moved samples")
+        result["category label"] = "moved samples"
         return result
     def get_additional_template_context(self, user_details):
         return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
@@ -147,7 +147,7 @@ class FeedNewPhysicalProcess(FeedEntry):
         process = self.process.find_actual_instance()
         result["title"] = _(u"New %s") % process
         result["category term"] = "new physical process"
-        result["category label"] = _(u"new physical process")
+        result["category label"] = "new physical process"
         result["link"] = process.get_absolute_url()
         return result
     def get_additional_template_context(self, user_details):
@@ -168,7 +168,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
         process = self.process.find_actual_instance()
         metadata["title"] = _(u"Edited %s") % process
         metadata["category term"] = "new physical process"
-        metadata["category label"] = _(u"new physical process")
+        metadata["category label"] = "new physical process"
         metadata["link"] = process.get_absolute_url()
         return metadata
     def get_additional_template_context(self, user_details):
@@ -192,11 +192,11 @@ class FeedResult(FeedEntry):
         if self.is_new:
             metadata["title"] = _(u"New: %s") % self.result.title
             metadata["category term"] = "new result"
-            metadata["category label"] = _(u"new result")
+            metadata["category label"] = "new result"
         else:
             metadata["title"] = _(u"Edited: %s") % self.result.title
             metadata["category term"] = "edited result"
-            metadata["category label"] = _(u"edited result")
+            metadata["category label"] = "edited result"
         metadata["link"] = self.result.get_absolute_url()
         return metadata
     def get_additional_template_context(self, user_details):
@@ -217,7 +217,7 @@ class FeedCopiedMySamples(FeedEntry):
         metadata = {}
         metadata["title"] = _(u"%s copied samples to you") % self.originator
         metadata["category term"] = "copied samples"
-        metadata["category label"] = _(u"copied My Samples")
+        metadata["category label"] = "copied My Samples"
         return metadata
     class Meta:
         verbose_name = _(u"copied My Samples feed entry")
@@ -243,7 +243,7 @@ class FeedEditedSamples(FeedEntry):
         else:
             metadata["title"] = _(u"Samples were edited")
         metadata["category term"] = "edited samples"
-        metadata["category label"] = _(u"edited samples")
+        metadata["category label"] = "edited samples"
         return metadata
     class Meta:
         verbose_name = _(u"edited samples feed entry")
@@ -260,7 +260,7 @@ class FeedSampleSplit(FeedEntry):
         metadata = {}
         metadata["title"] = _(u"Sample “%s” was split") % self.sample_split.parent
         metadata["category term"] = "split sample"
-        metadata["category label"] = _(u"split sample")
+        metadata["category label"] = "split sample"
         return metadata
     class Meta:
         verbose_name = _(u"sample split feed entry")
@@ -281,7 +281,7 @@ class FeedEditedSampleSeries(FeedEntry):
         metadata = {}
         metadata["title"] = _(u"Sample series %s was edited") % self.sample_series
         metadata["category term"] = "edited sample series"
-        metadata["category label"] = _(u"edited sample series")
+        metadata["category label"] = "edited sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
     class Meta:
@@ -301,7 +301,7 @@ class FeedNewSampleSeries(FeedEntry):
         metadata["title"] = _(u"New sample series “%(sample_series)s” in group “%(group)s”") % \
             {"sample_series": self.sample_series, "group": self.group}
         metadata["category term"] = "new sample series"
-        metadata["category label"] = _(u"new sample series")
+        metadata["category label"] = "new sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
     def get_additional_template_context(self, user_details):
@@ -326,7 +326,7 @@ class FeedMovedSampleSeries(FeedEntry):
         metadata["title"] = _(u"Sample series %(sample_series)s was moved to group “%(group)s”") % \
             {"sample_series": self.sample_series, "group": self.group}
         metadata["category term"] = "moved sample series"
-        metadata["category label"] = _(u"moved sample series")
+        metadata["category label"] = "moved sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
     def get_additional_template_context(self, user_details):
@@ -353,7 +353,7 @@ class FeedChangedGroup(FeedEntry):
         else:
             metadata["title"] = _(u"Not anymore in group “%s”") % self.group
         metadata["category term"] = "changed group membership"
-        metadata["category label"] = _(u"changed group membership")
+        metadata["category label"] = "changed group membership"
         return metadata
     class Meta:
         verbose_name = _(u"changed group feed entry")
