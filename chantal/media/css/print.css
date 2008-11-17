@@ -1,0 +1,11 @@
+@import url('main.css');
+
+table.headbar { display: none }
+
+.screen-only { display: none }
+
+div.main { margin: 0pt }
+div.outer-frame, div.inner-frame { border: none}
+
+a.edit-button, a.duplicate-button { display: none }
+a { color: black; text-decoration: none }
