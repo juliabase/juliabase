@@ -29,7 +29,7 @@
     </tr>
     {% for sample, new_name in samples %}
       <tr>
-        <td class="{% if forloop.last %}last{% else %}row{% endif %}">{{ sample.name }}</td>
+        <td class="{% if forloop.last %}last{% else %}row{% endif %}">{{ sample }}</td>
         <td class="{% if forloop.last %}last{% else %}row{% endif %}" style="text-align: center">→</td>
         <td class="{% if forloop.last %}last{% else %}row{% endif %}">
           {% error_list new_name _("Error in new name") %}

@@ -11,7 +11,7 @@
 
 <ul>
   {% for sample in entry.sample_split.pieces.all %}
-    <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a>
+    <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
       {% if sample.purpose %}
         ({% trans 'purpose:' %} {{ sample.purpose }})
       {% endif %}

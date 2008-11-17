@@ -19,7 +19,7 @@
           {% if not samples|length_is:"1" %}
             <ul>
               {% for sample in samples %}
-                <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
               {% endfor %}
             </ul>
           {% endif %}

@@ -32,32 +32,36 @@
         {% endfor %}
       </ul>
     {% endif %}
-    {% for group in my_groups %}
+    <div class="my-samples-groups">
+      {% for group in my_groups %}
 
-      <h3>{{ group.group }}</h3>
+        <h3>{{ group.group }}</h3>
 
-      {% if group.samples %}
-        <ul>
-          {% for sample in group.samples %}
-            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-
-      {% for series in group.sample_series %}
-
-        <h4><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
-
-        {% if not series.is_complete %}
-          <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
+        {% if group.samples %}
+          <ul>
+            {% for sample in group.samples %}
+              <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+            {% endfor %}
+          </ul>
         {% endif %}
-        <ul>
-          {% for sample in series.samples %}
-            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+
+        <div class="my-samples-series">
+          {% for series in group.sample_series %}
+
+            <h4><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
+
+            {% if not series.is_complete %}
+              <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
+            {% endif %}
+            <ul>
+              {% for sample in series.samples %}
+                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+              {% endfor %}
+            </ul>
           {% endfor %}
-        </ul>
+        </div>
       {% endfor %}
-    {% endfor %}
+    </div>
   {% endif %}
 
   {% if can_edit_group_memberships %}

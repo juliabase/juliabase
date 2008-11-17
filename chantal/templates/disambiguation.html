@@ -11,7 +11,7 @@
   </p>
   <ul>
     {% for sample in samples %}
-      <li><a href="{{ sample.get_absolute_url }}">{{ sample.name }}</a></li>
+      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}
