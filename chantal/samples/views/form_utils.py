@@ -41,15 +41,6 @@ class DataModelForm(ModelForm):
         """
         return self.data.get(self.prefix + "-" + fieldname)
 
-class OperatorChoiceField(ModelChoiceField):
-    _ = ugettext_lazy
-    u"""A specialised ``ModelChoiceField`` for displaying users in a choice
-    field in forms.  It's only purpose is that you don't see the dull username
-    then, but the beautiful full name of the user.
-    """
-    def label_from_instance(self, operator):
-        return utils.get_really_full_name(operator)
-
 def get_my_layers(user_details, deposition_model):
     u"""Parse the ``my_layers`` string of a user and convert it to valid input
     for a form selection field (``ChoiceField``).  Notethat the user is not
@@ -332,6 +323,34 @@ class GroupField(forms.ChoiceField):
         value = super(GroupField, self).clean(value)
         if value:
             return django.contrib.auth.models.Group.objects.get(pk=int(value))
+
+class FixedOperatorField(forms.ChoiceField):
+    u"""Form field class for the *fixed* selection of a single user.  This is
+    intended for edit-process views when the operator must be the currently
+    logged-in user, or the previous operator.  In other words, it must be
+    impossible to change it.  Then, you can use this form field for the
+    operator, and hide the field from display by ``style="display: none"`` in
+    the HTML template.
+
+    Important: This field must *always* be made required!
+    """
+    def set_operator(self, operator):
+        u"""Set the user list shown in the widget.  You *must* call this method
+        in the constructor of the form in which you use this field, otherwise
+        the selection box will remain emtpy.  The selection list will consist
+        only of the given operator, with no other choice (not even the empty
+        field).
+
+        :Parameters:
+          - `operator`: operator to be included into the list.  Typically, it
+            is the current user.
+
+        :type operator: ``django.contrib.auth.models.User``
+        """
+        self.choices = ((operator.pk, unicode(operator)),)
+    def clean(self, value):
+        value = super(FixedOperatorField, self).clean(value)
+        return django.contrib.auth.models.User.objects.get(pk=int(value))
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:

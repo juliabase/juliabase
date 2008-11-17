@@ -82,14 +82,6 @@ def list_(request):
                               {"title": _(u"List of all groups"), "groups": django.contrib.auth.models.Group.objects.all()},
                               context_instance=RequestContext(request))
 
-class OperatorMultipleChoiceField(forms.ModelMultipleChoiceField):
-    u"""A specialised ``ModelMultipleChoiceField`` for displaying users in a
-    multiple choice field in forms.  It's only purpose is that you don't see
-    the dull username then, but the beautiful full name of the user.
-    """
-    def label_from_instance(self, operator):
-        return utils.get_really_full_name(operator)
-
 class ChangeMembershipsForm(forms.Form):
     u"""Form for the member list of a group.  Note that it is allowed to have
     no members at all in a group.
