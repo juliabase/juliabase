@@ -373,6 +373,10 @@ class SearchSamplesForm(forms.Form):
     _ = ugettext_lazy
     name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30)
 
+class AddToMySamplesForm(forms.Form):
+    _ = ugettext_lazy
+    add_to_my_samples = forms.BooleanField(required=False)
+
 max_results = 50
 @login_required
 def search(request):
@@ -388,6 +392,7 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
+    user_details = utils.get_profile(request.user)
     found_samples = []
     too_many_results = False
     if request.method == "POST":
@@ -397,11 +402,27 @@ def search(request):
                 models.Sample.objects.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
             too_many_results = found_samples.count() > max_results
             found_samples = found_samples.all()[:max_results] if too_many_results else found_samples.all()
+        else:
+            found_samples = []
+        my_samples = user_details.my_samples.all()
+        add_to_my_samples_forms = [AddToMySamplesForm(request.POST, prefix=str(sample.pk))
+                                   if sample not in my_samples else None for sample in found_samples]
+        new_forms = []
+        for add_to_my_samples_form in add_to_my_samples_forms:
+            if add_to_my_samples_form and add_to_my_samples_form.is_valid() and \
+                    add_to_my_samples_form.cleaned_data["add_to_my_samples"]:
+                user_details.my_samples.add(get_object_or_404(models.Sample, pk=int(add_to_my_samples_form.prefix)))
+                new_forms.append(None)
+            else:
+                new_forms.append(add_to_my_samples_form)
+        add_to_my_samples_forms = new_forms
     else:
         search_samples_form = SearchSamplesForm()
+        add_to_my_samples_forms = [AddToMySamplesForm(sample, prefix=str(sample.pk)) if sample not in my_samples else None
+                                   for sample in found_samples]
     return render_to_response("search_samples.html", {"title": _(u"Search for sample"),
                                                       "search_samples": search_samples_form,
-                                                      "found_samples": found_samples,
+                                                      "found_samples": zip(found_samples, add_to_my_samples_forms),
                                                       "too_many_results": too_many_results,
                                                       "max_results": max_results},
                               context_instance=RequestContext(request))
