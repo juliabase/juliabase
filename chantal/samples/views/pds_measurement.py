@@ -134,14 +134,15 @@ class PDSMeasurementForm(forms.ModelForm):
     ``operator`` field here in oder to have the full names of the users.
     """
     _ = ugettext_lazy
-    operator = form_utils.UserField(label=_(u"Operator"))
-    def __init__(self, *args, **kwargs):
+    operator = forms.ChoiceField(label=_(u"Operator"))
+    def __init__(self, user, *args, **kwargs):
         u"""Form constructor.  I just adjust layout here.
         """
         super(PDSMeasurementForm, self).__init__(*args, **kwargs)
         self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
-        self.fields["operator"].set_users(kwargs["instance"].operator if kwargs.get("instance") else None)
+        operator = kwargs["instance"].operator if kwargs.get("instance") else user
+        self.fields["operator"].choices = ((operator.pk, unicode(operator)),)
     def test_for_datafile(self, filename):
         u"""Test whether a certain file is openable by Chantal.
 
@@ -275,10 +276,10 @@ def edit(request, pd_number):
                     pass
                 if sample:
                     user_details.my_samples.add(sample)
-                pds_measurement_form = PDSMeasurementForm(instance=pds_measurement, initial=initial)
+                pds_measurement_form = PDSMeasurementForm(request.user, instance=pds_measurement, initial=initial)
                 overwrite_form = OverwriteForm()
         if pds_measurement_form is None:
-            pds_measurement_form = PDSMeasurementForm(request.POST, instance=pds_measurement)
+            pds_measurement_form = PDSMeasurementForm(request.user, request.POST, instance=pds_measurement)
         if pds_measurement_form.is_valid():
             number = pds_measurement_form.cleaned_data["number"]
             if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
@@ -298,7 +299,7 @@ def edit(request, pd_number):
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
             numbers = models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
-        pds_measurement_form = PDSMeasurementForm(instance=pds_measurement, initial=initial)
+        pds_measurement_form = PDSMeasurementForm(request.user, instance=pds_measurement, initial=initial)
         initial = {}
         if pds_measurement:
             samples = pds_measurement.samples.all()

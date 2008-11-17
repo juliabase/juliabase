@@ -56,13 +56,14 @@ class DepositionForm(forms.ModelForm):
     in order to have full real names.
     """
     _ = ugettext_lazy
-    operator = form_utils.UserField(label=_(u"Operator"))
-    def __init__(self, data=None, **kwargs):
+    operator = forms.ChoiceField(label=_(u"Operator"))
+    def __init__(self, user, data=None, **kwargs):
         u"""Class constructor just for changing the appearance of the number
         field."""
         super(DepositionForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
-        self.fields["operator"].set_users(kwargs["instance"].operator if kwargs.get("instance") else None)
+        operator = kwargs["instance"].operator if kwargs.get("instance") else user
+        self.fields["operator"].choices = ((operator.pk, unicode(operator)),)
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
     def validate_unique(self):
@@ -181,7 +182,7 @@ class FormSet(object):
         :type post_data: ``QueryDict``
         """
         self.post_data = post_data
-        self.deposition_form = DepositionForm(self.post_data, instance=self.deposition,
+        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition,
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                                        "number": utils.get_next_deposition_number("L")})
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
@@ -239,18 +240,18 @@ class FormSet(object):
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["operator"] = self.user.pk
                 deposition_data["number"] = utils.get_next_deposition_number("L")
-                self.deposition_form = DepositionForm(initial=deposition_data)
+                self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 self._read_layer_forms(source_deposition_query.all()[0], deposition_data["number"])
         if not self.deposition_form:
             if self.deposition:
                 # Normal edit of existing deposition
-                self.deposition_form = DepositionForm(instance=self.deposition)
+                self.deposition_form = DepositionForm(self.user, instance=self.deposition)
                 self._read_layer_forms(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
-                    initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                             "number": utils.get_next_deposition_number("L")})
+                    self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
+                                        "number": utils.get_next_deposition_number("L")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = SamplesForm(self.user_details, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
@@ -383,7 +384,7 @@ class FormSet(object):
         post_data = self.post_data.copy()
         post_data["number"] = deposition_number_match.group("prefix") + \
             utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
-        self.deposition_form = DepositionForm(post_data, instance=self.deposition)
+        self.deposition_form = DepositionForm(self.user, post_data, instance=self.deposition)
 
         return structure_changed
     def _is_all_valid(self):
