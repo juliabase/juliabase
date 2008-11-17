@@ -52,7 +52,7 @@ class DepositionForm(ModelForm):
     """
     _ = ugettext_lazy
     sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
-    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects)
+    operator = form_utils.UserField(label=_(u"Operator"))
     def __init__(self, user_details, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
@@ -70,6 +70,7 @@ class DepositionForm(ModelForm):
             samples = list(samples) + list(deposition.samples.all())
         self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
+        self.fields["operator"].set_users(deposition.operator if deposition else None)
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
     def clean_comments(self):

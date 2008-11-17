@@ -56,12 +56,13 @@ class DepositionForm(forms.ModelForm):
     in order to have full real names.
     """
     _ = ugettext_lazy
-    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects)
+    operator = form_utils.UserField(label=_(u"Operator"))
     def __init__(self, data=None, **kwargs):
         u"""Class constructor just for changing the appearance of the number
         field."""
         super(DepositionForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
+        self.fields["operator"].set_users(kwargs["instance"].operator if kwargs.get("instance") else None)
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
     def validate_unique(self):

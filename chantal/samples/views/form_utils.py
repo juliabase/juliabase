@@ -23,7 +23,7 @@ class DataModelForm(ModelForm):
     data the user has given is totally valid.
 
     Actually, using this class is bad style nevertheless.  It is used in the
-    module `six_chamber_deposition`, however, for upcoming process, it should
+    module `six_chamber_deposition`, however, for upcoming processes, it should
     be avoided and extra forms used instead.
     """
     def uncleaned_data(self, fieldname):
@@ -194,8 +194,8 @@ class GeneralSampleField(object):
         otherwise the selection box will remain emtpy.
 
         :Parameters:
-          - `samples`: Samples to be included into the list”.  Typically, these
-            are thecurrent user's “My Samples”, plus the samples that were
+          - `samples`: Samples to be included into the list.  Typically, these
+            are the current user's “My Samples”, plus the samples that were
             already connected with the deposition or measurement when you edit
             it.
 
@@ -230,6 +230,108 @@ class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
     def clean(self, value):
         value = super(MultipleSamplesField, self).clean(value)
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
+
+class UserField(forms.ChoiceField):
+    u"""Form field class for the selection of a single user.  This can be the
+    new currently responsible person for a sample, or the person you wish to
+    send “My Samples” to.
+    """
+    def set_users(self, additional_user=None):
+        u"""Set the user list shown in the widget.  You *must* call this method
+        (or `set_users_without`) in the constructor of the form in which you
+        use this field, otherwise the selection box will remain emtpy.  The
+        selection list will consist of all currently active users, plus the
+        given additional user if any.
+
+        :Parameters:
+          - `additional_user`: Optional additional user to be included into the
+            list.  Typically, it is the current user for the process to be
+            edited.
+
+        :type additional_user: ``django.contrib.auth.models.User``
+        """
+        self.choices = [(u"", 9*u"-")]
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
+        if additional_user:
+            users.add(additional_user)
+        users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
+        self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+    def set_users_without(self, excluded_user):
+        u"""Set the user list shown in the widget.  You *must* call this method
+        (or `set_users`) in the constructor of the form in which you use this
+        field, otherwise the selection box will remain emtpy.  The selection
+        list will consist of all currently active users, minus the given user.
+
+        :Parameters:
+          - `excluded`: User to be excluded from the list.  Typically, it is
+            the currently logged-in user.
+
+        :type excluded_user: ``django.contrib.auth.models.User``
+        """
+        self.choices = [(u"", 9*u"-")]
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
+        users.remove(excluded_user)
+        users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
+        self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+    def clean(self, value):
+        value = super(UserField, self).clean(value)
+        if value:
+            return django.contrib.auth.models.User.objects.get(pk=int(value))
+
+class MultipleUsersField(forms.MultipleChoiceField):
+    u"""Form field class for the selection of zero or more users.  This can be
+    the set of members for a particular group.
+    """
+    def set_users(self, additional_users=[]):
+        u"""Set the user list shown in the widget.  You *must* call this method
+        in the constructor of the form in which you use this field, otherwise
+        the selection box will remain emtpy.  The selection list will consist
+        of all currently active users, plus the given additional users if any.
+
+        :Parameters:
+          - `additional_users`: Optional additional users to be included into
+            the list.  Typically, it is the current users for the group whose
+            memberships are to be changed.
+
+        :type additional_users: iterable of ``django.contrib.auth.models.User``
+        """
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
+        users |= set(additional_users)
+        users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
+        self.choices = [(user.pk, utils.get_really_full_name(user)) for user in users]
+    def clean(self, value):
+        value = super(MultipleUsersField, self).clean(value)
+        return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
+
+class GroupField(forms.ChoiceField):
+    u"""Form field class for the selection of a single group.  This can be the
+    group for a sample or a sample series, for example.
+    """
+    def set_groups(self, additional_group=None):
+        u"""Set the group list shown in the widget.  You *must* call this
+        method in the constructor of the form in which you use this field,
+        otherwise the selection box will remain emtpy.  The selection list will
+        consist of all currently active groups, plus the given additional group
+        if any.  The “currently active groups” are all groups with at least one
+        active user amongst its members.
+
+        :Parameters:
+          - `additional_group`: Optional additional group to be included into
+            the list.  Typically, it is the current group of the sample, for
+            example.
+
+        :type additional_group: ``django.contrib.auth.models.Group``
+        """
+        self.choices = [(u"", 9*u"-")]
+        groups = set(django.contrib.auth.models.Group.objects.filter(user__is_active=True).all())
+        if additional_group:
+            groups.add(additional_group)
+        groups = sorted(groups, key=lambda group: group.name)
+        self.choices.extend((group.pk, unicode(group)) for group in groups)
+    def clean(self, value):
+        value = super(GroupField, self).clean(value)
+        if value:
+            return django.contrib.auth.models.Group.objects.get(pk=int(value))
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:

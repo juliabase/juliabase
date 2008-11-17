@@ -15,7 +15,7 @@ import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from chantal.samples import permissions
-from chantal.samples.views import utils, feed_utils
+from chantal.samples.views import utils, feed_utils, form_utils
 
 class NewGroupForm(forms.Form):
     u"""Form for adding a new group.  I need only its new name.
@@ -94,8 +94,10 @@ class ChangeMembershipsForm(forms.Form):
     u"""Form for the member list of a group.  Note that it is allowed to have
     no members at all in a group.
     """
-    members = OperatorMultipleChoiceField(label=_(u"Members"), queryset=django.contrib.auth.models.User.objects,
-                                          required=False)
+    members = form_utils.MultipleUsersField(label=_(u"Members"), required=False)
+    def __init__(self, group, *args, **kwargs):
+        super(ChangeMembershipsForm, self).__init__(*args, **kwargs)
+        self.fields["members"].set_users(group.user_set.all())
 
 @login_required
 def edit(request, name):
@@ -117,7 +119,7 @@ def edit(request, name):
     permissions.assert_can_edit_group_memberships(request.user)
     group = get_object_or_404(django.contrib.auth.models.Group, name=name)
     if request.method == "POST":
-        change_memberships_form = ChangeMembershipsForm(request.POST)
+        change_memberships_form = ChangeMembershipsForm(group, request.POST)
         added_members = []
         removed_members = []
         if change_memberships_form.is_valid():
@@ -138,7 +140,8 @@ def edit(request, name):
                 feed_utils.Reporter(request.user).report_changed_group_membership(removed_members, group, "removed")
             return utils.successful_response(request, _(u"Members of group “%s” were successfully updated.") % group.name)
     else:
-        change_memberships_form = ChangeMembershipsForm(initial={"members": group.user_set.values_list("pk", flat=True)})
+        change_memberships_form = \
+            ChangeMembershipsForm(group, initial={"members": group.user_set.values_list("pk", flat=True)})
     return render_to_response("edit_group_memberships.html",
                               {"title": _(u"Change group memberships of “%s”") % name,
                                "change_memberships": change_memberships_form},

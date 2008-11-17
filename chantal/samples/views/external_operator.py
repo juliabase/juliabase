@@ -67,13 +67,13 @@ class EditExternalOperatorForm(forms.ModelForm):
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_person = form_utils.OperatorChoiceField(label=_(u"Concact person"),
-                                                    queryset=django.contrib.auth.models.User.objects)
+    contact_person = form_utils.UserField(label=_(u"Concact person"))
     def __init__(self, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
+        self.fields["contact_person"].set_users()
     class Meta:
         model = models.ExternalOperator
 

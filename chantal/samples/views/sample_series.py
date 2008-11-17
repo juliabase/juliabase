@@ -28,9 +28,8 @@ class SampleSeriesForm(Form):
     """
     _ = ugettext_lazy
     name = forms.CharField(label=_(u"Name"), max_length=50)
-    currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                                  queryset=django.contrib.auth.models.User.objects)
-    group = ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects)
+    currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
+    group = form_utils.GroupField(label=_(u"Group"))
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"))
     def __init__(self, user_details, sample_series, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the form here, especially
@@ -46,6 +45,9 @@ class SampleSeriesForm(Form):
         self.fields["name"].widget.attrs.update({"size": "50"})
         if sample_series:
             self.fields["name"].required = False
+        self.fields["currently_responsible_person"].set_users(
+            sample_series.currently_responsible_person if sample_series else None)
+        self.fields["group"].set_groups(sample_series.group if sample_series else None)
 
 @login_required
 def show(request, name):

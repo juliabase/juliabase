@@ -28,12 +28,10 @@ class ActionForm(forms.Form):
     u"""Form for all the things you can do with the selected samples.
     """
     _ = ugettext_lazy
-    new_currently_responsible_person = form_utils.OperatorChoiceField(
-        label=_(u"New currently responsible person"), required=False, queryset=None)
-    new_group = forms.ModelChoiceField(label=_(u"New Group"), queryset=django.contrib.auth.models.Group.objects,
-                                       required=False)
+    new_currently_responsible_person = form_utils.UserField(label=_(u"New currently responsible person"), required=False)
+    new_group = form_utils.GroupField(label=_(u"New Group"), required=False)
     new_current_location = forms.CharField(label=_(u"New current location"), required=False, max_length=50)
-    copy_to_user = form_utils.OperatorChoiceField(label=_(u"Copy to user"), required=False, queryset=None)
+    copy_to_user = form_utils.UserField(label=_(u"Copy to user"), required=False)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
     def __init__(self, user, *args, **kwargs):
@@ -45,8 +43,9 @@ class ActionForm(forms.Form):
         :type user: ``django.contrib.auth.models.User``
         """
         super(ActionForm, self).__init__(*args, **kwargs)
-        self.fields["new_currently_responsible_person"].queryset = self.fields["copy_to_user"].queryset = \
-            django.contrib.auth.models.User.objects.exclude(pk=user.pk)
+        self.fields["new_currently_responsible_person"].set_users_without(user)
+        self.fields["copy_to_user"].set_users_without(user)
+        self.fields["new_group"].set_groups()
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """

@@ -134,13 +134,14 @@ class PDSMeasurementForm(forms.ModelForm):
     ``operator`` field here in oder to have the full names of the users.
     """
     _ = ugettext_lazy
-    operator = form_utils.OperatorChoiceField(label=_(u"Operator"), queryset=django.contrib.auth.models.User.objects)
+    operator = form_utils.UserField(label=_(u"Operator"))
     def __init__(self, *args, **kwargs):
         u"""Form constructor.  I just adjust layout here.
         """
         super(PDSMeasurementForm, self).__init__(*args, **kwargs)
         self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
+        self.fields["operator"].set_users(kwargs["instance"].operator if kwargs.get("instance") else None)
     def test_for_datafile(self, filename):
         u"""Test whether a certain file is openable by Chantal.
 

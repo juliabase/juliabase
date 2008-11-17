@@ -32,12 +32,13 @@ class SampleForm(forms.ModelForm):
     *full* person names (not just the login name).
     """
     _ = ugettext_lazy
-    # FixMe: What about inactive users?
-    currently_responsible_person = form_utils.OperatorChoiceField(label=_(u"Currently responsible person"),
-                                                                  queryset=django.contrib.auth.models.User.objects)
+    currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
+    group = form_utils.GroupField(label=_(u"Group"), required=False)
     def __init__(self, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
-        self.fields["group"].required = True
+        self.fields["group"].set_groups(kwargs["instance"].group if kwargs.get("instance") else None)
+        self.fields["currently_responsible_person"].set_users(
+            kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
     class Meta:
         model = models.Sample
         exclude = ("name", "split_origin", "processes")
@@ -229,16 +230,17 @@ class AddSamplesForm(forms.Form):
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
-    currently_responsible_person = form_utils.OperatorChoiceField(
-        label=_(u"Currently responsible person"), queryset=django.contrib.auth.models.User.objects.filter(is_active=True))
+    currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
                            help_text=_(u"separated with commas, no whitespace"))
-    group = forms.ModelChoiceField(label=_(u"Group"), queryset=django.contrib.auth.models.Group.objects, required=False)
+    group = form_utils.GroupField(label=_(u"Group"), required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
     def __init__(self, user_details, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
+        self.fields["currently_responsible_person"].set_users()
         self.fields["currently_responsible_person"].initial = user_details.user.pk
+        self.fields["group"].set_groups()
 
 def add_samples_to_database(add_samples_form, user):
     u"""Create the new samples and add them to the database.  This routine
