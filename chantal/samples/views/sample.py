@@ -398,6 +398,13 @@ def search(request):
     if request.method == "POST":
         search_samples_form = SearchSamplesForm(request.POST)
         if search_samples_form.is_valid():
+            # FixMe: Currently, if you add samples to “My Samples”, the search
+            # results must not change because otherwise, only those are added
+            # that are also found by the new search (search and adding happens
+            # at the sample time).  Thus, instead of using the primary keys of
+            # all found samples to find the prefixes, the routine should
+            # collect all prefixes from ``request.POST``.  Then nothing can be
+            # missed.
             found_samples = \
                 models.Sample.objects.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
             too_many_results = found_samples.count() > max_results
