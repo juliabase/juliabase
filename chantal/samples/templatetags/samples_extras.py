@@ -375,6 +375,9 @@ class ValueFieldNode(template.Node):
         if self.unit == "yes/no":
             field = fancy_bool(field)
             self.unit = None
+        elif self.unit == "user":
+            field = get_really_full_name(field)
+            self.unit = None
         elif not field and field != 0:
             self.unit = None
             field = u"—"

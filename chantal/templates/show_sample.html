@@ -24,7 +24,50 @@
 {% endblock %}
 
 {% block content %}
-  {{ session.last_db_time_in_ms }}
+  <table>
+    <tr>
+      {% value_field sample.currently_responsible_person "user" %}
+    </tr>
+    <tr>
+      {% value_field sample.group %}
+    </tr>
+    {% if sample.tags %}
+      <tr>
+        {% value_field sample.tags %}
+      </tr>
+    {% endif %}
+    {% if sample.purpose %}
+      <tr>
+        {% value_field sample.purpose %}
+      </tr>
+    {% endif %}
+    <tr>
+      {% value_field sample.current_location %}
+    </tr>
+  </table>
+
+  {% with sample.series.count as number_of_sample_series %}
+    {% with sample.series.all as sample_serieses %}
+      {% if number_of_sample_series %}
+        <p>
+          {% blocktrans count number_of_sample_series as counter and sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
+            This sample is part of the sample series “<a href="{{ first_url }}">{{ first_series }}”</a>.
+          {% plural %}
+            This sample is part of the following sample series:  <!-- {{ first_url }}  {{ first_series }} -->
+          {% endblocktrans %}
+        </p>
+
+        {% ifnotequal number_of_sample_series 1 %}
+          <ul>
+            {% for sample_series in sample_serieses %}
+              <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endifnotequal %}
+      {% endif %}
+    {% endwith %}
+  {% endwith %}
+
   {% for process in processes %}
     <div class="process">
       <p class="operator_and_timestamp">
