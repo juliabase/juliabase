@@ -14,6 +14,7 @@ from functools import update_wrapper
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
+from django.db.models import Q
 from chantal.samples import models, permissions
 from chantal.samples.views.shared_utils import *
 
@@ -311,9 +312,13 @@ class ProcessContext(ResultContext):
         :rtype: list of `models.Process`
         """
         if self.cutoff_timestamp is None:
-            return self.current_sample.processes.all()
+            return models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                 Q(result__sample_series__samples=self.current_sample)).distinct()
         else:
-            return self.current_sample.processes.filter(timestamp__lte=self.cutoff_timestamp)
+            return models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                 Q(result__sample_series__samples=self.current_sample)). \
+                                                 filter(timestamp__lte=self.cutoff_timestamp).distinct()
+        return processes
     def collect_processes(self):
         u"""Make a list of all processes for `current_sample`.  This routine is
         called recursively in order to resolve all upstream sample splits,
