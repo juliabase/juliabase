@@ -182,8 +182,6 @@ def edit(request, username):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     user_details = utils.get_profile(user)
-    if not user_details.my_samples.count():
-        raise Http404(u"No “My Samples” found.")
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     if request.method == "POST":

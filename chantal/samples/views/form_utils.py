@@ -200,7 +200,7 @@ class GeneralSampleField(object):
             for series in group.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
-        if not isinstance(self, forms.MultipleChoiceField):
+        if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, (u"", 9*u"-"))
     
 class SampleField(GeneralSampleField, forms.ChoiceField):
@@ -219,6 +219,8 @@ class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
     deposition systems can deposit more than one sample in a single run.
     """
     def clean(self, value):
+        if value == [u""]:
+            value = []
         value = super(MultipleSamplesField, self).clean(value)
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
@@ -290,7 +292,11 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users |= set(additional_users)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices = [(user.pk, utils.get_really_full_name(user)) for user in users]
+        if not self.choices:
+            self.choices = ((u"", 9*u"-"),)
     def clean(self, value):
+        if value == [u""]:
+            value = []
         value = super(MultipleUsersField, self).clean(value)
         return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
 

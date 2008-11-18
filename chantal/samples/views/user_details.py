@@ -97,7 +97,8 @@ def edit_preferences(request, login_name):
         initials_form = form_utils.InitialsForm(user, initials_mandatory)
     return render_to_response("edit_preferences.html",
                               {"title": _(u"Change preferences for %s") % utils.get_really_full_name(request.user),
-                               "user_details": user_details_form, "initials": initials_form},
+                               "user_details": user_details_form, "initials": initials_form,
+                               "has_groups": bool(user.groups.count())},
                               context_instance=RequestContext(request))
 
 @login_required

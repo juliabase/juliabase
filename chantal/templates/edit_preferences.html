@@ -11,17 +11,19 @@
     <tr>
       {% input_field user_details.only_important_news %}
     </tr>
-    <tr>
-      <td class="label">
-        <label for="id_{{ user_details.auto_addition_groups.html_name }}"
-               >{{ user_details.auto_addition_groups.label }}:</label>
-        <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
-          {% blocktrans %}(This list shows
-          all groups you are a member of.  You can mark those groups that you want all new samples of which to be
-          implicitly added to “My Samples”.){% endblocktrans %}</div>
-      </td>
-      <td class="input">{{ user_details.auto_addition_groups }}</td>
-    </tr>
+    {% if has_groups %}
+      <tr>
+        <td class="label">
+          <label for="id_{{ user_details.auto_addition_groups.html_name }}"
+                 >{{ user_details.auto_addition_groups.label }}:</label>
+          <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
+            {% blocktrans %}(This list shows
+            all groups you are a member of.  You can mark those groups that you want all new samples of which to be
+            implicitly added to “My Samples”.){% endblocktrans %}</div>
+        </td>
+        <td class="input">{{ user_details.auto_addition_groups }}</td>
+      </tr>
+    {% endif %}
     <tr>
       <td class="label">
         <label for="id_{{ initials.initials.html_name }}">{{ initials.initials.label }}:</label>
