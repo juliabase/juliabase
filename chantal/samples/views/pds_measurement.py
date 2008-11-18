@@ -126,7 +126,7 @@ class SampleForm(forms.Form):
         super(SampleForm, self).__init__(*args, **kwargs)
         samples = user_details.my_samples.all()
         if pds_measurement:
-            samples = list(samples) + pds_measurement.samples.all()[:1]
+            samples = list(samples) + list(pds_measurement.samples.all()[:1])
         self.fields["sample"].set_samples(samples)
     
 class PDSMeasurementForm(forms.ModelForm):
