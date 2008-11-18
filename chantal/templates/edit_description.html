@@ -2,7 +2,7 @@
   {% load i18n %}
   {% load samples_extras %}
   <table class="edit-description">
-    {% error_list edit_description _("General error") %}
+    {% error_list edit_description _("General error") "<tr>" %}
     <tr>
       <td>
 	<label for="id_{{ edit_description.description.html_name }}"
