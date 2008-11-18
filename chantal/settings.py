@@ -118,6 +118,7 @@ LOCALES_DICT = {"en": "en_US.utf8", "de": "de_DE.utf8"}
 # Absolute path to the directory that holds uploaded images for result
 # processes.
 UPLOADED_RESULT_IMAGES_ROOT = "/home/bronger/temp/chantal_images/" if IS_TESTSERVER else "/var/lib/chantal_images/"
+THUMBNAIL_WIDTH = 400
 
 import subprocess, re, time
 def _scan_version(package):

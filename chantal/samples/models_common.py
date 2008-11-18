@@ -531,7 +531,8 @@ class Result(Process):
                 pass
             if not os.path.exists(image_locations["thumbnail_file"]):
                 subprocess.call(["convert", image_locations["original"] + ("[0]" if self.image_type == "pdf" else ""),
-                                 "-resize", "200x200", image_locations["thumbnail_file"]])
+                                 "-resize", "%(width)dx%(width)d" % {"width": settings.THUMBNAIL_WIDTH},
+                                 image_locations["thumbnail_file"]])
             if not os.path.exists(image_locations["image_file"]):
                 shutil.copy(image_locations["original"], image_locations["image_file"])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
