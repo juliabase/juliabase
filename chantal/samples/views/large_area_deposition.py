@@ -34,10 +34,11 @@ class SamplesForm(forms.Form):
     """
     _ = ugettext_lazy
     sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
-    def __init__(self, user_details, deposition, data=None, **kwargs):
+    def __init__(self, user_details, preset_sample, deposition, data=None, **kwargs):
         u"""Class constructor.  Note that I have to distinguish clearly here
         between new and existing depositions.
         """
+        samples = list(user_details.my_samples.all())
         if deposition:
             # Mark the samples of the deposition in the choise field
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
@@ -45,10 +46,13 @@ class SamplesForm(forms.Form):
             # below)
             super(SamplesForm, self).__init__(**kwargs)
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-            self.fields["sample_list"].set_samples(list(user_details.my_samples.all()) + list(deposition.samples.all()))
+            samples.extend(deposition.samples.all())
         else:
             super(SamplesForm, self).__init__(data, **kwargs)
-            self.fields["sample_list"].set_samples(user_details.my_samples.all())
+            if preset_sample:
+                samples.append(preset_sample)
+                self.fields["sample_list"].initial = [preset_sample.pk]
+        self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 class DepositionForm(forms.ModelForm):
@@ -153,24 +157,25 @@ class FormSet(object):
     :type deposition: `models.LargeAreaDeposition` or ``NoneType``
     """
     deposition_number_pattern = re.compile(ur"(?P<prefix>\d\dL-)(?P<number>\d+)$")
-    def __init__(self, user, deposition_number):
+    def __init__(self, request, deposition_number):
         u"""Class constructor.  Note that I don't create the forms here – this
         is done later in `from_post_data` and in `from_database`.
 
         :Parameters:
-          - `user`: the current user
+          - `request`: the current HTTP Request object
           - `deposition_number`: number of the deposition to be edited/created.
             If this number already exists, *edit* it, if not, *create* it.
 
-        :type user: ``django.contrib.auth.models.User``
+        :type request: ``HttpRequest``
         :type deposition_number: unicode
         """
-        self.user = user
+        self.user = request.user
         self.user_details = utils.get_profile(self.user)
         self.deposition = \
             get_object_or_404(models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
         self.layer_forms = self.change_layer_forms = []
+        self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
     def from_post_data(self, post_data):
         u"""Generate all forms from the post data submitted by the user.
@@ -186,7 +191,7 @@ class FormSet(object):
                                                        "number": utils.get_next_deposition_number("L")})
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
-        self.samples_form = SamplesForm(self.user_details, self.deposition, self.post_data)
+        self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition, self.post_data)
         indices = form_utils.collect_subform_indices(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
@@ -252,7 +257,7 @@ class FormSet(object):
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                         "number": utils.get_next_deposition_number("L")})
                 self.layer_forms, self.change_layer_forms = [], []
-        self.samples_form = SamplesForm(self.user_details, self.deposition)
+        self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm()
@@ -517,7 +522,7 @@ def edit(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    form_set = FormSet(request.user, deposition_number)
+    form_set = FormSet(request, deposition_number)
     permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, models.LargeAreaDeposition)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
