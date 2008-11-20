@@ -131,3 +131,13 @@ MYSQL_VERSION = _scan_version("mysql-server")
 MYSQL_STARTUP_TIME = os.stat("/var/run/mysqld/mysqld.pid")[9]
 PYTHON_VERSION = _scan_version("python")
 CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
+
+# LDAP binding
+AD_DNS_NAME = "localhost"
+AD_LDAP_PORT = 389
+AD_SEARCH_DN = "CN=Users,dc=example,dc=com"
+# This is the NT4/Samba domain name
+AD_NT4_DOMAIN = "EXAMPLE"
+AD_SEARCH_FIELDS = ["mail", "givenName", "sn", "sAMAccountName"]
+AD_LDAP_URL = "ldap://%s:%s" % (AD_DNS_NAME, AD_LDAP_PORT)
+#AUTHENTICATION_BACKENDS = ("chantal.samples.auth.ActiveDirectoryBackend",)
