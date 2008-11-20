@@ -121,7 +121,7 @@ class RelatedDataForm(forms.Form):
                 models.SampleSeries.objects.filter(Q(samples__watchers=user_details) |
                                                    ( Q(currently_responsible_person=user_details.user) &
                                                      Q(timestamp__range=(three_months_ago, now)))
-                                                   | Q(name=query_string_dict.get("sample_series"))).distinct()
+                                                   | Q(name=query_string_dict.get("sample_series", u""))).distinct()
             self.fields["sample_series"].initial = [query_string_dict.get("sample_series")]
         self.fields["image_file"].widget.attrs["size"] = 60
     

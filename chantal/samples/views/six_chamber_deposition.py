@@ -53,7 +53,7 @@ class DepositionForm(ModelForm):
     _ = ugettext_lazy
     sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
-    def __init__(self, user_details, data=None, **kwargs):
+    def __init__(self, user_details, preset_sample, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
         (``sample_list`` and ``operator``).
@@ -65,9 +65,12 @@ class DepositionForm(ModelForm):
             initial.update({"sample_list": deposition.samples.values_list("pk", flat=True)})
         kwargs["initial"] = initial
         super(DepositionForm, self).__init__(data, **kwargs)
-        samples = user_details.my_samples.all()
+        samples = list(user_details.my_samples.all())
         if deposition:
-            samples = list(samples) + list(deposition.samples.all())
+            samples.extend(deposition.samples.all())
+        if preset_sample:
+            samples.append(preset_sample)
+            self.fields["sample_list"].initial = [preset_sample.pk]
         self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
         self.fields["operator"].set_operator(deposition.operator if deposition else user_details.user)
@@ -461,8 +464,9 @@ def edit(request, deposition_number):
     deposition = get_object_or_404(SixChamberDeposition, number=deposition_number) if deposition_number else None
     permissions.assert_can_add_edit_physical_process(request.user, deposition, SixChamberDeposition)
     user_details = utils.get_profile(request.user)
+    preset_sample = utils.extract_preset_sample(request) if not deposition else None
     if request.method == "POST":
-        deposition_form = DepositionForm(user_details, request.POST, instance=deposition)
+        deposition_form = DepositionForm(user_details, preset_sample, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if deposition else None
@@ -499,17 +503,18 @@ def edit(request, deposition_number):
                 deposition_data = copy_from_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["number"] = utils.get_next_deposition_number("B")
-                deposition_form = DepositionForm(user_details, initial=deposition_data)
+                deposition_form = DepositionForm(user_details, preset_sample, initial=deposition_data)
                 layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
         if not deposition_form:
             if deposition:
                 # Normal edit of existing deposition
-                deposition_form = DepositionForm(user_details, instance=deposition)
+                deposition_form = DepositionForm(user_details, preset_sample, instance=deposition)
                 layer_forms, channel_form_lists = forms_from_database(deposition)
             else:
                 # New deposition, or duplication has failed
-                deposition_form = DepositionForm(user_details, initial={"number": utils.get_next_deposition_number("B"),
-                                                                        "timestamp": datetime.datetime.now()})
+                deposition_form = DepositionForm(
+                    user_details, preset_sample, initial={"number": utils.get_next_deposition_number("B"),
+                                                          "timestamp": datetime.datetime.now()})
                 layer_forms, channel_form_lists = [], []
         remove_from_my_samples_form = RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition})
         edit_description_form = form_utils.EditDescriptionForm() if deposition else None

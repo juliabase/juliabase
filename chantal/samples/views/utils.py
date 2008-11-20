@@ -716,3 +716,36 @@ def build_structured_sample_list(samples):
     for structured_group in structured_groups:
         structured_group.sort_sample_series()
     return structured_groups, groupless_samples
+
+def extract_preset_sample(request):
+    u"""Extract a sample from a query string.  All physical processes as well
+    as result processes may have an optional parameter in the query string,
+    namely the sample to which they should be applied (results even a sample
+    series, too).  If such a parameter is present, the given sample – if
+    existing – must be added to the list of selectable samples, and it must be
+    the initially marked sample.
+
+    This routine is used in all views for creating physical processes.  It is
+    not used for result processes because they need a given sample *series*,
+    too, and this would have been over-generalisation.
+
+    This routine extracts the sample name from the query string and returns the
+    sample.  If nothing was given or the sample non-existing, it returns
+    ``None``.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the sample given in the query string, if any
+
+    :rtype: `models.Sample` or ``NoneType``
+    """
+    query_string_dict = parse_query_string(request)
+    if "sample" in query_string_dict:
+        try:
+            return models.Sample.objects.get(name=query_string_dict["sample"])
+        except models.Sample.DoesNotExist:
+            pass
