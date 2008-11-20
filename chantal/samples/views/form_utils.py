@@ -5,7 +5,7 @@ u"""Helper classes and function which have something to do with form generation
 and validation.
 """
 
-import re
+import re, datetime
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -14,6 +14,25 @@ import django.forms as forms
 import django.contrib.auth.models
 from chantal.samples import models
 from chantal.samples.views import utils
+
+class ProcessForm(ModelForm):
+    u"""Abstract model form class for processes.  It ensures that timestamps
+    are not in the future, and that comments contain only allowed Markdown
+    syntax.
+    """
+    def clean_comments(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        check_markdown(comments)
+        return comments
+    def clean_timestamp(self):
+        u"""Forbid timestamps that are in the future.
+        """
+        timestamp = self.cleaned_data["timestamp"]
+        if timestamp > datetime.datetime.now():
+            raise ValidationError(_(u"The timestamp must not be in the future."))
+        return timestamp
 
 class DataModelForm(ModelForm):
     _ = ugettext_lazy

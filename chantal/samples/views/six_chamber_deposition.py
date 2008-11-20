@@ -47,7 +47,7 @@ class AddMyLayerForm(Form):
         super(AddMyLayerForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = form_utils.get_my_layers(user_details, SixChamberDeposition)
 
-class DepositionForm(ModelForm):
+class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the basic deposition data.
     """
     _ = ugettext_lazy
@@ -76,12 +76,6 @@ class DepositionForm(ModelForm):
         self.fields["operator"].set_operator(deposition.operator if deposition else user_details.user)
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
-    def clean_comments(self):
-        u"""Forbid image and headings syntax in Markdown markup.
-        """
-        comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
-        return comments
     def clean(self):
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:

@@ -243,6 +243,13 @@ class AddSamplesForm(forms.Form):
     def __init__(self, user_details, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
         self.fields["group"].set_groups()
+    def clean_timestamp(self):
+        u"""Forbid timestamps that are in the future.
+        """
+        timestamp = self.cleaned_data["timestamp"]
+        if timestamp > datetime.datetime.now():
+            raise ValidationError(_(u"The timestamp must not be in the future."))
+        return timestamp
 
 def add_samples_to_database(add_samples_form, user):
     u"""Create the new samples and add them to the database.  This routine

@@ -55,7 +55,7 @@ class SamplesForm(forms.Form):
         self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
-class DepositionForm(forms.ModelForm):
+class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the deposition main data.  I only overwrite ``operator``
     in order to have full real names.
     """
@@ -77,12 +77,6 @@ class DepositionForm(forms.ModelForm):
         wrong German (difficult to fix, even for the Django guys).
         """
         pass
-    def clean_comments(self):
-        u"""Forbid image and headings syntax in Markdown markup.
-        """
-        comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
-        return comments
     def clean(self):
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:

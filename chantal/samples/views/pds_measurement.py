@@ -136,7 +136,7 @@ class SampleForm(forms.Form):
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples)
     
-class PDSMeasurementForm(forms.ModelForm):
+class PDSMeasurementForm(form_utils.ProcessForm):
     u"""Model form for the core PDS measurement data.  I only redefine the
     ``operator`` field here in oder to have the full names of the users.
     """
@@ -182,12 +182,6 @@ class PDSMeasurementForm(forms.ModelForm):
         filename = self.cleaned_data["evaluated_datafile"]
         self.test_for_datafile(filename)
         return filename
-    def clean_comments(self):
-        u"""Forbid image and headings syntax in Markdown markup.
-        """
-        comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
-        return comments
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
