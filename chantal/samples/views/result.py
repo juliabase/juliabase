@@ -105,14 +105,17 @@ class RelatedDataForm(forms.Form):
         """
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
         if query_string_dict is not None:
-            self.fields["samples"].set_samples(list(user_details.my_samples.all()) +
-                                               list(models.Sample.objects.filter(name=query_string_dict.get("sample"))))
+            samples = user_details.my_samples.all()
             if "sample" in query_string_dict:
+                self.fields["samples"].set_samples(
+                    list(samples) + list(models.Sample.objects.filter(name=query_string_dict["sample"])))
                 try:
                     self.fields["samples"].initial = \
                         [models.Sample.objects.get(name=query_string_dict["sample"])._get_pk_val()]
                 except models.Sample.DoesNotExist:
                     raise Http404(u"sample %s given in query string not found" % query_string_dict["sample"])
+            else:
+                self.fields["samples"].set_samples(samples)
             now = datetime.datetime.now() + datetime.timedelta(seconds=5)
             three_months_ago = now - datetime.timedelta(days=90)
             self.fields["sample_series"].queryset = \
