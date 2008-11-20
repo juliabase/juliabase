@@ -98,13 +98,12 @@ class SixChamberDeposition(Deposition):
         This implies that it also must have an “add-edit” permission.
 
         :Return:
-          the full URL to the add page for this process, hyperlink label like
-          ``u"Add 6-chamber deposition"``
+          the full URL to the add page for this process
 
-        :rtype: str, unicode
+        :rtype: str
         """
         _ = ugettext
-        return django.core.urlresolvers.reverse("add_6-chamber_deposition"), _(u"Add 6-chamber deposition")
+        return django.core.urlresolvers.reverse("add_6-chamber_deposition")
     class Meta:
         verbose_name = _(u"6-chamber deposition")
         verbose_name_plural = _(u"6-chamber depositions")
@@ -249,13 +248,12 @@ class LargeAreaDeposition(Deposition):
         process.  See `SixChamberDeposition.get_add_link`.
 
         :Return:
-          the full URL to the add page for this process, hyperlink label like
-          ``u"Add 6-chamber deposition"``
+          the full URL to the add page for this process
 
-        :rtype: str, unicode
+        :rtype: str
         """
         _ = ugettext
-        return django.core.urlresolvers.reverse("add_large-area_deposition"), _(u"Add large-area deposition")
+        return django.core.urlresolvers.reverse("add_large-area_deposition")
     class Meta:
         verbose_name = _(u"large-area deposition")
         verbose_name_plural = _(u"large-area depositions")

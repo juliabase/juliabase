@@ -84,9 +84,8 @@ def main_menu(request):
     my_groups, groupless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
     physical_processes = []
     for cls in permissions.get_allowed_physical_processes(request.user):
-        # FixMe: This try block should vanish
         try:
-            url, label = cls.get_add_link()
+            url = cls.get_add_link()
         except NotImplementedError:
             continue
         physical_processes.append({"url": url, "label": cls._meta.verbose_name})

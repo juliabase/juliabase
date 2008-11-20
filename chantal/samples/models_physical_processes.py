@@ -79,14 +79,13 @@ class HallMeasurement(Process):
         process.  See `models_depositions.SixChamberDeposition.get_add_link`.
 
         :Return:
-          the full URL to the add page for this process, hyperlink label like
-          ``u"Add 6-chamber deposition"``
+          the full URL to the add page for this process
 
-        :rtype: str, unicode
+        :rtype: str
         """
         _ = ugettext
         raise NotImplementedError
-        return django.core.urlresolvers.reverse("add_hall_measurement"), _(u"Add hall measurement")
+        return django.core.urlresolvers.reverse("add_hall_measurement")
     class Meta:
         verbose_name = _(u"Hall measurement")
         verbose_name_plural = _(u"Hall measurements")
@@ -149,13 +148,12 @@ class PDSMeasurement(Process):
         process.  See `models_depositions.SixChamberDeposition.get_add_link`.
 
         :Return:
-          the full URL to the add page for this process, hyperlink label like
-          ``u"Add 6-chamber deposition"``
+          the full URL to the add page for this process
 
-        :rtype: str, unicode
+        :rtype: str
         """
         _ = ugettext
-        return django.core.urlresolvers.reverse("add_pds_measurement"), _(u"Add PDS measurement")
+        return django.core.urlresolvers.reverse("add_pds_measurement")
     class Meta:
         verbose_name = _(u"PDS measurement")
         verbose_name_plural = _(u"PDS measurements")
