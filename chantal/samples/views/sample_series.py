@@ -159,10 +159,9 @@ def edit(request, name):
         sample_series_form = \
             SampleSeriesForm(user_details, sample_series,
                              initial={"name": sample_series.name.split("-", 2)[-1],
-                                      "currently_responsible_person":
-                                          sample_series.currently_responsible_person._get_pk_val(),
-                                      "group": sample_series.group._get_pk_val(),
-                                      "samples": [sample._get_pk_val() for sample in sample_series.samples.all()]})
+                                      "currently_responsible_person": sample_series.currently_responsible_person.pk,
+                                      "group": sample_series.group.pk,
+                                      "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("edit_sample_series.html",

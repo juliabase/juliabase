@@ -110,8 +110,7 @@ class RelatedDataForm(forms.Form):
                 self.fields["samples"].set_samples(
                     list(samples) + list(models.Sample.objects.filter(name=query_string_dict["sample"])))
                 try:
-                    self.fields["samples"].initial = \
-                        [models.Sample.objects.get(name=query_string_dict["sample"])._get_pk_val()]
+                    self.fields["samples"].initial = [models.Sample.objects.get(name=query_string_dict["sample"]).pk]
                 except models.Sample.DoesNotExist:
                     raise Http404(u"sample %s given in query string not found" % query_string_dict["sample"])
             else:
