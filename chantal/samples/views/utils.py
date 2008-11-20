@@ -671,8 +671,7 @@ def build_structured_sample_list(samples):
     top-level.
 
     As far as sorting is concerned, all groups are sorted by alphabet, all
-    sample series by reverse timestamp of origin, and all samples by the
-    sorting oder defined in `models.Sample`.
+    sample series by reverse timestamp of origin, and all samples by name.
 
     :Parameters:
       - `samples`: the samples to be processed; it doesn't matter if a sample
@@ -689,12 +688,7 @@ def build_structured_sample_list(samples):
     structured_series = {}
     structured_groups = {}
     groupless_samples = []
-    samples_already_processed = set()
-    for sample in samples:
-        if sample in samples_already_processed:
-            continue
-        else:
-            samples_already_processed.add(sample)
+    for sample in sorted(set(samples), key=lambda sample: sample.name):
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:

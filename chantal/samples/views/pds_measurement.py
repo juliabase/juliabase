@@ -111,7 +111,7 @@ class SampleForm(forms.Form):
     """
     _ = ugettext_lazy
     sample = form_utils.SampleField(label=_(u"Sample"))
-    def __init__(self, user_details, pds_measurement, *args, **kwargs):
+    def __init__(self, user_details, pds_measurement, preset_sample, *args, **kwargs):
         u"""Form constructor.  I only set the selection of samples to the
         current user's “My Samples”.
 
@@ -119,14 +119,21 @@ class SampleForm(forms.Form):
           - `user_details`: the details of the current user
           - `pds_measurement`: the PDS measurement to be edited, or ``None`` if
             a new is about to be created
+          - `preset_sample`: the sample to which the PDS measurement should be
+            appended when creating a new PDS measurement; see
+            `utils.extract_preset_sample`
 
         :type user_details: `models.UserDetails`
         :type pds_measurement: `models.PDSMeasurement`
+        :type preset_sample: `models.Sample`
         """
         super(SampleForm, self).__init__(*args, **kwargs)
-        samples = user_details.my_samples.all()
+        samples = list(user_details.my_samples.all())
         if pds_measurement:
-            samples = list(samples) + list(pds_measurement.samples.all()[:1])
+            samples.extend(pds_measurement.samples.all()[:1])
+        if preset_sample:
+            samples.append(preset_sample)
+            self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples)
     
 class PDSMeasurementForm(forms.ModelForm):
@@ -257,9 +264,10 @@ def edit(request, pd_number):
         if pd_number is not None else None
     permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, models.PDSMeasurement)
     user_details = utils.get_profile(request.user)
+    preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
     if request.method == "POST":
         pds_measurement_form = None
-        sample_form = SampleForm(user_details, pds_measurement, request.POST)
+        sample_form = SampleForm(user_details, pds_measurement, preset_sample, request.POST)
         remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
         overwrite_form = OverwriteForm(request.POST)
         if overwrite_form.is_valid() and overwrite_form.cleaned_data["overwrite_from_file"]:
@@ -304,7 +312,7 @@ def edit(request, pd_number):
             samples = pds_measurement.samples.all()
             if samples:
                 initial["sample"] = samples[0].pk
-        sample_form = SampleForm(user_details, pds_measurement, initial=initial)
+        sample_form = SampleForm(user_details, pds_measurement, preset_sample, initial=initial)
         overwrite_form = OverwriteForm()
         remove_from_my_samples_form = RemoveFromMySamplesForm()
     title = _(u"PDS measurement %s") % pd_number if pd_number else _(u"Add PDS measurement")
