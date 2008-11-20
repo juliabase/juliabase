@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-18 22:54+0100\n"
+"POT-Creation-Date: 2008-11-20 15:42+0100\n"
 "PO-Revision-Date: 2008-11-18 22:54+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -282,9 +282,6 @@ msgstr "Depositionen"
 msgid "carrier"
 msgstr "Carrier"
 
-msgid "Add 6-chamber deposition"
-msgstr "6-Kammer-Deposition hinzufügen"
-
 msgid "6-chamber deposition"
 msgstr "6-Kammer-Deposition"
 
@@ -419,9 +416,6 @@ msgstr "6-Kammer-Channel"
 
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
-
-msgid "Add large-area deposition"
-msgstr "Großflächige Deposition hinzufügen"
 
 msgid "large-area deposition"
 msgstr "Großflächige Deposition"
@@ -701,9 +695,6 @@ msgstr "Hall-Messung von %s"
 msgid "hall measurement #%d"
 msgstr "Hall-Messung #%d"
 
-msgid "Add hall measurement"
-msgstr "Hall-Messung hinzufügen"
-
 msgid "Hall measurement"
 msgstr "Hall-Messung"
 
@@ -738,9 +729,6 @@ msgstr "Energie in eV"
 
 msgid "counts"
 msgstr "Counts"
-
-msgid "Add PDS measurement"
-msgstr "PDS-Messung hinzufügen"
 
 msgid "PDS measurement"
 msgstr "PDS-Messung"
@@ -1130,6 +1118,9 @@ msgstr "Die Deposition %s wurde erfolgreich zur Datenbank hinzugefügt."
 msgid "Large-area deposition “%s”"
 msgstr "Großflächige Deposition „%s“"
 
+msgid "Add large-area deposition"
+msgstr "Großflächige Deposition hinzufügen"
+
 msgid "MainMenu"
 msgstr "MainMenu"
 
@@ -1258,6 +1249,9 @@ msgstr "%s wurde erfolgreich zur Datenbank hinzugefügt."
 #, python-format
 msgid "PDS measurement %s"
 msgstr "PDS-Messung %s"
+
+msgid "Add PDS measurement"
+msgstr "PDS-Messung hinzufügen"
 
 msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
 msgstr "Ungültiges Dateiformat.  Nur PDF, PNG und JPEG sind erlaubt."
@@ -2596,7 +2590,10 @@ msgid_plural ""
 "            This sample is part of the following sample series:  <!-- %"
 "(first_url)s  %(first_series)s -->\n"
 "          "
-msgstr[0] "\nDiese Probe gehört zur Probenserie „<a href=\"%(first_url)s\">%(first_series)s</a>“."
+msgstr[0] ""
+"\n"
+"Diese Probe gehört zur Probenserie „<a href=\"%(first_url)s\">%(first_series)"
+"s</a>“."
 msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien:"
@@ -2794,6 +2791,12 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "Add 6-chamber deposition"
+#~ msgstr "6-Kammer-Deposition hinzufügen"
+
+#~ msgid "Add hall measurement"
+#~ msgstr "Hall-Messung hinzufügen"
 
 #~ msgid "new samples"
 #~ msgstr "Neue Proben"

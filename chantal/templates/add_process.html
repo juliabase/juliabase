@@ -6,8 +6,7 @@
 {% block content %}
   <ul>
     {% for process in processes %}
-      <li><a href="{{ process.link }}{% if query_string %}?{{ query_string }}{% endif %}"
-             >{{ process.name }}</a></li>
+      <li><a href="{{ process.url }}">{{ process.label|capfirst }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}

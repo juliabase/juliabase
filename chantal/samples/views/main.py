@@ -82,13 +82,6 @@ def main_menu(request):
     """
     user_details = utils.get_profile(request.user)
     my_groups, groupless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
-    physical_processes = []
-    for cls in permissions.get_allowed_physical_processes(request.user):
-        try:
-            url = cls.get_add_link()
-        except NotImplementedError:
-            continue
-        physical_processes.append({"url": url, "label": cls._meta.verbose_name})
     return render_to_response(
         "main_menu.html",
         {"title": _(u"Main menu"),
@@ -98,7 +91,7 @@ def main_menu(request):
          "can_edit_group_memberships": permissions.has_permission_to_edit_group_memberships(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
          "has_external_contacts": request.user.external_contacts.count() > 0,
-         "physical_processes": physical_processes},
+         "physical_processes": permissions.get_allowed_physical_processes(request.user)},
         context_instance=RequestContext(request))
 
 class SearchDepositionsForm(forms.Form):

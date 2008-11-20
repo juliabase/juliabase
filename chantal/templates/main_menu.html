@@ -11,7 +11,7 @@
     <li><a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
     <li><a href="{% url samples.views.result.new %}">{% trans 'Result' %}</a></li>
     {% for physical_process in physical_processes %}
-      <li><a href="{{ physical_process.url }}">{{ physical_process.label }}</a></li>
+      <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
   </ul>
 

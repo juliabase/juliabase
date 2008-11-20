@@ -115,10 +115,33 @@ def get_editable_sample_series(user):
     return chantal.samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
 
 def get_allowed_physical_processes(user):
+    u"""Get a list with all pysical processes (depositions, measurements; no
+    sample splits) that the user is allowed to add or edit.  This routine is
+    typically used where a list of all processes that the user is allowed to
+    *add* is to be build, on the main menu page and the “add process to sample”
+    page.
+
+    :Parameters:
+      - `user`: the user whose allowed physical processes should be collected
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      List of all physical processes the user is allowed to add to the
+      database.  Every process is represented by a dictionary with two keys,
+      namely ``"url"`` with the url to the “add” view for the process, and
+      ``"label"`` with the name of the process (starting lowercase).
+
+    :rtype: list of dict mapping str to unicode
+    """
     allowed_physical_processes = []
     for physical_process_class in chantal.samples.models.all_physical_process_models:
         if has_permission_to_add_edit_physical_process(user, None, physical_process_class):
-            allowed_physical_processes.append(physical_process_class)
+            try:
+                url = physical_process_class.get_add_link()
+            except NotImplementedError:
+                continue
+            allowed_physical_processes.append({"url": url, "label": physical_process_class._meta.verbose_name})
     return allowed_physical_processes
 
 class PermissionError(Exception):

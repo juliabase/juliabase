@@ -119,7 +119,7 @@ def edit(request, sample_name):
                               context_instance=RequestContext(request))
 
 def get_allowed_processes(user, sample):
-    u"""Return a list with processes the user is allowed to add to the sample.
+    u"""Return all processes the user is allowed to add to the sample.
 
     :Parameters:
       - `user`: the current user
@@ -129,31 +129,36 @@ def get_allowed_processes(user, sample):
     :type sample: `models.Sample`
 
     :Return:
-      a list with the allowed processes.  Every process is returned as a dict
-      with two keys: ``"name"`` and ``"link"``.  ``"name"`` is the
-      human-friendly descriptive name of the process, ``"link"`` is the URL to
+      two lists with the allowed processes.  Every process is returned as a dict
+      with two keys: ``"label"`` and ``"url"``.  ``"label"`` is the
+      human-friendly descriptive name of the process, ``"url"`` is the URL to
       the process (processing `sample`!).
 
-    :rtype: list of dict mapping str to unicode/str
+      The first list is sample split and sample death, the second list are
+      results and physical processes.
+
+    :rtype: list of dict mapping str to unicode/str, list of dict mapping str
+      to unicode/str
 
     :Exceptions:
       - `permissions.PermissionError`: if the user is not allowed to add any
         process to the sample
     """
-    processes = []
-    if permissions.has_permission_to_add_result_process(user, sample):
-        processes.append({"name": models.Result._meta.verbose_name,
-                          "link": django.core.urlresolvers.reverse("samples.views.result.new")})
+    sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample):
-        processes.append({"name": _(u"split"), "link": sample.get_absolute_url() + "/split/"})
+        sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "/split/"})
         # FixMe: Add sample death
-    # FixMe: Add other processes, deposition, measurements, if the user is allowed to do it
-    if not processes:
+    general_processes = []
+    if permissions.has_permission_to_add_result_process(user, sample):
+        general_processes.append({"label": models.Result._meta.verbose_name,
+                                  "url": django.core.urlresolvers.reverse("samples.views.result.new")})
+    general_processes.extend(permissions.get_allowed_physical_processes(user))
+    if not sample_processes and not general_processes:
         raise permissions.PermissionError(user, _(u"You are not allowed to add any processes to the sample %s "
                                                   u"because neither are you its currently responsible person, "
                                                   u"nor in its group, nor do you have special permissions for a "
                                                   u"physical process.") % sample, new_group_would_help=True)
-    return processes
+    return sample_processes, general_processes
 
 @login_required
 def show(request, sample_name, sample_id=None):
@@ -358,12 +363,12 @@ def add_process(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request)
     user_details = utils.get_profile(request.user)
-    processes = get_allowed_processes(request.user, sample)
+    sample_processes, general_processes = get_allowed_processes(request.user, sample)
+    for process in general_processes:
+        process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())
     return render_to_response("add_process.html",
                               {"title": _(u"Add process to sample “%s”") % sample.name,
-                               "processes": processes,
-                               "query_string": "sample=%s&next=%s" % (urlquote_plus(sample_name),
-                                                                      sample.get_absolute_url())},
+                               "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
 
 class SearchSamplesForm(forms.Form):
