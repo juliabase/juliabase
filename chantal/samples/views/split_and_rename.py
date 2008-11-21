@@ -12,7 +12,6 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
-from django.db.models import Q
 from chantal.samples import models, permissions
 import django.core.urlresolvers
 from chantal.samples.views import utils, form_utils, feed_utils
