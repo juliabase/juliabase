@@ -65,15 +65,17 @@ class DepositionForm(form_utils.ProcessForm):
             initial.update({"sample_list": deposition.samples.values_list("pk", flat=True)})
         kwargs["initial"] = initial
         super(DepositionForm, self).__init__(data, **kwargs)
+        self.is_new = not deposition
         samples = list(user_details.my_samples.all())
-        if deposition:
+        if not self.is_new:
             samples.extend(deposition.samples.all())
+            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
         if preset_sample:
             samples.append(preset_sample)
             self.fields["sample_list"].initial = [preset_sample.pk]
         self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
-        self.fields["operator"].set_operator(deposition.operator if deposition else user_details.user)
+        self.fields["operator"].set_operator(user_details.user if self.is_new else deposition.operator)
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
     def clean(self):
@@ -84,9 +86,10 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
     def save(self, *args, **kwargs):
         u"""Additionally to the deposition itself, I must store the list of
-        samples connected with the deposition."""
+        samples connected with the deposition (if it is a new one)."""
         deposition = super(DepositionForm, self).save(*args, **kwargs)
-        deposition.samples = self.cleaned_data["sample_list"]
+        if self.is_new:
+            deposition.samples = self.cleaned_data["sample_list"]
         return deposition
     class Meta:
         model = SixChamberDeposition
