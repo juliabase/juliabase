@@ -315,6 +315,8 @@ class Sample(models.Model):
             return ("show_sample_by_id", (), {"sample_id": str(self.pk)})
         else:
             return ("show_sample_by_name", [urlquote(self.name, safe="")])
+    def is_dead(self):
+        return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")

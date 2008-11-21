@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-20 19:57+0100\n"
-"PO-Revision-Date: 2008-11-20 19:58+0100\n"
+"POT-Creation-Date: 2008-11-21 17:09+0100\n"
+"PO-Revision-Date: 2008-11-21 17:09+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1373,6 +1373,18 @@ msgstr "Namensmuster"
 
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
+
+msgid "Last process wasn't a split."
+msgstr "Der letzte Prozess war keine Spaltung."
+
+#. FixMe: Feed entries
+#, python-format
+msgid "Sample “%s” was killed."
+msgstr "Probe „%s“ wurde getötet."
+
+#, python-format
+msgid "Kill sample “%s”"
+msgstr "Töten der Probe „%s“"
 
 msgid "Name"
 msgstr "Name"
