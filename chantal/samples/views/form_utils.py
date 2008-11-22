@@ -621,3 +621,28 @@ def check_markdown(text):
     """
     if dangerous_markup_pattern.search(text):
         raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
+
+def dead_samples(samples, timestamp):
+    u"""Determine all samples from ``samples`` which are already dead at the
+    given ``timestamp``.
+
+    :Parameters:
+      - `samples`: the samples to be tested
+      - `timestamp`: the timestamp for which the dead samples should be found
+
+    :type samples: list of `models.Sample`
+    :type timestamp: ``datetime.datetime``
+
+    :Return:
+      set of all samples which are dead at ``timestamp``
+
+    :rtype: set of `models.Sample`
+    """
+    result = set()
+    for sample in samples:
+        death_timestamps = \
+            sample.processes.filter(sampledeath__timestamp__isnull=False).values_list("timestamp", flat=True)
+        assert len(death_timestamps) <= 1
+        if death_timestamps and death_timestamps[0] <= timestamp:
+            result.add(sample)
+    return result

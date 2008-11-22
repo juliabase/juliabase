@@ -236,6 +236,39 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     all_valid = overwrite_form.is_valid() and all_valid
     all_valid = remove_from_my_samples_form.is_valid() and all_valid
     return all_valid
+
+def is_referentially_valid(pds_measurement_form, sample_form, pd_number):
+    u"""Test whether the forms are consistent with each other and with the
+    database.  In particular, it tests whether the sample is still “alive” at
+    the time of the measurement.
+
+    :Parameters:
+      - `pds_measurement_form`: a bound PDS measurement form
+      - `sample_form`: a bound sample selection form
+      - `pd_number`: The PD number of the PDS measurement to be edited.  If it
+        is ``None``, a new measurement is added to the database.
+
+    :type pds_measurement_form: `PDSMeasurementForm`
+    :type sample_form: `SampleForm`
+    :type pd_number: unicode
+    
+    :Return:
+      whether the forms are consistent with each other and the database
+
+    :rtype: bool
+    """
+    referentially_valid = True
+    if pds_measurement_form.is_valid():
+        number = pds_measurement_form.cleaned_data["number"]
+        if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
+            form_utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
+            referentially_valid = False
+        if sample_form.is_valid() and form_utils.dead_samples([sample_form.cleaned_data["sample"]],
+                                                              pds_measurement_form.cleaned_data["timestamp"]):
+            form_utils.append_error(pds_measurement_form, _(u"Sample is already dead at this time."), "timestamp")
+            referentially_valid = False
+    return referentially_valid
+    
     
 @login_required
 def edit(request, pd_number):
@@ -281,11 +314,9 @@ def edit(request, pd_number):
                 overwrite_form = OverwriteForm()
         if pds_measurement_form is None:
             pds_measurement_form = PDSMeasurementForm(request.user, request.POST, instance=pds_measurement)
-        if pds_measurement_form.is_valid():
-            number = pds_measurement_form.cleaned_data["number"]
-            if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
-                form_utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
-        if is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form):
+        all_valid = is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form)
+        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, pd_number)
+        if all_valid and referentially_valid:
             pds_measurement = pds_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]
             pds_measurement.samples = samples
