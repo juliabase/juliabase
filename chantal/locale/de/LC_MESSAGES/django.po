@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-22 14:28+0100\n"
-"PO-Revision-Date: 2008-11-22 14:29+0100\n"
+"POT-Creation-Date: 2008-11-22 20:27+0100\n"
+"PO-Revision-Date: 2008-11-22 20:28+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1106,6 +1106,12 @@ msgstr "Die neuen Schichten kollidieren mit der nachfolgenden Deposition."
 msgid "Overlap with previous deposition numbers."
 msgstr "Überlapp mit der vorherigen Depositionsnummer."
 
+#, python-format
+msgid "The sample %s is already dead at this time."
+msgid_plural "The samples %s are already dead at this time."
+msgstr[0] "Die Probe %s ist zu diesem Zeitpunkt schon tot."
+msgstr[1] "Die Proben %s sind zu diesem Zeitpunkt schon tot."
+
 msgid "Layer number is not consecutive."
 msgstr "Die Schichtnummern nicht nicht aufeinanderfolgend."
 
@@ -1414,15 +1420,6 @@ msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
-msgid ", "
-msgstr ", "
-
-msgid ", and"
-msgstr " und "
-
-msgid " and "
-msgstr " und "
-
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
@@ -1431,12 +1428,6 @@ msgstr "Dieser Gastyp ist unbekannt."
 
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
-
-#, python-format
-msgid "The sample %s is already dead at this time."
-msgid_plural "The samples %s are already dead at this time."
-msgstr[0] "Die Probe %s ist zu diesem Zeitpunkt schon tot."
-msgstr[1] "Die Proben %s sind zu diesem Zeitpunkt schon tot."
 
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
@@ -1611,6 +1602,12 @@ msgid_plural "%(count)d seconds"
 msgstr[0] "%(count)d Sekunde"
 msgstr[1] "%(count)d Sekunden"
 
+msgid " and "
+msgstr " und "
+
+msgid ", "
+msgstr ", "
+
 msgid ", and "
 msgstr " und "
 
@@ -1692,6 +1689,9 @@ msgstr "Gruppen und Berechtigungen von %s"
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
+
+msgid ", and"
+msgstr " und "
 
 msgid "woman with binoculars"
 msgstr "Frau mit Fernglas"
@@ -2609,6 +2609,9 @@ msgstr "gib Namen"
 
 msgid "add process"
 msgstr "Prozess hinzufügen"
+
+msgid "Attention: Groupless samples may be viewed and edited by anyone."
+msgstr "Achtung: Gruppenlose Proben können von jedem eingesehen und geändert werden."
 
 #, python-format
 msgid ""

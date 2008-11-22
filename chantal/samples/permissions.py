@@ -187,7 +187,7 @@ def assert_can_view_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to view the
         sample.
     """
-    if not user.has_perm("samples.view_all_samples") and sample.group not in user.groups.all() \
+    if not user.has_perm("samples.view_all_samples") and sample.group and sample.group not in user.groups.all() \
             and sample.currently_responsible_person != user:
         description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
                         u"its currently responsible person, nor are you a senior user.") % sample
