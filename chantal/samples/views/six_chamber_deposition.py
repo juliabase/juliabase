@@ -24,7 +24,7 @@ from chantal.samples.models import SixChamberDeposition, SixChamberLayer, SixCha
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, feed_utils, form_utils
 from chantal.samples.views.form_utils import DataModelForm
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
 from django.conf import settings
 import django.contrib.auth.models
 
@@ -79,6 +79,7 @@ class DepositionForm(form_utils.ProcessForm):
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
     def clean(self):
+        _ = ugettext
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
                 form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
@@ -333,10 +334,18 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     :rtype: bool
     """
     referentially_valid = True
-    if deposition_form.is_valid() and (
-        not deposition or deposition.number != deposition_form.cleaned_data["number"]):
-        if models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
+    if deposition_form.is_valid():
+        if (not deposition or deposition.number != deposition_form.cleaned_data["number"]) and \
+                models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
             form_utils.append_error(deposition_form, _(u"This deposition number exists already."))
+            referentially_valid = False
+        dead_samples = form_utils.dead_samples(deposition_form.cleaned_data["sample_list"],
+                                               deposition_form.cleaned_data["timestamp"])
+        if dead_samples:
+            error_message = ungettext(u"The sample %s is already dead at this time.",
+                                      u"The samples %s are already dead at this time.", len(dead_samples))
+            error_message %= utils.format_enumeration([sample.name for sample in dead_samples])
+            form_utils.append_error(deposition_form, error_message, "timestamp")
             referentially_valid = False
     if not layer_forms:
         form_utils.append_error(deposition_form, _(u"No layers given."))

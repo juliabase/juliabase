@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-22 13:41+0100\n"
-"PO-Revision-Date: 2008-11-22 13:41+0100\n"
+"POT-Creation-Date: 2008-11-22 14:28+0100\n"
+"PO-Revision-Date: 2008-11-22 14:29+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1414,6 +1414,15 @@ msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
+msgid ", "
+msgstr ", "
+
+msgid ", and"
+msgstr " und "
+
+msgid " and "
+msgstr " und "
+
 msgid "Name is unknown."
 msgstr "Dieser Name ist unbekannt."
 
@@ -1422,6 +1431,12 @@ msgstr "Dieser Gastyp ist unbekannt."
 
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
+
+#, python-format
+msgid "The sample %s is already dead at this time."
+msgid_plural "The samples %s are already dead at this time."
+msgstr[0] "Die Probe %s ist zu diesem Zeitpunkt schon tot."
+msgstr[1] "Die Proben %s sind zu diesem Zeitpunkt schon tot."
 
 msgid "Number is a duplicate."
 msgstr "Die Nummer ist ein Duplikat."
@@ -1595,12 +1610,6 @@ msgid "%(count)d second"
 msgid_plural "%(count)d seconds"
 msgstr[0] "%(count)d Sekunde"
 msgstr[1] "%(count)d Sekunden"
-
-msgid " and "
-msgstr " und "
-
-msgid ", "
-msgstr ", "
 
 msgid ", and "
 msgstr " und "
@@ -2816,6 +2825,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "The samples %s are already dead at this time."
+#~ msgstr "Die Proben %s sind zu diesem Zeitpunkt schon tot."
 
 #~ msgid "Add 6-chamber deposition"
 #~ msgstr "6-Kammer-Deposition hinzufügen"

@@ -744,3 +744,25 @@ def extract_preset_sample(request):
             return models.Sample.objects.get(name=query_string_dict["sample"])
         except models.Sample.DoesNotExist:
             pass
+
+def format_enumeration(items):
+    u"""Generates a pretty-printed enumeration of all given names.  For
+    example, if the list contains ``["a", "b", "c"]``, it yields ``"a, b, and
+    c"``.
+
+    :Parameters:
+      - `items`: list of names to be put into the enumeration
+
+    :type items: list of unicode
+
+    :Return:
+      human-friendly enumeration of all names
+
+    :rtype: unicode
+    """
+    if len(items) > 2:
+        return _(u", ").join(items[:-1]) + _(u", and") + items[-1]
+    elif len(items) == 2:
+        return _(u" and ").join(items)
+    else:
+        return u"".join(items)
