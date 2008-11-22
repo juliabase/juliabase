@@ -24,7 +24,7 @@ raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 date_pattern = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})")
 def get_data_from_file(number):
-    u"""Find the datafiles for a given PD number, and return all data found in
+    u"""Find the datafiles for a given PDS number, and return all data found in
     them.  The resulting dictionary may contain the following keys:
     ``"raw_datafile"``, ``"evaluated_datafile"``, ``"timestamp"``,
     ``"number"``, and ``"comments"``.  This is ready to be used as the
@@ -33,7 +33,7 @@ def get_data_from_file(number):
     returns it, too.
 
     :Parameters:
-      - `number`: the PD number of the PDS measurement
+      - `number`: the PDS number of the PDS measurement
 
     :type number: int
 
@@ -237,7 +237,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     all_valid = remove_from_my_samples_form.is_valid() and all_valid
     return all_valid
 
-def is_referentially_valid(pds_measurement_form, sample_form, pd_number):
+def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     u"""Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
@@ -245,12 +245,12 @@ def is_referentially_valid(pds_measurement_form, sample_form, pd_number):
     :Parameters:
       - `pds_measurement_form`: a bound PDS measurement form
       - `sample_form`: a bound sample selection form
-      - `pd_number`: The PD number of the PDS measurement to be edited.  If it
-        is ``None``, a new measurement is added to the database.
+      - `pds_number`: The PDS number of the PDS measurement to be edited.  If
+        it is ``None``, a new measurement is added to the database.
 
     :type pds_measurement_form: `PDSMeasurementForm`
     :type sample_form: `SampleForm`
-    :type pd_number: unicode
+    :type pds_number: unicode
     
     :Return:
       whether the forms are consistent with each other and the database
@@ -260,8 +260,8 @@ def is_referentially_valid(pds_measurement_form, sample_form, pd_number):
     referentially_valid = True
     if pds_measurement_form.is_valid():
         number = pds_measurement_form.cleaned_data["number"]
-        if unicode(number) != pd_number and models.PDSMeasurement.objects.filter(number=number).count():
-            form_utils.append_error(pds_measurement_form, _(u"This PD number is already in use."))
+        if unicode(number) != pds_number and models.PDSMeasurement.objects.filter(number=number).count():
+            form_utils.append_error(pds_measurement_form, _(u"This PDS number is already in use."))
             referentially_valid = False
         if sample_form.is_valid() and form_utils.dead_samples([sample_form.cleaned_data["sample"]],
                                                               pds_measurement_form.cleaned_data["timestamp"]):
@@ -271,24 +271,24 @@ def is_referentially_valid(pds_measurement_form, sample_form, pd_number):
     
     
 @login_required
-def edit(request, pd_number):
+def edit(request, pds_number):
     u"""Edit and create view for PDS measurements.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `pd_number`: The PD number of the PDS measurement to be edited.  If it
-        is ``None``, a new measurement is added to the database.
+      - `pds_number`: The PDS number of the PDS measurement to be edited.  If
+        it is ``None``, a new measurement is added to the database. 
 
     :type request: ``HttpRequest``
-    :type pd_number: unicode
+    :type pds_number: unicode
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    pds_measurement = get_object_or_404(models.PDSMeasurement, number=utils.convert_id_to_int(pd_number)) \
-        if pd_number is not None else None
+    pds_measurement = get_object_or_404(models.PDSMeasurement, number=utils.convert_id_to_int(pds_number)) \
+        if pds_number is not None else None
     permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, models.PDSMeasurement)
     user_details = utils.get_profile(request.user)
     preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
@@ -315,19 +315,19 @@ def edit(request, pd_number):
         if pds_measurement_form is None:
             pds_measurement_form = PDSMeasurementForm(request.user, request.POST, instance=pds_measurement)
         all_valid = is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form)
-        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, pd_number)
+        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, pds_number)
         if all_valid and referentially_valid:
             pds_measurement = pds_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]
             pds_measurement.samples = samples
             if remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, user_details)
-            success_report = _(u"%s was successfully changed in the database.") % pds_measurement if pd_number else \
+            success_report = _(u"%s was successfully changed in the database.") % pds_measurement if pds_number else \
                 _(u"%s was successfully added to the database.") % pds_measurement
             return utils.successful_response(request, success_report, remote_client_response=pds_measurement.pk)
     else:
         initial = {}
-        if pd_number is None:
+        if pds_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
             numbers = models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
@@ -340,7 +340,7 @@ def edit(request, pd_number):
         sample_form = SampleForm(user_details, pds_measurement, preset_sample, initial=initial)
         overwrite_form = OverwriteForm()
         remove_from_my_samples_form = RemoveFromMySamplesForm()
-    title = _(u"PDS measurement %s") % pd_number if pd_number else _(u"Add PDS measurement")
+    title = _(u"PDS measurement %s") % pds_number if pds_number else _(u"Add PDS measurement")
     return render_to_response("edit_pds_measurement.html", {"title": title,
                                                             "pds_measurement": pds_measurement_form,
                                                             "overwrite": overwrite_form,

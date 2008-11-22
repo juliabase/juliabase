@@ -98,7 +98,7 @@ pds_root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/window
 class PDSMeasurement(Process):
     u"""Model for PDS measurements.
     """
-    number = models.IntegerField(_(u"pd number"), unique=True)
+    number = models.IntegerField(_(u"pds number"), unique=True)
     raw_datafile = models.CharField(_(u"raw data file"), max_length=200,
                                     help_text=_(u"only the relative path below \"pds/\""))
     evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200,
@@ -121,7 +121,7 @@ class PDSMeasurement(Process):
         try:
             return ("pds_%s" % self.samples.get()).replace("*", "")
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            return "pds_pd%d" % self.number
+            return "pds_pds%d" % self.number
     def get_additional_template_context(self, process_context):
         u"""See
         `models_depositions.SixChamberDeposition.get_additional_template_context`.
@@ -140,7 +140,7 @@ class PDSMeasurement(Process):
         result = {}
         result["thumbnail"], result["figure"] = self.generate_plot()
         if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
-            result["edit_url"] = django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pd_number": self.number})
+            result["edit_url"] = django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pds_number": self.number})
         return result
     @classmethod
     def get_add_link(cls):

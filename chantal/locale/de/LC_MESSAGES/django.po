@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-22 20:27+0100\n"
-"PO-Revision-Date: 2008-11-22 20:28+0100\n"
+"POT-Creation-Date: 2008-11-22 20:54+0100\n"
+"PO-Revision-Date: 2008-11-22 20:55+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -704,8 +704,8 @@ msgstr "Hall-Messungen"
 msgid "Can create and edit hall measurements"
 msgstr "Darf Hallmessungen anlegen und ändern"
 
-msgid "pd number"
-msgstr "PD-Nummer"
+msgid "pds number"
+msgstr "PDS-Nummer"
 
 msgid "raw data file"
 msgstr "Rohdaten-Datei"
@@ -1244,8 +1244,8 @@ msgstr "Mit Datei-Daten überschreiben"
 msgid "Remove measured sample from My Samples"
 msgstr "Entferne gemessene Probe von Meine Proben"
 
-msgid "This PD number is already in use."
-msgstr "Diese PD-Nummer ist schon vergeben."
+msgid "This PDS number is already in use."
+msgstr "Diese PDS-Nummer ist schon vergeben."
 
 msgid "Sample is already dead at this time."
 msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
@@ -2598,8 +2598,8 @@ msgstr "Diesen Prozess editieren"
 msgid "Duplicate this process"
 msgstr "Diesen Prozess duplizieren"
 
-msgid "History of sample “"
-msgstr "Geschichte der Probe „"
+msgid "Sample “"
+msgstr "Probe „"
 
 msgid "”"
 msgstr "“"
@@ -2611,7 +2611,8 @@ msgid "add process"
 msgstr "Prozess hinzufügen"
 
 msgid "Attention: Groupless samples may be viewed and edited by anyone."
-msgstr "Achtung: Gruppenlose Proben können von jedem eingesehen und geändert werden."
+msgstr ""
+"Achtung: Gruppenlose Proben können von jedem eingesehen und geändert werden."
 
 #, python-format
 msgid ""
@@ -2828,6 +2829,9 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "History of sample “"
+#~ msgstr "Geschichte der Probe „"
 
 #~ msgid "The samples %s are already dead at this time."
 #~ msgstr "Die Proben %s sind zu diesem Zeitpunkt schon tot."
