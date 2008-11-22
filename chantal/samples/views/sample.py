@@ -145,9 +145,9 @@ def get_allowed_processes(user, sample):
         process to the sample
     """
     sample_processes = []
-    if permissions.has_permission_to_edit_sample(user, sample):
+    if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
         sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "/split/"})
-        # FixMe: Add sample death
+        sample_processes.append({"label": _(u"cease of existence"), "url": sample.get_absolute_url() + "/kill/"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
         general_processes.append({"label": models.Result._meta.verbose_name,

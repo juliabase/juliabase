@@ -317,6 +317,22 @@ class Sample(models.Model):
             return ("show_sample_by_name", [urlquote(self.name, safe="")])
     def is_dead(self):
         return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
+    def last_process_if_split(self):
+        u"""Test wheter the most recent process applied to the sample – except
+        for result processes – was a split.
+
+        :Return:
+          the split, if it is the most recent process, else ``None``
+
+        :rtype: `models.SampleSplit` or ``NoneType``
+        """
+        for process in self.processes.order_by("-timestamp"):
+            process = process.find_actual_instance()
+            if isinstance(process, SampleSplit):
+                return process
+            if not isinstance(process, Result):
+                break
+        return None
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
@@ -367,8 +383,8 @@ class SampleSplit(Process):
 
         :Return:
           dict with additional fields that are supposed to be given to the
-          sample split template: ``"parent"``, ``"original_sample"``,  and
-          ``"current_sample"``.
+          sample split template: ``"parent"``, ``"original_sample"``,
+          ``"current_sample"``, and ``"latest_descendant"``.
 
         :rtype: dict mapping string to arbitrary objects
         """
@@ -377,8 +393,14 @@ class SampleSplit(Process):
             parent = process_context.current_sample
         else:
             parent = None
-        return {"parent": parent, "original_sample": process_context.original_sample,
-                "current_sample": process_context.current_sample, "latest_descendant": process_context.latest_descendant}
+        result = {"parent": parent, "original_sample": process_context.original_sample,
+                  "current_sample": process_context.current_sample, "latest_descendant": process_context.latest_descendant}
+        result["resplit_url"] = None
+        if process_context.current_sample.last_process_if_split() == self and \
+                permissions.has_permission_to_edit_sample(process_context.user, process_context.current_sample):
+            result["resplit_url"] = django.core.urlresolvers.reverse(
+                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
+        return result
     class Meta:
         verbose_name = _(u"sample split")
         verbose_name_plural = _(u"sample splits")

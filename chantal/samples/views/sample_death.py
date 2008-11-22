@@ -25,41 +25,18 @@ class SampleDeathForm(forms.ModelForm):
     def __init__(self, sample, *args, **kwargs):
         super(SampleDeathForm, self).__init__(*args, **kwargs)
         self.sample = sample
-        if not self.last_process_was_split(sample):
+        if not sample.last_process_if_split():
             new_choices = []
             for choice in self.fields["reason"].choices:
                 if choice[0] != "split":
                     new_choices.append(choice)
             self.fields["reason"].choices = new_choices
-    @staticmethod
-    def last_process_was_split(sample):
-        u"""Test wheter the most recent process applied to the sample – except
-        for result processes – was a split.
-
-        :Parameters:
-          - `sample`: the sample to be tested
-
-        :type sample: `models.Sample`
-
-        :Return:
-          whether the sample can be killed with the reason “sample completely
-          split”
-
-        :rtype: bool
-        """
-        for process in sample.processes.order_by("-timestamp"):
-            process = process.find_actual_instance()
-            if isinstance(process, models.SampleSplit):
-                return True
-            if not isinstance(process, models.Result):
-                break
-        return False
     def clean_reason(self):
         u"""Assure that if a sample was completely split, the most recent
         process was indeed a split.
         """
         reason = self.cleaned_data["reason"]
-        if reason == "split" and not self.last_process_was_split(self.sample):
+        if reason == "split" and not self.sample.last_process_if_split():
             raise ValidationError(_("Last process wasn't a split."))
         return reason
     class Meta:
