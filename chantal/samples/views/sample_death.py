@@ -74,7 +74,8 @@ def new(request, sample_name):
             sample_death.save()
             sample_death.samples = [sample]
             # FixMe: Feed entries
-            return utils.successful_response(request, _(u"Sample “%s” was killed.") % sample_name)
+            return utils.successful_response(request, _(u"Sample “%s” was killed.") % sample_name,
+                                             "show_sample_by_name", {"sample_name": sample_name})
     else:
         sample_death_form = SampleDeathForm(sample)
     return render_to_response("edit_sample_death.html", {"title": _(u"Kill sample “%s”") % sample.name,
