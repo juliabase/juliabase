@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models, permissions
 from django import forms
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
+from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
 import django.core.urlresolvers
 import django.contrib.auth.models
 from chantal.samples.views import utils, form_utils
@@ -451,6 +451,15 @@ class FormSet(object):
                 if self.layer_forms and self.layer_forms[0].is_valid() and \
                         self.layer_forms[0].cleaned_data["number"] <= max_deposition_number:
                     form_utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
+                    referentially_valid = False
+            if self.samples_form.is_valid():
+                dead_samples = form_utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
+                                                       self.deposition_form.cleaned_data["timestamp"])
+                if dead_samples:
+                    error_message = ungettext(u"The sample %s is already dead at this time.",
+                                              u"The samples %s are already dead at this time.", len(dead_samples))
+                    error_message %= utils.format_enumeration([sample.name for sample in dead_samples])
+                    form_utils.append_error(self.deposition_form, error_message, "timestamp")
                     referentially_valid = False
             for i, layer_form in enumerate(self.layer_forms):
                 if layer_form.is_valid() and \
