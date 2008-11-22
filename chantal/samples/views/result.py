@@ -58,7 +58,7 @@ def save_image_file(image_data, result, related_data_form):
     destination.close()
     result.save()
 
-class ResultForm(forms.ModelForm):
+class ResultForm(form_utils.ProcessForm):
     u"""Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
 
@@ -70,12 +70,6 @@ class ResultForm(forms.ModelForm):
         super(ResultForm, self).__init__(*args, **kwargs)
         self.fields["comments"].required = True
         self.fields["title"].widget.attrs["size"] = 40
-    def clean_comments(self):
-        u"""Forbid image and headings syntax in Markdown markup.
-        """
-        comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
-        return comments
     class Meta:
         model = models.Result
         exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type")

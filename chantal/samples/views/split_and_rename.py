@@ -139,7 +139,7 @@ def is_all_valid(new_name_forms, global_data_form):
     all_valid = global_data_form.is_valid() and all_valid  # Ordering important: .is_valid() must be called
     return all_valid
 
-def is_referentially_valid(new_name_forms, global_data_form):
+def is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces):
     u"""Test whether all forms are consistent with each other and with the
     database.  For example, no piece name must occur twice, and the piece names
     must not exist within the database.
@@ -148,9 +148,12 @@ def is_referentially_valid(new_name_forms, global_data_form):
       - `new_name_forms`: all “new name forms”, but not the dummy one for new
         pieces (the one in darker grey).
       - `global_data_form`: the global data form
+      - `number_of_old_pieces`: The number of pieces the split has already had,
+        if it is a re-split.  It's 0 if we are creating a new split.
 
     :type new_name_forms: list of `NewNameForm`
     :type global_data_form: `GlobalDataForm`
+    :type number_of_old_pieces: int
 
     :Return:
       whether all forms are consistent with each other and the database
@@ -161,7 +164,8 @@ def is_referentially_valid(new_name_forms, global_data_form):
     if not new_name_forms:
         form_utils.append_error(global_data_form, _(u"You must split into at least one piece."))
         referentially_valid = False
-    if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and len(new_name_forms) < 2:
+    if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and \
+            number_of_old_pieces + len(new_name_forms) < 2:
         form_utils.append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
         referentially_valid = False
     new_names = set()
@@ -261,13 +265,14 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         old_split = get_object_or_404(models.SampleSplit, pk=utils.convert_id_to_int(old_split_id))
         parent = old_split.parent
         permissions.assert_can_edit_sample(request.user, parent)
-        if parent.processes.filter(timestamp__gt=old_split.timestamp).count():
+        if parent.last_process_if_split() != old_split:
             raise Http404(_(u"This split is not the last one in the sample's process list."))
     user_details = utils.get_profile(request.user)
+    number_of_old_pieces = old_split.pieces.count() if old_split else 0
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
         all_valid = is_all_valid(new_name_forms, global_data_form)
-        referentially_valid = is_referentially_valid(new_name_forms, global_data_form)
+        referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
         if all_valid and referentially_valid and not structure_changed:
             sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
             feed_utils.Reporter(request.user).report_sample_split(
@@ -277,7 +282,6 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
-    number_of_old_pieces = old_split.pieces.count() if old_split else 0
     return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
                                                         "new_names": zip(range(number_of_old_pieces+1,
                                                                                number_of_old_pieces+1+len(new_name_forms)),
@@ -305,10 +309,5 @@ def latest_split(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request)
-    try:
-        most_recent_process = sample.processes.latest("timestamp").find_actual_instance()
-    except models.Process.DoesNotExist:
-        return utils.respond_to_remote_client(None)
-    if isinstance(most_recent_process, models.SampleSplit):
-        return utils.respond_to_remote_client(most_recent_process.pk)
-    return utils.respond_to_remote_client(None)
+    split = sample.last_process_if_split()
+    return utils.respond_to_remote_client(split.pk if split else None)
