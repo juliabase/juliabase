@@ -8,7 +8,8 @@
   <ul>
     {% for group in groups %}
       {% with group.name|urlquote as normalized_groupname %}
-        <li><a href="{% url samples.views.group.edit name=normalized_groupname %}">{{ group.name }}</a></li>
+        <li style='list-style-image: url("/media/icons/group.png")'
+            ><a href="{% url samples.views.group.edit name=normalized_groupname %}">{{ group.name }}</a></li>
       {% endwith %}
     {% endfor %}
   </ul>

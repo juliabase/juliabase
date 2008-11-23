@@ -17,7 +17,7 @@
     {% endif %}
   </p>
 
-  <ul>
+  <ul class="sample-list">
     {% for sample, add_to_my_samples in found_samples %}
       <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
         {% if add_to_my_samples %}

@@ -22,11 +22,12 @@
   </ul>
 
   {% if groupless_samples or my_groups %}
-    <h2>{% trans 'My Samples' %} <a class="edit-button" 
-               href="{% url samples.views.my_samples.edit username=user.username %}">{% trans 'edit' %}</a></h2>
+    <h2>{% trans 'My Samples' %}<a class="edit-icon" 
+                                   href="{% url samples.views.my_samples.edit username=user.username %}"
+                                   ><img src="/media/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a></h2>
 
     {% if groupless_samples %}
-      <ul style="list-style-type: none">
+      <ul class="sample-list">
         {% for sample in groupless_samples %}
           <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
         {% endfor %}
@@ -38,7 +39,7 @@
         <h3><img src="/media/icons/group.png" alt="group icon" style="margin-right: 0.5em"/>{{ group.group }}</h3>
 
         {% if group.samples %}
-          <ul style="list-style-type: none">
+          <ul class="sample-list">
             {% for sample in group.samples %}
               <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
             {% endfor %}
@@ -54,7 +55,7 @@
             {% if not series.is_complete %}
               <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
             {% endif %}
-            <ul style="list-style-type: none">
+            <ul class="sample-list">
               {% for sample in series.samples %}
                 <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
               {% endfor %}

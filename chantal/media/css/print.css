@@ -7,5 +7,8 @@ table.headbar { display: none }
 div.main { margin: 0pt }
 div.outer-frame, div.inner-frame { border: none}
 
-a.edit-button, a.duplicate-button { display: none }
+a.edit-icon, a.edit-button, a.duplicate-button { display: none }
 a { color: black; text-decoration: none }
+
+ul.sample-series-list { list-style-image: none }
+ul.sample-list { list-style-image: none }
