@@ -128,9 +128,10 @@ def get_allowed_physical_processes(user):
 
     :Return:
       List of all physical processes the user is allowed to add to the
-      database.  Every process is represented by a dictionary with two keys,
-      namely ``"url"`` with the url to the “add” view for the process, and
-      ``"label"`` with the name of the process (starting lowercase).
+      database.  Every process is represented by a dictionary with three keys,
+      namely ``"url"`` with the url to the “add” view for the process,
+      ``"label"`` with the name of the process (starting lowercase), and
+      ``"type"`` with the process' class name.
 
     :rtype: list of dict mapping str to unicode
     """
@@ -141,7 +142,8 @@ def get_allowed_physical_processes(user):
                 url = physical_process_class.get_add_link()
             except NotImplementedError:
                 continue
-            allowed_physical_processes.append({"url": url, "label": physical_process_class._meta.verbose_name})
+            allowed_physical_processes.append({"url": url, "label": physical_process_class._meta.verbose_name,
+                                               "type": physical_process_class.__name__})
     return allowed_physical_processes
 
 class PermissionError(Exception):

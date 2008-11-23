@@ -129,10 +129,13 @@ def get_allowed_processes(user, sample):
     :type sample: `models.Sample`
 
     :Return:
-      two lists with the allowed processes.  Every process is returned as a dict
-      with two keys: ``"label"`` and ``"url"``.  ``"label"`` is the
-      human-friendly descriptive name of the process, ``"url"`` is the URL to
-      the process (processing `sample`!).
+      two lists with the allowed processes.  Every process is returned as a
+      dict with three keys: ``"label"``, ``"url"``, and ``"type"``.
+      ``"label"`` is the human-friendly descriptive name of the process,
+      ``"url"`` is the URL to the process (processing `sample`!), and
+      ``"type"`` is the computer-friendly name of the process.  ``"type"`` may
+      be ``"split"``, ``"death"``, ``"result"``, or the class name of a
+      physical process (e.g. ``"PDSMeasurement"``).
 
       The first list is sample split and sample death, the second list are
       results and physical processes.
@@ -146,11 +149,12 @@ def get_allowed_processes(user, sample):
     """
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
-        sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "/split/"})
-        sample_processes.append({"label": _(u"cease of existence"), "url": sample.get_absolute_url() + "/kill/"})
+        sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "/split/", "type": "split"})
+        sample_processes.append({"label": _(u"cease of existence"), "url": sample.get_absolute_url() + "/kill/",
+                                 "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
-        general_processes.append({"label": models.Result._meta.verbose_name,
+        general_processes.append({"label": models.Result._meta.verbose_name, "type": "result",
                                   "url": django.core.urlresolvers.reverse("samples.views.result.new")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:

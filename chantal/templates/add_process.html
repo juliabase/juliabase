@@ -4,9 +4,21 @@
 {% load samples_extras %}
 
 {% block content %}
-  <ul>
+  <ul style='list-style-image: url("/media/icons/add.png")'>
     {% for process in processes %}
-      <li><a href="{{ process.url }}">{{ process.label|capfirst }}</a></li>
+      <li
+         {% ifequal process.type "split" %}
+           style='list-style-image: url("/media/icons/arrow_branch.png")'
+         {% else %}
+           {% ifequal process.type "death" %}
+             style='list-style-image: url("/media/icons/bomb.png")'
+           {% else %}
+             {% ifequal process.type "result" %}
+               style='list-style-image: url("/media/icons/lightbulb_add.png")'
+             {% endifequal %}
+           {% endifequal %}
+         {% endifequal %}
+         ><a href="{{ process.url }}">{{ process.label|capfirst }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}

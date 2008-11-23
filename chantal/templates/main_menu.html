@@ -6,17 +6,17 @@
 {% block content %}
   <h2>{% trans 'Add things' %}</h2>
 
-  <ul>
-    <li><a href="{% url samples.views.sample.add %}">{% trans 'Samples' %}</a></li>
-    <li><a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
-    <li><a href="{% url samples.views.result.new %}">{% trans 'Result' %}</a></li>
+  <ul style='list-style-image: url("/media/icons/add.png")'>
+    <li style='list-style-image: url("/media/icons/ruby_add.png")'><a href="{% url samples.views.sample.add %}">{% trans 'Samples' %}</a></li>
+    <li style='list-style-image: url("/media/icons/chart_organisation_add.png")'><a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
+    <li style='list-style-image: url("/media/icons/lightbulb_add.png")'><a href="{% url samples.views.result.new %}">{% trans 'Result' %}</a></li>
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>
-  <ul>
+  <ul style='list-style-image: url("/media/icons/find.png")'>
     <li><a href="{% url samples.views.sample.search %}">{% trans 'Samples' %}</a></li>
     <li><a href="{% url samples.views.main.deposition_search %}">{% trans 'Depositions' %}</a></li>
   </ul>
@@ -26,7 +26,7 @@
                href="{% url samples.views.my_samples.edit username=user.username %}">{% trans 'edit' %}</a></h2>
 
     {% if groupless_samples %}
-      <ul>
+      <ul style="list-style-type: none">
         {% for sample in groupless_samples %}
           <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
         {% endfor %}
@@ -35,10 +35,10 @@
     <div class="my-samples-groups">
       {% for group in my_groups %}
 
-        <h3>{{ group.group }}</h3>
+        <h3><img src="/media/icons/group.png" alt="group icon" style="margin-right: 0.5em"/>{{ group.group }}</h3>
 
         {% if group.samples %}
-          <ul>
+          <ul style="list-style-type: none">
             {% for sample in group.samples %}
               <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
             {% endfor %}
@@ -48,12 +48,13 @@
         <div class="my-samples-series">
           {% for series in group.sample_series %}
 
-            <h4><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
+            <h4><img src="/media/icons/chart_organisation.png" alt="sample series icon" style="margin-right: 0.5em"
+                     /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
 
             {% if not series.is_complete %}
               <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
             {% endif %}
-            <ul>
+            <ul style="list-style-type: none">
               {% for sample in series.samples %}
                 <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
               {% endfor %}
@@ -68,15 +69,17 @@
     <h2>{% trans 'Edit groups' %}</h2>
 
     <ul>
-      <li><a href="{% url samples.views.group.add %}">{% trans 'Add new group' %}</a></li>
-      <li><a href="{% url samples.views.group.list_ %}">{% trans 'Change group memberships' %}</a></li>
+      <li style='list-style-image: url("/media/icons/group_add.png")'>
+        <a href="{% url samples.views.group.add %}">{% trans 'Add new group' %}</a></li>
+      <li style='list-style-image: url("/media/icons/group_gear.png")'>
+        <a href="{% url samples.views.group.list_ %}">{% trans 'Change group memberships' %}</a></li>
     </ul>  
   {% endif %}  
 
   {% if can_add_external_operator or has_external_contacts %}
     <h2>{% trans 'External operators' %}</h2>
 
-    <ul>
+    <ul style='list-style-image: url("/media/icons/user_gray.png")'>
       {% if can_add_external_operator %}
         <li><a href="{% url samples.views.external_operator.new %}">{% trans 'Add external operator' %}</a></li>
       {% endif %}  
@@ -89,14 +92,17 @@
   <h2>{% trans 'Miscellaneous' %}</h2>
   <ul>
     {% if user.is_staff %}
-      <li><a href="admin/">{% trans 'Administration' %}</a></li>
+      <li style='list-style-image: url("/media/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
     {% endif %}
-    <li><a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}">{% trans 'Edit preferences' %}</a></li>
-    <li><a href="{% url samples.views.user_details.groups_and_permissions login_name=user.username %}">{% trans 'My groups and permissions' %}</a></li>
-    <li><a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
+    <li style='list-style-image: url("/media/icons/user_edit.png")'>
+      <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
+         >{% trans 'Edit preferences' %}</a></li>
+    <li style='list-style-image: url("/media/icons/key.png")'><a href="{% url samples.views.user_details.groups_and_permissions login_name=user.username %}">{% trans 'My groups and permissions' %}</a></li>
+    <li style='list-style-image: url("/media/icons/shape_square_edit.png")'>
+      <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
     <li><a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
-    <li><a href="{% url samples.views.feed.show username=user.username %}?hash={{ user_hash }}">{% trans 'Newsfeed' %}</a></li>
-    <li><a href="{% url samples.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
-    <li><a href="{% url samples.views.statistics.statistics %}">{% trans 'Server statistics' %}</a></li>
+    <li style='list-style-image: url("/media/icons/feed.png")'><a href="{% url samples.views.feed.show username=user.username %}?hash={{ user_hash }}">{% trans 'Newsfeed' %}</a></li>
+    <li style='list-style-image: url("/media/icons/server_lightning.png")'><a href="{% url samples.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
+    <li style='list-style-image: url("/media/icons/server_chart.png")'><a href="{% url samples.views.statistics.statistics %}">{% trans 'Server statistics' %}</a></li>
   </ul>
 {% endblock %}
