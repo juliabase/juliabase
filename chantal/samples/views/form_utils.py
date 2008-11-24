@@ -275,8 +275,8 @@ class UserField(forms.ChoiceField):
         list will consist of all currently active users, minus the given user.
 
         :Parameters:
-          - `excluded`: User to be excluded from the list.  Typically, it is
-            the currently logged-in user.
+          - `excluded_user`: User to be excluded from the list.  Typically, it
+            is the currently logged-in user.
 
         :type excluded_user: ``django.contrib.auth.models.User``
         """
