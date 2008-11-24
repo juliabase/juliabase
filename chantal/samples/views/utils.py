@@ -434,7 +434,7 @@ def convert_id_to_int(process_id):
     try:
         return int(process_id)
     except ValueError:
-        raise Http404
+        raise Http404(u"Invalid ID: “%s”" % process_id)
 
 def parse_query_string(request):
     u"""Parses an URL query string.

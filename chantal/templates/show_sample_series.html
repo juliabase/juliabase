@@ -7,7 +7,7 @@
                            class="edit-icon" href="{% url samples.views.sample_series.edit name=sample_series.name %}"
            ><img src="/media/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a
      >{% endif %}{% if can_add_result %}<a class="edit-icon"
-  href="{% url samples.views.result.new %}?sample_series={{ sample_series.name|urlquote_plus }}&next={{ sample_series.get_absolute_url|urlquote_plus }}"
+  href="{% url add_result %}?sample_series={{ sample_series.name|urlquote_plus }}&next={{ sample_series.get_absolute_url|urlquote_plus }}"
    ><img src="/media/icons/lightbulb_add.png" alt="add-result icon" title="{% trans 'add result' %}"/></a>{% endif %}
 </h1>{% endblock %}
 

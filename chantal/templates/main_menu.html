@@ -9,7 +9,7 @@
   <ul style='list-style-image: url("/media/icons/add.png")'>
     <li style='list-style-image: url("/media/icons/ruby_add.png")'><a href="{% url samples.views.sample.add %}">{% trans 'Samples' %}</a></li>
     <li style='list-style-image: url("/media/icons/chart_organisation_add.png")'><a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
-    <li style='list-style-image: url("/media/icons/lightbulb_add.png")'><a href="{% url samples.views.result.new %}">{% trans 'Result' %}</a></li>
+    <li style='list-style-image: url("/media/icons/lightbulb_add.png")'><a href="{% url add_result %}">{% trans 'Result' %}</a></li>
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}

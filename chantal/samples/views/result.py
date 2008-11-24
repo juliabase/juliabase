@@ -77,55 +77,143 @@ class ResultForm(form_utils.ProcessForm):
 class RelatedDataForm(forms.Form):
     u"""Form for samples, sample series, and the image connected with this
     result process.  Since all these things are not part of the result process
-    model itself, they are in a form of its own.  Note that „image file“ is a
-    special case here because it's the only editable thing when *editing* a
-    view.  In contrast, samples and sample series can only be set when creating
-    a new result process.  The non-editability is realised by not showing the
-    fields in the template, and by ignoring possibly submitted values when
-    writing to the database.
+    model itself, they are in a form of its own.
     """
     _ = ugettext_lazy
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
-    def __init__(self, user_details, query_string_dict, data=None, files=None, **kwargs):
+    def __init__(self, user_details, query_string_dict, old_result, data=None, files=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
 
         The most complicated thing is to find all sample series electable for
         the result.  Note that the current query will probably find to many
         electable sample series, but unallowed series will be rejected by
-        `is_referentially_valid` anyway.
+        `clean` anyway.
         """
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
-        if query_string_dict is not None:
-            samples = user_details.my_samples.all()
+        self.old_relationships = set(old_result.samples.all()) | set(old_result.sample_series.all()) if old_result else set()
+        self.user = user_details.user
+        now = datetime.datetime.now() + datetime.timedelta(seconds=5)
+        three_months_ago = now - datetime.timedelta(days=90)
+        samples = list(user_details.my_samples.all())
+        if old_result:
+            samples.extend(old_result.samples.all())
+            self.fields["sample_series"].queryset = \
+                models.SampleSeries.objects.filter(
+                Q(samples__watchers=user_details) | ( Q(currently_responsible_person=user_details.user) &
+                                                      Q(timestamp__range=(three_months_ago, now)))
+                | Q(pk__in=old_result.sample_series.values_list("pk", flat=True))).distinct()
+            self.fields["samples"].initial = old_result.samples.values_list("pk", flat=True)
+            self.fields["sample_series"].initial = old_result.sample_series.values_list("pk", flat=True)
+        else:
             if "sample" in query_string_dict:
-                self.fields["samples"].set_samples(
-                    list(samples) + list(models.Sample.objects.filter(name=query_string_dict["sample"])))
-                try:
-                    self.fields["samples"].initial = [models.Sample.objects.get(name=query_string_dict["sample"]).pk]
-                except models.Sample.DoesNotExist:
-                    raise Http404(u"sample %s given in query string not found" % query_string_dict["sample"])
-            else:
-                self.fields["samples"].set_samples(samples)
-            now = datetime.datetime.now() + datetime.timedelta(seconds=5)
-            three_months_ago = now - datetime.timedelta(days=90)
+                preset_sample = get_object_or_404(models.Sample, name=query_string_dict["sample"])
+                self.fields["samples"].initial = [preset_sample.pk]
+                samples.append(preset_sample)
             self.fields["sample_series"].queryset = \
                 models.SampleSeries.objects.filter(Q(samples__watchers=user_details) |
                                                    ( Q(currently_responsible_person=user_details.user) &
                                                      Q(timestamp__range=(three_months_ago, now)))
                                                    | Q(name=query_string_dict.get("sample_series", u""))).distinct()
-            self.fields["sample_series"].initial = [query_string_dict.get("sample_series")]
+            if "sample_series" in query_string_dict:
+                self.fields["sample_series"].initial = \
+                    [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
+        self.fields["samples"].set_samples(samples)
         self.fields["image_file"].widget.attrs["size"] = 60
-    
-@login_required
-def edit(request, process_id):
-    u"""View for editing existing results.
+    def clean(self):
+        u"""Global clean method for the related data.  Note that this method
+        spares us the ``is_referentially_valid`` routine.  I can do this
+        because I only need the old result instance for a complete validity
+        check, so there needn't be any inter-form check.
+        """
+        samples = self.cleaned_data.get("samples")
+        sample_series = self.cleaned_data.get("sample_series")
+        if samples is not None and sample_series is not None:
+            for sample_or_series in set(samples + sample_series) - self.old_relationships:
+                if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
+                    form_utils.append_error(
+                        self, _(u"You don't have the permission to add the result to all selected samples/series."))
+            if not samples and not sample_series:
+                form_utils.append_error(self, _(u"You must select at least one samples/series."))
+        return self.cleaned_data
+
+def is_all_valid(result_form, related_data_form, edit_description_form):
+    u"""Test whether all bound forms are valid.  This routine guarantees that
+    all ``is_valid()`` methods are called, even if the first tested form is
+    already invalid.
+
+    :Parameters:
+      - `result_form`: the bound form with the result process
+      - `related_data_form`: the bound form with all samples and sample series
+        the result should be connected with
+      - `edit_description_form`: the bound form with the edit description if
+        we're editing an existing result, and ``None`` otherwise
+
+    :type result_form: `ResultForm`
+    :type related_data_form: `RelatedDataForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm` or
+      ``NoneType``
+
+    :Return:
+      whether all forms are valid
+
+    :rtype: bool
+    """
+    all_valid = result_form.is_valid()
+    all_valid = related_data_form.is_valid() and all_valid
+    if edit_description_form:
+        all_valid = edit_description_form.is_valid() and all_valid
+    return all_valid
+
+def save_to_database(request, result, result_form, related_data_form):
+    u"""Save the forms to the database.  One peculiarity here is that I still
+    check validity on this routine, namely whether the uploaded image data is
+    correct.  If it is not, the error is written to the ``result_form`` and the
+    result of this routine is ``None``.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `process_id`: the ID of the result process
+      - `result`: the result we're editing, or ``None`` if we're creating a new
+        one
+      - `result_form`: the valid bound form with the result process
+      - `related_data_form`: the valid bound form with all samples and sample
+        series the result should be connected with
+
+    :type request: ``HttpRequest``
+    :type result: `models.Result` or ``NoneType``
+    :type result_form: `ResultForm`
+    :type related_data_form: `RelatedDataForm`
+
+    :Return:
+      the created or updated result instance, or ``None`` if the uploaded image
+      data was invalid
+
+    :rtype: `models.Result` or ``NoneType``
+    """
+    if result:
+        result_form.save()
+    else:
+        result = result_form.save(commit=False)
+        result.operator = request.user
+        result.timestamp = datetime.datetime.now()
+        result.save()
+    if related_data_form.cleaned_data["image_file"]:
+        save_image_file(request.FILES["image_file"], result, related_data_form)
+    if related_data_form.is_valid():
+        result.samples = related_data_form.cleaned_data["samples"]
+        result.sample_series = related_data_form.cleaned_data["sample_series"]
+        return result
+
+@login_required
+def edit(request, process_id):
+    u"""View for editing existing results, and for creating new ones.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the ID of the result process; ``None`` if we're creating
+        a new one
 
     :type request: ``HttpRequest``
     :type process_id: str
@@ -135,101 +223,29 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
-    permissions.assert_can_edit_result_process(request.user, result)
+    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
+    if result:
+        permissions.assert_can_edit_result_process(request.user, result)
+    query_string_dict = utils.parse_query_string(request) if not result else None
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         result_form = ResultForm(request.POST, instance=result)
-        related_data_form = RelatedDataForm(user_details, None, request.POST, request.FILES)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST)
-        all_valid = result_form.is_valid()
-        all_valid = related_data_form.is_valid() and all_valid
-        all_valid = edit_description_form.is_valid() and all_valid
-        if all_valid:
-            result_form.save()
-            if related_data_form.cleaned_data["image_file"]:
-                save_image_file(request.FILES["image_file"], result, related_data_form)
-            if related_data_form.is_valid():
-                feed_utils.Reporter(request.user).report_result_process(result, edit_description_form.cleaned_data)
+        related_data_form = RelatedDataForm(user_details, query_string_dict, result, request.POST, request.FILES)
+        edit_description_form = form_utils.EditDescriptionForm(request.POST) if result else None
+        if is_all_valid(result_form, related_data_form, edit_description_form):
+            result = save_to_database(request, result, result_form, related_data_form)
+            if result:
+                feed_utils.Reporter(request.user).report_result_process(
+                    result, edit_description_form.cleaned_data if edit_description_form else None)
                 return utils.successful_response(request)
     else:
         result_form = ResultForm(instance=result)
-        related_data_form = RelatedDataForm(user_details, None)
-        edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("edit_result.html", {"title": _(u"Edit result"), "is_new": False, "result": result_form,
+        related_data_form = RelatedDataForm(user_details, query_string_dict, result)
+        edit_description_form = form_utils.EditDescriptionForm() if result else None
+    title = _(u"Edit result") if result else _(u"New result")
+    return render_to_response("edit_result.html", {"title": title, "result": result_form,
                                                    "related_data": related_data_form,
                                                    "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
-
-def is_referentially_valid(related_data_form, user):
-    u"""Test whether the related_data form is consistent with the database.  In
-    particular, it tests whether the user is allowed to add the result to all
-    selected samples and sample series.
-
-    :Parameters:
-      - `related_data_form`: bound form with all samples and sample series the
-        user wants to add the result to
-
-    :type related_data_form: `RelatedDataForm`
-    
-    :Return:
-      whether the form is consistent with the database
-
-    :rtype: bool
-    """
-    referentially_valid = True
-    for sample_or_series in related_data_form.cleaned_data["samples"] + related_data_form.cleaned_data["sample_series"]:
-        if not permissions.has_permission_to_add_result_process(user, sample_or_series):
-            referentially_valid = False
-            form_utils.append_error(related_data_form,
-                                    _(u"You don't have the permission to add the result to all selected samples/series."))
-    if not related_data_form.cleaned_data["samples"] and not related_data_form.cleaned_data["sample_series"]:
-        referentially_valid = False
-        form_utils.append_error(related_data_form, _(u"You must select at least one samples/series."))
-    return referentially_valid
-
-@login_required
-def new(request):
-    u"""View for adding a new result.  This routine also contains the full
-    code for creating the forms, checking validity with ``is_valid``, and
-    saving it to the database (because it's just so trivial for results).
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-
-    :type request: ``HttpRequest``
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    user_details = utils.get_profile(request.user)
-    query_string_dict = utils.parse_query_string(request)
-    if request.method == "POST":
-        result_form = ResultForm(request.POST)
-        related_data_form = RelatedDataForm(user_details, query_string_dict, request.POST, request.FILES)
-        all_valid = result_form.is_valid()
-        all_valid = related_data_form.is_valid() and all_valid
-        if all_valid and is_referentially_valid(related_data_form, request.user):
-            result = result_form.save(commit=False)
-            result.operator = request.user
-            result.timestamp = datetime.datetime.now()
-            result.save()
-            if related_data_form.cleaned_data["image_file"]:
-                save_image_file(request.FILES["image_file"], result, related_data_form)
-            if related_data_form.is_valid():
-                result.samples = related_data_form.cleaned_data["samples"]
-                result.sample_series = related_data_form.cleaned_data["sample_series"]
-                feed_utils.Reporter(request.user).report_result_process(result, edit_description=None)
-                return utils.successful_response(request)
-            else:
-                result.delete()
-    else:
-        result_form = ResultForm()
-        related_data_form = RelatedDataForm(user_details, query_string_dict)
-    return render_to_response("edit_result.html", {"title": _(u"New result"), "is_new": True, "result": result_form,
-                                                   "related_data": related_data_form},
                               context_instance=RequestContext(request))
 
 @login_required

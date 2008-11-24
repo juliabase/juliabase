@@ -10,19 +10,13 @@
   <table cellpadding="5">
     <tr>
       {% input_field result.title %}
-      <td rowspan="2" style="vertical-align: top">{% if is_new %}<label for="id_{{ related_data.samples.html_name }}"
+      <td rowspan="2" style="vertical-align: top"><label for="id_{{ related_data.samples.html_name }}"
                                 >{{ related_data.samples.label }}:</label><br/>
         {{ related_data.samples }}
-        {% else %}
-           
-        {% endif %}
       </td>
-      <td rowspan="2" style="vertical-align: top">{% if is_new %}<label for="id_{{ related_data.sample_series.html_name }}"
+      <td rowspan="2" style="vertical-align: top"><label for="id_{{ related_data.sample_series.html_name }}"
                                 >{{ related_data.sample_series.label }}:</label><br/>
         {{ related_data.sample_series }}
-        {% else %}
-           
-        {% endif %}
       </td>
     </tr>
     <tr>

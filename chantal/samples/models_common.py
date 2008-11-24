@@ -580,7 +580,7 @@ class Result(Process):
         result = self.result.get_image()
         if permissions.has_permission_to_edit_result_process(process_context.user, self):
             result["edit_url"] = \
-                django.core.urlresolvers.reverse("samples.views.result.edit", kwargs={"process_id": self.pk})
+                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
         return result
     class Meta:
         verbose_name = _(u"result")
