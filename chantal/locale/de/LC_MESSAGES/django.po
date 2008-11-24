@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-22 20:54+0100\n"
-"PO-Revision-Date: 2008-11-22 20:55+0100\n"
+"POT-Creation-Date: 2008-11-24 15:14+0100\n"
+"PO-Revision-Date: 2008-11-24 15:15+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1274,9 +1274,6 @@ msgstr "Probenserien"
 msgid "Image file"
 msgstr "Bilddatei"
 
-msgid "Edit result"
-msgstr "Ergebnis ändern"
-
 msgid ""
 "You don't have the permission to add the result to all selected samples/"
 "series."
@@ -1286,6 +1283,12 @@ msgstr ""
 
 msgid "You must select at least one samples/series."
 msgstr "Sie müssen mindestens eine Probe/Serie markieren."
+
+msgid "Adding samples or sample series must be marked as important."
+msgstr "Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert werden."
+
+msgid "Edit result"
+msgstr "Ergebnis ändern"
 
 msgid "New result"
 msgstr "Ergebnis hinzufügen"
@@ -2396,6 +2399,15 @@ msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
+msgid "edit"
+msgstr "ändern"
+
+msgid ""
+"(This series contains further samples not part of your “My Samples” list.)"
+msgstr ""
+"(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste "
+"gehören.)"
+
 msgid "Add things"
 msgstr "Dinge hinzufügen"
 
@@ -2407,15 +2419,6 @@ msgstr "Nach Dingen suchen"
 
 msgid "Depositions"
 msgstr "Depositionen"
-
-msgid "edit"
-msgstr "ändern"
-
-msgid ""
-"(This series contains further samples not part of your “My Samples” list.)"
-msgstr ""
-"(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste "
-"gehören.)"
 
 msgid "Edit groups"
 msgstr "Gruppen ändern"

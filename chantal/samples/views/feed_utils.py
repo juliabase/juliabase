@@ -206,8 +206,8 @@ class Reporter(object):
         self.__add_watchers(process, important)
         self.__connect_with_users(entry)
     def report_result_process(self, result, edit_description=None):
-        u"""Generate a feed entry for a physical process (deposition, measurement,
-        etching etc) which was recently edited or created.
+        u"""Generate a feed entry for a result process which was recently
+        edited or created.
 
         :Parameters:
           - `result`: the result process which was added/edited recently

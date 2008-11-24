@@ -123,10 +123,9 @@ class RelatedDataForm(forms.Form):
         self.fields["samples"].set_samples(samples)
         self.fields["image_file"].widget.attrs["size"] = 60
     def clean(self):
-        u"""Global clean method for the related data.  Note that this method
-        spares us the ``is_referentially_valid`` routine.  I can do this
-        because I only need the old result instance for a complete validity
-        check, so there needn't be any inter-form check.
+        u"""Global clean method for the related data.  I check whether at least
+        one sample or sample series was selected, and whether the user is
+        allowed to add results to the selected objects.
         """
         samples = self.cleaned_data.get("samples")
         sample_series = self.cleaned_data.get("sample_series")
@@ -166,6 +165,40 @@ def is_all_valid(result_form, related_data_form, edit_description_form):
     if edit_description_form:
         all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
+
+def is_referentially_valid(result, related_data_form, edit_description_form):
+    u"""Test whether all forms are consistent with each other and with the
+    database.  In particular, I test here whether the “important” checkbox in
+    marked if the user has added new samples or sample series to the result.
+
+    :Parameters:
+      - `result`: the result we're editing, or ``None`` if we're creating a new
+        one
+      - `related_data_form`: the bound form with all samples and sample series
+        the result should be connected with
+      - `edit_description_form`: the bound form with the edit description if
+        we're editing an existing result, and ``None`` otherwise
+
+    :type result: `models.Result` or ``NoneType``
+    :type related_data_form: `RelatedDataForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm` or
+      ``NoneType``
+
+    :Return:
+      whether all forms are consistent with each other and the database
+
+    :rtype: bool
+    """
+    referentially_valid = True
+    if result and related_data_form.is_valid() and edit_description_form.is_valid():
+        old_related_objects = set(result.samples.all()) | set(result.sample_series.all())
+        new_related_objects = set(related_data_form.cleaned_data["samples"] +
+                                  related_data_form.cleaned_data["sample_series"])
+        if new_related_objects - old_related_objects and not edit_description_form.cleaned_data["important"]:
+            form_utils.append_error(
+                edit_description_form, _(u"Adding samples or sample series must be marked as important."), "important")
+            referentially_valid = False
+    return referentially_valid
 
 def save_to_database(request, result, result_form, related_data_form):
     u"""Save the forms to the database.  One peculiarity here is that I still
@@ -232,7 +265,9 @@ def edit(request, process_id):
         result_form = ResultForm(request.POST, instance=result)
         related_data_form = RelatedDataForm(user_details, query_string_dict, result, request.POST, request.FILES)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if result else None
-        if is_all_valid(result_form, related_data_form, edit_description_form):
+        all_valid = is_all_valid(result_form, related_data_form, edit_description_form)
+        referentially_valid = is_referentially_valid(result, related_data_form, edit_description_form)
+        if all_valid and referentially_valid:
             result = save_to_database(request, result, result_form, related_data_form)
             if result:
                 feed_utils.Reporter(request.user).report_result_process(
