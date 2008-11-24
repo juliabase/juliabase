@@ -6,6 +6,8 @@
     {{ originator }} has added the sample series “<a href="{{ url }}">{{ sample_series }}</a>” to the group 
     “{{ group }}”.
   {% endblocktrans %}
+  <p>{% trans 'Description' %}:</p>
+  <blockquote>{{ entry.sample_series.description|markdown }}</blockquote>
   {% if subscribed %}
     {% trans 'You are subscribed to this sample series because you have at least one of its samples amongst “My Samples”.' %}
   {% else %}

@@ -12,6 +12,9 @@
 </h1>{% endblock %}
 
 {% block content %}
+
+{{ sample_series.description|markdown }}
+
 {% if sample_series.samples.count %}
   <p>{% trans 'This sample series contains the following samples:' %}</p>
   <ul class="sample-list">
