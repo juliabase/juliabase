@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-24 15:14+0100\n"
-"PO-Revision-Date: 2008-11-24 15:15+0100\n"
+"POT-Creation-Date: 2008-11-24 22:44+0100\n"
+"PO-Revision-Date: 2008-11-24 22:46+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -221,6 +221,9 @@ msgstr "Ergebnisse"
 
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
+
+msgid "description"
+msgstr "Beschreibung"
 
 msgid "sample series"
 msgstr "Probenserie"
@@ -538,9 +541,6 @@ msgstr "Feed-Einträge für neue Proben"
 
 msgid "old group"
 msgstr "alte Gruppe"
-
-msgid "description"
-msgstr "Beschreibung"
 
 #, python-format
 msgid "New sample moved to “%s”"
@@ -1285,7 +1285,9 @@ msgid "You must select at least one samples/series."
 msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 
 msgid "Adding samples or sample series must be marked as important."
-msgstr "Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert werden."
+msgstr ""
+"Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert "
+"werden."
 
 msgid "Edit result"
 msgstr "Ergebnis ändern"
@@ -1415,6 +1417,12 @@ msgstr "Ändern der Probenserie „%s“"
 
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
+
+#, python-format
+msgid "The name is %d letter too long."
+msgid_plural "The name is %d letters too long."
+msgstr[0] "Der Name ist %d Buchstaben zu lang."
+msgstr[1] "Der Name ist %d Buchstaben zu lang."
 
 #, python-format
 msgid "Sample series %s was successfully added to the database."

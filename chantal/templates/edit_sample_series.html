@@ -11,9 +11,9 @@
   <table cellpadding="5" style="float: left; margin-bottom: 3ex; width: 45%">
     {% if is_new %}
       <tr>
-        <td class="label"><label for="id_{{ sample_series.name.html_name }}"
-             >{{ sample_series.name.label }}:</label></td>
-        <td class="input">{{name_prefix}}-{{ sample_series.name }}</td>
+        <td class="label"><label for="id_{{ sample_series.short_name.html_name }}"
+             >{{ sample_series.short_name.label }}:</label></td>
+        <td class="input">{{ name_prefix }}-{{ sample_series.short_name }}</td>
       </tr>
     {% endif %}
     <tr {% if is_new %}style="display: none"{% endif %}>
@@ -21,6 +21,11 @@
     </tr>
     <tr>
       {% input_field sample_series.group %}
+    </tr>
+    <tr>
+      <td class="label"><label for="id_{{ sample_series.description.html_name }}"
+           >{{ sample_series.description.label }}:</label><br/>{% markdown_hint %}</td>
+      <td class="input">{{ sample_series.description }}</td>
     </tr>
   </table>
 

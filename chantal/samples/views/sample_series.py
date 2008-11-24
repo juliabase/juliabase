@@ -14,42 +14,59 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models, permissions
-from django.forms import Form
 import django.core.urlresolvers
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 from chantal.samples.views import utils, form_utils, feed_utils
 
-class SampleSeriesForm(Form):
+class SampleSeriesForm(forms.ModelForm):
     u"""Form for editing and creating sample series.
     """
     _ = ugettext_lazy
-    name = forms.CharField(label=_(u"Name"), max_length=50)
+    short_name = forms.CharField(label=_(u"Name"), max_length=50)
     currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
     group = form_utils.GroupField(label=_(u"Group"))
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"))
-    def __init__(self, user_details, sample_series, data=None, **kwargs):
+    def __init__(self, user_details, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the form here, especially
         because the sample set to choose from must be found and the name of an
         existing series must not be changed.
         """
         super(SampleSeriesForm, self).__init__(data, **kwargs)
+        sample_series = kwargs.get("instance")
         samples = user_details.my_samples.all()
         if sample_series:
             samples = list(samples) + list(sample_series.samples.all())
         self.fields["samples"].set_samples(samples)
         self.fields["samples"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
-        self.fields["name"].widget.attrs.update({"size": "50"})
+        self.fields["short_name"].widget.attrs.update({"size": "50"})
         if sample_series:
-            self.fields["name"].required = False
+            self.fields["short_name"].required = False
         if sample_series:
             self.fields["currently_responsible_person"].set_users(sample_series.currently_responsible_person)
         else:
             self.fields["currently_responsible_person"].choices = ((user_details.user.pk, unicode(user_details.user)),)
         self.fields["group"].set_groups(sample_series.group if sample_series else None)
+    def clean_description(self):
+        u"""Forbid image and headings syntax in Markdown markup.
+        """
+        description = self.cleaned_data["description"]
+        form_utils.check_markdown(description)
+        return description
+    def validate_unique(self):
+        u"""Overridden to disable Django's intrinsic test for uniqueness.  I
+        simply disable this inherited method completely because I do my own
+        uniqueness test in the create view itself.  I cannot use Django's
+        built-in test anyway because it leads to an error message in wrong
+        German (difficult to fix, even for the Django guys).
+        """
+        pass
+    class Meta:
+        model = models.SampleSeries
+        exclude = ("timestamp", "results", "name")
 
 @login_required
 def show(request, name):
@@ -102,10 +119,10 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
     :rtype: bool
     """
     referentially_valid = True
-    cleaned_data = sample_series_form.cleaned_data
     if sample_series_form.is_valid() and edit_description_form.is_valid() and \
-            (cleaned_data["group"] != sample_series.group or
-             cleaned_data["currently_responsible_person"] != sample_series.currently_responsible_person) and \
+            (sample_series_form.cleaned_data["group"] != sample_series.group or
+             sample_series_form.cleaned_data["currently_responsible_person"] !=
+             sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
         form_utils.append_error(edit_description_form,
@@ -133,7 +150,7 @@ def edit(request, name):
     permissions.assert_can_edit_sample_series(request.user, sample_series)
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
-        sample_series_form = SampleSeriesForm(user_details, sample_series, request.POST)
+        sample_series_form = SampleSeriesForm(user_details, request.POST, instance=sample_series)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
         all_valid = sample_series_form.is_valid()
         all_valid = edit_description_form.is_valid() and all_valid
@@ -142,34 +159,26 @@ def edit(request, name):
             edit_description = edit_description_form.cleaned_data
             feed_reporter = feed_utils.Reporter(request.user)
             if sample_series.currently_responsible_person != sample_series_form.cleaned_data["currently_responsible_person"]:
-                sample_series.currently_responsible_person = sample_series_form.cleaned_data["currently_responsible_person"]
                 feed_reporter.report_new_responsible_person_sample_series(sample_series, edit_description)
-            old_group = sample_series.group
-            if old_group != sample_series_form.cleaned_data["group"]:
-                sample_series.group = sample_series_form.cleaned_data["group"]
-                feed_reporter.report_changed_sample_series_group(sample_series, old_group, edit_description)
-            sample_series.save()
+            if sample_series.group != sample_series_form.cleaned_data["group"]:
+                feed_reporter.report_changed_sample_series_group(sample_series, sample_series.group, edit_description)
             feed_reporter.report_edited_sample_series(sample_series, edit_description)
-            sample_series.samples = sample_series_form.cleaned_data["samples"]
+            sample_series = sample_series_form.save()
             feed_reporter.report_edited_sample_series(sample_series, edit_description)
-            request.session["success_report"] = \
-                _(u"Sample series %s was successfully updated in the database.") % sample_series.name
-            return utils.HttpResponseSeeOther(sample_series.get_absolute_url())
+            return utils.successful_response(
+                request, _(u"Sample series %s was successfully updated in the database.") % sample_series.name)
     else:
         sample_series_form = \
-            SampleSeriesForm(user_details, sample_series,
-                             initial={"name": sample_series.name.split("-", 2)[-1],
+            SampleSeriesForm(user_details, instance=sample_series,
+                             initial={"short_name": sample_series.name.split("-", 2)[-1],
                                       "currently_responsible_person": sample_series.currently_responsible_person.pk,
                                       "group": sample_series.group.pk,
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
-    result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     return render_to_response("edit_sample_series.html",
                               {"title": _(u"Edit sample series “%s”") % sample_series.name,
                                "sample_series": sample_series_form,
-                               "is_new": False,
-                               "edit_description": edit_description_form,
-                               "result_processes": result_processes},
+                               "is_new": False, "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
 @login_required
@@ -189,26 +198,29 @@ def new(request):
     """
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
-        sample_series_form = SampleSeriesForm(user_details, None, request.POST)
+        sample_series_form = SampleSeriesForm(user_details, request.POST)
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
             full_name = \
-                u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["name"])
+                u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).count():
-                form_utils.append_error(sample_series_form, _("This sample series name is already given."), "name")
+                form_utils.append_error(sample_series_form, _("This sample series name is already given."), "short_name")
+            elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
+                overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
+                error_message = ungettext("The name is %d letter too long.", "The name is %d letters too long.",
+                                          overfull_letters) % overfull_letters
+                form_utils.append_error(sample_series_form, error_message, "short_name")
             else:
-                sample_series = models.SampleSeries(name=full_name, timestamp=timestamp,
-                                                    currently_responsible_person= \
-                                                        sample_series_form.cleaned_data["currently_responsible_person"],
-                                                    group=sample_series_form.cleaned_data["group"])
+                sample_series = sample_series_form.save(commit=False)
+                sample_series.name = full_name
+                sample_series.timestamp = timestamp
                 sample_series.save()
-                sample_series.samples=sample_series_form.cleaned_data["samples"]
+                sample_series_form.save_m2m()
                 feed_utils.Reporter(request.user).report_new_sample_series(sample_series)
-                request.session["success_report"] = \
-                    _(u"Sample series %s was successfully added to the database.") % full_name
-                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+                return utils.successful_response(request,
+                                                 _(u"Sample series %s was successfully added to the database.") % full_name)
     else:
-        sample_series_form = SampleSeriesForm(user_details, None)
+        sample_series_form = SampleSeriesForm(user_details)
     return render_to_response("edit_sample_series.html",
                               {"title": _(u"Create new sample series"),
                                "sample_series": sample_series_form,

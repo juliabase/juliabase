@@ -598,6 +598,7 @@ class SampleSeries(models.Model):
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
                                                      verbose_name=_(u"currently responsible person"))
+    description = models.TextField(_(u"description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))

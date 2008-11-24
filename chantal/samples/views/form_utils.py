@@ -180,6 +180,7 @@ class EditDescriptionForm(forms.Form):
     description = forms.CharField(label=_(u"Description of edit"), widget=forms.Textarea)
     important = forms.BooleanField(label=_(u"Important edit"), required=False)
     def __init__(self, *args, **kwargs):
+        kwargs["prefix"] = "edit_description"
         super(EditDescriptionForm, self).__init__(*args, **kwargs)
         self.fields["description"].widget.attrs["rows"] = 3
     def clean_description(self):
