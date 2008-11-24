@@ -103,3 +103,6 @@ div.my-samples-series { margin-left: 2em }
 
 ul.sample-series-list { list-style-image: url("/media/icons/chart_organisation.png") }
 ul.sample-list { list-style-image: url("/media/icons/ruby.png") }
+
+div.my-samples { width: 50%; float: right }
+div.my-samples h2 { margin-top: 0pt }
