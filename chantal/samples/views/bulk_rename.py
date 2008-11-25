@@ -106,7 +106,7 @@ def bulk_rename(request):
     except models.Initials.DoesNotExist:
         available_initials = []
     numbers_list = utils.parse_query_string(request).get("numbers", "")
-    samples = [get_object_or_404(models.Sample, name="*"+number) for number in numbers_list.split(",")]
+    samples = [get_object_or_404(models.Sample, name="*"+number.zfill(5)) for number in numbers_list.split(",")]
     if not samples:
         raise Http404(_(u"Please give the list of provisional samples names (without the asterisk, but with leading "
                         u"zeros) as a comma-separated list without whitespace in the “numbers” query string parameter."))

@@ -15,7 +15,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 import django.contrib.auth.models
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 from chantal.samples import models, permissions
 from chantal import settings
 
@@ -209,7 +209,7 @@ class RemoveFromMySamplesForm(forms.Form):
     remove_measured_from_my_samples = forms.BooleanField(label=_(u"Remove measured sample from My Samples"),
                                                          required=False, initial=True)
 
-def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form):
+def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form, edit_description_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
@@ -219,11 +219,13 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
       - `sample_form`: a bound sample selection form
       - `overwrite_form`: a bound overwrite data form
       - `remove_from_my_samples_form`: a bound remove-from-my-samples form
+      - `edit_description_form`: a bound edit-description form
 
     :type pds_measurement_form: `PDSMeasurementForm`
     :type sample_form: `SampleForm`
     :type overwrite_form: `OverwriteForm`
     :type remove_from_my_samples_form: `RemoveFromMySamplesForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm`
 
     :Return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
@@ -235,6 +237,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     all_valid = sample_form.is_valid() and all_valid
     all_valid = overwrite_form.is_valid() and all_valid
     all_valid = remove_from_my_samples_form.is_valid() and all_valid
+    all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
 
 def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
@@ -297,6 +300,7 @@ def edit(request, pds_number):
         sample_form = SampleForm(user_details, pds_measurement, preset_sample, request.POST)
         remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
         overwrite_form = OverwriteForm(request.POST)
+        edit_description_form = form_utils.EditDescriptionForm(request.POST) if pds_measurement else None
         if overwrite_form.is_valid() and overwrite_form.cleaned_data["overwrite_from_file"]:
             try:
                 number = int(request.POST["number"])
@@ -314,12 +318,15 @@ def edit(request, pds_number):
                 overwrite_form = OverwriteForm()
         if pds_measurement_form is None:
             pds_measurement_form = PDSMeasurementForm(request.user, request.POST, instance=pds_measurement)
-        all_valid = is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form)
+        all_valid = is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form,
+                                 edit_description_form)
         referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, pds_number)
         if all_valid and referentially_valid:
             pds_measurement = pds_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]
             pds_measurement.samples = samples
+            feed_utils.Reporter(request.user).report_physical_process(
+                pds_measurement, edit_description_form.cleaned_data if edit_description_form else None)
             if remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, user_details)
             success_report = _(u"%s was successfully changed in the database.") % pds_measurement if pds_number else \
@@ -338,12 +345,14 @@ def edit(request, pds_number):
             if samples:
                 initial["sample"] = samples[0].pk
         sample_form = SampleForm(user_details, pds_measurement, preset_sample, initial=initial)
-        overwrite_form = OverwriteForm()
         remove_from_my_samples_form = RemoveFromMySamplesForm()
+        overwrite_form = OverwriteForm()
+        edit_description_form = form_utils.EditDescriptionForm() if pds_measurement else None
     title = _(u"PDS measurement %s") % pds_number if pds_number else _(u"Add PDS measurement")
     return render_to_response("edit_pds_measurement.html", {"title": title,
                                                             "pds_measurement": pds_measurement_form,
                                                             "overwrite": overwrite_form,
                                                             "sample": sample_form,
-                                                            "remove_from_my_samples": remove_from_my_samples_form},
+                                                            "remove_from_my_samples": remove_from_my_samples_form,
+                                                            "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
