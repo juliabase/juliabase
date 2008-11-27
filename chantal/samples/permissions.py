@@ -491,6 +491,11 @@ def assert_can_view_feed(hash_value, user):
     the news feed of a certain ``user``.  Basically, this tests whether the
     requester *is* the user because only he can know the hash value.
 
+    Note that additionally, I have to test here whether the feed's user is
+    still active because you needn't be logged-in to access a feed, and I don't
+    use any ``has_perm`` method call here (which would yield ``False`` for
+    inactive users).
+
     :Parameters:
       - `hash_value`: the hash value given by the requester
       - `user`: the user whose news feed is requested
@@ -499,12 +504,16 @@ def assert_can_view_feed(hash_value, user):
     :type user: ``django.contrib.auth.models.User``
 
     :Exceptions:
-      - `PermissionError`: raised if the requester is not allowed to view the
-        user's news feed.
+      - `PermissionError`: Raised if the requester is not allowed to view the
+        user's news feed.  It's ``user`` parameter is always ``None`` because
+        we don't know the user who is currently accessing Chantal.
     """
     if hash_value != get_user_hash(user):
         description = _(u"You gave an invalid hash parameter in the query string.  "
                         u"Note that you can't access the news feed of another user.")
+        raise PermissionError(None, description)
+    if not user.is_active:
+        description = _(u"You can't access the feed of an inactive user.")
         raise PermissionError(None, description)
 
 
