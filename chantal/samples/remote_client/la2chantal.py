@@ -3,7 +3,7 @@
 
 import xml.etree.ElementTree as ElementTree
 import cPickle as pickle
-import codecs
+import codecs, re
 
 class Layer(object):
     def __init__(self):
@@ -94,10 +94,13 @@ login("bronger", "Rigel")
 
 started = False
 last_date = None
+legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
 for deposition in depositions:
     deposition_number = deposition[-1].fields["number"]
     if not deposition_number:
         continue
+    match = legacy_deposition_number_pattern.match(deposition_number)
+    deposition_number = deposition_number[:4] + "%03d" % int(match.group("number"))
     comments = u"\\n".join(layer.fields["comments"] for layer in deposition)
     while comments[-4:] == "\\n\\n":
         comments = comments[:-2]
