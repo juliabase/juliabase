@@ -452,7 +452,7 @@ def clean_quantity_field(value, units):
         raise ValidationError(_(u"The unit is invalid.  Valid units are: %s")%", ".join(units))
     return match.group("number") + " " + unit
 
-deposition_number_pattern = re.compile("\d\d[A-Za-z]-\d{3,4}$")
+deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
 def clean_deposition_number_field(value, letter):
     u"""Checks wheter a deposition number given by the user in a form is a
     valid one.  Note that it does not check whether a deposition with this
