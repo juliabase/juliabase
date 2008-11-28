@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib import admin
 from django.db import models
 import django.core.urlresolvers
-from chantal import settings
+from django.conf import settings
 from chantal.samples import permissions
 from chantal.samples.models_common import Process, Sample, PlotError
 import pylab

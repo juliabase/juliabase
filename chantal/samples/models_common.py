@@ -16,9 +16,9 @@ from django.contrib import admin
 from django.template import defaultfilters
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
+from django.conf import settings
 from django.db import models
 from chantal.samples import permissions
-from chantal import settings
 
 import matplotlib
 matplotlib.use("Agg")
