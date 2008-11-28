@@ -171,6 +171,7 @@ class FormSet(object):
         self.layer_forms = self.change_layer_forms = []
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
+        self.remote_client = utils.is_remote_client(request)
     def from_post_data(self, post_data):
         u"""Generate all forms from the post data submitted by the user.
 
@@ -478,7 +479,7 @@ class FormSet(object):
 
         :rtype: `models.LargeAreaDeposition` or ``NoneType``
         """
-        database_ready = not self._change_structure()
+        database_ready = not self._change_structure() if not self.remote_client else True
         database_ready = self._is_all_valid() and database_ready
         database_ready = self._is_referentially_valid() and database_ready
         if database_ready:
