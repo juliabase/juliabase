@@ -5,7 +5,8 @@ u"""Module with database maintenance work.  It is supposed to be called in
 regular intervales, e.g. once every night.  You may trigger its processing with
 the following shell command::
 
-    wget --post-data= --output-document=- http://127.0.0.1:8000/maintenance/{hash} > /dev/null
+    wget --post-data= --output-document=- http://127.0.0.1:8000/maintenance/{hash} \\
+        > /dev/null
 
 The hash can be found in ``urls.py``.
 
@@ -31,8 +32,8 @@ def expire_feed_entries():
 
 def mark_inactive_users():
     u"""Sets all users which can't be found anymore in the central Active
-    directory to “inactive”.  It also removed all sepecial rights from them,
-    and all group memberships.
+    Directory to “inactive”.  It also removes all special rights from them, and
+    all group memberships.
     """
     try:
         l = ldap.initialize(settings.AD_LDAP_URL)
