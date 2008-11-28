@@ -574,7 +574,7 @@ def show(request, deposition_number):
     """
     deposition = get_object_or_404(models.LargeAreaDeposition, number=deposition_number)
     samples = deposition.samples
-    permissions.assert_can_view_physical_process(request.user, form_set.deposition)
+    permissions.assert_can_view_physical_process(request.user, deposition)
     template_context = {"title": _(u"Large-area deposition “%s”") % deposition.number, "samples": samples.all(),
                         "process": deposition}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
