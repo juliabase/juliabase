@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 u"""Module with database maintenance work.  It is supposed to be called in
-regular intervales, e.g. once every night.  You may trigger its processing with
+regular intervals, e.g. once every night.  You may trigger its processing with
 the following shell command::
 
     wget --post-data= --output-document=- http://127.0.0.1/maintenance/{hash} \\
@@ -10,8 +10,8 @@ the following shell command::
 
 The hash can be found in ``urls.py``.
 
-So far, it sets users which can' be found anymore in the Active Directory to
-“inactive” and expires all feed entries which are older than six weeks.
+So far, it sets users which can't be found anymore in the Active Directory to
+“inactive”, and expires all feed entries which are older than six weeks.
 """
 
 import datetime
