@@ -118,6 +118,8 @@ urlpatterns = patterns("",
                        (r"^login_remote_client$", "samples.views.remote_client.login_remote_client"),
                        (r"^logout_remote_client$", "samples.views.remote_client.logout_remote_client"),
 
+                       (r"^maintenance/2127ff49478d1e385867452429edbf39df986c00$",
+                        "samples.views.maintenance.maintenance"),
                        (r"^admin/(.*)", admin.site.root),
                        )
 

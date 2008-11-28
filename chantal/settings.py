@@ -37,6 +37,7 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
+DEFAULT_CHARSET = "utf-8"
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -135,9 +136,9 @@ CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PI
 # LDAP binding
 AD_DNS_NAME = "localhost"
 AD_LDAP_PORT = 389
-AD_SEARCH_DN = "CN=Users,dc=example,dc=com"
+AD_SEARCH_DN = "CN=Users,dc=example,dc=local"
 # This is the NT4/Samba domain name
-AD_NT4_DOMAIN = "EXAMPLE"
+AD_NT4_DOMAIN = "example.local"
 AD_SEARCH_FIELDS = ["mail", "givenName", "sn", "sAMAccountName"]
 AD_LDAP_URL = "ldap://%s:%s" % (AD_DNS_NAME, AD_LDAP_PORT)
 #AUTHENTICATION_BACKENDS = ("chantal.samples.auth.ActiveDirectoryBackend",)
