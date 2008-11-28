@@ -187,7 +187,7 @@ class LargeAreaDeposition(object):
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
-            next_number = connection.open("next_deposition_number/L-")
+            next_number = connection.open("next_deposition_number/L")
             number_base = int(self.deposition_number_pattern.match(next_number).group("number")) - 1
             self.number = self.deposition_prefix + u"%03d" % (number_base + len(self.layers))
         else:
@@ -240,7 +240,7 @@ def rename_after_deposition(deposition_number, samples):
     for i, id_ in enumerate(samples):
         data["%d-sample" % i] = id_
         data["%d-number_of_pieces" % i] = 1
-        data["%d_0-new_name" % i] = samples[id_]
+        data["0-new_name"] = data["%d_0-new_name" % i] = samples[id_]
     return connection.open("depositions/split_and_rename_samples/"+deposition_number, data)
 
 class PDSMeasurement(object):
