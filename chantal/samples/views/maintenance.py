@@ -5,7 +5,7 @@ u"""Module with database maintenance work.  It is supposed to be called in
 regular intervales, e.g. once every night.  You may trigger its processing with
 the following shell command::
 
-    wget --post-data= --output-document=- http://127.0.0.1:8000/maintenance/{hash} \\
+    wget --post-data= --output-document=- http://127.0.0.1/maintenance/{hash} \\
         > /dev/null
 
 The hash can be found in ``urls.py``.
