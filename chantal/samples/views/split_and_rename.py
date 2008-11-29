@@ -236,13 +236,13 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         death.save()
         parent.processes.add(death)
     return sample_split, new_pieces
-        
+
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
     u"""Both splitting of a sample and re-split of an already existing split
     are handled here.  *Either* ``parent_name`` *or* ``old_split`` are unequal
     to ``None``.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `parent_name`: if given, the name of the sample to be split

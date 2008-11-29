@@ -116,7 +116,7 @@ def show(request, username):
     Additionally, a secret hash (see `permissions.get_user_hash`) is appended
     to the URL in the query string.  This should be enough security for this
     purpose.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `username`: the login name of the user for whic the news should be

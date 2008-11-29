@@ -136,7 +136,7 @@ def save_to_database(my_layer_forms, user):
         u", ".join(["%s: %s" % (form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
                     for form in my_layer_forms])
     user_details.save()
-    
+
 @login_required
 def edit(request, login_name):
     u"""View for editing the “My Layers”.

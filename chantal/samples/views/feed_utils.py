@@ -57,7 +57,7 @@ class Reporter(object):
     """
     def __init__(self, originator):
         u"""Class constructor.
-        
+
         :Parameters:
           - `originator`: the user who did the database change to be reported;
             almost always, this is the currently logged-in user

@@ -63,7 +63,7 @@ timestamp_inaccuracy_choices = (
     (5, _(u"accurate to the year")),
     (6, _(u"not even accurate to the year")),
     )
-    
+
 class Process(models.Model):
     u"""This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
@@ -494,10 +494,10 @@ class Result(Process):
         thumbnail and the full version.  The full version is always a PDF (not
         necessarily A4), whereas the thumbnail is either a JPEG or a PNG,
         depending on the original file type.
-        
+
         :Return:
           a dictionary containing the following keys:
-        
+
           =====================  =========================================
                  key                           meaning
           =====================  =========================================

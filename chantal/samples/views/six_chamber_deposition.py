@@ -201,7 +201,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     u"""Add or delete layers and channels in the form.  While changes in form
     fields are performs by the form objects themselves, they can't change the
     *structure* of the view.  This is performed here.
-    
+
     :Parameters:
       - `layer_forms`: the list with all bound layer forms of the deposition
       - `channel_form_lists`: all bound channel forms of this deposition.  It
@@ -227,7 +227,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     biggest_layer_number = max([utils.int_or_zero(layer.uncleaned_data("number")) for layer in layer_forms] + [0])
     new_layers = []
     new_channel_lists = []
-    
+
     # First step: Duplicate layers
     for i, layer_form in enumerate(layer_forms):
         if layer_form.is_valid() and all([channel.is_valid() for channel in channel_form_lists[i]]) and \
@@ -367,7 +367,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
                 else:
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referentially_valid
-    
+
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
     u"""Save the forms to the database.  Only the deposition is just updated if
     it already existed.  However, layers and channels are completely deleted
@@ -539,7 +539,7 @@ def show(request, deposition_number):
     u"""Show an existing 6-chamber_deposision.  You must be a 6-chamber
     operator *or* be able to view one of the samples affected by this
     deposition in order to be allowed to view it.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `deposition_number`: the number (=name) or the deposition

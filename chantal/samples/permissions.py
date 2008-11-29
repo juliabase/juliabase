@@ -82,7 +82,7 @@ def get_user_hash(user):
 
     Technically, it is the fist 10 characters of a salted SHA-1 hash of the
     user's name.
-    
+
     :Parameters:
       - `user`: the current user
 
@@ -303,7 +303,7 @@ def assert_can_add_result_process(user, sample_or_series):
     :Parameters:
       - `user`: the user whose permission should be checked
       - `sample_or_series`: the sample (series) the user wants to add a result
-        to 
+        to
 
     :type user: ``django.contrib.auth.models.User``
     :type sample_or_series: `models.Sample` or `models.SampleSeries`

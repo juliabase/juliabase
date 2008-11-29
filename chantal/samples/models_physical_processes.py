@@ -20,7 +20,7 @@ import pylab
 def read_techplot_file(filename, columns=(0, 1)):
     u"""Read a datafile in TechPlot format and return the content of selected
     columns.
-    
+
     :Parameters:
       - `filename`: full path to the Techplot data file
       - `columns`: the columns that should be read.  Defaults to the first two,

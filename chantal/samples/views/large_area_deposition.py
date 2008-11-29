@@ -327,7 +327,7 @@ class FormSet(object):
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
             self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
-                
+
         # Delete layers
         for i in range(len(new_layers)-1, -1, -1):
             if len(new_layers[i]) == 3:
@@ -391,7 +391,7 @@ class FormSet(object):
         This function calls the ``is_valid()`` method of all forms, even if one
         of them returns ``False`` (and makes the return value clear
         prematurely).
-    
+
         :Return:
           whether all forms are valid.
 
@@ -512,7 +512,7 @@ def edit(request, deposition_number):
     u"""Edit or create a large-area deposition.  In case of creation, starting
     with a duplicate of another deposition is also possible if a ``copy-from``
     query string parameter is present (as for the other depositions).
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `deposition_number`: number of the deposition to be edited/created.  If
@@ -559,7 +559,7 @@ def show(request, deposition_number):
     u"""Show an existing large-area_deposision.  You must be a large-area
     operator *or* be able to view one of the samples affected by this
     deposition in order to be allowed to view it.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `deposition_number`: the number (=name) or the deposition

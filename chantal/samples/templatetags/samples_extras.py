@@ -399,7 +399,7 @@ class ValueFieldNode(template.Node):
             field = u"—"
         return u"""<td class="label">%(label)s:</td><td class="value">%(value)s</td>""" % \
             {"label": verbose_name, "value": quantity(field, self.unit) if self.unit else field}
-        
+
 @register.tag
 def value_field(parser, token):
     u"""Tag for inserting a field value into an HTML table.  It consists of two

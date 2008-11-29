@@ -73,7 +73,7 @@ def show(request, name):
     u"""View for showing a sample series.  You can see a sample series if
     you're in its group, or you're the currently responsible person for it, or
     if you can view all samples anyway.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `name`: name of the sample series
@@ -185,7 +185,7 @@ def edit(request, name):
 def new(request):
     u"""View for creating a new sample series.  Note that you can add arbitrary
     samples to a sample series, even those you can't see.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 

@@ -29,7 +29,7 @@ class Deposition(Process):
     u"""The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
     class from it.
-    
+
     Every derived class, if it has sub-objects which resemble layers, must
     implement them as a class derived from `Layer`, with a ``ForeignKey`` field
     pointing to the deposition class with ``relative_name="layers"``.  In other
@@ -197,7 +197,7 @@ six_chamber_gas_choices = (
     ("PH3", _(u"PH₃ in 10 ppm H₂")))
 u"""Contains all possible choices for `SixChamberChannel.gas`.
 """
-    
+
 class SixChamberChannel(models.Model):
     u"""One channel of a certain layer in a 6-chamber deposition.
     """

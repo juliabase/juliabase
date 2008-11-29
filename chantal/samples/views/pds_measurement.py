@@ -135,7 +135,7 @@ class SampleForm(forms.Form):
             samples.append(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples)
-    
+
 class PDSMeasurementForm(form_utils.ProcessForm):
     u"""Model form for the core PDS measurement data.  I only redefine the
     ``operator`` field here in oder to have the full names of the users.
@@ -255,7 +255,7 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     :type pds_measurement_form: `PDSMeasurementForm`
     :type sample_form: `SampleForm`
     :type pds_number: unicode
-    
+
     :Return:
       whether the forms are consistent with each other and the database
 
@@ -272,8 +272,7 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
             form_utils.append_error(pds_measurement_form, _(u"Sample is already dead at this time."), "timestamp")
             referentially_valid = False
     return referentially_valid
-    
-    
+
 @login_required
 def edit(request, pds_number):
     u"""Edit and create view for PDS measurements.
@@ -281,7 +280,7 @@ def edit(request, pds_number):
     :Parameters:
       - `request`: the current HTTP Request object
       - `pds_number`: The PDS number of the PDS measurement to be edited.  If
-        it is ``None``, a new measurement is added to the database. 
+        it is ``None``, a new measurement is added to the database.
 
     :type request: ``HttpRequest``
     :type pds_number: unicode

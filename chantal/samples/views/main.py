@@ -69,7 +69,7 @@ def main_menu(request):
     u"""The main menu view.  It displays the sample series in a dynamic way,
     and the actions that depend on the specific permissions a user has.  The
     rest is served static.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 
@@ -150,7 +150,7 @@ def show_deposition(request, deposition_number):
     immediately redirecty to the actual deposition view.  Possibly it is
     superfluous, or at least only sensible to users who enter URL addresses
     directly.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `deposition_number`: the number of the deposition to be displayed
@@ -172,7 +172,7 @@ def switch_language(request):
     then switches the current user's prefered language to that language, and
     then goes back to the last URL.  This is used for realising the language
     switching by the flags on the top left.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 

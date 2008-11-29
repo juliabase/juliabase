@@ -125,7 +125,7 @@ class AddLayersForm(forms.Form):
             else:
                 layer_query = deposition.layers.filter(number=layer_number)
                 if layer_query.count() == 1:
-                    return layer_query.values()[0]    
+                    return layer_query.values()[0]
 
 initials_pattern = re.compile(ur"[A-Z]{2,4}[0-9]*$")
 class InitialsForm(forms.Form):
@@ -222,7 +222,7 @@ class GeneralSampleField(object):
                 self.choices.append((4*u" " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, (u"", 9*u"-"))
-    
+
 class SampleField(GeneralSampleField, forms.ChoiceField):
     u"""Form field class for sample selection boxes where you can select a
     single sample.  This is typically used in measurement forms because
@@ -510,7 +510,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     prefixes and cannot be changed easily, even if the layers are rearranged,
     duplicated, or deleted.  By using this function, the view has the chance to
     have everything in proper order nevertheless.
-    
+
     :Parameters:
       - `post_data`: the result from ``request.POST``
       - `subform_key`: the fieldname in the forms that is used for ordering.
@@ -544,7 +544,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
             value = last_value + 0.01
         last_value = values[index] = value
     return sorted(values, key=lambda index: values[index])
-    
+
 level0_pattern = re.compile(ur"(?P<level0_index>\d+)-(?P<id>.+)")
 level1_pattern = re.compile(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
 def normalize_prefixes(post_data):

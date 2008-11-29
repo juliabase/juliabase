@@ -141,7 +141,7 @@ def change_structure(original_data_forms, new_name_form_lists):
     entered by the user.  While changes in form fields are performs by the form
     objects themselves, they can't change the *structure* of the view.  This is
     performed here.
-    
+
     :Parameters:
       - `original_data_forms`: all old samples and pieces numbers
       - `new_name_form_lists`: new names for all pieces

@@ -37,7 +37,7 @@ class AddExternalOperatorForm(forms.ModelForm):
 @login_required
 def new(request):
     u"""View for adding a new external operator.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 
@@ -60,7 +60,6 @@ def new(request):
     return render_to_response("edit_external_operator.html", {"title": _(u"Add external operator"),
                                                               "external_operator": external_operator_form},
                               context_instance=RequestContext(request))
-    
 
 class EditExternalOperatorForm(forms.ModelForm):
     u"""Model form for editing an existing external operator.  Here, you can

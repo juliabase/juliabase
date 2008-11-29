@@ -71,7 +71,7 @@ class _AddHelpLink(object):
     def __call__(self, request, *args, **kwargs):
         request.chantal_help_link = self.help_link
         return self.original_view_function(request, *args, **kwargs)
-    
+
 def help_link(link):
     u"""Function decorator for views functions to set a help link for the view.
     The help link is embedded into the top line in the layout, see the template
@@ -114,7 +114,7 @@ def get_sample(sample_name):
 
 def does_sample_exist(sample_name):
     u"""Returns ``True`` if the sample name exists in the database.
-    
+
     :Parameters:
       - `sample_name`: the name or alias of the sample
 
@@ -130,7 +130,7 @@ def does_sample_exist(sample_name):
 
 def normalize_sample_name(sample_name):
     """Returns the current name of the sample.
-    
+
     :Parameters:
       - `sample_name`: the name or alias of the sample
 
@@ -345,7 +345,7 @@ def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
     called “08B-045”, this routine yields “08B-046” (unless the new year has
     begun).
-    
+
     :Parameters:
       - `letter`: the indentifying letter of the deposition apparatus.  For
         example, it is ``"B"`` for the 6-chamber deposition.
@@ -381,7 +381,7 @@ def lookup_sample(sample_name, request):
     u"""Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
     to view it.  If not, it raises an exception.
-    
+
     :Parameters:
       - `sample_name`: name of the sample
       - `request`: the HTTP request object
@@ -429,7 +429,7 @@ def convert_id_to_int(process_id):
     :rtype: int
 
     :Exceptions:
-      - `Http404`: if the process_id didn't represent an integer number. 
+      - `Http404`: if the process_id didn't represent an integer number.
     """
     try:
         return int(process_id)
@@ -727,7 +727,7 @@ def extract_preset_sample(request):
     This routine extracts the sample name from the query string and returns the
     sample.  If nothing was given or the sample non-existing, it returns
     ``None``.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 

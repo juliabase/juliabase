@@ -25,7 +25,7 @@ def default(request):
     And finally, it adds tuples with information needed to realise the neat
     little flags on the top left for language switching.  These flags don't
     occur if it was a POST request, or if the user isn't logged-in.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 

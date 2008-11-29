@@ -89,7 +89,7 @@ def bulk_rename(request):
     u"""View for bulk-renaming samples that have had a provisional name so far.
     If the user don't have initials yet, he is redirected to his preferences
     page.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
 
