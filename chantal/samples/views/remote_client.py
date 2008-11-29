@@ -11,6 +11,7 @@ from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
 from chantal.samples.views import utils
+from chantal.samples import models
 
 @login_required
 @never_cache
