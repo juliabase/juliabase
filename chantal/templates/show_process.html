@@ -6,7 +6,7 @@
 {% block content %}
   <div class="process">
     <p class="operator_and_timestamp">
-      {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
+      {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
     </p>
     {% if samples or sample_series %}
       <p>

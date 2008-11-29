@@ -227,8 +227,24 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
 def timestamp(value):
     u"""Filter for formatting the timestamp of a process properly to reflect
     the inaccuracy connected with this timestamp.
+
+    :Parameters:
+      - `value`: the process whose timestamp should be formatted
+
+    :type value: `models.Process` or dict mapping str to object
+
+    :Return:
+      the rendered timestamp
+
+    :rtype: unicode
     """
-    return mark_safe(value["timestamp"].strftime(str(unicode(timestamp_formats[value["timestamp_inaccuracy"]]))))
+    if isinstance(value, chantal.samples.models.Process):
+        timestamp_ = value.timestamp
+        inaccuracy = value.timestamp_inaccuracy
+    else:
+        timestamp_ = value["timestamp"]
+        inaccuracy = value["timestamp_inaccuracy"]
+    return mark_safe(timestamp_.strftime(str(unicode(timestamp_formats[inaccuracy]))))
 
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
