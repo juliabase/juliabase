@@ -237,7 +237,8 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     all_valid = sample_form.is_valid() and all_valid
     all_valid = overwrite_form.is_valid() and all_valid
     all_valid = remove_from_my_samples_form.is_valid() and all_valid
-    all_valid = edit_description_form.is_valid() and all_valid
+    if edit_description_form:
+        all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
 
 def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
