@@ -13,6 +13,8 @@ root = ElementTree.parse("/home/bronger/temp/large_area/content.xml")
 
 topline_styles = []
 bottomline_styles = []
+bold_styles = []
+medium_styles = []
 
 for style in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:style:1.0}style"):
     property_ = style.find("{urn:oasis:names:tc:opendocument:xmlns:style:1.0}table-cell-properties")
@@ -22,14 +24,52 @@ for style in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:style:1.0}
         if property_.attrib.get(
             "{urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0}border-bottom", "none") != "none":
             bottomline_styles.append(style.attrib["{urn:oasis:names:tc:opendocument:xmlns:style:1.0}name"])
+    property_ = style.find("{urn:oasis:names:tc:opendocument:xmlns:style:1.0}text-properties")
+    if property_ is not None:
+        if property_.attrib.get(
+            "{urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0}font-weight") == "bold":
+            bold_styles.append(style.attrib["{urn:oasis:names:tc:opendocument:xmlns:style:1.0}name"])
+        if property_.attrib.get(
+            "{urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0}font-weight") == "normal":
+            medium_styles.append(style.attrib["{urn:oasis:names:tc:opendocument:xmlns:style:1.0}name"])
 
-def text(root):
+def mark_bold(text, bold, in_bold):
+    if bold and not in_bold:
+        stripped_text = text.lstrip()
+        text = text[:len(text) - len(stripped_text)] + "__" + stripped_text
+        in_bold = True
+    elif not bold and in_bold:
+        text += "__"
+        in_bold = False
+    return text, in_bold
+
+def inner_text(root, in_comment, in_bold=False):
     if root.tag == "{urn:oasis:names:tc:opendocument:xmlns:office:1.0}annotation":
-        return u""
+        return u"", in_bold
     current_text = root.text or u""
+    if in_comment:
+        if root.attrib.get("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}style-name") in bold_styles or \
+                root.attrib.get("{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name") in bold_styles:
+            bold = True
+        elif root.attrib.get("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}style-name") in medium_styles or \
+                root.attrib.get("{urn:oasis:names:tc:opendocument:xmlns:text:1.0}style-name") in medium_styles:
+            bold = False
+        else:
+            bold = in_bold
+        current_text, in_bold = mark_bold(current_text, bold, in_bold)
     for element in list(root):
-        current_text += text(element)
-    return current_text
+        new_text, in_bold = inner_text(element, in_comment, in_bold)
+        current_text += new_text
+        if in_comment:
+            current_text, in_bold = mark_bold(current_text, bold, in_bold)
+        current_text += element.tail or u""
+    return current_text, in_bold
+
+def text(root, in_comment):
+    complete_text, in_bold = inner_text(root, in_comment)
+    if in_comment and in_bold:
+        complete_text += "__"
+    return complete_text
 
 class EmptyRowException(Exception):
     pass
@@ -50,7 +90,7 @@ for row in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}ta
         for cell in row.getiterator("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}table-cell"):
             if current_column >= len(columns):
                 break
-            current_layer.fields[columns[current_column]] = text(cell)
+            current_layer.fields[columns[current_column]] = text(cell, columns[current_column]=="comments")
             if current_column == 0 and not current_layer.fields["number"]:
                 raise EmptyRowException
             if current_column == 38:
@@ -106,7 +146,7 @@ for deposition in depositions:
         comments = comments[:-2]
     while comments[:2] == "\\n":
         comments = comments[2:]
-    comments = comments.replace('"', '\\"')
+    comments = comments.replace('"', '\\"').replace("____", "")
     date = datum2date(deposition[-1].fields["date"])
     if last_date is None or last_date != date:
         hour = 13
