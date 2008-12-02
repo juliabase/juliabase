@@ -237,7 +237,9 @@ class AddSamplesForm(forms.Form):
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
+    substrate_comments = forms.CharField(label=_(u"Substrate comments"), max_length=80, required=False)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
+    timestamp_inaccuracy = forms.IntegerField(required=False)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
@@ -273,9 +275,13 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
-    substrate = models.Substrate(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
-                                 material=add_samples_form.cleaned_data["substrate"])
-    substrate.save()
+    substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
+                                                material=add_samples_form.cleaned_data["substrate"],
+                                                comments=add_samples_form.cleaned_data["substrate_comments"])
+    inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
+    if inaccuracy:
+        substrate.timestamp_inaccuracy = inaccuracy
+        substrate.save()
     provisional_sample_names = \
         models.Sample.objects.filter(name__startswith=u"*").values_list("name", flat=True)
     occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
@@ -294,13 +300,12 @@ def add_samples_to_database(add_samples_form, user):
     samples = []
     for new_name in names:
         sample_group = add_samples_form.cleaned_data["group"]
-        sample = models.Sample(name=new_name,
-                               current_location=add_samples_form.cleaned_data["current_location"],
-                               currently_responsible_person=user,
-                               purpose=add_samples_form.cleaned_data["purpose"],
-                               tags=add_samples_form.cleaned_data["tags"],
-                               group=sample_group)
-        sample.save()
+        sample = models.Sample.objects.create(name=new_name,
+                                              current_location=add_samples_form.cleaned_data["current_location"],
+                                              currently_responsible_person=user,
+                                              purpose=add_samples_form.cleaned_data["purpose"],
+                                              tags=add_samples_form.cleaned_data["tags"],
+                                              group=sample_group)
         samples.append(sample)
         sample.processes.add(substrate)
         user_details.my_samples.add(sample)

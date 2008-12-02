@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-24 23:01+0100\n"
-"PO-Revision-Date: 2008-11-24 23:03+0100\n"
+"POT-Creation-Date: 2008-12-02 15:23+0100\n"
+"PO-Revision-Date: 2008-12-02 15:25+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -891,6 +891,9 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
+msgid "You can't access the feed of an inactive user."
+msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
+
 msgid "Yes"
 msgstr "Ja"
 
@@ -1348,6 +1351,9 @@ msgstr "Anzahl der Proben"
 
 msgid "Substrate"
 msgstr "Substrat"
+
+msgid "Substrate comments"
+msgstr "Substrat-Kommentare"
 
 msgid "Current location"
 msgstr "Aktueller Probenort"
