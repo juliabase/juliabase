@@ -4,7 +4,7 @@
 u"""All views and helper routines directly connected with the 6-chamber
 deposition.  This includes adding, editing, and viewing such processes.
 
-In principle, you can copy the code here to iplement other deposition systems,
+In principle, you can copy the code here to implement other deposition systems,
 however, this is not implemented perfectly: If done again, *all* form data
 should be organised in a real form instead of being hard-coded in the template.
 Additionally, `DataModelForm` was a sub-optimal idea: Instead, their data
