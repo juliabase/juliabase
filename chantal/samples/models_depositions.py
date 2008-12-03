@@ -137,10 +137,7 @@ six_chamber_chamber_choices = (
     ("#3", "#3"),
     ("#4", "#4"),
     ("#5", "#5"),
-    ("#6", "#6"),
-    ("LL", "LL"),
-    ("TL1", "TL1"),
-    ("TL2", "TL2"))
+    ("#6", "#6"))
 u"""Contains all possible choices for `SixChamberLayer.chamber`.
 """
 
