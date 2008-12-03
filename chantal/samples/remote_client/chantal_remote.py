@@ -84,13 +84,15 @@ def logout():
     connection.logout()
     logging.info("Successfully logged-out.")
 
-def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, purpose=None, tags=None,
-                group=None):
+def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, timestamp_inaccuracy=None,
+                purpose=None, tags=None, group=None, comments=None):
     samples = connection.open("samples/add/",
                               {"number_of_samples": number_of_samples,
                                "current_location": current_location,
                                "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                               "timestamp_inaccuracy": timestamp_inaccuracy or 0,
                                "substrate": substrate,
+                               "substrate_comments": comments,
                                "purpose": purpose,
                                "tags": tags,
                                "group": connection.primary_keys["groups"].get(group),
