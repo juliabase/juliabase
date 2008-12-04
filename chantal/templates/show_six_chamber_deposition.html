@@ -9,9 +9,7 @@
 </p>
 
 {% if process.comments %}
-  <p>
-    <span class="label">{% verbose_name SixChamberDeposition.comments %}:</span>{{ process.comments|markdown }}
-  </p>
+  <blockquote>{{ process.comments|markdown }}</blockquote>
 {% endif %}
 
 <table width="100%">
