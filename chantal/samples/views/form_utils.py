@@ -360,7 +360,7 @@ class FixedOperatorField(forms.ChoiceField):
 
     Important: This field must *always* be made required!
     """
-    def set_operator(self, operator):
+    def set_operator(self, operator, is_staff=False):
         u"""Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
         the selection box will remain emtpy.  The selection list will consist
@@ -370,10 +370,16 @@ class FixedOperatorField(forms.ChoiceField):
         :Parameters:
           - `operator`: operator to be included into the list.  Typically, it
             is the current user.
+          - `is_staff`: whether the currently logged-in user is an
+            administrator
 
         :type operator: ``django.contrib.auth.models.User``
+        :type is_staff: bool
         """
-        self.choices = ((operator.pk, unicode(operator)),)
+        if not is_staff:
+            self.choices = ((operator.pk, operator.username),)
+        else:
+            self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
     def clean(self, value):
         value = super(FixedOperatorField, self).clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))

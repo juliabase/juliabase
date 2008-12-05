@@ -148,7 +148,9 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         super(PDSMeasurementForm, self).__init__(*args, **kwargs)
         self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
-        self.fields["operator"].set_operator(kwargs["instance"].operator if kwargs.get("instance") else user)
+        measurement = kwargs.get("instance")
+        self.fields["operator"].set_operator(measurement.operator if measurement else user, user.is_staff)
+        self.fields["operator"].initial = measurement.operator.pk if measurement else user.pk
     def test_for_datafile(self, filename):
         u"""Test whether a certain file is openable by Chantal.
 

@@ -66,7 +66,9 @@ class DepositionForm(form_utils.ProcessForm):
         field."""
         super(DepositionForm, self).__init__(data, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "style": "font-size: large", "size": "8"})
-        self.fields["operator"].set_operator(kwargs["instance"].operator if kwargs.get("instance") else user)
+        deposition = kwargs.get("instance")
+        self.fields["operator"].set_operator(deposition.operator if deposition else user, user.is_staff)
+        self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
     def validate_unique(self):

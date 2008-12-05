@@ -62,7 +62,7 @@ class DepositionForm(form_utils.ProcessForm):
         initial = kwargs.get("initial", {})
         if deposition:
             # Mark the samples of the deposition in the choise field
-            initial.update({"sample_list": deposition.samples.values_list("pk", flat=True)})
+            initial["sample_list"] = deposition.samples.values_list("pk", flat=True)
         kwargs["initial"] = initial
         super(DepositionForm, self).__init__(data, **kwargs)
         self.is_new = not deposition
@@ -75,7 +75,9 @@ class DepositionForm(form_utils.ProcessForm):
             self.fields["sample_list"].initial = [preset_sample.pk]
         self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
-        self.fields["operator"].set_operator(user_details.user if self.is_new else deposition.operator)
+        user = user_details.user
+        self.fields["operator"].set_operator(user if self.is_new else deposition.operator, user.is_staff)
+        self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
     def clean(self):
@@ -125,9 +127,9 @@ class LayerForm(DataModelForm):
     def clean_gas_pre_heat_time(self):
         return form_utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
     def clean_pressure(self):
-        return form_utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar"])
+        return form_utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar", "Torr", "hPa"])
     def clean_gas_pre_heat_pressure(self):
-        return form_utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["mTorr", "mbar"])
+        return form_utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["Torr"])
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
