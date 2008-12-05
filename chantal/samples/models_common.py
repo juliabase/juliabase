@@ -407,6 +407,7 @@ class SampleSplit(Process):
 admin.site.register(SampleSplit)
 
 substrate_materials = (
+    ("custom", _(u"custom")),
     ("asahi-u", _(u"ASAHI-U")),
     ("100-Si", _(u"silicon 100 wafer")),
     )
