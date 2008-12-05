@@ -25,3 +25,6 @@ chantal/samples/remote_client/chantal_remote.log
 chantal/samples/remote_client/la_import.py
 chantal/samples/remote_client/large_area_depositions.pickle
 chantal/media/results
+chantal/samples/remote_client/6k.pickle
+chantal/samples/remote_client/6k_import.py
+chantal/samples/remote_client/6k_import.py.sicher
