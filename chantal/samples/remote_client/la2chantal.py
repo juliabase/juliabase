@@ -132,7 +132,6 @@ login("bronger", "Rigel")
 
 """
 
-started = False
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
 for deposition in depositions:
@@ -154,7 +153,7 @@ for deposition in depositions:
         hour += 1
     assert hour < 24
     last_date = date
-    print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00")
+    print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00", timestamp_inaccuracy=3)
 
 deposition = LargeAreaDeposition(sample)
 deposition.number = u"%s"
