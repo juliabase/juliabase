@@ -183,15 +183,15 @@ admin.site.register(SixChamberLayer)
 six_chamber_gas_choices = (
     ("SiH4", "SiH₄"),
     ("H2", "H₂"),
-    ("PH3+SiH4", _(u"PH₃ in 2% SiH₄")),
-    ("TMB", _(u"TMB in 1% He")),
-    ("B2H6", _(u"B₂H₆ in 5ppm H₂")),
+    ("PH3+SiH4", _(u"2% PH₃ in SiH₄")),
+    ("TMB", _(u"1% TMB in He")),
+    ("B2H6", _(u"5ppm B₂H₆ in H₂")),
     ("CH4", "CH₄"),
     ("CO2", "CO₂"),
     ("GeH4", "GeH₄"),
     ("Ar", "Ar"),
     ("Si2H6", "Si₂H₆"),
-    ("PH3", _(u"PH₃ in 10 ppm H₂")))
+    ("PH3", _(u"10 ppm PH₃ in H₂")))
 u"""Contains all possible choices for `SixChamberChannel.gas`.
 """
 
@@ -201,7 +201,7 @@ class SixChamberChannel(models.Model):
     number = models.IntegerField(_(u"channel"))
     layer = models.ForeignKey(SixChamberLayer, related_name="channels", verbose_name=_(u"layer"))
     gas = models.CharField(_(u"gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
-    flow_rate = models.DecimalField(_(u"flow rate"), max_digits=4, decimal_places=1, help_text=_(u"in sccm"))
+    flow_rate = models.DecimalField(_(u"flow rate"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
     def __unicode__(self):
         _ = ugettext
         return _(u"channel %(number)d of %(layer)s") % {"number": self.number, "layer": self.layer}
