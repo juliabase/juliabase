@@ -1,0 +1,187 @@
+-   fields:
+        email: bronger@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: sha1$95699$95d8f7082fae70337aa9b38183fafa76fda57c11
+        user_permissions: []
+        username: bronger
+    model: auth.user
+    pk: 1
+-   fields:
+        first_name: "Eerke"
+        last_name: "Bunte"
+        username: e_bunte
+    model: auth.user
+    pk: 2
+-   fields:
+        first_name: "Andreas"
+        last_name: "Lambertz"
+        username: a_lambertz
+    model: auth.user
+    pk: 3
+-   fields:
+        first_name: "Johannes"
+        last_name: "Wolff"
+        username: j_wolff
+    model: auth.user
+    pk: 4
+-   fields:
+        first_name: "Oliver"
+        last_name: "Vetterl"
+        username: o_vetterl
+    model: auth.user
+    pk: 5
+-   fields:
+        first_name: "Dietmar"
+        last_name: "Lundszien"
+        username: d_lundszien
+    model: auth.user
+    pk: 6
+-   fields:
+        first_name: "Fiedhelm"
+        last_name: "Finger"
+        username: f_finger
+    model: auth.user
+    pk: 7
+-   fields:
+        first_name: "Claus"
+        last_name: "Malten"
+        username: c_malten
+    model: auth.user
+    pk: 8
+-   fields:
+        first_name: "Arup"
+        last_name: "Dasgupta"
+        username: a_dasgupta
+    model: auth.user
+    pk: 9
+-   fields:
+        first_name: "Stefan"
+        last_name: "Klein"
+        username: s_klein
+    model: auth.user
+    pk: 10
+-   fields:
+        first_name: "Russel"
+        last_name: "Hollingsworth"
+        username: r_hollingsworth
+    model: auth.user
+    pk: 11
+-   fields:
+        first_name: "Andreas"
+        last_name: "Groß"
+        username: a_gross
+    model: auth.user
+    pk: 12
+-   fields:
+        first_name: "Christoph"
+        last_name: "Roß"
+        username: ch.ross
+    model: auth.user
+    pk: 13
+-   fields:
+        first_name: "Silke"
+        last_name: "Michel"
+        username: s_michel
+    model: auth.user
+    pk: 15
+-   fields:
+        first_name: "Jana"
+        last_name: "Tapati"
+        username: j_tapati
+    model: auth.user
+    pk: 16
+-   fields:
+        first_name: "Luciano Baia"
+        last_name: "Neto"
+        username: l_neto
+    model: auth.user
+    pk: 17
+-   fields:
+        first_name: "Joachim"
+        last_name: "Kirchhoff"
+        username: j_kirchhoff
+    model: auth.user
+    pk: 18
+-   fields:
+        first_name: "Thosten"
+        last_name: "Dylla"
+        username: th_dylla
+    model: auth.user
+    pk: 19
+-   fields:
+        first_name: "Yong"
+        last_name: "Feng"
+        username: y_feng
+    model: auth.user
+    pk: 20
+-   fields:
+        first_name: "Oleksandr"
+        last_name: "Astakhov"
+        username: o_astakhov
+    model: auth.user
+    pk: 21
+-   fields:
+        first_name: "Steve"
+        last_name: "Reynolds"
+        username: s_reynolds
+    model: auth.user
+    pk: 22
+-   fields:
+        first_name: "Chandan"
+        last_name: "Das"
+        username: ch_das
+    model: auth.user
+    pk: 23
+-   fields:
+        first_name: "Thomas"
+        last_name: "Melle"
+        username: th_melle
+    model: auth.user
+    pk: 24
+-   fields:
+        first_name: "Vlad"
+        last_name: "Smirnov"
+        username: v_smirnov
+    model: auth.user
+    pk: 25
+-   fields:
+        first_name: "Michael"
+        last_name: "Scholz"
+        username: m_scholz
+    model: auth.user
+    pk: 26
+-   fields:
+        first_name: "Thomas"
+        last_name: "Grundler"
+        username: th_grundler
+    model: auth.user
+    pk: 27
+-   fields:
+        first_name: "Rebecca"
+        last_name: "van Aubel"
+        username: r_v_aubel
+    model: auth.user
+    pk: 28
+-   fields:
+        first_name: "Lihong"
+        last_name: "Xiao"
+        username: l_xiao
+    model: auth.user
+    pk: 29
+-   fields:
+        first_name: "Joachim"
+        last_name: "Müller"
+        username: j_mueller
+    model: auth.user
+    pk: 30
+-   fields:
+        first_name: "Mathias"
+        last_name: "Krause"
+        username: m_krause
+    model: auth.user
+    pk: 31
