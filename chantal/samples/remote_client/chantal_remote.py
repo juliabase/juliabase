@@ -85,14 +85,14 @@ def logout():
     logging.info("Successfully logged-out.")
 
 def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, timestamp_inaccuracy=None,
-                purpose=None, tags=None, group=None, comments=None):
+                purpose=None, tags=None, group=None, substrate_comments=None):
     samples = connection.open("samples/add/",
                               {"number_of_samples": number_of_samples,
                                "current_location": current_location,
                                "timestamp": timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                                "timestamp_inaccuracy": timestamp_inaccuracy or 0,
                                "substrate": substrate,
-                               "substrate_comments": comments,
+                               "substrate_comments": substrate_comments,
                                "purpose": purpose,
                                "tags": tags,
                                "group": connection.primary_keys["groups"].get(group),
@@ -111,7 +111,6 @@ class SixChamberDeposition(object):
         # FixMe: Assure that sample is in MySamples
         #
         # Returns the deposition number if succeeded
-        date, time = self.timestamp.split(" ")
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
@@ -119,11 +118,11 @@ class SixChamberDeposition(object):
         data = {"number": self.number,
                 "carrier": self.carrier,
                 "operator": connection.primary_keys["users"][self.operator],
-                "timestamp_0": date,
-                "timestamp_1": time,
+                "timestamp": self.timestamp,
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "comments": self.comments,
-                "sample_list": self.sample_ids}
+                "sample_list": self.sample_ids,
+                "remove_deposited_from_my_samples": True}
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
         result = connection.open("6-chamber_depositions/add/", data)
