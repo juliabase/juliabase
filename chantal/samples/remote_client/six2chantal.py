@@ -165,13 +165,15 @@ sample = new_samples(1, u"6-Kammer-Labor", timestamp="%(timestamp)s 12:00:00", t
 deposition = SixChamberDeposition(sample)
 deposition.number = u"%(deposition_number)s"
 deposition.carrier = u"%(carrier)s"
+deposition.operator = u"%(operator)s"
 deposition.comments = u"%(comments)s"
 deposition.timestamp_inaccuracy = 3
 deposition.timestamp = u'%(timestamp)s 13:00:00'
 """ % {"deposition_number": deposition_number,
        "comments": deposition.get("comments", "").replace("\"", "\\\"").replace("\n", "\\n"),
        "timestamp": deposition["date"][:10], "carrier": deposition.get("carrier", ""),
-       "substrate_comments": deposition.get("substrate", "").replace("\"", "\\\"").replace("\n", "\\n")}
+       "substrate_comments": deposition.get("substrate", "").replace("\"", "\\\"").replace("\n", "\\n"),
+       "operator": operators[deposition.get("operator_initials", "AL")]}
     operator_username = operators[deposition.get("operator_initials", "AL")]
     for i, layer_number in enumerate(sorted(deposition["layers"])):
         layer = deposition["layers"][layer_number]

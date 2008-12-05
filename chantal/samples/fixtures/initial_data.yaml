@@ -80,7 +80,7 @@
 -   fields:
         first_name: "Christoph"
         last_name: "Roß"
-        username: ch.ross
+        username: ch_ross
     model: auth.user
     pk: 13
 -   fields:
