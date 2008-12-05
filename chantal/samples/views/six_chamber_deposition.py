@@ -58,18 +58,15 @@ class DepositionForm(form_utils.ProcessForm):
         a non-trivial way, especially those that I have added myself
         (``sample_list`` and ``operator``).
         """
-        deposition = kwargs.get("instance")
-        initial = kwargs.get("initial", {})
-        if deposition:
-            # Mark the samples of the deposition in the choise field
-            initial["sample_list"] = deposition.samples.values_list("pk", flat=True)
-        kwargs["initial"] = initial
         super(DepositionForm, self).__init__(data, **kwargs)
+        deposition = kwargs.get("instance")
         self.is_new = not deposition
         samples = list(user_details.my_samples.all())
         if not self.is_new:
             samples.extend(deposition.samples.all())
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+            self.fields["sample_list"].required = False
+            self.fields["sample_list"].initial = deposition.samples.values_list("pk", flat=True)
         if preset_sample:
             samples.append(preset_sample)
             self.fields["sample_list"].initial = [preset_sample.pk]
