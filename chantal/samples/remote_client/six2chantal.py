@@ -118,14 +118,14 @@ def normalize_quantity(quantity, base_pressure=False):
     if match:
         if not match.group("value") or not match.group("value").strip():
             return u""
-        print quantity
         quantity = match.group("value").strip() + (" " + match.group("unit") if not base_pressure else "")
-        assert quantity != "m"
         return quantity.replace("mBar", "mbar")
     if base_pressure:
         return quantity
     print quantity + " could not be parsed as a quantity"
     return u""
+
+gas_and_dilution = [None, "SiH4", "H2", "PH3+SiH4", "TMB", "B2H6", "CH4", "CO2", "", "GeH4", "Ar", "Si2H6", "PH3"]
 
 depositions = pickle.load(open("6k.pickle", "rb"))
 
@@ -142,11 +142,16 @@ last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dB(?P<number>\d+)$")
 for deposition_number in sorted(depositions):
     if deposition_number == "97B091":
-        deposition_number = "07B091"
-    elif deposition_number == "00B-496":
+        print deposition_number
+        continue
+    elif deposition_number == "00B496":
         depositions[deposition_number]["date"] = "2000-11-15"
-    elif deposition_number == "01B-202":
+    elif deposition_number == "01B202":
         depositions[deposition_number]["date"] = "2001-03-23"
+    elif deposition_number == "04B003":
+        depositions[deposition_number]["date"] = "2004-02-08"
+    elif deposition_number == "06B283":
+        depositions[deposition_number]["date"] = "2006-12-31"
     deposition = depositions[deposition_number]
     match = legacy_deposition_number_pattern.match(deposition_number)
     if not match:
@@ -206,6 +211,17 @@ layer.base_pressure = "%(base_pressure)s"
        "deposition_power": layer.get("deposition_power", ""),
        "base_pressure": normalize_quantity(layer.get("base_pressure"), base_pressure=True),
        }
+        for channel in sorted(layer["channels"], key=lambda x: x["channel_number"]):
+            gas = gas_and_dilution[int(channel["gas_and_dillution"])]
+            if gas:
+                print>>outfile, """channel = SixChamberChannel(layer)
+channel.number = %(number)s
+channel.gas = "%(gas)s"
+channel.flow_rate = "%(flow_rate)s"
+""" % {"number": channel["channel_number"], "gas": gas, "flow_rate": channel.get("flow_rate", "0")}
+            else:
+                print deposition_number, "has empty gas field"
+
 
     print>>outfile, u"""
 deposition_number = deposition.submit()
