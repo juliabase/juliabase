@@ -237,7 +237,7 @@ class AddSamplesForm(forms.Form):
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
     substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
-    substrate_comments = forms.CharField(label=_(u"Substrate comments"), max_length=80, required=False)
+    substrate_comments = forms.CharField(label=_(u"Substrate comments"), required=False)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     timestamp_inaccuracy = forms.IntegerField(required=False)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
