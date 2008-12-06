@@ -27,7 +27,41 @@
                  >{{ related_data.image_file.label }}:</label></td>
       <td class="input" colspan="0">{{ related_data.image_file }}</td>
     </tr>
+    <tr>
+      <td class="label"><label for="id_{{ dimensions.number_of_quantities.html_name }}"
+                 >{% trans 'Number of quantities × values' %}:</label></td>
+      <td class="input" colspan="0">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
+    </tr>
   </table>
+
+  <div style="display: none">{{ previous_dimensions.number_of_quantities }}{{ previous_dimensions.number_of_values }}</div>
+
+  {% if quantities and value_lists %}
+    <table style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 2ex" 
+           cellspacing="0" cellpadding="0">
+      <thead>
+        <tr>
+          {% for quantity in quantities %}
+            <th style=
+                "border-top: solid black 2px; border-bottom: solid black 1px; padding-top: 0.5ex; padding-bottom: 0.5ex"
+                >{{ quantity.quantity }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for value_list in value_lists %}
+          <tr>
+            {% for value in value_list %}
+              <td{% if forloop.parentloop.first or forloop.parentloop.last %}
+                    style="{% if forloop.parentloop.first %}padding-top: 0.5ex; {% endif %}
+                           {% if forloop.parentloop.last %}padding-bottom: 0.5ex; border-bottom: solid black 2px{% endif %}"
+                    {% endif %}>{{ value.value }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 
   {% include "edit_description.html" %}
 

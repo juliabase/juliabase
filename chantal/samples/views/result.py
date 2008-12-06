@@ -83,8 +83,6 @@ class RelatedDataForm(forms.Form):
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
-    number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
-    number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
     def __init__(self, user_details, query_string_dict, old_result, data=None, files=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
@@ -94,9 +92,6 @@ class RelatedDataForm(forms.Form):
         electable sample series, but unallowed series will be rejected by
         `clean` anyway.
         """
-        initial = kwargs.get("initial", {})
-        initial.update({"number_of_quantities": 0, "number_of_values": 0})
-        kwargs["initial"] = initial
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
         self.old_relationships = set(old_result.samples.all()) | set(old_result.sample_series.all()) if old_result else set()
         self.user = user_details.user
@@ -127,8 +122,6 @@ class RelatedDataForm(forms.Form):
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
         self.fields["samples"].set_samples(samples)
         self.fields["image_file"].widget.attrs["size"] = 60
-        self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
-        self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
     def clean(self):
         u"""Global clean method for the related data.  I check whether at least
         one sample or sample series was selected, and whether the user is
@@ -144,6 +137,17 @@ class RelatedDataForm(forms.Form):
             if not samples and not sample_series:
                 form_utils.append_error(self, _(u"You must select at least one samples/series."))
         return self.cleaned_data
+
+class DimensionsForm(forms.Form):
+    _ = ugettext_lazy
+    number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
+    number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
+    def __init__(self, *args, **kwargs):
+        if "initial" not in kwargs:
+            kwargs["initial"] = {"number_of_quantities": 0, "number_of_values": 0}
+        super(DimensionsForm, self).__init__(*args, **kwargs)
+        self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
+        self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
 
 class QuantityForm(forms.Form):
     _ = ugettext_lazy
@@ -165,23 +169,8 @@ def forms_from_database(result, request):
     user_details = utils.get_profile(request.user)
     related_data_form = RelatedDataForm(user_details, query_string_dict, result)
     edit_description_form = form_utils.EditDescriptionForm() if result else None
-    return result_form, related_data_form, edit_description_form, [], []
-
-quantity_prefix_pattern = re.compile(r"(?P<column>\d+)-")
-value_prefix_pattern = re.compile(r"(?P<column>\d+)_(?P<row>\d+)-")
-def find_biggest_prefixes(post_data):
-    quantities_prefixes = set([-1])
-    values_prefixes = set([-1])
-    for name in post_data:
-        match = quantity_prefix_pattern.match(name)
-        if match:
-            quantities_prefixes.add(int(match.group("column")))
-        else:
-            match = value_prefix_pattern.match(name)
-            if match:
-                quantities_prefixes.add(int(match.group("column")))
-                values_prefixes.add(int(match.group("row")))
-    return max(quantities_prefixes) + 1, max(values_prefixes) + 1
+    return result_form, related_data_form, edit_description_form, \
+        DimensionsForm(), DimensionsForm(prefix="previous"), [], []
 
 def forms_from_post_data(result, request):
     post_data = request.POST
@@ -189,10 +178,16 @@ def forms_from_post_data(result, request):
     query_string_dict = utils.parse_query_string(request) if not result else None
     user_details = utils.get_profile(request.user)
     related_data_form = RelatedDataForm(user_details, query_string_dict, result, post_data, request.FILES)
-    found_number_of_quantities, found_number_of_values = find_biggest_prefixes(post_data)
-    if related_data_form.is_valid():
-        number_of_quantities = related_data_form.cleaned_data["number_of_quantities"]
-        number_of_values = related_data_form.cleaned_data["number_of_values"]
+    dimensions_form = DimensionsForm(post_data)
+    previous_dimensions_form = DimensionsForm(post_data, prefix="previous")
+    if previous_dimensions_form.is_valid():
+        found_number_of_quantities = previous_dimensions_form.cleaned_data["number_of_quantities"]
+        found_number_of_values = previous_dimensions_form.cleaned_data["number_of_values"]
+    else:
+        found_number_of_quantities, found_number_of_values = 0, 0
+    if dimensions_form.is_valid():
+        number_of_quantities = dimensions_form.cleaned_data["number_of_quantities"]
+        number_of_values = dimensions_form.cleaned_data["number_of_values"]
         found_number_of_quantities = min(found_number_of_quantities, number_of_quantities)
         found_number_of_values = min(found_number_of_values, number_of_values)
     else:
@@ -211,9 +206,11 @@ def forms_from_post_data(result, request):
                 values.append(ValueForm(prefix="%d_%d" % (i, j)))
         value_form_lists.append(values)
     edit_description_form = form_utils.EditDescriptionForm(post_data) if result else None
-    return result_form, related_data_form, edit_description_form, quantity_forms, value_form_lists
+    return result_form, related_data_form, edit_description_form, dimensions_form, previous_dimensions_form, \
+        quantity_forms, value_form_lists
 
-def is_all_valid(result_form, related_data_form, edit_description_form):
+def is_all_valid(result_form, related_data_form, dimensions_form, previous_dimensions_form,
+                 quantity_forms, value_form_lists, edit_description_form):
     u"""Test whether all bound forms are valid.  This routine guarantees that
     all ``is_valid()`` methods are called, even if the first tested form is
     already invalid.
@@ -222,11 +219,25 @@ def is_all_valid(result_form, related_data_form, edit_description_form):
       - `result_form`: the bound form with the result process
       - `related_data_form`: the bound form with all samples and sample series
         the result should be connected with
+      - `dimensions_form`: the bound form with the number of columns and rows
+        in the result values table
+      - `previous_dimonesions_form`: the bound form with the number of columns
+        and rows from the previous view, in order to see whether they were
+        changed
+      - `quantity_forms`: The (mostly) bound forms of quantities (the column
+        heads in the table).  Those that are newly added are unbound.
+      - `value_form_lists`: The (mostly) bound forms of result values in the
+        table.  Those that are newly added are unbound.  The outer list are the
+        rows, the inner the columns.
       - `edit_description_form`: the bound form with the edit description if
         we're editing an existing result, and ``None`` otherwise
 
     :type result_form: `ResultForm`
     :type related_data_form: `RelatedDataForm`
+    :type dimensions_form: `DimensionsForm`
+    :type previous_dimensions_form: `DimensionsForm`
+    :type quantity_forms: list of `QuantityForm`
+    :type value_form_lists: list of list of `ValueForm`
     :type edit_description_form: `form_utils.EditDescriptionForm` or
       ``NoneType``
 
@@ -237,6 +248,10 @@ def is_all_valid(result_form, related_data_form, edit_description_form):
     """
     all_valid = result_form.is_valid()
     all_valid = related_data_form.is_valid() and all_valid
+    all_valid = dimensions_form.is_valid() and all_valid
+    all_valid = previous_dimensions_form.is_valid() and all_valid
+    all_valid = all([form.is_valid for form in quantity_forms]) and all_valid
+    all_valid = all([all([form.is_valid for form in form_list]) for form_list in value_form_lists]) and all_valid
     if edit_description_form:
         all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
@@ -274,6 +289,16 @@ def is_referentially_valid(result, related_data_form, edit_description_form):
                 edit_description_form, _(u"Adding samples or sample series must be marked as important."), "important")
             referentially_valid = False
     return referentially_valid
+
+def is_structure_changed(dimensions_form, previous_dimensions_form):
+    if dimensions_form.is_valid() and previous_dimensions_form.is_valid():
+        return dimensions_form.cleaned_data["number_of_quantities"] != \
+            previous_dimensions_form.cleaned_data["number_of_quantities"] or \
+            dimensions_form.cleaned_data["number_of_values"] != \
+            previous_dimensions_form.cleaned_data["number_of_values"]
+    else:
+        # In case of doubt, assume that the structure was changed.
+        return True
 
 def save_to_database(request, result, result_form, related_data_form):
     u"""Save the forms to the database.  One peculiarity here is that I still
@@ -335,23 +360,31 @@ def edit(request, process_id):
     if result:
         permissions.assert_can_edit_result_process(request.user, result)
     if request.method == "POST":
-        result_form, related_data_form, edit_description_form, quantity_forms, value_form_lists = \
-            forms_from_post_data(result, request)
-        all_valid = is_all_valid(result_form, related_data_form, edit_description_form)
+        result_form, related_data_form, edit_description_form, dimensions_form, previous_dimensions_form, \
+            quantity_forms, value_form_lists = forms_from_post_data(result, request)
+        all_valid = is_all_valid(result_form, related_data_form, dimensions_form, previous_dimensions_form,
+                                 quantity_forms, value_form_lists, edit_description_form)
         referentially_valid = is_referentially_valid(result, related_data_form, edit_description_form)
-        if all_valid and referentially_valid:
+        structure_changed = is_structure_changed(dimensions_form, previous_dimensions_form)
+        print structure_changed
+        if all_valid and referentially_valid and not structure_changed:
             result = save_to_database(request, result, result_form, related_data_form)
             if result:
                 feed_utils.Reporter(request.user).report_result_process(
                     result, edit_description_form.cleaned_data if edit_description_form else None)
                 return utils.successful_response(request)
+        previous_dimensions_form = DimensionsForm(
+            initial={"number_of_quantities": dimensions_form.cleaned_data["number_of_quantities"],
+                     "number_of_values": dimensions_form.cleaned_data["number_of_values"]}, prefix="previous")
     else:
-        result_form, related_data_form, edit_description_form, quantity_forms, value_form_lists = \
-            forms_from_database(result, request)
+        result_form, related_data_form, edit_description_form, dimensions_form, previous_dimensions_form, \
+            quantity_forms, value_form_lists = forms_from_database(result, request)
     title = _(u"Edit result") if result else _(u"New result")
     return render_to_response("edit_result.html", {"title": title, "result": result_form,
                                                    "related_data": related_data_form,
                                                    "edit_description": edit_description_form,
+                                                   "dimensions": dimensions_form,
+                                                   "previous_dimensions": previous_dimensions_form,
                                                    "quantities": quantity_forms,
                                                    "value_lists": value_form_lists},
                               context_instance=RequestContext(request))
