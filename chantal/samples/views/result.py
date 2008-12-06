@@ -250,8 +250,8 @@ def is_all_valid(result_form, related_data_form, dimensions_form, previous_dimen
     all_valid = related_data_form.is_valid() and all_valid
     all_valid = dimensions_form.is_valid() and all_valid
     all_valid = previous_dimensions_form.is_valid() and all_valid
-    all_valid = all([form.is_valid for form in quantity_forms]) and all_valid
-    all_valid = all([all([form.is_valid for form in form_list]) for form_list in value_form_lists]) and all_valid
+    all_valid = all([form.is_valid() for form in quantity_forms]) and all_valid
+    all_valid = all([all([form.is_valid() for form in form_list]) for form_list in value_form_lists]) and all_valid
     if edit_description_form:
         all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
