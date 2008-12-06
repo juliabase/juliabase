@@ -4,7 +4,7 @@
 u"""Views for editing and creating results (aka result processes).
 """
 
-import datetime, os, shutil
+import datetime, os, shutil, pickle, re
 from django.template import RequestContext
 from django.http import Http404
 import django.forms as forms
@@ -83,6 +83,8 @@ class RelatedDataForm(forms.Form):
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
+    number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
+    number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
     def __init__(self, user_details, query_string_dict, old_result, data=None, files=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
@@ -92,6 +94,9 @@ class RelatedDataForm(forms.Form):
         electable sample series, but unallowed series will be rejected by
         `clean` anyway.
         """
+        initial = kwargs.get("initial", {})
+        initial.update({"number_of_quantities": 0, "number_of_values": 0})
+        kwargs["initial"] = initial
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
         self.old_relationships = set(old_result.samples.all()) | set(old_result.sample_series.all()) if old_result else set()
         self.user = user_details.user
@@ -122,6 +127,8 @@ class RelatedDataForm(forms.Form):
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
         self.fields["samples"].set_samples(samples)
         self.fields["image_file"].widget.attrs["size"] = 60
+        self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
+        self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
     def clean(self):
         u"""Global clean method for the related data.  I check whether at least
         one sample or sample series was selected, and whether the user is
@@ -137,6 +144,74 @@ class RelatedDataForm(forms.Form):
             if not samples and not sample_series:
                 form_utils.append_error(self, _(u"You must select at least one samples/series."))
         return self.cleaned_data
+
+class QuantityForm(forms.Form):
+    _ = ugettext_lazy
+    quantity = forms.CharField(label=_("Quantity name"), max_length=50)
+    def __init__(self, *args, **kwargs):
+        super(QuantityForm, self).__init__(*args, **kwargs)
+        self.fields["quantity"].widget.attrs.update({"size": 10, "style": "font-weight: bold; text-align: center"})
+
+class ValueForm(forms.Form):
+    _ = ugettext_lazy
+    value = forms.CharField(label=_("Value"), max_length=50, required=False)
+    def __init__(self, *args, **kwargs):
+        super(ValueForm, self).__init__(*args, **kwargs)
+        self.fields["value"].widget.attrs.update({"size": 10})
+
+def forms_from_database(result, request):
+    result_form = ResultForm(instance=result)
+    query_string_dict = utils.parse_query_string(request) if not result else None
+    user_details = utils.get_profile(request.user)
+    related_data_form = RelatedDataForm(user_details, query_string_dict, result)
+    edit_description_form = form_utils.EditDescriptionForm() if result else None
+    return result_form, related_data_form, edit_description_form, [], []
+
+quantity_prefix_pattern = re.compile(r"(?P<column>\d+)-")
+value_prefix_pattern = re.compile(r"(?P<column>\d+)_(?P<row>\d+)-")
+def find_biggest_prefixes(post_data):
+    quantities_prefixes = set([-1])
+    values_prefixes = set([-1])
+    for name in post_data:
+        match = quantity_prefix_pattern.match(name)
+        if match:
+            quantities_prefixes.add(int(match.group("column")))
+        else:
+            match = value_prefix_pattern.match(name)
+            if match:
+                quantities_prefixes.add(int(match.group("column")))
+                values_prefixes.add(int(match.group("row")))
+    return max(quantities_prefixes) + 1, max(values_prefixes) + 1
+
+def forms_from_post_data(result, request):
+    post_data = request.POST
+    result_form = ResultForm(post_data, instance=result)
+    query_string_dict = utils.parse_query_string(request) if not result else None
+    user_details = utils.get_profile(request.user)
+    related_data_form = RelatedDataForm(user_details, query_string_dict, result, post_data, request.FILES)
+    found_number_of_quantities, found_number_of_values = find_biggest_prefixes(post_data)
+    if related_data_form.is_valid():
+        number_of_quantities = related_data_form.cleaned_data["number_of_quantities"]
+        number_of_values = related_data_form.cleaned_data["number_of_values"]
+        found_number_of_quantities = min(found_number_of_quantities, number_of_quantities)
+        found_number_of_values = min(found_number_of_values, number_of_values)
+    else:
+        number_of_quantities, number_of_values = found_number_of_quantities, found_number_of_values
+    quantity_forms = []
+    for i in range(number_of_quantities):
+        quantity_forms.append(
+            QuantityForm(post_data, prefix=str(i)) if i < found_number_of_quantities else QuantityForm(prefix=str(i)))
+    value_form_lists = []
+    for j in range(number_of_values):
+        values = []
+        for i in range(number_of_quantities):
+            if i < found_number_of_quantities and j < found_number_of_values:
+                values.append(ValueForm(post_data, prefix="%d_%d" % (i, j)))
+            else:
+                values.append(ValueForm(prefix="%d_%d" % (i, j)))
+        value_form_lists.append(values)
+    edit_description_form = form_utils.EditDescriptionForm(post_data) if result else None
+    return result_form, related_data_form, edit_description_form, quantity_forms, value_form_lists
 
 def is_all_valid(result_form, related_data_form, edit_description_form):
     u"""Test whether all bound forms are valid.  This routine guarantees that
@@ -259,12 +334,9 @@ def edit(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
     if result:
         permissions.assert_can_edit_result_process(request.user, result)
-    query_string_dict = utils.parse_query_string(request) if not result else None
-    user_details = utils.get_profile(request.user)
     if request.method == "POST":
-        result_form = ResultForm(request.POST, instance=result)
-        related_data_form = RelatedDataForm(user_details, query_string_dict, result, request.POST, request.FILES)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST) if result else None
+        result_form, related_data_form, edit_description_form, quantity_forms, value_form_lists = \
+            forms_from_post_data(result, request)
         all_valid = is_all_valid(result_form, related_data_form, edit_description_form)
         referentially_valid = is_referentially_valid(result, related_data_form, edit_description_form)
         if all_valid and referentially_valid:
@@ -274,13 +346,14 @@ def edit(request, process_id):
                     result, edit_description_form.cleaned_data if edit_description_form else None)
                 return utils.successful_response(request)
     else:
-        result_form = ResultForm(instance=result)
-        related_data_form = RelatedDataForm(user_details, query_string_dict, result)
-        edit_description_form = form_utils.EditDescriptionForm() if result else None
+        result_form, related_data_form, edit_description_form, quantity_forms, value_form_lists = \
+            forms_from_database(result, request)
     title = _(u"Edit result") if result else _(u"New result")
     return render_to_response("edit_result.html", {"title": title, "result": result_form,
                                                    "related_data": related_data_form,
-                                                   "edit_description": edit_description_form},
+                                                   "edit_description": edit_description_form,
+                                                   "quantities": quantity_forms,
+                                                   "value_lists": value_form_lists},
                               context_instance=RequestContext(request))
 
 @login_required
