@@ -44,7 +44,7 @@
           {% for quantity in quantities %}
             <th style=
                 "border-top: solid black 2px; border-bottom: solid black 1px; padding-top: 0.5ex; padding-bottom: 0.5ex"
-                >{{ quantity.quantity }}</th>
+                >{% error_list quantity _("Error in quantity") %}{{ quantity.quantity }}</th>
           {% endfor %}
         </tr>
       </thead>
@@ -55,7 +55,7 @@
               <td{% if forloop.parentloop.first or forloop.parentloop.last %}
                     style="{% if forloop.parentloop.first %}padding-top: 0.5ex; {% endif %}
                            {% if forloop.parentloop.last %}padding-bottom: 0.5ex; border-bottom: solid black 2px{% endif %}"
-                    {% endif %}>{{ value.value }}</td>
+                    {% endif %}>{% error_list value _("Error in value") %}{{ value.value }}</td>
             {% endfor %}
           </tr>
         {% endfor %}
