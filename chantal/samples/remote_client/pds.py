@@ -87,7 +87,7 @@ for line in open(database_path):
         pass
 
 for legacy_pds_measurement in pds_measurements:
-    if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].lower() != u"l":
+    if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].upper() not in ["L", "B"]:
         continue
     sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
     if sample_id is not None:
