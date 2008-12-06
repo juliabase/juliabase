@@ -163,181 +163,198 @@ class ValueForm(forms.Form):
         super(ValueForm, self).__init__(*args, **kwargs)
         self.fields["value"].widget.attrs.update({"size": 10})
 
-def forms_from_database(result, request):
-    result_form = ResultForm(instance=result)
-    query_string_dict = utils.parse_query_string(request) if not result else None
-    user_details = utils.get_profile(request.user)
-    related_data_form = RelatedDataForm(user_details, query_string_dict, result)
-    edit_description_form = form_utils.EditDescriptionForm() if result else None
-    return result_form, related_data_form, edit_description_form, \
-        DimensionsForm(), DimensionsForm(prefix="previous"), [], []
-
-def forms_from_post_data(result, request):
-    post_data = request.POST
-    result_form = ResultForm(post_data, instance=result)
-    query_string_dict = utils.parse_query_string(request) if not result else None
-    user_details = utils.get_profile(request.user)
-    related_data_form = RelatedDataForm(user_details, query_string_dict, result, post_data, request.FILES)
-    dimensions_form = DimensionsForm(post_data)
-    previous_dimensions_form = DimensionsForm(post_data, prefix="previous")
-    if previous_dimensions_form.is_valid():
-        found_number_of_quantities = previous_dimensions_form.cleaned_data["number_of_quantities"]
-        found_number_of_values = previous_dimensions_form.cleaned_data["number_of_values"]
-    else:
-        found_number_of_quantities, found_number_of_values = 0, 0
-    if dimensions_form.is_valid():
-        number_of_quantities = dimensions_form.cleaned_data["number_of_quantities"]
-        number_of_values = dimensions_form.cleaned_data["number_of_values"]
-        found_number_of_quantities = min(found_number_of_quantities, number_of_quantities)
-        found_number_of_values = min(found_number_of_values, number_of_values)
-    else:
-        number_of_quantities, number_of_values = found_number_of_quantities, found_number_of_values
-    quantity_forms = []
-    for i in range(number_of_quantities):
-        quantity_forms.append(
-            QuantityForm(post_data, prefix=str(i)) if i < found_number_of_quantities else QuantityForm(prefix=str(i)))
-    value_form_lists = []
-    for j in range(number_of_values):
-        values = []
+class FormSet(object):
+    def __init__(self, request, process_id):
+        self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
+        self.user_details = utils.get_profile(request.user)
+        self.query_string_dict = utils.parse_query_string(request) if not self.result else None
+    def from_database(self):
+        self.result_form = ResultForm(instance=self.result)
+        self.related_data_form = RelatedDataForm(self.user_details, self.query_string_dict, self.result)
+        self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
+        self.dimensions_form = DimensionsForm()
+        self.previous_dimensions_form = DimensionsForm(prefix="previous")
+        self.quantity_forms = self.value_form_lists = ()
+    def from_post_data(self, post_data, post_files):
+        self.result_form = ResultForm(post_data, instance=self.result)
+        self.related_data_form = \
+            RelatedDataForm(self.user_details, self.query_string_dict, self.result, post_data, post_files)
+        self.dimensions_form = DimensionsForm(post_data)
+        self.previous_dimensions_form = DimensionsForm(post_data, prefix="previous")
+        if self.previous_dimensions_form.is_valid():
+            found_number_of_quantities = self.previous_dimensions_form.cleaned_data["number_of_quantities"]
+            found_number_of_values = self.previous_dimensions_form.cleaned_data["number_of_values"]
+        else:
+            found_number_of_quantities, found_number_of_values = 0, 0
+        if self.dimensions_form.is_valid():
+            number_of_quantities = self.dimensions_form.cleaned_data["number_of_quantities"]
+            number_of_values = self.dimensions_form.cleaned_data["number_of_values"]
+            found_number_of_quantities = min(found_number_of_quantities, number_of_quantities)
+            found_number_of_values = min(found_number_of_values, number_of_values)
+        else:
+            number_of_quantities, number_of_values = found_number_of_quantities, found_number_of_values
+        self.quantity_forms = []
         for i in range(number_of_quantities):
-            if i < found_number_of_quantities and j < found_number_of_values:
-                values.append(ValueForm(post_data, prefix="%d_%d" % (i, j)))
+            self.quantity_forms.append(
+                QuantityForm(post_data, prefix=str(i)) if i < found_number_of_quantities else QuantityForm(prefix=str(i)))
+        self.value_form_lists = []
+        for j in range(number_of_values):
+            values = []
+            for i in range(number_of_quantities):
+                if i < found_number_of_quantities and j < found_number_of_values:
+                    values.append(ValueForm(post_data, prefix="%d_%d" % (i, j)))
+                else:
+                    values.append(ValueForm(prefix="%d_%d" % (i, j)))
+            self.value_form_lists.append(values)
+        self.edit_description_form = form_utils.EditDescriptionForm(post_data) if self.result else None
+    def _is_all_valid(self):
+        u"""Test whether all bound forms are valid.  This routine guarantees that
+        all ``is_valid()`` methods are called, even if the first tested form is
+        already invalid.
+
+        :Parameters:
+          - `result_form`: the bound form with the result process
+          - `related_data_form`: the bound form with all samples and sample series
+            the result should be connected with
+          - `dimensions_form`: the bound form with the number of columns and rows
+            in the result values table
+          - `previous_dimonesions_form`: the bound form with the number of columns
+            and rows from the previous view, in order to see whether they were
+            changed
+          - `quantity_forms`: The (mostly) bound forms of quantities (the column
+            heads in the table).  Those that are newly added are unbound.
+          - `value_form_lists`: The (mostly) bound forms of result values in the
+            table.  Those that are newly added are unbound.  The outer list are the
+            rows, the inner the columns.
+          - `edit_description_form`: the bound form with the edit description if
+            we're editing an existing result, and ``None`` otherwise
+
+        :type result_form: `ResultForm`
+        :type related_data_form: `RelatedDataForm`
+        :type dimensions_form: `DimensionsForm`
+        :type previous_dimensions_form: `DimensionsForm`
+        :type quantity_forms: list of `QuantityForm`
+        :type value_form_lists: list of list of `ValueForm`
+        :type edit_description_form: `form_utils.EditDescriptionForm` or
+          ``NoneType``
+
+        :Return:
+          whether all forms are valid
+
+        :rtype: bool
+        """
+        all_valid = self.result_form.is_valid()
+        all_valid = self.related_data_form.is_valid() and all_valid
+        all_valid = self.dimensions_form.is_valid() and all_valid
+        all_valid = self.previous_dimensions_form.is_valid() and all_valid
+        all_valid = all([form.is_valid() for form in self.quantity_forms]) and all_valid
+        all_valid = all([all([form.is_valid() for form in form_list]) for form_list in self.value_form_lists]) and all_valid
+        if self.edit_description_form:
+            all_valid = self.edit_description_form.is_valid() and all_valid
+        return all_valid
+    def _is_referentially_valid(self):
+        u"""Test whether all forms are consistent with each other and with the
+        database.  In particular, I test here whether the “important” checkbox in
+        marked if the user has added new samples or sample series to the result.
+
+        :Parameters:
+          - `result`: the result we're editing, or ``None`` if we're creating a new
+            one
+          - `related_data_form`: the bound form with all samples and sample series
+            the result should be connected with
+          - `edit_description_form`: the bound form with the edit description if
+            we're editing an existing result, and ``None`` otherwise
+
+        :type result: `models.Result` or ``NoneType``
+        :type related_data_form: `RelatedDataForm`
+        :type edit_description_form: `form_utils.EditDescriptionForm` or
+          ``NoneType``
+
+        :Return:
+          whether all forms are consistent with each other and the database
+
+        :rtype: bool
+        """
+        referentially_valid = True
+        if self.result and self.related_data_form.is_valid() and self.edit_description_form.is_valid():
+            old_related_objects = set(self.result.samples.all()) | set(self.result.sample_series.all())
+            new_related_objects = set(self.related_data_form.cleaned_data["samples"] +
+                                      self.related_data_form.cleaned_data["sample_series"])
+            if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
+                form_utils.append_error(
+                    self.edit_description_form, _(u"Adding samples or sample series must be marked as important."),
+                    "important")
+                referentially_valid = False
+        return referentially_valid
+    def _is_structure_changed(self):
+        if self.dimensions_form.is_valid() and self.previous_dimensions_form.is_valid():
+            return self.dimensions_form.cleaned_data["number_of_quantities"] != \
+                self.previous_dimensions_form.cleaned_data["number_of_quantities"] or \
+                self.dimensions_form.cleaned_data["number_of_values"] != \
+                self.previous_dimensions_form.cleaned_data["number_of_values"]
+        else:
+            # In case of doubt, assume that the structure was changed.
+            return True
+    def save_to_database(self, post_files):
+        u"""Save the forms to the database.  One peculiarity here is that I still
+        check validity on this routine, namely whether the uploaded image data is
+        correct.  If it is not, the error is written to the ``result_form`` and the
+        result of this routine is ``None``.
+
+        :Parameters:
+          - `request`: the current HTTP Request object
+          - `result`: the result we're editing, or ``None`` if we're creating a new
+            one
+          - `result_form`: the valid bound form with the result process
+          - `related_data_form`: the valid bound form with all samples and sample
+            series the result should be connected with
+
+        :type request: ``HttpRequest``
+        :type result: `models.Result` or ``NoneType``
+        :type result_form: `ResultForm`
+        :type related_data_form: `RelatedDataForm`
+
+        :Return:
+          the created or updated result instance, or ``None`` if the uploaded image
+          data was invalid
+
+        :rtype: `models.Result` or ``NoneType``
+        """
+        all_valid = self._is_all_valid()
+        referentially_valid = self._is_referentially_valid()
+        structure_changed = self._is_structure_changed()
+        if all_valid and referentially_valid and not structure_changed:
+            if self.result:
+                result = self.result_form.save()
             else:
-                values.append(ValueForm(prefix="%d_%d" % (i, j)))
-        value_form_lists.append(values)
-    edit_description_form = form_utils.EditDescriptionForm(post_data) if result else None
-    return result_form, related_data_form, edit_description_form, dimensions_form, previous_dimensions_form, \
-        quantity_forms, value_form_lists
+                result = self.result_form.save(commit=False)
+                result.operator = self.user_details.user
+                result.timestamp = datetime.datetime.now()
+                result.save()
+            if self.related_data_form.cleaned_data["image_file"]:
+                save_image_file(post_files["image_file"], result, self.related_data_form)
+            if self.related_data_form.is_valid():
+                result.samples = self.related_data_form.cleaned_data["samples"]
+                result.sample_series = self.related_data_form.cleaned_data["sample_series"]
+                return result
+    def update_previous_dimensions_form(self):
+        self.previous_dimensions_form = DimensionsForm(
+            initial={"number_of_quantities": self.dimensions_form.cleaned_data["number_of_quantities"],
+                     "number_of_values": self.dimensions_form.cleaned_data["number_of_values"]}, prefix="previous")
+    def get_context_dict(self):
+        u"""Retrieve the context dictionary to be passed to the template.  This
+        context dictionary contains all forms in an easy-to-use format for the
+        template code.
 
-def is_all_valid(result_form, related_data_form, dimensions_form, previous_dimensions_form,
-                 quantity_forms, value_form_lists, edit_description_form):
-    u"""Test whether all bound forms are valid.  This routine guarantees that
-    all ``is_valid()`` methods are called, even if the first tested form is
-    already invalid.
+        :Return:
+          context dictionary
 
-    :Parameters:
-      - `result_form`: the bound form with the result process
-      - `related_data_form`: the bound form with all samples and sample series
-        the result should be connected with
-      - `dimensions_form`: the bound form with the number of columns and rows
-        in the result values table
-      - `previous_dimonesions_form`: the bound form with the number of columns
-        and rows from the previous view, in order to see whether they were
-        changed
-      - `quantity_forms`: The (mostly) bound forms of quantities (the column
-        heads in the table).  Those that are newly added are unbound.
-      - `value_form_lists`: The (mostly) bound forms of result values in the
-        table.  Those that are newly added are unbound.  The outer list are the
-        rows, the inner the columns.
-      - `edit_description_form`: the bound form with the edit description if
-        we're editing an existing result, and ``None`` otherwise
-
-    :type result_form: `ResultForm`
-    :type related_data_form: `RelatedDataForm`
-    :type dimensions_form: `DimensionsForm`
-    :type previous_dimensions_form: `DimensionsForm`
-    :type quantity_forms: list of `QuantityForm`
-    :type value_form_lists: list of list of `ValueForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm` or
-      ``NoneType``
-
-    :Return:
-      whether all forms are valid
-
-    :rtype: bool
-    """
-    all_valid = result_form.is_valid()
-    all_valid = related_data_form.is_valid() and all_valid
-    all_valid = dimensions_form.is_valid() and all_valid
-    all_valid = previous_dimensions_form.is_valid() and all_valid
-    all_valid = all([form.is_valid() for form in quantity_forms]) and all_valid
-    all_valid = all([all([form.is_valid() for form in form_list]) for form_list in value_form_lists]) and all_valid
-    if edit_description_form:
-        all_valid = edit_description_form.is_valid() and all_valid
-    return all_valid
-
-def is_referentially_valid(result, related_data_form, edit_description_form):
-    u"""Test whether all forms are consistent with each other and with the
-    database.  In particular, I test here whether the “important” checkbox in
-    marked if the user has added new samples or sample series to the result.
-
-    :Parameters:
-      - `result`: the result we're editing, or ``None`` if we're creating a new
-        one
-      - `related_data_form`: the bound form with all samples and sample series
-        the result should be connected with
-      - `edit_description_form`: the bound form with the edit description if
-        we're editing an existing result, and ``None`` otherwise
-
-    :type result: `models.Result` or ``NoneType``
-    :type related_data_form: `RelatedDataForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm` or
-      ``NoneType``
-
-    :Return:
-      whether all forms are consistent with each other and the database
-
-    :rtype: bool
-    """
-    referentially_valid = True
-    if result and related_data_form.is_valid() and edit_description_form.is_valid():
-        old_related_objects = set(result.samples.all()) | set(result.sample_series.all())
-        new_related_objects = set(related_data_form.cleaned_data["samples"] +
-                                  related_data_form.cleaned_data["sample_series"])
-        if new_related_objects - old_related_objects and not edit_description_form.cleaned_data["important"]:
-            form_utils.append_error(
-                edit_description_form, _(u"Adding samples or sample series must be marked as important."), "important")
-            referentially_valid = False
-    return referentially_valid
-
-def is_structure_changed(dimensions_form, previous_dimensions_form):
-    if dimensions_form.is_valid() and previous_dimensions_form.is_valid():
-        return dimensions_form.cleaned_data["number_of_quantities"] != \
-            previous_dimensions_form.cleaned_data["number_of_quantities"] or \
-            dimensions_form.cleaned_data["number_of_values"] != \
-            previous_dimensions_form.cleaned_data["number_of_values"]
-    else:
-        # In case of doubt, assume that the structure was changed.
-        return True
-
-def save_to_database(request, result, result_form, related_data_form):
-    u"""Save the forms to the database.  One peculiarity here is that I still
-    check validity on this routine, namely whether the uploaded image data is
-    correct.  If it is not, the error is written to the ``result_form`` and the
-    result of this routine is ``None``.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `result`: the result we're editing, or ``None`` if we're creating a new
-        one
-      - `result_form`: the valid bound form with the result process
-      - `related_data_form`: the valid bound form with all samples and sample
-        series the result should be connected with
-
-    :type request: ``HttpRequest``
-    :type result: `models.Result` or ``NoneType``
-    :type result_form: `ResultForm`
-    :type related_data_form: `RelatedDataForm`
-
-    :Return:
-      the created or updated result instance, or ``None`` if the uploaded image
-      data was invalid
-
-    :rtype: `models.Result` or ``NoneType``
-    """
-    if result:
-        result_form.save()
-    else:
-        result = result_form.save(commit=False)
-        result.operator = request.user
-        result.timestamp = datetime.datetime.now()
-        result.save()
-    if related_data_form.cleaned_data["image_file"]:
-        save_image_file(request.FILES["image_file"], result, related_data_form)
-    if related_data_form.is_valid():
-        result.samples = related_data_form.cleaned_data["samples"]
-        result.sample_series = related_data_form.cleaned_data["sample_series"]
-        return result
+        :rtype: dict mapping str to various types
+        """
+        return {"result": self.result_form, "related_data": self.related_data_form,
+                "edit_description": self.edit_description_form, "dimensions": self.dimensions_form,
+                "previous_dimensions": self.previous_dimensions_form, "quantities": self.quantity_forms,
+                "value_lists": self.value_form_lists}
 
 @login_required
 def edit(request, process_id):
@@ -356,38 +373,23 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
-    if result:
+    form_set = FormSet(request, process_id)
+    if form_set.result:
         permissions.assert_can_edit_result_process(request.user, result)
     if request.method == "POST":
-        result_form, related_data_form, edit_description_form, dimensions_form, previous_dimensions_form, \
-            quantity_forms, value_form_lists = forms_from_post_data(result, request)
-        all_valid = is_all_valid(result_form, related_data_form, dimensions_form, previous_dimensions_form,
-                                 quantity_forms, value_form_lists, edit_description_form)
-        referentially_valid = is_referentially_valid(result, related_data_form, edit_description_form)
-        structure_changed = is_structure_changed(dimensions_form, previous_dimensions_form)
-        print structure_changed
-        if all_valid and referentially_valid and not structure_changed:
-            result = save_to_database(request, result, result_form, related_data_form)
-            if result:
-                feed_utils.Reporter(request.user).report_result_process(
-                    result, edit_description_form.cleaned_data if edit_description_form else None)
-                return utils.successful_response(request)
-        previous_dimensions_form = DimensionsForm(
-            initial={"number_of_quantities": dimensions_form.cleaned_data["number_of_quantities"],
-                     "number_of_values": dimensions_form.cleaned_data["number_of_values"]}, prefix="previous")
+        form_set.from_post_data(request.POST, request.FILES)
+        result = form_set.save_to_database(request.FILES)
+        if result:
+            feed_utils.Reporter(request.user).report_result_process(
+                result, edit_description_form.cleaned_data if edit_description_form else None)
+            return utils.successful_response(request)
+        form_set.update_previous_dimensions_form()
     else:
-        result_form, related_data_form, edit_description_form, dimensions_form, previous_dimensions_form, \
-            quantity_forms, value_form_lists = forms_from_database(result, request)
-    title = _(u"Edit result") if result else _(u"New result")
-    return render_to_response("edit_result.html", {"title": title, "result": result_form,
-                                                   "related_data": related_data_form,
-                                                   "edit_description": edit_description_form,
-                                                   "dimensions": dimensions_form,
-                                                   "previous_dimensions": previous_dimensions_form,
-                                                   "quantities": quantity_forms,
-                                                   "value_lists": value_form_lists},
-                              context_instance=RequestContext(request))
+        form_set.from_database()
+    title = _(u"Edit result") if form_set.result else _(u"New result")
+    context_dict = {"title": title}
+    context_dict.update(form_set.get_context_dict())
+    return render_to_response("edit_result.html", context_dict, context_instance=RequestContext(request))
 
 @login_required
 def show(request, process_id):

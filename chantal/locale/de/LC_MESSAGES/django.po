@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-02 15:23+0100\n"
-"PO-Revision-Date: 2008-12-02 15:25+0100\n"
+"POT-Creation-Date: 2008-12-06 16:23+0100\n"
+"PO-Revision-Date: 2008-12-06 16:25+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -154,6 +154,9 @@ msgstr "Probenspaltung"
 
 msgid "sample splits"
 msgstr "Probenspaltungen"
+
+msgid "custom"
+msgstr "speziell"
 
 msgid "ASAHI-U"
 msgstr "ASAHI-U"
@@ -386,17 +389,17 @@ msgstr "6-Kammer-Deposition"
 msgid "6-chamber layers"
 msgstr "6-Kammer-Schichten"
 
-msgid "PH₃ in 2% SiH₄"
-msgstr "PH₃ in 2% SiH₄"
+msgid "2% PH₃ in SiH₄"
+msgstr "2% PH₃ in SiH₄"
 
-msgid "TMB in 1% He"
-msgstr "TMB in 1% He"
+msgid "1% TMB in He"
+msgstr "1% TMB in He"
 
-msgid "B₂H₆ in 5ppm H₂"
-msgstr "B₂H₆ in 5ppm H₂"
+msgid "5ppm B₂H₆ in H₂"
+msgstr "5ppm B₂H₆ in H₂"
 
-msgid "PH₃ in 10 ppm H₂"
-msgstr "PH₃ in 10 ppm H₂"
+msgid "10 ppm PH₃ in H₂"
+msgstr "10 ppm PH₃ in H₂"
 
 msgid "channel"
 msgstr "Channel"
@@ -1287,6 +1290,18 @@ msgstr ""
 msgid "You must select at least one samples/series."
 msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 
+msgid "Number of quantities"
+msgstr "Anzahl der Messgrößen"
+
+msgid "Number of values"
+msgstr "Anzahl der Werte"
+
+msgid "Quantity name"
+msgstr "Meßgrößen-Name"
+
+msgid "Value"
+msgstr "Wert"
+
 msgid "Adding samples or sample series must be marked as important."
 msgstr ""
 "Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert "
@@ -1944,6 +1959,9 @@ msgstr "(Einmal gesetzt, kann es nie mehr geändert werden.)"
 
 msgid "Error in result"
 msgstr "Fehler im Ergebnis"
+
+msgid "Number of quantities × values"
+msgstr "Anzahl der Messgrößen × Werte"
 
 msgid "Error in sample series"
 msgstr "Fehler in Probenserie"
