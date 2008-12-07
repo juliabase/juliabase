@@ -8,7 +8,7 @@ here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
-import hashlib, os.path, shutil, subprocess
+import hashlib, os.path, shutil, subprocess, pickle
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -583,6 +583,8 @@ class Result(Process):
         if permissions.has_permission_to_edit_result_process(process_context.user, self):
             result["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+        if self.quantities_and_values:
+            result["quantities"], result["value_lists"] = pickle.loads(str(self.quantities_and_values))
         return result
     class Meta:
         verbose_name = _(u"result")

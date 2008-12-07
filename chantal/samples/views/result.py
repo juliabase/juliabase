@@ -185,10 +185,12 @@ class FormSet(object):
             quantities, values = [], []
         self.dimensions_form = DimensionsForm(initial={"number_of_quantities": len(quantities),
                                                        "number_of_values": len(values)})
-        self.quantity_forms = [QuantityForm(initial={"quantity": quantity}) for quantity in quantities]
+        self.quantity_forms = [QuantityForm(initial={"quantity": quantity}, prefix=str(i))
+                               for i, quantity in enumerate(quantities)]
         self.value_form_lists = []
-        for value_list in values:
-            self.value_form_lists.append([ValueForm(initial={"value": value}) for value in value_list])
+        for j, value_list in enumerate(values):
+            self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="%d_%d" % (i, j))
+                                          for i, value in enumerate(value_list)])
     def from_post_data(self, post_data, post_files):
         self.result_form = ResultForm(post_data, instance=self.result)
         self.related_data_form = \
