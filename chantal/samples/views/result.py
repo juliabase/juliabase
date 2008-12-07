@@ -314,7 +314,7 @@ class FormSet(object):
     def serialize_quantities_and_values(self):
         result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
             [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
-        return pickle.dumps(result)
+        return pickle.dumps(result, protocol=0)
     def save_to_database(self, post_files):
         u"""Save the forms to the database.  One peculiarity here is that I still
         check validity on this routine, namely whether the uploaded image data is
