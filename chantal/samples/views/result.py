@@ -143,11 +143,15 @@ class DimensionsForm(forms.Form):
     number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
     number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
     def __init__(self, *args, **kwargs):
-        if "initial" not in kwargs:
-            kwargs["initial"] = {"number_of_quantities": 0, "number_of_values": 0}
         super(DimensionsForm, self).__init__(*args, **kwargs)
         self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
         self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if "number_of_quantities" in cleaned_data and "number_of_values" in cleaned_data:
+            if cleaned_data["number_of_quantities"] == 0 or cleaned_data["number_of_values"] == 0:
+                cleaned_data["number_of_quantities"] = cleaned_data["number_of_values"] = 0
+        return cleaned_data
 
 class QuantityForm(forms.Form):
     _ = ugettext_lazy
@@ -155,6 +159,9 @@ class QuantityForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(QuantityForm, self).__init__(*args, **kwargs)
         self.fields["quantity"].widget.attrs.update({"size": 10, "style": "font-weight: bold; text-align: center"})
+    def clean_quantity(self):
+        quantity = u" ".join(self.cleaned_data["quantity"].split())
+        return utils.substitute_html_entities(quantity)
 
 class ValueForm(forms.Form):
     _ = ugettext_lazy
@@ -172,9 +179,16 @@ class FormSet(object):
         self.result_form = ResultForm(instance=self.result)
         self.related_data_form = RelatedDataForm(self.user_details, self.query_string_dict, self.result)
         self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
-        self.dimensions_form = DimensionsForm()
-        self.previous_dimensions_form = DimensionsForm(prefix="previous")
-        self.quantity_forms = self.value_form_lists = ()
+        if self.result and self.result.quantities_and_values:
+            quantities, values = pickle.loads(str(self.result.quantities_and_values))
+        else:
+            quantities, values = [], []
+        self.dimensions_form = DimensionsForm(initial={"number_of_quantities": len(quantities),
+                                                       "number_of_values": len(values)})
+        self.quantity_forms = [QuantityForm(initial={"quantity": quantity}) for quantity in quantities]
+        self.value_form_lists = []
+        for value_list in values:
+            self.value_form_lists.append([ValueForm(initial={"value": value}) for value in value_list])
     def from_post_data(self, post_data, post_files):
         self.result_form = ResultForm(post_data, instance=self.result)
         self.related_data_form = \
@@ -295,6 +309,10 @@ class FormSet(object):
         else:
             # In case of doubt, assume that the structure was changed.
             return True
+    def serialize_quantities_and_values(self):
+        result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
+            [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
+        return pickle.dumps(result)
     def save_to_database(self, post_files):
         u"""Save the forms to the database.  One peculiarity here is that I still
         check validity on this routine, namely whether the uploaded image data is
@@ -330,7 +348,8 @@ class FormSet(object):
                 result = self.result_form.save(commit=False)
                 result.operator = self.user_details.user
                 result.timestamp = datetime.datetime.now()
-                result.save()
+            result.quantities_and_values = self.serialize_quantities_and_values()
+            result.save()
             if self.related_data_form.cleaned_data["image_file"]:
                 save_image_file(post_files["image_file"], result, self.related_data_form)
             if self.related_data_form.is_valid():
@@ -339,8 +358,8 @@ class FormSet(object):
                 return result
     def update_previous_dimensions_form(self):
         self.previous_dimensions_form = DimensionsForm(
-            initial={"number_of_quantities": self.dimensions_form.cleaned_data["number_of_quantities"],
-                     "number_of_values": self.dimensions_form.cleaned_data["number_of_values"]}, prefix="previous")
+            initial={"number_of_quantities": len(self.quantity_forms), "number_of_values": len(self.value_form_lists)},
+                     prefix="previous")
     def get_context_dict(self):
         u"""Retrieve the context dictionary to be passed to the template.  This
         context dictionary contains all forms in an easy-to-use format for the
@@ -375,17 +394,17 @@ def edit(request, process_id):
     """
     form_set = FormSet(request, process_id)
     if form_set.result:
-        permissions.assert_can_edit_result_process(request.user, result)
+        permissions.assert_can_edit_result_process(request.user, form_set.result)
     if request.method == "POST":
         form_set.from_post_data(request.POST, request.FILES)
         result = form_set.save_to_database(request.FILES)
         if result:
             feed_utils.Reporter(request.user).report_result_process(
-                result, edit_description_form.cleaned_data if edit_description_form else None)
+                result, form_set.edit_description_form.cleaned_data if form_set.edit_description_form else None)
             return utils.successful_response(request)
-        form_set.update_previous_dimensions_form()
     else:
         form_set.from_database()
+    form_set.update_previous_dimensions_form()
     title = _(u"Edit result") if form_set.result else _(u"New result")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())

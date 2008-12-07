@@ -466,6 +466,7 @@ class Result(Process):
     """
     title = models.CharField(_(u"title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
+    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in Python pickle format"))
     def __unicode__(self):
         _ = ugettext
         try:
