@@ -251,7 +251,7 @@ def by_id(request, sample_id, path_suffix):
     query_string = request.META["QUERY_STRING"] or u""
     return utils.HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
-        ("?" + query_string) if query_string else u"")
+        ("?" + query_string if query_string else u""))
     
 class AddSamplesForm(forms.Form):
     u"""Form for adding new samples.
