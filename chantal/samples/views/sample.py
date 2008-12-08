@@ -108,13 +108,13 @@ def edit(request, sample_name):
                 feed_reporter.report_changed_sample_group([sample], old_group, edit_description_form.cleaned_data)
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
             return utils.successful_response(request,
-                                             _(u"Sample %s was successfully changed in the database.") % sample.name,
+                                             _(u"Sample %s was successfully changed in the database.") % sample,
                                              sample.get_absolute_url())
     else:
         sample_form = SampleForm(instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample.name,
-                                                   "sample_name": sample.name, "sample": sample_form,
+    return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample,
+                                                   "sample": sample_form,
                                                    "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
@@ -199,13 +199,13 @@ def show(request, sample_name, sample_id=None):
                 if is_remote_client:
                     return utils.respond_to_remote_client(True)
                 else:
-                    request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample.name
+                    request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample
             else:
                 user_details.my_samples.remove(sample)
                 if is_remote_client:
                     return utils.respond_to_remote_client(True)
                 else:
-                    request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample.name
+                    request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample
     else:
         is_my_sample_form = IsMySampleForm(
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
