@@ -32,7 +32,7 @@ def save_image_file(image_data, result, related_data_form):
         uploaded.  This is only needed to dumping error messages into it if
         something went wrong.
 
-    :type image_data: ``django.core.files.uploadedfile.InMemoryUploadedFile``
+    :type image_data: ``django.core.files.uploadedfile.UploadedFile``
     :type result: `models.Result`
     :type related_data_form: `RelatedDataForm`
     """
