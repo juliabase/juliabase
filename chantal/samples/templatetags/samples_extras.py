@@ -186,7 +186,6 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         text.
 
     """
-    # anchor_type may be "http", "mailto", or "plain".
     if not isinstance(user, django.contrib.auth.models.User):
         return u""
     full_name = chantal.samples.views.utils.get_really_full_name(user)
