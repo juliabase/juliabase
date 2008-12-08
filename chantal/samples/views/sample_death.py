@@ -78,6 +78,6 @@ def new(request, sample_name):
                                              "show_sample_by_name", {"sample_name": sample_name})
     else:
         sample_death_form = SampleDeathForm(sample)
-    return render_to_response("edit_sample_death.html", {"title": _(u"Kill sample “%s”") % sample.name,
+    return render_to_response("edit_sample_death.html", {"title": _(u"Kill sample “%s”") % sample,
                                                          "sample_death": sample_death_form},
                               context_instance=RequestContext(request))

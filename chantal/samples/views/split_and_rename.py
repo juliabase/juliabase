@@ -278,13 +278,13 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
             feed_utils.Reporter(request.user).report_sample_split(
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
-                request, _(u"Sample “%s” was successfully split.") % parent.name,
+                request, _(u"Sample “%s” was successfully split.") % parent,
                 "show_sample_by_name", {"sample_name": parent.name}, remote_client_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
-    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent.name,
+    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent,
                                                         "new_names": zip(range(number_of_old_pieces+1,
                                                                                number_of_old_pieces+1+len(new_name_forms)),
                                                                          new_name_forms),
