@@ -270,8 +270,10 @@ class FormSet(object):
         return all_valid
     def _is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
-        database.  In particular, I test here whether the “important” checkbox in
-        marked if the user has added new samples or sample series to the result.
+        database.  In particular, I test here whether the “important” checkbox
+        in marked if the user has added new samples or sample series to the
+        result.  I also assure that no two quantities in the result table
+        (i.e., the column headings) are the same.
 
         :Parameters:
           - `result`: the result we're editing, or ``None`` if we're creating a new
@@ -301,6 +303,14 @@ class FormSet(object):
                     self.edit_description_form, _(u"Adding samples or sample series must be marked as important."),
                     "important")
                 referentially_valid = False
+        quantities = set()
+        for quantity_form in self.quantity_forms:
+            if quantity_form.is_valid():
+                quantity = quantity_form.cleaned_data["quantity"]
+                if quantity in quantities:
+                    form_utils.append_error(quantity_form, _(u"This quantity is already used in this table."), "quantity")
+                else:
+                    quantities.add(quantity)
         return referentially_valid
     def _is_structure_changed(self):
         if self.dimensions_form.is_valid() and self.previous_dimensions_form.is_valid():
