@@ -494,6 +494,7 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
+            # FixMe: Feed entries
             return deposition
     def get_context_dict(self):
         u"""Retrieve the context dictionary to be passed to the template.  This
