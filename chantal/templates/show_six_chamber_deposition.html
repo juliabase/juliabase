@@ -95,7 +95,7 @@
                             {% for channel in channels %}
                             <tr>
                               <td>{{ channel.number }}</td>
-                              <td>{{ channel.get_gas_display|chem_markup }}</td>
+                              <td>{{ channel.get_gas_display }}</td>
                               <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
                             </tr>
                             {% endfor %}

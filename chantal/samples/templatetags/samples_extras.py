@@ -20,31 +20,6 @@ import chantal.samples.views.utils
 register = template.Library()
 
 @register.filter
-@stringfilter
-def chem_markup(chemical_formula, autoescape=False):
-    u"""Filter for pretty-printing of chemical formula.  It just puts numbers
-    in subscripts.  Thus, H2O becoms H₂O.
-    """
-    if autoescape:
-        chemical_formula = conditional_escape(chemical_formula)
-    result = u""
-    i = 0
-    while i < len(chemical_formula):
-        if i > 0 and chemical_formula[i] in string.digits and chemical_formula[i-1] in string.ascii_letters:
-            result += "<sub>"
-            while True:
-                result += chemical_formula[i]
-                i += 1
-                if i >= len(chemical_formula) or chemical_formula[i] not in string.digits:
-                    break
-            result += "</sub>"
-        else:
-            result += chemical_formula[i]
-            i += 1
-    return mark_safe(result)
-chem_markup.needs_autoescape = True
-
-@register.filter
 def quantity(value, unit=None, autoescape=False):
     u"""Filter for pretty-printing a physical quantity.  It converts 3.4e-3
     into 3.4·10⁻³.  The number is the part that is actually filtered, while the
