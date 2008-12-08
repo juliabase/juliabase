@@ -312,7 +312,7 @@ class Sample(models.Model):
     @models.permalink
     def get_absolute_url(self):
         if self.name.startswith("*"):
-            return ("show_sample_by_id", (), {"sample_id": str(self.pk)})
+            return ("show_sample_by_id", (), {"sample_id": str(self.pk), "path_suffix": ""})
         else:
             return ("show_sample_by_name", [urlquote(self.name, safe="")])
     def is_dead(self):

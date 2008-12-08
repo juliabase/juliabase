@@ -226,6 +226,33 @@ def show(request, sample_name, sample_id=None):
                                                    "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))
 
+@login_required
+def by_id(request, sample_id, path_suffix):
+    u"""Pure re-direct view in case a sample is accessed by ID instead of by
+    name.  It redirects to the URL with the name.  The query string, if given,
+    is passed, too.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_id`: the numberic ID of the sample
+      - `path_suffix`: the trailing path, e.g. ``"/split/"``; if you just view
+        a sample, it is empty (or only the query string)
+
+    :type request: ``HttpRequest``
+    :type sample_id: unicode
+    :type path_suffix: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
+    query_string = request.META["QUERY_STRING"] or u""
+    return utils.HttpResponseSeeOther(
+        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
+        ("?" + query_string) if query_string else u"")
+    
 class AddSamplesForm(forms.Form):
     u"""Form for adding new samples.
 
@@ -383,7 +410,7 @@ def add_process(request, sample_name):
     for process in general_processes:
         process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())
     return render_to_response("add_process.html",
-                              {"title": _(u"Add process to sample “%s”") % sample.name,
+                              {"title": _(u"Add process to sample “%s”") % sample,
                                "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
 
