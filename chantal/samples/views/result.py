@@ -140,6 +140,17 @@ class RelatedDataForm(forms.Form):
         return self.cleaned_data
 
 class DimensionsForm(forms.Form):
+    u"""Model form for the number of quantities and values per quantity in the
+    result values table.  In other words, it is the number or columns
+    (``number_of_quantities``) and the number or rows (``number_of_values``) in
+    this table.
+
+    This form class is also used for the hidden ``previous_dimensions_form``.
+    It contains the values set *before* the user made his input.  Thus, one can
+    decide easily whether the user has changed something, plus one can easily
+    read-in the table value given by the user.  (The table had the previous
+    dimensions after all.)
+    """
     _ = ugettext_lazy
     number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
     number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
@@ -148,6 +159,9 @@ class DimensionsForm(forms.Form):
         self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
         self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
     def clean(self):
+        u"""If one of the two dimensions is set to zero, the other is set to
+        zero, too.
+        """
         cleaned_data = self.cleaned_data
         if "number_of_quantities" in cleaned_data and "number_of_values" in cleaned_data:
             if cleaned_data["number_of_quantities"] == 0 or cleaned_data["number_of_values"] == 0:
@@ -155,6 +169,11 @@ class DimensionsForm(forms.Form):
         return cleaned_data
 
 class QuantityForm(forms.Form):
+    u"""Form for one quantity field (i.e., one heading in the result values
+    table).  All HTML entities in it are immediately converted to their unicode
+    pendant (i.e., the conversion is not delayed until display, as with
+    Markdown content).  Furthermore, all whitespace is normalised.
+    """
     _ = ugettext_lazy
     quantity = forms.CharField(label=_("Quantity name"), max_length=50)
     def __init__(self, *args, **kwargs):
@@ -165,6 +184,11 @@ class QuantityForm(forms.Form):
         return utils.substitute_html_entities(quantity)
 
 class ValueForm(forms.Form):
+    u"""Form for one value entry in the result values table.  Note that this is
+    a pure unicode field and not a number field, so you may enter whatever you
+    like here.  Whitespace is not normalised, and no other conversion takes
+    place.
+    """
     _ = ugettext_lazy
     value = forms.CharField(label=_("Value"), max_length=50, required=False)
     def __init__(self, *args, **kwargs):
@@ -172,11 +196,66 @@ class ValueForm(forms.Form):
         self.fields["value"].widget.attrs.update({"size": 10})
 
 class FormSet(object):
+    u"""Class for holding all forms of the result views, and for all methods
+    working on these forms.  The main advantage of putting all this into a big
+    class is to avoid long parameter and return tuples because one can use
+    instance attributes instead.
+
+    :ivar result: the result to be edited.  If it is ``None``, we create a new
+      one.  This is very important because testing ``result`` is the only way
+      to distinguish between editing or creating.
+
+    :ivar result_form: the form with the result process
+      
+    :ivar related_data_form: the form with all samples and sample series the
+      result should be connected with
+
+    :ivar dimensions_form: the form with the number of columns and rows in the
+      result values table
+
+    :ivar previous_dimonesions_form: the form with the number of columns and
+      rows from the previous view, in order to see whether they were changed
+
+    :ivar quantity_forms: The (mostly) bound forms of quantities (the column
+      heads in the table).  Those that are newly added are unbound.  (In case
+      of a GET method, all are unbound of course.)
+
+    :ivar value_form_lists: The (mostly) bound forms of result values in the
+      table.  Those that are newly added are unbound.  The outer list are the
+      rows, the inner the columns.  (In case of a GET method, all are unbound
+      of course.)
+
+    :ivar edit_description_form: the bound form with the edit description if
+      we're editing an existing result, and ``None`` otherwise
+
+    :type result: `models.Result` or ``NoneType``
+    :type result_form: `ResultForm`
+    :type related_data_form: `RelatedDataForm`
+    :type dimensions_form: `DimensionsForm`
+    :type previous_dimensions_form: `DimensionsForm`
+    :type quantity_forms: list of `QuantityForm`
+    :type value_form_lists: list of list of `ValueForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm` or
+      ``NoneType``
+    """
     def __init__(self, request, process_id):
+        u"""Class constructor.
+        
+        :Parameters:
+          - `request`: the current HTTP Request object
+          - `process_id`: the ID of the result to be edited; ``None`` if we
+            create a new one
+
+        :type request: ``HttpRequest``
+        :type process_id: unicode or ``NoneType``
+        """
         self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
         self.user_details = utils.get_profile(request.user)
         self.query_string_dict = utils.parse_query_string(request) if not self.result else None
     def from_database(self):
+        u"""Generate all forms from the database.  This is called when the HTTP
+        GET method was sent with the request.
+        """
         self.result_form = ResultForm(instance=self.result)
         self.related_data_form = RelatedDataForm(self.user_details, self.query_string_dict, self.result)
         self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
@@ -193,6 +272,18 @@ class FormSet(object):
             self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="%d_%d" % (i, j))
                                           for i, value in enumerate(value_list)])
     def from_post_data(self, post_data, post_files):
+        u"""Generate all forms from the database.  This is called when the HTTP
+        POST method was sent with the request.
+
+        :Parameters:
+          - `post_data`:  The post data submitted via HTTP.  It is the result
+            of ``request.POST``.
+          - `post_files`: The file data submitted via HTTP.  It is the result
+            of ``request.FILES``.
+
+        :type post_data: ``django.http.QueryDict``
+        :type post_files: ``django.utils.datastructures.MultiValueDict``
+        """
         self.result_form = ResultForm(post_data, instance=self.result)
         self.related_data_form = \
             RelatedDataForm(self.user_details, self.query_string_dict, self.result, post_data, post_files)
@@ -229,32 +320,6 @@ class FormSet(object):
         all ``is_valid()`` methods are called, even if the first tested form is
         already invalid.
 
-        :Parameters:
-          - `result_form`: the bound form with the result process
-          - `related_data_form`: the bound form with all samples and sample series
-            the result should be connected with
-          - `dimensions_form`: the bound form with the number of columns and rows
-            in the result values table
-          - `previous_dimonesions_form`: the bound form with the number of columns
-            and rows from the previous view, in order to see whether they were
-            changed
-          - `quantity_forms`: The (mostly) bound forms of quantities (the column
-            heads in the table).  Those that are newly added are unbound.
-          - `value_form_lists`: The (mostly) bound forms of result values in the
-            table.  Those that are newly added are unbound.  The outer list are the
-            rows, the inner the columns.
-          - `edit_description_form`: the bound form with the edit description if
-            we're editing an existing result, and ``None`` otherwise
-
-        :type result_form: `ResultForm`
-        :type related_data_form: `RelatedDataForm`
-        :type dimensions_form: `DimensionsForm`
-        :type previous_dimensions_form: `DimensionsForm`
-        :type quantity_forms: list of `QuantityForm`
-        :type value_form_lists: list of list of `ValueForm`
-        :type edit_description_form: `form_utils.EditDescriptionForm` or
-          ``NoneType``
-
         :Return:
           whether all forms are valid
 
@@ -275,19 +340,6 @@ class FormSet(object):
         in marked if the user has added new samples or sample series to the
         result.  I also assure that no two quantities in the result table
         (i.e., the column headings) are the same.
-
-        :Parameters:
-          - `result`: the result we're editing, or ``None`` if we're creating a new
-            one
-          - `related_data_form`: the bound form with all samples and sample series
-            the result should be connected with
-          - `edit_description_form`: the bound form with the edit description if
-            we're editing an existing result, and ``None`` otherwise
-
-        :type result: `models.Result` or ``NoneType``
-        :type related_data_form: `RelatedDataForm`
-        :type edit_description_form: `form_utils.EditDescriptionForm` or
-          ``NoneType``
 
         :Return:
           whether all forms are consistent with each other and the database
@@ -314,6 +366,15 @@ class FormSet(object):
                     quantities.add(quantity)
         return referentially_valid
     def _is_structure_changed(self):
+        u"""Check whether the structure was changed by the user, i.e. whether
+        the table dimensions were changed.  (In this case, the view has to be
+        re-displayed instead of being written to the database.)
+
+        :Return:
+          whether the dimensions of the result values table were changed
+
+        :rtype: bool
+        """
         if self.dimensions_form.is_valid() and self.previous_dimensions_form.is_valid():
             return self.dimensions_form.cleaned_data["number_of_quantities"] != \
                 self.previous_dimensions_form.cleaned_data["number_of_quantities"] or \
@@ -321,33 +382,39 @@ class FormSet(object):
                 self.previous_dimensions_form.cleaned_data["number_of_values"]
         else:
             # In case of doubt, assume that the structure was changed.
+            # Actually, this should never happen unless the browser is broken.
             return True
     def serialize_quantities_and_values(self):
+        u"""Serialise the result table data (quantities and values) to a string
+        which is ready to be written to the database.  See
+        `models.Result.quantities_and_values` for further information.
+
+        :Return:
+          the serialised result values table, as an ASCII-only string
+
+        :rtype: str
+        """
         result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
             [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
         return pickle.dumps(result, protocol=0)
     def save_to_database(self, post_files):
-        u"""Save the forms to the database.  One peculiarity here is that I still
-        check validity on this routine, namely whether the uploaded image data is
-        correct.  If it is not, the error is written to the ``result_form`` and the
-        result of this routine is ``None``.
+        u"""Save the forms to the database.  One peculiarity here is that I
+        still check validity on this routine, namely whether the uploaded image
+        data is correct.  If it is not, the error is written to the
+        ``result_form`` and the result of this routine is ``None``.  I also
+        check all other types of validity, and whether the structure was
+        changed (i.e., the dimensions of the result values table were changed).
 
         :Parameters:
-          - `request`: the current HTTP Request object
-          - `result`: the result we're editing, or ``None`` if we're creating a new
-            one
-          - `result_form`: the valid bound form with the result process
-          - `related_data_form`: the valid bound form with all samples and sample
-            series the result should be connected with
+          - `post_files`: The file data submitted via HTTP.  It is the result
+            of ``request.FILES``.
 
-        :type request: ``HttpRequest``
-        :type result: `models.Result` or ``NoneType``
-        :type result_form: `ResultForm`
-        :type related_data_form: `RelatedDataForm`
+        :type post_files: ``django.utils.datastructures.MultiValueDict``
 
         :Return:
-          the created or updated result instance, or ``None`` if the uploaded image
-          data was invalid
+          the created or updated result instance, or ``None`` if the data
+          couldn't yet be written to the database, but the view has to be
+          re-displayed
 
         :rtype: `models.Result` or ``NoneType``
         """
@@ -370,6 +437,9 @@ class FormSet(object):
                 result.sample_series = self.related_data_form.cleaned_data["sample_series"]
                 return result
     def update_previous_dimensions_form(self):
+        u"""Set the form with the previous dimensions to the currently set
+        dimensions.
+        """
         self.previous_dimensions_form = DimensionsForm(
             initial={"number_of_quantities": len(self.quantity_forms), "number_of_values": len(self.value_form_lists)},
                      prefix="previous")

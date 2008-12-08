@@ -259,10 +259,11 @@ def markdown(value):
     at least Python Markdown 1.7 or later so that this works.
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
-    `substitute_html_entities`.  This creates a mild escaping problem.
-    ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.  It can only be
-    solved by getting python-markdown to replace the entities, however, I can't
-    easily do that without allowing HTML tags, too.
+    `chantal.samples.views.utils.substitute_html_entities`.  This creates a
+    mild escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of
+    ``\&amp;``.  It can only be solved by getting python-markdown to replace
+    the entities, however, I can't easily do that without allowing HTML tags,
+    too.
     """
     value = escape(chantal.samples.views.utils.substitute_html_entities(unicode(value)))
     position = 0
