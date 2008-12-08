@@ -36,7 +36,7 @@ class HttpResponseSeeOther(HttpResponse):
 
 old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 new_sample_name_pattern = re.compile(r"\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})-[-A-Za-z_/0-9]+$")
-provisional_sample_name_pattern = re.compile(r"\*\d+")
+provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)")
 def sample_name_format(name):
     u"""Determines which sample name format the given name has.
 
@@ -380,7 +380,9 @@ class AmbiguityException(Exception):
 def lookup_sample(sample_name, request):
     u"""Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
-    to view it.  If not, it raises an exception.
+    to view it.  Shortened provisional names like “*2” are also found.  If
+    nothing is found or the permissions are not sufficient, it raises an
+    exception.
 
     :Parameters:
       - `sample_name`: name of the sample
@@ -400,6 +402,9 @@ def lookup_sample(sample_name, request):
       - `permissions.PermissionError`: if the user is not allowed to view the
         sample
     """
+    match = provisional_sample_name_pattern.match(sample_name)
+    if match:
+        sample_name = "*%05d" % int(match.group("id"))
     sample = get_sample(sample_name)
     if not sample:
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
