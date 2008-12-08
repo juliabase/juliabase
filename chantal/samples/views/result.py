@@ -72,7 +72,8 @@ class ResultForm(form_utils.ProcessForm):
         self.fields["title"].widget.attrs["size"] = 40
     class Meta:
         model = models.Result
-        exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type")
+        exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type",
+                   "quantities_and_values")
 
 class RelatedDataForm(forms.Form):
     u"""Form for samples, sample series, and the image connected with this

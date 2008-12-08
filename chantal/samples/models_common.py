@@ -318,7 +318,7 @@ class Sample(models.Model):
     def is_dead(self):
         return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
     def last_process_if_split(self):
-        u"""Test wheter the most recent process applied to the sample – except
+        u"""Test whether the most recent process applied to the sample – except
         for result processes – was a split.
 
         :Return:
