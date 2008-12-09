@@ -53,7 +53,7 @@ def quantity(value, unit=None, autoescape=False):
     if unit:
         result += "&nbsp;" + unit
     return mark_safe(result)
-chem_markup.needs_autoescape = True
+quantity.needs_autoescape = True
 
 @register.filter
 def fancy_bool(boolean):
