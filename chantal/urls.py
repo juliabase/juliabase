@@ -69,6 +69,8 @@ urlpatterns = patterns("",
 
                        url(r"^large-area_depositions/add/$", "samples.views.large_area_deposition.edit",
                            {"deposition_number": None}, "add_large-area_deposition"),
+                       (r"^large-area_depositions/lab_notebook/(?P<year_and_month>.*)",
+                        "samples.views.lab_notebook.show", {"process_name": "LargeAreaDeposition"}),
                        url(r"^large-area_depositions/(?P<deposition_number>.+)/edit/$",
                            "samples.views.large_area_deposition.edit", name="edit_large-area_deposition"),
                        url(r"^large-area_depositions/(?P<deposition_number>.+)", "samples.views.large_area_deposition.show"),
