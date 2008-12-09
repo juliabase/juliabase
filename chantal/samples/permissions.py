@@ -136,7 +136,7 @@ def get_allowed_physical_processes(user):
     :rtype: list of dict mapping str to unicode
     """
     allowed_physical_processes = []
-    for physical_process_class in chantal.samples.models.all_physical_process_models:
+    for physical_process_class in chantal.samples.models.physical_process_models.itervalues():
         if has_permission_to_add_edit_physical_process(user, None, physical_process_class):
             try:
                 url = physical_process_class.get_add_link()

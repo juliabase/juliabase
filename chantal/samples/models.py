@@ -24,27 +24,27 @@ residing in this directory.  With ``from chantal.samples.models_... import *``
 I can give the rest of Chantal's modules the illusion that all models are
 actually here.
 
-:var all_physical_process_models: list of all models that denote physical
-  processes (i.e. depositions, measurements, etching processes etc).  Such
-  processes must have a permission of the form ``"add_edit_model_name"`` where
-  the model name is in lowercase with underscores.  Additionally, they must
-  have the method ``get_add_link`` (see `SixChamberDeposition.get_add_link`).
-  For the sake of performance, I don't want to enforce the latter by a common
-  parent class.
+:var physical_process_models: dictionary of all models that denote physical
+  processes (i.e. depositions, measurements, etching processes etc).  It maps
+  the name to the model class itself.  Such processes must have a permission of
+  the form ``"add_edit_model_name"`` where the model name is in lowercase with
+  underscores.  Additionally, they must have the method ``get_add_link`` (see
+  `SixChamberDeposition.get_add_link`).  For the sake of performance, I don't
+  want to enforce the latter by a common parent class.
 
-:type all_physical_process_models: list of ``class``.
+:type physical_process_models: dict mapping ``str`` to ``class``.
 """
 
+import copy, inspect
 from django.db import models
 from chantal.samples.models_common import *
 from chantal.samples.models_physical_processes import *
 from chantal.samples.models_depositions import *
 from chantal.samples.models_feeds import *
 
-import copy, inspect
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
-all_physical_process_models = [cls for cls in all_models if hasattr(cls, "get_add_link")]
+physical_process_models = dict([(cls.__name__, cls) for cls in all_models if hasattr(cls, "get_add_link")])
 class_hierarchy = inspect.getclasstree(all_models)
 u"""Rather complicated list structure that represents the class hierarchy of
 models in this module.  Nobody needs to understand it as long as the internal
