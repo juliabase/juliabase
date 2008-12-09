@@ -44,8 +44,7 @@ def show(request, process_name, year_and_month):
         if year_month_form.is_valid():
             return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
                     show, kwargs={"process_name": process_name,
-                                  "year": str(year_month_form.cleaned_data["year"]),
-                                  "month": str(year_month_form.cleaned_data["month"])}))
+                                  "year_and_month": "%(year)d/%(month)d" % year_month_form.cleaned_data}))
     else:
         year_month_form = YearMonthForm()
     template = loader.get_template("lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
