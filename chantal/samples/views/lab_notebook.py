@@ -49,9 +49,9 @@ def show(request, process_name, year_and_month):
         year_month_form = YearMonthForm()
     template = loader.get_template("lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
     template_context = process_class.get_lab_notebook_data(year, month)
-    table_body = template.render(Context(template_context))
+    html_body = template.render(Context(template_context))
     return render_to_response("lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name,
                                                     "year": year, "month": month,
-                                                    "table_body": table_body},
+                                                    "html_body": html_body},
                               context_instance=RequestContext(request))
 
