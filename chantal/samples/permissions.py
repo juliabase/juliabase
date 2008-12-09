@@ -230,6 +230,29 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
                             {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
         raise PermissionError(user, description)
 
+def assert_can_view_lab_notebook(user, process_class):
+    u"""Tests whether the user can view the lab notebook for a physical process
+    class (i.e. deposition, measurement, etching process, clean room work etc).
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `process_class`: the type of physical process that the user asks
+        permission for
+
+    :type user: ``django.contrib.auth.models.User``
+    :type process_class: ``class`` (derived from `models.Process`)
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to view the lab
+        notebook for this process class.
+    """
+    permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process_class.__name__))
+    if not user.has_perm(permission):
+        description = _(u"You are not allowed to view lab notebooks for %(process_plural_name)s because you don't have the "
+                        u"permission “%(permission)s”.") % \
+                        {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
+        raise PermissionError(user, description)
+
 def assert_can_view_physical_process(user, process):
     u"""Tests whether the user can view a physical process (i.e. deposition,
     measurement, etching process, clean room work etc).
