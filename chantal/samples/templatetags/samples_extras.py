@@ -33,7 +33,7 @@ def quantity(value, unit=None, autoescape=False):
     value_string = u"%g" % value
     if autoescape:
         value_string = conditional_escape(value_string)
-        unit = conditional_escape(unit)
+        unit = conditional_escape(unit) if unit else None
     result = u""
     i = 0
     match = re.match(ur"(?P<leading>.*?)(?P<prepoint>\d*)(\.(?P<postpoint>\d+))?(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)",
