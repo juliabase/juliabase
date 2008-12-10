@@ -8,7 +8,7 @@ here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
-import hashlib, os.path, shutil, subprocess, pickle
+import hashlib, os.path, shutil, subprocess, pickle, datetime
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -259,6 +259,9 @@ class Process(models.Model):
         :rtype: str
         """
         raise NotImplementedError
+    @classmethod
+    def get_monthly_processes(cls, year, month):
+        return cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")

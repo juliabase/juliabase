@@ -251,6 +251,10 @@ class LargeAreaDeposition(Deposition):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_large-area_deposition")
+    @classmethod
+    def get_lab_notebook_data(cls, year, month):
+        depositions = cls.get_monthly_processes(year, month)
+        return {"depositions": depositions}
     class Meta:
         verbose_name = _(u"large-area deposition")
         verbose_name_plural = _(u"large-area depositions")

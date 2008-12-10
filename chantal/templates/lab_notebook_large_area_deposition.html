@@ -1,0 +1,85 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% load i18n %}
+{% load samples_extras %}
+
+{% block css %}
+<style type="text/css">
+  div.timestamp + p { margin-top: 0pt }
+</style>
+{% endblock %}
+
+<table style="border-collapse: collapse; margin-top: 2ex" cellpadding="5">
+  <col span="2"/>
+  <colgroup>
+    <col span="6" style="background-color: #ffbbbb" align="char" char="."/>
+  </colgroup>
+  <col style="background-color: #bbffbb" align="char" char="."/>
+  <col span="6"/>
+  <thead>
+    <tr style="border-top: 2px solid">
+      <th>{% trans 'number' %}</th>
+      <th>{% trans 'type' %}</th>
+      <th>SiH₄</th>
+      <th>H₂</th>
+      <th>TMB</th>
+      <th>CH₄</th>
+      <th>CO₂</th>
+      <th>PH₃</th>
+      <th>SC</th>
+      <th style="font-style: italic">P</th>
+      <th style="font-style: italic">p</th>
+      <th style="font-style: italic">T</th>
+      <th><span style="font-style: italic">f</span><sub>HF</sub></th>
+      <th style="font-style: italic">t</th>
+      <th>{% trans 'comments' %}</th>
+    </tr>
+    <tr style="padding-top: -2ex">
+      <th/>
+      <th/>
+      <th colspan="6" style="text-align: center">(sccm)</th>
+      <th style="white-space: nowrap">(%)</th>
+      <th style="white-space: nowrap">(W)</th>
+      <th style="white-space: nowrap">(Torr)</th>
+      <th style="white-space: nowrap">(℃)</th>
+      <th style="white-space: nowrap">(MHz)</th>
+      <th style="white-space: nowrap">(s)</th>
+      <th/>
+    </tr>
+  </thead>
+  <tbody>
+    {% for deposition in depositions %}
+      {% for layer in deposition.layers.all %}
+        <tr style="{% if forloop.first %}border-top: 1px solid; {% endif %}
+                   {% if forloop.last and forloop.parentloop.last %}border-bottom: 2px solid; {% endif %}
+                   vertical-align: top">
+          <td>
+            {% if forloop.last %}
+              <a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a>
+            {% else %}
+              {{ layer.number }}
+            {% endif %}
+          </td>
+          <td style="text-align: center">{{ layer.layer_type }}</td>
+          <td>{{ layer.sih4|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.h2|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.tmb|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.ch4|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.co2|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.ph3|quantity|default_if_none:"" }}</td>
+          <td>{{ layer|calculate_silane_concentration|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.power|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.pressure|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.temperature|quantity|default_if_none:"" }}</td>
+          <td>{{ layer.get_hf_frequency_display|default_if_none:"" }}</td>
+          <td>{{ layer.time|quantity|default_if_none:"" }}</td>
+          {% if forloop.first %}
+            <td rowspan="{{ deposition.layers.count }}">
+              <div style="float: right; marging-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
+                          border-bottom: 1px solid" class="timestamp">
+                {{ deposition|timestamp }}</div>{{ deposition.comments|markdown }}</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  </tbody>
+</table>
