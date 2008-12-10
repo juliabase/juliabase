@@ -3,6 +3,15 @@
 {% load i18n %}
 {% load samples_extras %}
 
+{% block css %}
+<style type="text/css">
+  div.timestamp + p { margin-top: 0pt }
+  td p { margin-bottom: 0pt }
+  th.top { border-top: 2px solid }
+  td.top, td.topbottom { border-top: 1px solid }
+  td.topbottom { border-bottom: 2px solid }
+</style>
+{% endblock %}
 
 {% block content %}
 <table>

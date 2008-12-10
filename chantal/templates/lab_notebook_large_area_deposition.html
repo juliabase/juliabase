@@ -2,23 +2,13 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block css %}
-<style type="text/css">
-  div.timestamp + p { margin-top: 0pt }
-  td p { margin-bottom: 0pt }
-  th.top { border-top: 2px solid }
-  td.top, td.topbottom { border-top: 1px solid }
-  td.topbottom { border-bottom: 2px solid }
-</style>
-{% endblock %}
-
 <table style="margin-top: 2ex; border-color: black" cellpadding="6" cellspacing="0">
-  <col span="2"/>
+  <colgroup span="2"/>
   <colgroup>
     <col span="6" style="background-color: #ffbbbb" align="char" char="."/>
   </colgroup>
-  <col style="background-color: #bbffbb" align="char" char="."/>
-  <col span="6"/>
+  <colgroup style="background-color: #bbffbb" align="char" char="."/>
+  <colgroup span="6"/>
   <thead>
     <tr>
       <th class="top">{% trans 'number' %}</th>
