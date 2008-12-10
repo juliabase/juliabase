@@ -5,10 +5,13 @@
 {% block css %}
 <style type="text/css">
   div.timestamp + p { margin-top: 0pt }
+  th.top { border-top: 2px solid }
+  td.top, td.topbottom { border-top: 1px solid }
+  td.topbottom { border-bottom: 2px solid }
 </style>
 {% endblock %}
 
-<table style="border-collapse: collapse; margin-top: 2ex" cellpadding="5">
+<table style="margin-top: 2ex" cellpadding="6" cellspacing="0">
   <col span="2"/>
   <colgroup>
     <col span="6" style="background-color: #ffbbbb" align="char" char="."/>
@@ -16,22 +19,22 @@
   <col style="background-color: #bbffbb" align="char" char="."/>
   <col span="6"/>
   <thead>
-    <tr style="border-top: 2px solid">
-      <th>{% trans 'number' %}</th>
-      <th>{% trans 'type' %}</th>
-      <th>SiH₄</th>
-      <th>H₂</th>
-      <th>TMB</th>
-      <th>CH₄</th>
-      <th>CO₂</th>
-      <th>PH₃</th>
-      <th>SC</th>
-      <th style="font-style: italic">P</th>
-      <th style="font-style: italic">p</th>
-      <th style="font-style: italic">T</th>
-      <th><span style="font-style: italic">f</span><sub>HF</sub></th>
-      <th style="font-style: italic">t</th>
-      <th>{% trans 'comments' %}</th>
+    <tr>
+      <th class="top">{% trans 'number' %}</th>
+      <th class="top">{% trans 'type' %}</th>
+      <th class="top">SiH₄</th>
+      <th class="top">H₂</th>
+      <th class="top">TMB</th>
+      <th class="top">CH₄</th>
+      <th class="top">CO₂</th>
+      <th class="top">PH₃</th>
+      <th class="top">SC</th>
+      <th class="top" style="font-style: italic">P</th>
+      <th class="top" style="font-style: italic">p</th>
+      <th class="top" style="font-style: italic">T</th>
+      <th class="top"><span style="font-style: italic">f</span><sub>HF</sub></th>
+      <th class="top" style="font-style: italic">t</th>
+      <th class="top">{% trans 'comments' %}</th>
     </tr>
     <tr style="padding-top: -2ex">
       <th/>
@@ -49,31 +52,29 @@
   <tbody>
     {% for deposition in depositions %}
       {% for layer in deposition.layers.all %}
-        <tr style="{% if forloop.first %}border-top: 1px solid; {% endif %}
-                   {% if forloop.last and forloop.parentloop.last %}border-bottom: 2px solid; {% endif %}
-                   vertical-align: top">
-          <td>
+        <tr style="vertical-align: top">
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
             {% if forloop.last %}
               <a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a>
             {% else %}
               {{ layer.number }}
             {% endif %}
           </td>
-          <td style="text-align: center">{{ layer.layer_type }}</td>
-          <td>{{ layer.sih4|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.h2|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.tmb|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.ch4|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.co2|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.ph3|quantity|default_if_none:"" }}</td>
-          <td>{{ layer|calculate_silane_concentration|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.power|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.pressure|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.temperature|quantity|default_if_none:"" }}</td>
-          <td>{{ layer.get_hf_frequency_display|default_if_none:"" }}</td>
-          <td>{{ layer.time|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.layer_type }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.sih4|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.h2|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.tmb|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.ch4|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.co2|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.ph3|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer|calculate_silane_concentration|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.power|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.pressure|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.temperature|quantity|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.get_hf_frequency_display|default_if_none:"" }}</td>
+          <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.time|quantity|default_if_none:"" }}</td>
           {% if forloop.first %}
-            <td rowspan="{{ deposition.layers.count }}">
+            <td rowspan="{{ deposition.layers.count }}"{% if forloop.first %} class="top"{% endif %}{% if forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
               <div style="float: right; marging-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
                           border-bottom: 1px solid" class="timestamp">
                 {{ deposition|timestamp }}</div>{{ deposition.comments|markdown }}</td>
