@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-10 15:13+0100\n"
-"PO-Revision-Date: 2008-12-10 15:13+0100\n"
+"POT-Creation-Date: 2008-12-10 23:39+0100\n"
+"PO-Revision-Date: 2008-12-10 23:40+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2444,14 +2444,23 @@ msgstr "besondere Berechtigungen, die Sie haben"
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
 
+msgid "Error in date"
+msgstr "Fehler im Datum"
+
+msgid "previous month"
+msgstr "vorheriger Monat"
+
+msgid "next month"
+msgstr "nächster Monat"
+
 msgid "number"
 msgstr "Nummer"
 
 msgid "type"
 msgstr "Typ"
 
-msgid "H2"
-msgstr ""
+msgid "No data found for this time range."
+msgstr "Keine Daten aus diesen Zeitraum gefunden."
 
 msgid "No groups available."
 msgstr "Keine Gruppen vorhanden."
@@ -3252,9 +3261,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "%(count)d years"
 #~ msgstr "%(count)d Jahre"
-
-#~ msgid "%(count)d months"
-#~ msgstr "%(count)d Monate"
 
 #~ msgid "%(count)d weeks"
 #~ msgstr "%(count)d Wochen"

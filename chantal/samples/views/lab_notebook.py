@@ -33,6 +33,24 @@ def parse_year_and_month(year_and_month):
     if not 1990 <= year or not 1 <= month <= 12:
         raise Http404("Invalid year and/or month")
     return year, month
+
+def get_previous_next_urls(year, month):
+    previous_year = next_year = year
+    previous_month = next_month = month
+    previous_url = next_url = None
+    previous_month -= 1
+    if previous_month == 0:
+        previous_month = 12
+        previous_year -= 1
+    if previous_year >= 1990:
+        previous_url = \
+            django.core.urlresolvers.reverse(show, kwargs={"year_and_month": "%d/%d" % (previous_year, previous_month)})
+    next_month += 1
+    if next_month == 13:
+        next_month = 1
+        next_year += 1
+    next_url = django.core.urlresolvers.reverse(show, kwargs={"year_and_month": "%d/%d" % (next_year, next_month)})
+    return previous_url, next_url
     
 @login_required
 def show(request, process_name, year_and_month):
@@ -43,16 +61,16 @@ def show(request, process_name, year_and_month):
         year_month_form = YearMonthForm(request.POST)
         if year_month_form.is_valid():
             return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
-                    show, kwargs={"process_name": process_name,
-                                  "year_and_month": "%(year)d/%(month)d" % year_month_form.cleaned_data}))
+                    show, kwargs={"year_and_month": "%(year)d/%(month)d" % year_month_form.cleaned_data}))
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
     template = loader.get_template("lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
     template_context = process_class.get_lab_notebook_data(year, month)
     html_body = template.render(Context(template_context))
+    previous_url, next_url = get_previous_next_urls(year, month)
     return render_to_response(
         "lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name_plural,
                               "year": year, "month": month, "year_month": year_month_form,
-                              "html_body": html_body},
+                              "html_body": html_body, "previous_url": previous_url, "next_url": next_url},
         context_instance=RequestContext(request))
 
