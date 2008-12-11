@@ -10,6 +10,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from chantal.samples import models, permissions
 from django.http import HttpResponsePermanentRedirect
+import django.core.urlresolvers
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
@@ -82,6 +83,17 @@ def main_menu(request):
     """
     user_details = utils.get_profile(request.user)
     my_groups, groupless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
+    allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
+    lab_notebook_urls = []
+    for process in allowed_physical_processes:
+        try:
+            url = django.core.urlresolvers.reverse(
+                "samples.views.lab_notebook.show", kwargs={"year_and_month": "", "process_name": process["type"]})
+        except Exception:
+            pass
+        else:
+            lab_notebook_urls.append(url)
+    print lab_notebook_urls
     return render_to_response(
         "main_menu.html",
         {"title": _(u"Main menu"),
@@ -91,7 +103,7 @@ def main_menu(request):
          "can_edit_group_memberships": permissions.has_permission_to_edit_group_memberships(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
          "has_external_contacts": request.user.external_contacts.count() > 0,
-         "physical_processes": permissions.get_allowed_physical_processes(request.user)},
+         "physical_processes": allowed_physical_processes},
         context_instance=RequestContext(request))
 
 class SearchDepositionsForm(forms.Form):
