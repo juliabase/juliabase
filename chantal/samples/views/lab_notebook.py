@@ -6,7 +6,9 @@ The concrete data extraction work is done in the ``get_lab_notebook_data``
 methods of physical process models, and the layout work is done in the
 ``lab_notebook_<class_name_of_process>.html`` templates.
 
-Furthermore, if you'd like to add a lab notebook function
+Furthermore, if you'd like to add a lab notebook function, you must add its URL
+explicitly to ``urls.py``.  Look at the large-area deposition entry as an
+example.
 """
 
 import datetime, re
