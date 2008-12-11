@@ -142,7 +142,9 @@ def get_allowed_physical_processes(user):
                 url = physical_process_class.get_add_link()
             except NotImplementedError:
                 continue
-            allowed_physical_processes.append({"url": url, "label": physical_process_class._meta.verbose_name,
+            allowed_physical_processes.append({"url": url,
+                                               "label": physical_process_class._meta.verbose_name,
+                                               "label_plural": physical_process_class._meta.verbose_name_plural,
                                                "type": physical_process_class.__name__})
     return allowed_physical_processes
 

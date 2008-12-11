@@ -84,16 +84,14 @@ def main_menu(request):
     user_details = utils.get_profile(request.user)
     my_groups, groupless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
-    lab_notebook_urls = []
+    lab_notebooks = []
     for process in allowed_physical_processes:
         try:
-            url = django.core.urlresolvers.reverse(
-                "samples.views.lab_notebook.show", kwargs={"year_and_month": "", "process_name": process["type"]})
-        except Exception:
+            url = django.core.urlresolvers.reverse("lab_notebook_"+process["type"], kwargs={"year_and_month": ""})
+        except django.core.urlresolvers.NoReverseMatch:
             pass
         else:
-            lab_notebook_urls.append(url)
-    print lab_notebook_urls
+            lab_notebooks.append({"label": process["label_plural"], "url": url})
     return render_to_response(
         "main_menu.html",
         {"title": _(u"Main menu"),
@@ -103,7 +101,8 @@ def main_menu(request):
          "can_edit_group_memberships": permissions.has_permission_to_edit_group_memberships(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
          "has_external_contacts": request.user.external_contacts.count() > 0,
-         "physical_processes": allowed_physical_processes},
+         "physical_processes": allowed_physical_processes,
+         "lab_notebooks": lab_notebooks},
         context_instance=RequestContext(request))
 
 class SearchDepositionsForm(forms.Form):
