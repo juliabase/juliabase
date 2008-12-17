@@ -232,7 +232,6 @@ class ResultContext(object):
                         "html_body": template.render(Context(template_context))}
         for key in ["edit_url", "duplicate_url", "resplit_url"]:
             if key in template_context:
-                print key, template_context[key]
                 context_dict[key] = template_context[key]
         return context_dict
     def collect_processes(self):
