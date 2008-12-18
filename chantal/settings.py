@@ -95,7 +95,7 @@ INSTALLED_APPS = (
 CACHE_BACKEND = "file:///var/tmp/django_cache"
 
 WITH_EPYDOC = 'epydoc' in sys.modules
-IS_TESTSERVER = len(sys.argv) >= 2 or True
+IS_TESTSERVER = len(sys.argv) >= 2
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login"
