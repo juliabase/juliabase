@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-11 15:26+0100\n"
-"PO-Revision-Date: 2008-12-11 15:26+0100\n"
+"POT-Creation-Date: 2008-12-18 18:49+0100\n"
+"PO-Revision-Date: 2008-12-18 18:51+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -167,6 +167,9 @@ msgstr "Silizium-100-Wafer"
 msgid "substrate material"
 msgstr "Substrat-Material"
 
+msgid "material"
+msgstr "Material"
+
 msgid "substrate"
 msgstr "Substrat"
 
@@ -221,6 +224,10 @@ msgstr "Ergebnis für %s"
 #, python-format
 msgid "result #%d"
 msgstr "Ergebnis #%d"
+
+#, python-format
+msgid "row #%d"
+msgstr "Zeile #%d"
 
 msgid "result"
 msgstr "Ergebnis"
@@ -284,6 +291,9 @@ msgstr "Depositionsnummer"
 #, python-format
 msgid "deposition %s"
 msgstr "Deposition %s"
+
+msgid "number"
+msgstr "Nummer"
 
 msgid "deposition"
 msgstr "Deposition"
@@ -389,6 +399,27 @@ msgstr "in Torr"
 msgid "layer %(number)d of %(deposition)s"
 msgstr "Schicht %(number)d von %(deposition)s"
 
+msgid "time"
+msgstr "Zeit"
+
+msgid "electr. dist./mm"
+msgstr "Elektr.-Abst./mm"
+
+msgid "P_start/W"
+msgstr "P_start/W"
+
+msgid "yes"
+msgstr "ja"
+
+msgid "no"
+msgstr "nein"
+
+msgid "p_base/Torr"
+msgstr "p_Basis/Torr"
+
+msgid "(in sccm)"
+msgstr "(in sccm)"
+
 msgid "6-chamber layer"
 msgstr "6-Kammer-Deposition"
 
@@ -489,9 +520,6 @@ msgstr "Temperatur"
 msgid "HF frequency"
 msgstr "HF-Frequenz"
 
-msgid "time"
-msgstr "Zeit"
-
 msgid "in sec"
 msgstr "in sec"
 
@@ -504,9 +532,17 @@ msgstr "in V"
 msgid "electrode"
 msgstr "Elektrode"
 
-#. FixMe: Must be called "electrodes_distance".  Also in other modules.
 msgid "electrodes distance"
 msgstr "Elektrodenabstand"
+
+msgid "time/s"
+msgstr "Zeit/s"
+
+msgid "DC bias/V"
+msgstr "DC-Bias/V"
+
+msgid "elec. dist./mm"
+msgstr "Elektr.-Abst./mm"
 
 msgid "large-area layer"
 msgstr "Schicht der Großflächigen"
@@ -2452,9 +2488,6 @@ msgstr "vorheriger Monat"
 
 msgid "next month"
 msgstr "nächster Monat"
-
-msgid "number"
-msgstr "Nummer"
 
 msgid "type"
 msgstr "Typ"

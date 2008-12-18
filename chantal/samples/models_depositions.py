@@ -17,6 +17,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from chantal.samples.models_common import Process
 from chantal.samples import permissions
+from chantal.samples.views.csv_node import CSVNode
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -43,6 +44,13 @@ class Deposition(Process):
     def __unicode__(self):
         _ = ugettext
         return _(u"deposition %s") % self.number
+    def get_data(self):
+        # See `Process.get_data` for the documentation.
+        _ = ugettext
+        csv_node = super(Deposition, self).get_data()
+        csv_node.items.append((_(u"number"), self.number))
+        csv_node.children = [layer.get_data() for layer in self.layers.all()]
+        return csv_node
     class Meta:
         verbose_name = _(u"deposition")
         verbose_name_plural = _(u"depositions")
@@ -124,6 +132,20 @@ class Layer(models.Model):
     ``related_name="layers"``.  See also `Deposition`.
     """
     number = models.IntegerField(_(u"layer number"))
+    def get_data(self):
+        u"""Extract the data of this layer as a CSV node with a list of
+        key–value pairs, ready to be used for the CSV table export.  See the
+        `chantal.samples.views.csv_export` module for all the glory details.
+
+        :Return:
+          a node for building a CSV tree
+
+        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        """
+        _ = ugettext
+        csv_node = CSVNode(unicode(self._meta.verbose_name))
+        csv_node.items = [(_(u"number"), unicode(self.number))]
+        return csv_node
     class Meta:
         abstract = True
         ordering = ["number"]
@@ -175,6 +197,34 @@ class SixChamberLayer(Layer):
     def __unicode__(self):
         _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
+    def get_data(self):
+        # See `Layer.get_data` for the documentation.
+        _ = ugettext
+        csv_node = super(SixChamberLayer, self).get_data()
+        csv_node.items.extend([(_(u"chamber"), self.get_chamber_display()),
+                               (u"p", self.pressure),
+                               (_(u"time"), self.time),
+                               (_(u"electr. dist./mm"), unicode(self.substrate_electrode_distance)),
+                               (_(u"transfer in the chamber"), self.transfer_in_chamber),
+                               (_(u"pre-heat"), self.pre_heat),
+                               (_(u"gas of gas pre-heat"), self.gas_pre_heat_gas),
+                               (_(u"pressure of gas pre-heat"), self.gas_pre_heat_pressure),
+                               (_(u"time of gas pre-heat"), self.gas_pre_heat_time),
+                               (u"T/℃", unicode(self.heating_temperature)),
+                               (_(u"transfer out of the chamber"), self.transfer_out_of_chamber),
+                               (_("P_start/W"), unicode(self.plasma_start_power)),
+                               (_(u"plasma start with carrier"), _(u"yes") if self.plasma_start_with_carrier else _(u"no")),
+                               (u"f/MHz", unicode(self.deposition_frequency)),
+                               (u"P/W", unicode(self.deposition_power)),
+                               (_(u"p_base/Torr"), unicode(self.base_pressure)),
+                               (_(u"comments"), self.comments)])
+        flow_rates = {}
+        for channel in self.channels.all():
+            flow_rates[channel.gas] = unicode(channel.flow_rate)
+        gas_names = dict(six_chamber_gas_choices)
+        for gas_name in gas_names:
+            csv_node_items.append((unicode(gas_names[gas_name]) + _(u"(in sccm)"), flow_rates.get(gas_name, u"")))
+        return csv_node
     class Meta(Layer.Meta):
         verbose_name = _(u"6-chamber layer")
         verbose_name_plural = _(u"6-chamber layers")
@@ -313,12 +363,32 @@ class LargeAreaLayer(Layer):
     time = models.IntegerField(_(u"time"), help_text=_(u"in sec"))
     dc_bias = models.DecimalField(_(u"DC bias"), max_digits=3, decimal_places=1, help_text=_(u"in V"), null=True, blank=True)
     electrode = models.CharField(_(u"electrode"), max_length=30, choices=large_area_electrode_choices)
-    # FixMe: Must be called "electrodes_distance".  Also in other modules.
     electrodes_distance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
                                                help_text=_(u"in mm"))
     def __unicode__(self):
         _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
+    def get_data(self):
+        # See `Layer.get_data` for the documentation.
+        _ = ugettext
+        csv_node = super(LargeAreaLayer, self).get_data()
+        csv_node.items.extend([(_(u"layer type"), self.get_layer_type_display()),
+                               (_(u"station"), self.get_station_display()),
+                               (u"SiH₄/sccm", unicode(self.sih4)),
+                               (u"H₂/sccm", unicode(self.h2)),
+                               (u"TMB/sccm", unicode(self.tmb)),
+                               (u"CH₄/sccm", unicode(self.ch4)),
+                               (u"CO₂/sccm", unicode(self.co2)),
+                               (u"PH₃/sccm", unicode(self.ph3)),
+                               (u"P/W", unicode(self.power)),
+                               (u"p/Torr", unicode(self.pressure)),
+                               (u"T/℃", unicode(self.temperature)),
+                               (u"f_HF/MHz", unicode(self.hf_frequency)),
+                               (_(u"time/s"), unicode(self.time)),
+                               (_(u"DC bias/V"), unicode(self.dc_bias)),
+                               (_(u"electrode"), self.get_electrode_display()),
+                               (_(u"elec. dist./mm"), unicode(self.electrodes_distance))])
+        return csv_node
     class Meta(Layer.Meta):
         verbose_name = _(u"large-area layer")
         verbose_name_plural = _(u"large-area layers")

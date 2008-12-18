@@ -8,7 +8,8 @@ here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
-import hashlib, os.path, shutil, subprocess, pickle, datetime
+import hashlib, os.path, shutil, subprocess, datetime
+import cPickle as pickle
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -19,6 +20,8 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from chantal.samples import permissions
+from chantal.samples.views import shared_utils
+from chantal.samples.views.csv_node import CSVNode
 
 import matplotlib
 matplotlib.use("Agg")
@@ -259,6 +262,22 @@ class Process(models.Model):
         :rtype: str
         """
         raise NotImplementedError
+    def get_data(self):
+        u"""Extract the data of this process as a tree of nodes (or a single
+        node) with lists of key–value pairs, ready to be used for the CSV table
+        export.  See the `chantal.samples.views.csv_export` module for all the
+        glory details.
+
+        :Return:
+          a node for building a CSV tree
+
+        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        """
+        csv_node = CSVNode(unicode(self._meta.verbose_name))
+        csv_node.items = [(_(u"timestamp"), unicode(self.timestamp)),
+                          (_(u"operator"), shared_utils.get_really_full_name(self.operator)),
+                          (_(u"comments"), self.comments)]
+        return csv_node
     @classmethod
     def get_monthly_processes(cls, year, month):
         return cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
@@ -336,6 +355,24 @@ class Sample(models.Model):
             if not isinstance(process, Result):
                 break
         return None
+    def get_data(self):
+        u"""Extract the data of this sample as a tree of nodes with lists of
+        key–value pairs, ready to be used for the CSV table export.  Every
+        child of the top-level node is a process of the sample.  See the
+        `chantal.samples.views.csv_export` module for all the glory details.
+
+        :Return:
+          a node for building a CSV tree
+
+        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        """
+        _ = ugettext
+        csv_node = CSVNode(unicode(self))
+        csv_node.children.extend(process.find_actual_instance().get_data() for process in self.processes.all())
+        # I don't think that any sample properties are interesting for table
+        # export; people only want to see the *process* data.  Thus, I don't
+        # set ``cvs_note.items``.
+        return csv_node
     class Meta:
         verbose_name = _(u"sample")
         verbose_name_plural = _(u"samples")
@@ -427,6 +464,12 @@ class Substrate(Process):
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
     def __unicode__(self):
         return self.material
+    def get_data(self):
+        # See `Process.get_data` for the documentation.
+        _ = ugettext
+        csv_node = super(Substrate, self).get_data()
+        csv_node.items.append((_(u"material"), self.get_material_display()))
+        return csv_node
     class Meta:
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")
@@ -598,6 +641,18 @@ class Result(Process):
         if self.quantities_and_values:
             result["quantities"], result["value_lists"] = pickle.loads(str(self.quantities_and_values))
         return result
+    def get_data(self):
+        _ = ugettext
+        csv_node = super(Result, self).get_data()
+        quantities, value_lists = pickle.loads(str(self.quantities_and_values))
+        if len(value_lists) > 1:
+            for i, value_list in enumerate(value_lists):
+                child_node = CSVNode(_(u"row #%d") % i)
+                child_node.items = [(quantities[i], value) for j, value in enumerate(value_list)]
+                csv_node.children.append(child_node)
+        else:
+            csv_node.items = zip(quantities, value_lists[0])
+        return csv_node
     class Meta:
         verbose_name = _(u"result")
         verbose_name_plural = _(u"results")
@@ -623,6 +678,25 @@ class SampleSeries(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.sample_series.show", [urlquote(self.name, safe="")])
+    def get_data(self):
+        u"""Extract the data of this sample series as a tree of nodes with
+        lists of key–value pairs, ready to be used for the CSV table export.
+        Every child of the top-level node is a sample of the sample series.
+        See the `chantal.samples.views.csv_export` module for all the glory
+        details.
+
+        :Return:
+          a node for building a CSV tree
+
+        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        """
+        _ = ugettext
+        csv_node = CSVNode(unicode(self))
+        csv_node.children.extend(sample.get_data() for sample in self.samples.all())
+        # I don't think that any sample series properties are interesting for
+        # table export; people only want to see the *sample* data.  Thus, I
+        # don't set ``cvs_note.items``.
+        return csv_node
     class Meta:
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
