@@ -642,6 +642,25 @@ class Result(Process):
             result["quantities"], result["value_lists"] = pickle.loads(str(self.quantities_and_values))
         return result
     def get_data(self):
+        u"""Extract the data of this result process as a tree of nodes (or a
+        single node) with lists of key–value pairs, ready to be used for the
+        CSV table export.  See the `chantal.samples.views.csv_export` module
+        for all the glory details.
+
+        However, I should point out the peculiarities of result processes in
+        this respect.  Result comments are not exported, just the table.  If
+        the table contains only one row (which should be the case almost
+        always), one one CSV tree node is returned, with this row as the
+        key–value list.
+
+        If the result table has more than one row, for each row, a sub-node is
+        generated, which contains the row columns in its key–value list.
+
+        :Return:
+          a node for building a CSV tree
+
+        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        """
         _ = ugettext
         csv_node = super(Result, self).get_data()
         quantities, value_lists = pickle.loads(str(self.quantities_and_values))
