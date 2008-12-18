@@ -367,7 +367,7 @@ class Sample(models.Model):
         :rtype: `chantal.samples.views.csv_node.CSVNode`
         """
         _ = ugettext
-        csv_node = CSVNode(unicode(self))
+        csv_node = CSVNode(unicode(self._meta.verbose_name))
         csv_node.children.extend(process.find_actual_instance().get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
@@ -710,7 +710,7 @@ class SampleSeries(models.Model):
         :rtype: `chantal.samples.views.csv_node.CSVNode`
         """
         _ = ugettext
-        csv_node = CSVNode(unicode(self))
+        csv_node = CSVNode(unicode(self._meta.verbose_name))
         csv_node.children.extend(sample.get_data() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I
