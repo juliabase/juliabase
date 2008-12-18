@@ -666,7 +666,7 @@ class Result(Process):
         quantities, value_lists = pickle.loads(str(self.quantities_and_values))
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
-                child_node = CSVNode(_(u"row #%d") % i)
+                child_node = CSVNode(_(u"row #%d") % (i + 1))
                 child_node.items = [(quantities[i], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         else:
