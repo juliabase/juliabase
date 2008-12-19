@@ -663,6 +663,7 @@ class Result(Process):
         """
         _ = ugettext
         csv_node = super(Result, self).get_data()
+        csv_node.name = csv_node.descriptive_name = self.title
         quantities, value_lists = pickle.loads(str(self.quantities_and_values))
         if len(value_lists) > 1:
             for value_list in value_lists:
