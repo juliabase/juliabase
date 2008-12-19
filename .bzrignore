@@ -28,3 +28,4 @@ chantal/media/results
 chantal/samples/remote_client/6k.pickle
 chantal/samples/remote_client/6k_import.py
 chantal/samples/remote_client/6k_import.py.sicher
+chantal/settings.py
