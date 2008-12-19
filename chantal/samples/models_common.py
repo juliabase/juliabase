@@ -21,7 +21,7 @@ from django.conf import settings
 from django.db import models
 from chantal.samples import permissions
 from chantal.samples.views import shared_utils
-from chantal.samples.views.csv_node import CSVNode
+from chantal.samples.views.csv_node import CSVNode, CSVItem
 
 import matplotlib
 matplotlib.use("Agg")
@@ -274,9 +274,9 @@ class Process(models.Model):
         :rtype: `chantal.samples.views.csv_node.CSVNode`
         """
         csv_node = CSVNode(self)
-        csv_node.items = [(_(u"timestamp"), unicode(self.timestamp)),
-                          (_(u"operator"), shared_utils.get_really_full_name(self.operator)),
-                          (_(u"comments"), self.comments)]
+        csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
+                          CSVItem(_(u"operator"), shared_utils.get_really_full_name(self.operator), "process"),
+                          CSVItem(_(u"comments"), self.comments, "process")]
         return csv_node
     @classmethod
     def get_monthly_processes(cls, year, month):
@@ -468,7 +468,7 @@ class Substrate(Process):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Substrate, self).get_data()
-        csv_node.items.append((_(u"material"), self.get_material_display()))
+        csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))
         return csv_node
     class Meta:
         verbose_name = _(u"substrate")
@@ -667,10 +667,10 @@ class Result(Process):
         if len(value_lists) > 1:
             for value_list in value_lists:
                 child_node = CSVNode(_(u"row"))
-                child_node.items = [(quantities[i], value) for i, value in enumerate(value_list)]
+                child_node.items = [CSVItem(quantities[i], value) for i, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         else:
-            csv_node.items = zip(quantities, value_lists[0])
+            csv_node.items = [CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])]
         return csv_node
     class Meta:
         verbose_name = _(u"result")

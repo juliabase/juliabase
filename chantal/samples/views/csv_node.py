@@ -20,3 +20,7 @@ class CSVNode(object):
             child.find_unambiguous_names(top_level=False)
     def __repr__(self):
         return repr(self.name)
+
+class CSVItem(object):
+    def __init__(self, key, value, origin=None):
+        self.key, self.value, self.origin = unicode(key), unicode(value), origin

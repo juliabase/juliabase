@@ -17,7 +17,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from chantal.samples.models_common import Process
 from chantal.samples import permissions
-from chantal.samples.views.csv_node import CSVNode
+from chantal.samples.views.csv_node import CSVNode, CSVItem
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -48,7 +48,7 @@ class Deposition(Process):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Deposition, self).get_data()
-        csv_node.items.append((_(u"number"), self.number))
+        csv_node.items.append(CSVItem(_(u"number"), self.number, "deposition"))
         csv_node.children = [layer.get_data() for layer in self.layers.all()]
         return csv_node
     class Meta:
@@ -144,7 +144,7 @@ class Layer(models.Model):
         """
         _ = ugettext
         csv_node = CSVNode(self)
-        csv_node.items = [(_(u"number"), unicode(self.number))]
+        csv_node.items = [CSVItem(_(u"number"), unicode(self.number), "layer")]
         return csv_node
     class Meta:
         abstract = True
@@ -201,23 +201,24 @@ class SixChamberLayer(Layer):
         # See `Layer.get_data` for the documentation.
         _ = ugettext
         csv_node = super(SixChamberLayer, self).get_data()
-        csv_node.items.extend([(_(u"chamber"), self.get_chamber_display()),
-                               (u"p", self.pressure),
-                               (_(u"time"), self.time),
-                               (_(u"electr. dist./mm"), unicode(self.substrate_electrode_distance)),
-                               (_(u"transfer in the chamber"), self.transfer_in_chamber),
-                               (_(u"pre-heat"), self.pre_heat),
-                               (_(u"gas of gas pre-heat"), self.gas_pre_heat_gas),
-                               (_(u"pressure of gas pre-heat"), self.gas_pre_heat_pressure),
-                               (_(u"time of gas pre-heat"), self.gas_pre_heat_time),
-                               (u"T/℃", unicode(self.heating_temperature)),
-                               (_(u"transfer out of the chamber"), self.transfer_out_of_chamber),
-                               (_("P_start/W"), unicode(self.plasma_start_power)),
-                               (_(u"plasma start with carrier"), _(u"yes") if self.plasma_start_with_carrier else _(u"no")),
-                               (u"f/MHz", unicode(self.deposition_frequency)),
-                               (u"P/W", unicode(self.deposition_power)),
-                               (_(u"p_base/Torr"), unicode(self.base_pressure)),
-                               (_(u"comments"), self.comments)])
+        csv_node.items.extend([CSVItem(_(u"chamber"), self.get_chamber_display()),
+                               CSVItem(u"p", self.pressure),
+                               CSVItem(_(u"time"), self.time),
+                               CSVItem(_(u"electr. dist./mm"), self.substrate_electrode_distance),
+                               CSVItem(_(u"transfer in the chamber"), self.transfer_in_chamber),
+                               CSVItem(_(u"pre-heat"), self.pre_heat),
+                               CSVItem(_(u"gas of gas pre-heat"), self.gas_pre_heat_gas),
+                               CSVItem(_(u"pressure of gas pre-heat"), self.gas_pre_heat_pressure),
+                               CSVItem(_(u"time of gas pre-heat"), self.gas_pre_heat_time),
+                               CSVItem(u"T/℃", self.heating_temperature),
+                               CSVItem(_(u"transfer out of the chamber"), self.transfer_out_of_chamber),
+                               CSVItem(_("P_start/W"), self.plasma_start_power),
+                               CSVItem(_(u"plasma start with carrier"),
+                                       _(u"yes") if self.plasma_start_with_carrier else _(u"no")),
+                               CSVItem(u"f/MHz", self.deposition_frequency),
+                               CSVItem(u"P/W", self.deposition_power),
+                               CSVItem(_(u"p_base/Torr"), self.base_pressure),
+                               CSVItem(_(u"comments"), self.comments)])
         flow_rates = {}
         for channel in self.channels.all():
             flow_rates[channel.gas] = unicode(channel.flow_rate)
@@ -372,22 +373,22 @@ class LargeAreaLayer(Layer):
         # See `Layer.get_data` for the documentation.
         _ = ugettext
         csv_node = super(LargeAreaLayer, self).get_data()
-        csv_node.items.extend([(_(u"layer type"), self.get_layer_type_display()),
-                               (_(u"station"), self.get_station_display()),
-                               (u"SiH₄/sccm", unicode(self.sih4)),
-                               (u"H₂/sccm", unicode(self.h2)),
-                               (u"TMB/sccm", unicode(self.tmb)),
-                               (u"CH₄/sccm", unicode(self.ch4)),
-                               (u"CO₂/sccm", unicode(self.co2)),
-                               (u"PH₃/sccm", unicode(self.ph3)),
-                               (u"P/W", unicode(self.power)),
-                               (u"p/Torr", unicode(self.pressure)),
-                               (u"T/℃", unicode(self.temperature)),
-                               (u"f_HF/MHz", unicode(self.hf_frequency)),
-                               (_(u"time/s"), unicode(self.time)),
-                               (_(u"DC bias/V"), unicode(self.dc_bias)),
-                               (_(u"electrode"), self.get_electrode_display()),
-                               (_(u"elec. dist./mm"), unicode(self.electrodes_distance))])
+        csv_node.items.extend([CSVItem(_(u"layer type"), self.get_layer_type_display()),
+                               CSVItem(_(u"station"), self.get_station_display()),
+                               CSVItem(u"SiH₄/sccm", self.sih4),
+                               CSVItem(u"H₂/sccm", self.h2),
+                               CSVItem(u"TMB/sccm", self.tmb),
+                               CSVItem(u"CH₄/sccm", self.ch4),
+                               CSVItem(u"CO₂/sccm", self.co2),
+                               CSVItem(u"PH₃/sccm", self.ph3),
+                               CSVItem(u"P/W", self.power),
+                               CSVItem(u"p/Torr", self.pressure),
+                               CSVItem(u"T/℃", self.temperature),
+                               CSVItem(u"f_HF/MHz", self.hf_frequency),
+                               CSVItem(_(u"time/s"), self.time),
+                               CSVItem(_(u"DC bias/V"), self.dc_bias),
+                               CSVItem(_(u"electrode"), self.get_electrode_display()),
+                               CSVItem(_(u"elec. dist./mm"), self.electrodes_distance)])
         return csv_node
     class Meta(Layer.Meta):
         verbose_name = _(u"large-area layer")
