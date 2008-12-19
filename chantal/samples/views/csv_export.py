@@ -45,7 +45,7 @@ class Column(object):
     def append_name(self, column_group_name):
         self.column_group_names.append(column_group_name)
     def disambig(self):
-        self.heading = u"%s {%s}" % (self.key, self.column_group_names[0])  # FixMe: Take all names into account?
+        self.heading = u"%s {%s}" % (self.key, u" / ".join(self.column_group_names))
     def get_value(self, row):
         for column_group_name in self.column_group_names:
             if column_group_name in row:
