@@ -273,7 +273,7 @@ class Process(models.Model):
 
         :rtype: `chantal.samples.views.csv_node.CSVNode`
         """
-        csv_node = CSVNode(unicode(self._meta.verbose_name))
+        csv_node = CSVNode(self)
         csv_node.items = [(_(u"timestamp"), unicode(self.timestamp)),
                           (_(u"operator"), shared_utils.get_really_full_name(self.operator)),
                           (_(u"comments"), self.comments)]
@@ -367,7 +367,7 @@ class Sample(models.Model):
         :rtype: `chantal.samples.views.csv_node.CSVNode`
         """
         _ = ugettext
-        csv_node = CSVNode(unicode(self._meta.verbose_name))
+        csv_node = CSVNode(self)
         csv_node.children.extend(process.find_actual_instance().get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
@@ -665,9 +665,9 @@ class Result(Process):
         csv_node = super(Result, self).get_data()
         quantities, value_lists = pickle.loads(str(self.quantities_and_values))
         if len(value_lists) > 1:
-            for i, value_list in enumerate(value_lists):
-                child_node = CSVNode(_(u"row #%d") % (i + 1))
-                child_node.items = [(quantities[i], value) for j, value in enumerate(value_list)]
+            for value_list in value_lists:
+                child_node = CSVNode(_(u"row"))
+                child_node.items = [(quantities[i], value) for i, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         else:
             csv_node.items = zip(quantities, value_lists[0])
@@ -710,7 +710,7 @@ class SampleSeries(models.Model):
         :rtype: `chantal.samples.views.csv_node.CSVNode`
         """
         _ = ugettext
-        csv_node = CSVNode(unicode(self._meta.verbose_name))
+        csv_node = CSVNode(self)
         csv_node.children.extend(sample.get_data() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I

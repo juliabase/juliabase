@@ -9,12 +9,12 @@ from chantal.samples.views.csv_node import CSVNode
 from chantal.samples import models
 
 class UnicodeWriter(object):
-    u"""Taken from <http://docs.python.org/library/csv.html#examples>.
+    u"""Inspired by <http://docs.python.org/library/csv.html#examples>.
     """
-    def __init__(self, filename, dialect=csv.excel, encoding="utf-8", **kwargs):
+    def __init__(self, dialect=csv.excel, encoding="utf-8", **kwargs):
         self.queue = cStringIO.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwargs)
-        self.stream = open(filename, "wb")
+        self.stream = cStringIO.StringIO()
         self.encoder = codecs.getincrementalencoder(encoding)()
     def writerow(self, row):
         self.writer.writerow([unicode(s).encode("utf-8") for s in row])
@@ -26,6 +26,8 @@ class UnicodeWriter(object):
     def writerows(self, rows):
         for row in rows:
             self.writerow(row)
+    def getvalue(self):
+        return self.stream.getvalue()
 
 class CSVColumnGroup(object):
     def __init__(self, name):
@@ -66,6 +68,7 @@ def build_column_group_list(root):
                 i = len(keys)
                 for key, __ in node.items:
                     column_group.key_indices.append(i)
+                    key = unicode(key)
                     keys.append([name, key, key])
                     i += 1
                 column_groups.insert(position, column_group)
@@ -75,17 +78,35 @@ def build_column_group_list(root):
 
 def flatten_tree(root):
     def flatten_row_tree(node):
-        name_dict = {node.name: dict(node.items)}
+        name_dict = {node.name: dict((unicode(key), value) for key, value in node.items)}
         for child in node.children:
             name_dict.update(flatten_row_tree(child))
         return name_dict
     return [flatten_row_tree(row) for row in root.children]
-    
+
+def generate_table_rows(flattened_tree, keys, selected_key_indices):
+    # Generate headline
+    table_rows = [[unicode(keys[key_index][2]) for key_index in selected_key_indices]]
+    for row in flattened_tree:
+        table_row = []
+        for key_index in selected_key_indices:
+            node_name, key, __ = keys[key_index]
+            if node_name in row:
+                table_row.append(row[node_name][key])
+            else:
+                table_row.append(u"")
+        table_rows.append(table_row)
+    return table_rows
     
 pds_measurement = models.Sample.objects.get(name="08-TB-erste")
 data = pds_measurement.get_data()
 data.find_unambiguous_names()
 column_groups, keys = build_column_group_list(data)
-print flatten_tree(data)
+flattened_tree = flatten_tree(data)
+#print flattened_tree
+writer = UnicodeWriter()
+writer.writerows(generate_table_rows(flattened_tree, keys, range(len(keys))))
+print writer.getvalue()
+
 # for row in data.children:
 #     print unicode(row.name)
