@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 class CSVNode(object):
-    def __init__(self, instance):
+    def __init__(self, instance, descriptive_name=u""):
         if isinstance(instance, unicode):
             self.name = self.descriptive_name = instance
         else:
             self.name = unicode(instance._meta.verbose_name)
-            self.descriptive_name = unicode(instance)
+        self.descriptive_name = unicode(descriptive_name) or self.name
         self.items = []
         self.children = []
     def find_unambiguous_names(self, top_level=True):

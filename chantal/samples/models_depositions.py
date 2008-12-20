@@ -143,7 +143,7 @@ class Layer(models.Model):
         :rtype: `chantal.samples.csv_common.CSVNode`
         """
         _ = ugettext
-        csv_node = CSVNode(self)
+        csv_node = CSVNode(self, _(u"layer %d") % self.number)
         csv_node.items = [CSVItem(_(u"number"), unicode(self.number), "layer")]
         return csv_node
     class Meta:

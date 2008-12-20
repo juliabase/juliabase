@@ -108,11 +108,11 @@ def flatten_tree(root):
         return name_dict
     return [flatten_row_tree(row) for row in root.children]
 
-def generate_table_rows(flattened_tree, columns, selected_key_indices):
+def generate_table_rows(flattened_tree, columns, selected_key_indices, first_column, first_column_heading):
     # Generate headline
-    table_rows = [[unicode(columns[key_index].heading) for key_index in selected_key_indices]]
-    for row in flattened_tree:
-        table_row = []
+    table_rows = [[first_column_heading] + [unicode(columns[key_index].heading) for key_index in selected_key_indices]]
+    for i, row in enumerate(flattened_tree):
+        table_row = [first_column[i]]
         for key_index in selected_key_indices:
             table_row.append(columns[key_index].get_value(row))
         table_rows.append(table_row)
@@ -121,11 +121,13 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices):
 pds_measurement = models.Sample.objects.get(name="08-TB-erste")
 data = pds_measurement.get_data()
 data.find_unambiguous_names()
+first_column = [row.descriptive_name for row in data.children]
+first_column_heading = "Prozess"
 column_groups, columns = build_column_group_list(data)
 flattened_tree = flatten_tree(data)
 #print flattened_tree
 writer = UnicodeWriter()
-writer.writerows(generate_table_rows(flattened_tree, columns, range(len(columns))))
+writer.writerows(generate_table_rows(flattened_tree, columns, range(len(columns)), first_column, first_column_heading))
 print writer.getvalue()
 
 # for row in data.children:
