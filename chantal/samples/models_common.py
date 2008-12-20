@@ -21,7 +21,7 @@ from django.conf import settings
 from django.db import models
 from chantal.samples import permissions
 from chantal.samples.views import shared_utils
-from chantal.samples.views.csv_node import CSVNode, CSVItem
+from chantal.samples.csv_common import CSVNode, CSVItem
 
 import matplotlib
 matplotlib.use("Agg")
@@ -271,7 +271,7 @@ class Process(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        :rtype: `chantal.samples.csv_common.CSVNode`
         """
         csv_node = CSVNode(self)
         csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
@@ -364,7 +364,7 @@ class Sample(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        :rtype: `chantal.samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = CSVNode(self)
@@ -659,7 +659,7 @@ class Result(Process):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        :rtype: `chantal.samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = super(Result, self).get_data()
@@ -708,7 +708,7 @@ class SampleSeries(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        :rtype: `chantal.samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = CSVNode(self)

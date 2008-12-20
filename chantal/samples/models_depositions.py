@@ -17,7 +17,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from chantal.samples.models_common import Process
 from chantal.samples import permissions
-from chantal.samples.views.csv_node import CSVNode, CSVItem
+from chantal.samples.csv_common import CSVNode, CSVItem
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -140,7 +140,7 @@ class Layer(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.views.csv_node.CSVNode`
+        :rtype: `chantal.samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = CSVNode(self)

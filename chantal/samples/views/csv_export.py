@@ -5,7 +5,7 @@ import sys
 sys.path.append("/home/bronger/src/chantal/current")
 
 import csv, cStringIO, codecs
-from chantal.samples.views.csv_node import CSVNode
+from chantal.samples.csv_common import CSVNode
 from chantal.samples import models
 
 class UnicodeWriter(object):
