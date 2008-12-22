@@ -87,10 +87,10 @@ In order to get a proper node tree, all involved model instances must have a
 ``get_data`` method.  This method must return a `CSVNode`, which may in turn be
 the root of a whole ``CSVNode`` subtree.  Additionally, it probably will append
 items to the ``items`` list with the values of the database instance's
-attributes.  See `CSVNode.__init__` and `csv_common.CSVItem.__init__` for
-further information.  Additionally, the various instances of the ``get_data``
-method in various database model classes will show you how to use it (they are
-all very strightforward).
+attributes.  See `CSVNode` and `csv_common.CSVItem` for further information.
+Additionally, the various instances of the ``get_data`` method in various
+database model classes will show you how to use it (they are all very
+strightforward).
 """
 
 import sys
@@ -459,9 +459,9 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
             table_row.append(columns[key_index].get_value(row))
         table_rows.append(table_row)
     return table_rows
-    
-pds_measurement = models.Sample.objects.get(name="08-TB-erste")
-data = pds_measurement.get_data()
+
+sample = models.Sample.objects.get(name="08-TB-erste")
+data = sample.get_data()
 data.find_unambiguous_names()
 label_column = [row.descriptive_name for row in data.children]
 label_column_heading = "Prozess"
