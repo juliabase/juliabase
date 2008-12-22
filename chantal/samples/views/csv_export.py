@@ -93,10 +93,14 @@ database model classes will show you how to use it (they are all very
 strightforward).
 """
 
-import sys
-sys.path.append("/home/bronger/src/chantal/current")
-
 import csv, cStringIO, codecs
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+from django.http import HttpResponse
+import django.forms as forms
+from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _, ugettext_lazy
+from chantal.samples.views import utils
 from chantal.samples.csv_common import CSVNode
 from chantal.samples import models
 
@@ -460,17 +464,46 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
         table_rows.append(table_row)
     return table_rows
 
-sample = models.Sample.objects.get(name="08-TB-erste")
-data = sample.get_data()
-data.find_unambiguous_names()
-label_column = [row.descriptive_name for row in data.children]
-label_column_heading = "Prozess"
-column_groups, columns = build_column_group_list(data)
-flattened_tree = flatten_tree(data)
-#print flattened_tree
-writer = UnicodeWriter()
-writer.writerows(generate_table_rows(flattened_tree, columns, range(len(columns)), label_column, label_column_heading))
-print writer.getvalue()
+class ColumnGroupsForm(forms.Form):
+    column_groups = forms.MultipleChoiceField(label=_(u"Column groups"))
+    def __init__(self, column_groups, *args, **kwargs):
+        super(ColumnGroupsForm, self).__init__(*args, **kwargs)
+        self.fields["column_groups"].choices = ((column_group.name, column_group.name) for column_group in column_groups)
 
-# for row in data.children:
-#     print unicode(row.name)
+class ColumnsForm(forms.Form):
+    columns = forms.MultipleChoiceField(label=_(u"Column groups"))
+    def __init__(self, column_groups, columns, *args, **kwargs):
+        super(ColumnsForm, self).__init__(*args, **kwargs)
+        self.fields["columns"].choices = ((column_group.name, [(key_index, key_name) for key_name, key_index
+                                                               in column_group.key_indices.iteritems()])
+                                          for column_group in column_groups)
+
+def export_csv(request, database_object, label_column_heading):
+    data = database_object.get_data()
+    data.find_unambiguous_names()
+    column_groups, columns = build_column_group_list(data)
+    table = None
+    if request.method == "POST":
+        column_groups_form = ColumnGroupsForm(column_groups, request.POST)
+        columns_form = ColumnsForm(column_groups, columns, request.POST)
+        all_valid = column_groups_form.is_valid()
+        all_valid = columns_form.is_valid() and all_valid
+        if all_valid:
+            writer = UnicodeWriter()
+            label_column = [row.descriptive_name for row in data.children]
+            table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["key_indices"],
+                                       label_column, label_column_heading)
+            writer.writerows(table)
+            return HttpResponse(writer.get_value(), content_type="text/csv; charset=utf-8")
+    else:
+        column_groups_form = ColumnGroupsForm(column_groups)
+        columns_form = ColumnsForm(column_groups, columns)
+    title = _(u"Table export")
+    return render_to_response("export_csv.html", {"title": title, "column_groups": column_groups_form,
+                                                  "columns": columns_form, "table": table},
+                              context_instance=RequestContext(request))
+
+@login_required
+def export_sample(request, sample_name):
+    sample = utils.lookup_sample(sample_name, request)
+    return export_csv(request, sample, _(u"process"))

@@ -58,6 +58,7 @@ urlpatterns = patterns("",
                        (r"^samples/(?P<sample_name>.+)/kill/$", "samples.views.sample_death.new"),
                        (r"^samples/(?P<sample_name>.+)/add_process/$", "samples.views.sample.add_process"),
                        (r"^samples/(?P<sample_name>.+)/edit/$", "samples.views.sample.edit"),
+                       (r"^samples/(?P<sample_name>.+)/export/$", "samples.views.csv_export.export_sample"),
                        url(r"^samples/(?P<sample_name>.+)", "samples.views.sample.show", name="show_sample_by_name"),
                        (r"^bulk_rename$", "samples.views.bulk_rename.bulk_rename"),
 
