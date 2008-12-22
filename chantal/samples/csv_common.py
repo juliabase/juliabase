@@ -61,7 +61,7 @@ class CSVNode(object):
 
         :Parameters:
           - `top_level`: whether this node is the root node of the complete
-            tree, or in other words, whether its children are row trees.  Sou
+            tree, or in other words, whether its children are row trees.  You
             shouldn't need this parameter really, it's just for the internal
             recursion.
 
@@ -112,8 +112,8 @@ class CSVItem(object):
         :Parameters:
           - `key`: the key name of the data item
           - `value`: the value of the data item
-          - `origin`: an optional name of the class from where this data item comes
-            from.  See `CSVItem.origin` for more information.
+          - `origin`: an optional name of the class from where this data item
+            comes from.  See `CSVItem.origin` for more information.
 
         :type key: unicode
         :type value: unicode
