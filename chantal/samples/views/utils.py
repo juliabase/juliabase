@@ -86,6 +86,10 @@ def help_link(link):
         return _AddHelpLink(original_view_function, link)
     return decorate
 
+from chantal.settings import WITH_EPYDOC
+if WITH_EPYDOC:
+    help_link = lambda x: lambda y: y
+
 def get_sample(sample_name):
     u"""Lookup a sample by name.  You may also give an alias.  If more than one
     sample is found (can only happen via aliases), it returns a list.  Matching
