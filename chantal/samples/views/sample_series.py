@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
-from chantal.samples.views import utils, form_utils, feed_utils
+from chantal.samples.views import utils, form_utils, feed_utils, csv_export
 
 class SampleSeriesForm(forms.ModelForm):
     u"""Form for editing and creating sample series.
@@ -227,3 +227,24 @@ def new(request):
                                "is_new": True,
                                "name_prefix": u"%s-%02d" % (request.user.username, datetime.datetime.today().year % 100)},
                               context_instance=RequestContext(request))
+
+@login_required
+def export(request, name):
+    u"""View for exporting a sample series to CSV data.  Thus, the return value
+    is not an HTML response but a text/csv response.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: the name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    sample_series = get_object_or_404(models.SampleSeries, name=name)
+    permissions.assert_can_view_sample_series(request.user, sample_series)
+    return csv_export.export(request, sample_series, _(u"sample"))

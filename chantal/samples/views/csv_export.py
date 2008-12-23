@@ -95,15 +95,13 @@ strightforward).
 
 import csv, cStringIO, codecs
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import django.forms as forms
 from django.forms.util import ValidationError
-from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils
 from chantal.samples.csv_common import CSVNode
-from chantal.samples import models, permissions
 
 class UnicodeWriter(object):
     u"""Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
@@ -467,6 +465,9 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
     return table_rows
 
 class ColumnGroupsForm(forms.Form):
+    u"""Form for the columns choice.  It has only one field, ``column_groups``,
+    the result of which is a set with the selected column group names.
+    """
     column_groups = forms.MultipleChoiceField(label=_(u"Column groups"))
     def __init__(self, column_groups, *args, **kwargs):
         super(ColumnGroupsForm, self).__init__(*args, **kwargs)
@@ -475,6 +476,9 @@ class ColumnGroupsForm(forms.Form):
         return set(self.cleaned_data["column_groups"])
 
 class ColumnsForm(forms.Form):
+    u"""Form for the columns choice.  It has only one field, ``columns``, the
+    result of which is a set with the selected column indices as ints.
+    """
     columns = forms.MultipleChoiceField(label=_(u"Columns"))
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
         super(ColumnsForm, self).__init__(*args, **kwargs)
@@ -489,6 +493,11 @@ class ColumnsForm(forms.Form):
             raise ValidationError(u"Invalid number in column indices list")
 
 class OldDataForm(forms.Form):
+    u"""Form which stores the user input of the previous run.  It is not
+    intended for user interaction, in fact it is hidden in the HTML.  By
+    comparing the user's input with what is stored here, `export` can detect
+    whether the user has changed something.
+    """
     column_groups = forms.CharField(required=False)
     columns = forms.CharField(required=False)
     def __init__(self, *args, **kwargs):
@@ -509,9 +518,32 @@ class OldDataForm(forms.Form):
             raise ValidationError(u"Invalid number in column indices list")
 
 class SwitchRowForm(forms.Form):
+    u"""Form for the tick marks before every row in the preview table.  If it
+    is checked, the respective row is included into the CSV export.
+    """
     active = forms.BooleanField(required=False)
 
-def export_csv(request, database_object, label_column_heading):
+def export(request, database_object, label_column_heading):
+    u"""Helper function which does almost all work needed for a CSV table
+    export view.  This is not a view per se, however, it is called by views,
+    which have to do almost nothing anymore by themselves.  See for example
+    `sample.export`.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `database_object`: the database instance that is to be exported
+      - `label_column_heading`: Description of the very first column with the
+        table row headings, see `generate_table_rows`.
+
+    :type request: ``HttpRequest``
+    :type database_object: ``django.db.models.Model``
+    :type label_column_heading: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     data = database_object.get_data()
     data.find_unambiguous_names()
     column_groups, columns = build_column_group_list(data)
@@ -560,14 +592,3 @@ def export_csv(request, database_object, label_column_heading):
                                                   "backlink": utils.parse_query_string(request).get("next") or \
                                                       database_object.get_absolute_url()},
                               context_instance=RequestContext(request))
-
-@login_required
-def export_sample(request, sample_name):
-    sample = utils.lookup_sample(sample_name, request)
-    return export_csv(request, sample, _(u"process"))
-
-@login_required
-def export_sample_series(request, name):
-    sample_series = get_object_or_404(models.SampleSeries, name=name)
-    permissions.assert_can_view_sample_series(request.user, sample_series)
-    return export_csv(request, sample_series, _(u"sample"))

@@ -58,7 +58,7 @@ urlpatterns = patterns("",
                        (r"^samples/(?P<sample_name>.+)/kill/$", "samples.views.sample_death.new"),
                        (r"^samples/(?P<sample_name>.+)/add_process/$", "samples.views.sample.add_process"),
                        (r"^samples/(?P<sample_name>.+)/edit/$", "samples.views.sample.edit"),
-                       (r"^samples/(?P<sample_name>.+)/export/$", "samples.views.csv_export.export_sample"),
+                       (r"^samples/(?P<sample_name>.+)/export/$", "samples.views.sample.export"),
                        url(r"^samples/(?P<sample_name>.+)", "samples.views.sample.show", name="show_sample_by_name"),
                        (r"^bulk_rename$", "samples.views.bulk_rename.bulk_rename"),
 
@@ -83,7 +83,7 @@ urlpatterns = patterns("",
 
                        (r"^sample_series/add/$", "samples.views.sample_series.new"),
                        (r"^sample_series/(?P<name>.+)/edit/$", "samples.views.sample_series.edit"),
-                       (r"^sample_series/(?P<name>.+)/export/$", "samples.views.csv_export.export_sample_series"),
+                       (r"^sample_series/(?P<name>.+)/export/$", "samples.views.sample_series.export"),
                        (r"^sample_series/(?P<name>.+)", "samples.views.sample_series.show"),
 
                        url(r"^results/add/$", "samples.views.result.edit", {"process_id": None}, "add_result"),

@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal.samples.views import utils, form_utils, feed_utils
+from chantal.samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy
 
 class IsMySampleForm(forms.Form):
@@ -394,7 +394,7 @@ def add_process(request, sample_name):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `sample_name`: the sample of the sample
+      - `sample_name`: the name of the sample
 
     :type request: ``HttpRequest``
     :type sample_name: unicode
@@ -481,3 +481,24 @@ def search(request):
                                                       "too_many_results": too_many_results,
                                                       "max_results": max_results},
                               context_instance=RequestContext(request))
+
+@login_required
+def export(request, sample_name):
+    u"""View for exporting a sample to CSV data.  Thus, the return value is not
+    an HTML response but a text/csv response.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    sample = utils.lookup_sample(sample_name, request)
+    return csv_export.export(request, sample, _(u"process"))
+
