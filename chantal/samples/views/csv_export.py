@@ -552,11 +552,13 @@ def export_csv(request, database_object, label_column_heading):
         column_groups_form = ColumnGroupsForm(column_groups)
         columns_form = ColumnsForm(column_groups, columns, [])
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
-    title = _(u"Table export")
+    title = _(u"Table export for “%s”") % database_object
     return render_to_response("export_csv.html", {"title": title, "column_groups": column_groups_form,
                                                   "columns": columns_form,
                                                   "rows": zip(table, switch_row_forms) if table else None,
-                                                  "old_data": old_data_form},
+                                                  "old_data": old_data_form,
+                                                  "backlink": utils.parse_query_string(request).get("next") or \
+                                                      database_object.get_absolute_url()},
                               context_instance=RequestContext(request))
 
 @login_required

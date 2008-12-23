@@ -6,13 +6,23 @@
 {% block content %}
 <form method="post" action="">
 
-  <table>
-    {{ column_groups }}
+  <table style="float: left">
+    <tr>
+      <td><label for="id_{{ column_groups.column_groups.html_name }}">{{ column_groups.column_groups.label }}:</label></td>
+    </tr>
+    <tr>
+      <td>{{ column_groups.column_groups }}</td>
+    </tr>
   </table>
 
   {% if columns.fields.columns.choices %}
     <table>
-      {{ columns }}
+      <tr>
+        <td><label for="id_{{ columns.columns.html_name }}">{{ columns.columns.label }}:</label></td>
+      </tr>
+      <tr>
+        <td>{{ columns.columns }}</td>
+      </tr>
     </table>
   {% endif %}
 
@@ -21,7 +31,7 @@
   </table>
 
   {% if rows %}
-    <table border="1">
+    <table border="1" style="clear: left; margin-top: 2ex; margin-left: auto; margin-right: auto">
       {% for row, switch_row in rows %}
         <tr>
           {% if forloop.first %}
@@ -44,5 +54,6 @@
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
 
+<div style="text-align: right; margin-top: 1ex"><a href="{{ backlink }}">Go back</a></div>
 
 {% endblock %}
