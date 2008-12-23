@@ -69,9 +69,9 @@ class CSVNode(object):
         """
         names = [child.name for child in self.children]
         for i, child in enumerate(self.children):
-            if names.count(child.name) > 1:
-                child.name += u" #%d" % (names[:i].count(child.name) + 1)
             if not top_level:
+                if names.count(child.name) > 1:
+                    child.name += u" #%d" % (names[:i].count(child.name) + 1)
                 child.name = self.name + ", " + child.name
             child.find_unambiguous_names(top_level=False)
     def __repr__(self):
