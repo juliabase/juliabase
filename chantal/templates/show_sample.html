@@ -16,7 +16,11 @@
   {% endif %}
   {% if can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.name %}"
                              ><img src="/media/icons/cog_add.png" alt="add-process icon"
-                                   title="{% trans 'add process' %}"/></a>{% endif %}</h1>{% endspaceless %}{% endblock %}
+                                   title="{% trans 'add process' %}"/></a>{% endif %} 
+  <a class="edit-icon" 
+     href="{% url samples.views.sample.export sample_name=sample.name %}?next={{ sample.get_absolute_url|urlquote_plus }}"
+     ><img src="/media/icons/table.png" alt="export icon"
+           title="{% trans 'export as table' %}"/></a></h1>{% endspaceless %}{% endblock %}
 
 {% block css %}
 <style type="text/css">
