@@ -7,6 +7,7 @@
 <form method="post" action="">
 
   <table style="float: left">
+    {% error_list column_groups _("Error in column groups") "<tr>" %}
     <tr>
       <td><label for="id_{{ column_groups.column_groups.html_name }}">{{ column_groups.column_groups.label }}:</label></td>
     </tr>
@@ -16,7 +17,8 @@
   </table>
 
   {% if columns.fields.columns.choices %}
-    <table>
+    <table style="float: left; margin-right: 2em">
+      {% error_list columns _("Error in columns") "<tr>" %}
       <tr>
         <td><label for="id_{{ columns.columns.html_name }}">{{ columns.columns.label }}:</label></td>
       </tr>
@@ -24,6 +26,29 @@
         <td>{{ columns.columns }}</td>
       </tr>
     </table>
+
+    {% if rows %}
+      <table>
+        <tr><td>
+          {% blocktrans %}
+            <p>Below, you see a preview of the table.  If you export it by
+              clicking on the button, you get the table in CSV format.  This
+              should be importable by any table-processing program.  It has the
+              following properties, which you may have to specify when
+              importing the data:</p>
+
+            <ol>
+              <li>The columns are <em>tabulator</em>-separated (“TAB”).</li>
+              <li>The file is encoded in <em>UTF-8</em>.</li>
+            </ol>
+
+            <p>Note that depending on the MS Excel version number, it may be
+              easier to import the table into Excel by saving the file with the
+              extension <tt>".txt"</tt> before importing it.</p>
+          {% endblocktrans %}
+        </td></tr>
+      </table>
+    {% endif %}
   {% endif %}
 
   <table style="display: none">

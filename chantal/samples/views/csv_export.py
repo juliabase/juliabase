@@ -109,7 +109,7 @@ class UnicodeWriter(object):
     u"""Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
     string.  Inspired by <http://docs.python.org/library/csv.html#examples>.
     """
-    def __init__(self, dialect=csv.excel, encoding="utf-8", **kwargs):
+    def __init__(self, dialect=csv.excel_tab, encoding="utf-8", **kwargs):
         u"""Class constructor.  Additional keyword arguments are passed to the
         ``csv.writer`` factory function in Python's ``csv`` module.  After
         having instantiated this class, you can use `writerow` and `writerows`
@@ -117,8 +117,8 @@ class UnicodeWriter(object):
         `getvalue`.
 
         :Parameters:
-          - `dialect`: the CSV format; it defaults to Excel's format
-            (comma-separated, double-quotes)
+          - `dialect`: the CSV format; it defaults to Excel's TAB format
+            (TAB-separated, double-quotes)
           - `encoding`: name of the output encoding to be used; defaults to
             UTF-8
 
