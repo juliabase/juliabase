@@ -547,10 +547,12 @@ def export(request, database_object, label_column_heading):
     data = database_object.get_data()
     data.find_unambiguous_names()
     column_groups, columns = build_column_group_list(data)
+    single_column_group = [column_groups[0].name] if len(column_groups) == 1 else []
     table = None
-    selected_column_groups = selected_columns = frozenset()
+    selected_column_groups = set(single_column_group)
+    selected_columns = set()
     if request.method == "POST":
-        column_groups_form = ColumnGroupsForm(column_groups, request.POST)
+        column_groups_form = ColumnGroupsForm(column_groups, request.POST) if not single_column_group else None
         previous_data_form = OldDataForm(request.POST)
         if previous_data_form.is_valid():
             previous_column_groups = previous_data_form.cleaned_data["column_groups"]
@@ -558,8 +560,8 @@ def export(request, database_object, label_column_heading):
         else:
             previous_column_groups = previous_columns = frozenset()
         columns_form = ColumnsForm(column_groups, columns, previous_column_groups, request.POST)
-        if column_groups_form.is_valid():
-            selected_column_groups = column_groups_form.cleaned_data["column_groups"]
+        if single_column_group or column_groups_form.is_valid():
+            selected_column_groups = single_column_group or column_groups_form.cleaned_data["column_groups"]
             if columns_form.is_valid():
                 selected_columns = columns_form.cleaned_data["columns"]
                 label_column = [row.descriptive_name for row in data.children]
@@ -581,8 +583,8 @@ def export(request, database_object, label_column_heading):
         if selected_column_groups != previous_column_groups:
             columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     else:
-        column_groups_form = ColumnGroupsForm(column_groups)
-        columns_form = ColumnsForm(column_groups, columns, [])
+        column_groups_form = ColumnGroupsForm(column_groups) if not single_column_group else None
+        columns_form = ColumnsForm(column_groups, columns, single_column_group)
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export for “%s”") % database_object
     return render_to_response("csv_export.html", {"title": title, "column_groups": column_groups_form,
