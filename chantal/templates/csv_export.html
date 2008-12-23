@@ -7,10 +7,10 @@
 <form method="post" action="">
 
   <table style="float: left">
-    {% error_list column_groups _("Error in column groups") "<tr>" %}
     <tr>
       <td><label for="id_{{ column_groups.column_groups.html_name }}">{{ column_groups.column_groups.label }}:</label></td>
     </tr>
+    {% error_list column_groups _("Error in column groups") "<tr>" %}
     <tr>
       <td>{{ column_groups.column_groups }}</td>
     </tr>
@@ -18,10 +18,10 @@
 
   {% if columns.fields.columns.choices %}
     <table style="float: left; margin-right: 2em">
-      {% error_list columns _("Error in columns") "<tr>" %}
       <tr>
         <td><label for="id_{{ columns.columns.html_name }}">{{ columns.columns.label }}:</label></td>
       </tr>
+      {% error_list columns _("Error in columns") "<tr>" %}
       <tr>
         <td>{{ columns.columns }}</td>
       </tr>

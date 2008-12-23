@@ -95,7 +95,7 @@ strightforward).
 
 import csv, cStringIO, codecs
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 import django.forms as forms
 from django.forms.util import ValidationError
@@ -103,7 +103,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils
 from chantal.samples.csv_common import CSVNode
-from chantal.samples import models
+from chantal.samples import models, permissions
 
 class UnicodeWriter(object):
     u"""Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
@@ -553,7 +553,7 @@ def export_csv(request, database_object, label_column_heading):
         columns_form = ColumnsForm(column_groups, columns, [])
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export for “%s”") % database_object
-    return render_to_response("export_csv.html", {"title": title, "column_groups": column_groups_form,
+    return render_to_response("csv_export.html", {"title": title, "column_groups": column_groups_form,
                                                   "columns": columns_form,
                                                   "rows": zip(table, switch_row_forms) if table else None,
                                                   "old_data": old_data_form,
@@ -565,3 +565,9 @@ def export_csv(request, database_object, label_column_heading):
 def export_sample(request, sample_name):
     sample = utils.lookup_sample(sample_name, request)
     return export_csv(request, sample, _(u"process"))
+
+@login_required
+def export_sample_series(request, name):
+    sample_series = get_object_or_404(models.SampleSeries, name=name)
+    permissions.assert_can_view_sample_series(request.user, sample_series)
+    return export_csv(request, sample_series, _(u"sample"))

@@ -83,6 +83,7 @@ urlpatterns = patterns("",
 
                        (r"^sample_series/add/$", "samples.views.sample_series.new"),
                        (r"^sample_series/(?P<name>.+)/edit/$", "samples.views.sample_series.edit"),
+                       (r"^sample_series/(?P<name>.+)/export/$", "samples.views.csv_export.export_sample_series"),
                        (r"^sample_series/(?P<name>.+)", "samples.views.sample_series.show"),
 
                        url(r"^results/add/$", "samples.views.result.edit", {"process_id": None}, "add_result"),
