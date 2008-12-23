@@ -523,7 +523,7 @@ class SwitchRowForm(forms.Form):
     """
     active = forms.BooleanField(required=False)
 
-def export(request, database_object, label_column_heading):
+def export(request, database_object, label_column_heading, renaming_offset=1):
     u"""Helper function which does almost all work needed for a CSV table
     export view.  This is not a view per se, however, it is called by views,
     which have to do almost nothing anymore by themselves.  See for example
@@ -534,10 +534,14 @@ def export(request, database_object, label_column_heading):
       - `database_object`: the database instance that is to be exported
       - `label_column_heading`: Description of the very first column with the
         table row headings, see `generate_table_rows`.
+      - `renaming_offset`: number of the nesting levels in the tree still to be
+        stepped down from the root node before disambiguation of the node names
+        takes place.
 
     :type request: ``HttpRequest``
     :type database_object: ``django.db.models.Model``
     :type label_column_heading: unicode
+    :type renaming_offset: int
 
     :Returns:
       the HTTP response object
@@ -545,7 +549,7 @@ def export(request, database_object, label_column_heading):
     :rtype: ``HttpResponse``
     """
     data = database_object.get_data()
-    data.find_unambiguous_names()
+    data.find_unambiguous_names(renaming_offset)
     column_groups, columns = build_column_group_list(data)
     single_column_group = [column_groups[0].name] if len(column_groups) == 1 else []
     table = None

@@ -49,7 +49,7 @@ class CSVNode(object):
         self.descriptive_name = unicode(descriptive_name) or self.name
         self.items = []
         self.children = []
-    def find_unambiguous_names(self, top_level=True):
+    def find_unambiguous_names(self, renaming_offset=1):
         u"""Make all names in the whole tree of this node instance
         unambiguous.  This is done by two means:
 
@@ -60,20 +60,18 @@ class CSVNode(object):
            deposition, layer #2"``
 
         :Parameters:
-          - `top_level`: whether this node is the root node of the complete
-            tree, or in other words, whether its children are row trees.  You
-            shouldn't need this parameter really, it's just for the internal
-            recursion.
+          - `renaming_offset`: number of the nesting levels still to be stepped
+            down before disambiguation of the node names takes place.
 
-        :type top_level: bool
+        :type renaming_offset: int
         """
         names = [child.name for child in self.children]
         for i, child in enumerate(self.children):
-            if not top_level:
+            if renaming_offset <= 0:
                 if names.count(child.name) > 1:
                     child.name += u" #%d" % (names[:i].count(child.name) + 1)
                 child.name = self.name + ", " + child.name
-            child.find_unambiguous_names(top_level=False)
+            child.find_unambiguous_names(renaming_offset - 1)
     def __repr__(self):
         return repr(self.name)
 
