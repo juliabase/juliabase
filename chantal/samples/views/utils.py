@@ -208,9 +208,10 @@ class ResultContext(object):
         the main template for the sample's/sample series' history.  Each item
         is a dictionary which always contains ``"name"``, ``"operator"``,
         ``"timestamp"``, and ``"html_body"``.  The latter contains the result
-        of the process rendering.  Additionally, ``"edit_url"`` and
-        ``"duplicate_url"`` are inserted, if the
-        ``get_additional_template_context`` of the process had provided them.
+        of the process rendering.  Additionally, ``"edit_url"``,
+        ``"export_url"``, ``"duplicate_url"``, and ``"resplit_url"`` are
+        inserted, if the ``get_additional_template_context`` of the process had
+        provided them.
 
         All these things are used in the “outer” part of the history rendering.
         The inner part is the value of ``"html_body"``.
@@ -234,7 +235,7 @@ class ResultContext(object):
         context_dict = {"name": name[:1].upper()+name[1:], "operator": process.operator,
                         "timestamp": process.timestamp, "timestamp_inaccuracy": process.timestamp_inaccuracy,
                         "html_body": template.render(Context(template_context))}
-        for key in ["edit_url", "duplicate_url", "resplit_url"]:
+        for key in ["edit_url", "export_url", "duplicate_url", "resplit_url"]:
             if key in template_context:
                 context_dict[key] = template_context[key]
         return context_dict

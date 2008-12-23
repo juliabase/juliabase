@@ -88,6 +88,9 @@
         <h2>{{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
                                            href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
              ><img src="/media/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+          {% endif %}{% if process.export_url %}<a class="edit-icon" 
+                  href="{{ process.export_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+             ><img src="/media/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
           {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
                                         href="{{ process.resplit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
              ><img src="/media/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>

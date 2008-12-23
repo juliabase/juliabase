@@ -501,4 +501,3 @@ def export(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request)
     return csv_export.export(request, sample, _(u"process"))
-

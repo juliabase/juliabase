@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils, feed_utils
+from chantal.samples.views import utils, form_utils, feed_utils, csv_export
 
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
@@ -517,3 +517,24 @@ def show(request, process_id):
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.ResultContext(request.user, sample_series=None).digest_process(result))
     return render_to_response("show_single_result.html", template_context, context_instance=RequestContext(request))
+
+@login_required
+def export(request, process_id):
+    u"""View for exporting a result process to CSV data.  Thus, the return
+    value is not an HTML response but a text/csv response.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the database ID of the result to show
+
+    :type request: ``HttpRequest``
+    :type process_id: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
+    permissions.assert_can_view_result_process(request.user, result)
+    return csv_export.export(request, result, _(u"row"))

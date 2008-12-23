@@ -640,6 +640,8 @@ class Result(Process):
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
         if self.quantities_and_values:
             result["quantities"], result["value_lists"] = pickle.loads(str(self.quantities_and_values))
+            result["export_url"] = \
+                django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
         return result
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
@@ -666,9 +668,9 @@ class Result(Process):
         csv_node.name = csv_node.descriptive_name = self.title
         quantities, value_lists = pickle.loads(str(self.quantities_and_values))
         if len(value_lists) > 1:
-            for value_list in value_lists:
-                child_node = CSVNode(_(u"row"))
-                child_node.items = [CSVItem(quantities[i], value) for i, value in enumerate(value_list)]
+            for i, value_list in enumerate(value_lists):
+                child_node = CSVNode(_(u"row"), _(u"row #%d") % (i + 1))
+                child_node.items = [CSVItem(quantities[j], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         else:
             csv_node.items = [CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])]

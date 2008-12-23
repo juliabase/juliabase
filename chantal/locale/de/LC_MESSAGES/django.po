@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-23 15:41+0100\n"
-"PO-Revision-Date: 2008-12-23 15:42+0100\n"
+"POT-Creation-Date: 2008-12-23 17:53+0100\n"
+"PO-Revision-Date: 2008-12-23 17:56+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -227,6 +227,10 @@ msgstr "Ergebnis #%d"
 
 msgid "row"
 msgstr "Zeile"
+
+#, python-format
+msgid "row #%d"
+msgstr "Zeile %d"
 
 msgid "result"
 msgstr "Ergebnis"
@@ -2784,6 +2788,9 @@ msgstr[1] ""
 msgid "Edit this process"
 msgstr "Diesen Prozess editieren"
 
+msgid "Export this process"
+msgstr "Diesen Prozess in eine Tabelle exportieren"
+
 msgid "Duplicate this process"
 msgstr "Diesen Prozess duplizieren"
 
@@ -3021,9 +3028,6 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
-
-#~ msgid "row #%d"
-#~ msgstr "Zeile #%d"
 
 #~ msgid "History of sample “"
 #~ msgstr "Geschichte der Probe „"
