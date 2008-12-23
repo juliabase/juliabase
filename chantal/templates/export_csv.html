@@ -79,6 +79,8 @@
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
 
-<div style="text-align: right; margin-top: 1ex"><a href="{{ backlink }}">Go back</a></div>
+{% if backlink %}
+  <div style="text-align: right; margin-top: 1ex"><a href="{{ backlink }}">Go back</a></div>
+{% endif %}
 
 {% endblock %}
