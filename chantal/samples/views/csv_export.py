@@ -98,6 +98,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import django.forms as forms
+from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils
@@ -178,7 +179,8 @@ class ColumnGroup(object):
     boxes in the HTML view for the user.
 
     :ivar name: name of the column group which directly corresponds to the name
-      of the respective `CSVNode`.
+      of the respective `CSVNode`.  It must never contain a TAB character
+      because this is used as a separator in `OldDataForm`.
 
     :ivar key_indices: dictionary which maps key names to their index in the
       ``columns`` list which is built parallely to the list of
@@ -469,38 +471,92 @@ class ColumnGroupsForm(forms.Form):
     def __init__(self, column_groups, *args, **kwargs):
         super(ColumnGroupsForm, self).__init__(*args, **kwargs)
         self.fields["column_groups"].choices = ((column_group.name, column_group.name) for column_group in column_groups)
+    def clean_column_groups(self):
+        return set(self.cleaned_data["column_groups"])
 
 class ColumnsForm(forms.Form):
-    columns = forms.MultipleChoiceField(label=_(u"Column groups"))
-    def __init__(self, column_groups, columns, *args, **kwargs):
+    columns = forms.MultipleChoiceField(label=_(u"Columns"))
+    def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
         super(ColumnsForm, self).__init__(*args, **kwargs)
         self.fields["columns"].choices = ((column_group.name, [(key_index, key_name) for key_name, key_index
                                                                in column_group.key_indices.iteritems()])
-                                          for column_group in column_groups)
+                                          for column_group in column_groups if column_group.name in selected_column_groups)
+    def clean_columns(self):
+        try:
+            return set(int(i) for i in self.cleaned_data["columns"])
+        except ValueError:
+            # Untranslable because internal anyway
+            raise ValidationError(u"Invalid number in column indices list")
+
+class OldDataForm(forms.Form):
+    column_groups = forms.CharField(required=False)
+    columns = forms.CharField(required=False)
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.pop("initial", {})
+        kwargs["prefix"] = "old_data"
+        super(OldDataForm, self).__init__(*args, **kwargs)
+        if "column_groups" in initial:
+            self.fields["column_groups"].initial = u"\t".join(column_group for column_group in initial["column_groups"])
+        if "columns" in initial:
+            self.fields["columns"].initial = u" ".join(str(i) for i in initial["columns"])
+    def clean_column_groups(self):
+        return set(self.cleaned_data["column_groups"].split("\t"))
+    def clean_columns(self):
+        try:
+            return set(int(i) for i in self.cleaned_data["columns"].split())
+        except ValueError:
+            # Untranslable because internal anyway
+            raise ValidationError(u"Invalid number in column indices list")
+
+class SwitchRowForm(forms.Form):
+    active = forms.BooleanField(required=False)
 
 def export_csv(request, database_object, label_column_heading):
     data = database_object.get_data()
     data.find_unambiguous_names()
     column_groups, columns = build_column_group_list(data)
     table = None
+    selected_column_groups = selected_columns = frozenset()
     if request.method == "POST":
         column_groups_form = ColumnGroupsForm(column_groups, request.POST)
-        columns_form = ColumnsForm(column_groups, columns, request.POST)
-        all_valid = column_groups_form.is_valid()
-        all_valid = columns_form.is_valid() and all_valid
-        if all_valid:
-            writer = UnicodeWriter()
-            label_column = [row.descriptive_name for row in data.children]
-            table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["key_indices"],
-                                       label_column, label_column_heading)
-            writer.writerows(table)
-            return HttpResponse(writer.get_value(), content_type="text/csv; charset=utf-8")
+        previous_data_form = OldDataForm(request.POST)
+        if previous_data_form.is_valid():
+            previous_column_groups = previous_data_form.cleaned_data["column_groups"]
+            previous_columns = previous_data_form.cleaned_data["columns"]
+        else:
+            previous_column_groups = previous_columns = frozenset()
+        columns_form = ColumnsForm(column_groups, columns, previous_column_groups, request.POST)
+        if column_groups_form.is_valid():
+            selected_column_groups = column_groups_form.cleaned_data["column_groups"]
+            if columns_form.is_valid():
+                selected_columns = columns_form.cleaned_data["columns"]
+                label_column = [row.descriptive_name for row in data.children]
+                table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["columns"],
+                                            label_column, label_column_heading)
+                if not(previous_columns) and selected_columns:
+                    switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[1:])})
+                                        for i, row in enumerate(table)]
+                else:
+                    switch_row_forms = [SwitchRowForm(request.POST, prefix=str(i)) for i in range(len(table))]
+                all_switch_row_forms_valid = all([switch_row_form.is_valid() for switch_row_form in switch_row_forms])
+                if all_switch_row_forms_valid and \
+                        previous_column_groups == selected_column_groups and previous_columns == selected_columns:
+                    reduced_table = \
+                        [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
+                    writer = UnicodeWriter()
+                    writer.writerows(reduced_table)
+                    return HttpResponse(writer.getvalue(), content_type="text/csv; charset=utf-8")
+        if selected_column_groups != previous_column_groups:
+            columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     else:
         column_groups_form = ColumnGroupsForm(column_groups)
-        columns_form = ColumnsForm(column_groups, columns)
+        columns_form = ColumnsForm(column_groups, columns, [])
+    old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export")
     return render_to_response("export_csv.html", {"title": title, "column_groups": column_groups_form,
-                                                  "columns": columns_form, "table": table},
+                                                  "columns": columns_form,
+                                                  "rows": zip(table, switch_row_forms) if table else None,
+                                                  "old_data": old_data_form},
                               context_instance=RequestContext(request))
 
 @login_required

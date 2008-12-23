@@ -10,9 +10,36 @@
     {{ column_groups }}
   </table>
 
-  <table>
-    {{ columns }}
+  {% if columns.fields.columns.choices %}
+    <table>
+      {{ columns }}
+    </table>
+  {% endif %}
+
+  <table style="display: none">
+    {{ old_data }}
   </table>
+
+  {% if rows %}
+    <table border="1">
+      {% for row, switch_row in rows %}
+        <tr>
+          {% if forloop.first %}
+            <td/>
+          {% else %}
+            <td>{{ switch_row.active }}</td>
+          {% endif %}
+          {% for cell in row %}
+            {% if forloop.parentloop.first %}
+              <th>{{ cell }}</th>
+            {% else %}
+              <td>{{ cell }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
