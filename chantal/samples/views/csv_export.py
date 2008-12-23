@@ -551,7 +551,7 @@ def export(request, database_object, label_column_heading, renaming_offset=1):
     data = database_object.get_data()
     data.find_unambiguous_names(renaming_offset)
     column_groups, columns = build_column_group_list(data)
-    single_column_group = [column_groups[0].name] if len(column_groups) == 1 else []
+    single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
     table = None
     selected_column_groups = set(single_column_group)
     selected_columns = set()
