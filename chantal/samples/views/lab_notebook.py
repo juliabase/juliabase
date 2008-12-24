@@ -19,6 +19,7 @@ from django.template import Context, loader, RequestContext
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
+from django.utils.http import urlquote_plus
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, csv_export
 from chantal.samples.csv_common import CSVNode
@@ -145,7 +146,10 @@ def show(request, process_name, year_and_month):
     return render_to_response(
         "lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name_plural,
                               "year": year, "month": month, "year_month": year_month_form,
-                              "html_body": html_body, "previous_url": previous_url, "next_url": next_url},
+                              "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
+                              "export_url": django.core.urlresolvers.reverse(
+                "export_lab_notebook_"+process_name,
+                kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)},
         context_instance=RequestContext(request))
 
 @login_required
