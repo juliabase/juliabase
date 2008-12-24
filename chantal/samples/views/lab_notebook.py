@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 u"""View for the lab notebooks for physical processes.  This is a generic view.
-The concrete data extraction work is done in the ``get_lab_notebook_data``
+The concrete data extraction work is done in the ``get_lab_notebook_context``
 methods of physical process models, and the layout work is done in the
 ``lab_notebook_<class_name_of_process>.html`` templates.
 
@@ -138,7 +138,7 @@ def show(request, process_name, year_and_month):
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
     template = loader.get_template("lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
-    template_context = process_class.get_lab_notebook_data(year, month)
+    template_context = process_class.get_lab_notebook_context(year, month)
     html_body = template.render(Context(template_context))
     previous_url, next_url = get_previous_next_urls(process_name, year, month)
     return render_to_response(
