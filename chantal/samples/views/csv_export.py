@@ -437,6 +437,9 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
         sample series table, the rows are the samples of the series, and their
         names are printed in the first column.  Therefore, the length of this
         list must be equal to the number of rows.
+
+        If all elements are empty, no label column is generated.  This is
+        interesting for lab notebooks
       - `label_column_heading`: Description of the very first column with the
         table row headings.  This is the contents of the top left cell.  For
         example, for a sample series table, it may be ``"sample"`` because the
@@ -456,10 +459,13 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
 
     :rtype: list of list of unicode
     """
-    # Generate headline
-    table_rows = [[label_column_heading] + [unicode(columns[key_index].heading) for key_index in selected_key_indices]]
+    generate_label_column = any(label_column)
+    head_row = [label_column_heading] if generate_label_column else []
+    head_row.extend([unicode(columns[key_index].heading) for key_index in selected_key_indices])
+    table_rows = [head_row]
+    print table_rows
     for i, row in enumerate(flattened_tree):
-        table_row = [label_column[i]]
+        table_row = [label_column[i]] if generate_label_column else []
         for key_index in selected_key_indices:
             table_row.append(columns[key_index].get_value(row))
         table_rows.append(table_row)
@@ -571,8 +577,9 @@ def export(request, data, label_column_heading, renaming_offset=1):
                 label_column = [row.descriptive_name for row in data.children]
                 table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["columns"],
                                             label_column, label_column_heading)
+                start_column_index = 1 if any(label_column) else 0
                 if not(previous_columns) and selected_columns:
-                    switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[1:])})
+                    switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[start_column_index:])})
                                         for i, row in enumerate(table)]
                 else:
                     switch_row_forms = [SwitchRowForm(request.POST, prefix=str(i)) for i in range(len(table))]

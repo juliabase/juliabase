@@ -309,7 +309,7 @@ class LargeAreaDeposition(Deposition):
         for deposition in depositions:
             for layer in deposition.layers.all():
                 data.children.append(layer.get_data())
-#                data.children[-1].name = u""
+                data.children[-1].descriptive_name = u""
         return data
     class Meta:
         verbose_name = _(u"large-area deposition")
@@ -380,7 +380,8 @@ class LargeAreaLayer(Layer):
         csv_node = super(LargeAreaLayer, self).get_data()
         silane_normalized = 0.6 * float(self.sih4)
         silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
-        csv_node.items.extend([CSVItem(_(u"layer type"), self.get_layer_type_display()),
+        csv_node.items.extend([CSVItem(_(u"date"), self.date),
+                               CSVItem(_(u"layer type"), self.get_layer_type_display()),
                                CSVItem(_(u"station"), self.get_station_display()),
                                CSVItem(u"SiH₄/sccm", self.sih4),
                                CSVItem(u"H₂/sccm", self.h2),
