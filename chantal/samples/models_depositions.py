@@ -378,6 +378,8 @@ class LargeAreaLayer(Layer):
         # See `Layer.get_data` for the documentation.
         _ = ugettext
         csv_node = super(LargeAreaLayer, self).get_data()
+        silane_normalized = 0.6 * float(self.sih4)
+        silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
         csv_node.items.extend([CSVItem(_(u"layer type"), self.get_layer_type_display()),
                                CSVItem(_(u"station"), self.get_station_display()),
                                CSVItem(u"SiH₄/sccm", self.sih4),
@@ -386,6 +388,7 @@ class LargeAreaLayer(Layer):
                                CSVItem(u"CH₄/sccm", self.ch4),
                                CSVItem(u"CO₂/sccm", self.co2),
                                CSVItem(u"PH₃/sccm", self.ph3),
+                               CSVItem(u"SC/%", u"%5.2f" % silane_concentration),
                                CSVItem(u"P/W", self.power),
                                CSVItem(u"p/Torr", self.pressure),
                                CSVItem(u"T/℃", self.temperature),
