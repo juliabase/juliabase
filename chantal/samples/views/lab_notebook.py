@@ -110,7 +110,8 @@ def get_previous_next_urls(process_name, year, month):
 @login_required
 def show(request, process_name, year_and_month):
     u"""View for showing one month of the lab notebook for a particular
-    physical process.
+    physical process.  In ``urls.py``, you must give the entry for this view
+    the name ``"lab_notebook_<process_name>"``.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -143,17 +144,42 @@ def show(request, process_name, year_and_month):
     template_context = process_class.get_lab_notebook_context(year, month)
     html_body = template.render(Context(template_context))
     previous_url, next_url = get_previous_next_urls(process_name, year, month)
+    try:
+        export_url = django.core.urlresolvers.reverse(
+            "export_lab_notebook_"+process_name,
+            kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)
+    except django.core.urlresolvers.NoReverseMatch:
+        export_url = None
     return render_to_response(
         "lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name_plural,
                               "year": year, "month": month, "year_month": year_month_form,
                               "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
-                              "export_url": django.core.urlresolvers.reverse(
-                "export_lab_notebook_"+process_name,
-                kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)},
+                              "export_url": export_url},
         context_instance=RequestContext(request))
 
 @login_required
 def export(request, process_name, year_and_month):
+    u"""View for exporting a month of a lab notebook to CSV data.  Thus, the
+    return value is not an HTML response but a text/csv response.  In
+    ``urls.py``, you must give the entry for this view the name
+    ``"export_lab_notebook_<process_name>"``.
+    
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_name`: the class name of the model of the physical process,
+        e.g. ``"LargeAreaDeposition"``
+      - `year_and_month`: the year and month to be displayed in the format
+        ``YYYY/MM`` (the month may be single-digit)
+
+    :type request: ``HttpRequest``
+    :type process_name: str
+    :type year_and_month: str
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     process_class = models.physical_process_models[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
