@@ -483,9 +483,9 @@ class ColumnsForm(forms.Form):
     columns = forms.MultipleChoiceField(label=_(u"Columns"))
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
         super(ColumnsForm, self).__init__(*args, **kwargs)
-        self.fields["columns"].choices = ((column_group.name, [(key_index, key_name) for key_name, key_index
-                                                               in column_group.key_indices.iteritems()])
-                                          for column_group in column_groups if column_group.name in selected_column_groups)
+        self.fields["columns"].choices = \
+            ((column_group.name, [(i, columns[i].key) for i in sorted(column_group.key_indices.values())])
+             for column_group in column_groups if column_group.name in selected_column_groups)
     def clean_columns(self):
         try:
             return set(int(i) for i in self.cleaned_data["columns"])
