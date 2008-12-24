@@ -247,4 +247,4 @@ def export(request, name):
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
-    return csv_export.export(request, sample_series, _(u"sample"), renaming_offset=2)
+    return csv_export.export(request, sample_series.get_data(), _(u"sample"), renaming_offset=2)

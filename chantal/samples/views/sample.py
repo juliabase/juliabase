@@ -500,4 +500,4 @@ def export(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request)
-    return csv_export.export(request, sample, _(u"process"))
+    return csv_export.export(request, sample.get_data(), _(u"process"))

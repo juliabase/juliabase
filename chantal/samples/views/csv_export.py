@@ -524,7 +524,7 @@ class SwitchRowForm(forms.Form):
     """
     active = forms.BooleanField(required=False)
 
-def export(request, database_object, label_column_heading, renaming_offset=1):
+def export(request, data, label_column_heading, renaming_offset=1):
     u"""Helper function which does almost all work needed for a CSV table
     export view.  This is not a view per se, however, it is called by views,
     which have to do almost nothing anymore by themselves.  See for example
@@ -532,7 +532,7 @@ def export(request, database_object, label_column_heading, renaming_offset=1):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `database_object`: the database instance that is to be exported
+      - `data`: the root node of the data tree
       - `label_column_heading`: Description of the very first column with the
         table row headings, see `generate_table_rows`.
       - `renaming_offset`: number of the nesting levels in the tree still to be
@@ -540,7 +540,7 @@ def export(request, database_object, label_column_heading, renaming_offset=1):
         takes place.
 
     :type request: ``HttpRequest``
-    :type database_object: ``django.db.models.Model``
+    :type data: `CSVNode`
     :type label_column_heading: unicode
     :type renaming_offset: int
 
@@ -549,7 +549,6 @@ def export(request, database_object, label_column_heading, renaming_offset=1):
 
     :rtype: ``HttpResponse``
     """
-    data = database_object.get_data()
     data.find_unambiguous_names(renaming_offset)
     column_groups, columns = build_column_group_list(data)
     single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
@@ -591,14 +590,10 @@ def export(request, database_object, label_column_heading, renaming_offset=1):
         column_groups_form = ColumnGroupsForm(column_groups) if not single_column_group else None
         columns_form = ColumnsForm(column_groups, columns, single_column_group)
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
-    title = _(u"Table export for “%s”") % database_object
-    try:
-        backlink = utils.parse_query_string(request).get("next") or database_object.get_absolute_url()
-    except AttributeError:
-        backlink = django.core.urlresolvers.reverse("samples.views.main.main_menu")
+    title = _(u"Table export for “%s”") % data.descriptive_name
     return render_to_response("csv_export.html", {"title": title, "column_groups": column_groups_form,
                                                   "columns": columns_form,
                                                   "rows": zip(table, switch_row_forms) if table else None,
                                                   "old_data": old_data_form,
-                                                  "backlink": backlink},
+                                                  "backlink": utils.parse_query_string(request).get("next")},
                               context_instance=RequestContext(request))
