@@ -302,6 +302,15 @@ class LargeAreaDeposition(Deposition):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_large-area_deposition")
+    @classmethod
+    def get_lab_notebook_data(cls, year, month):
+        depositions = cls.get_lab_notebook_context(year, month)["processes"]
+        data = CSVNode(_(u"lab notebook for %s") % cls._meta.verbose_name_plural)
+        for deposition in depositions:
+            for layer in deposition.layers.all():
+                data.children.append(layer.get_data())
+#                data.children[-1].name = u""
+        return data
     class Meta:
         verbose_name = _(u"large-area deposition")
         verbose_name_plural = _(u"large-area depositions")

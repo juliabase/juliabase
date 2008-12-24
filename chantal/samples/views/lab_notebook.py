@@ -20,7 +20,8 @@ import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from chantal.samples.views import utils, csv_export
+from chantal.samples.csv_common import CSVNode
 
 class YearMonthForm(forms.Form):
     u"""Form for the year/month fields in which the user can see which month is
@@ -147,3 +148,10 @@ def show(request, process_name, year_and_month):
                               "html_body": html_body, "previous_url": previous_url, "next_url": next_url},
         context_instance=RequestContext(request))
 
+@login_required
+def export(request, process_name, year_and_month):
+    process_class = models.physical_process_models[process_name]
+    permissions.assert_can_view_lab_notebook(request.user, process_class)
+    year, month = parse_year_and_month(year_and_month)
+    data = process_class.get_lab_notebook_data(year, month)
+    return csv_export.export(request, data, _(u"process"), renaming_offset=2)
