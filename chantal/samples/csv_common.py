@@ -117,4 +117,4 @@ class CSVItem(object):
         :type value: unicode
         :type origin: str or ``NoneType``
         """
-        self.key, self.value, self.origin = unicode(key), unicode(value), origin
+        self.key, self.value, self.origin = unicode(key), unicode(value or u""), origin
