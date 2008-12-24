@@ -279,8 +279,9 @@ class Process(models.Model):
                           CSVItem(_(u"comments"), self.comments, "process")]
         return csv_node
     @classmethod
-    def get_monthly_processes(cls, year, month):
-        return cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
+    def get_lab_notebook_data(cls, year, month):
+        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
+        return {"processes": processes}
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")

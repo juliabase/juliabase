@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% if depositions %}
+{% if processes %}
   <table style="margin-top: 2ex; border-color: black" cellpadding="6" cellspacing="0">
     <colgroup span="2"/>
     <colgroup>
@@ -42,7 +42,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for deposition in depositions %}
+      {% for deposition in processes %}
         {% for layer in deposition.layers.all %}
           <tr style="vertical-align: top">
             <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
