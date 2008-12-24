@@ -102,6 +102,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils
 from chantal.samples.csv_common import CSVNode
+import django.core.urlresolvers
 
 class UnicodeWriter(object):
     u"""Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
@@ -591,10 +592,13 @@ def export(request, database_object, label_column_heading, renaming_offset=1):
         columns_form = ColumnsForm(column_groups, columns, single_column_group)
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export for “%s”") % database_object
+    try:
+        backlink = utils.parse_query_string(request).get("next") or database_object.get_absolute_url()
+    except AttributeError:
+        backlink = django.core.urlresolvers.reverse("samples.views.main.main_menu")
     return render_to_response("csv_export.html", {"title": title, "column_groups": column_groups_form,
                                                   "columns": columns_form,
                                                   "rows": zip(table, switch_row_forms) if table else None,
                                                   "old_data": old_data_form,
-                                                  "backlink": utils.parse_query_string(request).get("next") or \
-                                                      database_object.get_absolute_url()},
+                                                  "backlink": backlink},
                               context_instance=RequestContext(request))
