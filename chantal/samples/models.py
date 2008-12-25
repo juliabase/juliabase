@@ -42,6 +42,7 @@ from chantal.samples.models_physical_processes import *
 from chantal.samples.models_depositions import *
 from chantal.samples.models_feeds import *
 
+
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
 physical_process_models = dict([(cls.__name__, cls) for cls in all_models if hasattr(cls, "get_add_link")])
@@ -77,7 +78,10 @@ def find_actual_instance(self):
             else:
                 raise Exception("internal error: instance not found")
         return self.__actual_instance
+
 models.Model.find_actual_instance = find_actual_instance
+
+
 def inject_direct_subclasses(parent, hierarchy):
     u"""This is a mere helper function which injects a list with all subclasses
     into the class itself, under the name ``direct_subclasses``.  It is only
@@ -104,5 +108,6 @@ def inject_direct_subclasses(parent, hierarchy):
             i += 2
         else:
             i += 1
+
 inject_direct_subclasses(None, class_hierarchy)
 del _globals, cls

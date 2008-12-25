@@ -10,6 +10,7 @@ from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _
 
+
 def default(request):
     u"""Injects some session data into the template context.  At the same time,
     it removes them from the session data so that the next view has to re-set

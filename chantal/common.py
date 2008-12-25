@@ -10,10 +10,12 @@ import re, datetime
 
 remote_monitor_log_file_name = "/windows/T/public/bronger/remote_monitor.log"
 
+
 class SystemInfo(object):
     def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5):
         self.timestamp, self.used_mem, self.used_mem_with_buffers, self.used_swap, self.load_avg_5 = \
             timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5
+
 
 class Availability(object):
     u"""Container for storing server availability data.
@@ -21,6 +23,7 @@ class Availability(object):
     FixMe: Describe attributes.
     """
     line_pattern = re.compile(ur"(?P<date>[-0-9 :]+)\s+(?P<type>[A-Z]+)\s+(?P<message>.*)")
+
     def __init__(self, logfile_name=remote_monitor_log_file_name):
         self.downtime_intervals = []
         self.start_of_log = None

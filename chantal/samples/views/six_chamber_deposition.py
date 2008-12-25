@@ -28,6 +28,7 @@ from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ung
 from django.conf import settings
 import django.contrib.auth.models
 
+
 class RemoveFromMySamplesForm(Form):
     u"""Form class for one single checkbox for removing deposited samples from
     “My Samples”.
@@ -35,6 +36,7 @@ class RemoveFromMySamplesForm(Form):
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
+
 
 class AddMyLayerForm(Form):
     u"""Form class for a choice field for appending nicknamed layers from “My
@@ -47,12 +49,14 @@ class AddMyLayerForm(Form):
         super(AddMyLayerForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = form_utils.get_my_layers(user_details, SixChamberDeposition)
 
+
 class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the basic deposition data.
     """
     _ = ugettext_lazy
     sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
+
     def __init__(self, user_details, preset_sample, data=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way, especially those that I have added myself
@@ -75,8 +79,10 @@ class DepositionForm(form_utils.ProcessForm):
         user = user_details.user
         self.fields["operator"].set_operator(user if self.is_new else deposition.operator, user.is_staff)
         self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
+
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "B")
+
     def clean(self):
         _ = ugettext
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
@@ -84,6 +90,7 @@ class DepositionForm(form_utils.ProcessForm):
                 form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
+
     def save(self, *args, **kwargs):
         u"""Additionally to the deposition itself, I must store the list of
         samples connected with the deposition (if it is a new one)."""
@@ -91,11 +98,14 @@ class DepositionForm(form_utils.ProcessForm):
         if self.is_new:
             deposition.samples = self.cleaned_data["sample_list"]
         return deposition
+
     class Meta:
         model = SixChamberDeposition
 
+
 class LayerForm(DataModelForm):
     u"""Model form for a 6-chamber layer."""
+
     def __init__(self, data=None, **kwargs):
         u"""Model form constructor.  I do additional initialisation here, but
         very harmless: It's only about visual appearance and numerical limits.
@@ -112,33 +122,43 @@ class LayerForm(DataModelForm):
                                                 ("deposition_power", 0, 1000)]:
             self.fields[fieldname].min_value = min_value
             self.fields[fieldname].max_value = max_value
+
     def clean_chamber(self):
         # FixMe: Isn't this already tested by Django itself?
         if self.cleaned_data["chamber"] not in set([x[0] for x in models.six_chamber_chamber_choices]):
             raise ValidationError(_(u"Name is unknown."))
         return self.cleaned_data["chamber"]
+
     def clean_time(self):
         return form_utils.clean_time_field(self.cleaned_data["time"])
+
     def clean_pre_heat(self):
         return form_utils.clean_time_field(self.cleaned_data["pre_heat"])
+
     def clean_gas_pre_heat_time(self):
         return form_utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
+
     def clean_pressure(self):
         return form_utils.clean_quantity_field(self.cleaned_data["pressure"], ["mTorr", "mbar", "Torr", "hPa"])
+
     def clean_gas_pre_heat_pressure(self):
         return form_utils.clean_quantity_field(self.cleaned_data["gas_pre_heat_pressure"], ["Torr"])
+
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
         form_utils.check_markdown(comments)
         return comments
+
     class Meta:
         model = SixChamberLayer
         exclude = ("deposition",)
 
+
 class ChannelForm(ModelForm):
     u"""Model form for channels in 6-chamber depositions."""
+
     def __init__(self, data=None, **kwargs):
         u"""Model form constructor.  I do additional initialisation here, but
         very harmless: It's only about visual appearance.
@@ -146,14 +166,17 @@ class ChannelForm(ModelForm):
         super(ChannelForm, self).__init__(data, **kwargs)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
+
     def clean_gas(self):
         # FixMe: Isn't this already tested by Django itself?
         if self.cleaned_data["gas"] not in set([x[0] for x in models.six_chamber_gas_choices]):
             raise ValidationError(_(u"Gas type is unknown."))
         return self.cleaned_data["gas"]
+
     class Meta:
         model = SixChamberChannel
         exclude = ("layer",)
+
 
 def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form,
                  edit_description_form):
@@ -195,6 +218,7 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
     for forms in channel_form_lists:
         valid = valid and all([channel_form.is_valid() for channel_form in forms])
     return valid
+
 
 def change_structure(layer_forms, channel_form_lists, post_data):
     u"""Add or delete layers and channels in the form.  While changes in form
@@ -308,6 +332,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     channel_form_lists.extend(new_channel_lists)
     return structure_changed
 
+
 def is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
     u"""Test whether all forms are consistent with each other and with the
     database.  For example, no layer number must occur twice, and the
@@ -367,6 +392,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
                     channel_numbers.add(channel_form.cleaned_data["number"])
     return referentially_valid
 
+
 def save_to_database(deposition_form, layer_forms, channel_form_lists):
     u"""Save the forms to the database.  Only the deposition is just updated if
     it already existed.  However, layers and channels are completely deleted
@@ -400,6 +426,7 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
             channel.save()
     return deposition
 
+
 def forms_from_post_data(post_data):
     u"""Interpret the POST data and create bound forms for layers and channels
     from it.  The top-level channel list has the same number of elements as the
@@ -424,6 +451,7 @@ def forms_from_post_data(post_data):
              for channel_index in range(list_of_number_of_channels[layer_index])])
     return layer_forms, channel_form_lists
 
+
 def forms_from_database(deposition):
     u"""Take a deposition instance and construct forms from it for its layers
     and their channels.  The top-level channel list has the same number of
@@ -447,6 +475,7 @@ def forms_from_database(deposition):
             [ChannelForm(prefix="%d_%d"%(layer_index, channel_index), instance=channel)
              for channel_index, channel in enumerate(layer.channels.all())])
     return layer_forms, channel_form_lists
+
 
 @login_required
 def edit(request, deposition_number):
@@ -532,6 +561,7 @@ def edit(request, deposition_number):
                                "remove_from_my_samples": remove_from_my_samples_form,
                                "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def show(request, deposition_number):

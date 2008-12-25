@@ -17,9 +17,11 @@ from django.conf import settings
 import django.core.urlresolvers
 from chantal.samples.views import utils
 
+
 from chantal.settings import WITH_EPYDOC
 if WITH_EPYDOC:
     cache_page = lambda x: lambda y: y
+
 
 def indent(elem, level=0):
     """Indent a given ElementTree in-place by added whitespace so that it looks
@@ -52,6 +54,7 @@ def indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
+
 
 def get_timezone_string(timestamp=None):
     u"""Claculate the timezone string (e.g. ``"+02:00"``) for a given point in
@@ -90,6 +93,7 @@ def get_timezone_string(timestamp=None):
     minutes = (seconds-hours*3600) // 60
     return "%s%02d:%02d" % (sign, hours, minutes)
 
+
 def format_timestamp(timestamp):
     u"""Convert a timestamp to an Atom-1.0-compatible string.
 
@@ -104,6 +108,7 @@ def format_timestamp(timestamp):
     :rtype: str
     """
     return timestamp.strftime("%Y-%m-%dT%H:%M:%S") + get_timezone_string(timestamp)
+
 
 @cache_page(600)
 def show(request, username):

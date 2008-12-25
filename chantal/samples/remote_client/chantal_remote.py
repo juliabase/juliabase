@@ -13,21 +13,26 @@ logging.basicConfig(level=logging.DEBUG,
 __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamberLayer", "SixChamberChannel",
            "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition", "PDSMeasurement", "get_or_create_sample"]
 
+
 def quote_header(value):
     if isinstance(value, bool):
         return u"on" if value else None
     return unicode(value).encode("utf-8")
 
+
 class ResponseError(Exception):
     pass
+
 
 class ChantalConnection(object):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
     opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
+
     def __init__(self, chantal_url="http://bob.ipv.kfa-juelich.de/chantal/"):
         self.root_url = chantal_url
         self.username = None
         self.primary_keys = None
+
     def open(self, relative_url, data=None):
         if data is not None:
             cleaned_data = {}
@@ -62,6 +67,7 @@ class ChantalConnection(object):
             logfile.write(text)
             logfile.close()
             raise ResponseError("Response was not in pickle format!")
+
     def login(self, username, password):
         self.username = username
         if not self.open("login_remote_client", {"username": username, "password": password}):
@@ -69,20 +75,25 @@ class ChantalConnection(object):
             raise ResponseError("Login failed")
         # FixMe: Test whether login was successful
         self.primary_keys = self.open("primary_keys?groups=*&users=*")
+
     def logout(self):
         if not self.open("logout_remote_client"):
             logging.error("Logout failed.")
             raise ResponseError("Logout failed")
 
+
 connection = ChantalConnection("http://127.0.0.1:8000/")
+
 
 def login(username, password):
     connection.login(username, password)
     logging.info("Successfully logged-in as %s." % username)
 
+
 def logout():
     connection.logout()
     logging.info("Successfully logged-out.")
+
 
 def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, timestamp_inaccuracy=None,
                 purpose=None, tags=None, group=None, substrate_comments=None):
@@ -101,12 +112,15 @@ def new_samples(number_of_samples, current_location, substrate=u"asahi-u", times
     logging.info("Successfully created %d samples with the ids %s." % (len(samples), ",".join(str(id_) for id_ in samples)))
     return samples
 
+
 class SixChamberDeposition(object):
+
     def __init__(self, sample_ids):
         self.sample_ids = sample_ids
         self.number = self.carrier = self.operator = self.timestamp = self.comments = None
         self.timestamp_inaccuracy = 0
         self.layers = []
+
     def submit(self):
         # FixMe: Assure that sample is in MySamples
         #
@@ -129,7 +143,9 @@ class SixChamberDeposition(object):
         logging.info("Successfully added 6-chamber deposition %s." % self.number)
         return result
 
+
 class SixChamberLayer(object):
+
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
@@ -139,6 +155,7 @@ class SixChamberLayer(object):
             self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
             self.deposition_frequency = self.deposition_power = self.base_pressure = None
         self.channels = []
+
     def get_data(self, layer_index):
         prefix = unicode(layer_index) + "-"
         data = {prefix+"number": layer_index + 1,
@@ -163,24 +180,30 @@ class SixChamberLayer(object):
             data.update(channel.get_data(layer_index, channel_index))
         return data
 
+
 class SixChamberChannel(object):
+
     def __init__(self, layer):
         self.layer = layer
         layer.channels.append(self)
         self.number = self.gas = self.flow_rate = None
+
     def get_data(self, layer_index, channel_index):
         prefix = "%d_%d-" % (layer_index, channel_index)
         return {prefix+"number": self.number, prefix+"gas": self.gas, prefix+"flow_rate": self.flow_rate}
 
 
+
 class LargeAreaDeposition(object):
     deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
     deposition_number_pattern = re.compile(ur"\d\dL-(?P<number>\d+)$")
+
     def __init__(self, sample_ids):
         self.sample_ids = sample_ids
         self.number = self.operator = self.timestamp = self.comments = None
         self.timestamp_inaccuracy = 0
         self.layers = []
+
     def submit(self):
         # FixMe: Assure that sample is in MySamples
         #
@@ -206,13 +229,16 @@ class LargeAreaDeposition(object):
         logging.info("Successfully added large area deposition %s." % self.number)
         return result
 
+
 class LargeAreaLayer(object):
+
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
         self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.sc = self.tmb = self.ch4 = \
             self.co2 = self.ph3 = self.power = self.pressure = self.temperature = self.hf_frequency = self.time = \
             self.dc_bias = self.electrode = self.electrodes_distance = None
+
     def get_data(self, layer_number, layer_index):
         prefix = unicode(layer_index) + "-"
         data = {prefix+"number": self.number or layer_number,
@@ -236,6 +262,7 @@ class LargeAreaLayer(object):
                 prefix+"electrodes_distance": self.electrodes_distance}
         return data
 
+
 def rename_after_deposition(deposition_number, samples):
     data = {}
     for i, id_ in enumerate(samples):
@@ -244,12 +271,15 @@ def rename_after_deposition(deposition_number, samples):
         data["0-new_name"] = data["%d_0-new_name" % i] = samples[id_]
     return connection.open("depositions/split_and_rename_samples/"+deposition_number, data)
 
+
 class PDSMeasurement(object):
+
     def __init__(self, sample_id):
         self.sample_id = sample_id
         self.number = self.operator = self.timestamp = self.comments = None
         self.timestamp_inaccuracy = 0
         self.raw_datafile = self.evaluated_datafile = None
+
     def submit(self):
         if not self.operator:
             self.operator = connection.username
@@ -267,6 +297,7 @@ class PDSMeasurement(object):
                 "remove_measured_from_my_samples": True}
         return connection.open("pds_measurements/add/", data)
 
+
 def add_century(two_digit_year):
     two_digit_year = int(two_digit_year)
     if two_digit_year < 70:
@@ -274,12 +305,15 @@ def add_century(two_digit_year):
     else:
         return 1900 + two_digit_year
 
+
 class QuirkySampleError(Exception):
     pass
+
 
 quirky_deposition_number_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
                                               ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)-(?P<initials>[A-Za-z]{2}(?:[A-Za-z]{0,2}|[A-Za-z]\d|\d{0,2}))-"
+
                                         ur"(?P<suffix>[A-Za-z0-9][-A-Za-z_/0-9]*)?$")
 def normalize_sample_name(sample_name):
     result_dict = {}
@@ -307,6 +341,7 @@ def normalize_sample_name(sample_name):
         else:
             raise QuirkySampleError("Sample name is too quirky to normalize")
     return sample_name, result_dict
+
 
 def get_or_create_sample(sample_name):
     try:

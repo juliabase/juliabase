@@ -32,7 +32,9 @@ from django.conf import settings
 from django.core.mail import mail_admins
 import ldap
 
+
 class ActiveDirectoryBackend:
+
     def authenticate(self, username=None, password=None):
         try:
             is_valid = self.is_valid(username, password)
@@ -69,11 +71,13 @@ login name.
 """ % user.username).encode("utf-8"))
             return None
         return user
+
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
     def is_valid(self, username, password):
         if not password:
             return False

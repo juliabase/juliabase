@@ -16,6 +16,7 @@ import django.contrib.auth.models
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils
 
+
 class MyLayerForm(forms.Form):
     u"""Form for editing the “My Layers” structure.
     """
@@ -24,6 +25,7 @@ class MyLayerForm(forms.Form):
     deposition_and_layer = forms.CharField(label=_(u"Layer identifier"),
                                            help_text=_(u"in the form \"deposition number\"-\"layer number\""))
     delete = forms.BooleanField(label=_(u"Delete"), required=False)
+
     def clean_deposition_and_layer(self):
         u"""Convert the notation ``<deposition number>-<layer number>`` to
         ``<deposition ID>-<layer number>``.  Additionaly, do some validity
@@ -44,6 +46,7 @@ class MyLayerForm(forms.Form):
         if not deposition.layers.filter(number=layer_number).count():
             raise ValidationError(_(u"This layer does not exist in this deposition."))
         return u"%d-%s" % (deposition.id, layer_number)
+
 
 layer_item_pattern = re.compile(ur"\s*(?P<nickname>.+?)\s*:\s*(?P<raw_layer_identifier>.+?)\s*(?:,\s*|\Z)")
 def forms_from_database(user):
@@ -74,6 +77,7 @@ def forms_from_database(user):
                                           prefix=str(len(my_layer_forms))))
         my_layers_serialized = my_layers_serialized[next_match.end():]
     return my_layer_forms
+
 
 def forms_from_post_data(post_data):
     u"""Interpret the POST data and create bound forms for with the “My Layers”
@@ -108,6 +112,7 @@ def forms_from_post_data(post_data):
         structure_changed = True
     return my_layer_forms, structure_changed
 
+
 def is_referentially_valid(my_layer_forms):
     u"""Test whether no nickname occurs twice.
 
@@ -128,6 +133,7 @@ def is_referentially_valid(my_layer_forms):
                 nicknames.add(nickname)
     return referentially_valid
 
+
 def save_to_database(my_layer_forms, user):
     u"""Save the new “My Layers” into the database.
     """
@@ -136,6 +142,7 @@ def save_to_database(my_layer_forms, user):
         u", ".join(["%s: %s" % (form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
                     for form in my_layer_forms])
     user_details.save()
+
 
 @login_required
 def edit(request, login_name):

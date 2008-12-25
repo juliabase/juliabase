@@ -16,6 +16,7 @@ from chantal.samples import models, permissions
 import django.core.urlresolvers
 from chantal.samples.views import utils, form_utils, feed_utils
 
+
 class NewNameForm(forms.Form):
     u"""Form for data of one new sample piece.
     """
@@ -23,9 +24,11 @@ class NewNameForm(forms.Form):
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
     new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_(u"Delete"), required=False)
+
     def __init__(self, parent_name, *args, **kwargs):
         super(NewNameForm, self).__init__(*args, **kwargs)
         self.parent_name = parent_name
+
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
         sample_name_format = utils.sample_name_format(new_name)
@@ -38,6 +41,7 @@ class NewNameForm(forms.Form):
             raise ValidationError(_(u"Name does already exist in database."))
         return new_name
 
+
 class GlobalDataForm(forms.Form):
     u"""Form for general data for a split as a whole, and for the “finished”
     checkbox.
@@ -46,11 +50,13 @@ class GlobalDataForm(forms.Form):
     finished = forms.BooleanField(label=_(u"All pieces completely entered"), required=False)
     sample_completely_split = forms.BooleanField(label=_(u"Sample was completely split"), initial=True, required=False)
     sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None, required=False)
+
     def __init__(self, parent, user_details, data=None, **kwargs):
         super(GlobalDataForm, self).__init__(data, **kwargs)
         now = datetime.datetime.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
         self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)
+
 
 def forms_from_post_data(post_data, parent, user_details):
     u"""Interpret the POST data sent by the user through his browser and create
@@ -97,6 +103,7 @@ def forms_from_post_data(post_data, parent, user_details):
     global_data_form = GlobalDataForm(parent, user_details, post_data)
     return new_name_forms, global_data_form, structure_changed
 
+
 def forms_from_database(parent, user_details):
     u"""Generate pristine forms for the given parent.  In particular, this
     returns an empty list of ``new_name_forms``.
@@ -116,6 +123,7 @@ def forms_from_database(parent, user_details):
     new_name_forms = []
     global_data_form = GlobalDataForm(parent, user_details)
     return new_name_forms, global_data_form
+
 
 def is_all_valid(new_name_forms, global_data_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
@@ -138,6 +146,7 @@ def is_all_valid(new_name_forms, global_data_form):
     all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
     all_valid = global_data_form.is_valid() and all_valid  # Ordering important: .is_valid() must be called
     return all_valid
+
 
 def is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces):
     u"""Test whether all forms are consistent with each other and with the
@@ -177,6 +186,7 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
                 referentially_valid = False
             new_names.add(new_name)
     return referentially_valid
+
 
 def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
     u"""Save all form data to the database.  If `sample_split` is not ``None``,
@@ -237,6 +247,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         parent.processes.add(death)
     return sample_split, new_pieces
 
+
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
     u"""Both splitting of a sample and re-split of an already existing split
@@ -291,6 +302,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                                                         "global_data": global_data_form,
                                                         "old_split": old_split},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def latest_split(request, sample_name):

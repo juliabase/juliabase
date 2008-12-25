@@ -29,6 +29,7 @@ from django.conf import settings
 import chantal.samples.models
 from chantal.samples.views import shared_utils
 
+
 def translate_permission(permission_codename):
     u"""Translates a permission description to the user's language.
 
@@ -46,6 +47,7 @@ def translate_permission(permission_codename):
     :rtype: unicode
     """
     return ugettext(django.contrib.auth.models.Permission.objects.get(codename=permission_codename))
+
 
 def get_user_permissions(user):
     u"""Determines the permissions of a user.  It iterates through all
@@ -73,6 +75,7 @@ def get_user_permissions(user):
             has_not.append(ugettext(permission["name"]))
     return has, has_not
 
+
 def get_user_hash(user):
     u"""Generates a secret hash that is connected with a user.  It is means as
     some sort of URL-based login for fetching feeds.  If the user accesses his
@@ -98,6 +101,7 @@ def get_user_hash(user):
     user_hash.update(user.username)
     return user_hash.hexdigest()[:10]
 
+
 def get_editable_sample_series(user):
     u"""Return a query set with all sample series that the user can edit.  So
     far, it is only used in `split_and_rename.GlobalDataForm`.
@@ -113,6 +117,7 @@ def get_editable_sample_series(user):
     :rtype: ``QuerySet``
     """
     return chantal.samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
+
 
 def get_allowed_physical_processes(user):
     u"""Get a list with all pysical processes (depositions, measurements; no
@@ -148,6 +153,7 @@ def get_allowed_physical_processes(user):
                                                "type": physical_process_class.__name__})
     return allowed_physical_processes
 
+
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
 
@@ -160,6 +166,7 @@ class PermissionError(Exception):
 
     :type description: unicode
     """
+
     def __init__(self, user, description, new_group_would_help=False):
         u"""Class constructor.
 
@@ -176,6 +183,7 @@ class PermissionError(Exception):
         """
         super(PermissionError, self).__init__(_(u"Permission denied: ") + description)
         self.user, self.description, self.new_group_would_help = user, description, new_group_would_help
+
 
 def assert_can_view_sample(user, sample):
     u"""Tests whether the user can view the sample.
@@ -196,6 +204,7 @@ def assert_can_view_sample(user, sample):
         description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
                         u"its currently responsible person, nor are you a senior user.") % sample
         raise PermissionError(user, description, new_group_would_help=True)
+
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
     u"""Tests whether the user can create or edit a physical process
@@ -232,6 +241,7 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
                             {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
         raise PermissionError(user, description)
 
+
 def assert_can_view_lab_notebook(user, process_class):
     u"""Tests whether the user can view the lab notebook for a physical process
     class (i.e. deposition, measurement, etching process, clean room work etc).
@@ -254,6 +264,7 @@ def assert_can_view_lab_notebook(user, process_class):
                         u"permission “%(permission)s”.") % \
                         {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
         raise PermissionError(user, description)
+
 
 def assert_can_view_physical_process(user, process):
     u"""Tests whether the user can view a physical process (i.e. deposition,
@@ -281,6 +292,7 @@ def assert_can_view_physical_process(user, process):
                             % {"process": unicode(process), "permission": permission}
             raise PermissionError(user, description, new_group_would_help=True)
 
+
 def assert_can_edit_result_process(user, result_process):
     u"""Tests whether the user can edit a result process.
 
@@ -299,6 +311,7 @@ def assert_can_edit_result_process(user, result_process):
         description = _(u"You are not allowed to edit the result “%s” because you didn't create this result.") \
             % unicode(result_process)
         raise PermissionError(user, description)
+
 
 def assert_can_view_result_process(user, result_process):
     u"""Tests whether the user can view a result process.
@@ -321,6 +334,7 @@ def assert_can_view_result_process(user, result_process):
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
         raise PermissionError(user, description, new_group_would_help=True)
+
 
 def assert_can_add_result_process(user, sample_or_series):
     u"""Tests whether the user can add a result process.
@@ -346,6 +360,7 @@ def assert_can_add_result_process(user, sample_or_series):
                             u"responsible person for this sample series, nor are you a member of its group.") \
                             % sample_or_series
         raise PermissionError(user, description)
+
 
 def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
     u"""Tests whether the user can add or edit a substrate to *already
@@ -380,6 +395,7 @@ def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
                                 u"affected samples.")
             raise PermissionError(user, description, new_group_would_help=True)
 
+
 def assert_can_edit_sample(user, sample):
     u"""Tests whether the user can edit, split, and kill a sample.
 
@@ -397,6 +413,7 @@ def assert_can_edit_sample(user, sample):
         description = _(u"You are not allowed to edit the sample “%s” (including splitting and declaring dead) because "
                         u"you are not the currently responsible person for this sample.") % sample
         raise PermissionError(user, description)
+
 
 def assert_can_edit_sample_series(user, sample_series):
     u"""Tests whether the user can edit a sample series, including adding or
@@ -418,6 +435,7 @@ def assert_can_edit_sample_series(user, sample_series):
                         u"you are not the currently responsible person for this sample series.") % sample_series
         raise PermissionError(user, description)
 
+
 def assert_can_view_sample_series(user, sample_series):
     u"""Tests whether the user can view a sample series.
 
@@ -437,6 +455,7 @@ def assert_can_view_sample_series(user, sample_series):
                         u"you the currently responsible person for it, nor are you in its group.") % sample_series
         raise PermissionError(user, description, new_group_would_help=True)
 
+
 def assert_can_add_external_operator(user):
     u"""Tests whether the user can add an external operator.
 
@@ -453,6 +472,7 @@ def assert_can_add_external_operator(user):
         description = _(u"You are not allowed to add an external operator because you don't have the permission “%s”.") \
             % translate_permission("add_external_operator")
         raise PermissionError(user, description)
+
 
 def assert_can_edit_external_operator(user, external_operator):
     u"""Tests whether the user can edit an external operator.
@@ -473,6 +493,7 @@ def assert_can_edit_external_operator(user, external_operator):
                         u"current contact person.")
         raise PermissionError(user, description)
 
+
 def assert_can_view_external_operator(user, external_operator):
     u"""Tests whether the user can view an external operator.
 
@@ -492,6 +513,7 @@ def assert_can_view_external_operator(user, external_operator):
                         u"current contact person, nor are you a senior user.")
         raise PermissionError(user, description)
 
+
 def assert_can_edit_group_memberships(user):
     u"""Tests whether the user can change group memberships of other users, and
     add new groups.  This typically is a priviledge of heads of institute
@@ -510,6 +532,7 @@ def assert_can_edit_group_memberships(user):
         description = _(u"You are not allowed to change group memberships because you don't have the permission “%s”.") \
             % translate_permission("edit_group_memberships")
         raise PermissionError(user, description)
+
 
 def assert_can_view_feed(hash_value, user):
     u"""Tests whether the requester that gave a certain ``hash_value`` can view
@@ -554,6 +577,8 @@ def generate_permission_function(assert_func):
         else:
             return True
     return has_permission
+
+
 import copy, inspect
 _globals = copy.copy(globals())
 all_assertion_functions = [func for func in _globals.values()

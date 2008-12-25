@@ -19,12 +19,14 @@ import django.core.urlresolvers
 from chantal.samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy
 
+
 class IsMySampleForm(forms.Form):
     u"""Form class just for the checkbox marking that the current sample is
     amongst “My Samples”.
     """
     _ = ugettext_lazy
     is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+
 
 class SampleForm(forms.ModelForm):
     u"""Model form class for a sample.  All unusual I do here is overwriting
@@ -34,14 +36,17 @@ class SampleForm(forms.ModelForm):
     _ = ugettext_lazy
     currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
     group = form_utils.GroupField(label=_(u"Group"), required=False)
+
     def __init__(self, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
         self.fields["group"].set_groups(kwargs["instance"].group if kwargs.get("instance") else None)
         self.fields["currently_responsible_person"].set_users(
             kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
+
     class Meta:
         model = models.Sample
         exclude = ("name", "split_origin", "processes")
+
 
 def is_referentially_valid(sample, sample_form, edit_description_form):
     u"""Checks that the “important” checkbox is marked if the group or the
@@ -71,6 +76,7 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
         form_utils.append_error(edit_description_form,
                                 _(u"Changing the group or the responsible person must be marked as important."), "important")
     return referentially_valid
+
 
 @login_required
 def edit(request, sample_name):
@@ -118,6 +124,7 @@ def edit(request, sample_name):
                                                    "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
+
 def get_allowed_processes(user, sample):
     u"""Return all processes the user is allowed to add to the sample.
 
@@ -163,6 +170,7 @@ def get_allowed_processes(user, sample):
                                                   u"nor in its group, nor do you have special permissions for a "
                                                   u"physical process.") % sample, new_group_would_help=True)
     return sample_processes, general_processes
+
 
 @login_required
 def show(request, sample_name, sample_id=None):
@@ -226,6 +234,7 @@ def show(request, sample_name, sample_id=None):
                                                    "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def by_id(request, sample_id, path_suffix):
     u"""Pure re-direct view in case a sample is accessed by ID instead of by
@@ -252,6 +261,7 @@ def by_id(request, sample_id, path_suffix):
     return utils.HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else u""))
+
     
 class AddSamplesForm(forms.Form):
     u"""Form for adding new samples.
@@ -283,6 +293,7 @@ class AddSamplesForm(forms.Form):
         if timestamp > datetime.datetime.now():
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
+
 
 def add_samples_to_database(add_samples_form, user):
     u"""Create the new samples and add them to the database.  This routine
@@ -342,6 +353,7 @@ def add_samples_to_database(add_samples_form, user):
         new_names.append(unicode(sample))
     return new_names, samples
 
+
 @login_required
 def add(request):
     u"""View for adding new samples.
@@ -388,6 +400,7 @@ def add(request):
                                "add_samples": add_samples_form},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def add_process(request, sample_name):
     u"""View for appending a new process to the process list of a sample.
@@ -414,6 +427,7 @@ def add_process(request, sample_name):
                                "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
 
+
 class SearchSamplesForm(forms.Form):
     u"""Form for searching for samples.  So far, you can only enter a name
     substring for looking for samples.
@@ -421,9 +435,11 @@ class SearchSamplesForm(forms.Form):
     _ = ugettext_lazy
     name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30)
 
+
 class AddToMySamplesForm(forms.Form):
     _ = ugettext_lazy
     add_to_my_samples = forms.BooleanField(required=False)
+
 
 max_results = 50
 @login_required
@@ -481,6 +497,7 @@ def search(request):
                                                       "too_many_results": too_many_results,
                                                       "max_results": max_results},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def export(request, sample_name):

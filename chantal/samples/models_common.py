@@ -27,11 +27,13 @@ import matplotlib
 matplotlib.use("Agg")
 import pylab
 
+
 class PlotError(Exception):
     u"""Raised if an error occurs while generating a plot.  Usually, it is
     raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
     """
     pass
+
 
 class ExternalOperator(models.Model):
     u"""Some samples and processes are not made in our institute but in external
@@ -45,17 +47,22 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
-    def __unicode__(self):
-        return self.name
-    @models.permalink
-    def get_absolute_url(self):
-        return ("samples.views.external_operator.show", [urlquote(self.pk, safe="")])
+
     class Meta:
         verbose_name = _(u"external operator")
         verbose_name_plural = _(u"external operators")
         _ = lambda x: x
         permissions = (("add_external_operator", _("Can add an external operator")),)
+
+    def __unicode__(self):
+        return self.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.external_operator.show", [urlquote(self.pk, safe="")])
+
 admin.site.register(ExternalOperator)
+
 
 timestamp_inaccuracy_choices = (
     (0, _(u"totally accurate")),
@@ -87,8 +94,15 @@ class Process(models.Model):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
+
+    class Meta:
+        ordering = ["timestamp"]
+        verbose_name = _(u"process")
+        verbose_name_plural = _(u"processes")
+
     def __unicode__(self):
         return unicode(self.find_actual_instance())
+
     @models.permalink
     def get_absolute_url(self):
         u"""Returns the relative URL (ie, without the domain name) of the
@@ -108,6 +122,7 @@ class Process(models.Model):
         """
         return ("samples.views.main.main_menu", (), {})
 #        return ("samples.views.main.show_process", [str(self.pk)])
+
     def calculate_image_filename_and_url(self, number):
         u"""Get the location of a (plot) image in the local filesystem as well
         as on the webpage.  The results are without file extension so that you
@@ -147,6 +162,7 @@ class Process(models.Model):
         filename = self.get_imagefile_basename(number)
         relative_path = os.path.join(dirname, filename)
         return os.path.join(settings.MEDIA_ROOT, relative_path), os.path.join(settings.MEDIA_URL, relative_path)
+
     def generate_plot(self, number=0):
         u"""The central plot-generating method which shouldn't be overridden by
         a derived class.  This method tests whether it is necessary to generate
@@ -194,6 +210,7 @@ class Process(models.Model):
             finally:
                 pylab.close("all")
         return output_url+".png", output_url+".pdf"
+
     def pylab_commands(self, number, filename):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
         here – but eventually, there must be a savable Matplotlib plot.  You
@@ -217,6 +234,7 @@ class Process(models.Model):
             plot
         """
         raise NotImplementedError
+
     def get_datafile_name(self, number):
         u"""Get the name of the file with the original data for the plot with
         the given ``number``.
@@ -238,6 +256,7 @@ class Process(models.Model):
         :rtype: str
         """
         raise NotImplementedError
+
     def get_imagefile_basename(self, number):
         u"""Get the name of the plot files with the given ``number``.  For
         example, for the PDS measurement for the sample 01B410, this may be
@@ -262,6 +281,7 @@ class Process(models.Model):
         :rtype: str
         """
         raise NotImplementedError
+
     def get_data(self):
         u"""Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the CSV table
@@ -278,14 +298,12 @@ class Process(models.Model):
                           CSVItem(_(u"operator"), shared_utils.get_really_full_name(self.operator), "process"),
                           CSVItem(_(u"comments"), self.comments, "process")]
         return csv_node
+
     @classmethod
     def get_lab_notebook_context(cls, year, month):
         processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
         return {"processes": processes}
-    class Meta:
-        ordering = ["timestamp"]
-        verbose_name = _(u"process")
-        verbose_name_plural = _(u"processes")
+
 
 class Sample(models.Model):
     u"""The model for samples.
@@ -301,6 +319,14 @@ class Sample(models.Model):
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, related_name="samples",
                               verbose_name=_(u"group"))
+
+    class Meta:
+        verbose_name = _(u"sample")
+        verbose_name_plural = _(u"samples")
+        ordering = ["name"]
+        _ = lambda x: x
+        permissions = (("view_all_samples", _("Can view all samples (senior user)")),)
+
     def __unicode__(self):
         u"""Here, I realise the peculiar naming scheme of provisional sample
         names.  Provisional samples names always start with ``"*"``, followed
@@ -319,6 +345,14 @@ class Sample(models.Model):
             return u"*" + name.lstrip("*0")
         else:
             return name
+
+    @models.permalink
+    def get_absolute_url(self):
+        if self.name.startswith("*"):
+            return ("show_sample_by_id", (), {"sample_id": str(self.pk), "path_suffix": ""})
+        else:
+            return ("show_sample_by_name", [urlquote(self.name, safe="")])
+
     def duplicate(self):
         u"""This is used to create a new `Sample` instance with the same data as
         the current one.  Note that the `processes` field is not set because
@@ -332,14 +366,10 @@ class Sample(models.Model):
         return Sample(name=self.name, current_location=self.current_location,
                       currently_responsible_person=self.currently_responsible_person, tags=self.tags,
                       split_origin=self.split_origin, group=self.group)
-    @models.permalink
-    def get_absolute_url(self):
-        if self.name.startswith("*"):
-            return ("show_sample_by_id", (), {"sample_id": str(self.pk), "path_suffix": ""})
-        else:
-            return ("show_sample_by_name", [urlquote(self.name, safe="")])
+
     def is_dead(self):
         return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
+
     def last_process_if_split(self):
         u"""Test whether the most recent process applied to the sample – except
         for result processes – was a split.
@@ -356,6 +386,7 @@ class Sample(models.Model):
             if not isinstance(process, Result):
                 break
         return None
+
     def get_data(self):
         u"""Extract the data of this sample as a tree of nodes with lists of
         key–value pairs, ready to be used for the CSV table export.  Every
@@ -374,13 +405,9 @@ class Sample(models.Model):
         # export; people only want to see the *process* data.  Thus, I don't
         # set ``cvs_note.items``.
         return csv_node
-    class Meta:
-        verbose_name = _(u"sample")
-        verbose_name_plural = _(u"samples")
-        ordering = ["name"]
-        _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples (senior user)")),)
+
 admin.site.register(Sample)
+
 
 class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
@@ -390,12 +417,16 @@ class SampleAlias(models.Model):
     """
     name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
-    def __unicode__(self):
-        return self.name
+
     class Meta:
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
+
+    def __unicode__(self):
+        return self.name
+
 admin.site.register(SampleAlias)
+
 
 class SampleSplit(Process):
     u"""A process where a sample is split into many child samples.  The sample
@@ -407,9 +438,15 @@ class SampleSplit(Process):
     u"""This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
+
+    class Meta:
+        verbose_name = _(u"sample split")
+        verbose_name_plural = _(u"sample splits")
+
     def __unicode__(self):
         _ = ugettext
         return _(u"split of %s") % self.parent.name
+
     def get_additional_template_context(self, process_context):
         u"""See
         `models_depositions.SixChamberDeposition.get_additional_template_context`
@@ -442,10 +479,9 @@ class SampleSplit(Process):
             result["resplit_url"] = django.core.urlresolvers.reverse(
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
         return result
-    class Meta:
-        verbose_name = _(u"sample split")
-        verbose_name_plural = _(u"sample splits")
+
 admin.site.register(SampleSplit)
+
 
 substrate_materials = (
     ("custom", _(u"custom")),
@@ -463,18 +499,23 @@ class Substrate(Process):
     `Process.external_operator`, it is an external sample.
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
+
+    class Meta:
+        verbose_name = _(u"substrate")
+        verbose_name_plural = _(u"substrates")
+
     def __unicode__(self):
         return self.material
+
     def get_data(self):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Substrate, self).get_data()
         csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))
         return csv_node
-    class Meta:
-        verbose_name = _(u"substrate")
-        verbose_name_plural = _(u"substrates")
+
 admin.site.register(Substrate)
+
 
 sample_death_reasons = (
     ("split", _(u"completely split")),
@@ -491,22 +532,27 @@ class SampleDeath(Process):
     must be the last.
     """
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
+
+    class Meta:
+        verbose_name = _(u"cease of existence")
+        verbose_name_plural = _(u"ceases of existence")
+
     def __unicode__(self):
         _ = ugettext
         try:
             return _(u"cease of existence of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return _(u"cease of existence #%d") % self.pk
-    class Meta:
-        verbose_name = _(u"cease of existence")
-        verbose_name_plural = _(u"ceases of existence")
+
 admin.site.register(SampleDeath)
+
 
 image_type_choices=(("none", _(u"none")),
                     ("pdf", "PDF"),
                     ("png", "PNG"),
                     ("jpeg", "JPEG"),
                     )
+
 class Result(Process):
     u"""Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
@@ -523,6 +569,11 @@ class Result(Process):
     plain strings.  (The HTML entity substitution in quantities has taken place
     already *before* anyting is written here.)
     """
+
+    class Meta:
+        verbose_name = _(u"result")
+        verbose_name_plural = _(u"results")
+
     def __unicode__(self):
         _ = ugettext
         try:
@@ -532,9 +583,11 @@ class Result(Process):
                 return _(u"result for %s") % self.sample_series.get()
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
                 return _(u"result #%d") % self.pk
+
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.result.show", (self.pk,))
+
     def get_image_locations(self):
         u"""Get the location of the image in the local filesystem as well
         as on the webpage.  The results are without file extension so that you
@@ -587,6 +640,7 @@ class Result(Process):
                 "image_directory": os.path.join(settings.MEDIA_ROOT, dirname),
                 "thumbnail_file": file_path + thumbnail_extension, "image_file": file_path + original_extension,
                 "thumbnail_url": url_path + thumbnail_extension, "image_url": url_path + original_extension}
+
     def get_image(self):
         u"""Assures that the images of this result process are generated and
         returns their URLs.
@@ -618,6 +672,7 @@ class Result(Process):
             if not os.path.exists(image_locations["image_file"]):
                 shutil.copy(image_locations["original"], image_locations["image_file"])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
+
     def get_additional_template_context(self, process_context):
         u"""See
         `models_depositions.SixChamberDeposition.get_additional_template_context`
@@ -644,6 +699,7 @@ class Result(Process):
             result["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
         return result
+
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for the
@@ -676,10 +732,9 @@ class Result(Process):
         else:
             csv_node.items = [CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])]
         return csv_node
-    class Meta:
-        verbose_name = _(u"result")
-        verbose_name_plural = _(u"results")
+
 admin.site.register(Result)
+
 
 class SampleSeries(models.Model):
     u"""A sample series groups together zero or more `Sample`.  It must belong
@@ -696,11 +751,18 @@ class SampleSeries(models.Model):
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
+
+    class Meta:
+        verbose_name = _(u"sample series")
+        verbose_name_plural = _(u"sample serieses")
+
     def __unicode__(self):
         return self.name
+
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.sample_series.show", [urlquote(self.name, safe="")])
+
     def get_data(self):
         u"""Extract the data of this sample series as a tree of nodes with
         lists of key–value pairs, ready to be used for the CSV table export.
@@ -720,10 +782,9 @@ class SampleSeries(models.Model):
         # table export; people only want to see the *sample* data.  Thus, I
         # don't set ``cvs_note.items``.
         return csv_node
-    class Meta:
-        verbose_name = _(u"sample series")
-        verbose_name_plural = _(u"sample serieses")
+
 admin.site.register(SampleSeries)
+
 
 class Initials(models.Model):
     u"""Model for initials of people or external operators.  They are used to
@@ -743,12 +804,16 @@ class Initials(models.Model):
                                 related_name="initials", null=True, blank=True)
     external_operator = models.OneToOneField(ExternalOperator, verbose_name=_(u"external operator"),
                                              related_name="initials", null=True, blank=True)
-    def __unicode__(self):
-        return self.initials
+
     class Meta:
         verbose_name = _(u"initials")
         verbose_name_plural = _(u"initialses")
+
+    def __unicode__(self):
+        return self.initials
+
 admin.site.register(Initials)
+
 
 languages = (
     ("de", u"Deutsch"),
@@ -777,11 +842,14 @@ class UserDetails(models.Model):
     *process id* (``Process.pk``, not the deposition number!) of the
     deposition, and “layer” is the layer number (`models_depositions.Layer.number`).
     """
-    def __unicode__(self):
-        return unicode(self.user)
+
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
         _ = lambda x: x
         permissions = (("edit_group_memberships", _("Can edit group memberships and add new groups")),)
+
+    def __unicode__(self):
+        return unicode(self.user)
+
 admin.site.register(UserDetails)

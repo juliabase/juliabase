@@ -14,25 +14,30 @@ import django.contrib.auth.models
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils
 
+
 class AddExternalOperatorForm(forms.ModelForm):
     u"""Model form for creating a new external operator.  The
     ``contact_person`` is implicitly the currently logged-in user.
     """
     _ = ugettext_lazy
+
     def __init__(self, user, *args, **kwargs):
         super(AddExternalOperatorForm, self).__init__(*args, **kwargs)
         self.user = user
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
+
     def save(self):
         external_operator = super(AddExternalOperatorForm, self).save(commit=False)
         external_operator.contact_person = self.user
         external_operator.save()
         return external_operator
+
     class Meta:
         model = models.ExternalOperator
         exclude = ("contact_person",)
+
 
 @login_required
 def new(request):
@@ -61,20 +66,24 @@ def new(request):
                                                               "external_operator": external_operator_form},
                               context_instance=RequestContext(request))
 
+
 class EditExternalOperatorForm(forms.ModelForm):
     u"""Model form for editing an existing external operator.  Here, you can
     also change the contact person.
     """
     _ = ugettext_lazy
     contact_person = form_utils.UserField(label=_(u"Concact person"))
+
     def __init__(self, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
         self.fields["contact_person"].set_users()
+
     class Meta:
         model = models.ExternalOperator
+
 
 @login_required
 def edit(request, external_operator_id):
@@ -112,6 +121,7 @@ def edit(request, external_operator_id):
                                "initials": initials_form},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def show(request, external_operator_id):
     u"""View for displaying existing external operators.  Only users who are
@@ -141,6 +151,7 @@ def show(request, external_operator_id):
                                "external_operator": external_operator, "initials": initials,
                                "can_edit": request.user == external_operator.contact_person},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def list_(request):

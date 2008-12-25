@@ -17,6 +17,7 @@ import django.contrib.auth.models
 from chantal.samples import permissions
 from chantal.samples.views import utils, feed_utils, form_utils
 
+
 class NewGroupForm(forms.Form):
     u"""Form for adding a new group.  I need only its new name.
     """
@@ -31,6 +32,7 @@ class NewGroupForm(forms.Form):
         if django.contrib.auth.models.Group.objects.filter(name=group_name).count():
             raise ValidationError(_(u"This group name is already used."))
         return group_name
+
 
 @login_required
 def add(request):
@@ -61,6 +63,7 @@ def add(request):
     return render_to_response("add_group.html", {"title": _(u"Add new group"), "new_group": new_group_form},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def list_(request):
     u"""View for a complete list of all groups.  The user may select one, which
@@ -82,14 +85,17 @@ def list_(request):
                               {"title": _(u"List of all groups"), "groups": django.contrib.auth.models.Group.objects.all()},
                               context_instance=RequestContext(request))
 
+
 class ChangeMembershipsForm(forms.Form):
     u"""Form for the member list of a group.  Note that it is allowed to have
     no members at all in a group.
     """
     members = form_utils.MultipleUsersField(label=_(u"Members"), required=False)
+
     def __init__(self, group, *args, **kwargs):
         super(ChangeMembershipsForm, self).__init__(*args, **kwargs)
         self.fields["members"].set_users(group.user_set.all())
+
 
 @login_required
 def edit(request, name):

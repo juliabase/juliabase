@@ -17,12 +17,15 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils, feed_utils
 
+
 class MySamplesForm(forms.Form):
     _ = ugettext_lazy
     samples = form_utils.MultipleSamplesField(label=_(u"My Samples"))
+
     def __init__(self, user_details, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
         self.fields["samples"].set_samples(user_details.my_samples.all())
+
 
 class ActionForm(forms.Form):
     u"""Form for all the things you can do with the selected samples.
@@ -34,6 +37,7 @@ class ActionForm(forms.Form):
     copy_to_user = form_utils.UserField(label=_(u"Copy to user"), required=False)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
+
     def __init__(self, user, *args, **kwargs):
         u"""Form constructor.
 
@@ -46,12 +50,14 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users_without(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_group"].set_groups()
+
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comment = self.cleaned_data["comment"]
         form_utils.check_markdown(comment)
         return comment
+
     def clean(self):
         cleaned_data = self.cleaned_data
         if cleaned_data["copy_to_user"] and not cleaned_data["comment"]:
@@ -60,6 +66,7 @@ class ActionForm(forms.Form):
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
         return cleaned_data
+
 
 def is_referentially_valid(current_user, my_samples_form, action_form):
     u"""Test whether all forms are consistent with each other and with the
@@ -94,6 +101,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     action_form, _(u"You must be the currently responsible person for samples you'd like to change."))
                 referentially_valid = False
     return referentially_valid
+
 
 def save_to_database(user, my_samples_form, action_form):
     u"""Execute the things that should be done with the selected “My Samples”.
@@ -152,6 +160,7 @@ def save_to_database(user, my_samples_form, action_form):
     # Now a separate(!) message for copied samples
     if action_data["copy_to_user"]:
         feed_utils.Reporter(user).report_copied_my_samples(samples, action_data["copy_to_user"], action_data["comment"])
+
 
 @login_required
 def edit(request, username):

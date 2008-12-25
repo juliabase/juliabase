@@ -17,6 +17,7 @@ from chantal.samples import permissions
 from chantal.samples.models_common import Process, Sample, PlotError
 import pylab
 
+
 def read_techplot_file(filename, columns=(0, 1)):
     u"""Read a datafile in TechPlot format and return the content of selected
     columns.
@@ -63,16 +64,25 @@ def read_techplot_file(filename, columns=(0, 1)):
     datafile.close()
     return result
 
+
 class HallMeasurement(Process):
     u"""This model is intended to store Hall measurements.  So far, all just
     fields here …
     """
+
+    class Meta:
+        verbose_name = _(u"Hall measurement")
+        verbose_name_plural = _(u"Hall measurements")
+        _ = lambda x: x
+        permissions = (("add_edit_hall_measurement", _("Can create and edit hall measurements")),)
+
     def __unicode__(self):
         _ = ugettext
         try:
             _(u"hall measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return _(u"hall measurement #%d") % self.pk
+
     @classmethod
     def get_add_link(cls):
         u"""Return all you need to generate a link to the “add” view for this
@@ -86,12 +96,9 @@ class HallMeasurement(Process):
         _ = ugettext
         raise NotImplementedError
         return django.core.urlresolvers.reverse("add_hall_measurement")
-    class Meta:
-        verbose_name = _(u"Hall measurement")
-        verbose_name_plural = _(u"Hall measurements")
-        _ = lambda x: x
-        permissions = (("add_edit_hall_measurement", _("Can create and edit hall measurements")),)
+
 admin.site.register(HallMeasurement)
+
 
 pds_root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"
 
@@ -103,25 +110,36 @@ class PDSMeasurement(Process):
                                     help_text=_(u"only the relative path below \"pds/\""))
     evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200,
                                           help_text=_("only the relative path below \"pds/\""), blank=True)
+
+    class Meta:
+        verbose_name = _(u"PDS measurement")
+        verbose_name_plural = _(u"PDS measurements")
+        _ = lambda x: x
+        permissions = (("add_edit_pds_measurement", _("Can create and edit PDS measurements")),)
+
     def __unicode__(self):
         _ = ugettext
         try:
             return _(u"PDS measurement of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return _(u"PDS measurement #%d") % self.number
+
     def pylab_commands(self, number, filename):
         _ = ugettext
         x_values, y_values = read_techplot_file(filename)
         pylab.plot(x_values, y_values)
         pylab.xlabel(_(u"energy in eV"))
         pylab.ylabel(_(u"counts"))
+
     def get_datafile_name(self, number):
         return os.path.join(pds_root_dir, self.evaluated_datafile)
+
     def get_imagefile_basename(self, number):
         try:
             return ("pds_%s" % self.samples.get()).replace("*", "")
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             return "pds_pds%d" % self.number
+
     def get_additional_template_context(self, process_context):
         u"""See
         `models_depositions.SixChamberDeposition.get_additional_template_context`.
@@ -142,6 +160,7 @@ class PDSMeasurement(Process):
         if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
             result["edit_url"] = django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pds_number": self.number})
         return result
+
     @classmethod
     def get_add_link(cls):
         u"""Return all you need to generate a link to the “add” view for this
@@ -154,10 +173,5 @@ class PDSMeasurement(Process):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_pds_measurement")
-    class Meta:
-        verbose_name = _(u"PDS measurement")
-        verbose_name_plural = _(u"PDS measurements")
-        _ = lambda x: x
-        permissions = (("add_edit_pds_measurement", _("Can create and edit PDS measurements")),)
-admin.site.register(PDSMeasurement)
 
+admin.site.register(PDSMeasurement)

@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from chantal.samples.views import utils
 from chantal.samples.views.utils import help_link
 
+
 class MySeries(object):
     u"""Helper class to pass sample series data to the main menu template.  It
     is used in `main_menu`.  This is *not* a data strcuture for sample series.
@@ -40,12 +41,14 @@ class MySeries(object):
     :type samples: list of `models.Sample`
     :type is_complete: bool
     """
+
     def __init__(self, sample_series):
         self.sample_series = sample_series
         self.name = sample_series.name
         self.timestamp = sample_series.timestamp
         self.samples = []
         self.__is_complete = None
+
     def append(self, sample):
         u"""Adds a sample to this sample series view.
 
@@ -56,6 +59,7 @@ class MySeries(object):
         """
         assert self.__is_complete is None
         self.samples.append(sample)
+
     @property
     def is_complete(self):
         if self.__is_complete is None:
@@ -63,6 +67,7 @@ class MySeries(object):
             assert sample_series_length >= len(self.samples)
             self.__is_complete = sample_series_length == len(self.samples)
         return self.__is_complete
+
 
 @help_link(_(u"MainMenu"))
 @login_required
@@ -105,6 +110,7 @@ def main_menu(request):
          "lab_notebooks": lab_notebooks},
         context_instance=RequestContext(request))
 
+
 class SearchDepositionsForm(forms.Form):
     u"""Tiny form class that just allows to enter a pattern for the deposition
     search.  Currently, the search is case-insensitive, and arbitrary parts of
@@ -112,6 +118,7 @@ class SearchDepositionsForm(forms.Form):
     """
     _ = ugettext_lazy
     number_pattern = forms.CharField(label=_(u"Deposition number pattern"), max_length=30)
+
 
 max_results = 50
 u"""Maximal number of search results to be displayed."""
@@ -154,6 +161,7 @@ def deposition_search(request):
                                                           "max_results": max_results},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def show_deposition(request, deposition_number):
     u"""View for showing depositions by deposition number, no matter which type
@@ -176,6 +184,7 @@ def show_deposition(request, deposition_number):
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
+
 
 @login_required
 def switch_language(request):

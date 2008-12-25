@@ -15,17 +15,20 @@ import django.contrib.auth.models
 from chantal.samples import models
 from chantal.samples.views import utils
 
+
 class ProcessForm(ModelForm):
     u"""Abstract model form class for processes.  It ensures that timestamps
     are not in the future, and that comments contain only allowed Markdown
     syntax.
     """
+
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
         check_markdown(comments)
         return comments
+
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
         """
@@ -33,6 +36,7 @@ class ProcessForm(ModelForm):
         if timestamp > datetime.datetime.now():
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
+
 
 class DataModelForm(ModelForm):
     _ = ugettext_lazy
@@ -45,6 +49,7 @@ class DataModelForm(ModelForm):
     module `six_chamber_deposition`, however, for upcoming processes, it should
     be avoided and extra forms used instead.
     """
+
     def uncleaned_data(self, fieldname):
         u"""Get the field value of a *bound* form, even if it is invalid.
 
@@ -59,6 +64,7 @@ class DataModelForm(ModelForm):
         :rtype: unicode
         """
         return self.data.get(self.prefix + "-" + fieldname)
+
 
 def get_my_layers(user_details, deposition_model):
     u"""Parse the ``my_layers`` string of a user and convert it to valid input
@@ -103,16 +109,20 @@ def get_my_layers(user_details, deposition_model):
         fitting_items.append((u"%d-%d" % (deposition_id, layer_number), nickname))
     return fitting_items
 
+
 class AddLayersForm(forms.Form):
     _ = ugettext_lazy
     number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
+
     def __init__(self, user_details, model, data=None, **kwargs):
         super(AddLayersForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
         self.model = model
+
     def clean_number_of_layers_to_add(self):
         return utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+
     def clean_my_layer_to_be_added(self):
         nickname = self.cleaned_data["my_layer_to_be_added"]
         if nickname and "-" in nickname:
@@ -127,7 +137,9 @@ class AddLayersForm(forms.Form):
                 if layer_query.count() == 1:
                     return layer_query.values()[0]
 
+
 initials_pattern = re.compile(ur"[A-Z]{2,4}[0-9]*$")
+
 class InitialsForm(forms.Form):
     u"""Form for a person's initials.  A “person” can be a user or an external
     operator.  Initials are optional, however, if you choose them, you cannot
@@ -135,6 +147,7 @@ class InitialsForm(forms.Form):
     """
     _ = ugettext_lazy
     initials = forms.CharField(label=_(u"Initials"), max_length=4, required=False)
+
     def __init__(self, person, initials_mandatory, *args, **kwargs):
         super(InitialsForm, self).__init__(*args, **kwargs)
         self.fields["initials"].required = initials_mandatory
@@ -149,6 +162,7 @@ class InitialsForm(forms.Form):
             self.fields["initials"].widget.attrs["readonly"] = "readonly"
             self.fields["initials"].initial = initials
         self.fields["initials"].min_length = 2 if self.is_user else 4
+
     def clean_initials(self):
         initials = self.cleaned_data["initials"]
         if not initials or self.readonly:
@@ -160,6 +174,7 @@ class InitialsForm(forms.Form):
         if models.Initials.objects.filter(initials=initials).count():
             raise ValidationError(_(u"These initials are already used."))
         return initials
+
     def save(self):
         u"""Although this is not a model form, I add a ``save()`` method in
         order to avoid code duplication.  Here, I test whether the “initials”
@@ -175,20 +190,24 @@ class InitialsForm(forms.Form):
                 if models.Initials.objects.filter(external_operator=self.person).count() == 0:
                     models.Initials.objects.create(initials=initials, external_operator=self.person)
 
+
 class EditDescriptionForm(forms.Form):
     _ = ugettext_lazy
     description = forms.CharField(label=_(u"Description of edit"), widget=forms.Textarea)
     important = forms.BooleanField(label=_(u"Important edit"), required=False)
+
     def __init__(self, *args, **kwargs):
         kwargs["prefix"] = "edit_description"
         super(EditDescriptionForm, self).__init__(*args, **kwargs)
         self.fields["description"].widget.attrs["rows"] = 3
+
     def clean_description(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
         check_markdown(description)
         return description
+
 
 class GeneralSampleField(object):
     u"""Mixin class for the samples selection box.  It is used in the two form
@@ -199,6 +218,7 @@ class GeneralSampleField(object):
     order to have a structured list.  Some samples may occur twice in the list
     because of this; you may select both without a negative effect.
     """
+
     def set_samples(self, samples):
         u"""Set the sample list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
@@ -223,32 +243,38 @@ class GeneralSampleField(object):
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, (u"", 9*u"-"))
 
+
 class SampleField(GeneralSampleField, forms.ChoiceField):
     u"""Form field class for sample selection boxes where you can select a
     single sample.  This is typically used in measurement forms because
     normally, one measures only *one* sample at a time.
     """
+
     def clean(self, value):
         value = super(SampleField, self).clean(value)
         if value:
             return models.Sample.objects.get(pk=int(value))
+
 
 class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
     u"""Form field class for sample selection boxes where you can select many
     samples at once.  This is typically used in deposition forms because most
     deposition systems can deposit more than one sample in a single run.
     """
+
     def clean(self, value):
         if value == [u""]:
             value = []
         value = super(MultipleSamplesField, self).clean(value)
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
+
 class UserField(forms.ChoiceField):
     u"""Form field class for the selection of a single user.  This can be the
     new currently responsible person for a sample, or the person you wish to
     send “My Samples” to.
     """
+
     def set_users(self, additional_user=None):
         u"""Set the user list shown in the widget.  You *must* call this method
         (or `set_users_without`) in the constructor of the form in which you
@@ -269,6 +295,7 @@ class UserField(forms.ChoiceField):
             users.add(additional_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+
     def set_users_without(self, excluded_user):
         u"""Set the user list shown in the widget.  You *must* call this method
         (or `set_users`) in the constructor of the form in which you use this
@@ -286,15 +313,18 @@ class UserField(forms.ChoiceField):
         users.remove(excluded_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+
     def clean(self, value):
         value = super(UserField, self).clean(value)
         if value:
             return django.contrib.auth.models.User.objects.get(pk=int(value))
 
+
 class MultipleUsersField(forms.MultipleChoiceField):
     u"""Form field class for the selection of zero or more users.  This can be
     the set of members for a particular group.
     """
+
     def set_users(self, additional_users=[]):
         u"""Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
@@ -314,16 +344,19 @@ class MultipleUsersField(forms.MultipleChoiceField):
         self.choices = [(user.pk, utils.get_really_full_name(user)) for user in users]
         if not self.choices:
             self.choices = ((u"", 9*u"-"),)
+
     def clean(self, value):
         if value == [u""]:
             value = []
         value = super(MultipleUsersField, self).clean(value)
         return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
+
 class GroupField(forms.ChoiceField):
     u"""Form field class for the selection of a single group.  This can be the
     group for a sample or a sample series, for example.
     """
+
     def set_groups(self, additional_group=None):
         u"""Set the group list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
@@ -345,10 +378,12 @@ class GroupField(forms.ChoiceField):
             groups.add(additional_group)
         groups = sorted(groups, key=lambda group: group.name)
         self.choices.extend((group.pk, unicode(group)) for group in groups)
+
     def clean(self, value):
         value = super(GroupField, self).clean(value)
         if value:
             return django.contrib.auth.models.Group.objects.get(pk=int(value))
+
 
 class FixedOperatorField(forms.ChoiceField):
     u"""Form field class for the *fixed* selection of a single user.  This is
@@ -360,6 +395,7 @@ class FixedOperatorField(forms.ChoiceField):
 
     Important: This field must *always* be made required!
     """
+
     def set_operator(self, operator, is_staff=False):
         u"""Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
@@ -380,9 +416,11 @@ class FixedOperatorField(forms.ChoiceField):
             self.choices = ((operator.pk, operator.username),)
         else:
             self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+
     def clean(self, value):
         value = super(FixedOperatorField, self).clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
+
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
@@ -421,6 +459,7 @@ def clean_time_field(value):
     else:
         return "%d:%02d:%02d" % (hours, minutes, seconds)
 
+
 quantity_pattern = re.compile(ur"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
 u"""Regular expression pattern for valid physical quantities."""
 def clean_quantity_field(value, units):
@@ -458,6 +497,7 @@ def clean_quantity_field(value, units):
         raise ValidationError(_(u"The unit is invalid.  Valid units are: %s")%", ".join(units))
     return match.group("number") + " " + unit
 
+
 deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
 def clean_deposition_number_field(value, letter):
     u"""Checks wheter a deposition number given by the user in a form is a
@@ -487,6 +527,7 @@ def clean_deposition_number_field(value, letter):
         raise ValidationError(_(u"The deposition letter must be an uppercase “%s”.") % letter)
     return value
 
+
 def append_error(form, error_message, fieldname="__all__"):
     u"""This function is called if a validation error is found in form data
     which cannot be found by the ``is_valid`` method itself.  The reason is
@@ -508,6 +549,7 @@ def append_error(form, error_message, fieldname="__all__"):
     """
     form.is_valid()
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
+
 
 def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     u"""Find all indices of subforms of a certain type (e.g. layers) and return
@@ -550,6 +592,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
             value = last_value + 0.01
         last_value = values[index] = value
     return sorted(values, key=lambda index: values[index])
+
 
 level0_pattern = re.compile(ur"(?P<level0_index>\d+)-(?P<id>.+)")
 level1_pattern = re.compile(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
@@ -614,6 +657,7 @@ def normalize_prefixes(post_data):
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
 
+
 dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r][-=]")
 def check_markdown(text):
     u"""Checks whether the Markdown input by the user contains only permitted
@@ -628,6 +672,7 @@ def check_markdown(text):
     """
     if dangerous_markup_pattern.search(text):
         raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
+
 
 def dead_samples(samples, timestamp):
     u"""Determine all samples from ``samples`` which are already dead at the

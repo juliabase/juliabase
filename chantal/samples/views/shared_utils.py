@@ -12,6 +12,7 @@ ist really only interesting for the Remote Client.
 
 import re, string, codecs, os.path
 
+
 def get_really_full_name(user):
     u"""Unfortunately, Django's ``get_full_name`` method for users returns the
     empty string if the user has no first and surname set.  However, it'd be
@@ -27,6 +28,7 @@ def get_really_full_name(user):
     :rtype: unicode
     """
     return user.get_full_name() or unicode(user)
+
 
 def int_or_zero(number):
     u"""
@@ -48,6 +50,7 @@ def int_or_zero(number):
     except TypeError:
         if number is None:
             return 0
+
 
 def camel_case_to_underscores(name):
     u"""Converts a CamelCase identifier to one using underscores.  For example,
@@ -74,6 +77,7 @@ def camel_case_to_underscores(name):
             result.append(character.lower())
     return "".join(result)
 
+
 def three_digits(number):
     u"""
     :Parameters:
@@ -89,6 +93,7 @@ def three_digits(number):
     :rtype: unicode
     """
     return u"%03d" % number
+
 
 quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
                                         ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
@@ -117,6 +122,7 @@ def normalize_legacy_sample_name(sample_name):
     parts["number"] = int(parts["number"])
     parts["letter"] = parts["letter"].upper()
     return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
+
 
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):

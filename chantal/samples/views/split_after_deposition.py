@@ -20,6 +20,7 @@ from django import forms
 from django.forms.util import ValidationError
 from chantal.samples.views import utils, form_utils, feed_utils
 
+
 class OriginalDataForm(Form):
     u"""Form holding the old sample and the number of pieces it is about to be
     split into.
@@ -30,6 +31,7 @@ class OriginalDataForm(Form):
     new_name = forms.CharField(label=_(u"New name"), max_length=30)
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
+
     def __init__(self, remote_client, deposition_number, post_data=None, *args, **kwargs):
         if "initial" not in kwargs:
             kwargs["initial"] = {}
@@ -39,6 +41,7 @@ class OriginalDataForm(Form):
                 else deposition_number
         super(OriginalDataForm, self).__init__(post_data, *args, **kwargs)
         self.remote_client, self.deposition_number = remote_client, deposition_number
+
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
         new_name_format = utils.sample_name_format(new_name)
@@ -47,6 +50,7 @@ class OriginalDataForm(Form):
         elif new_name_format == "provisional":
             raise ValidationError(_(u"You must get rid of the provisional sample name."))
         return new_name
+
     def clean_sample(self):
         if not self.remote_client:
             sample = utils.get_sample(self.cleaned_data["sample"])
@@ -62,10 +66,12 @@ class OriginalDataForm(Form):
             except ValueError:
                 raise ValidationError(_(u"Invalid ID format."))
         return sample
+
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
             raise ValidationError(_(u"Must be at least 1."))
         return self.cleaned_data["number_of_pieces"]
+
     def clean(self):
         if "new_name" in self.cleaned_data:
             sample = self.cleaned_data.get("sample")
@@ -83,16 +89,19 @@ class OriginalDataForm(Form):
                         del self.cleaned_data["new_name"]
         return self.cleaned_data
 
+
 class NewNameForm(Form):
     u"""Form holding the newly given name of a sample.
     """
     _ = ugettext_lazy
     new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
+
     def __init__(self, readonly, data=None, **kwargs):
         super(NewNameForm, self).__init__(data, **kwargs)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
         if readonly:
             self.fields["new_name"].widget.attrs["readonly"] = "readonly"
+
 
 class GlobalNewDataForm(Form):
     u"""Form for holding new data which applies to all samples and overrides
@@ -101,6 +110,7 @@ class GlobalNewDataForm(Form):
     _ = ugettext_lazy
     new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
                                    help_text=_(u"(for all samples; leave empty for no change)"))
+
     def __init__(self, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the field here, both their
         value and their layout.
@@ -110,6 +120,7 @@ class GlobalNewDataForm(Form):
         self.fields["new_location"].initial = \
             models.default_location_of_deposited_samples.get(deposition_instance.__class__, u"")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
+
 
 def is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
@@ -135,6 +146,7 @@ def is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form)
         valid = valid and all([new_name_form.is_valid() for new_name_form in forms])
     valid = valid and global_new_data_form.is_valid()
     return valid
+
 
 def change_structure(original_data_forms, new_name_form_lists):
     u"""Add or delete new data form according to the new number of pieces
@@ -170,6 +182,7 @@ def change_structure(original_data_forms, new_name_form_lists):
                                                       prefix="%d_%d"%(sample_index, new_name_index)))
                 structure_changed = True
     return structure_changed
+
 
 def save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition):
     u"""Performs all splits – if any – and renames the samples according to
@@ -227,6 +240,7 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
                 sample.current_location = global_new_location
             sample.save()
     return sample_splits
+
 
 def is_referentially_valid(original_data_forms, new_name_form_lists, deposition):
     u"""Test whether all forms are consistent with each other and with the
@@ -309,6 +323,7 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                             referentially_valid = False
     return referentially_valid
 
+
 def forms_from_post_data(post_data, deposition, remote_client):
     u"""Intepret the POST data and create bound forms for old and new names and
     the global data.  The top-level new-data list has the same number of
@@ -352,6 +367,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
     global_new_data_form = GlobalNewDataForm(post_data, deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
 
+
 def forms_from_database(deposition, remote_client):
     u"""Take a deposition instance and construct forms from it for its old and
     new data.  The top-level new data list has the same number of elements as
@@ -381,6 +397,7 @@ def forms_from_database(deposition, remote_client):
                 prefix="%d_0"%i)] for i, sample in enumerate(samples.all())]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
+
 
 @login_required
 def split_and_rename_after_deposition(request, deposition_number):

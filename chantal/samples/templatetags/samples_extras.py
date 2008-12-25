@@ -19,6 +19,7 @@ import chantal.samples.views.utils
 
 register = template.Library()
 
+
 @register.filter
 def quantity(value, unit=None, autoescape=False):
     u"""Filter for pretty-printing a physical quantity.  It converts 3.4e-3
@@ -55,6 +56,7 @@ def quantity(value, unit=None, autoescape=False):
     return mark_safe(result)
 quantity.needs_autoescape = True
 
+
 @register.filter
 def fancy_bool(boolean):
     u"""Filter for coverting a bool into a translated “Yes” or “No”.
@@ -63,6 +65,7 @@ def fancy_bool(boolean):
     result = _(u"Yes") if boolean else _(u"No")
     return mark_safe(result)
 
+
 @register.filter
 def three_digits(number):
     u"""Filter for padding an integer with zeros so that it has at least three
@@ -70,12 +73,15 @@ def three_digits(number):
     """
     return mark_safe(u"%03d" % number)
 
+
 class VerboseNameNode(template.Node):
     u"""Helper class for the tag `verbose_name`.  While `verbose_name` does the
     parsing, this class does the actual processing.
     """
+
     def __init__(self, var):
         self.var = var
+
     def render(self, context):
         if "." not in self.var:
             verbose_name = unicode(context[self.var]._meta.verbose_name)
@@ -89,6 +95,7 @@ class VerboseNameNode(template.Node):
         if verbose_name:
             verbose_name = verbose_name[0].upper() + verbose_name[1:]
         return verbose_name
+
 
 @register.tag
 def verbose_name(parser, token):
@@ -107,6 +114,7 @@ def verbose_name(parser, token):
     tag_name, var = token.split_contents()
     return VerboseNameNode(var)
 
+
 @register.simple_tag
 def markdown_hint():
     u"""Tag for inserting a short remark that Markdown syntax must be used
@@ -115,6 +123,7 @@ def markdown_hint():
     return u"""<span class="markdown-hint">""" + _(u"""(with %(markdown_link)s syntax)""") \
         % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
            django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
+
 
 @register.filter
 @stringfilter
@@ -128,6 +137,7 @@ def urlquote(value):
     return django.utils.http.urlquote(value, safe="")
 urlquote.is_safe = False
 
+
 @register.filter
 @stringfilter
 def urlquote_plus(value):
@@ -139,6 +149,7 @@ def urlquote_plus(value):
     """
     return django.utils.http.urlquote_plus(value, safe="/")
 urlquote_plus.is_safe = False
+
 
 @register.filter
 def get_really_full_name(user, anchor_type="http", autoescape=False):
@@ -178,6 +189,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         return u""
 get_really_full_name.needs_autoescape = True
 
+
 @register.filter
 def calculate_silane_concentration(value):
     u"""Filter for calculating the silane concentration for a large-area
@@ -189,6 +201,7 @@ def calculate_silane_concentration(value):
         return None
     # Cheap way to cut the digits
     return float(u"%5.2f" % (100 * silane / (silane + hydrogen)))
+
 
 timestamp_formats = ("%Y-%m-%d %H:%M:%S",
                      "%Y-%m-%d %H:%M",
@@ -219,6 +232,7 @@ def timestamp(value):
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
     return mark_safe(timestamp_.strftime(str(unicode(timestamp_formats[inaccuracy]))))
+
 
 sample_name_pattern = \
     re.compile(ur"(\W|\A)(?P<name>[0-9][0-9](([BVHLCS]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?)|"
@@ -271,6 +285,7 @@ def markdown(value):
             break
     return markup.markdown(result)
 
+
 @register.inclusion_tag("error_list.html")
 def error_list(form, form_error_title, outest_tag=u"<table>"):
     u"""Includes a comprehensive error list for one particular form into the
@@ -293,6 +308,7 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
     """
     return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
 
+
 @register.simple_tag
 def input_field(field):
     u"""Tag for inserting a field value into an HTML table as an editable
@@ -308,13 +324,16 @@ def input_field(field):
     result += u"""<td class="input">%(field)s%(help_text)s</td>""" % {"field": field, "help_text": help_text}
     return result
 
+
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
     """
+
     def __init__(self, field, unit):
         self.field_name = field
         self.field = template.Variable(field)
         self.unit = unit
+
     def render(self, context):
         field = self.field.resolve(context)
         if "." not in self.field_name:
@@ -339,6 +358,7 @@ class ValueFieldNode(template.Node):
             field = u"—"
         return u"""<td class="label">%(label)s:</td><td class="value">%(value)s</td>""" % \
             {"label": verbose_name, "value": quantity(field, self.unit) if self.unit else field}
+
 
 @register.tag
 def value_field(parser, token):

@@ -28,12 +28,14 @@ import django.core.urlresolvers
 import django.contrib.auth.models
 from chantal.samples.views import utils, form_utils
 
+
 class SamplesForm(forms.Form):
     u"""Form for the list selection of samples that took part in the
     deposition.
     """
     _ = ugettext_lazy
     sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
+
     def __init__(self, user_details, preset_sample, deposition, data=None, **kwargs):
         u"""Class constructor.  Note that I have to distinguish clearly here
         between new and existing depositions.
@@ -55,12 +57,14 @@ class SamplesForm(forms.Form):
         self.fields["sample_list"].set_samples(samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
+
 class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the deposition main data.  I only overwrite ``operator``
     in order to have full real names.
     """
     _ = ugettext_lazy
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
+
     def __init__(self, user, data=None, **kwargs):
         u"""Class constructor just for changing the appearance of the number
         field."""
@@ -69,8 +73,10 @@ class DepositionForm(form_utils.ProcessForm):
         deposition = kwargs.get("instance")
         self.fields["operator"].set_operator(deposition.operator if deposition else user, user.is_staff)
         self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
+
     def clean_number(self):
         return form_utils.clean_deposition_number_field(self.cleaned_data["number"], "L")
+
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -79,20 +85,24 @@ class DepositionForm(form_utils.ProcessForm):
         wrong German (difficult to fix, even for the Django guys).
         """
         pass
+
     def clean(self):
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
                 form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
+
     class Meta:
         model = models.LargeAreaDeposition
         exclude = ("external_operator",)
+
 
 class LayerForm(forms.ModelForm):
     u"""Model form for a single layer.
     """
     _ = ugettext_lazy
+
     def __init__(self, *args, **kwargs):
         u"""Form constructor.  I only tweak the HTML layout slightly, and I set
         the initial date to today for fresh layers.
@@ -108,9 +118,11 @@ class LayerForm(forms.ModelForm):
         for fieldname in ["date", "sih4", "h2", "tmb", "ch4", "co2", "ph3", "power", "pressure", "temperature",
                           "time", "dc_bias", "electrodes_distance"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
+
     class Meta:
         model = models.LargeAreaLayer
         exclude = ("deposition",)
+
 
 class RemoveFromMySamplesForm(forms.Form):
     u"""Form for the question whether the user wants to remove the deposited
@@ -119,6 +131,7 @@ class RemoveFromMySamplesForm(forms.Form):
     _ = ugettext_lazy
     remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove deposited samples from My Samples"),
                                                           required=False, initial=True)
+
 
 class ChangeLayerForm(forms.Form):
     u"""Form for manipulating a layer.  Duplicating it (appending the
@@ -129,6 +142,7 @@ class ChangeLayerForm(forms.Form):
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
     move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
                                         choices=(("", _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
+
     def clean(self):
         _ = ugettext
         operations = 0
@@ -142,6 +156,7 @@ class ChangeLayerForm(forms.Form):
             raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
         return self.cleaned_data
 
+
 class FormSet(object):
     u"""Class for holding all forms of the large-area deposition views, and for
     all methods working on these forms.
@@ -153,6 +168,7 @@ class FormSet(object):
     :type deposition: `models.LargeAreaDeposition` or ``NoneType``
     """
     deposition_number_pattern = re.compile(ur"(?P<prefix>\d\dL-)(?P<number>\d+)$")
+
     def __init__(self, request, deposition_number):
         u"""Class constructor.  Note that I don't create the forms here – this
         is done later in `from_post_data` and in `from_database`.
@@ -174,6 +190,7 @@ class FormSet(object):
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
         self.remote_client = utils.is_remote_client(request)
+
     def from_post_data(self, post_data):
         u"""Generate all forms from the post data submitted by the user.
 
@@ -193,6 +210,7 @@ class FormSet(object):
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
+
     def _read_layer_forms(self, source_deposition, destination_deposition_number=None):
         u"""Generate a set of layer forms from database data.  Note that the
         layers are not returned – instead, they are written directly into
@@ -219,6 +237,7 @@ class FormSet(object):
         self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer,
                                       initial={"number": utils.three_digits(base_number + layer_index)})
                             for layer_index, layer in enumerate(source_deposition.layers.all())]
+
     def from_database(self, query_dict):
         u"""Create all forms from database data.  This is used if the view was
         retrieved from the user with the HTTP GET method, so there hasn't been
@@ -258,6 +277,7 @@ class FormSet(object):
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm()
+
     def _change_structure(self):
         u"""Apply any layer-based rearrangements the user has requested.  This
         is layer duplication, order changes, appending of layers, and deletion.
@@ -388,6 +408,7 @@ class FormSet(object):
         self.deposition_form = DepositionForm(self.user, post_data, instance=self.deposition)
 
         return structure_changed
+
     def _is_all_valid(self):
         u"""Tests the “inner” validity of all forms belonging to this view.
         This function calls the ``is_valid()`` method of all forms, even if one
@@ -408,6 +429,7 @@ class FormSet(object):
         all_valid = all([(change_layer_form.is_valid() or not change_layer_form.is_bound)
                          for change_layer_form in self.change_layer_forms]) and all_valid
         return all_valid
+
     def _is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
         database.  For example, no layer number must occur twice, and the
@@ -470,6 +492,7 @@ class FormSet(object):
                     form_utils.append_error(layer_form, _(u"Layer number is not consecutive."))
                     referentially_valid = False
         return referentially_valid
+
     def save_to_database(self):
         u"""Apply all layer changes, check the whole validity of the data, and
         save the forms to the database.  Only the deposition is just updated if
@@ -496,6 +519,7 @@ class FormSet(object):
                 layer.save()
             # FixMe: Feed entries
             return deposition
+
     def get_context_dict(self):
         u"""Retrieve the context dictionary to be passed to the template.  This
         context dictionary contains all forms in an easy-to-use format for the
@@ -509,6 +533,7 @@ class FormSet(object):
         return {"deposition": self.deposition_form, "samples": self.samples_form,
                 "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms),
                 "add_layers": self.add_layers_form, "remove_from_my_samples": self.remove_from_my_samples_form}
+
 
 @login_required
 def edit(request, deposition_number):
@@ -556,6 +581,7 @@ def edit(request, deposition_number):
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
     return render_to_response("edit_large_area_deposition.html", context_dict, context_instance=RequestContext(request))
+
 
 @login_required
 def show(request, deposition_number):

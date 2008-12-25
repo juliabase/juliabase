@@ -18,6 +18,7 @@ from django.db.models import Q
 from chantal.samples import models, permissions
 from chantal.samples.views.shared_utils import *
 
+
 class HttpResponseSeeOther(HttpResponse):
     u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
     same wrong thing as most other web frameworks: it knows only one type of
@@ -30,9 +31,11 @@ class HttpResponseSeeOther(HttpResponse):
     It can simply be used as a drop-in replacement of HttpResponseRedirect.
     """
     status_code = 303
+
     def __init__(self, redirect_to):
         super(HttpResponseSeeOther, self).__init__()
         self["Location"] = iri_to_uri(redirect_to)
+
 
 old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 new_sample_name_pattern = re.compile(r"\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})-[-A-Za-z_/0-9]+$")
@@ -60,17 +63,21 @@ def sample_name_format(name):
     elif provisional_sample_name_pattern.match(name):
         return "provisional"
 
+
 class _AddHelpLink(object):
     u"""Internal helper class in order to realise the `help_link` function
     decorator.
     """
+
     def __init__(self, original_view_function, help_link):
         self.original_view_function = original_view_function
         self.help_link = help_link
         update_wrapper(self, original_view_function)
+
     def __call__(self, request, *args, **kwargs):
         request.chantal_help_link = self.help_link
         return self.original_view_function(request, *args, **kwargs)
+
 
 def help_link(link):
     u"""Function decorator for views functions to set a help link for the view.
@@ -82,13 +89,17 @@ def help_link(link):
 
     :type link: str
     """
+
     def decorate(original_view_function):
         return _AddHelpLink(original_view_function, link)
+
     return decorate
+
 
 from chantal.settings import WITH_EPYDOC
 if WITH_EPYDOC:
     help_link = lambda x: lambda y: y
+
 
 def get_sample(sample_name):
     u"""Lookup a sample by name.  You may also give an alias.  If more than one
@@ -116,6 +127,7 @@ def get_sample(sample_name):
     else:
         return sample
 
+
 def does_sample_exist(sample_name):
     u"""Returns ``True`` if the sample name exists in the database.
 
@@ -131,6 +143,7 @@ def does_sample_exist(sample_name):
     """
     return (models.Sample.objects.filter(name=sample_name).count() or
             models.SampleAlias.objects.filter(name=sample_name).count())
+
 
 def normalize_sample_name(sample_name):
     """Returns the current name of the sample.
@@ -155,6 +168,7 @@ def normalize_sample_name(sample_name):
     else:
         return sample_alias.sample.name
 
+
 class ResultContext(object):
     u"""Contains all info that result processes must know in order to render
     themselves as HTML.  It retrieves all processes, resolve the polymorphism
@@ -169,6 +183,7 @@ class ResultContext(object):
     is expanded by the child class `ProcessContext`, which is about rendering
     histories of samples themselves.
     """
+
     def __init__(self, user, sample_series):
         u"""
         :Parameters:
@@ -181,6 +196,7 @@ class ResultContext(object):
         """
         self.sample_series = sample_series
         self.user = user
+
     def get_template_context(self, process):
         u"""Generate the complete context that the template of the process
         needs.  The process itself is always part of ot; further key/value
@@ -203,6 +219,7 @@ class ResultContext(object):
         if hasattr(process, "get_additional_template_context"):
             context_dict.update(process.get_additional_template_context(self))
         return context_dict
+
     def digest_process(self, process):
         u"""Return one item for the list of processes, which is later passed to
         the main template for the sample's/sample series' history.  Each item
@@ -239,6 +256,7 @@ class ResultContext(object):
             if key in template_context:
                 context_dict[key] = template_context[key]
         return context_dict
+
     def collect_processes(self):
         u"""Make a list of all result processes for the sample series.
 
@@ -253,6 +271,7 @@ class ResultContext(object):
         for result in self.sample_series.results.all():
             results.append(self.digest_process(result))
         return results
+
 
 class ProcessContext(ResultContext):
     u"""Contains all info that processes must know in order to render
@@ -273,6 +292,7 @@ class ProcessContext(ResultContext):
       of `current_sample` that came *after* the cutoff timestamp must not be
       included into the history.
     """
+
     def __init__(self, user, original_sample=None):
         u"""
         :Parameters:
@@ -287,6 +307,7 @@ class ProcessContext(ResultContext):
         self.latest_descendant = None
         self.user = user
         self.cutoff_timestamp = None
+
     def split(self, split):
         u"""Generate a copy of this `ProcessContext` for the parent of the
         current sample.
@@ -307,6 +328,7 @@ class ProcessContext(ResultContext):
         result.latest_descendant = self.current_sample
         result.cutoff_timestamp = split.timestamp
         return result
+
     def get_processes(self):
         u"""Get all relevant processes of the `current_sample`.
 
@@ -324,6 +346,7 @@ class ProcessContext(ResultContext):
                                                  Q(result__sample_series__samples=self.current_sample)). \
                                                  filter(timestamp__lte=self.cutoff_timestamp).distinct()
         return processes
+
     def collect_processes(self):
         u"""Make a list of all processes for `current_sample`.  This routine is
         called recursively in order to resolve all upstream sample splits,
@@ -344,6 +367,7 @@ class ProcessContext(ResultContext):
         for process in self.get_processes():
             processes.append(self.digest_process(process))
         return processes
+
 
 def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
@@ -373,13 +397,16 @@ def get_next_deposition_number(letter):
         next_number = 1
     return prefix + u"%03d" % next_number
 
+
 class AmbiguityException(Exception):
     u"""Exception if a sample lookup leads to more than one matching alias
     (remember that alias names needn't be unique).  It is raised in
     `lookup_sample` and typically caught in Chantal's own middleware.
     """
+
     def __init__(self, sample_name, samples):
         self.sample_name, self.samples = sample_name, samples
+
 
 def lookup_sample(sample_name, request):
     u"""Looks up the ``sample_name`` in the database (also among the aliases),
@@ -417,6 +444,7 @@ def lookup_sample(sample_name, request):
     permissions.assert_can_view_sample(request.user, sample)
     return sample
 
+
 def convert_id_to_int(process_id):
     u"""If the user gives a process ID via the browser, it must be converted to
     an integer because this is what's stored in the database.  (Well, actually
@@ -445,6 +473,7 @@ def convert_id_to_int(process_id):
     except ValueError:
         raise Http404(u"Invalid ID: “%s”" % process_id)
 
+
 def parse_query_string(request):
     u"""Parses an URL query string.
 
@@ -470,6 +499,7 @@ def parse_query_string(request):
             item.append(u"")
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
+
 
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
                         remote_client_response=True):
@@ -528,6 +558,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "samples.views.main.main_menu", kwargs=kwargs)
                                 + query_string)
 
+
 def is_remote_client(request):
     u"""Tests whether the current request was not done by an ordinary browser
     like Firefox or Google Chrome but by the Chantal Remote Client.
@@ -543,6 +574,7 @@ def is_remote_client(request):
     :rtype: bool
     """
     return request.META.get("HTTP_USER_AGENT", "").startswith("Chantal-Remote")
+
 
 def respond_to_remote_client(value):
     u"""The communication with the Chantal Remote Client should be done without
@@ -564,6 +596,7 @@ def respond_to_remote_client(value):
     """
     return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle; charset=ascii")
 
+
 def remove_samples_from_my_samples(samples, user_details):
     u"""Remove the given samples from the user's MySamples list
 
@@ -577,6 +610,7 @@ def remove_samples_from_my_samples(samples, user_details):
     """
     for sample in samples:
         user_details.my_samples.remove(sample)
+
 
 def get_profile(user):
     u"""Retrieve the user details for the given user.  If this user hasn't yet
@@ -601,6 +635,7 @@ def get_profile(user):
         user_details.save()
         return user_details
 
+
 class StructuredSeries(object):
     u"""Helper class to pass sample series data to the main menu template.
     This is *not* a data strcuture for sample series.  It just stores all data
@@ -624,12 +659,14 @@ class StructuredSeries(object):
     :type samples: list of `models.Sample`
     :type is_complete: bool
     """
+
     def __init__(self, sample_series):
         self.sample_series = sample_series
         self.name = sample_series.name
         self.timestamp = sample_series.timestamp
         self.samples = []
         self.__is_complete = None
+
     def append(self, sample):
         u"""Adds a sample to this sample series view.
 
@@ -640,6 +677,7 @@ class StructuredSeries(object):
         """
         assert self.__is_complete is None
         self.samples.append(sample)
+
     @property
     def is_complete(self):
         if self.__is_complete is None:
@@ -647,6 +685,7 @@ class StructuredSeries(object):
             assert sample_series_length >= len(self.samples)
             self.__is_complete = sample_series_length == len(self.samples)
         return self.__is_complete
+
 
 class StructuredGroup(object):
     u"""Class that represents one group which contains samples and sample
@@ -666,12 +705,15 @@ class StructuredGroup(object):
     :type samples: list of `models.Sample`
     :type sample_series: list of `StructuredSeries`
     """
+
     def __init__(self, group):
         self.group = group
         self.samples = []
         self.sample_series = []
+
     def sort_sample_series(self):
         self.sample_series.sort(key=lambda series: series.timestamp, reverse=True)
+
 
 def build_structured_sample_list(samples):
     u"""Generate a nested datastructure which contains the given samples in a
@@ -721,6 +763,7 @@ def build_structured_sample_list(samples):
         structured_group.sort_sample_series()
     return structured_groups, groupless_samples
 
+
 def extract_preset_sample(request):
     u"""Extract a sample from a query string.  All physical processes as well
     as result processes may have an optional parameter in the query string,
@@ -753,6 +796,7 @@ def extract_preset_sample(request):
             return models.Sample.objects.get(name=query_string_dict["sample"])
         except models.Sample.DoesNotExist:
             pass
+
 
 def format_enumeration(items):
     u"""Generates a pretty-printed enumeration of all given names.  For

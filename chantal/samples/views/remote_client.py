@@ -13,6 +13,7 @@ import django.contrib.auth
 from chantal.samples.views import utils
 from chantal.samples import models
 
+
 @login_required
 @never_cache
 def primary_keys(request):
@@ -74,6 +75,7 @@ def primary_keys(request):
                                         values_list("username", "id"))
     return utils.respond_to_remote_client(result_dict)
 
+
 def login_remote_client(request):
     u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
     method and expects ``username`` and ``password``.
@@ -100,6 +102,7 @@ def login_remote_client(request):
         return utils.respond_to_remote_client(True)
     return utils.respond_to_remote_client(False)
 
+
 def logout_remote_client(request):
     u"""By requesting this view, the Chantal Remote Client can log out.  This
     view can never fail.
@@ -117,6 +120,7 @@ def logout_remote_client(request):
     """
     django.contrib.auth.logout(request)
     return utils.respond_to_remote_client(True)
+
 
 def next_deposition_number(request, letter):
     u"""Send the next free deposition number to the Chantal Remote Client.  It

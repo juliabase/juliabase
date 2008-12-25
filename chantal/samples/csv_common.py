@@ -5,6 +5,7 @@ u"""Module with CSV-related classes that are needed in the models.  Therefore,
 they cannot be defined in a view because then you'd have cyclic imports.
 """
 
+
 class CSVNode(object):
     u"""Class for a node in a data tree intended for CSV export.
 
@@ -26,6 +27,7 @@ class CSVNode(object):
     :type items: list of (unicode, unicode)
     :type childen: list of `CSVNode`
     """
+
     def __init__(self, instance, descriptive_name=u""):
         u"""Class constructor.
 
@@ -49,6 +51,7 @@ class CSVNode(object):
         self.descriptive_name = unicode(descriptive_name) or self.name
         self.items = []
         self.children = []
+
     def find_unambiguous_names(self, renaming_offset=1):
         u"""Make all names in the whole tree of this node instance
         unambiguous.  This is done by two means:
@@ -72,8 +75,10 @@ class CSVNode(object):
                     child.name += u" #%d" % (names[:i].count(child.name) + 1)
                 child.name = self.name + ", " + child.name
             child.find_unambiguous_names(renaming_offset - 1)
+
     def __repr__(self):
         return repr(self.name)
+
 
 class CSVItem(object):
     u"""This class represents a key–value pair, holding the actual data in a
@@ -104,6 +109,7 @@ class CSVItem(object):
     :type value: unicode
     :type origin: str or ``NoneType``
     """
+
     def __init__(self, key, value, origin=None):
         u"""Class constructor.
 

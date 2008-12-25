@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
+
 class SampleDeathForm(forms.ModelForm):
     u"""Model form for a sample death.  I only use the ``reason`` field here.
     Note that it is not possible to select a sample (or even more than a
@@ -42,6 +43,7 @@ class SampleDeathForm(forms.ModelForm):
     class Meta:
         model = models.SampleDeath
         fields = ("reason",)
+
 
 @login_required
 def new(request, sample_name):

@@ -15,6 +15,7 @@ from django.conf import settings
 import django
 from chantal.common import Availability
 
+
 def breakup_time(seconds):
     u"""Local helper routine for the `statistics` view.  It is used to
     calculate the uptime of Chantal components.
@@ -31,6 +32,7 @@ def breakup_time(seconds):
 
     :rtype: unicode
     """
+
     def test_timeunit(seconds, size_of_timeunit_in_seconds, translation_function, current_timeunit_list):
         u"""Calculates the number of time units that fit into the remaining
         seconds and generates a human-readable string for it.  For example,
@@ -68,6 +70,7 @@ def breakup_time(seconds):
         if number_of_timeunits:
             current_timeunit_list.append(translation_function(number_of_timeunits) % {"count": number_of_timeunits })
         return number_of_timeunits * size_of_timeunit_in_seconds
+
     current_timeunit_list = []
     seconds = int(round(seconds))
 
@@ -90,6 +93,7 @@ def breakup_time(seconds):
         return current_timeunit_list[0] + _(u" and ") + current_timeunit_list[1]
     else:
         return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
+
 
 backup_inspected_pattern = re.compile(r"Total number of objects inspected: *([0-9\,]+)")
 backup_failed_pattern = re.compile(r"Total number of objects failed: *([0-9\,]+)")
@@ -133,6 +137,7 @@ def get_adsm_results():
     log_file.close()
     return result
 
+
 def get_availability_data():
     u"""Read the report file from the remote monitor program and generate a
     succinct report from it.  The remote monitor is a small program called
@@ -173,6 +178,7 @@ def get_availability_data():
                                              u"%(from)s until %(to)s (%(minutes)d minutes)", minutes) %
                                    {"from": from_, "to": to, "minutes": minutes})
     return result
+
 
 logline_pattern = re.compile(r"(?P<date>[-0-9: ]+) (?P<type>[A-Z]+)\s+(?P<message>.*)")
 u"""Format of a line in the backup cron job's logfile."""
@@ -220,6 +226,7 @@ def analyze_last_database_backup():
         last_copy = _(u"no log data found")
     return {"last_backup": last_backup, "last_copy": last_copy}
 
+
 def statistics(request):
     u"""View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
@@ -247,6 +254,7 @@ def statistics(request):
                                                   "availability": get_availability_data(),
                                                   "last_db_backup": analyze_last_database_backup()},
                               context_instance=RequestContext(request))
+
 
 def about(request):
     u"""The “about” view.  It displays general superficial information about

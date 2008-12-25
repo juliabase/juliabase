@@ -24,6 +24,7 @@ from chantal.samples import models, permissions
 from chantal.samples.views import utils, csv_export
 from chantal.samples.csv_common import CSVNode
 
+
 class YearMonthForm(forms.Form):
     u"""Form for the year/month fields in which the user can see which month is
     currently selected, and also change it.
@@ -31,10 +32,12 @@ class YearMonthForm(forms.Form):
     _ = ugettext_lazy
     year = forms.IntegerField(label=_(u"year"), min_value=1990)
     month = forms.IntegerField(label=_(u"month"), min_value=1, max_value=12)
+
     def __init__(self, *args, **kwargs):
         super(YearMonthForm, self).__init__(*args, **kwargs)
         self.fields["year"].widget.attrs["size"] = 3
         self.fields["month"].widget.attrs["size"] = 3
+
 
 year_and_month_pattern = re.compile(r"(?P<year>\d{4})/(?P<month>\d{1,2})$")
 def parse_year_and_month(year_and_month):
@@ -67,6 +70,7 @@ def parse_year_and_month(year_and_month):
     if not 1990 <= year or not 1 <= month <= 12:
         raise Http404("Invalid year and/or month")
     return year, month
+
 
 def get_previous_next_urls(process_name, year, month):
     u"""Determine the full relative URLs (i.e., only the domain is missing) of
@@ -106,6 +110,7 @@ def get_previous_next_urls(process_name, year, month):
     next_url = django.core.urlresolvers.reverse(
         "lab_notebook_"+process_name, kwargs={"year_and_month": "%d/%d" % (next_year, next_month)})
     return previous_url, next_url
+
     
 @login_required
 def show(request, process_name, year_and_month):
@@ -156,6 +161,7 @@ def show(request, process_name, year_and_month):
                               "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
                               "export_url": export_url},
         context_instance=RequestContext(request))
+
 
 @login_required
 def export(request, process_name, year_and_month):

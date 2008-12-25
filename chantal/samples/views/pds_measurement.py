@@ -19,6 +19,7 @@ import django.contrib.auth.models
 from chantal.samples.views import utils, form_utils, feed_utils
 from chantal.samples import models, permissions
 
+
 root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"
 raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
@@ -105,12 +106,14 @@ def get_data_from_file(number):
     result["number"] = unicode(number)
     return result, sample
 
+
 class SampleForm(forms.Form):
     u"""Form for the sample selection field.  You can only select *one* sample
     per PDS measurement (in contrast to depositions).
     """
     _ = ugettext_lazy
     sample = form_utils.SampleField(label=_(u"Sample"))
+
     def __init__(self, user_details, pds_measurement, preset_sample, *args, **kwargs):
         u"""Form constructor.  I only set the selection of samples to the
         current user's “My Samples”.
@@ -136,12 +139,14 @@ class SampleForm(forms.Form):
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples)
 
+
 class PDSMeasurementForm(form_utils.ProcessForm):
     u"""Model form for the core PDS measurement data.  I only redefine the
     ``operator`` field here in oder to have the full names of the users.
     """
     _ = ugettext_lazy
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
+
     def __init__(self, user, *args, **kwargs):
         u"""Form constructor.  I just adjust layout here.
         """
@@ -151,6 +156,7 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         measurement = kwargs.get("instance")
         self.fields["operator"].set_operator(measurement.operator if measurement else user, user.is_staff)
         self.fields["operator"].initial = measurement.operator.pk if measurement else user.pk
+
     def test_for_datafile(self, filename):
         u"""Test whether a certain file is openable by Chantal.
 
@@ -171,12 +177,14 @@ class PDSMeasurementForm(form_utils.ProcessForm):
                 open(os.path.join(root_dir, filename))
             except IOError:
                 raise ValidationError(_(u"Couldn't open datafile."))
+
     def clean_raw_datafile(self):
         u"""Check whether the raw datafile name points to a readable file.
         """
         filename = self.cleaned_data["raw_datafile"]
         self.test_for_datafile(filename)
         return filename
+
     def clean_evaluated_datafile(self):
         u"""Check whether the evaluated datafile name points to a readable
         file.
@@ -184,6 +192,7 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         filename = self.cleaned_data["evaluated_datafile"]
         self.test_for_datafile(filename)
         return filename
+
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -192,9 +201,11 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         even for the Django guys).
         """
         pass
+
     class Meta:
         model = models.PDSMeasurement
         exclude = ("external_operator",)
+
 
 class OverwriteForm(forms.Form):
     u"""Form for the checkbox whether the form data should be taken from the
@@ -203,6 +214,7 @@ class OverwriteForm(forms.Form):
     _ = ugettext_lazy
     overwrite_from_file = forms.BooleanField(label=_(u"Overwrite with file data"), required=False)
 
+
 class RemoveFromMySamplesForm(forms.Form):
     u"""Form for the question whether the user wants to remove the measured
     sample from the “My Samples” list after having created the deposition.
@@ -210,6 +222,7 @@ class RemoveFromMySamplesForm(forms.Form):
     _ = ugettext_lazy
     remove_measured_from_my_samples = forms.BooleanField(label=_(u"Remove measured sample from My Samples"),
                                                          required=False, initial=True)
+
 
 def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form, edit_description_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
@@ -243,6 +256,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
         all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
 
+
 def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     u"""Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
@@ -274,6 +288,7 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
             form_utils.append_error(pds_measurement_form, _(u"Sample is already dead at this time."), "timestamp")
             referentially_valid = False
     return referentially_valid
+
 
 @login_required
 def edit(request, pds_number):

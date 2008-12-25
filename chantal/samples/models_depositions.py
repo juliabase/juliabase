@@ -26,6 +26,7 @@ This is used in
 `samples.views.split_after_deposition.GlobalNewDataForm.__init__`.
 """
 
+
 class Deposition(Process):
     u"""The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
@@ -38,12 +39,19 @@ class Deposition(Process):
     of your deposition class.
     """
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+
+    class Meta:
+        verbose_name = _(u"deposition")
+        verbose_name_plural = _(u"depositions")
+
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.main.show_deposition", [urlquote(self.number, safe="")])
+
     def __unicode__(self):
         _ = ugettext
         return _(u"deposition %s") % self.number
+
     def get_data(self):
         # See `Process.get_data` for the documentation.
         _ = ugettext
@@ -51,14 +59,23 @@ class Deposition(Process):
         csv_node.items.append(CSVItem(_(u"number"), self.number, "deposition"))
         csv_node.children = [layer.get_data() for layer in self.layers.all()]
         return csv_node
-    class Meta:
-        verbose_name = _(u"deposition")
-        verbose_name_plural = _(u"depositions")
+
 
 class SixChamberDeposition(Deposition):
     u"""6-chamber depositions.
     """
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
+
+    class Meta:
+        verbose_name = _(u"6-chamber deposition")
+        verbose_name_plural = _(u"6-chamber depositions")
+        _ = lambda x: x
+        permissions = (("add_edit_six_chamber_deposition", _("Can create and edit 6-chamber depositions")),)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.six_chamber_deposition.show", [urlquote(self.number, safe="")])
+
     def get_additional_template_context(self, process_context):
         u"""This method is called e.g. when the process list for a sample is
         being constructed.  It returns a dict with additional fields that are
@@ -92,9 +109,7 @@ class SixChamberDeposition(Deposition):
                                                           urlquote_plus(self.number))}
         else:
             return {}
-    @models.permalink
-    def get_absolute_url(self):
-        return ("samples.views.six_chamber_deposition.show", [urlquote(self.number, safe="")])
+
     @classmethod
     def get_add_link(cls):
         u"""Return all you need to generate a link to the “add” view for this
@@ -112,13 +127,10 @@ class SixChamberDeposition(Deposition):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_6-chamber_deposition")
-    class Meta:
-        verbose_name = _(u"6-chamber deposition")
-        verbose_name_plural = _(u"6-chamber depositions")
-        _ = lambda x: x
-        permissions = (("add_edit_six_chamber_deposition", _("Can create and edit 6-chamber depositions")),)
+
 default_location_of_deposited_samples[SixChamberDeposition] = _(u"6-chamber deposition lab")
 admin.site.register(SixChamberDeposition)
+
 
 class Layer(models.Model):
     u"""This is an abstract base model for deposition layers.  Now, this is the
@@ -132,6 +144,14 @@ class Layer(models.Model):
     ``related_name="layers"``.  See also `Deposition`.
     """
     number = models.IntegerField(_(u"layer number"))
+
+    class Meta:
+        abstract = True
+        ordering = ["number"]
+        unique_together = ("deposition", "number")
+        verbose_name = _(u"layer")
+        verbose_name_plural = _(u"layers")
+
     def get_data(self):
         u"""Extract the data of this layer as a CSV node with a list of
         key–value pairs, ready to be used for the CSV table export.  See the
@@ -146,12 +166,7 @@ class Layer(models.Model):
         csv_node = CSVNode(self, _(u"layer %d") % self.number)
         csv_node.items = [CSVItem(_(u"number"), unicode(self.number), "layer")]
         return csv_node
-    class Meta:
-        abstract = True
-        ordering = ["number"]
-        unique_together = ("deposition", "number")
-        verbose_name = _(u"layer")
-        verbose_name_plural = _(u"layers")
+
 
 six_chamber_chamber_choices = (
     ("#1", "#1"),
@@ -194,9 +209,15 @@ class SixChamberLayer(Layer):
     deposition_power = models.DecimalField(_(u"deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
                                            help_text=_(u"in W"))
     base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
+
+    class Meta(Layer.Meta):
+        verbose_name = _(u"6-chamber layer")
+        verbose_name_plural = _(u"6-chamber layers")
+
     def __unicode__(self):
         _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
+
     def get_data(self):
         # See `Layer.get_data` for the documentation.
         _ = ugettext
@@ -226,10 +247,9 @@ class SixChamberLayer(Layer):
         for gas_name in gas_names:
             csv_node_items.append((unicode(gas_names[gas_name]) + _(u"(in sccm)"), flow_rates.get(gas_name, u"")))
         return csv_node
-    class Meta(Layer.Meta):
-        verbose_name = _(u"6-chamber layer")
-        verbose_name_plural = _(u"6-chamber layers")
+
 admin.site.register(SixChamberLayer)
+
 
 six_chamber_gas_choices = (
     ("SiH4", "SiH₄"),
@@ -253,19 +273,34 @@ class SixChamberChannel(models.Model):
     layer = models.ForeignKey(SixChamberLayer, related_name="channels", verbose_name=_(u"layer"))
     gas = models.CharField(_(u"gas and dilution"), max_length=30, choices=six_chamber_gas_choices)
     flow_rate = models.DecimalField(_(u"flow rate"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"))
-    def __unicode__(self):
-        _ = ugettext
-        return _(u"channel %(number)d of %(layer)s") % {"number": self.number, "layer": self.layer}
+
     class Meta:
         verbose_name = _(u"6-chamber channel")
         verbose_name_plural = _(u"6-chamber channels")
         unique_together = ("layer", "number")
         ordering = ["number"]
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"channel %(number)d of %(layer)s") % {"number": self.number, "layer": self.layer}
+
 admin.site.register(SixChamberChannel)
+
 
 class LargeAreaDeposition(Deposition):
     u"""Large-area depositions.
     """
+
+    class Meta:
+        verbose_name = _(u"large-area deposition")
+        verbose_name_plural = _(u"large-area depositions")
+        _ = lambda x: x
+        permissions = (("add_edit_large_area_deposition", _("Can create and edit large-area depositions")),)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.large_area_deposition.show", [urlquote(self.number, safe="")])
+
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context`.
 
@@ -287,9 +322,7 @@ class LargeAreaDeposition(Deposition):
                                                           urlquote_plus(self.number))}
         else:
             return {}
-    @models.permalink
-    def get_absolute_url(self):
-        return ("samples.views.large_area_deposition.show", [urlquote(self.number, safe="")])
+
     @classmethod
     def get_add_link(cls):
         u"""Return all you need to generate a link to the “add” view for this
@@ -302,6 +335,7 @@ class LargeAreaDeposition(Deposition):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_large-area_deposition")
+
     @classmethod
     def get_lab_notebook_data(cls, year, month):
         depositions = cls.get_lab_notebook_context(year, month)["processes"]
@@ -311,13 +345,10 @@ class LargeAreaDeposition(Deposition):
                 data.children.append(layer.get_data())
                 data.children[-1].descriptive_name = u""
         return data
-    class Meta:
-        verbose_name = _(u"large-area deposition")
-        verbose_name_plural = _(u"large-area depositions")
-        _ = lambda x: x
-        permissions = (("add_edit_large_area_deposition", _("Can create and edit large-area depositions")),)
+
 default_location_of_deposited_samples[SixChamberDeposition] = _(u"large-area deposition lab")
 admin.site.register(LargeAreaDeposition)
+
 
 large_area_layer_type_choices = (
     ("p", "p"),
@@ -344,6 +375,7 @@ large_area_electrode_choices = (
     ("NN40 large PC1", _(u"NN40 large PC1")),
     ("NN40 large PC2", _(u"NN40 large PC2")),
 )
+
 class LargeAreaLayer(Layer):
     u"""One layer in a large-area deposition.
 
@@ -371,9 +403,15 @@ class LargeAreaLayer(Layer):
     electrode = models.CharField(_(u"electrode"), max_length=30, choices=large_area_electrode_choices)
     electrodes_distance = models.DecimalField(_(u"electrodes distance"), max_digits=4, decimal_places=1,
                                                help_text=_(u"in mm"))
+
+    class Meta(Layer.Meta):
+        verbose_name = _(u"large-area layer")
+        verbose_name_plural = _(u"large-area layers")
+
     def __unicode__(self):
         _ = ugettext
         return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
+
     def get_data(self):
         # See `Layer.get_data` for the documentation.
         _ = ugettext
@@ -399,7 +437,5 @@ class LargeAreaLayer(Layer):
                                CSVItem(_(u"electrode"), self.get_electrode_display()),
                                CSVItem(_(u"elec. dist./mm"), self.electrodes_distance)])
         return csv_node
-    class Meta(Layer.Meta):
-        verbose_name = _(u"large-area layer")
-        verbose_name_plural = _(u"large-area layers")
+
 admin.site.register(LargeAreaLayer)

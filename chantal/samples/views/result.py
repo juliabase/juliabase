@@ -15,6 +15,7 @@ from django.db.models import Q
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils, feed_utils, csv_export
 
+
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
     `settings.UPLOADED_RESULT_IMAGES_ROOT`.  If the given result has already an
@@ -58,6 +59,7 @@ def save_image_file(image_data, result, related_data_form):
     destination.close()
     result.save()
 
+
 class ResultForm(form_utils.ProcessForm):
     u"""Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
@@ -66,14 +68,17 @@ class ResultForm(form_utils.ProcessForm):
     processes.
     """
     _ = ugettext_lazy
+
     def __init__(self, *args, **kwargs):
         super(ResultForm, self).__init__(*args, **kwargs)
         self.fields["comments"].required = True
         self.fields["title"].widget.attrs["size"] = 40
+
     class Meta:
         model = models.Result
         exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type",
                    "quantities_and_values")
+
 
 class RelatedDataForm(forms.Form):
     u"""Form for samples, sample series, and the image connected with this
@@ -84,6 +89,7 @@ class RelatedDataForm(forms.Form):
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
+
     def __init__(self, user_details, query_string_dict, old_result, data=None, files=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
@@ -123,6 +129,7 @@ class RelatedDataForm(forms.Form):
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
         self.fields["samples"].set_samples(samples)
         self.fields["image_file"].widget.attrs["size"] = 60
+
     def clean(self):
         u"""Global clean method for the related data.  I check whether at least
         one sample or sample series was selected, and whether the user is
@@ -139,6 +146,7 @@ class RelatedDataForm(forms.Form):
                 form_utils.append_error(self, _(u"You must select at least one samples/series."))
         return self.cleaned_data
 
+
 class DimensionsForm(forms.Form):
     u"""Model form for the number of quantities and values per quantity in the
     result values table.  In other words, it is the number or columns
@@ -154,10 +162,12 @@ class DimensionsForm(forms.Form):
     _ = ugettext_lazy
     number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
     number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
+
     def __init__(self, *args, **kwargs):
         super(DimensionsForm, self).__init__(*args, **kwargs)
         self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
         self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
+
     def clean(self):
         u"""If one of the two dimensions is set to zero, the other is set to
         zero, too.
@@ -168,6 +178,7 @@ class DimensionsForm(forms.Form):
                 cleaned_data["number_of_quantities"] = cleaned_data["number_of_values"] = 0
         return cleaned_data
 
+
 class QuantityForm(forms.Form):
     u"""Form for one quantity field (i.e., one heading in the result values
     table).  All HTML entities in it are immediately converted to their unicode
@@ -176,12 +187,15 @@ class QuantityForm(forms.Form):
     """
     _ = ugettext_lazy
     quantity = forms.CharField(label=_("Quantity name"), max_length=50)
+
     def __init__(self, *args, **kwargs):
         super(QuantityForm, self).__init__(*args, **kwargs)
         self.fields["quantity"].widget.attrs.update({"size": 10, "style": "font-weight: bold; text-align: center"})
+
     def clean_quantity(self):
         quantity = u" ".join(self.cleaned_data["quantity"].split())
         return utils.substitute_html_entities(quantity)
+
 
 class ValueForm(forms.Form):
     u"""Form for one value entry in the result values table.  Note that this is
@@ -191,9 +205,11 @@ class ValueForm(forms.Form):
     """
     _ = ugettext_lazy
     value = forms.CharField(label=_("Value"), max_length=50, required=False)
+
     def __init__(self, *args, **kwargs):
         super(ValueForm, self).__init__(*args, **kwargs)
         self.fields["value"].widget.attrs.update({"size": 10})
+
 
 class FormSet(object):
     u"""Class for holding all forms of the result views, and for all methods
@@ -238,6 +254,7 @@ class FormSet(object):
     :type edit_description_form: `form_utils.EditDescriptionForm` or
       ``NoneType``
     """
+
     def __init__(self, request, process_id):
         u"""Class constructor.
         
@@ -252,6 +269,7 @@ class FormSet(object):
         self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
         self.user_details = utils.get_profile(request.user)
         self.query_string_dict = utils.parse_query_string(request) if not self.result else None
+
     def from_database(self):
         u"""Generate all forms from the database.  This is called when the HTTP
         GET method was sent with the request.
@@ -271,6 +289,7 @@ class FormSet(object):
         for j, value_list in enumerate(values):
             self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="%d_%d" % (i, j))
                                           for i, value in enumerate(value_list)])
+
     def from_post_data(self, post_data, post_files):
         u"""Generate all forms from the database.  This is called when the HTTP
         POST method was sent with the request.
@@ -315,6 +334,7 @@ class FormSet(object):
                     values.append(ValueForm(prefix="%d_%d" % (i, j)))
             self.value_form_lists.append(values)
         self.edit_description_form = form_utils.EditDescriptionForm(post_data) if self.result else None
+
     def _is_all_valid(self):
         u"""Test whether all bound forms are valid.  This routine guarantees that
         all ``is_valid()`` methods are called, even if the first tested form is
@@ -334,6 +354,7 @@ class FormSet(object):
         if self.edit_description_form:
             all_valid = self.edit_description_form.is_valid() and all_valid
         return all_valid
+
     def _is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
         database.  In particular, I test here whether the “important” checkbox
@@ -365,6 +386,7 @@ class FormSet(object):
                 else:
                     quantities.add(quantity)
         return referentially_valid
+
     def _is_structure_changed(self):
         u"""Check whether the structure was changed by the user, i.e. whether
         the table dimensions were changed.  (In this case, the view has to be
@@ -384,6 +406,7 @@ class FormSet(object):
             # In case of doubt, assume that the structure was changed.
             # Actually, this should never happen unless the browser is broken.
             return True
+
     def serialize_quantities_and_values(self):
         u"""Serialise the result table data (quantities and values) to a string
         which is ready to be written to the database.  See
@@ -397,6 +420,7 @@ class FormSet(object):
         result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
             [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
         return pickle.dumps(result, protocol=0)
+
     def save_to_database(self, post_files):
         u"""Save the forms to the database.  One peculiarity here is that I
         still check validity on this routine, namely whether the uploaded image
@@ -436,6 +460,7 @@ class FormSet(object):
                 result.samples = self.related_data_form.cleaned_data["samples"]
                 result.sample_series = self.related_data_form.cleaned_data["sample_series"]
                 return result
+
     def update_previous_dimensions_form(self):
         u"""Set the form with the previous dimensions to the currently set
         dimensions.
@@ -443,6 +468,7 @@ class FormSet(object):
         self.previous_dimensions_form = DimensionsForm(
             initial={"number_of_quantities": len(self.quantity_forms), "number_of_values": len(self.value_form_lists)},
                      prefix="previous")
+
     def get_context_dict(self):
         u"""Retrieve the context dictionary to be passed to the template.  This
         context dictionary contains all forms in an easy-to-use format for the
@@ -457,6 +483,7 @@ class FormSet(object):
                 "edit_description": self.edit_description_form, "dimensions": self.dimensions_form,
                 "previous_dimensions": self.previous_dimensions_form, "quantities": self.quantity_forms,
                 "value_lists": self.value_form_lists}
+
 
 @login_required
 def edit(request, process_id):
@@ -493,6 +520,7 @@ def edit(request, process_id):
     context_dict.update(form_set.get_context_dict())
     return render_to_response("edit_result.html", context_dict, context_instance=RequestContext(request))
 
+
 @login_required
 def show(request, process_id):
     u"""Shows a particular result process.  The main purpose of this view is to
@@ -517,6 +545,7 @@ def show(request, process_id):
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.ResultContext(request.user, sample_series=None).digest_process(result))
     return render_to_response("show_single_result.html", template_context, context_instance=RequestContext(request))
+
 
 @login_required
 def export(request, process_id):

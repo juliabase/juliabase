@@ -18,6 +18,7 @@ from django.forms.util import ValidationError
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils
 
+
 class InitialsForm(forms.Form):
     u"""Form for giving the initials to be used for the new names.  This form
     is not used if the user has only his own initials available, i.e. there is
@@ -25,15 +26,18 @@ class InitialsForm(forms.Form):
     """
     _ = ugettext_lazy
     initials = forms.ChoiceField(label=_(u"Initials"))
+
     def __init__(self, available_initials, *args, **kwargs):
         super(InitialsForm, self).__init__(*args, **kwargs)
         self.fields["initials"].choices = available_initials
+
 
 class NewNameForm(forms.Form):
     u"""Form for the new name of one sample.
     """
     _ = ugettext_lazy
     name = forms.CharField(label=_(u"New name"), max_length=22)
+
     def __init__(self, year, initials, *args, **kwargs):
         u"""Class constructor.
 
@@ -49,6 +53,7 @@ class NewNameForm(forms.Form):
         """
         super(NewNameForm, self).__init__(*args, **kwargs)
         self.prefix_ = "%s-%s-" % (year, initials)
+
     def clean_name(self):
         new_name = self.prefix_ + self.cleaned_data["name"]
         if utils.sample_name_format(new_name) != "new":
@@ -56,6 +61,7 @@ class NewNameForm(forms.Form):
         if utils.does_sample_exist(new_name):
             raise ValidationError(_(u"This sample name exists already."))
         return new_name
+
 
 def is_referentially_valid(new_name_forms):
     u"""Check whether there are duplicate names on the page.  Note that I don't
@@ -83,6 +89,7 @@ def is_referentially_valid(new_name_forms):
             else:
                 new_names.add(new_name)
     return referentially_valid
+
 
 @login_required
 def bulk_rename(request):

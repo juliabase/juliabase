@@ -9,6 +9,7 @@ database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenba
 
 login("bronger", "*******")
 
+
 def read_lines(filename):
     try:
         return codecs.open(filename, encoding="cp1252").readlines()
@@ -17,6 +18,7 @@ def read_lines(filename):
             return codecs.open(filename, encoding="cp437").readlines()
         except UnicodeDecodeError:
             return open(filename).readlines()
+
 
 evaluated_data_files = {}
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
@@ -27,6 +29,7 @@ for directory, __, filenames in os.walk(root_dir):
             if match:
                 number = int(match.group("number"))
                 evaluated_data_files[number] = os.path.join(directory, filename)
+
 
 date_pattern = re.compile(r"#?(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{2,4})")
 date2_pattern = re.compile(r"(?P<day>\d{1,2})\s*(?P<month>[A-Za-z]{3})\s+(?P<year>\d{4})")
@@ -42,6 +45,7 @@ def parse_date(datestring):
         month = [None, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].\
             index(match.group("month"))
         return datetime.datetime(int(match.group("year")), month, int(match.group("day")), 10, 0)
+
 
 def extract_comments(filename):
     comment_lines = []
@@ -59,8 +63,11 @@ def extract_comments(filename):
         comments = comments[1:]
     return comments
 
+
 raw_filename_pattern = re.compile(r"pd(?P<number>\d+)\.dat", re.IGNORECASE)
+
 class LegacyPDSMeasurement(object):
+
     def __init__(self, line):
         self.path, filename, self.date, self.sample_name, self.substrate, self.material, self.remarks = \
             line.strip().split(";", 6)
@@ -78,6 +85,7 @@ class LegacyPDSMeasurement(object):
         if not self.comments.startswith(self.remarks):
             self.comments = u"Abweichende Angaben in Datenbank und Messdatei!\n"
         self.evaluated_path = evaluated_data_files.get(self.number)
+
 
 pds_measurements = []
 for line in open(database_path):

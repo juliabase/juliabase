@@ -90,6 +90,7 @@ operators = {
     "LX": "l_xiao",
     }
 
+
 hours_pattern = re.compile(r"(?P<hours>\d+)\s*h$")
 minutes_pattern = re.compile(r"(?P<minutes>\d+)\s*min$")
 def format_pre_heat_time(time):
@@ -108,6 +109,7 @@ def format_pre_heat_time(time):
         assert minutes < 60
         return "00:%02d:00" % minutes
     print time, "could not be parsed as a pre-heat time"
+
 
 quantity_pattern = re.compile(r"(?P<value>[-+0-9.,eE]+)?\s*(?P<unit>(Torr)|(mBar)|(mTorr)|(hPa))$")
 def normalize_quantity(quantity, base_pressure=False):

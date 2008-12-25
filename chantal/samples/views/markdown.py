@@ -11,6 +11,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils, form_utils
 from chantal.samples.views.utils import help_link
 
+
 class SandboxForm(forms.Form):
     u"""Form for entering Markdown markup just for testing it.
     """
@@ -22,6 +23,7 @@ class SandboxForm(forms.Form):
         sandbox = self.cleaned_data["sandbox"]
         form_utils.check_markdown(sandbox)
         return sandbox
+
 
 @help_link(_(u"MarkdownMarkup"))
 def sandbox(request):

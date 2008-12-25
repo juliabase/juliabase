@@ -5,9 +5,11 @@ import xml.etree.ElementTree as ElementTree
 import cPickle as pickle
 import codecs, re
 
+
 class Layer(object):
     def __init__(self):
         self.fields = {}
+
 
 root = ElementTree.parse("/home/bronger/temp/large_area/content.xml")
 
@@ -33,6 +35,7 @@ for style in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:style:1.0}
             "{urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0}font-weight") == "normal":
             medium_styles.append(style.attrib["{urn:oasis:names:tc:opendocument:xmlns:style:1.0}name"])
 
+
 def mark_bold(text, bold, in_bold):
     if bold and not in_bold:
         stripped_text = text.lstrip()
@@ -42,6 +45,7 @@ def mark_bold(text, bold, in_bold):
         text += "__"
         in_bold = False
     return text, in_bold
+
 
 def inner_text(root, in_comment, in_bold=False):
     if root.tag == "{urn:oasis:names:tc:opendocument:xmlns:office:1.0}annotation":
@@ -65,14 +69,17 @@ def inner_text(root, in_comment, in_bold=False):
         current_text += element.tail or u""
     return current_text, in_bold
 
+
 def text(root, in_comment):
     complete_text, in_bold = inner_text(root, in_comment)
     if in_comment and in_bold:
         complete_text += "__"
     return complete_text
 
+
 class EmptyRowException(Exception):
     pass
+
 
 layers = []
 depositions = []
@@ -81,6 +88,7 @@ columns = ("number", "date", "layer_type", "station", "sih4", "h2", "__", "tmb",
            "pressure", "temperature", "hf_frequency", "time", "dc_bias", "__", "__", "__", "__", "__", "__", "__", "__",
            "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "__", "electrode", "electrodes_distance",
            "comments")
+
 
 for row in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}table-row"):
     try:
@@ -118,8 +126,10 @@ for row in root.getiterator("{urn:oasis:names:tc:opendocument:xmlns:table:1.0}ta
 
 del depositions[:3]
 
+
 def datum2date(datum):
     return datum[6:10] + "-" + datum[3:5] + "-" + datum[0:2]
+
 
 outfile = codecs.open("la_import.py", "w", encoding="utf-8")
 

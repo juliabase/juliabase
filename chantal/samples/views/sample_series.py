@@ -22,6 +22,7 @@ import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 from chantal.samples.views import utils, form_utils, feed_utils, csv_export
 
+
 class SampleSeriesForm(forms.ModelForm):
     u"""Form for editing and creating sample series.
     """
@@ -30,6 +31,7 @@ class SampleSeriesForm(forms.ModelForm):
     currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
     group = form_utils.GroupField(label=_(u"Group"))
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"))
+
     def __init__(self, user_details, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the form here, especially
         because the sample set to choose from must be found and the name of an
@@ -50,12 +52,14 @@ class SampleSeriesForm(forms.ModelForm):
         else:
             self.fields["currently_responsible_person"].choices = ((user_details.user.pk, unicode(user_details.user)),)
         self.fields["group"].set_groups(sample_series.group if sample_series else None)
+
     def clean_description(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
         form_utils.check_markdown(description)
         return description
+
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
@@ -64,9 +68,11 @@ class SampleSeriesForm(forms.ModelForm):
         German (difficult to fix, even for the Django guys).
         """
         pass
+
     class Meta:
         model = models.SampleSeries
         exclude = ("timestamp", "results", "name")
+
 
 @login_required
 def show(request, name):
@@ -99,6 +105,7 @@ def show(request, name):
                                "result_processes": result_processes},
                               context_instance=RequestContext(request))
 
+
 def is_referentially_valid(sample_series, sample_series_form, edit_description_form):
     u"""Checks that the “important” checkbox is marked if the group or the
     currently responsible person were changed.
@@ -128,6 +135,7 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
         form_utils.append_error(edit_description_form,
                                 _(u"Changing the group or the responsible person must be marked as important."), "important")
     return referentially_valid
+
 
 @login_required
 def edit(request, name):
@@ -181,6 +189,7 @@ def edit(request, name):
                                "is_new": False, "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def new(request):
     u"""View for creating a new sample series.  Note that you can add arbitrary
@@ -227,6 +236,7 @@ def new(request):
                                "is_new": True,
                                "name_prefix": u"%s-%02d" % (request.user.username, datetime.datetime.today().year % 100)},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def export(request, name):

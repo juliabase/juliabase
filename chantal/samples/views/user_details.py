@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, form_utils
 
+
 @login_required
 def show_user(request, login_name):
     u"""View for showing basic information about a user, like the email
@@ -40,6 +41,7 @@ def show_user(request, login_name):
     return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
 
+
 class UserDetailsForm(forms.ModelForm):
     u"""Model form for user preferences.  I exhibit only two field here, namely
     the auto-addition groups and the switch whether a user wants to get only
@@ -52,6 +54,7 @@ class UserDetailsForm(forms.ModelForm):
     class Meta:
         model = models.UserDetails
         fields = ("auto_addition_groups", "only_important_news")
+
 
 @login_required
 def edit_preferences(request, login_name):
@@ -100,6 +103,7 @@ def edit_preferences(request, login_name):
                                "user_details": user_details_form, "initials": initials_form,
                                "has_groups": bool(user.groups.count())},
                               context_instance=RequestContext(request))
+
 
 @login_required
 def groups_and_permissions(request, login_name):

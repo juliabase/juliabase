@@ -22,6 +22,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 import ldap
 
+
 def expire_feed_entries():
     u"""Deletes all feed entries which are older than six weeks.
     """
@@ -29,6 +30,7 @@ def expire_feed_entries():
     six_weeks_ago = now - datetime.timedelta(days=42)
     for entry in models.FeedEntry.objects.filter(timestamp__lt=six_weeks_ago):
         entry.delete()
+
 
 def mark_inactive_users():
     u"""Sets all users which can't be found anymore in the central Active
@@ -50,6 +52,7 @@ def mark_inactive_users():
         l.unbind_s()
     except ldap.LDAPError, e:
         mail_admins("Chantal LDAP error", message=e.message["desc"])
+
 
 def maintenance(request):
     u"""Perform database maintenance.  Its URL should never be accessable or
