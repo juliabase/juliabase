@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-24 15:56+0100\n"
-"PO-Revision-Date: 2008-12-24 15:57+0100\n"
+"POT-Creation-Date: 2008-12-26 14:19+0100\n"
+"PO-Revision-Date: 2008-12-26 14:19+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -145,15 +145,15 @@ msgstr "Alternativnamen"
 msgid "parent"
 msgstr "Elter"
 
-#, python-format
-msgid "split of %s"
-msgstr "Spaltung von %s"
-
 msgid "sample split"
 msgstr "Probenspaltung"
 
 msgid "sample splits"
 msgstr "Probenspaltungen"
+
+#, python-format
+msgid "split of %s"
+msgstr "Spaltung von %s"
 
 msgid "custom"
 msgstr "speziell"
@@ -167,14 +167,14 @@ msgstr "Silizium-100-Wafer"
 msgid "substrate material"
 msgstr "Substrat-Material"
 
-msgid "material"
-msgstr "Material"
-
 msgid "substrate"
 msgstr "Substrat"
 
 msgid "substrates"
 msgstr "Substrate"
+
+msgid "material"
+msgstr "Material"
 
 msgid "completely split"
 msgstr "vollständig gespalten"
@@ -188,6 +188,12 @@ msgstr "vollständig vernichtet"
 msgid "cause of death"
 msgstr "Todesursache"
 
+msgid "cease of existence"
+msgstr "Beendigung der Existenz"
+
+msgid "ceases of existence"
+msgstr "Beendigungen der Existenz"
+
 #, python-format
 msgid "cease of existence of %s"
 msgstr "Beendigung der Existenz von %s"
@@ -195,12 +201,6 @@ msgstr "Beendigung der Existenz von %s"
 #, python-format
 msgid "cease of existence #%d"
 msgstr "Beendigung der Existenz #%d"
-
-msgid "cease of existence"
-msgstr "Beendigung der Existenz"
-
-msgid "ceases of existence"
-msgstr "Beendigungen der Existenz"
 
 msgid "none"
 msgstr "keine"
@@ -217,6 +217,12 @@ msgstr "Messgrößen und Werte"
 msgid "in Python pickle format"
 msgstr "im Python-Pickle-Format"
 
+msgid "result"
+msgstr "Ergebnis"
+
+msgid "results"
+msgstr "Ergebnisse"
+
 #, python-format
 msgid "result for %s"
 msgstr "Ergebnis für %s"
@@ -231,12 +237,6 @@ msgstr "Zeile"
 #, python-format
 msgid "row #%d"
 msgstr "Zeile %d"
-
-msgid "result"
-msgstr "Ergebnis"
-
-msgid "results"
-msgstr "Ergebnisse"
 
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
@@ -288,8 +288,20 @@ msgstr "Benutzerdetails"
 msgid "Can edit group memberships and add new groups"
 msgstr "Darf Gruppenzugehörigkeiten ändern und neue Gruppen hinzufügen"
 
+msgid "restricted"
+msgstr "beschränkt"
+
+msgid "group details"
+msgstr "Gruppendetails"
+
 msgid "deposition number"
 msgstr "Depositionsnummer"
+
+msgid "deposition"
+msgstr "Deposition"
+
+msgid "depositions"
+msgstr "Depositionen"
 
 #, python-format
 msgid "deposition %s"
@@ -297,12 +309,6 @@ msgstr "Deposition %s"
 
 msgid "number"
 msgstr "Nummer"
-
-msgid "deposition"
-msgstr "Deposition"
-
-msgid "depositions"
-msgstr "Depositionen"
 
 msgid "carrier"
 msgstr "Carrier"
@@ -322,15 +328,15 @@ msgstr "6-Kammer-Depositionslabor"
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#, python-format
-msgid "layer %d"
-msgstr "Schicht %d"
-
 msgid "layer"
 msgstr "Schicht"
 
 msgid "layers"
 msgstr "Schichten"
+
+#, python-format
+msgid "layer %d"
+msgstr "Schicht %d"
 
 msgid "chamber"
 msgstr "Kammer"
@@ -402,6 +408,12 @@ msgstr "Basisdruck"
 msgid "in Torr"
 msgstr "in Torr"
 
+msgid "6-chamber layer"
+msgstr "6-Kammer-Deposition"
+
+msgid "6-chamber layers"
+msgstr "6-Kammer-Schichten"
+
 #, python-format
 msgid "layer %(number)d of %(deposition)s"
 msgstr "Schicht %(number)d von %(deposition)s"
@@ -427,12 +439,6 @@ msgstr "p_Basis/Torr"
 msgid "(in sccm)"
 msgstr "(in sccm)"
 
-msgid "6-chamber layer"
-msgstr "6-Kammer-Deposition"
-
-msgid "6-chamber layers"
-msgstr "6-Kammer-Schichten"
-
 msgid "2% PH₃ in SiH₄"
 msgstr "2% PH₃ in SiH₄"
 
@@ -457,15 +463,15 @@ msgstr "Flussrate"
 msgid "in sccm"
 msgstr "in sccm"
 
-#, python-format
-msgid "channel %(number)d of %(layer)s"
-msgstr "Channel %(number)d von %(layer)s"
-
 msgid "6-chamber channel"
 msgstr "6-Kammer-Channel"
 
 msgid "6-chamber channels"
 msgstr "6-Kammer-Channels"
+
+#, python-format
+msgid "channel %(number)d of %(layer)s"
+msgstr "Channel %(number)d von %(layer)s"
 
 msgid "large-area deposition"
 msgstr "großflächige Deposition"
@@ -475,6 +481,10 @@ msgstr "großflächige Depositionen"
 
 msgid "Can create and edit large-area depositions"
 msgstr "Darf großflächige Depositionen anlegen und ändern"
+
+#, python-format
+msgid "lab notebook for %s"
+msgstr "Laborbuch für %s"
 
 msgid "large-area deposition lab"
 msgstr "Großflächige-Depositionslabor"
@@ -542,6 +552,12 @@ msgstr "Elektrode"
 msgid "electrodes distance"
 msgstr "Elektrodenabstand"
 
+msgid "large-area layer"
+msgstr "Schicht der Großflächigen"
+
+msgid "large-area layers"
+msgstr "Schichten der Großflächigen"
+
 msgid "time/s"
 msgstr "Zeit/s"
 
@@ -550,12 +566,6 @@ msgstr "DC-Bias/V"
 
 msgid "elec. dist./mm"
 msgstr "Elektr.-Abst./mm"
-
-msgid "large-area layer"
-msgstr "Schicht der Großflächigen"
-
-msgid "large-area layers"
-msgstr "Schichten der Großflächigen"
 
 msgid "originator"
 msgstr "Ersteller"
@@ -566,24 +576,18 @@ msgstr "ist wichtig"
 msgid "SHA1 hex digest"
 msgstr "SHA1 Hex-Digest"
 
-#, python-format
-msgid "feed entry #%d"
-msgstr "Feed-Eintrag #%d"
-
 msgid "feed entry"
 msgstr "Feed-Eintrag"
 
 msgid "feed entries"
 msgstr "Feed-Einträge"
 
+#, python-format
+msgid "feed entry #%d"
+msgstr "Feed-Eintrag #%d"
+
 msgid "auto adders"
 msgstr "Auto-Hinzufüger"
-
-#, python-format
-msgid "New sample in “%s”"
-msgid_plural "New samples in “%s”"
-msgstr[0] "Neue Probe in „%s“"
-msgstr[1] "Neue Proben in „%s“"
 
 msgid "new samples feed entry"
 msgstr "Feed-Eintrag für neue Proben"
@@ -591,14 +595,14 @@ msgstr "Feed-Eintrag für neue Proben"
 msgid "new samples feed entries"
 msgstr "Feed-Einträge für neue Proben"
 
+#, python-format
+msgid "New sample in “%s”"
+msgid_plural "New samples in “%s”"
+msgstr[0] "Neue Probe in „%s“"
+msgstr[1] "Neue Proben in „%s“"
+
 msgid "old group"
 msgstr "alte Gruppe"
-
-#, python-format
-msgid "New sample moved to “%s”"
-msgid_plural "New samples moved to “%s”"
-msgstr[0] "Neue Probe in „%s“ verschoben"
-msgstr[1] "Neue Proben in „%s“ verschoben"
 
 msgid "moved samples feed entry"
 msgstr "Feed-Eintrag für verschobene Proben"
@@ -607,8 +611,10 @@ msgid "moved samples feed entries"
 msgstr "Feed-Einträge für verschobene Proben"
 
 #, python-format
-msgid "New %s"
-msgstr "Neu: %s"
+msgid "New sample moved to “%s”"
+msgid_plural "New samples moved to “%s”"
+msgstr[0] "Neue Probe in „%s“ verschoben"
+msgstr[1] "Neue Proben in „%s“ verschoben"
 
 msgid "new physical process feed entry"
 msgstr "Feed-Eintrag für neue physikalische Prozesse"
@@ -617,8 +623,8 @@ msgid "new physical process feed entries"
 msgstr "Feed-Einträge für neue physikalische Prozesse"
 
 #, python-format
-msgid "Edited %s"
-msgstr "%s geändert"
+msgid "New %s"
+msgstr "Neu: %s"
 
 msgid "edited physical process feed entry"
 msgstr "Feed-Eintrag für geänderte physikalische Prozesse"
@@ -626,8 +632,18 @@ msgstr "Feed-Eintrag für geänderte physikalische Prozesse"
 msgid "edited physical process feed entries"
 msgstr "Feed-Einträge für geänderte physikalische Prozesse"
 
+#, python-format
+msgid "Edited %s"
+msgstr "%s geändert"
+
 msgid "result is new"
 msgstr "Ergebnis ist neu"
+
+msgid "result feed entry"
+msgstr "Feed-Eintrag für Ergebnis"
+
+msgid "result feed entries"
+msgstr "Feed-Einträge für Ergebnisse"
 
 #, python-format
 msgid "New: %s"
@@ -637,24 +653,24 @@ msgstr "Neu: %s"
 msgid "Edited: %s"
 msgstr "Geändert: %s"
 
-msgid "result feed entry"
-msgstr "Feed-Eintrag für Ergebnis"
-
-msgid "result feed entries"
-msgstr "Feed-Einträge für Ergebnisse"
-
-#, python-format
-msgid "%s copied samples to you"
-msgstr "%s hat Proben zu Ihnen kopiert"
-
 msgid "copied My Samples feed entry"
 msgstr "Feed-Eintrag für kopierte Meine Proben"
 
 msgid "copied My Samples feed entries"
 msgstr "Feed-Einträge für kopierte Meine Proben"
 
+#, python-format
+msgid "%s copied samples to you"
+msgstr "%s hat Proben zu Ihnen kopiert"
+
 msgid "has responsible person changed"
 msgstr "hat der Proben-Verantwortliche sich geändert"
+
+msgid "edited samples feed entry"
+msgstr "Feed-Eintrag für geänderte Proben"
+
+msgid "edited samples feed entries"
+msgstr "Feed-Einträge für geänderte Proben"
 
 #, python-format
 msgid "Sample %s was edited"
@@ -663,18 +679,8 @@ msgstr "Probe %s wurde geändert"
 msgid "Samples were edited"
 msgstr "Proben wurden geändert"
 
-msgid "edited samples feed entry"
-msgstr "Feed-Eintrag für geänderte Proben"
-
-msgid "edited samples feed entries"
-msgstr "Feed-Einträge für geänderte Proben"
-
 msgid "sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
-
-#, python-format
-msgid "Sample “%s” was split"
-msgstr "Probe „%s“ wurde gespalten"
 
 msgid "sample split feed entry"
 msgstr "Feed-Eintrag für gespaltene Probe"
@@ -683,8 +689,8 @@ msgid "sample split feed entries"
 msgstr "Feed-Einträge für gespaltene Probe"
 
 #, python-format
-msgid "Sample series %s was edited"
-msgstr "Probenserie „%s“ wurde geändert"
+msgid "Sample “%s” was split"
+msgstr "Probe „%s“ wurde gespalten"
 
 msgid "edited sample series feed entry"
 msgstr "Feed-Eintrag für geänderte Probenserie"
@@ -692,12 +698,12 @@ msgstr "Feed-Eintrag für geänderte Probenserie"
 msgid "edited sample series feed entries"
 msgstr "Feed-Einträge für geänderte Probenserien"
 
+#, python-format
+msgid "Sample series %s was edited"
+msgstr "Probenserie „%s“ wurde geändert"
+
 msgid "subscribers"
 msgstr "Abonnenten"
-
-#, python-format
-msgid "New sample series “%(sample_series)s” in group “%(group)s”"
-msgstr "Neue Probenserie „%(sample_series)s“ in Gruppe „%(group)s“"
 
 msgid "new sample series feed entry"
 msgstr "Feed-Eintrag für neue Probenserie"
@@ -706,15 +712,19 @@ msgid "new sample series feed entries"
 msgstr "Feed-Einträge für neue Probenserien"
 
 #, python-format
-msgid "Sample series %(sample_series)s was moved to group “%(group)s”"
-msgstr ""
-"Probenserie „%(sample_series)s“ wurde zur Gruppe „%(group)s“ verschoben"
+msgid "New sample series “%(sample_series)s” in group “%(group)s”"
+msgstr "Neue Probenserie „%(sample_series)s“ in Gruppe „%(group)s“"
 
 msgid "moved sample series feed entry"
 msgstr "Feed-Eintrag für verschobene Probenserie"
 
 msgid "moved sample series feed entries"
 msgstr "Feed-Einträge für verschobene Probenserien"
+
+#, python-format
+msgid "Sample series %(sample_series)s was moved to group “%(group)s”"
+msgstr ""
+"Probenserie „%(sample_series)s“ wurde zur Gruppe „%(group)s“ verschoben"
 
 msgid "added"
 msgstr "hinzugefügt"
@@ -725,14 +735,6 @@ msgstr "entfernt"
 msgid "action"
 msgstr "Aktion"
 
-#, python-format
-msgid "Now in group “%s”"
-msgstr "Jetzt in Gruppe „%s“"
-
-#, python-format
-msgid "Not anymore in group “%s”"
-msgstr "Nicht mehr in Gruppe „%s“"
-
 msgid "changed group feed entry"
 msgstr "Feed-Eintrag für geänderte Gruppen"
 
@@ -740,12 +742,12 @@ msgid "changed group feed entries"
 msgstr "Feed-Einträge für geänderte Gruppen"
 
 #, python-format
-msgid "hall measurement of %s"
-msgstr "Hall-Messung von %s"
+msgid "Now in group “%s”"
+msgstr "Jetzt in Gruppe „%s“"
 
 #, python-format
-msgid "hall measurement #%d"
-msgstr "Hall-Messung #%d"
+msgid "Not anymore in group “%s”"
+msgstr "Nicht mehr in Gruppe „%s“"
 
 msgid "Hall measurement"
 msgstr "Hall-Messung"
@@ -755,6 +757,14 @@ msgstr "Hall-Messungen"
 
 msgid "Can create and edit hall measurements"
 msgstr "Darf Hallmessungen anlegen und ändern"
+
+#, python-format
+msgid "hall measurement of %s"
+msgstr "Hall-Messung von %s"
+
+#, python-format
+msgid "hall measurement #%d"
+msgstr "Hall-Messung #%d"
 
 msgid "pds number"
 msgstr "PDS-Nummer"
@@ -767,6 +777,15 @@ msgstr "nur der relative Pfad unterhalb von \"pds/\""
 
 msgid "evaluated data file"
 msgstr "ausgewertete Daten-Datei"
+
+msgid "PDS measurement"
+msgstr "PDS-Messung"
+
+msgid "PDS measurements"
+msgstr "PDS-Messungen"
+
+msgid "Can create and edit PDS measurements"
+msgstr "Darf PDS-Messungen anlegen und ändern"
 
 #, python-format
 msgid "PDS measurement of %s"
@@ -781,15 +800,6 @@ msgstr "Energie in eV"
 
 msgid "counts"
 msgstr "Counts"
-
-msgid "PDS measurement"
-msgstr "PDS-Messung"
-
-msgid "PDS measurements"
-msgstr "PDS-Messungen"
-
-msgid "Can create and edit PDS measurements"
-msgstr "Darf PDS-Messungen anlegen und ändern"
 
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
@@ -1140,10 +1150,6 @@ msgstr "Monat"
 
 #, python-format
 msgid "Lab notebook for %s"
-msgstr "Laborbuch für %s"
-
-#, python-format
-msgid "lab notebook for %s"
 msgstr "Laborbuch für %s"
 
 msgid "Samples"
@@ -2549,6 +2555,9 @@ msgstr "besondere Berechtigungen, die Sie haben"
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
 
+msgid "export as table"
+msgstr "als Tabelle exportieren"
+
 msgid "Error in date"
 msgstr "Fehler im Datum"
 
@@ -2809,9 +2818,6 @@ msgstr "gib Namen"
 
 msgid "add process"
 msgstr "Prozess hinzufügen"
-
-msgid "export as table"
-msgstr "als Tabelle exportieren"
 
 msgid "Attention: Groupless samples may be viewed and edited by anyone."
 msgstr ""
