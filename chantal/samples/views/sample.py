@@ -283,9 +283,11 @@ class AddSamplesForm(forms.Form):
                            help_text=_(u"separated with commas, no whitespace"))
     group = form_utils.GroupField(label=_(u"Group"), required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
+
     def __init__(self, user, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
         self.fields["group"].set_groups(user)
+
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
         """
@@ -293,6 +295,14 @@ class AddSamplesForm(forms.Form):
         if timestamp > datetime.datetime.now():
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if "substrate" in cleaned_data and "substrate_comments" in cleaned_data:
+            if cleaned_data["substrate"] == "custom" and not cleaned_data["substrate_comments"]:
+                form_utils.append_error(
+                    self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
+        return cleaned_data
 
 
 def add_samples_to_database(add_samples_form, user):
