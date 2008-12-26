@@ -47,6 +47,7 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
+    restricted = models.BooleanField(_(u"restricted"), default=False, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u"external operator")
