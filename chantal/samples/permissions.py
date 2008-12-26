@@ -154,6 +154,27 @@ def get_allowed_physical_processes(user):
     return allowed_physical_processes
 
 
+def is_restricted(group):
+    u"""Returns whether the group is restricted, i.e., only accessibly by group
+    members, and in particular not accessable just because someone in a “senior
+    user”.
+
+    :Parameters:
+      - `group`: the groups which is about to be accessed
+
+    :type group: ``django.contrib.auth.models.Group``
+
+    :Return:
+      whether the group is restricted
+
+    :rtype: bool
+    """
+    try:
+        return bool(group.details.restricted)
+    except chantal.samples.models.GroupDetails.DoesNotExist:
+        return False
+
+
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
 
