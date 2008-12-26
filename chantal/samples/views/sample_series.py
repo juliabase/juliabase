@@ -241,7 +241,8 @@ def new(request):
 @login_required
 def export(request, name):
     u"""View for exporting a sample series to CSV data.  Thus, the return value
-    is not an HTML response but a text/csv response.
+    is not an HTML response but a text/csv response.  Note that you must also
+    be allowed to see all *samples* in this sample series for CSV table export.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -257,4 +258,6 @@ def export(request, name):
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
+    for sample in sample_series.samples.all():
+        permissions.assert_can_view_sample(request.user, sample)
     return csv_export.export(request, sample_series.get_data(), _(u"sample"), renaming_offset=2)
