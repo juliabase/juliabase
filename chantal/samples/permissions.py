@@ -169,6 +169,8 @@ def is_restricted(group):
 
     :rtype: bool
     """
+    if not group:
+        return False
     try:
         return bool(group.details.restricted)
     except chantal.samples.models.GroupDetails.DoesNotExist:
@@ -220,11 +222,15 @@ def assert_can_view_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to view the
         sample.
     """
-    if not user.has_perm("samples.view_all_samples") and sample.group and sample.group not in user.groups.all() \
-            and sample.currently_responsible_person != user:
-        description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
-                        u"its currently responsible person, nor are you a senior user.") % sample
-        raise PermissionError(user, description, new_group_would_help=True)
+    if sample.group and sample.group not in user.groups.all() and sample.currently_responsible_person != user:
+        if is_restricted(sample.group):
+            description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
+                            u"its currently responsible person.") % sample
+            raise PermissionError(user, description, new_group_would_help=True)
+        elif not user.has_perm("samples.view_all_samples"):
+            description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
+                            u"its currently responsible person, nor are you a senior user.") % sample
+            raise PermissionError(user, description, new_group_would_help=True)
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
@@ -529,21 +535,29 @@ def assert_can_view_external_operator(user, external_operator):
       - `PermissionError`: raised if the user is not allowed to view an
         external operator.
     """
-    if external_operator.contact_person != user and not user.has_perm("samples.view_all_samples"):
-        description = _(u"You are not allowed to view this external operator because neither are you their "
-                        u"current contact person, nor are you a senior user.")
-        raise PermissionError(user, description)
+    if external_operator.contact_person != user:
+        if external_operator.restricted:
+            description = _(u"You are not allowed to view this external operator because you are not their "
+                            u"current contact person.")
+            raise PermissionError(user, description)
+        elif not user.has_perm("samples.view_all_samples"):
+            description = _(u"You are not allowed to view this external operator because neither are you their "
+                            u"current contact person, nor are you a senior user.")
+            raise PermissionError(user, description)
 
 
-def assert_can_edit_group_memberships(user):
+def assert_can_edit_group_memberships(user, group=None):
     u"""Tests whether the user can change group memberships of other users, and
     add new groups.  This typically is a priviledge of heads of institute
     groups.
 
     :Parameters:
       - `user`: the user whose permission should be checked
+      - `group`: the group whose members are about to be edited; ``None`` if we
+        create a new one, list groups etc
 
     :type user: ``django.contrib.auth.models.User``
+    :type group: ``django.contrib.auth.models.Group`` or ``NoneType``
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit group
@@ -552,6 +566,9 @@ def assert_can_edit_group_memberships(user):
     if not user.has_perm("samples.edit_group_memberships"):
         description = _(u"You are not allowed to change group memberships because you don't have the permission “%s”.") \
             % translate_permission("edit_group_memberships")
+        raise PermissionError(user, description)
+    elif group and is_restricted(group) and not group in user.groups.all():
+        description = _(u"You are not allowed to change group memberships because you are not in this group.")
         raise PermissionError(user, description)
 
 

@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
-from chantal.samples import models
+from chantal.samples import models, permissions
 from chantal.samples.views import utils
 
 
@@ -357,7 +357,7 @@ class GroupField(forms.ChoiceField):
     group for a sample or a sample series, for example.
     """
 
-    def set_groups(self, additional_group=None):
+    def set_groups(self, user, additional_group=None):
         u"""Set the group list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.  The selection list will
@@ -366,14 +366,18 @@ class GroupField(forms.ChoiceField):
         active user amongst its members.
 
         :Parameters:
+          - `user`: the currently logged-in user
           - `additional_group`: Optional additional group to be included into
             the list.  Typically, it is the current group of the sample, for
             example.
 
+        :type user: ``django.contrib.auth.models.User``
         :type additional_group: ``django.contrib.auth.models.Group``
         """
         self.choices = [(u"", 9*u"-")]
-        groups = set(django.contrib.auth.models.Group.objects.filter(user__is_active=True).all())
+        all_groups = django.contrib.auth.models.Group.objects.filter(user__is_active=True).distinct()
+        user_groups = user.groups.all()
+        groups = set(group for group in all_groups if not permissions.is_restricted(group) or group in user_groups)
         if additional_group:
             groups.add(additional_group)
         groups = sorted(groups, key=lambda group: group.name)

@@ -37,9 +37,9 @@ class SampleForm(forms.ModelForm):
     currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
     group = form_utils.GroupField(label=_(u"Group"), required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
-        self.fields["group"].set_groups(kwargs["instance"].group if kwargs.get("instance") else None)
+        self.fields["group"].set_groups(user, kwargs["instance"].group if kwargs.get("instance") else None)
         self.fields["currently_responsible_person"].set_users(
             kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
 
@@ -99,7 +99,7 @@ def edit(request, sample_name):
     old_group, old_responsible_person = sample.group, sample.currently_responsible_person
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
-        sample_form = SampleForm(request.POST, instance=sample)
+        sample_form = SampleForm(request.user, request.POST, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
         referentially_valid = is_referentially_valid(sample, sample_form, edit_description_form)
         if all([sample_form.is_valid(), edit_description_form.is_valid()]) and referentially_valid:
@@ -117,7 +117,7 @@ def edit(request, sample_name):
                                              _(u"Sample %s was successfully changed in the database.") % sample,
                                              sample.get_absolute_url())
     else:
-        sample_form = SampleForm(instance=sample)
+        sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample,
                                                    "sample": sample_form,
@@ -283,9 +283,9 @@ class AddSamplesForm(forms.Form):
                            help_text=_(u"separated with commas, no whitespace"))
     group = form_utils.GroupField(label=_(u"Group"), required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
-    def __init__(self, user_details, data=None, **kwargs):
+    def __init__(self, user, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
-        self.fields["group"].set_groups()
+        self.fields["group"].set_groups(user)
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
         """
@@ -368,14 +368,14 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = utils.get_profile(request.user)
+    user = request.user
     if request.method == "POST":
-        add_samples_form = AddSamplesForm(user_details, request.POST)
+        add_samples_form = AddSamplesForm(user, request.POST)
         if add_samples_form.is_valid():
             cleaned_data = add_samples_form.cleaned_data
-            new_names, samples = add_samples_to_database(add_samples_form, request.user)
+            new_names, samples = add_samples_to_database(add_samples_form, user)
             ids = [sample.pk for sample in samples]
-            feed_utils.Reporter(request.user).report_new_samples(samples)
+            feed_utils.Reporter(user).report_new_samples(samples)
             if cleaned_data["group"]:
                 for watcher in cleaned_data["group"].auto_adders.all():
                     for sample in samples:
@@ -394,7 +394,7 @@ def add(request):
             else:
                 return utils.successful_response(request, success_report, remote_client_response=ids)
     else:
-        add_samples_form = AddSamplesForm(user_details)
+        add_samples_form = AddSamplesForm(user)
     return render_to_response("add_samples.html",
                               {"title": _(u"Add samples"),
                                "add_samples": add_samples_form},
@@ -418,7 +418,6 @@ def add_process(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request)
-    user_details = utils.get_profile(request.user)
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
         process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())

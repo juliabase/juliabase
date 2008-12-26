@@ -11,7 +11,7 @@ from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
 from chantal.samples.views import utils
-from chantal.samples import models
+from chantal.samples import models, permissions
 
 
 @login_required
@@ -53,12 +53,14 @@ def primary_keys(request):
     query_dict = utils.parse_query_string(request)
     result_dict = {}
     if "groups" in query_dict:
+        all_groups = set(group for group in django.contrib.auth.models.Group.objects.all()
+                         if not permissions.is_restricted(group) or group in user_groups)
         if query_dict["groups"] == "*":
-            result_dict["groups"] = dict(django.contrib.auth.models.Group.objects.values_list("name", "id"))
+            groups = all_groups
         else:
             groupnames = query_dict["groups"].split(",")
-            result_dict["groups"] = dict(django.contrib.auth.models.Group.objects.filter(name__in=groupnames).
-                                         values_list("name", "id"))
+            groups = set(group for group in all_groups if group.name in groupnames)
+        result_dict["groups"] = dict((group.name, group.id) for group in groups)
     if "samples" in query_dict:
         if query_dict["samples"] == "*":
             result_dict["samples"] = dict(utils.get_profile(request.user).my_samples.values_list("name", "id"))

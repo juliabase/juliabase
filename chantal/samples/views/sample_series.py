@@ -51,7 +51,7 @@ class SampleSeriesForm(forms.ModelForm):
             self.fields["currently_responsible_person"].set_users(sample_series.currently_responsible_person)
         else:
             self.fields["currently_responsible_person"].choices = ((user_details.user.pk, unicode(user_details.user)),)
-        self.fields["group"].set_groups(sample_series.group if sample_series else None)
+        self.fields["group"].set_groups(user_details.user, sample_series.group if sample_series else None)
 
     def clean_description(self):
         u"""Forbid image and headings syntax in Markdown markup.

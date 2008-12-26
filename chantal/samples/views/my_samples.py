@@ -49,7 +49,7 @@ class ActionForm(forms.Form):
         super(ActionForm, self).__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].set_users_without(user)
         self.fields["copy_to_user"].set_users_without(user)
-        self.fields["new_group"].set_groups()
+        self.fields["new_group"].set_groups(user)
 
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.

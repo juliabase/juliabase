@@ -68,7 +68,8 @@ def add(request):
 def list_(request):
     u"""View for a complete list of all groups.  The user may select one, which
     leads him to the membership view for this group.  Note this this view is
-    also restricted to users who can change memberships in groups.
+    also restricted to users who can change memberships in groups, although it
+    is not really necessary.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -81,8 +82,11 @@ def list_(request):
     :rtype: ``HttpResponse``
     """
     permissions.assert_can_edit_group_memberships(request.user)
+    all_groups = django.contrib.auth.models.Group.objects.all()
+    user_groups = request.user.groups.all()
+    groups = set(group for group in all_groups if not permissions.is_restricted(group) or group in user_groups)
     return render_to_response("list_groups.html",
-                              {"title": _(u"List of all groups"), "groups": django.contrib.auth.models.Group.objects.all()},
+                              {"title": _(u"List of all groups"), "groups": groups},
                               context_instance=RequestContext(request))
 
 
@@ -114,8 +118,8 @@ def edit(request, name):
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_edit_group_memberships(request.user)
     group = get_object_or_404(django.contrib.auth.models.Group, name=name)
+    permissions.assert_can_edit_group_memberships(request.user, group)
     if request.method == "POST":
         change_memberships_form = ChangeMembershipsForm(group, request.POST)
         added_members = []
