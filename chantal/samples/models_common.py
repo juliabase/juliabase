@@ -853,3 +853,27 @@ class UserDetails(models.Model):
         return unicode(self.user)
 
 admin.site.register(UserDetails)
+
+
+class GroupDetails(models.Model):
+    u"""Model for further details about a group, beyond
+    ``django.contrib.auth.models.Group``.  Here, you have all data about a
+    Chantal group that is not stored by Django's group model itself.
+
+    So far, this is just to have the additional attribute ``restricted`` which
+    means that senior users (i.e. users with the permission
+    ``"view_all_samples"``) cannot view samples of restricted groups (in order
+    to make non-disclosure agreements with external partners possible).
+    """
+    group = models.OneToOneField(django.contrib.auth.models.Group, primary_key=True, verbose_name=_(u"group"),
+                                 related_name="details")
+    restricted = models.BooleanField(_(u"restricted"), default=False, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u"group details")
+        verbose_name_plural = _(u"group details")
+
+    def __unicode__(self):
+        return unicode(self.group)
+
+admin.site.register(GroupDetails)
