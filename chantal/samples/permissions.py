@@ -546,10 +546,10 @@ def assert_can_view_external_operator(user, external_operator):
             raise PermissionError(user, description)
 
 
-def assert_can_edit_group_memberships(user, group=None):
-    u"""Tests whether the user can change group memberships of other users, and
-    add new groups.  This typically is a priviledge of heads of institute
-    groups.
+def assert_can_edit_group(user, group=None):
+    u"""Tests whether the user can change group memberships of other users, set
+    the group's restriction status, and add new groups.  This typically is a
+    priviledge of heads of institute groups.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -560,15 +560,15 @@ def assert_can_edit_group_memberships(user, group=None):
     :type group: ``django.contrib.auth.models.Group`` or ``NoneType``
 
     :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit group
-        memberships, nor to add new groups.
+      - `PermissionError`: raised if the user is not allowed to edit groups,
+        nor to add new groups.
     """
-    if not user.has_perm("samples.edit_group_memberships"):
-        description = _(u"You are not allowed to change group memberships because you don't have the permission “%s”.") \
-            % translate_permission("edit_group_memberships")
+    if not user.has_perm("samples.edit_group"):
+        description = _(u"You are not allowed to change this group because you don't have the permission “%s”.") \
+            % translate_permission("edit_group")
         raise PermissionError(user, description)
     elif group and is_restricted(group) and not group in user.groups.all():
-        description = _(u"You are not allowed to change group memberships because you are not in this group.")
+        description = _(u"You are not allowed to change this group because you are not in this group.")
         raise PermissionError(user, description)
 
 

@@ -848,7 +848,7 @@ class UserDetails(models.Model):
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
         _ = lambda x: x
-        permissions = (("edit_group_memberships", _("Can edit group memberships and add new groups")),)
+        permissions = (("edit_group", _("Can edit groups, and can add new groups")),)
 
     def __unicode__(self):
         return unicode(self.user)

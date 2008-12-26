@@ -14,15 +14,35 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
-from chantal.samples import permissions
+from chantal.samples import models, permissions
 from chantal.samples.views import utils, feed_utils, form_utils
 
 
+def set_restriction_status(group, restricted):
+    u"""Set the restriction status for a group.  This routine assures that a
+    group details record exists.
+
+    :Parameters:
+      - `group`: the group to be changed
+      - `restricted`: the new restriction status of the group
+
+    :type group: ``django.contrib.auth.models.Group``
+    :type restricted: bool
+    """
+    try:
+        group.details.restricted = restricted
+        group.details.save()
+    except models.GroupDetails.DoesNotExist:
+        group_details = models.GroupDetails.objects.create(group=group, restricted=restricted)
+
+
 class NewGroupForm(forms.Form):
-    u"""Form for adding a new group.  I need only its new name.
+    u"""Form for adding a new group.  I need only its new name and restriction
+    status.
     """
     _ = ugettext_lazy
     new_group_name = forms.CharField(label=_(u"Name of new group"), max_length=80)
+    restricted = forms.BooleanField(label=_(u"restricted"))
     def __init__(self, *args, **kwargs):
         super(NewGroupForm, self).__init__(*args, **kwargs)
         self.fields["new_group_name"].widget.attrs["size"] = 40
@@ -49,12 +69,14 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_edit_group_memberships(request.user)
+    permissions.assert_can_edit_group(request.user)
     if request.method == "POST":
         new_group_form = NewGroupForm(request.POST)
         if new_group_form.is_valid():
             new_group = django.contrib.auth.models.Group(name=new_group_form.cleaned_data["new_group_name"])
             new_group.save()
+            request.user.groups.add(new_group)
+            set_restriction_status(new_group, new_group_form.cleaned_data["restricted"])
             return utils.successful_response(
                 request, _(u"Group %s was successfully created.") % new_group.name, "samples.views.group.edit",
                 kwargs={"name": django.utils.http.urlquote(new_group.name, safe="")})
@@ -81,7 +103,7 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_edit_group_memberships(request.user)
+    permissions.assert_can_edit_group(request.user)
     all_groups = django.contrib.auth.models.Group.objects.all()
     user_groups = request.user.groups.all()
     groups = set(group for group in all_groups if not permissions.is_restricted(group) or group in user_groups)
@@ -90,21 +112,34 @@ def list_(request):
                               context_instance=RequestContext(request))
 
 
-class ChangeMembershipsForm(forms.Form):
+class EditGroupForm(forms.Form):
     u"""Form for the member list of a group.  Note that it is allowed to have
-    no members at all in a group.
+    no members at all in a group.  However, if the group is restricted, the
+    currently logged-in user must remain a member of the group.
     """
     members = form_utils.MultipleUsersField(label=_(u"Members"), required=False)
+    restricted = forms.BooleanField(label=_(u"restricted"), required=False)
 
-    def __init__(self, group, *args, **kwargs):
-        super(ChangeMembershipsForm, self).__init__(*args, **kwargs)
+    def __init__(self, user, group, *args, **kwargs):
+        super(EditGroupForm, self).__init__(*args, **kwargs)
         self.fields["members"].set_users(group.user_set.all())
+        self.fields["restricted"].initial = permissions.is_restricted(group)
+        self.user = user
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if "members" in cleaned_data and "restricted" in cleaned_data:
+            if cleaned_data["restricted"] and \
+                    not any(permissions.has_permission_to_edit_group(user) for user in cleaned_data["members"]):
+                form_utils.append_error(
+                    self, _(u"In restricted groups, at least one member must have permission to change groups."), "members")
+        return cleaned_data
 
 
 @login_required
 def edit(request, name):
-    u"""View for changing the members of a particular group.  This is only
-    allowed to heads of institute groups.
+    u"""View for changing the members of a particular group, and to set the
+    restriction status.  This is only allowed to heads of institute groups.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -119,15 +154,16 @@ def edit(request, name):
     :rtype: ``HttpResponse``
     """
     group = get_object_or_404(django.contrib.auth.models.Group, name=name)
-    permissions.assert_can_edit_group_memberships(request.user, group)
+    permissions.assert_can_edit_group(request.user, group)
     if request.method == "POST":
-        change_memberships_form = ChangeMembershipsForm(group, request.POST)
+        edit_group_form = EditGroupForm(request.user, group, request.POST)
         added_members = []
         removed_members = []
-        if change_memberships_form.is_valid():
+        if edit_group_form.is_valid():
             old_members = list(group.user_set.all())
-            new_members = change_memberships_form.cleaned_data["members"]
+            new_members = edit_group_form.cleaned_data["members"]
             group.user_set = new_members
+            set_restriction_status(group, edit_group_form.cleaned_data["restricted"])
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)
@@ -142,9 +178,9 @@ def edit(request, name):
                 feed_utils.Reporter(request.user).report_changed_group_membership(removed_members, group, "removed")
             return utils.successful_response(request, _(u"Members of group “%s” were successfully updated.") % group.name)
     else:
-        change_memberships_form = \
-            ChangeMembershipsForm(group, initial={"members": group.user_set.values_list("pk", flat=True)})
-    return render_to_response("edit_group_memberships.html",
+        edit_group_form = \
+            EditGroupForm(request.user, group, initial={"members": group.user_set.values_list("pk", flat=True)})
+    return render_to_response("edit_group.html",
                               {"title": _(u"Change group memberships of “%s”") % name,
-                               "change_memberships": change_memberships_form},
+                               "edit_group": edit_group_form},
                               context_instance=RequestContext(request))

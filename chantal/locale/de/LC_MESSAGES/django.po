@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-26 19:42+0100\n"
-"PO-Revision-Date: 2008-12-26 19:43+0100\n"
+"POT-Creation-Date: 2008-12-26 20:37+0100\n"
+"PO-Revision-Date: 2008-12-26 20:38+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -288,8 +288,8 @@ msgstr "meine Schichten"
 msgid "user details"
 msgstr "Benutzerdetails"
 
-msgid "Can edit group memberships and add new groups"
-msgstr "Darf Gruppenzugehörigkeiten ändern und neue Gruppen hinzufügen"
+msgid "Can edit groups, and can add new groups"
+msgstr "Darf Gruppen ändern und neue Gruppen hinzufügen"
 
 msgid "group details"
 msgstr "Gruppendetails"
@@ -962,18 +962,15 @@ msgstr ""
 
 #, python-format
 msgid ""
-"You are not allowed to change group memberships because you don't have the "
+"You are not allowed to change this group because you don't have the "
 "permission “%s”."
 msgstr ""
-"Sie dürfen keine Gruppenzugehörigkeiten ändern, weil Ihnen die Berechtgung „%"
-"s“ fehlt."
+"Sie dürfen diese Gruppe nicht ändern, weil Ihnen die Berechtgung „%s“ fehlt."
 
 msgid ""
-"You are not allowed to change group memberships because you are not in this "
-"group."
+"You are not allowed to change this group because you are not in this group."
 msgstr ""
-"Sie dürfen keine Gruppenzugehörigkeiten ändern, weil Sie nicht in dieser "
-"Gruppe sind."
+"Sie dürfen diese Gruppe nicht ändern, weil Sie nicht in dieser Gruppe sind."
 
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
@@ -1153,6 +1150,11 @@ msgstr "Liste aller Gruppen"
 
 msgid "Members"
 msgstr "Mitglieder"
+
+msgid ""
+"In restricted groups, at least one member must have permission to change "
+"groups."
+msgstr "Wenigstens ein Mitglied in einer beschränkten Gruppe muss die Berechtigung haben, Gruppen zu ändern."
 
 #, python-format
 msgid "Members of group “%s” were successfully updated."
@@ -1945,6 +1947,9 @@ msgstr ""
 "strong>ibrary“.\n"
 "  "
 
+msgid "New group"
+msgstr "Neue Gruppe"
+
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -2067,6 +2072,9 @@ msgstr ""
 
 msgid "Error in external operator"
 msgstr "Fehler im externen Operateur"
+
+msgid "Error in group data"
+msgstr "Fehler in den Gruppen-Daten"
 
 msgid "Error in deposition"
 msgstr "Fehler in der Deposition"
@@ -2782,7 +2790,10 @@ msgid ""
 "  This external contact is <em>restricted</em>, which means that only the "
 "current contact person can\n"
 "  view its data.\n"
-msgstr "\nDieser externe Kontakt ist <em>beschränkt</em>, was bedeutet, daß nur die aktuelle Kontaktperson seine Daten einsehen kann.\n"
+msgstr ""
+"\n"
+"Dieser externe Kontakt ist <em>beschränkt</em>, was bedeutet, daß nur die "
+"aktuelle Kontaktperson seine Daten einsehen kann.\n"
 
 msgid "Silane conc."
 msgstr "Silankonz."
