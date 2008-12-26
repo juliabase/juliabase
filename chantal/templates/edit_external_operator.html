@@ -17,6 +17,8 @@
       {% input_field external_operator.alternative_email %}
     </tr><tr>
       {% input_field external_operator.phone %}
+    </tr><tr>
+      {% input_field external_operator.restricted %}
     </tr>
     {% if initials %}
       {% error_list initials _("Error in initials") "<tr>" %}

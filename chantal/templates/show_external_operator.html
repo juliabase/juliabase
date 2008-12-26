@@ -5,9 +5,9 @@
 
 {% block content_title %}<h1
     >{% blocktrans with external_operator.name as name %}External operator “{{ name }}”{% endblocktrans %}
-  {% if can_edit %}<a class="edit-button"
-    href="{{ external_operator.get_absolute_url }}/edit/?next={{ external_operator.get_absolute_url|urlquote_plus }}"
-                      >{% trans 'edit' %}</a>{% endif %}</h1>{% endblock %}
+  {% if can_edit %}<a class="edit-icon"
+       href="{{ external_operator.get_absolute_url }}/edit/?next={{ external_operator.get_absolute_url|urlquote_plus }}"
+     ><img src="/media/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>{% endif %}</h1>{% endblock %}
 
 {% block content %}
 <table cellspacing="10" style="margin-bottom: 2ex">
@@ -45,4 +45,13 @@
     </tr>
   {% endif %}
 </table>
+
+{% if external_operator.restricted %}
+<p>{% blocktrans %}
+  This external contact is <em>restricted</em>, which means that only the current contact person can
+  view its data.
+{% endblocktrans %}</p>
+
+{% endif %}
+
 {% endblock %}
