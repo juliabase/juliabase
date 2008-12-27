@@ -39,7 +39,7 @@ def mark_inactive_users():
     """
     try:
         l = ldap.initialize(settings.AD_LDAP_URL)
-        l.simple_bind_s("chantal", "*****")
+        l.simple_bind_s(settings.CREDENTIALS["ldap_login"], settings.CREDENTIALS["ldap_password"])
         for user in django.contrib.auth.models.User.objects.filter(is_active=True):
             try:
                 l.search_ext_s(settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "sAMAccountName=%s" % user.username,

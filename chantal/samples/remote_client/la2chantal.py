@@ -5,6 +5,10 @@ import xml.etree.ElementTree as ElementTree
 import cPickle as pickle
 import codecs, re
 
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read(os.path.expanduser("~/chantal.auth"))
+credentials = dict(credentials.items("DEFAULT"))
 
 class Layer(object):
     def __init__(self):
@@ -138,9 +142,9 @@ print>>outfile, """#!/usr/bin/env python
 
 from chantal_remote import *
 
-login("bronger", "Rigel")
+login("%(login)s", "%(password)s")
 
-"""
+""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")

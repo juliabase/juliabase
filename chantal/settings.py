@@ -4,6 +4,14 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 import socket, os.path, sys
+
+IS_TESTSERVER = len(sys.argv) >= 2
+
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read(os.path.expanduser("~/chantal.auth" if IS_TESTSERVER else "/var/lib/chantal/chantal.auth"))
+CREDENTIALS = dict(credentials.items("DEFAULT"))
+
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULT_FROM_EMAIL = "bronger@physik.rwth-aachen.de"
@@ -17,7 +25,7 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'mysql'      # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_NAME = 'chantal'      # Or path to database file if using sqlite3.
 DATABASE_USER = 'root'         # Not used with sqlite3.
-DATABASE_PASSWORD = '*****'    # Not used with sqlite3.
+DATABASE_PASSWORD = CREDENTIALS["mysql_password"]    # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
@@ -54,7 +62,7 @@ MEDIA_URL = '/media'
 ADMIN_MEDIA_PREFIX = '/media_admin/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = ')bd!vw1dukz!f((*e+r6k!^9#y4z+f2-kyi$2ao1=+c&i24mmm'
+SECRET_KEY = CREDENTIALS["salt"]
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -95,7 +103,6 @@ INSTALLED_APPS = (
 CACHE_BACKEND = "file:///var/tmp/django_cache"
 
 WITH_EPYDOC = 'epydoc' in sys.modules
-IS_TESTSERVER = len(sys.argv) >= 2
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login"

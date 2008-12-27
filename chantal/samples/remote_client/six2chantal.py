@@ -4,6 +4,11 @@
 import xml.etree.ElementTree as ElementTree
 import cPickle as pickle, re, codecs
 
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read(os.path.expanduser("~/chantal.auth"))
+credentials = dict(credentials.items("DEFAULT"))
+
 # depositions = {}
 
 # for row in ElementTree.parse("/home/bronger/temp/chantal_depositions.xml").getroot():
@@ -138,8 +143,8 @@ print>>outfile, """#!/usr/bin/env python
 
 from chantal_remote import *
 
-login("bronger", "*******")
-"""
+login("%(login)s", "%(password)s")
+""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dB(?P<number>\d+)$")
 for deposition_number in sorted(depositions):

@@ -4,10 +4,15 @@
 from chantal_remote import *
 import os, re, codecs, datetime
 
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read(os.path.expanduser("~/chantal.auth"))
+credentials = dict(credentials.items("DEFAULT"))
+
 root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"
 database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
 
-login("bronger", "*******")
+login(credentials["crawlers_login"], credentials["crawlers_password"])
 
 
 def read_lines(filename):

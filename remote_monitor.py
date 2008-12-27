@@ -5,6 +5,11 @@ import urllib, urllib2, cookielib, pickle, time, logging
 import smtplib
 from email.MIMEText import MIMEText
 
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read(os.path.expanduser("chantal.auth"))
+credentials = dict(credentials.items("DEFAULT"))
+
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -16,7 +21,8 @@ opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
 
 def test_connection():
     response = opener.open("http://bob.ipv.kfa-juelich.de/chantal/login_remote_client",
-                           urllib.urlencode({"username": "bronger", "password": "Rigel"}, doseq=True))
+                           urllib.urlencode({"username": credentials["monitor_login"],
+                                             "password": credentials["monitor_password"]}, doseq=True))
     is_pickled = response.info()["Content-Type"].startswith("text/x-python-pickle")
     if not is_pickled:
         raise Exception("Login response was not pickled.")
