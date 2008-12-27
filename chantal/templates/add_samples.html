@@ -13,7 +13,13 @@
       {% input_field add_samples.substrate %}
     </tr><tr>
       {% input_field add_samples.substrate_comments %}
-    </tr><tr>
+    </tr>
+    {% if external_operators_available %}
+      <tr>
+        {% input_field add_samples.substrate_originator %}
+      </tr>
+    {% endif %}
+    <tr>
       {% input_field add_samples.timestamp %}
     </tr><tr>
       {% input_field add_samples.current_location %}

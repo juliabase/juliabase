@@ -120,9 +120,9 @@ def markdown_hint():
     u"""Tag for inserting a short remark that Markdown syntax must be used
     here, with a link to further information.
     """
-    return u"""<span class="markdown-hint">""" + _(u"""(with %(markdown_link)s syntax)""") \
+    return u"""<span class="markdown-hint">(""" + _(u"""with %(markdown_link)s syntax""") \
         % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-           django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
+           django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u")</span>"
 
 
 @register.filter
@@ -172,21 +172,34 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         text.
 
     """
-    if not isinstance(user, django.contrib.auth.models.User):
-        return u""
-    full_name = chantal.samples.views.utils.get_really_full_name(user)
-    if autoescape:
-        full_name = conditional_escape(full_name)
-    if anchor_type == "http":
-        return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse("samples.views.user_details.show_user",
-                                                                                    kwargs={"login_name": user.username}),
-                                                   full_name))
-    elif anchor_type == "mailto":
-        return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
-    elif anchor_type == "plain":
-        return mark_safe(full_name)
-    else:
-        return u""
+    if isinstance(user, django.contrib.auth.models.User):
+        full_name = chantal.samples.views.utils.get_really_full_name(user)
+        if autoescape:
+            full_name = conditional_escape(full_name)
+        if anchor_type == "http":
+            return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse(
+                        "samples.views.user_details.show_user", kwargs={"login_name": user.username}), full_name))
+        elif anchor_type == "mailto":
+            return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
+        elif anchor_type == "plain":
+            return mark_safe(full_name)
+        else:
+            return u""
+    elif isinstance(user, chantal.samples.models.ExternalOperator):
+        full_name = user.name
+        if autoescape:
+            full_name = conditional_escape(full_name)
+        if anchor_type == "http":
+            return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse(
+                        "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), full_name))
+        elif anchor_type == "mailto":
+            return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
+        elif anchor_type == "plain":
+            return mark_safe(full_name)
+        else:
+            return u""
+    return u""
+
 get_really_full_name.needs_autoescape = True
 
 

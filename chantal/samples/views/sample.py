@@ -17,7 +17,7 @@ import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal.samples.views import utils, form_utils, feed_utils, csv_export
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 
 
 class IsMySampleForm(forms.Form):
@@ -273,8 +273,9 @@ class AddSamplesForm(forms.Form):
     """
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
-    substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials)
+    substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials + ((u"<>", 9*u"-"),))
     substrate_comments = forms.CharField(label=_(u"Substrate comments"), required=False)
+    substrate_originator = forms.ChoiceField(label=_(u"Substrate originator"), required=False)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     timestamp_inaccuracy = forms.IntegerField(required=False)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
@@ -285,8 +286,19 @@ class AddSamplesForm(forms.Form):
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
 
     def __init__(self, user, data=None, **kwargs):
+        _ = ugettext
         super(AddSamplesForm, self).__init__(data, **kwargs)
         self.fields["group"].set_groups(user)
+        self.fields["substrate_comments"].help_text = \
+            u"""<span class="markdown-hint">""" + _(u"""with %(markdown_link)s syntax""") \
+            % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
+               django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
+        self.fields["substrate_originator"].choices = [(u"<>", utils.get_really_full_name(user))]
+        if user.external_contacts.count() > 0:
+            for external_operator in user.external_contacts.all():
+                self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
+            self.fields["substrate_originator"].required = True
+        self.user = user
 
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
@@ -296,12 +308,34 @@ class AddSamplesForm(forms.Form):
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
 
+    def clean_substrate(self):
+        substrate = self.cleaned_data["substrate"]
+        return substrate if substrate != u"<>" else None
+
+    def clean_substrate_originator(self):
+        u"""Return the cleaned substrate originator.  Note that something is
+        returned only if it is an external operator.
+        """
+        key = self.cleaned_data["substrate_originator"]
+        if not key or key == u"<>":
+            return None
+        return models.ExternalOperator.objects.get(pk=int(key))
+
     def clean(self):
+        _ = ugettext
         cleaned_data = self.cleaned_data
         if "substrate" in cleaned_data and "substrate_comments" in cleaned_data:
             if cleaned_data["substrate"] == "custom" and not cleaned_data["substrate_comments"]:
                 form_utils.append_error(
                     self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
+            if cleaned_data["substrate"] == "" and cleaned_data["substrate_comments"]:
+                form_utils.append_error(
+                    self, _(u"You selected “no substrate”, so your substrate comments would be lost."), "substrate_comments")
+        if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
+            if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
+                form_utils.append_error(self,
+                                        _(u"You selected “no substrate”, so the external originator would be lost."),
+                                        "substrate_originator")
         return cleaned_data
 
 
@@ -323,13 +357,17 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
-    substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
-                                                material=add_samples_form.cleaned_data["substrate"],
-                                                comments=add_samples_form.cleaned_data["substrate_comments"])
-    inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
-    if inaccuracy:
-        substrate.timestamp_inaccuracy = inaccuracy
-        substrate.save()
+    if add_samples_form.cleaned_data["substrate"]:
+        substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
+                                                    material=add_samples_form.cleaned_data["substrate"],
+                                                    comments=add_samples_form.cleaned_data["substrate_comments"],
+                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"])
+        inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
+        if inaccuracy:
+            substrate.timestamp_inaccuracy = inaccuracy
+            substrate.save()
+    else:
+        substrate = None
     provisional_sample_names = \
         models.Sample.objects.filter(name__startswith=u"*").values_list("name", flat=True)
     occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
@@ -355,7 +393,8 @@ def add_samples_to_database(add_samples_form, user):
                                               tags=add_samples_form.cleaned_data["tags"],
                                               group=sample_group)
         samples.append(sample)
-        sample.processes.add(substrate)
+        if substrate:
+            sample.processes.add(substrate)
         user_details.my_samples.add(sample)
         if sample_group:
             for watcher in sample_group.auto_adders.all():
@@ -383,6 +422,7 @@ def add(request):
         add_samples_form = AddSamplesForm(user, request.POST)
         if add_samples_form.is_valid():
             cleaned_data = add_samples_form.cleaned_data
+            print cleaned_data["substrate_originator"]
             new_names, samples = add_samples_to_database(add_samples_form, user)
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(user).report_new_samples(samples)
@@ -407,7 +447,8 @@ def add(request):
         add_samples_form = AddSamplesForm(user)
     return render_to_response("add_samples.html",
                               {"title": _(u"Add samples"),
-                               "add_samples": add_samples_form},
+                               "add_samples": add_samples_form,
+                               "external_operators_available": user.external_contacts.count() > 0},
                               context_instance=RequestContext(request))
 
 
