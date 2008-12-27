@@ -185,7 +185,8 @@ class ResultContext(object):
     """
 
     def __init__(self, user, sample_series):
-        u"""
+        u"""Class constructor.
+
         :Parameters:
           - `user`: the user that wants to see all the generated HTML
           - `sample_series`: the sample series the history of which is about to
@@ -199,7 +200,7 @@ class ResultContext(object):
 
     def get_template_context(self, process):
         u"""Generate the complete context that the template of the process
-        needs.  The process itself is always part of ot; further key/value
+        needs.  The process itself is always part of it; further key/value
         pairs may be added by the process class'
         ``get_additional_template_context`` method – which in turn gets this
         ``ResultContext`` instance as a parameter.
