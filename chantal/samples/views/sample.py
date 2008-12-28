@@ -250,6 +250,9 @@ def by_id(request, sample_id, path_suffix):
     :rtype: ``HttpResponse``
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
+    if utils.is_remote_client(request):
+        # No redirect for the remote client
+        return show(request, sample.name)
     permissions.assert_can_view_sample(request.user, sample)
     query_string = request.META["QUERY_STRING"] or u""
     return utils.HttpResponseSeeOther(

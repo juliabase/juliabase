@@ -284,7 +284,6 @@ class PDSMeasurement(object):
         if not self.operator:
             self.operator = connection.username
         result = connection.open("samples/by_id/%s" % self.sample_id, {"is_my_sample": True})
-        print result
         assert result
         data = {"number": self.number,
                 "sample": self.sample_id,

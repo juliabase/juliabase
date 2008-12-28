@@ -24,6 +24,8 @@ root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_
 raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 date_pattern = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})")
+
+
 def get_data_from_file(number):
     u"""Find the datafiles for a given PDS number, and return all data found in
     them.  The resulting dictionary may contain the following keys:

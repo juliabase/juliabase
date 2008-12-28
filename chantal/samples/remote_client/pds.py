@@ -92,14 +92,15 @@ class LegacyPDSMeasurement(object):
         self.evaluated_path = evaluated_data_files.get(self.number)
 
 
-pds_measurements = []
+pds_measurements = {}
 for line in open(database_path):
     try:
-        pds_measurements.append(LegacyPDSMeasurement(line))
+        measurement = LegacyPDSMeasurement(line)
+        pds_measurements[measurement.number] = measurement
     except ValueError:
         pass
 
-for legacy_pds_measurement in pds_measurements:
+for legacy_pds_measurement in pds_measurements.itervalues():
     if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].upper() not in ["L", "B"]:
         continue
     sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
