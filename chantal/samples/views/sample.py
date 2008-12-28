@@ -416,7 +416,6 @@ def add(request):
         add_samples_form = AddSamplesForm(user, request.POST)
         if add_samples_form.is_valid():
             cleaned_data = add_samples_form.cleaned_data
-            print cleaned_data["substrate_originator"]
             new_names, samples = add_samples_to_database(add_samples_form, user)
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(user).report_new_samples(samples)

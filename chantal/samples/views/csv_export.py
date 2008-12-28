@@ -484,7 +484,6 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
     head_row = [label_column_heading] if generate_label_column else []
     head_row.extend([unicode(columns[key_index].heading) for key_index in selected_key_indices])
     table_rows = [head_row]
-    print table_rows
     for i, row in enumerate(flattened_tree):
         table_row = [label_column[i]] if generate_label_column else []
         for key_index in selected_key_indices:
