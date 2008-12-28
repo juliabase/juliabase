@@ -105,7 +105,7 @@ pds_root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/window
 class PDSMeasurement(Process):
     u"""Model for PDS measurements.
     """
-    number = models.IntegerField(_(u"pds number"), unique=True)
+    number = models.IntegerField(_(u"pds number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_(u"raw data file"), max_length=200,
                                     help_text=_(u"only the relative path below \"pds/\""))
     evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200,

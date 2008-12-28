@@ -38,7 +38,7 @@ class Deposition(Process):
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
     """
-    number = models.CharField(_(u"deposition number"), max_length=15, unique=True)
+    number = models.CharField(_(u"deposition number"), max_length=15, unique=True, db_index=True)
 
     class Meta:
         verbose_name = _(u"deposition")

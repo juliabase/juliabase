@@ -309,7 +309,7 @@ class Process(models.Model):
 class Sample(models.Model):
     u"""The model for samples.
     """
-    name = models.CharField(_(u"name"), max_length=30, unique=True)
+    name = models.CharField(_(u"name"), max_length=30, unique=True, db_index=True)
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
