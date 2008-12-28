@@ -250,6 +250,7 @@ def by_id(request, sample_id, path_suffix):
     :rtype: ``HttpResponse``
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
+    permissions.assert_can_view_sample(request.user, sample)
     query_string = request.META["QUERY_STRING"] or u""
     return utils.HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
