@@ -62,10 +62,10 @@ msgid "restricted"
 msgstr "beschränkt"
 
 msgid "external operator"
-msgstr "externer Operator"
+msgstr "externer Operateur"
 
 msgid "external operators"
-msgstr "externe Operatoren"
+msgstr "externe Operateure"
 
 msgid "Can add an external operator"
 msgstr "Darf externen Operateur anlegen"
@@ -98,7 +98,7 @@ msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
 msgid "operator"
-msgstr "Operator"
+msgstr "Operateur"
 
 msgid "comments"
 msgstr "Kommentare"
@@ -930,7 +930,7 @@ msgid ""
 "You are not allowed to add an external operator because you don't have the "
 "permission “%s”."
 msgstr ""
-"Sie dürfen keinen neuen externen Operator anlegen, weil Ihnen die "
+"Sie dürfen keinen neuen externen Operateur anlegen, weil Ihnen die "
 "Berechtgung „%s“ fehlt."
 
 msgid ""
@@ -1176,7 +1176,7 @@ msgid "Samples"
 msgstr "Proben"
 
 msgid "Operator"
-msgstr "Operator"
+msgstr "Operateur"
 
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
@@ -3425,7 +3425,7 @@ msgstr "Fehlgeschlagene Objekte"
 #~ msgstr "Telefon:"
 
 #~ msgid "operators"
-#~ msgstr "Operatoren"
+#~ msgstr "Operateure"
 
 #~ msgid "%(count)d years"
 #~ msgstr "%(count)d Jahre"
