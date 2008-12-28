@@ -245,23 +245,24 @@ class SixChamberLayer(Layer):
             flow_rates[channel.gas] = unicode(channel.flow_rate)
         gas_names = dict(six_chamber_gas_choices)
         for gas_name in gas_names:
-            csv_node_items.append((unicode(gas_names[gas_name]) + _(u"(in sccm)"), flow_rates.get(gas_name, u"")))
+            csv_node.items.append(CSVItem(unicode(gas_names[gas_name]) + u" " + _(u"(in sccm)"),
+                                          flow_rates.get(gas_name, u"")))
         return csv_node
 
 admin.site.register(SixChamberLayer)
 
 
 six_chamber_gas_choices = (
-    ("SiH4", "SiH₄"),
-    ("H2", "H₂"),
+    ("SiH4", u"SiH₄"),
+    ("H2", u"H₂"),
     ("PH3+SiH4", _(u"2% PH₃ in SiH₄")),
     ("TMB", _(u"1% TMB in He")),
     ("B2H6", _(u"5ppm B₂H₆ in H₂")),
-    ("CH4", "CH₄"),
-    ("CO2", "CO₂"),
-    ("GeH4", "GeH₄"),
-    ("Ar", "Ar"),
-    ("Si2H6", "Si₂H₆"),
+    ("CH4", u"CH₄"),
+    ("CO2", u"CO₂"),
+    ("GeH4", u"GeH₄"),
+    ("Ar", u"Ar"),
+    ("Si2H6", u"Si₂H₆"),
     ("PH3", _(u"10 ppm PH₃ in H₂")))
 u"""Contains all possible choices for `SixChamberChannel.gas`.
 """
