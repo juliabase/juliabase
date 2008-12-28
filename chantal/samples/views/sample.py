@@ -173,17 +173,15 @@ def get_allowed_processes(user, sample):
 
 
 @login_required
-def show(request, sample_name, sample_id=None):
+def show(request, sample_name):
     u"""A view for showing existing samples.
 
     :Parameters:
       - `request`: the current HTTP Request object
       - `sample_name`: the name of the sample
-      - `sample_id`: the id of the sample; only used by the remote client
 
     :type request: ``HttpRequest``
     :type sample_name: unicode
-    :type sample_id: unicode
 
     :Returns:
       the HTTP response object
@@ -192,12 +190,7 @@ def show(request, sample_name, sample_id=None):
     """
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
-    if sample_id and not is_remote_client:
-        sample_name = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
-        return utils.HttpResponseSeeOther(
-            django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample_name.name}))
-    sample = \
-        utils.lookup_sample(sample_name, request) if sample_id is None else get_object_or_404(models.Sample, pk=sample_id)
+    sample = utils.lookup_sample(sample_name, request)
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         is_my_sample_form = IsMySampleForm(request.POST)
