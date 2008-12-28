@@ -224,12 +224,12 @@ def assert_can_view_sample(user, sample):
     """
     if sample.group and sample.group not in user.groups.all() and sample.currently_responsible_person != user:
         if is_restricted(sample.group):
-            description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
-                            u"its currently responsible person.") % sample
+            description = _(u"You are not allowed to view the sample since you are not in the sample's group, nor are you "
+                            u"its currently responsible person.")
             raise PermissionError(user, description, new_group_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
-            description = _(u"You are not allowed to view sample %s since you are not in the sample's group, nor are you "
-                            u"its currently responsible person, nor are you a senior user.") % sample
+            description = _(u"You are not allowed to view the sample since you are not in the sample's group, nor are you "
+                            u"its currently responsible person, nor are you a senior user.")
             raise PermissionError(user, description, new_group_would_help=True)
 
 
