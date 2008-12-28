@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ElementTree
-import cPickle as pickle, re, codecs
+import cPickle as pickle, re, codecs, os.path
 
 import ConfigParser
 credentials = ConfigParser.SafeConfigParser()
@@ -179,7 +179,7 @@ deposition.timestamp = u'%(timestamp)s 13:00:00'
 """ % {"deposition_number": deposition_number,
        "comments": deposition.get("comments", "").replace("\"", "\\\"").replace("\n", "\\n"),
        "timestamp": deposition["date"][:10], "carrier": deposition.get("carrier", ""),
-       "substrate_comments": deposition.get("substrate", "").replace("\"", "\\\"").replace("\n", "\\n"),
+       "substrate_comments": deposition.get("substrate", "").replace("\"", "\\\"").replace("\n", "\\n") or u"unknown",
        "operator": operators[deposition.get("operator_initials", "AL")]}
     operator_username = operators[deposition.get("operator_initials", "AL")]
     for i, layer_number in enumerate(sorted(deposition["layers"])):
