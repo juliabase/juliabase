@@ -194,14 +194,15 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
         is a list, and every item is again a list containing all the channels
         of the layer with the same index in ``layer forms``.
       - `remove_from_my_samples_form`: a bound form for the checkbox for
-        removing deposited samples from My Samples
+        removing deposited samples from My Samples; ``None`` if we're editing
+        an existing deposition
       - `edit_description_form`: a bound form with description of edit changes
         if editing an existing deposition, or ``None`` if a new one is created
 
     :type deposition_form: `DepositionForm`
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
-    :type remove_from_my_samples_form: `RemoveFromMySamplesForm`
+    :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or ``NoneType``
     :type edit_description_form: `form_utils.EditDescriptionForm` or ``NoneType``
 
     :Return:
@@ -210,7 +211,9 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
 
     :rtype: bool
     """
-    valid = deposition_form.is_valid() and remove_from_my_samples_form.is_valid()
+    valid = deposition_form.is_valid()
+    if remove_from_my_samples_form:
+        valid = remove_from_my_samples_form.is_valid() and valid
     valid = (edit_description_form.is_valid() if edit_description_form else True) and valid
     # Don't use a generator expression here because I want to call ``is_valid``
     # for every form
@@ -502,7 +505,7 @@ def edit(request, deposition_number):
     if request.method == "POST":
         deposition_form = DepositionForm(user_details, preset_sample, request.POST, instance=deposition)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
-        remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
+        remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST) if not deposition else None
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if deposition else None
         all_valid = is_all_valid(
             deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form, edit_description_form)
@@ -512,7 +515,7 @@ def edit(request, deposition_number):
             deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
             feed_utils.Reporter(request.user).report_physical_process(
                 deposition, edit_description_form.cleaned_data if edit_description_form else None)
-            if remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
+            if remove_from_my_samples_form and remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
             if deposition_number:
                 request.session["success_report"] = \
@@ -550,7 +553,8 @@ def edit(request, deposition_number):
                     user_details, preset_sample, initial={"number": utils.get_next_deposition_number("B"),
                                                           "timestamp": datetime.datetime.now()})
                 layer_forms, channel_form_lists = [], []
-        remove_from_my_samples_form = RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition})
+        remove_from_my_samples_form = \
+            RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition}) if not deposition else None
         edit_description_form = form_utils.EditDescriptionForm() if deposition else None
     add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")

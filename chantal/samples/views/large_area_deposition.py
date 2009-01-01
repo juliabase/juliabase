@@ -204,7 +204,8 @@ class FormSet(object):
                                               initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                                        "number": utils.get_next_deposition_number("L")})
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
-        self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
+        if not self.deposition:
+            self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition, self.post_data)
         indices = form_utils.collect_subform_indices(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
@@ -276,7 +277,8 @@ class FormSet(object):
         self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
-        self.remove_from_my_samples_form = RemoveFromMySamplesForm()
+        if not self.deposition:
+            self.remove_from_my_samples_form = RemoveFromMySamplesForm()
 
     def _change_structure(self):
         u"""Apply any layer-based rearrangements the user has requested.  This
@@ -422,7 +424,8 @@ class FormSet(object):
         """
         all_valid = self.deposition_form.is_valid()
         all_valid = (self.add_layers_form.is_valid() or not self.add_layers_form.is_bound) and all_valid
-        all_valid = self.remove_from_my_samples_form.is_valid() and all_valid
+        if not self.deposition:
+            all_valid = self.remove_from_my_samples_form.is_valid() and all_valid
         if not self.deposition:
             all_valid = self.samples_form.is_valid() and all_valid
         all_valid = all([layer_form.is_valid() for layer_form in self.layer_forms]) and all_valid
@@ -560,7 +563,8 @@ def edit(request, deposition_number):
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
         if deposition:
-            if form_set.remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
+            if form_set.remove_from_my_samples_form and \
+                    form_set.remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), form_set.user_details)
             if deposition_number:
                 request.session["success_report"] = \

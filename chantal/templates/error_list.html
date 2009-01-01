@@ -1,18 +1,20 @@
-{% if form.errors or form.non_field_errors %}
-  {% ifequal outest_tag "<table>" %}
-    <table width="100%" cellspacing="0" cellpadding="0">
-  {% endifequal %}
-  <tr>
-    <td class="error-messages">
-      {% for field in form %}
-	{% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
-      {% endfor %}
-      {% if form.non_field_errors %}
-	<p>{{ form_error_title }}</p>{{ form.non_field_errors }}
-      {% endif %}
-    </td>
-  </tr>
-  {% ifequal outest_tag "<table>" %}
-    </table>
-  {% endifequal %}
+{% if form %}
+  {% if form.errors or form.non_field_errors %}
+    {% ifequal outest_tag "<table>" %}
+      <table width="100%" cellspacing="0" cellpadding="0">
+    {% endifequal %}
+    <tr>
+      <td class="error-messages">
+	{% for field in form %}
+	  {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+	{% endfor %}
+	{% if form.non_field_errors %}
+	  <p>{{ form_error_title }}</p>{{ form.non_field_errors }}
+	{% endif %}
+      </td>
+    </tr>
+    {% ifequal outest_tag "<table>" %}
+      </table>
+    {% endifequal %}
+  {% endif %}
 {% endif %}

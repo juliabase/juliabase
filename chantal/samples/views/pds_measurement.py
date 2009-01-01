@@ -241,7 +241,8 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     :type pds_measurement_form: `PDSMeasurementForm`
     :type sample_form: `SampleForm`
     :type overwrite_form: `OverwriteForm`
-    :type remove_from_my_samples_form: `RemoveFromMySamplesForm`
+    :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
+      ``NoneType``
     :type edit_description_form: `form_utils.EditDescriptionForm`
 
     :Return:
@@ -253,7 +254,8 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     all_valid = pds_measurement_form.is_valid()
     all_valid = sample_form.is_valid() and all_valid
     all_valid = overwrite_form.is_valid() and all_valid
-    all_valid = remove_from_my_samples_form.is_valid() and all_valid
+    if remove_from_my_samples_form:
+        all_valid = remove_from_my_samples_form.is_valid() and all_valid
     if edit_description_form:
         all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
@@ -317,7 +319,7 @@ def edit(request, pds_number):
     if request.method == "POST":
         pds_measurement_form = None
         sample_form = SampleForm(user_details, pds_measurement, preset_sample, request.POST)
-        remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST)
+        remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST) if not pds_measurement else None
         overwrite_form = OverwriteForm(request.POST)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if pds_measurement else None
         if overwrite_form.is_valid() and overwrite_form.cleaned_data["overwrite_from_file"]:
@@ -346,7 +348,7 @@ def edit(request, pds_number):
             pds_measurement.samples = samples
             feed_utils.Reporter(request.user).report_physical_process(
                 pds_measurement, edit_description_form.cleaned_data if edit_description_form else None)
-            if remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
+            if remove_from_my_samples_form and remove_from_my_samples_form.cleaned_data["remove_measured_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, user_details)
             success_report = _(u"%s was successfully changed in the database.") % pds_measurement if pds_number else \
                 _(u"%s was successfully added to the database.") % pds_measurement
@@ -364,7 +366,7 @@ def edit(request, pds_number):
             if samples:
                 initial["sample"] = samples[0].pk
         sample_form = SampleForm(user_details, pds_measurement, preset_sample, initial=initial)
-        remove_from_my_samples_form = RemoveFromMySamplesForm()
+        remove_from_my_samples_form = RemoveFromMySamplesForm() if pds_measurement else None
         overwrite_form = OverwriteForm()
         edit_description_form = form_utils.EditDescriptionForm() if pds_measurement else None
     title = _(u"PDS measurement %s") % pds_number if pds_number else _(u"Add PDS measurement")

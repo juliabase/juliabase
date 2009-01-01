@@ -97,9 +97,11 @@
     <tr>
       {% input_field add_layers.my_layer_to_be_added %}
     </tr>
-    <tr>
-      {% input_field remove_from_my_samples.remove_deposited_from_my_samples %}
-    </tr>
+    {% if remove_from_my_samples %}
+      <tr>
+        {% input_field remove_from_my_samples.remove_deposited_from_my_samples %}
+      </tr>
+    {% endif %}
   </table>
 
   <div style="display: none">

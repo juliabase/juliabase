@@ -306,7 +306,8 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
     properly.  Its template can be found in the file ``"error_list.html"``.
 
     :Parameters:
-      - `form`: the bound form whose errors should be displayed
+      - `form`: the bound form whose errors should be displayed; if ``None``,
+        nothing is generated
       - `form_error_title`: The title used for general error messages.  These
         are not connected to one particular field but the form as a
         whole. Typically, they are generated in the ``is_referentially_valid``

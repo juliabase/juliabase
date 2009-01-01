@@ -47,9 +47,11 @@
 
   {% include "edit_description.html" %}
 
-  <div style="text-align: right; clear: both">
-    {{ remove_from_my_samples.as_p }}
-  </div>
+  {% if remove_from_my_samples %}
+    <div style="text-align: right; clear: both">
+      {{ remove_from_my_samples.as_p }}
+    </div>
+  {% endif %}
 
   <div style="display: none">
     {{ pds_measurement.timestamp_inaccuracy }}
