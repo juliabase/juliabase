@@ -88,7 +88,7 @@ def get_my_layers(user_details, deposition_model):
     :rtype: list of (MyLayer-ID, nickname)
     """
     if not user_details.my_layers:
-        return []
+        return [(u"", u"---------")]
     items = [item.split(":", 1) for item in user_details.my_layers.split(",")]
     items = [(item[0].strip(),) + tuple(item[1].rsplit("-", 1)) for item in items]
     items = [(item[0], int(item[1]), int(item[2])) for item in items]
