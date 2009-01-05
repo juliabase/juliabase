@@ -99,6 +99,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import django.forms as forms
 from django.forms.util import ValidationError
+from django.template import defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal.samples.views import utils
 from chantal.samples.csv_common import CSVNode
@@ -110,7 +111,7 @@ class UnicodeWriter(object):
     string.  Inspired by <http://docs.python.org/library/csv.html#examples>.
     """
 
-    def __init__(self, dialect=csv.excel_tab, encoding="utf-8", **kwargs):
+    def __init__(self, stream=None, dialect=csv.excel_tab, encoding="utf-8", **kwargs):
         u"""Class constructor.  Additional keyword arguments are passed to the
         ``csv.writer`` factory function in Python's ``csv`` module.  After
         having instantiated this class, you can use `writerow` and `writerows`
@@ -118,17 +119,20 @@ class UnicodeWriter(object):
         `getvalue`.
 
         :Parameters:
+          - `stream`: the writable file-like object where the output should be
+            sent; if ``None``, you must get the outout with `getvalue`.
           - `dialect`: the CSV format; it defaults to Excel's TAB format
             (TAB-separated, double-quotes)
           - `encoding`: name of the output encoding to be used; defaults to
             UTF-8
 
+        :type stream: file
         :type dialect: ``csv.Dialect``
         :type encoding: str
         """
         self.queue = cStringIO.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwargs)
-        self.stream = cStringIO.StringIO()
+        self.stream = stream if stream else cStringIO.StringIO()
         self.encoder = codecs.getincrementalencoder(encoding)()
 
     def writerow(self, row):
@@ -620,9 +624,12 @@ def export(request, data, label_column_heading, renaming_offset=1):
                         previous_column_groups == selected_column_groups and previous_columns == selected_columns:
                     reduced_table = \
                         [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
-                    writer = UnicodeWriter()
+                    response = HttpResponse(content_type="text/csv; charset=utf-8")
+                    response['Content-Disposition'] = \
+                        "attachment; filename=chantal--%s.txt" % defaultfilters.slugify(data.descriptive_name)
+                    writer = UnicodeWriter(response)
                     writer.writerows(reduced_table)
-                    return HttpResponse(writer.getvalue(), content_type="text/csv; charset=utf-8")
+                    return response
         if selected_column_groups != previous_column_groups:
             columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     else:
