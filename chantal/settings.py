@@ -10,7 +10,9 @@ WITH_EPYDOC = 'epydoc' in sys.modules
 
 import ConfigParser
 credentials = ConfigParser.SafeConfigParser()
-credentials.read(os.path.expanduser("~/chantal.auth" if IS_TESTSERVER or WITH_EPYDOC else "/var/lib/chantal/chantal.auth"))
+read_files = credentials.read(os.path.expanduser("~/chantal.auth" if IS_TESTSERVER or WITH_EPYDOC
+                                                 else "/var/lib/chantal/chantal.auth"))
+assert read_files, Exception("file with authentication data not found")
 CREDENTIALS = dict(credentials.items("DEFAULT"))
 
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
