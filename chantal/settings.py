@@ -6,10 +6,11 @@ TEMPLATE_DEBUG = DEBUG
 import socket, os.path, sys
 
 IS_TESTSERVER = len(sys.argv) >= 2
+WITH_EPYDOC = 'epydoc' in sys.modules
 
 import ConfigParser
 credentials = ConfigParser.SafeConfigParser()
-credentials.read(os.path.expanduser("~/chantal.auth" if IS_TESTSERVER else "/var/lib/chantal/chantal.auth"))
+credentials.read(os.path.expanduser("~/chantal.auth" if IS_TESTSERVER or WITH_EPYDOC else "/var/lib/chantal/chantal.auth"))
 CREDENTIALS = dict(credentials.items("DEFAULT"))
 
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
@@ -102,7 +103,6 @@ INSTALLED_APPS = (
 
 CACHE_BACKEND = "file:///var/tmp/django_cache"
 
-WITH_EPYDOC = 'epydoc' in sys.modules
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
 
 LOGIN_URL = URL_PREFIX + "login"
