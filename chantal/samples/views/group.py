@@ -42,7 +42,7 @@ class NewGroupForm(forms.Form):
     """
     _ = ugettext_lazy
     new_group_name = forms.CharField(label=_(u"Name of new group"), max_length=80)
-    restricted = forms.BooleanField(label=_(u"restricted"))
+    restricted = forms.BooleanField(label=_(u"restricted"), required=False)
     def __init__(self, *args, **kwargs):
         super(NewGroupForm, self).__init__(*args, **kwargs)
         self.fields["new_group_name"].widget.attrs["size"] = 40
