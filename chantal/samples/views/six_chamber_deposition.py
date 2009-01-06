@@ -123,12 +123,6 @@ class LayerForm(DataModelForm):
             self.fields[fieldname].min_value = min_value
             self.fields[fieldname].max_value = max_value
 
-    def clean_chamber(self):
-        # FixMe: Isn't this already tested by Django itself?
-        if self.cleaned_data["chamber"] not in set([x[0] for x in models.six_chamber_chamber_choices]):
-            raise ValidationError(_(u"Name is unknown."))
-        return self.cleaned_data["chamber"]
-
     def clean_time(self):
         return form_utils.clean_time_field(self.cleaned_data["time"])
 
@@ -166,12 +160,6 @@ class ChannelForm(ModelForm):
         super(ChannelForm, self).__init__(data, **kwargs)
         self.fields["number"].widget = forms.TextInput(attrs={"size": "3", "style": "text-align: center"})
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
-
-    def clean_gas(self):
-        # FixMe: Isn't this already tested by Django itself?
-        if self.cleaned_data["gas"] not in set([x[0] for x in models.six_chamber_gas_choices]):
-            raise ValidationError(_(u"Gas type is unknown."))
-        return self.cleaned_data["gas"]
 
     class Meta:
         model = SixChamberChannel
