@@ -190,5 +190,5 @@ def show(request, username):
         context_dict.update(entry.get_additional_template_context(user_details))
         content.text = template.render(Context(context_dict))
         content.attrib["type"] = "html"
-    indent(feed)
+#    indent(feed)
     return HttpResponse(ElementTree.tostring(feed,"utf-8"), content_type="application/atom+xml; charset=utf-8")
