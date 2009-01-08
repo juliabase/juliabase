@@ -67,8 +67,8 @@ class DepositionForm(form_utils.ProcessForm):
         samples = list(user_details.my_samples.all())
         if not self.is_new:
             # If editing an existing deposition, always have an *unbound* form
-            # so that the samples are set altough sample selection is
-            # "disabled" und thus never successful when submitting
+            # so that the samples are set although sample selection is
+            # "disabled" and thus never successful when submitting
             super(DepositionForm, self).__init__(**kwargs)
             samples.extend(deposition.samples.all())
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
