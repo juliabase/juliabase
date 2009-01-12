@@ -29,8 +29,8 @@ class LocaleMiddleware(object):
     of course).
     """
     language_pattern = re.compile("[a-zA-Z0-9]+")
-    @staticmethod
 
+    @staticmethod
     def get_language_for_user(request):
         if request.user.is_authenticated():
             try:
