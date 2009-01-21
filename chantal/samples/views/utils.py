@@ -595,7 +595,7 @@ def respond_to_remote_client(value):
 
     :rtype: ``HttpResponse``
     """
-    return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle; charset=ascii")
+    return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle")
 
 
 def remove_samples_from_my_samples(samples, user_details):

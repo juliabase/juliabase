@@ -4,7 +4,7 @@
 u"""Views for editing and creating results (aka result processes).
 """
 
-import datetime, os, shutil, pickle, re
+import datetime, os, shutil, re
 from django.template import RequestContext
 from django.http import Http404
 import django.forms as forms
@@ -278,7 +278,7 @@ class FormSet(object):
         self.related_data_form = RelatedDataForm(self.user_details, self.query_string_dict, self.result)
         self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
         if self.result and self.result.quantities_and_values:
-            quantities, values = pickle.loads(str(self.result.quantities_and_values))
+            quantities, values = utils.ascii_unpickle(self.result.quantities_and_values)
         else:
             quantities, values = [], []
         self.dimensions_form = DimensionsForm(initial={"number_of_quantities": len(quantities),
@@ -419,7 +419,7 @@ class FormSet(object):
         """
         result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
             [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
-        return pickle.dumps(result, protocol=0)
+        return utils.ascii_pickle(result)
 
     def save_to_database(self, post_files):
         u"""Save the forms to the database.  One peculiarity here is that I

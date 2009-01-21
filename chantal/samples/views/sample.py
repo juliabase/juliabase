@@ -5,7 +5,7 @@ u"""All views and helper routines directly connected with samples themselves
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import time, datetime, pickle
+import time, datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
