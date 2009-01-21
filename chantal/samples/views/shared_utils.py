@@ -7,7 +7,7 @@ to avoid cyclic imports, and I'd like to avoid being forced to ship the whole
 of Django with the Remove Client (which uses this module).
 
 Note that all names defined here are also available in `utils`, so this module
-ist really only interesting for the Remote Client.
+is really only interesting for the Remote Client.
 """
 
 import re, string, codecs, os.path
