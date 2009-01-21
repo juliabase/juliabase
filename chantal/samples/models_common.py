@@ -731,7 +731,7 @@ class Result(Process):
                 child_node.items = [CSVItem(quantities[j], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         else:
-            csv_node.items = [CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])]
+            csv_node.items.extend([CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
         return csv_node
 
 admin.site.register(Result)

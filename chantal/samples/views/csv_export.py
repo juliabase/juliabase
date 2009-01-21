@@ -93,7 +93,7 @@ database model classes will show you how to use it (they are all very
 strightforward).
 """
 
-import csv, cStringIO, codecs
+import csv, cStringIO, codecs, copy
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
@@ -591,6 +591,13 @@ def export(request, data, label_column_heading, renaming_offset=1):
 
     :rtype: ``HttpResponse``
     """
+    if not data.children:
+        # We have no rows (e.g. a result process with only one row), so let's
+        # turn the root into the only row.
+        root_without_children = copy.copy(data)
+        # Remove the label column (the zeroth column)
+        root_without_children.descriptive_name = None
+        data.children = [root_without_children]
     data.find_unambiguous_names(renaming_offset)
     column_groups, columns = build_column_group_list(data)
     single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
