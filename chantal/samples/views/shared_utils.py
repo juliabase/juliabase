@@ -186,7 +186,7 @@ def ascii_pickle(python_object):
     #
     # Note that any change to this routine must be changed in
     # ``chantal_remote.py``, too.
-    return base64.b64encode(pickle.dumps(result, protocol=2))
+    return base64.b64encode(pickle.dumps(python_object, protocol=2))
 
 
 def ascii_unpickle(string):
