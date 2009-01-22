@@ -29,35 +29,6 @@ import django.contrib.auth.models
 from chantal.samples.views import utils, form_utils
 
 
-class SamplesForm(forms.Form):
-    u"""Form for the list selection of samples that took part in the
-    deposition.
-    """
-    _ = ugettext_lazy
-    sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
-
-    def __init__(self, user_details, preset_sample, deposition, data=None, **kwargs):
-        u"""Class constructor.  Note that I have to distinguish clearly here
-        between new and existing depositions.
-        """
-        samples = list(user_details.my_samples.all())
-        if deposition:
-            # Mark the samples of the deposition in the choise field
-            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
-            # Don't use ``data`` because it's disabled and thus empty (see
-            # below)
-            super(SamplesForm, self).__init__(**kwargs)
-            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-            samples.extend(deposition.samples.all())
-        else:
-            super(SamplesForm, self).__init__(data, **kwargs)
-            if preset_sample:
-                samples.append(preset_sample)
-                self.fields["sample_list"].initial = [preset_sample.pk]
-        self.fields["sample_list"].set_samples(samples)
-        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
-
-
 class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the deposition main data.  I only overwrite ``operator``
     in order to have full real names.
@@ -206,7 +177,8 @@ class FormSet(object):
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
-        self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition, self.post_data)
+        self.samples_form = \
+            form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition, self.post_data)
         indices = form_utils.collect_subform_indices(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
@@ -274,7 +246,7 @@ class FormSet(object):
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                         "number": utils.get_next_deposition_number("L")})
                 self.layer_forms, self.change_layer_forms = [], []
-        self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition)
+        self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         if not self.deposition:

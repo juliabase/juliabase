@@ -54,35 +54,15 @@ class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the basic deposition data.
     """
     _ = ugettext_lazy
-    sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
 
-    def __init__(self, user_details, preset_sample, data=None, **kwargs):
-        u"""Form constructor.  I have to initialise a couple of things here in
-        a non-trivial way, especially those that I have added myself
-        (``sample_list`` and ``operator``).
+    def __init__(self, user, data=None, **kwargs):
+        u"""Form constructor.  I have to initialise a couple of things here,
+        especially ``operator`` because I overrode it.
         """
         deposition = kwargs.get("instance")
-        self.is_new = not deposition
-        samples = list(user_details.my_samples.all())
-        if not self.is_new:
-            # If editing an existing deposition, always have an *unbound* form
-            # so that the samples are set although sample selection is
-            # "disabled" and thus never successful when submitting
-            super(DepositionForm, self).__init__(**kwargs)
-            samples.extend(deposition.samples.all())
-            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-            self.fields["sample_list"].required = False
-            self.fields["sample_list"].initial = deposition.samples.values_list("pk", flat=True)
-        else:
-            super(DepositionForm, self).__init__(data, **kwargs)
-        if preset_sample:
-            samples.append(preset_sample)
-            self.fields["sample_list"].initial = [preset_sample.pk]
-        self.fields["sample_list"].set_samples(samples)
-        self.fields["sample_list"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
-        user = user_details.user
-        self.fields["operator"].set_operator(user if self.is_new else deposition.operator, user.is_staff)
+        super(DepositionForm, self).__init__(data, **kwargs)
+        self.fields["operator"].set_operator(user if not deposition else deposition.operator, user.is_staff)
         self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
 
     def clean_number(self):
@@ -95,14 +75,6 @@ class DepositionForm(form_utils.ProcessForm):
                 form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
-
-    def save(self, *args, **kwargs):
-        u"""Additionally to the deposition itself, I must store the list of
-        samples connected with the deposition (if it is a new one)."""
-        deposition = super(DepositionForm, self).save(*args, **kwargs)
-        if self.is_new:
-            deposition.samples = self.cleaned_data["sample_list"]
-        return deposition
 
     class Meta:
         model = SixChamberDeposition
@@ -171,7 +143,7 @@ class ChannelForm(ModelForm):
         exclude = ("layer",)
 
 
-def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form,
+def is_all_valid(deposition_form, samples_form, layer_forms, channel_form_lists, remove_from_my_samples_form,
                  edit_description_form):
     u"""Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
@@ -182,6 +154,8 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
 
     :Parameters:
       - `deposition_form`: a bound deposition form
+      - `samples_form`: a sample list form, bound iff we're creating a new
+        deposition
       - `layer_forms`: the list with all bound layer forms of the deposition
       - `channel_form_lists`: all bound channel forms of this deposition.  It
         is a list, and every item is again a list containing all the channels
@@ -193,10 +167,13 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
         if editing an existing deposition, or ``None`` if a new one is created
 
     :type deposition_form: `DepositionForm`
+    :type samples_form: `form_utils.DepositionSamplesForm`
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
-    :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or ``NoneType``
-    :type edit_description_form: `form_utils.EditDescriptionForm` or ``NoneType``
+    :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
+      ``NoneType`` 
+    :type edit_description_form: `form_utils.EditDescriptionForm` or
+      ``NoneType`` 
 
     :Return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
@@ -208,6 +185,8 @@ def is_all_valid(deposition_form, layer_forms, channel_form_lists, remove_from_m
     if remove_from_my_samples_form:
         valid = remove_from_my_samples_form.is_valid() and valid
     valid = (edit_description_form.is_valid() if edit_description_form else True) and valid
+    if samples_form.is_bound:
+        valid = samples_form.is_valid() and valid
     # Don't use a generator expression here because I want to call ``is_valid``
     # for every form
     valid = valid and all([layer_form.is_valid() for layer_form in layer_forms])
@@ -329,7 +308,7 @@ def change_structure(layer_forms, channel_form_lists, post_data):
     return structure_changed
 
 
-def is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists):
+def is_referentially_valid(deposition, deposition_form, samples_form, layer_forms, channel_form_lists):
     u"""Test whether all forms are consistent with each other and with the
     database.  For example, no layer number must occur twice, and the
     deposition number must not exist within the database.
@@ -338,6 +317,8 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
       - `deposition`: the currently edited deposition, or ``None`` if we create
         a new one
       - `deposition_form`: a bound deposition form
+      - `samples_form`: a sample list form, bound iff we're creating a new
+        deposition
       - `layer_forms`: the list with all bound layer forms of the deposition
       - `channel_form_lists`: all bound channel forms of this deposition.  It
         is a list, and every item is again a list containing all the channels
@@ -345,6 +326,7 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
 
     :type deposition: `models.SixChamberDeposition` or ``NoneType``
     :type deposition_form: `DepositionForm`
+    :type samples_form: `form_utils.DepositionSamplesForm`
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
 
@@ -359,14 +341,15 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
                 models.Deposition.objects.filter(number=deposition_form.cleaned_data["number"]).count():
             form_utils.append_error(deposition_form, _(u"This deposition number exists already."))
             referentially_valid = False
-        dead_samples = form_utils.dead_samples(deposition_form.cleaned_data["sample_list"],
-                                               deposition_form.cleaned_data["timestamp"])
-        if dead_samples:
-            error_message = ungettext(u"The sample %s is already dead at this time.",
-                                      u"The samples %s are already dead at this time.", len(dead_samples))
-            error_message %= utils.format_enumeration([sample.name for sample in dead_samples])
-            form_utils.append_error(deposition_form, error_message, "timestamp")
-            referentially_valid = False
+        if samples_form.is_valid():
+            dead_samples = form_utils.dead_samples(samples_form.cleaned_data["sample_list"],
+                                                   deposition_form.cleaned_data["timestamp"])
+            if dead_samples:
+                error_message = ungettext(u"The sample %s is already dead at this time.",
+                                          u"The samples %s are already dead at this time.", len(dead_samples))
+                error_message %= utils.format_enumeration([sample.name for sample in dead_samples])
+                form_utils.append_error(deposition_form, error_message, "timestamp")
+                referentially_valid = False
     if not layer_forms:
         form_utils.append_error(deposition_form, _(u"No layers given."))
         referentially_valid = False
@@ -389,19 +372,22 @@ def is_referentially_valid(deposition, deposition_form, layer_forms, channel_for
     return referentially_valid
 
 
-def save_to_database(deposition_form, layer_forms, channel_form_lists):
+def save_to_database(deposition_form, samples_form, layer_forms, channel_form_lists):
     u"""Save the forms to the database.  Only the deposition is just updated if
     it already existed.  However, layers and channels are completely deleted
     and re-constructed from scratch.
 
     :Parameters:
       - `deposition_form`: a bound deposition form
+      - `samples_form`: a sample list form, bound iff we're creating a new
+        deposition
       - `layer_forms`: the list with all bound layer forms of the deposition
       - `channel_form_lists`: all bound channel forms of this deposition.  It
         is a list, and every item is again a list containing all the channels
         of the layer with the same index in ``layer forms``.
 
     :type deposition_form: `DepositionForm`
+    :type samples_form: `form_utils.DepositionSamplesForm`
     :type layer_forms: list of `LayerForm`
     :type channel_form_lists: list of lists of `ChannelForm`
 
@@ -411,6 +397,8 @@ def save_to_database(deposition_form, layer_forms, channel_form_lists):
     :rtype: `models.SixChamberDeposition`
     """
     deposition = deposition_form.save()
+    if samples_form.is_bound:
+        deposition.samples = samples_form.cleaned_data["sample_list"]
     deposition.layers.all().delete()  # deletes channels, too
     for layer_form, channel_forms in zip(layer_forms, channel_form_lists):
         layer = layer_form.save(commit=False)
@@ -496,33 +484,31 @@ def edit(request, deposition_number):
     user_details = utils.get_profile(request.user)
     preset_sample = utils.extract_preset_sample(request) if not deposition else None
     if request.method == "POST":
-        deposition_form = DepositionForm(user_details, preset_sample, request.POST, instance=deposition)
+        deposition_form = DepositionForm(request.user, request.POST, instance=deposition)
+        samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, deposition, request.POST)
         layer_forms, channel_form_lists = forms_from_post_data(request.POST)
         remove_from_my_samples_form = RemoveFromMySamplesForm(request.POST) if not deposition else None
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if deposition else None
-        all_valid = is_all_valid(
-            deposition_form, layer_forms, channel_form_lists, remove_from_my_samples_form, edit_description_form)
+        all_valid = is_all_valid(deposition_form, samples_form, layer_forms, channel_form_lists,
+                                 remove_from_my_samples_form, edit_description_form)
         structure_changed = change_structure(layer_forms, channel_form_lists, request.POST)
-        referentially_valid = is_referentially_valid(deposition, deposition_form, layer_forms, channel_form_lists)
+        referentially_valid = \
+            is_referentially_valid(deposition, deposition_form, samples_form, layer_forms, channel_form_lists)
         if all_valid and referentially_valid and not structure_changed:
-            deposition = save_to_database(deposition_form, layer_forms, channel_form_lists)
+            deposition = save_to_database(deposition_form, samples_form, layer_forms, channel_form_lists)
             feed_utils.Reporter(request.user).report_physical_process(
                 deposition, edit_description_form.cleaned_data if edit_description_form else None)
             if remove_from_my_samples_form and remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), user_details)
             if deposition_number:
-                request.session["success_report"] = \
-                    _(u"Deposition %s was successfully changed in the database.") % deposition.number
-                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+                return utils.successful_response(
+                    request, _(u"Deposition %s was successfully changed in the database.") % deposition.number)
             else:
-                if utils.is_remote_client(request):
-                    return utils.respond_to_remote_client(deposition.number)
-                else:
-                    request.session["success_report"] = \
-                        _(u"Deposition %s was successfully added to the database.") % deposition.number
-                    return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
-                            "samples.views.split_after_deposition.split_and_rename_after_deposition",
-                            kwargs={"deposition_number": deposition.number}))
+                return utils.successful_response(
+                    request, _(u"Deposition %s was successfully added to the database.") % deposition.number,
+                    "samples.views.split_after_deposition.split_and_rename_after_deposition",
+                    {"deposition_number": deposition.number},
+                    forced=True, remote_client_response=deposition.number)
     else:
         deposition_form = None
         copy_from = utils.parse_query_string(request).get("copy_from")
@@ -533,18 +519,21 @@ def edit(request, deposition_number):
                 deposition_data = copy_from_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["number"] = utils.get_next_deposition_number("B")
-                deposition_form = DepositionForm(user_details, preset_sample, initial=deposition_data)
-                layer_forms, channel_form_lists = forms_from_database(copy_from_query.all()[0])
+                deposition_form = DepositionForm(request.user, initial=deposition_data)
+                deposition = copy_from_query.all()[0]
+                samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, deposition=None)
+                layer_forms, channel_form_lists = forms_from_database(deposition)
         if not deposition_form:
             if deposition:
                 # Normal edit of existing deposition
-                deposition_form = DepositionForm(user_details, preset_sample, instance=deposition)
+                deposition_form = DepositionForm(request.user, instance=deposition)
+                samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, deposition)
                 layer_forms, channel_form_lists = forms_from_database(deposition)
             else:
                 # New deposition, or duplication has failed
-                deposition_form = DepositionForm(
-                    user_details, preset_sample, initial={"number": utils.get_next_deposition_number("B"),
-                                                          "timestamp": datetime.datetime.now()})
+                deposition_form = DepositionForm(request.user, initial={"number": utils.get_next_deposition_number("B"),
+                                                                        "timestamp": datetime.datetime.now()})
+                samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, deposition=None)
                 layer_forms, channel_form_lists = [], []
         remove_from_my_samples_form = \
             RemoveFromMySamplesForm(initial={"remove_deposited_from_my_samples": not deposition}) if not deposition else None
@@ -553,6 +542,7 @@ def edit(request, deposition_number):
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
     return render_to_response("edit_six_chamber_deposition.html",
                               {"title": title, "deposition": deposition_form,
+                               "samples": samples_form,
                                "layers_and_channels": zip(layer_forms, channel_form_lists),
                                "add_my_layer": add_my_layer_form,
                                "remove_from_my_samples": remove_from_my_samples_form,
