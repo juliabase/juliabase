@@ -552,8 +552,12 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     if success_report:
         request.session["success_report"] = success_report
     next_url = parse_query_string(request).get("next")
-    if next_url is not None and not forced:
-        return HttpResponseSeeOther(next_url)
+    if next_url is not None:
+        if forced:
+            #FixMe: Pass "next" to the next URL somehow
+            pass
+        else:
+            return HttpResponseSeeOther(next_url)
     if query_string:
         query_string = "?" + query_string
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "samples.views.main.main_menu", kwargs=kwargs)
