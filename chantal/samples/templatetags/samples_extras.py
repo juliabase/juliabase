@@ -31,7 +31,7 @@ def quantity(value, unit=None, autoescape=False):
     """
     if value is None:
         return None
-    value_string = u"%g" % value if isinstance(value, float) else value
+    value_string = u"%g" % value if isinstance(value, float) else unicode(value)
     if autoescape:
         value_string = conditional_escape(value_string)
         unit = conditional_escape(unit) if unit else None
