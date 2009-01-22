@@ -371,7 +371,7 @@ class ValueFieldNode(template.Node):
             self.unit = None
             field = u"—"
         return u"""<td class="label">%(label)s:</td><td class="value">%(value)s</td>""" % \
-            {"label": verbose_name, "value": quantity(field, self.unit) if self.unit else field}
+            {"label": verbose_name, "value": field if self.unit is None else quantity(field, self.unit)}
 
 
 @register.tag

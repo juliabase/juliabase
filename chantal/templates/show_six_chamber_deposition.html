@@ -52,11 +52,11 @@
               </tr>
               <tr>
                 {% value_field layer.gas_pre_heat_gas %}
-                {% value_field layer.gas_pre_heat_pressure %}
+                {% value_field layer.gas_pre_heat_pressure "" %}  {# "" for float pretty-formatting #}
                 {% value_field layer.gas_pre_heat_time %}
               </tr>
               <tr>
-                {% value_field layer.pressure %}
+                {% value_field layer.pressure "" %}  {# "" for float pretty-formatting #}
                 {% value_field layer.transfer_out_of_chamber %}
                 {% value_field layer.deposition_power "W" %}
               </tr>
