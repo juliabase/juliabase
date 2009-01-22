@@ -440,3 +440,58 @@ class LargeAreaLayer(Layer):
         return csv_node
 
 admin.site.register(LargeAreaLayer)
+
+
+class SmallClusterToolDeposition(Deposition):
+    u"""Small (old) cluster tool depositions.
+    """
+    carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
+
+    class Meta:
+        verbose_name = _(u"small cluster tool deposition")
+        verbose_name_plural = _(u"small cluster tool depositions")
+        _ = lambda x: x
+        permissions = (("add_edit_small_cluster_tool_deposition", _("Can create and edit small cluster tool depositions")),)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.small_cluster_tool_deposition.show", [urlquote(self.number, safe="")])
+
+    def get_additional_template_context(self, process_context):
+        u"""See `SixChamberDeposition.get_additional_template_context`.
+
+        :Parameters:
+          - `process_context`: the context of this process
+
+        :type process_context: `views.utils.ProcessContext`
+
+        :Return:
+          dict with additional fields that are supposed to be given to the
+          templates.
+
+        :rtype: dict mapping str to arbitrary objects
+        """
+        if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
+            return {"edit_url": django.core.urlresolvers.reverse("edit_small_cluster_tool_deposition",
+                                                                 kwargs={"deposition_number": self.number}),
+                    "duplicate_url": "%s?copy_from=%s" % (
+                    django.core.urlresolvers.reverse("add_small_cluster_tool_deposition"),
+                    urlquote_plus(self.number))}
+        else:
+            return {}
+
+    @classmethod
+    def get_add_link(cls):
+        u"""Return all you need to generate a link to the “add” view for this
+        process.  See `SixChamberDeposition.get_add_link`.
+
+        :Return:
+          the full URL to the add page for this process
+
+        :rtype: str
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_small_cluster_tool_deposition")
+
+default_location_of_deposited_samples[SmallClusterToolDeposition] = _(u"small cluster tool deposition lab")
+admin.site.register(SmallClusterToolDeposition)

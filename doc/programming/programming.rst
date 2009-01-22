@@ -11,15 +11,20 @@ General considerations
 ===========================
 
 Chantal source code modules should not exceed 1000 lines of code.  You should
-stick to `PEP 8`_ and the `Django coding guidelines`_.
+stick to :pep:`8` and the `Django coding guidelines`_.
 
 Chantal makes one exception from PEP 8: I allow lines with 125 columns instead
 of only 80.
 
-All variables and source code comments should be in English.
+All variables and source code comments should be in English.  Please give
+*long* identifier names.  In case of doubt, make it more explicit.  All
+non-trivial methods should get a docstring in `Epydoc`_ format using the
+`RestructureText`_ markup language.  Just look at the existing code to see what
+this means.
 
-.. _`PEP 8`: http://www.python.org/dev/peps/pep-0008/
 .. _`Django coding guidelines`: http://docs.djangoproject.com/en/dev/internals/contributing/?from=olddocs#coding-style
+.. _`Epydoc`: http://epydoc.sourceforge.net/
+.. _`RestructureText`: http://epydoc.sourceforge.net/manual-othermarkup.html
 
 
 Writing a deposition module
