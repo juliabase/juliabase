@@ -31,23 +31,23 @@ def quantity(value, unit=None, autoescape=False):
     """
     if value is None:
         return None
-    value_string = u"%g" % value
+    value_string = u"%g" % value if isinstance(value, float) else value
     if autoescape:
         value_string = conditional_escape(value_string)
         unit = conditional_escape(unit) if unit else None
     result = u""
     i = 0
-    match = re.match(ur"(?P<leading>.*?)(?P<prepoint>\d*)(\.(?P<postpoint>\d+))?(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)",
-                     value_string)
+    match = re.match(ur"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
+                     ur"(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
     match_dict = match.groupdict(u"")
-    result = match_dict["leading"] + match_dict["prepoint"]
+    result = match_dict["leading"] + match_dict["prepoint"].replace(u"-", u"−")
     if match_dict["postpoint"]:
         result += "." + match_dict["postpoint"]
     if match_dict["exponent"]:
         result += u" · 10<sup>"
         match_exponent = re.match(ur"(?P<sign>[-+])?0*(?P<digits>\d+)", match_dict["exponent"])
         if match_exponent.group("sign") == "-":
-            result += u"-"
+            result += u"−"
         result += match_exponent.group("digits")
         result += u"</sup>"
     result += match_dict["trailing"]
