@@ -197,6 +197,7 @@ class FormSet(object):
                  for channel_index in range(list_of_number_of_channels[layer_index])])
         self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data) if not self.deposition else None
         self.edit_description_form = form_utils.EditDescriptionForm(self.post_data) if self.deposition else None
+        self.add_my_layer_form = AddMyLayerForm(user_details=self.user_details, prefix="structural-change")
 
     def from_database(self, query_dict):
         u"""Take a deposition instance and construct forms from it for its layers
@@ -244,6 +245,7 @@ class FormSet(object):
                 self.layer_forms, self.channel_form_lists = [], []
         self.remove_from_my_samples_form = RemoveFromMySamplesForm() if not self.deposition else None
         self.edit_description_form = form_utils.EditDescriptionForm() if self.deposition else None
+        self.add_my_layer_form = AddMyLayerForm(user_details=self.user_details, prefix="structural-change")
 
     def __change_structure(self):
         u"""Add or delete layers and channels in the form.  While changes in
@@ -450,6 +452,21 @@ class FormSet(object):
                 utils.remove_samples_from_my_samples(deposition.samples.all(), self.user_details)
             return deposition
 
+    def get_context_dict(self):
+        u"""Retrieve the context dictionary to be passed to the template.  This
+        context dictionary contains all forms in an easy-to-use format for the
+        template code.
+
+        :Return:
+          context dictionary
+
+        :rtype: dict mapping str to various types
+        """
+        return {"deposition": self.deposition_form, "samples": self.samples_form,
+                "layers_and_channels": zip(self.layer_forms, self.channel_form_lists),
+                "add_my_layer": self.add_my_layer_form, "remove_from_my_samples": self.remove_from_my_samples_form,
+                "edit_description": self.edit_description_form}
+
 
 @login_required
 def edit(request, deposition_number):
@@ -488,16 +505,10 @@ def edit(request, deposition_number):
                     forced=True, remote_client_response=deposition.number)
     else:
         form_set.from_database(utils.parse_query_string(request))
-    add_my_layer_form = AddMyLayerForm(user_details=user_details, prefix="structural-change")
     title = _(u"6-chamber deposition “%s”") % deposition_number if deposition_number else _(u"New 6-chamber deposition")
-    return render_to_response("edit_six_chamber_deposition.html",
-                              {"title": title, "deposition": deposition_form,
-                               "samples": samples_form,
-                               "layers_and_channels": zip(layer_forms, channel_form_lists),
-                               "add_my_layer": add_my_layer_form,
-                               "remove_from_my_samples": remove_from_my_samples_form,
-                               "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+    context_dict = {"title": title}
+    context_dict.update(form_set.get_context_dict())
+    return render_to_response("edit_six_chamber_deposition.html", context_dict, context_instance=RequestContext(request))
 
 
 @login_required
