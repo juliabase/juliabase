@@ -157,7 +157,8 @@ class FormSet(object):
         self.deposition = \
             get_object_or_404(models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
-        self.layer_forms = self.change_layer_forms = []
+        self.layer_forms = []
+        self.change_layer_forms = []
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
         self.remote_client = utils.is_remote_client(request)
