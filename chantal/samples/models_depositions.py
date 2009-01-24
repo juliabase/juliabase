@@ -137,8 +137,8 @@ class Layer(models.Model):
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a
     number, because at least the MyLayers infrastructure relies on this.  (See
-    for example `views.six_chamber_deposition.change_structure`, after ``if
-    my_layer:``.)
+    for example `views.six_chamber_deposition.FormSet.__change_structure`,
+    after ``if my_layer:``.)
 
     Every class derived from this model must point to their deposition with
     ``related_name="layers"``.  See also `Deposition`.
