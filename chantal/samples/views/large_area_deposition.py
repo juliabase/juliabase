@@ -492,7 +492,8 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-            # FixMe: Feed entries
+            feed_utils.Reporter(self.user).report_physical_process(
+                deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 
     def get_context_dict(self):
