@@ -249,7 +249,7 @@ class FormSet(object):
 
     def __change_structure(self):
         u"""Add or delete layers and channels in the form.  While changes in
-        form fields are performs by the form objects themselves, they can't
+        form fields are performed by the form objects themselves, they can't
         change the *structure* of the view.  This is performed here.
 
         :Return:
