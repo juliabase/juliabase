@@ -424,7 +424,7 @@ class FormSet(object):
         and re-constructed from scratch.
 
         Additionally, this method removed deposited samples from „My Samples“
-        if appropriate.
+        if appropriate, and it generates the feed entries.
 
         :Return:
           The saved deposition object, or ``None`` if validation failed
@@ -450,6 +450,8 @@ class FormSet(object):
             if self.remove_from_my_samples_form and \
                     self.remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), self.user_details)
+            feed_utils.Reporter(self.user).report_physical_process(
+                deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 
     def get_context_dict(self):
@@ -492,8 +494,6 @@ def edit(request, deposition_number):
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
         if deposition:
-            feed_utils.Reporter(request.user).report_physical_process(
-                deposition, form_set.edit_description_form.cleaned_data if form_set.edit_description_form else None)
             if deposition_number:
                 return utils.successful_response(
                     request, _(u"Deposition %s was successfully changed in the database.") % deposition.number)
