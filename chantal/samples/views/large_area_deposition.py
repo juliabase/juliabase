@@ -29,35 +29,6 @@ import django.contrib.auth.models
 from chantal.samples.views import utils, form_utils
 
 
-class SamplesForm(forms.Form):
-    u"""Form for the list selection of samples that took part in the
-    deposition.
-    """
-    _ = ugettext_lazy
-    sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
-
-    def __init__(self, user_details, preset_sample, deposition, data=None, **kwargs):
-        u"""Class constructor.  Note that I have to distinguish clearly here
-        between new and existing depositions.
-        """
-        samples = list(user_details.my_samples.all())
-        if deposition:
-            # Mark the samples of the deposition in the choise field
-            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
-            # Don't use ``data`` because it's disabled and thus empty (see
-            # below)
-            super(SamplesForm, self).__init__(**kwargs)
-            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-            samples.extend(deposition.samples.all())
-        else:
-            super(SamplesForm, self).__init__(data, **kwargs)
-            if preset_sample:
-                samples.append(preset_sample)
-                self.fields["sample_list"].initial = [preset_sample.pk]
-        self.fields["sample_list"].set_samples(samples)
-        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
-
-
 class DepositionForm(form_utils.ProcessForm):
     u"""Model form for the deposition main data.  I only overwrite ``operator``
     in order to have full real names.
@@ -80,7 +51,7 @@ class DepositionForm(form_utils.ProcessForm):
     def validate_unique(self):
         u"""Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
-        uniqueness test in `FormSet._is_referentially_valid`.  I cannot use
+        uniqueness test in `FormSet.__is_referentially_valid`.  I cannot use
         Django's built-in test anyway because it leads to an error message in
         wrong German (difficult to fix, even for the Django guys).
         """
@@ -186,7 +157,7 @@ class FormSet(object):
         self.deposition = \
             get_object_or_404(models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
-        self.layer_forms = self.change_layer_forms = []
+        self.layer_forms, self.change_layer_forms = [], []
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
         self.remote_client = utils.is_remote_client(request)
@@ -206,13 +177,14 @@ class FormSet(object):
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
-        self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition, self.post_data)
+        self.samples_form = \
+            form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition, self.post_data)
         indices = form_utils.collect_subform_indices(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
 
-    def _read_layer_forms(self, source_deposition, destination_deposition_number=None):
+    def __read_layer_forms(self, source_deposition, destination_deposition_number=None):
         u"""Generate a set of layer forms from database data.  Note that the
         layers are not returned – instead, they are written directly into
         ``self.layer_forms``.
@@ -262,25 +234,25 @@ class FormSet(object):
                 deposition_data["operator"] = self.user.pk
                 deposition_data["number"] = utils.get_next_deposition_number("L")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
-                self._read_layer_forms(source_deposition_query.all()[0], deposition_data["number"])
+                self.__read_layer_forms(source_deposition_query.all()[0], deposition_data["number"])
         if not self.deposition_form:
             if self.deposition:
                 # Normal edit of existing deposition
                 self.deposition_form = DepositionForm(self.user, instance=self.deposition)
-                self._read_layer_forms(self.deposition)
+                self.__read_layer_forms(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
                                         "number": utils.get_next_deposition_number("L")})
                 self.layer_forms, self.change_layer_forms = [], []
-        self.samples_form = SamplesForm(self.user_details, self.preset_sample, self.deposition)
+        self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm()
 
-    def _change_structure(self):
+    def __change_structure(self):
         u"""Apply any layer-based rearrangements the user has requested.  This
         is layer duplication, order changes, appending of layers, and deletion.
 
@@ -296,7 +268,7 @@ class FormSet(object):
         initial layer form data for ``"new"``.
 
         Of course, the new layer forms are not validated.  Therefore,
-        `_is_all_valid` is called *after* this routine in `save_to_database`.
+        `__is_all_valid` is called *after* this routine in `save_to_database`.
 
         Note that – as usual – the numbers of depositions and layers are called
         *number*, whereas the internal numbers used as prefixes in the HTML
@@ -411,7 +383,7 @@ class FormSet(object):
 
         return structure_changed
 
-    def _is_all_valid(self):
+    def __is_all_valid(self):
         u"""Tests the “inner” validity of all forms belonging to this view.
         This function calls the ``is_valid()`` method of all forms, even if one
         of them returns ``False`` (and makes the return value clear
@@ -433,7 +405,7 @@ class FormSet(object):
                          for change_layer_form in self.change_layer_forms]) and all_valid
         return all_valid
 
-    def _is_referentially_valid(self):
+    def __is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
         database.  For example, no layer number must occur twice, and the
         deposition number must not exist within the database.
@@ -507,9 +479,9 @@ class FormSet(object):
 
         :rtype: `models.LargeAreaDeposition` or ``NoneType``
         """
-        database_ready = not self._change_structure() if not self.remote_client else True
-        database_ready = self._is_all_valid() and database_ready
-        database_ready = self._is_referentially_valid() and database_ready
+        database_ready = not self.__change_structure() if not self.remote_client else True
+        database_ready = self.__is_all_valid() and database_ready
+        database_ready = self.__is_referentially_valid() and database_ready
         if database_ready:
             deposition = self.deposition_form.save()
             if not self.deposition:
@@ -520,7 +492,8 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-            # FixMe: Feed entries
+            feed_utils.Reporter(self.user).report_physical_process(
+                deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 
     def get_context_dict(self):
