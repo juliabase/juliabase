@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-28 15:19+0100\n"
-"PO-Revision-Date: 2008-12-28 22:06+0100\n"
+"POT-Creation-Date: 2009-01-26 10:31+0100\n"
+"PO-Revision-Date: 2009-01-26 10:32+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -798,8 +798,8 @@ msgstr "PDS-Messung #%d"
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-msgid "counts"
-msgstr "Counts"
+msgid "α in cm⁻¹"
+msgstr "α in cm⁻¹"
 
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
@@ -807,13 +807,17 @@ msgstr "Zugriff verweigert: "
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "group, nor are you its currently responsible person."
-msgstr "Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, noch ihr aktuell Verantwortlicher sind."
+msgstr ""
+"Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, "
+"noch ihr aktuell Verantwortlicher sind."
 
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "group, nor are you its currently responsible person, nor are you a senior "
 "user."
-msgstr "Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, noch ihr aktuell Verantwortlicher sind, noch Seniornutzer sind."
+msgstr ""
+"Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, "
+"noch ihr aktuell Verantwortlicher sind, noch Seniornutzer sind."
 
 #, python-format
 msgid ""
@@ -1101,6 +1105,9 @@ msgstr "Beschreibung der Änderung"
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
+msgid "Samples"
+msgstr "Proben"
+
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
@@ -1171,9 +1178,6 @@ msgstr "Monat"
 #, python-format
 msgid "Lab notebook for %s"
 msgstr "Laborbuch für %s"
-
-msgid "Samples"
-msgstr "Proben"
 
 msgid "Operator"
 msgstr "Operateur"
@@ -1579,12 +1583,6 @@ msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
-
-msgid "Name is unknown."
-msgstr "Dieser Name ist unbekannt."
-
-msgid "Gas type is unknown."
-msgstr "Dieser Gastyp ist unbekannt."
 
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
@@ -3092,6 +3090,15 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+#~ msgid "counts"
+#~ msgstr "Counts"
+
+#~ msgid "Name is unknown."
+#~ msgstr "Dieser Name ist unbekannt."
+
+#~ msgid "Gas type is unknown."
+#~ msgstr "Dieser Gastyp ist unbekannt."
 
 #~ msgid "History of sample “"
 #~ msgstr "Geschichte der Probe „"

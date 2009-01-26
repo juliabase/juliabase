@@ -127,9 +127,9 @@ class PDSMeasurement(Process):
     def pylab_commands(self, number, filename):
         _ = ugettext
         x_values, y_values = read_techplot_file(filename)
-        pylab.plot(x_values, y_values)
+        pylab.semilogy(x_values, y_values)
         pylab.xlabel(_(u"energy in eV"))
-        pylab.ylabel(_(u"counts"))
+        pylab.ylabel(_(u"α in cm⁻¹"))
 
     def get_datafile_name(self, number):
         return os.path.join(pds_root_dir, self.evaluated_datafile)
