@@ -26,7 +26,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
 import django.core.urlresolvers
 import django.contrib.auth.models
-from chantal.samples.views import utils, form_utils
+from chantal.samples.views import utils, form_utils, feed_utils
 
 
 class SamplesForm(forms.Form):
@@ -520,7 +520,8 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-            # FixMe: Feed entries
+#             feed_utils.Reporter(self.user).report_physical_process(
+#                 deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 
     def get_context_dict(self):
