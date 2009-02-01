@@ -6,7 +6,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 `shared_utils` should be useful only for the Remote Client.
 """
 
-import re, string, copy, datetime, pickle
+import re, string, copy, datetime, jsonpickle
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
@@ -580,7 +580,7 @@ def is_remote_client(request):
 def respond_to_remote_client(value):
     u"""The communication with the Chantal Remote Client should be done without
     generating HTML pages in order to have better performance.  Thus, all
-    responses are Python objects, serialised by the “pickle” module.
+    responses are Python objects, serialised in JSON notation.
 
     This views that should be accessed by both the Remote Client and the normal
     users should distinguish between both by using `is_remote_client`.
@@ -595,7 +595,7 @@ def respond_to_remote_client(value):
 
     :rtype: ``HttpResponse``
     """
-    return HttpResponse(pickle.dumps(value), content_type="text/x-python-pickle")
+    return HttpResponse(jsonpickle.encode(value), content_type="application/json; charset=ascii")
 
 
 def remove_samples_from_my_samples(samples, user_details):

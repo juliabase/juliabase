@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib, urllib2, cookielib, pickle, logging
+import urllib, urllib2, cookielib, jsonpickle, logging
 import datetime, re
 
 logging.basicConfig(level=logging.DEBUG,
@@ -57,9 +57,9 @@ class ChantalConnection(object):
                 raise
         else:
             response = self.opener.open(self.root_url+relative_url)
-        is_pickled = response.info()["Content-Type"].startswith("text/x-python-pickle")
+        is_pickled = response.info()["Content-Type"].startswith("application/json")
         if is_pickled:
-            return pickle.load(response)
+            return jsonpickle.decode(response.read())
         else:
             logging.error("Resonse was not in pickle format.  Probably failed validation.")
             text = response.read()
@@ -128,7 +128,7 @@ class SixChamberDeposition(object):
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
-            self.number = pickle.load(self.opener.open(self.root_url+"next_deposition_number/B"))
+            self.number = jsonpickle.decode(self.opener.open(self.root_url+"next_deposition_number/B").read())
         data = {"number": self.number,
                 "carrier": self.carrier,
                 "operator": connection.primary_keys["users"][self.operator],
