@@ -61,12 +61,12 @@ class ChantalConnection(object):
         if is_pickled:
             return pickle.load(response)
         else:
-            logging.error("Resonse was not in pickle format.  Probably failed validation.")
+            logging.error("Resonse was not in JSON format.  Probably failed validation.")
             text = response.read()
             logfile = open("chantal_remote.html", "wb")
             logfile.write(text)
             logfile.close()
-            raise ResponseError("Response was not in pickle format!")
+            raise ResponseError("Response was not in JSON format!")
 
     def login(self, username, password):
         self.username = username
