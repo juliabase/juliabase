@@ -209,8 +209,18 @@ class FormSet(object):
 
         :type query_dict: dict mapping unicode to unicode
         """
-        def read_layers_and_channels():
-            layers = self.deposition.layers.all()
+        def build_layer_and_channel_forms(deposition):
+            u"""Construct the layer and channel forms for the given deposition
+            according to the data currently stored in the database.  Note that
+            this method writes its products directly into the instance.
+
+            :Parameters:
+              - `deposition`: the 6-chamber deposition for which the layer and
+                channel forms should be generated
+
+            :type deposition: `models.SixChamberDeposition`
+            """
+            layers = deposition.layers.all()
             self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer)
                                 for layer_index, layer in enumerate(layers)]
             self.channel_form_lists = []
@@ -230,13 +240,13 @@ class FormSet(object):
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 deposition = copy_from_query.all()[0]
                 self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, deposition=None)
-                self.layer_forms, self.channel_form_lists = read_layers_and_channels(deposition)
+                build_layer_and_channel_forms(deposition)
         if not self.deposition_form:
             if self.deposition:
                 # Normal edit of existing deposition
                 self.deposition_form = DepositionForm(self.user, instance=self.deposition)
                 self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
-                self.layer_forms, self.channel_form_lists = self.from_database(self.deposition)
+                build_layer_and_channel_forms(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(self.user, initial={"number": utils.get_next_deposition_number("B"),
