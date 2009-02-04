@@ -236,7 +236,7 @@ class FormSet(object):
                 # Normal edit of existing deposition
                 self.deposition_form = DepositionForm(self.user, instance=self.deposition)
                 self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
-                self.layer_forms, self.channel_form_lists = forms_from_database(self.deposition)
+                self.layer_forms, self.channel_form_lists = self.from_database(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(self.user, initial={"number": utils.get_next_deposition_number("B"),
