@@ -140,15 +140,29 @@ class Layer(models.Model):
     for example `views.six_chamber_deposition.change_structure`, after ``if
     my_layer:``.)
 
+    Note that the above is slightly untrue for cluster tool layers because they
+    must be polymorphic.  There, I need a *concret* base class for all layer
+    models, derived from this one.  However, I consider this a rim case.  But
+    this is debatable: Maybe it's cleaner to make this class concrete.  The
+    only drawback would be that in order to access the layer attributes, one
+    would have to visit the layer instance explicitly with e.g.
+
+    ::
+
+        six_chamber_deposition.layers.all()[0].six_chamber_layer.temperature
+
     Every class derived from this model must point to their deposition with
-    ``related_name="layers"``.  See also `Deposition`.
+    ``related_name="layers"``.  See also `Deposition`.  Additionally, the
+    ``Meta`` class should contain::
+
+        class Meta(Layer.Meta):
+            unique_together = ("deposition", "number")
     """
     number = models.IntegerField(_(u"layer number"))
 
     class Meta:
         abstract = True
         ordering = ["number"]
-        unique_together = ("deposition", "number")
         verbose_name = _(u"layer")
         verbose_name_plural = _(u"layers")
 
@@ -202,7 +216,6 @@ class SixChamberLayer(Layer):
     transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
     plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
                                              help_text=_(u"in W"))
-    # FixMe:  Maybe NullBooleanField?
     plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False, null=True, blank=True)
     deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
                                                null=True, blank=True, help_text=_(u"in MHz"))
@@ -211,6 +224,7 @@ class SixChamberLayer(Layer):
     base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
 
     class Meta(Layer.Meta):
+        unique_together = ("deposition", "number")
         verbose_name = _(u"6-chamber layer")
         verbose_name_plural = _(u"6-chamber layers")
 
@@ -495,3 +509,105 @@ class SmallClusterToolDeposition(Deposition):
 
 default_location_of_deposited_samples[SmallClusterToolDeposition] = _(u"small cluster tool deposition lab")
 admin.site.register(SmallClusterToolDeposition)
+
+
+class SmallClusterToolLayer(Layer):
+    u"""Model for a layer the old, small “cluster tool”.  Note that this is the
+    common base class for the actual layer models
+    `SmallClusterToolHotwireLayer` and `SmallClusterToolPECVDLayer`.  This is
+    *not* an abstract model though because it needs to be back-referenced from
+    the deposition.  I need inheritance and polymorphism here because cluster
+    tools may have layers with very different fields.
+    """
+    deposition = models.ForeignKey(SmallClusterToolDeposition, related_name="layers", verbose_name=_(u"deposition"))
+
+    class Meta(Layer.Meta):
+        unique_together = ("deposition", "number")
+        verbose_name = _(u"small cluster tool layer")
+        verbose_name_plural = _(u"small cluster tool layers")
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"layer %(number)d of %(deposition)s") % {"number": self.number, "deposition": self.deposition}
+
+
+small_cluster_tool_wire_material_choices = (
+    ("Rhenium", "Rhenium"),
+    ("Tantal", "Tantalum"),
+    ("Tungsten", "Tungsten"),
+)
+
+class SmallClusterToolHotwireLayer(SmallClusterToolLayer):
+    u"""Model for a hotwire layer in the small cluster tool.  We have no
+    “chamber” field here because there is only one hotwire chamber anyway.
+    """
+    pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
+    time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
+    substrate_electrode_distance = \
+        models.DecimalField(_(u"substrate–electrode distance"), null=True, blank=True, max_digits=4,
+                            decimal_places=1, help_text=_(u"in mm"))
+    comments = models.TextField(_(u"comments"), blank=True)
+    transfer_in_chamber = models.CharField(_(u"transfer in the chamber"), max_length=10, default="Ar", blank=True)
+    pre_heat = models.CharField(_(u"pre-heat"), max_length=9, blank=True, help_text=_(u"format HH:MM:SS"))
+    gas_pre_heat_gas = models.CharField(_(u"gas of gas pre-heat"), max_length=10, blank=True)
+    gas_pre_heat_pressure = models.CharField(_(u"pressure of gas pre-heat"), max_length=15, blank=True,
+                                             help_text=_(u"with unit"))
+    gas_pre_heat_time = models.CharField(_(u"time of gas pre-heat"), max_length=15, blank=True,
+                                         help_text=_(u"format HH:MM:SS"))
+    heating_temperature = models.IntegerField(_(u"heating temperature"), help_text=_(u"in ℃"), null=True, blank=True)
+    transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
+    filament_temperature = models.DecimalField(_(u"filament temperature"), max_digits=5, decimal_places=2,
+                                               null=True, blank=True, help_text=_(u"in ℃"))
+    current = models.DecimalField(_(u"wire current"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                  help_text=_(u"in A"))
+    voltage = models.DecimalField(_(u"wire voltage"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                  help_text=_(u"in V"))
+    wire_material = models.CharField(_(u"wire material"), max_length=20, choices=small_cluster_tool_wire_material_choices)
+    base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
+
+    class Meta(SmallClusterToolLayer.Meta):
+        verbose_name = _(u"small cluster tool hotwire layer")
+        verbose_name_plural = _(u"small cluster tool hotwire layers")
+
+admin.site.register(SmallClusterToolHotwireLayer)
+
+
+small_cluster_tool_pecvd_chamber_choices = (
+    ("#1", "#1"),
+    ("#2", "#2"),
+    ("#3", "#3"),
+    )
+
+class SmallClusterToolPECVDLayer(SmallClusterToolLayer):
+    u"""Model for a PECDV layer in the small cluster tool.
+    """
+    chamber = models.CharField(_(u"chamber"), max_length=5, choices=small_cluster_tool_pecvd_chamber_choices)
+    pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
+    time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
+    substrate_electrode_distance = \
+        models.DecimalField(_(u"substrate–electrode distance"), null=True, blank=True, max_digits=4,
+                            decimal_places=1, help_text=_(u"in mm"))
+    comments = models.TextField(_(u"comments"), blank=True)
+    transfer_in_chamber = models.CharField(_(u"transfer in the chamber"), max_length=10, default="Ar", blank=True)
+    pre_heat = models.CharField(_(u"pre-heat"), max_length=9, blank=True, help_text=_(u"format HH:MM:SS"))
+    gas_pre_heat_gas = models.CharField(_(u"gas of gas pre-heat"), max_length=10, blank=True)
+    gas_pre_heat_pressure = models.CharField(_(u"pressure of gas pre-heat"), max_length=15, blank=True,
+                                             help_text=_(u"with unit"))
+    gas_pre_heat_time = models.CharField(_(u"time of gas pre-heat"), max_length=15, blank=True,
+                                         help_text=_(u"format HH:MM:SS"))
+    heating_temperature = models.IntegerField(_(u"heating temperature"), help_text=_(u"in ℃"), null=True, blank=True)
+    transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
+    plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                             help_text=_(u"in W"))
+    plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False, null=True, blank=True)
+    deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
+                                               null=True, blank=True, help_text=_(u"in MHz"))
+    deposition_power = models.DecimalField(_(u"deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                           help_text=_(u"in W"))
+    base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)
+
+    class Meta(SmallClusterToolLayer.Meta):
+        verbose_name = _(u"small cluster tool PECVD layer")
+        verbose_name_plural = _(u"small cluster tool PECVD layers")
+
+admin.site.register(SmallClusterToolPECVDLayer)
