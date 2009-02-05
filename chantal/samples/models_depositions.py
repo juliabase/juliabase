@@ -507,7 +507,7 @@ class SmallClusterToolDeposition(Deposition):
         _ = ugettext
         return django.core.urlresolvers.reverse("add_small_cluster_tool_deposition")
 
-default_location_of_deposited_samples[SmallClusterToolDeposition] = _(u"small cluster tool deposition lab")
+default_location_of_deposited_samples[SmallClusterToolDeposition] = _(u"large-area deposition lab")
 admin.site.register(SmallClusterToolDeposition)
 
 

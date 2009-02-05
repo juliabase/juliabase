@@ -160,7 +160,7 @@ Finally, with
 ::
 
     default_location_of_deposited_samples[SmallClusterToolDeposition] = \
-            _(u"small cluster tool deposition lab")
+            _(u"large-area deposition lab")
     admin.site.register(SmallClusterToolDeposition)
 
 I declare that the default sample location for samples deposited in the small
