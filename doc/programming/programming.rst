@@ -21,7 +21,6 @@ All variables and source code comments should be in English.
 .. _`PEP 8`: http://www.python.org/dev/peps/pep-0008/
 .. _`Django coding guidelines`: http://docs.djangoproject.com/en/dev/internals/contributing/?from=olddocs#coding-style
 
-
 .. note::
 
    I skip all docstrings in the code examples in this document because
@@ -31,6 +30,13 @@ All variables and source code comments should be in English.
    modifications.
 
 .. _`ReST format`: http://epydoc.sourceforge.net/manual-othermarkup.html
+
+Internationalisation is a very important point in Chantal.  All strings exposed
+to the user should be marked as translatable by putting them in ``_(u"...")``
+unless you have very good reason not to do so (e.g. for some proper names).
+Note that in code which is executed at module load time (e.g. model and form
+fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
+methods which are executed on each request, it should be ``ugettext``.
 
 
 Writing a deposition module
@@ -192,6 +198,52 @@ The hotwire layer model
 
 I'll now show the addition of the Layer model.  Since we have two, I only show
 the *hotwire* layer.  The PECVD is not much different.
+
+First, for some models, you need so-called “choices” tuples.  For hotwire
+layers, this is only one, namely for the wire material::
+
+    small_cluster_tool_wire_material_choices = (
+	("Rhenium", _("Rhenium")),
+	("Tantal", _("Tantalum")),
+	("Tungsten", _("Tungsten")),
+    )
+
+Put these “choices” tuples right before the respective model class.  See the
+Django documentation for more about this.  However, I'd like to point out that
+very often you have to make the second item translatable by putting it in
+``_(...)``.
+
+Now for the fields::
+
+    class SmallClusterToolHotwireLayer(SmallClusterToolLayer):
+	pressure = models.CharField(_(u"deposition pressure"), max_length=15,
+                                    help_text=_(u"with unit"), blank=True)
+	time = models.CharField(_(u"deposition time"), max_length=9,
+                                help_text=_(u"format HH:MM:SS"), blank=True)
+	substrate_electrode_distance = \
+	    models.DecimalField(_(u"substrate–electrode distance"),
+                                null=True, blank=True, max_digits=4,
+				decimal_places=1, help_text=_(u"in mm"))
+	comments = models.TextField(_(u"comments"), blank=True)
+        ...
+
+As you can see, every field starts with its name, marked as translatable.
+Optional text fields just have a ``blank=True`` in their parameter list.
+
+The rest is standard.
+
+::
+
+	class Meta(SmallClusterToolLayer.Meta):
+	    verbose_name = _(u"small cluster tool hotwire layer")
+	    verbose_name_plural = _(u"small cluster tool hotwire layers")
+
+    admin.site.register(SmallClusterToolHotwireLayer)
+
+Adds the singular/plural name of this model to the model (also for
+internationalisation), and register the model on the admin pages.
+
+And that's it.  The models are done now.
 
 
 Glossary

@@ -532,9 +532,9 @@ class SmallClusterToolLayer(Layer):
 
 
 small_cluster_tool_wire_material_choices = (
-    ("Rhenium", "Rhenium"),
-    ("Tantal", "Tantalum"),
-    ("Tungsten", "Tungsten"),
+    ("Rhenium", _("Rhenium")),
+    ("Tantal", _("Tantalum")),
+    ("Tungsten", _("Tungsten")),
 )
 
 class SmallClusterToolHotwireLayer(SmallClusterToolLayer):
