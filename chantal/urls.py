@@ -80,6 +80,13 @@ urlpatterns = patterns("",
                            "samples.views.large_area_deposition.edit", name="edit_large-area_deposition"),
                        url(r"^large-area_depositions/(?P<deposition_number>.+)", "samples.views.large_area_deposition.show"),
 
+                       url(r"^small_cluster_tool_depositions/add/$", "samples.views.small_cluster_tool_deposition.edit",
+                           {"deposition_number": None}, "add_small_cluster_tool_deposition"),
+                       url(r"^small_cluster_tool_depositions/(?P<deposition_number>.+)/edit/$",
+                           "samples.views.small_cluster_tool_deposition.edit", name="edit_small_cluster_tool_deposition"),
+                       (r"^small_cluster_tool_depositions/(?P<deposition_number>.+)",
+                        "samples.views.small_cluster_tool_deposition.show"),
+
                        (r"^resplit/(?P<old_split_id>.+)", "samples.views.split_and_rename.split_and_rename"),
                        (r"^login$", "django.contrib.auth.views.login", {"template_name": "login.html"}),
                        (r"^logout$", "django.contrib.auth.views.logout", {"template_name": "logout.html"}),

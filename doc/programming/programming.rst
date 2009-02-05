@@ -246,6 +246,34 @@ internationalisation), and register the model on the admin pages.
 And that's it.  The models are done now.
 
 
+Creating the URLs
+---------------------
+
+The next work is done in ``urls.py``.  This stap is fairly simple.  You just
+have to copy-n-paste the URLs from an apparatus which is sufficiently closely
+retated to yours and substitute the names.  For the small cluster tool, we
+get::
+
+    url(r"^small_cluster_tool_depositions/add/$",
+        "samples.views.small_cluster_tool_deposition.edit",
+	{"deposition_number": None}, "add_small_cluster_tool_deposition"),
+    url(r"^small_cluster_tool_depositions/(?P<deposition_number>.+)/edit/$",
+	"samples.views.small_cluster_tool_deposition.edit", 
+        name="edit_small_cluster_tool_deposition"),
+    (r"^small_cluster_tool_depositions/(?P<deposition_number>.+)",
+     "samples.views.small_cluster_tool_deposition.show"),
+
+I took this from the 6-chamber deposition and wrote the new names into it.  If
+you also want to proved a lay notebook, you have to append::
+
+    url(r"^small_cluster_tool_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
+	"samples.views.lab_notebook.export", {"process_name": "SmallClusterToolDeposition"},
+	"export_lab_notebook_SmallClusterToolDeposition"),
+    url(r"^small_cluster_tool_depositions/lab_notebook/(?P<year_and_month>.*)",
+	"samples.views.lab_notebook.show", {"process_name": "SmallClusterToolDeposition"},
+	"lab_notebook_SmallClusterToolDeposition"),
+
+
 Glossary
 ===========
 
