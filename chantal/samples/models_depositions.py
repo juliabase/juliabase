@@ -543,9 +543,8 @@ class SmallClusterToolHotwireLayer(SmallClusterToolLayer):
     """
     pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
     time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
-    substrate_electrode_distance = \
-        models.DecimalField(_(u"substrate–electrode distance"), null=True, blank=True, max_digits=4,
-                            decimal_places=1, help_text=_(u"in mm"))
+    substrate_wire_distance = models.DecimalField(_(u"substrate–wire distance"), null=True, blank=True, max_digits=4,
+                                                  decimal_places=1, help_text=_(u"in mm"))
     comments = models.TextField(_(u"comments"), blank=True)
     transfer_in_chamber = models.CharField(_(u"transfer in the chamber"), max_length=10, default="Ar", blank=True)
     pre_heat = models.CharField(_(u"pre-heat"), max_length=9, blank=True, help_text=_(u"format HH:MM:SS"))
