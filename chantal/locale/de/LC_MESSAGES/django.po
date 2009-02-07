@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-05 11:57+0100\n"
-"PO-Revision-Date: 2009-02-05 11:58+0100\n"
+"POT-Creation-Date: 2009-02-07 16:28+0100\n"
+"PO-Revision-Date: 2009-02-07 16:28+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -589,6 +589,9 @@ msgstr "Tantal"
 
 msgid "Tungsten"
 msgstr "Wolfram"
+
+msgid "substrate–wire distance"
+msgstr "Abstand Substrat–Draht"
 
 msgid "filament temperature"
 msgstr "Filament-Temperatur"
@@ -1646,6 +1649,22 @@ msgstr "6-Kammer-Deposition „%s“"
 
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
+
+msgid "hotwire"
+msgstr "Hotwire"
+
+msgid "PECVD"
+msgstr "PECVD"
+
+msgid "Layer to be added"
+msgstr "Schicht, die hinzugefügt werden soll"
+
+#, python-format
+msgid "Small cluster tool deposition “%s”"
+msgstr "Kleine-Cluster-Tool-Depositionen „%s“"
+
+msgid "New small cluster tool deposition"
+msgstr "Neue Kleine-Cluster-Tool-Deposition"
 
 msgid "Old sample name"
 msgstr "Alter Probenname"

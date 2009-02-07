@@ -6,6 +6,17 @@ tool deposition system.  This includes adding, editing, and viewing such
 processes.
 """
 
+import datetime
+from django.template import RequestContext
+from django.shortcuts import render_to_response, get_object_or_404
+from django import forms
+from django.forms.util import ValidationError
+from django.contrib.auth.decorators import login_required
+from chantal.samples import models, permissions
+from chantal.samples.views import utils, feed_utils, form_utils
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
+
+
 class RemoveFromMySamplesForm(forms.Form):
     u"""Form class for one single checkbox for removing deposited samples from
     “My Samples”.
@@ -83,7 +94,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = SmallClusterToolDeposition
+        model = models.SmallClusterToolDeposition
 
 
 class HotwireLayerForm(forms.ModelForm):
@@ -211,7 +222,7 @@ class ChangeLayerForm(forms.Form):
     duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
     move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
-                                        choices=(("", _(9*u"-")), ("up", _(u"up")), ("down", _(u"down"))))
+                                        choices=(("", _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
 
     def clean(self):
         _ = ugettext
