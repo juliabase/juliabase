@@ -385,6 +385,15 @@ The ordering of the layers is simply determined by their ordering in the
 webpage's form set.  I add the layer number in the ``save_to_database`` method.
 
 
+The view functions
+......................
+
+You need an ``edit`` and a ``show`` view function.  They are really
+straightforward.  Just copy them from another deposition module and modify them
+slightly.  (Actually, this code duplication is a candidate for a common base
+function but I'd like to implement more deposition systems just to be sure.)
+
+
 Glossary
 ===========
 

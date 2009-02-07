@@ -578,3 +578,73 @@ class FormSet(object):
         return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
                 "add_my_layer": self.add_my_layer_form, "remove_from_my_samples": self.remove_from_my_samples_form,
                 "edit_description": self.edit_description_form}
+
+
+@login_required
+def edit(request, deposition_number):
+    u"""Central view for editing, creating, and duplicating small cluster tool
+    depositions.  If `deposition_number` is ``None``, a new depositon is
+    created (possibly by duplicating another one).
+
+    :Parameters:
+      - `request`: the HTTP request object
+      - `deposition_number`: the number (=name) or the deposition
+
+    :type request: ``QueryDict``
+    :type deposition_number: unicode or ``NoneType``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    form_set = FormSet(request, deposition_number)
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, SmallClusterToolDeposition)
+    if request.method == "POST":
+        form_set.from_post_data(request.POST)
+        deposition = form_set.save_to_database()
+        if deposition:
+            if deposition_number:
+                return utils.successful_response(
+                    request, _(u"Deposition %s was successfully changed in the database.") % deposition.number)
+            else:
+                return utils.successful_response(
+                    request, _(u"Deposition %s was successfully added to the database.") % deposition.number,
+                    "samples.views.split_after_deposition.split_and_rename_after_deposition",
+                    {"deposition_number": deposition.number},
+                    forced=True, remote_client_response=deposition.number)
+    else:
+        form_set.from_database(utils.parse_query_string(request))
+    title = _(u"Small cluster tool deposition “%s”") % deposition_number if deposition_number \
+        else _(u"New small cluster tool deposition")
+    context_dict = {"title": title}
+    context_dict.update(form_set.get_context_dict())
+    return render_to_response("edit_small_cluster_tool_deposition.html", context_dict,
+                              context_instance=RequestContext(request))
+
+
+@login_required
+def show(request, deposition_number):
+    u"""Show an existing small cluster tool deposision.  You must be a
+    small-cluster-tool operator *or* be able to view one of the samples
+    affected by this deposition in order to be allowed to view it.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `deposition_number`: the number (=name) or the deposition
+
+    :type request: ``HttpRequest``
+    :type deposition_number: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    deposition = get_object_or_404(SmallClusterToolDeposition, number=deposition_number)
+    permissions.assert_can_view_physical_process(request.user, deposition)
+    samples = deposition.samples
+    template_context = {"title": _(u"Small cluster tool deposition “%s”") % deposition.number, "samples": samples.all(),
+                        "process": deposition}
+    template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
+    return render_to_response("show_process.html", template_context, context_instance=RequestContext(request))
