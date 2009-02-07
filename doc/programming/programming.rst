@@ -328,11 +328,20 @@ or removing a layer::
 	_ = ugettext_lazy
 	duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
 	remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
+	move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
+					    choices=(("", _(9*u"-")), ("up", _(u"up")), ("down", _(u"down"))))
 
 	def clean(self):
 	    _ = ugettext
-	    if self.cleaned_data["duplicate_this_layer"] and self.cleaned_data["remove_this_layer"]:
-		raise ValidationError(_(u"You can't duplicate and remove a layer at the same time."))
+	    operations = 0
+	    if self.cleaned_data["duplicate_this_layer"]:
+		operations += 1
+	    if self.cleaned_data["remove_this_layer"]:
+		operations += 1
+	    if self.cleaned_data.get("move_this_layer"):
+		operations += 1
+	    if operations > 1:
+		raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
 	    return self.cleaned_data
 
 
@@ -356,7 +365,7 @@ mentioned ``layer_type``::
     class LayerForm(forms.ModelForm):
         layer_type = forms.CharField()
 
-I cannot explain all modification that are necessary but exemplarity, have a
+I cannot explain all modification that are necessary but exemplarily, have a
 look at the auxiliary routine ``build_layer_and_channel_forms``::
 
     def build_layer_and_channel_forms(deposition):
@@ -370,6 +379,10 @@ look at the auxiliary routine ``build_layer_and_channel_forms``::
                                         instance=layer.smallclustertoolpecvdlayer))
 
 Here, you can see how I distinguish between the two layer types.
+
+Furthermore, it's important that I don't let the user enter a layer number.
+The ordering of the layers is simply determined by their ordering in the
+webpage's form set.  I add the layer number in the ``save_to_database`` method.
 
 
 Glossary

@@ -49,7 +49,11 @@ class AddLayersForm(forms.Form):
             else:
                 layer_query = deposition.layers.filter(number=layer_number)
                 if layer_query.count() == 1:
-                    return layer_query.values()[0]
+                    result = layer_query.values()[0]
+                    layer = layer_query.all()[0]
+                    result["layer_type"] = \
+                        {"layer_type": "hotwire" if hasattr(layer, "smallclustertoolhotwirelayer") else "PECVD"}
+                    return result
 
     
 class DepositionForm(form_utils.ProcessForm):
@@ -136,7 +140,7 @@ class HotwireLayerForm(forms.ModelForm):
 
     class Meta:
         model = models.SmallClusterToolHotwireLayer
-        exclude = ("deposition",)
+        exclude = ("deposition", "number")
 
 
 class PECVDLayerForm(forms.ModelForm):
@@ -196,21 +200,30 @@ class PECVDLayerForm(forms.ModelForm):
 
     class Meta:
         model = models.SmallClusterToolPECVDLayer
-        exclude = ("deposition",)
+        exclude = ("deposition", "number")
 
 
 class ChangeLayerForm(forms.Form):
     u"""Form for manipulating a layer.  Duplicating it (appending the
-    duplicate), and deleting it.
+    duplicate), deleting it, and moving it up- or downwards.
     """
     _ = ugettext_lazy
     duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
+    move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
+                                        choices=(("", _(9*u"-")), ("up", _(u"up")), ("down", _(u"down"))))
 
     def clean(self):
         _ = ugettext
-        if self.cleaned_data["duplicate_this_layer"] and self.cleaned_data["remove_this_layer"]:
-            raise ValidationError(_(u"You can't duplicate and remove a layer at the same time."))
+        operations = 0
+        if self.cleaned_data["duplicate_this_layer"]:
+            operations += 1
+        if self.cleaned_data["remove_this_layer"]:
+            operations += 1
+        if self.cleaned_data.get("move_this_layer"):
+            operations += 1
+        if operations > 1:
+            raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
         return self.cleaned_data
 
 
@@ -407,15 +420,20 @@ class FormSet(object):
 
         # Add layers
         if self.add_layers_form.is_valid():
-            for i in range(self.add_layers_form.cleaned_data["number_of_layers_to_add"]):
-                new_layers.append(("new", {}))
+            new_layer_type = self.add_layers_form.cleaned_data["layer_to_be_added"]
+            if new_layer_type == "hotwire":
+                new_layers.append(("new hotwire", {}))
                 structure_changed = True
+            elif new_layer_type == "PECVD":
+                new_layers.append(("new PECVD", {}))
+                structure_changed = True
+
             # Add MyLayer
             my_layer_data = self.add_layers_form.cleaned_data["my_layer_to_be_added"]
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition)
+            self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
 
         # Delete layers
         for i in range(len(new_layers)-1, -1, -1):
@@ -426,54 +444,38 @@ class FormSet(object):
                     structure_changed = True
 
         # Apply changes
-        next_full_number = None
-        if self.deposition:
-            next_full_number = self.deposition.number[:4] + utils.three_digits(self.deposition.layers.all()[0].number)
-        elif self.deposition_form.is_valid():
-            match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
-            if match:
-                number_of_first_layer = int(match.group("number")) - (len(self.layer_forms) - 1 if self.layer_forms else 0)
-                next_full_number = match.group("prefix") + utils.three_digits(number_of_first_layer)
-        if not next_full_number:
-            next_full_number = utils.get_next_deposition_number("L")
-        deposition_number_match = self.deposition_number_pattern.match(next_full_number)
-        next_layer_number = int(deposition_number_match.group("number"))
         old_prefixes = [int(layer_form.prefix) for layer_form in self.layer_forms if layer_form.is_bound]
         next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
         self.layer_forms = []
         self.change_layer_forms = []
         for new_layer in new_layers:
             if new_layer[0] == "original":
-                post_data = self.post_data.copy()
-                prefix = new_layer[1].prefix
-                post_data[prefix+"-number"] = utils.three_digits(next_layer_number)
-                next_layer_number += 1
                 self.layer_forms.append(LayerForm(post_data, prefix=prefix))
                 self.change_layer_forms.append(new_layer[2])
             elif new_layer[0] == "duplicate":
                 original_layer = new_layer[1]
                 if original_layer.is_valid():
                     layer_data = original_layer.cleaned_data
-                    layer_data["number"] = utils.three_digits(next_layer_number)
-                    next_layer_number += 1
                     self.layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
                     self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
+                # New MyLayer
                 initial = new_layer[1]
-                initial["number"] = utils.three_digits(next_layer_number)
-                self.layer_forms.append(LayerForm(initial=initial, prefix=str(next_prefix)))
+                FormClass = HotwireLayerForm if initial.layer_type == "hotwire" else PECVDLayerForm
+                self.layer_forms.append(FormClass(initial=initial, prefix=str(next_prefix)))
                 self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
-                next_layer_number += 1
+                next_prefix += 1
+            elif new_layer[0] == "new hotwire":
+                self.layer_forms.append(HotwireLayerForm(prefix=str(next_prefix)))
+                self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
+                next_prefix += 1
+            elif new_layer[0] == "new PECVD":
+                self.layer_forms.append(PECVDLayerForm(prefix=str(next_prefix)))
+                self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1
             else:
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
-        # Finally, adjust the deposition number to the new number of layers.
-        post_data = self.post_data.copy()
-        post_data["number"] = deposition_number_match.group("prefix") + \
-            utils.three_digits(next_layer_number - 1 if self.layer_forms else next_layer_number)
-        self.deposition_form = DepositionForm(self.user, post_data, instance=self.deposition)
-
         return structure_changed
 
     def __is_all_valid(self):
@@ -496,14 +498,12 @@ class FormSet(object):
         # Don't use a generator expression here because I want to call ``is_valid``
         # for every form
         valid = valid and all([layer_form.is_valid() for layer_form in self.layer_forms])
-        for forms in self.channel_form_lists:
-            valid = valid and all([channel_form.is_valid() for channel_form in forms])
         return valid
 
     def __is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
-        database.  For example, no layer number must occur twice, and the
-        deposition number must not exist within the database.
+        database.  For example, the deposition number must not exist within the
+        database.
 
         :Return:
           whether all forms are consistent with each other and the database
@@ -512,6 +512,8 @@ class FormSet(object):
         """
         referentially_valid = True
         if self.deposition_form.is_valid():
+            # FixMe: Doesn't the ModelForm check already for duplicates here?
+            # (Or does overriding "clean_deposition_number" spoil it?)
             if (not self.deposition or self.deposition.number != self.deposition_form.cleaned_data["number"]) and \
                     models.Deposition.objects.filter(number=self.deposition_form.cleaned_data["number"]).count():
                 form_utils.append_error(self.deposition_form, _(u"This deposition number exists already."))
@@ -528,28 +530,12 @@ class FormSet(object):
         if not self.layer_forms:
             form_utils.append_error(self.deposition_form, _(u"No layers given."))
             referentially_valid = False
-        layer_numbers = set()
-        for layer_form, channel_forms in zip(self.layer_forms, self.channel_form_lists):
-            if layer_form.is_valid():
-                if layer_form.cleaned_data["number"] in layer_numbers:
-                    form_utils.append_error(layer_form, _(u"Number is a duplicate."))
-                    referentially_valid = False
-                else:
-                    layer_numbers.add(layer_form.cleaned_data["number"])
-            channel_numbers = set()
-            for channel_form in channel_forms:
-                if channel_form.is_valid():
-                    if channel_form.cleaned_data["number"] in channel_numbers:
-                        form_utils.append_error(channel_form, _(u"Number is a duplicate."))
-                        referentially_valid = False
-                    else:
-                        channel_numbers.add(channel_form.cleaned_data["number"])
         return referentially_valid
 
     def save_to_database(self):
-        u"""Save the forms to the database.  Only the deposition is just updated if
-        it already existed.  However, layers and channels are completely deleted
-        and re-constructed from scratch.
+        u"""Save the forms to the database.  Only the deposition is just
+        updated if it already existed.  However, the layers are completely
+        deleted and re-constructed from scratch.
 
         Additionally, this method removed deposited samples from „My Samples“
         if appropriate, and it generates the feed entries.
@@ -557,7 +543,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `models.SixChamberDeposition` or ``NoneType``
+        :rtype: `models.SmallClusterToolDeposition` or ``NoneType``
         """
         database_ready = not self.__change_structure() if not self.remote_client else True
         database_ready = self.__is_all_valid() and database_ready
@@ -566,15 +552,12 @@ class FormSet(object):
             deposition = self.deposition_form.save()
             if self.samples_form.is_bound:
                 deposition.samples = self.samples_form.cleaned_data["sample_list"]
-            deposition.layers.all().delete()  # deletes channels, too
-            for layer_form, channel_forms in zip(self.layer_forms, self.channel_form_lists):
+            deposition.layers.all().delete()
+            for i, layer_form in enumerate(self.layer_forms):
                 layer = layer_form.save(commit=False)
+                layer.number = i + 1
                 layer.deposition = deposition
                 layer.save()
-                for channel_form in channel_forms:
-                    channel = channel_form.save(commit=False)
-                    channel.layer = layer
-                    channel.save()
             if self.remove_from_my_samples_form and \
                     self.remove_from_my_samples_form.cleaned_data["remove_deposited_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), self.user_details)
@@ -592,7 +575,6 @@ class FormSet(object):
 
         :rtype: dict mapping str to various types
         """
-        return {"deposition": self.deposition_form, "samples": self.samples_form,
-                "layers_and_channels": zip(self.layer_forms, self.channel_form_lists),
+        return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
                 "add_my_layer": self.add_my_layer_form, "remove_from_my_samples": self.remove_from_my_samples_form,
                 "edit_description": self.edit_description_form}
