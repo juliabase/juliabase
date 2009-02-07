@@ -239,20 +239,18 @@ class FormSet(object):
                 deposition_data["number"] = utils.get_next_deposition_number("B")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 deposition = copy_from_query.all()[0]
-                self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, deposition=None)
                 build_layer_and_channel_forms(deposition)
         if not self.deposition_form:
             if self.deposition:
                 # Normal edit of existing deposition
                 self.deposition_form = DepositionForm(self.user, instance=self.deposition)
-                self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
                 build_layer_and_channel_forms(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(self.user, initial={"number": utils.get_next_deposition_number("B"),
                                                                           "timestamp": datetime.datetime.now()})
-                self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, deposition=None)
                 self.layer_forms, self.channel_form_lists = [], []
+        self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
         self.remove_from_my_samples_form = RemoveFromMySamplesForm() if not self.deposition else None
         self.edit_description_form = form_utils.EditDescriptionForm() if self.deposition else None
         self.add_my_layer_form = AddMyLayerForm(user_details=self.user_details, prefix="structural-change")
