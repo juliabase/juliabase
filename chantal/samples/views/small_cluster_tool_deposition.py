@@ -363,7 +363,7 @@ class FormSet(object):
                                         "number": utils.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.SmallClusteToolDeposition)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm()
@@ -587,7 +587,7 @@ class FormSet(object):
         :rtype: dict mapping str to various types
         """
         return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
-                "add_my_layer": self.add_my_layer_form, "remove_from_my_samples": self.remove_from_my_samples_form,
+                "add_layers": self.add_layers_form, "remove_from_my_samples": self.remove_from_my_samples_form,
                 "edit_description": self.edit_description_form}
 
 
@@ -610,7 +610,7 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     form_set = FormSet(request, deposition_number)
-    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, SmallClusterToolDeposition)
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, models.SmallClusterToolDeposition)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
@@ -652,7 +652,7 @@ def show(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    deposition = get_object_or_404(SmallClusterToolDeposition, number=deposition_number)
+    deposition = get_object_or_404(models.SmallClusterToolDeposition, number=deposition_number)
     permissions.assert_can_view_physical_process(request.user, deposition)
     samples = deposition.samples
     template_context = {"title": _(u"Small cluster tool deposition “%s”") % deposition.number, "samples": samples.all(),
