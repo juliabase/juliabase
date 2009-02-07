@@ -17,8 +17,8 @@
     <tr>
       {% input_field deposition.number %}
       <td rowspan="4" style="padding-left: 2em">
-        <label for="id_{{ deposition.sample_list.html_name }}" style="margin-right: 0.5em"
-                             >{{ deposition.sample_list.label }}:</label>{{ deposition.sample_list }}</td>
+        <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
+                             >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
     </tr>
     <tr>
       {% input_field deposition.carrier %}
@@ -36,11 +36,12 @@
        ><br/>{% markdown_hint %}<br/>{{ deposition.comments }}
   </p>
 
-  {% if layers_and_channels %}
+  {% if layers_and_change_layers %}
     <table width="100%">
-      {% for layer, channels in layers_and_channels %}
+      {% for layer, change_layer in layers_and_change_layers %}
         <tr>
           <td style="border-style: solid; border-color: black; border-width: thin">
+            {{ layer.layer_type }}
             <table width="100%">
               <tr>
                 <td>
@@ -50,43 +51,61 @@
                       <td colspan="2" rowspan="3" style="vertical-align: top">
                         <table>
                           <tr>
-                            <td style="vertical-align: top; text-align: right">
-                              <div><label for="id_{{ layer.number.html_name }}">{{ layer.number.label }}:</label></div>
-                              <div 
-                                style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
-                                       margin-left: 0.3em">{{ layer.number }}</div>
+                            <td style="vertical-align: top; text-align: left">
+                              <div>
+                                <label for="id_{{ forloop.counter0 }}-number">{{ _("layer number")|capfirst }}:</label>
+                              </div>
+                              <div style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                          margin-left: 0.3em">
+                                <input type="text" readonly="readonly" value="{{ forloop.counter }}"
+                                       id="id_{{ forloop.counter0 }}-number"
+                                       style="text-align: center; font-size: xx-large" size="2"/>
+                              </div>
                             </td>
                             <td style="vertical-align: top; padding-left: 2em">
-                              <label for="id_{{ layer.chamber.html_name }}">{{ layer.chamber.label }}:</label><span 
-                                class="value">{{ layer.chamber }}</span>
+                              {% ifequal layer.type "PECVD" %}
+                                <label for="id_{{ layer.chamber.html_name }}">{{ layer.chamber.label }}:</label><span 
+                                  class="value">{{ layer.chamber }}</span>
+                              {% else %}
+                                 
+                              {% endifequal %}
                             </td>
                           </tr>
-                          <tr>
-                            <td colspan="2">
-                              <p><input type="checkbox"
-                                        id="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
-                                        name="structural-change-duplicate-layerindex-{{ forloop.counter0 }}"/>
-                                <label for="id_structural-change-duplicate-layerindex-{{ forloop.counter0 }}"
-                                       >{% trans 'duplicate this layer' %}</label><br/>
-                              <input type="checkbox"
-                                        id="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
-                                        name="structural-change-delete-layerindex-{{ forloop.counter0 }}"/>
-                                <label for="id_structural-change-delete-layerindex-{{ forloop.counter0 }}"
-                                       >{% trans 'delete this layer' %}</label></p>
-                            </td>
-                          </tr>
+                          <tr><td colspan="2"><table width="100%">
+                                <tr>
+                                  {% input_field change_layer.duplicate_this_layer %}
+                                </tr>
+                                <tr>
+                                  {% input_field change_layer.remove_this_layer %}
+                                </tr>
+                                <tr>
+                                  {% input_field change_layer.move_this_layer %}
+                                </tr>
+                          </table></td></tr>
                         </table>
                       </td>
                       {% input_field layer.transfer_in_chamber %}
-                      {% input_field layer.plasma_start_power %}
+                      {% ifequal layer.type "PECVD" %}
+                        {% input_field layer.plasma_start_power %}
+                      {% else %}
+                        {% input_field layer.wire_material %}
+                      {% endifequal %}
                     </tr>
                     <tr>
                       {% input_field layer.pre_heat %}
-                      {% input_field layer.plasma_start_with_carrier %}
+                      {% ifequal layer.type "PECVD" %}
+                        {% input_field layer.plasma_start_with_carrier %}
+                      {% else %}
+                        {% input_field layer.voltage %}
+                      {% endifequal %}
                     </tr>
                     <tr>
                       {% input_field layer.heating_temperature %}
-                      {% input_field layer.deposition_frequency %}
+                      {% ifequal layer.type "PECVD" %}
+                        {% input_field layer.deposition_frequency %}
+                      {% else %}
+                        {% input_field layer.filament_temperature %}
+                      {% endifequal %}
                     </tr>
                     <tr>
                       {% input_field layer.gas_pre_heat_gas %}
@@ -96,11 +115,19 @@
                     <tr>
                       {% input_field layer.pressure %}
                       {% input_field layer.transfer_out_of_chamber %}
-                      {% input_field layer.deposition_power %}
+                      {% ifequal layer.type "PECVD" %}
+                        {% input_field layer.deposition_power %}
+                      {% else %}
+                        {% input_field layer.current %}
+                      {% endifequal %}
                     </tr>
                     <tr>
                       {% input_field layer.time %}
-                      {% input_field layer.substrate_electrode_distance %}
+                      {% ifequal layer.type "PECVD" %}
+                        {% input_field layer.substrate_electrode_distance %}
+                      {% else %}
+                        {% input_field layer.substrate_wire_distance %}
+                      {% endifequal %}
                       {% input_field layer.base_pressure %}
                     </tr>
                   </table>
@@ -160,8 +187,7 @@ name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerinde
 
   {% include "edit_description.html" %}
 
-  <p><label for="id_structural-change-add-layers">{% trans 'Number of layers to be added:' %}</label
-    > <input id="id_structural-change-add-layers" name="structural-change-add-layers" type="text" size="3"/></p>
+  <table>{{ add_layers }}</table>
   {{ add_my_layer.as_p }}
 
   {% if remove_from_my_samples %}

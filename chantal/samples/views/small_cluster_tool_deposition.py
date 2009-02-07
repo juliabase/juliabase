@@ -109,12 +109,11 @@ class HotwireLayerForm(forms.ModelForm):
         very harmless: It's only about visual appearance and numerical limits.
         """
         super(HotwireLayerForm, self).__init__(data, **kwargs)
-        self.fields["number"].widget.attrs.update({"size": "2", "style": "text-align: center; font-size: xx-large"})
+        self.type = "hotwire"
         self.fields["comments"].widget.attrs["cols"] = "30"
         for fieldname in ["pressure", "time", "substrate_wire_distance", "transfer_in_chamber", "pre_heat",
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
-                          "transfer_out_of_chamber", "filament_temperature", "current", "voltage", "wire_material",
-                          "base_pressure"]:
+                          "transfer_out_of_chamber", "filament_temperature", "current", "voltage", "base_pressure"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
         # FixMe: Min/Max values?
 
@@ -148,6 +147,7 @@ class HotwireLayerForm(forms.ModelForm):
         """
         if self.cleaned_data["layer_type"] != u"hotwire":
             raise ValidationError(u"Layer type must be “hotwire”.")
+        return self.cleaned_data["layer_type"]
 
     class Meta:
         model = models.SmallClusterToolHotwireLayer
@@ -166,7 +166,7 @@ class PECVDLayerForm(forms.ModelForm):
         very harmless: It's only about visual appearance and numerical limits.
         """
         super(PECVDLayerForm, self).__init__(data, **kwargs)
-        self.fields["number"].widget.attrs.update({"size": "2", "style": "text-align: center; font-size: xx-large"})
+        self.type = "PECVD"
         self.fields["comments"].widget.attrs["cols"] = "30"
         for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
@@ -208,6 +208,7 @@ class PECVDLayerForm(forms.ModelForm):
         """
         if self.cleaned_data["layer_type"] != u"PECVD":
             raise ValidationError(u"Layer type must be “PECVD”.")
+        return self.cleaned_data["layer_type"]
 
     class Meta:
         model = models.SmallClusterToolPECVDLayer
@@ -249,7 +250,7 @@ class FormSet(object):
     :type deposition: `models.SmallClusterToolDeposition` or ``NoneType``
     """
 
-    class LayerForm(forms.ModelForm):
+    class LayerForm(forms.Form):
         u"""Dummy form class for detecting the actual layer type.  It is used
         only in `from_post_data`."""
         layer_type = forms.CharField()
@@ -288,17 +289,16 @@ class FormSet(object):
         def get_layer_form(index):
             prefix = str(index)
             layer_form = self.LayerForm(self.post_data, prefix=prefix)
+            # PECVDLayerForm is default.  This means that I let it handle all
+            # errors.
+            LayerFormClass = PECVDLayerForm
             if layer_form.is_valid() and layer_form.cleaned_data["layer_type"] == "hotwire":
-                return HotwireLayerForm(self.post_data, prefix=prefix)
-            else:
-                # Note that all error cases (e.g. no ``layer_type`` given) also
-                # ends up here.  I let the form class handle all further
-                # errors.
-                return PECVDLayerForm(self.post_data, prefix=prefix)
+                LayerFormClass = HotwireLayerForm
+            return LayerFormClass(self.post_data, prefix=prefix)
 
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.SmallClusterToolDeposition, self.post_data)
+        self.add_layers_form = AddLayersForm(self.user_details, models.SmallClusterToolDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -363,7 +363,7 @@ class FormSet(object):
                                         "number": utils.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
+        self.add_layers_form = AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm()
@@ -444,7 +444,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
+            self.add_layers_form = AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
 
         # Delete layers
         for i in range(len(new_layers)-1, -1, -1):
@@ -461,20 +461,21 @@ class FormSet(object):
         self.change_layer_forms = []
         for new_layer in new_layers:
             if new_layer[0] == "original":
-                self.layer_forms.append(LayerForm(post_data, prefix=prefix))
+                self.layer_forms.append(new_layer[1])
                 self.change_layer_forms.append(new_layer[2])
             elif new_layer[0] == "duplicate":
                 original_layer = new_layer[1]
                 if original_layer.is_valid():
+                    LayerFormClass = HotwireLayerForm if original_layer.type == "hotwire" else PECVDLayerForm
                     layer_data = original_layer.cleaned_data
-                    self.layer_forms.append(LayerForm(initial=layer_data, prefix=str(next_prefix)))
+                    self.layer_forms.append(LayerFormClass(initial=layer_data, prefix=str(next_prefix)))
                     self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
                 # New MyLayer
                 initial = new_layer[1]
-                FormClass = HotwireLayerForm if initial.layer_type == "hotwire" else PECVDLayerForm
-                self.layer_forms.append(FormClass(initial=initial, prefix=str(next_prefix)))
+                LayerFormClass = HotwireLayerForm if initial.layer_type == "hotwire" else PECVDLayerForm
+                self.layer_forms.append(LayerFormClass(initial=initial, prefix=str(next_prefix)))
                 self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1
             elif new_layer[0] == "new hotwire":
@@ -586,7 +587,8 @@ class FormSet(object):
 
         :rtype: dict mapping str to various types
         """
-        return {"deposition": self.deposition_form, "samples": self.samples_form, "layers": self.layer_forms,
+        return {"deposition": self.deposition_form, "samples": self.samples_form,
+                "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms),
                 "add_layers": self.add_layers_form, "remove_from_my_samples": self.remove_from_my_samples_form,
                 "edit_description": self.edit_description_form}
 
