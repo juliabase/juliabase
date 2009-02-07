@@ -489,7 +489,7 @@ class FormSet(object):
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
         return structure_changed
 
-    def __is_all_valid(self):
+    def _is_all_valid(self):
         u"""Tests the “inner” validity of all forms belonging to this view.  This
         function calls the ``is_valid()`` method of all forms, even if one of them
         returns ``False`` (and makes the return value clear prematurely).
@@ -511,7 +511,7 @@ class FormSet(object):
         valid = valid and all([layer_form.is_valid() for layer_form in self.layer_forms])
         return valid
 
-    def __is_referentially_valid(self):
+    def _is_referentially_valid(self):
         u"""Test whether all forms are consistent with each other and with the
         database.  For example, the deposition number must not exist within the
         database.
@@ -556,9 +556,9 @@ class FormSet(object):
 
         :rtype: `models.SmallClusterToolDeposition` or ``NoneType``
         """
-        database_ready = not self.__change_structure() if not self.remote_client else True
-        database_ready = self.__is_all_valid() and database_ready
-        database_ready = self.__is_referentially_valid() and database_ready
+        database_ready = not self._change_structure() if not self.remote_client else True
+        database_ready = self._is_all_valid() and database_ready
+        database_ready = self._is_referentially_valid() and database_ready
         if database_ready:
             deposition = self.deposition_form.save()
             if self.samples_form.is_bound:
