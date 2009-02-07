@@ -164,8 +164,8 @@ Finally, with
     admin.site.register(SmallClusterToolDeposition)
 
 I declare that the default sample location for samples deposited in the small
-cluster tool is the “small cluster tool deposition lab”, and I register the
-model with Django's admin interface so that it can be seen and modified there.
+cluster tool is the “large-area deposition lab”, and I register the model with
+Django's admin interface so that it can be seen and modified there.
 
 
 The layer base model
@@ -249,7 +249,7 @@ And that's it.  The models are done now.
 Creating the URLs
 ---------------------
 
-The next work is done in ``urls.py``.  This stap is fairly simple.  You just
+The next work is done in ``urls.py``.  This step is fairly simple.  You just
 have to copy-n-paste the URLs from an apparatus which is sufficiently closely
 retated to yours and substitute the names.  For the small cluster tool, we
 get::
@@ -272,6 +272,104 @@ you also want to proved a lay notebook, you have to append::
     url(r"^small_cluster_tool_depositions/lab_notebook/(?P<year_and_month>.*)",
 	"samples.views.lab_notebook.show", {"process_name": "SmallClusterToolDeposition"},
 	"lab_notebook_SmallClusterToolDeposition"),
+
+
+Creating the views
+---------------------
+
+Take another view module as a guide for the new one.  In the case of the small
+cluster tool deposition system, I take the 6-chamber deposition as a guide.
+
+Try to keep the imports at the top of the file minimal.  It's best to start
+with an empty imports list and add them as needed.
+
+
+The forms
+........
+
+In contrast to non-cluster-tool modules, I need to add a custom
+``AddMyLayerForm`` class because adding a new layer is different from other
+deposition systems since you have to give the *type* of the new layer.  Thus::
+
+    new_layer_choices = (
+	("hotwire", _(u"hotwire")),
+	("PECVD", _(u"PECVD")),
+	("none", _(u"none")),
+	)
+
+    class AddLayersForm(forms.Form):
+	_ = ugettext_lazy
+	layer_to_be_added = forms.ChoiceField(
+                label=_(u"Layer to be added"), required=False, widget=forms.RadioSelect,
+		choices=new_layer_choices)
+	my_layer_to_be_added = forms.ChoiceField(
+                label=_(u"Nickname of My Layer to be added"), required=False)
+
+        ...
+
+This is not more than a modified version of the class of the same name from
+``form_utils.py``.
+
+The deposition form can largely be copied from the 6-chamber deposition.  In
+principle, this is also true for the two layer models, however, the attributes
+and validation conditions must be carefully adapted of course.  Moreover, I add
+an extra, hidden ``TextInput`` field called ``layer_type`` which saves the
+layer type when creating the HTML form, so that it can be re-constructed when
+scanning POST data::
+
+    class HotwireLayerForm(forms.ModelForm):
+	layer_type = forms.CharField(widget=forms.HiddenInput, initial=u"hotwire")
+	...
+
+Then, I need a ``ChangeLayerForm`` which contains the controls for duplicating
+or removing a layer::
+
+    class ChangeLayerForm(forms.Form):
+	_ = ugettext_lazy
+	duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
+	remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
+
+	def clean(self):
+	    _ = ugettext
+	    if self.cleaned_data["duplicate_this_layer"] and self.cleaned_data["remove_this_layer"]:
+		raise ValidationError(_(u"You can't duplicate and remove a layer at the same time."))
+	    return self.cleaned_data
+
+
+The FormSet
+...............
+
+Now we're ready to create the ``FormSet`` class which is basically a container
+for methods that are used to manage the forms.  In order to avoid being forced
+to pass all the forms and form lists to all of these routines, they are not
+functions but methods, and the forms and form lists are instance variables of
+the ``FormSet``.
+
+By and large, also the ``FormSet`` can be copied from another deposition system
+and carefully adopted.  In the case of the small cluster tool, most
+modifications are due to the prlymorphic layers.
+
+The first peculiarity is a dummy ``LayerForm`` class which is only to detect
+the layer type when constructing forms from POST data, using the above
+mentioned ``layer_type``::
+
+    class LayerForm(forms.ModelForm):
+        layer_type = forms.CharField()
+
+I cannot explain all modification that are necessary but exemplarity, have a
+look at the auxiliary routine ``build_layer_and_channel_forms``::
+
+    def build_layer_and_channel_forms(deposition):
+	self.layer_forms = []
+	for index, layer in enumerate(deposition.layers.all()):
+	    if hasattr(layer, "smallclustertoolhotwirelayer"):
+		self.layer_forms.append(HotwireLayerForm(prefix=str(index),
+                                        instance=layer.smallclustertoolhotwirelayer))
+	    else:
+		self.layer_forms.append(PECVDLayerForm(prefix=str(index),
+                                        instance=layer.smallclustertoolpecvdlayer))
+
+Here, you can see how I distinguish between the two layer types.
 
 
 Glossary
