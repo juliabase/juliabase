@@ -182,6 +182,29 @@ class Layer(models.Model):
         return csv_node
 
 
+class AllGases(models.Model):
+    tmb = models.DecimalField(u"TMB", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+
+    sih4 = models.DecimalField(u"SiH₄", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    h2 = models.DecimalField(u"H₂", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    ph3_sih4 = models.DecimalField(_(u"2% PH₃ in SiH₄"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"),
+                                   null=True, blank=True)
+    tmb_he = models.DecimalField(_(u"1% TMB in He"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"),
+                                 null=True, blank=True)
+    b2h6_h2 = models.DecimalField(_(u"5ppm B₂H₆ in H₂"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"),
+                                  null=True, blank=True)
+    ch4 = models.DecimalField(u"CH₄", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    co2 = models.DecimalField(u"CO₂", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    geh4 = models.DecimalField(u"GeH₄", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    ar = models.DecimalField(u"Ar", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    si2h6 = models.DecimalField(u"Si₂H₆", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
+    ph3_h2 = models.DecimalField(_(u"10 ppm PH₃ in H₂"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"),
+                                 null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
 six_chamber_chamber_choices = (
     ("#1", "#1"),
     ("#2", "#2"),
@@ -537,7 +560,7 @@ small_cluster_tool_wire_material_choices = (
     ("Tungsten", _("Tungsten")),
 )
 
-class SmallClusterToolHotwireLayer(SmallClusterToolLayer):
+class SmallClusterToolHotwireLayer(SmallClusterToolLayer, AllGases):
     u"""Model for a hotwire layer in the small cluster tool.  We have no
     “chamber” field here because there is only one hotwire chamber anyway.
     """
@@ -577,7 +600,7 @@ small_cluster_tool_pecvd_chamber_choices = (
     ("#3", "#3"),
     )
 
-class SmallClusterToolPECVDLayer(SmallClusterToolLayer):
+class SmallClusterToolPECVDLayer(SmallClusterToolLayer, AllGases):
     u"""Model for a PECDV layer in the small cluster tool.
     """
     chamber = models.CharField(_(u"chamber"), max_length=5, choices=small_cluster_tool_pecvd_chamber_choices)
