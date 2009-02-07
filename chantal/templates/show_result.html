@@ -2,7 +2,7 @@
 {% load samples_extras %}
 
 {% if thumbnail_url and image_url %}
-  <div style="float: right; margin-left: 2em">
+  <div style="float: right; margin-left: 2em; page-break-inside: avoid">
     <a style="display: block" href="{{ image_url }}"><img style="display: block" src="{{ thumbnail_url }}" 
                                                           alt="{{ process }}"/></a>
   </div>

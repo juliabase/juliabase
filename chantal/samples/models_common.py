@@ -196,13 +196,18 @@ class Process(models.Model):
         figure_necessary = \
             not os.path.exists(figure_filename) or os.stat(figure_filename).st_mtime < os.stat(datafile_name).st_mtime
         if thumbnail_necessary or figure_necessary:
-            pylab.figure()
             try:
-                self.pylab_commands(number, datafile_name)
                 if thumbnail_necessary:
-                    pylab.savefig(open(thumbnail_filename, "wb"), facecolor=("#e6e6e6"), edgecolor=("#e6e6e6"), dpi=50)
-                pylab.title(unicode(self))
+                    pylab.figure(frameon=False, figsize=(4, 3), dpi=100)
+                    pylab.gcf().add_axes([0.15, 0.15, 0.8, 0.8])
+                    pylab.gca().grid(True)
+                    self.pylab_commands(number, datafile_name, for_thumbnail=True)
+                    pylab.savefig(open(thumbnail_filename, "wb"))
                 if figure_necessary:
+                    pylab.figure()
+                    pylab.gca().grid(True)
+                    self.pylab_commands(number, datafile_name, for_thumbnail=False)
+                    pylab.title(unicode(self))
                     pylab.savefig(open(figure_filename, "wb"), format="pdf")
             except (IOError, PlotError):
                 pylab.close("all")
@@ -211,7 +216,7 @@ class Process(models.Model):
                 pylab.close("all")
         return output_url+".png", output_url+".pdf"
 
-    def pylab_commands(self, number, filename):
+    def pylab_commands(self, number, filename, for_thumbnail):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
         here – but eventually, there must be a savable Matplotlib plot.  You
         should't use ``pylab.figure``.  The ``filename`` parameter ist not
@@ -225,6 +230,8 @@ class Process(models.Model):
             this can only be zero and as such is not used it all in this
             method.
           - `filename`: the filename of the original data file
+          - `for_thumbnail`: whether we do a plot for the thumbnail bitmap; for
+            simple plots, this can be ignored
 
         :type number: int
         :type filename: str

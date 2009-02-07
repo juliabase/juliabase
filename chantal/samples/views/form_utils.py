@@ -426,6 +426,39 @@ class FixedOperatorField(forms.ChoiceField):
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
 
+class DepositionSamplesForm(forms.Form):
+    u"""Form for the list selection of samples that took part in the
+    deposition.  Depositions need a special form class for this because it must
+    be disabled when editing an *existing* deposition.
+    """
+    _ = ugettext_lazy
+    sample_list = MultipleSamplesField(label=_(u"Samples"))
+
+    def __init__(self, user_details, preset_sample, deposition, data=None, **kwargs):
+        u"""Class constructor.  Note that I have to distinguish clearly here
+        between new and existing depositions.
+        """
+        samples = list(user_details.my_samples.all())
+        if deposition:
+            # If editing an existing deposition, always have an *unbound* form
+            # so that the samples are set although sample selection is
+            # "disabled" and thus never successful when submitting.  This is
+            # necessary for depositions because they can change the name of
+            # samples, and so changing the affected samples afterwards is a
+            # source of big trouble.
+            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
+            super(DepositionSamplesForm, self).__init__(**kwargs)
+            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+            samples.extend(deposition.samples.all())
+        else:
+            super(DepositionSamplesForm, self).__init__(data, **kwargs)
+            if preset_sample:
+                samples.append(preset_sample)
+                self.fields["sample_list"].initial = [preset_sample.pk]
+        self.fields["sample_list"].set_samples(samples)
+        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
+
+
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
 HH:MM:SS, where hours can also be 3-digit and are optional."""
