@@ -562,7 +562,7 @@ def edit(request, deposition_number):
 
 @login_required
 def show(request, deposition_number):
-    u"""Show an existing 6-chamber_deposision.  You must be a 6-chamber
+    u"""Show an existing 6-chamber deposision.  You must be a 6-chamber
     operator *or* be able to view one of the samples affected by this
     deposition in order to be allowed to view it.
 
