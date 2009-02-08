@@ -25,7 +25,7 @@
                   <table>
                     <tr>
                       <td style="vertical-align: top; text-align: right">
-                        <div style="float: left">{% verbose_name SixChamberLayer.number %}:</div>
+                        <div style="float: left">{% verbose_name SmallClusterToolLayer.number %}:</div>
                         <div 
                           style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
                                  margin-left: 0.3em;
@@ -34,7 +34,7 @@
                       </td>
                       <td style="vertical-align: top; padding-left: 2em">
                         {% ifequal layer.type "PECVD" %}
-                          <span class="label">{% verbose_name SixChamberLayer.chamber %}:</span
+                          <span class="label">{% verbose_name SmallClusterToolPECVDLayer.chamber %}:</span
                                 ><span class="value">{{ layer.chamber }}</span>
                         {% else %}
                            
@@ -92,49 +92,49 @@
             </table>
           </td>
         </tr>
-        {% with layer.channels.all as channels %}
-          {% if layer.comments or channels %}
-            <tr>
-              <td>
-                <table width="100%">
-                  <tr>
-                    {% if layer.comments %}
-                    <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
-                        {{ layer.comments|markdown }}
-                    </td>
-                    {% else %}
-                    <td> </td>
-                    {% endif %}
-                    <td style="width: 50%; vertical-align: top; padding: 1ex">
-                      {% if channels %}
-                        <table width="100%" style="text-align: center">
-                          <thead>
-                            <tr>
-                              <th>{% verbose_name SixChamberChannel.number %}</th>
-                              <th>{% verbose_name SixChamberChannel.gas %}</th>
-                              <th>{% verbose_name SixChamberChannel.flow_rate %}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for channel in channels %}
-                            <tr>
-                              <td>{{ channel.number }}</td>
-                              <td>{{ channel.get_gas_display }}</td>
-                              <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
-                            </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      {% else %}
-                         
-                      {% endif %}
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          {% endif %}
-        {% endwith %}
+        <tr>
+          <td>
+            <table width="100%">
+              <tr>
+                {% if layer.comments %}
+                <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                    {{ layer.comments|markdown }}
+                </td>
+                {% else %}
+                <td> </td>
+                {% endif %}
+                <td style="width: 60%; vertical-align: top; padding: 1ex">
+                  <table width="100%" style="text-align: center">
+                    <tr>
+                      {% value_field layer.h2 "sccm_collapse" %}
+                      {% value_field layer.sih4 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.tmb_he "sccm_collapse" %}
+                      {% value_field layer.ph3_sih4 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.b2h6_h2 "sccm_collapse" %}
+                      {% value_field layer.ph3_h2 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.co2 "sccm_collapse" %}
+                      {% value_field layer.ch4 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.geh4 "sccm_collapse" %}
+                      {% value_field layer.si2h6 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      <td colspan="2"/>
+                      {% value_field layer.ar "sccm_collapse" %}
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
