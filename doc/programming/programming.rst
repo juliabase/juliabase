@@ -136,17 +136,25 @@ In order to enable users to duplicate and edit existing depositions, you should
 also add the following method::
 
     def get_additional_template_context(self, process_context):
+        layers = []
+        for layer in self.layers.all():
+            try:
+                layer = layer.smallclustertoolhotwirelayer
+                layer.type = "hotwire"
+            except SmallClusterToolHotwireLayer.DoesNotExist:
+                layer = layer.smallclustertoolpecvdlayer
+                layer.type = "PECVD"
+            layers.append(layer)
+        result = {"layers": layers}
         if permissions.has_permission_to_add_edit_physical_process(
                 process_context.user, self):
-            return {"edit_url": django.core.urlresolvers.reverse(
-                            "edit_small_cluster_tool_deposition",
-                            kwargs={"deposition_number": self.number}),
-                    "duplicate_url": "%s?copy_from=%s" % (
-                            django.core.urlresolvers.reverse(
-			            "add_small_cluster_tool_deposition"),
-                            urlquote_plus(self.number))}
-        else:
-            return {}
+            result.update({"edit_url": django.core.urlresolvers.reverse(
+                                   "edit_small_cluster_tool_deposition",
+                                   kwargs={"deposition_number": self.number}),
+                           "duplicate_url": "%s?copy_from=%s" % (
+                        django.core.urlresolvers.reverse("add_small_cluster_tool_deposition"),
+                        urlquote_plus(self.number))})
+        return result
 
 This is a somewhat peculiar method.  It is used when the HTML for a process (in
 this case a deposition) is created.  Its return value is a dictionary which is
@@ -154,6 +162,11 @@ combined with the dictionary sent to the “show-process” template.  This way,
 additional program logic can be used to generate the HTML.  In case of
 depositions, an “edit” and “duplicate” button are added, depending on the
 user's permissions.
+
+However, in the special case of a cluster tool deposition, I also place the
+layers into this template context.  The reason is that this way, I can inject a
+``type`` attribute into the layers which is useful when rendering it by the
+template code.
 
 Finally, with
 
@@ -392,6 +405,25 @@ You need an ``edit`` and a ``show`` view function.  They are really
 straightforward.  Just copy them from another deposition module and modify them
 slightly.  (Actually, this code duplication is a candidate for a common base
 function but I'd like to implement more deposition systems just to be sure.)
+
+
+Creating the templates
+---------------------------
+
+You need two templates per process, one that is called
+``edit_process_name.html`` and the other that is called
+``show_process_name.html``.  Copy them from the process which is most closely
+related to the one you're editing and apply the necessary modifications.
+
+Remember that the contents of the dictionary returned by
+``get_additional_template_context`` contains a ``layers`` list in which each
+layer also bears a ``type`` attribute, which can be used to render some parts
+of the layers depending on whether they are hotwire or PECVD layers.  For
+non-cluster-tool depositions however, you can use ``process.layers.all()`` in
+the template code instead.
+
+Read the docstrings in ``samples_extras.py`` for getting used to the filters
+and tags special to Chantal.
 
 
 Glossary
