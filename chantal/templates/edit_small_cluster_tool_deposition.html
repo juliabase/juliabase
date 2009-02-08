@@ -147,32 +147,35 @@
                       <td> </td>
                       {% endif %}
                       <td style="vertical-align: top; padding: 1ex">
-                        {% if channels %}
-                          <table width="100%" style="text-align: center" class="channels">
-                            <tr>
-                              <th>{{ channels.0.number.label }}</th>
-                              <th>{{ channels.0.gas.label }}</th>
-                              <th>{{ channels.0.flow_rate.label }}<br/><span class="help"
-                                        >({{ channels.0.flow_rate.help_text }})</span></th>
-                              <th>{% trans 'delete' %}</th>
-                            </tr>
-                            {% for channel in channels %}
-                              {% error_list channel _("Error in channel") "<tr>" %}
-                              <tr>
-                                <td>{{ channel.number }}</td>
-                                <td>{{ channel.gas }}</td>
-                                <td>{{ channel.flow_rate }}</td>
-                                <td><input type="checkbox" 
-name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerindex-{{ forloop.parentloop.counter0 }}"/></td>
-                              </tr>
-                            {% endfor %}
-                          </table>
-                        {% endif %}
-                        <p><label for="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                                  >{% trans 'Number of channels to be added:' %}</label> <input
-                          id="id_structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                          name="structural-change-add-channels-for-layerindex-{{ forloop.counter0 }}"
-                          type="text" size="3"/></p>
+                        <div style="text-align: center; margin-bottom: 1ex; font-style: italic">
+                          {{ _("Gas flows in sccm") }}
+                        </div>
+                        <table width="100%" style="text-align: center" class="channels">
+                          <tr>
+                            {% input_field layer.h2 %}
+                            {% input_field layer.sih4 %}
+                          </tr>
+                          <tr>
+                            {% input_field layer.tmb %}
+                            {% input_field layer.ph3_sih4 %}
+                          </tr>
+                          <tr>
+                            {% input_field layer.tmb_he %}
+                            {% input_field layer.ph3_h2 %}
+                          </tr>
+                          <tr>
+                            {% input_field layer.b2h6_h2 %}
+                            {% input_field layer.ch4 %}
+                          </tr>
+                          <tr>
+                            {% input_field layer.co2 %}
+                            {% input_field layer.geh4 %}
+                          </tr>
+                          <tr>
+                            {% input_field layer.ar %}
+                            {% input_field layer.si2h6 %}
+                          </tr>
+                        </table>
                       </td>
                     </tr>
                   </table>
@@ -187,7 +190,11 @@ name="structural-change-delete-channelindex-{{ forloop.counter0 }}-for-layerinde
 
   {% include "edit_description.html" %}
 
-  <table>{{ add_layers }}</table>
+  <table>
+    <tr>
+      {{ add_layers }}
+  </table>
+
   {{ add_my_layer.as_p }}
 
   {% if remove_from_my_samples %}

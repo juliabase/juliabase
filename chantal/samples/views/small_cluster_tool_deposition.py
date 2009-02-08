@@ -115,6 +115,10 @@ class HotwireLayerForm(forms.ModelForm):
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
                           "transfer_out_of_chamber", "filament_temperature", "current", "voltage", "base_pressure"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
+        for fieldname in ["tmb", "sih4", "h2", "ph3_sih4", "tmb_he", "b2h6_h2", "ch4", "co2", "geh4", "ar", "si2h6",
+                          "ph3_h2"]:
+            self.fields[fieldname].help_text = u""
+            self.fields[fieldname].widget.attrs["size"] = "8"
         # FixMe: Min/Max values?
 
     def clean_time(self):
@@ -173,6 +177,10 @@ class PECVDLayerForm(forms.ModelForm):
                           "transfer_out_of_chamber", "plasma_start_power",
                           "deposition_frequency", "deposition_power", "base_pressure"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
+        for fieldname in ["tmb", "sih4", "h2", "ph3_sih4", "tmb_he", "b2h6_h2", "ch4", "co2", "geh4", "ar", "si2h6",
+                          "ph3_h2"]:
+            self.fields[fieldname].help_text = u""
+            self.fields[fieldname].widget.attrs["size"] = "8"
         for fieldname, min_value, max_value in [("deposition_frequency", 13, 150), ("plasma_start_power", 0, 1000),
                                                 ("deposition_power", 0, 1000)]:
             self.fields[fieldname].min_value = min_value
