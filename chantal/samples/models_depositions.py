@@ -497,6 +497,12 @@ class SmallClusterToolDeposition(Deposition):
     def get_additional_template_context(self, process_context):
         u"""See `SixChamberDeposition.get_additional_template_context`.
 
+        Additionally, because this is a cluster tool and thus has different
+        type of layers, I add a layer list ``layers`` to the template context.
+        The template can't access the layers with ``process.layers.all()``
+        because they are polymorphic.  But ``layers`` can be conveniently
+        digested by the template.
+
         :Parameters:
           - `process_context`: the context of this process
 
@@ -508,14 +514,23 @@ class SmallClusterToolDeposition(Deposition):
 
         :rtype: dict mapping str to arbitrary objects
         """
+        layers = []
+        for layer in self.layers.all():
+            try:
+                layer = layer.smallclustertoolhotwirelayer
+                layer.type = "hotwire"
+            except SmallClusterToolHotwireLayer.DoesNotExist:
+                layer = layer.smallclustertoolpecvdlayer
+                layer.type = "PECVD"
+            layers.append(layer)
+        result = {"layers": layers}
         if permissions.has_permission_to_add_edit_physical_process(process_context.user, self):
-            return {"edit_url": django.core.urlresolvers.reverse("edit_small_cluster_tool_deposition",
-                                                                 kwargs={"deposition_number": self.number}),
-                    "duplicate_url": "%s?copy_from=%s" % (
-                    django.core.urlresolvers.reverse("add_small_cluster_tool_deposition"),
-                    urlquote_plus(self.number))}
-        else:
-            return {}
+            result.update({"edit_url": django.core.urlresolvers.reverse("edit_small_cluster_tool_deposition",
+                                                                        kwargs={"deposition_number": self.number}),
+                           "duplicate_url": "%s?copy_from=%s" % (
+                        django.core.urlresolvers.reverse("add_small_cluster_tool_deposition"),
+                        urlquote_plus(self.number))})
+        return result
 
     @classmethod
     def get_add_link(cls):

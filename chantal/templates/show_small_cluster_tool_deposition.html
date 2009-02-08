@@ -13,7 +13,7 @@
 {% endif %}
 
 <table width="100%">
-  {% for layer in process.layers.all %}
+  {% for layer in layers %}
   <tr>
     <td style="border-style: solid; border-color: black; border-width: thin">
       <table width="100%">
@@ -33,22 +33,38 @@
                                  border-color: black; float: right; clear: left">{{ layer.number }}</div>
                       </td>
                       <td style="vertical-align: top; padding-left: 2em">
-                        <span class="label">{% verbose_name SixChamberLayer.chamber %}:</span
-                              ><span class="value">{{ layer.chamber }}</span>
+                        {% ifequal layer.type "PECVD" %}
+                          <span class="label">{% verbose_name SixChamberLayer.chamber %}:</span
+                                ><span class="value">{{ layer.chamber }}</span>
+                        {% else %}
+                           
+                        {% endifequal %}
                       </td>
                     </tr>
                   </table>
                 </td>
                 {% value_field layer.transfer_in_chamber %}
-                {% value_field layer.plasma_start_power "W" %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.plasma_start_power "W" %}
+                {% else %}
+                  {% value_field layer.wire_material %}
+                {% endifequal %}
               </tr>
               <tr>
                 {% value_field layer.pre_heat %}
-                {% value_field layer.plasma_start_with_carrier "yes/no" %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.plasma_start_with_carrier "yes/no" %}
+                {% else %}
+                  {% value_field layer.voltage "V" %}
+                {% endifequal %}
               </tr>
               <tr>
                 {% value_field layer.heating_temperature "℃" %}
-                {% value_field layer.deposition_frequency "MHz" %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.deposition_frequency "MHz" %}
+                {% else %}
+                  {% value_field layer.filament_temperature "℃" %}
+                {% endifequal %}
               </tr>
               <tr>
                 {% value_field layer.gas_pre_heat_gas %}
@@ -58,11 +74,19 @@
               <tr>
                 {% value_field layer.pressure "" %}  {# "" for float pretty-formatting #}
                 {% value_field layer.transfer_out_of_chamber %}
-                {% value_field layer.deposition_power "W" %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.deposition_power "W" %}
+                {% else %}
+                  {% value_field layer.current "A" %}
+                {% endifequal %}
               </tr>
               <tr>
                 {% value_field layer.time %}
-                {% value_field layer.substrate_electrode_distance "mm" %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.substrate_electrode_distance "mm" %}
+                {% else %}
+                  {% value_field layer.substrate_wire_distance "mm" %}
+                {% endifequal %}
                 {% value_field layer.base_pressure "Torr" %}
               </tr>
             </table>

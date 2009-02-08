@@ -13,6 +13,7 @@
 {% block content %}
 <form method="post" action="">
   {% error_list deposition _("Error in deposition") %}
+  {% error_list samples _("Error in sample list") %}
   <table cellpadding="5">
     <tr>
       {% input_field deposition.number %}
@@ -43,10 +44,10 @@
           <td style="border-style: solid; border-color: black; border-width: thin">
             {{ layer.layer_type }}
             <table width="100%">
+              {% error_list layer _("Error in layer") "<tr>" %}
               <tr>
                 <td>
                   <table width="100%">
-                    {% error_list layer _("Error in layer") "<tr>" %}
                     <tr>
                       <td colspan="2" rowspan="3" style="vertical-align: top">
                         <table>
@@ -156,24 +157,24 @@
                             {% input_field layer.sih4 %}
                           </tr>
                           <tr>
-                            {% input_field layer.tmb %}
+                            {% input_field layer.tmb_he %}
                             {% input_field layer.ph3_sih4 %}
                           </tr>
                           <tr>
-                            {% input_field layer.tmb_he %}
+                            {% input_field layer.b2h6_h2 %}
                             {% input_field layer.ph3_h2 %}
                           </tr>
                           <tr>
-                            {% input_field layer.b2h6_h2 %}
+                            {% input_field layer.co2 %}
                             {% input_field layer.ch4 %}
                           </tr>
                           <tr>
-                            {% input_field layer.co2 %}
                             {% input_field layer.geh4 %}
+                            {% input_field layer.si2h6 %}
                           </tr>
                           <tr>
+                            <td colspan="2"> </td>
                             {% input_field layer.ar %}
-                            {% input_field layer.si2h6 %}
                           </tr>
                         </table>
                       </td>

@@ -291,6 +291,7 @@ class FormSet(object):
             get_object_or_404(models.SmallClusterToolDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = None
         self.layer_forms = []
+        self.remove_from_my_samples_form = None
         self.edit_description_form = None
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
@@ -340,7 +341,7 @@ class FormSet(object):
 
         :type query_dict: dict mapping unicode to unicode
         """
-        def build_layer_and_channel_forms(deposition):
+        def build_layer_forms(deposition):
             u"""Construct the layer forms for the given deposition according to
             the data currently stored in the database.  Note that this method
             writes its products directly into the instance.
@@ -368,12 +369,12 @@ class FormSet(object):
                 deposition_data["operator"] = self.user.pk
                 deposition_data["number"] = utils.get_next_deposition_number("C")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
-                self.build_layer_and_channel_forms(source_deposition_query.all()[0])
+                build_layer_forms(source_deposition_query.all()[0])
         if not self.deposition_form:
             if self.deposition:
                 # Normal edit of existing deposition
                 self.deposition_form = DepositionForm(self.user, instance=self.deposition)
-                self.build_layer_and_channel_forms(self.deposition)
+                build_layer_forms(self.deposition)
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
