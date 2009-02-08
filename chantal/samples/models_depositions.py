@@ -183,8 +183,10 @@ class Layer(models.Model):
 
 
 class AllGases(models.Model):
-    tmb = models.DecimalField(u"TMB", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
-
+    u"""Abstract base model with all gas types that are used in the institute.
+    This comes handy if you want to add all these fields to a layer model.
+    Just add this class to its list of parent classes.
+    """
     sih4 = models.DecimalField(u"SiH₄", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
     h2 = models.DecimalField(u"H₂", max_digits=5, decimal_places=2, help_text=_(u"in sccm"), null=True, blank=True)
     ph3_sih4 = models.DecimalField(_(u"2% PH₃ in SiH₄"), max_digits=5, decimal_places=2, help_text=_(u"in sccm"),
