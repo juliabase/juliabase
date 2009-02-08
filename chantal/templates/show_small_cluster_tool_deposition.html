@@ -47,7 +47,8 @@
                 {% ifequal layer.type "PECVD" %}
                   {% value_field layer.plasma_start_power "W" %}
                 {% else %}
-                  {% value_field layer.wire_material %}
+                  <td class="label">{% verbose_name SmallClusterToolHotwireLayer.wire_material %}:</td>
+                  <td class="value">{{ layer.get_wire_material_display }}</td>
                 {% endifequal %}
               </tr>
               <tr>
