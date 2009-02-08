@@ -149,7 +149,7 @@ class SixChamberLayer(object):
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
-        self.chamber = self.chamber = self.pressure = self.time = \
+        self.chamber = self.pressure = self.time = \
             self.substrate_electrode_distance = self.comments = self.transfer_in_chamber = self.pre_heat = \
             self.gas_pre_heat_gas = self.gas_pre_heat_pressure = self.gas_pre_heat_time = self.heating_temperature = \
             self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
