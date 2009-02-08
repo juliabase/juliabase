@@ -235,7 +235,7 @@ class LargeAreaLayer(object):
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
-        self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.sc = self.tmb = self.ch4 = \
+        self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.tmb = self.ch4 = \
             self.co2 = self.ph3 = self.power = self.pressure = self.temperature = self.hf_frequency = self.time = \
             self.dc_bias = self.electrode = self.electrodes_distance = None
 
@@ -247,7 +247,6 @@ class LargeAreaLayer(object):
                 prefix+"station": self.station,
                 prefix+"sih4": self.sih4,
                 prefix+"h2": self.h2,
-                prefix+"sc": self.sc,
                 prefix+"tmb": self.tmb,
                 prefix+"ch4": self.ch4,
                 prefix+"co2": self.co2,
