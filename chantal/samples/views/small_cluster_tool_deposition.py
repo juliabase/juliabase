@@ -125,7 +125,7 @@ class HotwireLayerForm(forms.ModelForm):
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
                           "transfer_out_of_chamber", "filament_temperature", "current", "voltage", "base_pressure"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
-        for fieldname in ["tmb", "sih4", "h2", "ph3_sih4", "tmb_he", "b2h6_h2", "ch4", "co2", "geh4", "ar", "si2h6",
+        for fieldname in ["sih4", "h2", "ph3_sih4", "tmb_he", "b2h6_h2", "ch4", "co2", "geh4", "ar", "si2h6",
                           "ph3_h2"]:
             self.fields[fieldname].help_text = u""
             self.fields[fieldname].widget.attrs["size"] = "8"
@@ -187,7 +187,7 @@ class PECVDLayerForm(forms.ModelForm):
                           "transfer_out_of_chamber", "plasma_start_power",
                           "deposition_frequency", "deposition_power", "base_pressure"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
-        for fieldname in ["tmb", "sih4", "h2", "ph3_sih4", "tmb_he", "b2h6_h2", "ch4", "co2", "geh4", "ar", "si2h6",
+        for fieldname in ["sih4", "h2", "ph3_sih4", "tmb_he", "b2h6_h2", "ch4", "co2", "geh4", "ar", "si2h6",
                           "ph3_h2"]:
             self.fields[fieldname].help_text = u""
             self.fields[fieldname].widget.attrs["size"] = "8"

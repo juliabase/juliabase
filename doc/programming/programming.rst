@@ -426,6 +426,12 @@ Read the docstrings in ``samples_extras.py`` for getting used to the filters
 and tags special to Chantal.
 
 
+Update for the Remote Client
+-----------------------------------
+
+
+
+
 Glossary
 ===========
 
