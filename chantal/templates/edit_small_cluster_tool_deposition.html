@@ -190,12 +190,18 @@
 
   {% include "edit_description.html" %}
 
-  <table>
+  <table style="margin-top: 2ex">
     <tr>
-      {{ add_layers }}
+      <td class="label"><label for="id_{{ add_layers.layer_to_be_added.html_name }}"
+                 >{{ add_layers.layer_to_be_added.label }}:</label></td>
+      <td class="value" style="font-weight: normal">{{ add_layers.layer_to_be_added }}</td>
+    </tr>
+    <tr>
+      <td class="label"><label for="id_{{ add_layers.my_layer_to_be_added.html_name }}"
+                 >{{ add_layers.my_layer_to_be_added.label }}:</label></td>
+      <td class="value" style="font-weight: normal">{{ add_layers.my_layer_to_be_added }}</td>
+    </tr>
   </table>
-
-  {{ add_my_layer.as_p }}
 
   {% if remove_from_my_samples %}
     {{ remove_from_my_samples.as_p }}

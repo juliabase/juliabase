@@ -10,7 +10,10 @@ import datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django import forms
+from django.forms import widgets
 from django.forms.util import ValidationError
+from django.utils.safestring import mark_safe
+from django.utils.encoding import force_unicode
 from django.contrib.auth.decorators import login_required
 from chantal.samples import models, permissions
 from chantal.samples.views import utils, feed_utils, form_utils
@@ -26,6 +29,12 @@ class RemoveFromMySamplesForm(forms.Form):
                                                           required=False, initial=True)
 
 
+class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
+
+    def render(self):
+        return mark_safe(u"<ul class=\"radio-select\">\n%s\n</ul>" % u"\n".join([u"<li>%s</li>"
+                % force_unicode(w) for w in self]))
+
 new_layer_choices = (
     ("hotwire", _(u"hotwire")),
     ("PECVD", _(u"PECVD")),
@@ -39,7 +48,8 @@ class AddLayersForm(forms.Form):
     Alternatively, the user can give a layer nickname from “My Layers”.
     """
     _ = ugettext_lazy
-    layer_to_be_added = forms.ChoiceField(label=_(u"Layer to be added"), required=False, widget=forms.RadioSelect,
+    layer_to_be_added = forms.ChoiceField(label=_(u"Layer to be added"), required=False,
+                                          widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer),
                                           choices=new_layer_choices)
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
 

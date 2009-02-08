@@ -106,3 +106,6 @@ ul.sample-list { list-style-image: url("/media/icons/ruby.png") }
 
 div.my-samples { width: 50%; float: right }
 div.my-samples h2 { margin-top: 0pt }
+
+ul.radio-select { list-style-type: none; display: inline; margin-left: 0; padding-left:0 }
+ul.radio-select li { display: inline; margin-right: 1em }
