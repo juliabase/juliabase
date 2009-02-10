@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib, urllib2, cookielib, pickle, time, logging
+import urllib, urllib2, cookielib, time, logging, os.path
 import smtplib
 from email.MIMEText import MIMEText
 
@@ -23,17 +23,17 @@ def test_connection():
     response = opener.open("http://bob.ipv.kfa-juelich.de/chantal/login_remote_client",
                            urllib.urlencode({"username": credentials["monitor_login"],
                                              "password": credentials["monitor_password"]}, doseq=True))
-    is_pickled = response.info()["Content-Type"].startswith("text/x-python-pickle")
-    if not is_pickled:
-        raise Exception("Login response was not pickled.")
-    elif not pickle.load(response):
-        raise Exception("Login response was not True.")
+    is_json = response.info()["Content-Type"].startswith("application/json")
+    if not is_json:
+        raise Exception("Login response was not JSON.")
+    elif response.read() != "true":
+        raise Exception("""Login response was not "true".""")
     response = opener.open("http://bob.ipv.kfa-juelich.de/chantal/logout_remote_client")
-    is_pickled = response.info()["Content-Type"].startswith("text/x-python-pickle")
-    if not is_pickled:
-        raise Exception("Logout response was not pickled.")
-    elif not pickle.load(response):
-        raise Exception("Logout response was not True.")
+    is_json = response.info()["Content-Type"].startswith("application/json")
+    if not is_json:
+        raise Exception("Logout response was not JSON.")
+    elif response.read() != "true":
+        raise Exception("""Logout response was not "true".""")
 
 def send_error_email(error_message):
     s = smtplib.SMTP("mailrelay.fz-juelich.de")
