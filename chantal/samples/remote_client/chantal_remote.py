@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 
 __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamberLayer", "SixChamberChannel",
-           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition", "PDSMeasurement", "get_or_create_sample"]
+           "LargeAreaDeposition", "LargeAreaLayer", "rename_after_deposition", "PDSMeasurement", "get_or_create_sample",
+           "SmallClusterToolDeposition", "SmallClusterToolHotwireLayer", "SmallClusterToolPECVDLayer"]
 
 
 def quote_header(value):
@@ -260,6 +261,129 @@ class LargeAreaLayer(object):
                 prefix+"dc_bias": self.dc_bias,
                 prefix+"electrode": self.electrode,
                 prefix+"electrodes_distance": self.electrodes_distance}
+        return data
+
+
+class SmallClusterToolDeposition(object):
+
+    def __init__(self, sample_ids):
+        self.sample_ids = sample_ids
+        self.number = self.operator = self.timestamp = self.comments = None
+        self.timestamp_inaccuracy = 0
+        self.layers = []
+
+    def submit(self):
+        # FixMe: Assure that sample is in MySamples
+        #
+        # Returns the deposition number if succeeded
+        if not self.operator:
+            self.operator = connection.username
+        if self.number is None:
+            self.number = connection.open("next_deposition_number/C")
+        data = {"number": self.number,
+                "operator": connection.primary_keys["users"][self.operator],
+                "timestamp": self.timestamp,
+                "timestamp_inaccuracy": self.timestamp_inaccuracy,
+                "comments": self.comments,
+                "sample_list": self.sample_ids,
+                "remove_deposited_from_my_samples": True}
+        for layer_index, layer in enumerate(self.layers):
+            data.update(layer.get_data(layer_index))
+        result = connection.open("small_cluster_tool_depositions/add/", data)
+        logging.info("Successfully added small cluster toll deposition %s." % self.number)
+        return result
+
+
+class SmallClusterToolHotwireLayer(object):
+
+    def __init__(self, deposition):
+        self.deposition = deposition
+        deposition.layers.append(self)
+        self.pressure = self.time = \
+            self.substrate_wire_distance = self.comments = self.transfer_in_chamber = self.pre_heat = \
+            self.gas_pre_heat_gas = self.gas_pre_heat_pressure = self.gas_pre_heat_time = self.heating_temperature = \
+            self.transfer_out_of_chamber = self.wire_material = self.voltage = \
+            self.filament_temperature = self.current = self.base_pressure = None
+        self.sih4 = self.h2 = self.ph3_sih4 = self.tmb_he = self.b2h6_h2 = self.ch4 = self.co2 = self.geh4 = self.ar = \
+            self.si2h6 = self.ph3_h2 = None
+
+    def get_data(self, layer_index):
+        prefix = unicode(layer_index) + "-"
+        data = {prefix+"layer_type": "hotwire",
+                prefix+"pressure": self.pressure,
+                prefix+"time": self.time,
+                prefix+"substrate_wire_distance": self.substrate_wire_distance,
+                prefix+"comments": self.comments,
+                prefix+"transfer_in_chamber": self.transfer_in_chamber,
+                prefix+"pre_heat": self.pre_heat,
+                prefix+"gas_pre_heat_gas": self.gas_pre_heat_gas,
+                prefix+"gas_pre_heat_pressure": self.gas_pre_heat_pressure,
+                prefix+"gas_pre_heat_time": self.gas_pre_heat_time,
+                prefix+"heating_temperature": self.heating_temperature,
+                prefix+"transfer_out_of_chamber": self.transfer_out_of_chamber,
+                prefix+"wire_material": self.wire_material,
+                prefix+"voltage": self.voltage,
+                prefix+"filament_temperature": self.filament_temperature,
+                prefix+"current": self.current,
+                prefix+"base_pressure": self.base_pressure,
+                prefix+"sih4": self.sih4,
+                prefix+"h2": self.h2,
+                prefix+"ph3_sih4": self.ph3_sih4,
+                prefix+"tmb_he": self.tmb_he,
+                prefix+"b2h6_h2": self.b2h6_h2,
+                prefix+"ch4": self.ch4,
+                prefix+"co2": self.co2,
+                prefix+"geh4": self.geh4,
+                prefix+"ar": self.ar,
+                prefix+"si2h6": self.si2h6,
+                prefix+"ph3_h2": self.ph3_h2}
+        return data
+
+
+class SmallClusterToolPECVDLayer(object):
+
+    def __init__(self, deposition):
+        self.deposition = deposition
+        deposition.layers.append(self)
+        self.chamber = self.pressure = self.time = \
+            self.substrate_electrode_distance = self.comments = self.transfer_in_chamber = self.pre_heat = \
+            self.gas_pre_heat_gas = self.gas_pre_heat_pressure = self.gas_pre_heat_time = self.heating_temperature = \
+            self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
+            self.deposition_frequency = self.deposition_power = self.base_pressure = None
+        self.sih4 = self.h2 = self.ph3_sih4 = self.tmb_he = self.b2h6_h2 = self.ch4 = self.co2 = self.geh4 = self.ar = \
+            self.si2h6 = self.ph3_h2 = None
+
+    def get_data(self, layer_index):
+        prefix = unicode(layer_index) + "-"
+        data = {prefix+"layer_type": "PECVD",
+                prefix+"chamber": self.chamber,
+                prefix+"pressure": self.pressure,
+                prefix+"time": self.time,
+                prefix+"substrate_electrode_distance": self.substrate_electrode_distance,
+                prefix+"comments": self.comments,
+                prefix+"transfer_in_chamber": self.transfer_in_chamber,
+                prefix+"pre_heat": self.pre_heat,
+                prefix+"gas_pre_heat_gas": self.gas_pre_heat_gas,
+                prefix+"gas_pre_heat_pressure": self.gas_pre_heat_pressure,
+                prefix+"gas_pre_heat_time": self.gas_pre_heat_time,
+                prefix+"heating_temperature": self.heating_temperature,
+                prefix+"transfer_out_of_chamber": self.transfer_out_of_chamber,
+                prefix+"plasma_start_power": self.plasma_start_power,
+                prefix+"plasma_start_with_carrier": self.plasma_start_with_carrier,
+                prefix+"deposition_frequency": self.deposition_frequency,
+                prefix+"deposition_power": self.deposition_power,
+                prefix+"base_pressure": self.base_pressure,
+                prefix+"sih4": self.sih4,
+                prefix+"h2": self.h2,
+                prefix+"ph3_sih4": self.ph3_sih4,
+                prefix+"tmb_he": self.tmb_he,
+                prefix+"b2h6_h2": self.b2h6_h2,
+                prefix+"ch4": self.ch4,
+                prefix+"co2": self.co2,
+                prefix+"geh4": self.geh4,
+                prefix+"ar": self.ar,
+                prefix+"si2h6": self.si2h6,
+                prefix+"ph3_h2": self.ph3_h2}
         return data
 
 

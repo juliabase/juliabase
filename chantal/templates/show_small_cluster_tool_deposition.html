@@ -1,0 +1,143 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  <span class="label">{% verbose_name Deposition.number %}:</span><span class="value"
+    style="margin-right: 4em">{{ process.number }}</span>
+  <span class="label">{% verbose_name SixChamberDeposition.carrier %}:</span><span class="value">{{ process.carrier|default:"—" }}</span>
+</p>
+
+{% if process.comments %}
+  <blockquote>{{ process.comments|markdown }}</blockquote>
+{% endif %}
+
+<table width="100%">
+  {% for layer in layers %}
+  <tr>
+    <td style="border-style: solid; border-color: black; border-width: thin">
+      <table width="100%">
+        <tr>
+          <td>
+            <table width="100%">
+              <tr>
+                <td colspan="2" rowspan="3" style="vertical-align: top">
+                  <table>
+                    <tr>
+                      <td style="vertical-align: top; text-align: right">
+                        <div style="float: left">{% verbose_name SmallClusterToolLayer.number %}:</div>
+                        <div 
+                          style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                 margin-left: 0.3em;
+                                 border-style: solid; border-width: thin;
+                                 border-color: black; float: right; clear: left">{{ layer.number }}</div>
+                      </td>
+                      <td style="vertical-align: top; padding-left: 2em">
+                        {% ifequal layer.type "PECVD" %}
+                          <span class="label">{% verbose_name SmallClusterToolPECVDLayer.chamber %}:</span
+                                ><span class="value">{{ layer.chamber }}</span>
+                        {% else %}
+                           
+                        {% endifequal %}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                {% value_field layer.transfer_in_chamber %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.plasma_start_power "W" %}
+                {% else %}
+                  <td class="label">{% verbose_name SmallClusterToolHotwireLayer.wire_material %}:</td>
+                  <td class="value">{{ layer.get_wire_material_display }}</td>
+                {% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.pre_heat %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.plasma_start_with_carrier "yes/no" %}
+                {% else %}
+                  {% value_field layer.voltage "V" %}
+                {% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.heating_temperature "℃" %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.deposition_frequency "MHz" %}
+                {% else %}
+                  {% value_field layer.filament_temperature "℃" %}
+                {% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.gas_pre_heat_gas %}
+                {% value_field layer.gas_pre_heat_pressure "" %}  {# "" for float pretty-formatting #}
+                {% value_field layer.gas_pre_heat_time %}
+              </tr>
+              <tr>
+                {% value_field layer.pressure "" %}  {# "" for float pretty-formatting #}
+                {% value_field layer.transfer_out_of_chamber %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.deposition_power "W" %}
+                {% else %}
+                  {% value_field layer.current "A" %}
+                {% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.time %}
+                {% ifequal layer.type "PECVD" %}
+                  {% value_field layer.substrate_electrode_distance "mm" %}
+                {% else %}
+                  {% value_field layer.substrate_wire_distance "mm" %}
+                {% endifequal %}
+                {% value_field layer.base_pressure "Torr" %}
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table width="100%">
+              <tr>
+                {% if layer.comments %}
+                <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                    {{ layer.comments|markdown }}
+                </td>
+                {% else %}
+                <td> </td>
+                {% endif %}
+                <td style="width: 60%; vertical-align: top; padding: 1ex">
+                  <table width="100%" style="text-align: center">
+                    <tr>
+                      {% value_field layer.h2 "sccm_collapse" %}
+                      {% value_field layer.sih4 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.tmb_he "sccm_collapse" %}
+                      {% value_field layer.ph3_sih4 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.b2h6_h2 "sccm_collapse" %}
+                      {% value_field layer.ph3_h2 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.co2 "sccm_collapse" %}
+                      {% value_field layer.ch4 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      {% value_field layer.geh4 "sccm_collapse" %}
+                      {% value_field layer.si2h6 "sccm_collapse" %}
+                    </tr>
+                    <tr>
+                      <td colspan="2"/>
+                      {% value_field layer.ar "sccm_collapse" %}
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
