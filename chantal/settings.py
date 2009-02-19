@@ -137,8 +137,9 @@ def _scan_version(package):
     return match.group("version") if match else None
 APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER or WITH_EPYDOC else os.stat("/var/run/apache2.pid")[9]
-MYSQL_VERSION = _scan_version("mysql-server")
-MYSQL_STARTUP_TIME = os.stat("/var/run/mysqld/mysqld.pid")[9]
+POSTGRESQL_VERSION = _scan_version("postgresql")
+# FixMe: PostgreSQL version shouldn't be fixed
+POSTGRESQL_STARTUP_TIME = os.stat("/var/run/postgresql/8.3-main.pid")[9]
 PYTHON_VERSION = _scan_version("python")
 CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
 

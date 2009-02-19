@@ -4,7 +4,7 @@
 u"""This program should run every 10 minutes as a cronjob.  It should not run
 with root priviledges.  Its purpose is to generate a new plot file which is
 written to the file with the name `filename`.  It reads the logs of Apache and
-MySQL server and the monitor data from `monitor_file_name`.
+PostgreSQL server and the monitor data from `monitor_file_name`.
 """
 
 from __future__ import division
@@ -51,12 +51,13 @@ def read_times_apache():
             break
     return times
 
-mysql_date_pattern = re.compile(ur"^\d{6} (\d| )\d:\d\d:\d\d")
-db_hit_pattern = re.compile(ur"(\d{6} (\d| )\d:\d\d:\d\d)?\s+\d+ Query\s+(SELECT|DELETE|INSERT|ALTER|CREATE|UPDATE|SHOW)")
-def read_times_mysql():
+postgresql_date_pattern = re.compile(ur"^\d{4}-\d\d-\d\d (\d| )\d:\d\d:\d\d")
+db_hit_pattern = re.compile(ur"(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\s+[A-Z]{2,4} (ANWEISUNG|STATEMENT)")
+def read_times_postgresql():
     times = number_of_slots * [0]
     read_further = True
-    for filename in sorted(glob.glob("/var/log/mysql/mysql.log*")):
+    # FixMe: Logrotate muß noch beachtet werden
+    for filename in sorted(glob.glob("/var/log/postgresql/postgresql-*-main.log")):
         if filename.endswith(".gz"):
             logfile = gzip.open(filename)
         else:
@@ -64,12 +65,12 @@ def read_times_mysql():
         timedelta = datetime.timedelta(0)
         index = None
         for linenumber, line in enumerate(logfile):
-            date_match = mysql_date_pattern.match(line)
+            date_match = postgresql_date_pattern.match(line)
             if date_match:
                 date = date_match.group()
                 if date[7] == " ":
                     date = date[:7] + "0" + date[8:]
-                timestamp = datetime.datetime.strptime(date, "%y%m%d %H:%M:%S")
+                timestamp = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
                 timedelta = now - timestamp
                 timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
                 index = (24*3600 - timedelta_seconds)//binning
@@ -157,9 +158,9 @@ pylab.ylabel(u"requests/sec")
 pylab.xticks(locations, labels)
 
 pylab.subplot(412)
-rps_mysql = expand_array(mollify(read_times_mysql()))
-pylab.fill(x_values, rps_mysql, edgecolor="b", facecolor="#bbbbff", closed=False)
-pylab.title(u"MySQL server load")
+rps_postgresql = expand_array(mollify(read_times_postgresql()))
+pylab.fill(x_values, rps_postgresql, edgecolor="b", facecolor="#bbbbff", closed=False)
+pylab.title(u"PostgreSQL server load")
 pylab.xticks(locations, labels)
 pylab.xlim(0, 24)
 pylab.ylabel(u"queries/sec")
