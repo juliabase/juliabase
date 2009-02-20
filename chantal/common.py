@@ -12,9 +12,9 @@ remote_monitor_log_file_name = "/windows/T/public/bronger/remote_monitor.log"
 
 
 class SystemInfo(object):
-    def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5):
+    def __init__(self, timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5, db_hits):
         self.timestamp, self.used_mem, self.used_mem_with_buffers, self.used_swap, self.load_avg_5 = \
-            timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5
+            timestamp, used_mem, used_mem_with_buffers, used_swap, load_avg_5, db_hits
 
 
 class Availability(object):
