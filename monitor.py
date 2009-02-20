@@ -59,15 +59,13 @@ except IOError:
     monitor_data = []
 
 
-last_db_hits = None
+waiting_time = 5*60  # in seconds
 
 while True:
     now = datetime.datetime.now()
     used, used_with_buffers, used_swap = get_free_memory()
-    current_db_hits = get_db_hits()
-    db_hits = 0 if last_db_hits is None else current - last_db_hits
-    last_db_hits = current_db_hits
-    monitor_data.append(SystemInfo(now, used, used_with_buffers, used_swap, os.getloadavg()[1], db_hits/(5*60)))
+    monitor_data.append(SystemInfo(now, used, used_with_buffers, used_swap, os.getloadavg()[1],
+                                   get_db_hits() / waiting_time))
     while monitor_data and now - monitor_data[0].timestamp > datetime.timedelta(1.1):
         del monitor_data[0]
     pickle.dump(monitor_data, open(filename, "wb"))
@@ -75,4 +73,4 @@ while True:
         pickle.dump(Availability(), open(remote_monitor_pickle_file_name, "wb"))
     except IOError:
         pass
-    time.sleep(5*60)
+    time.sleep(waiting_time)

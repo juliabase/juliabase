@@ -81,13 +81,14 @@ def read_monitor_data():
                 (getattr(monitor_data[j], attribute) - getattr(monitor_data[j-1], attribute)) +
                 getattr(monitor_data[j-1], attribute))
     monitor_data = pickle.load(open(monitor_file_name, "rb"))
-    for data in monitor_data:
+    for i, data in enumerate(monitor_data):
         data.load_avg_5 = max(0, data.load_avg_5 - 1)
+        monitor_data.db_hps = monitor_data[i].db_hits - monitor_data[i-1].db_hits if i > 0 else 0  # hits per second
     memory_usage = []
     memory_with_buffers_usage = []
     swap_usage = []
     load_avgs = []
-    db_hits = []
+    db_hps = []
     for i in range(number_of_slots):
         timestamp = now + datetime.timedelta(-1 + i/number_of_slots)
         j = 0
@@ -98,20 +99,20 @@ def read_monitor_data():
             memory_with_buffers_usage.append(monitor_data[-1].used_mem_with_buffers)
             swap_usage.append(monitor_data[-1].used_swap)
             load_avgs.append(monitor_data[-1].load_avg_5)
-            db_hits.append(monitor_data[-1].db_hits)
+            db_hps.append(monitor_data[-1].db_hps)
         elif j == 0:
             memory_usage.append(0)
             memory_with_buffers_usage.append(0)
             swap_usage.append(0)
             load_avgs.append(0)
-            db_hits.append(0)
+            db_hps.append(0)
         else:
             memory_usage.append(interpolate("used_mem"))
             memory_with_buffers_usage.append(interpolate("used_mem_with_buffers"))
             swap_usage.append(interpolate("used_swap"))
             load_avgs.append(interpolate("load_avg_5"))
-            db_hits.append(interpolate("db_hits"))
-    return memory_usage, memory_with_buffers_usage, swap_usage, load_avgs, db_hits
+            db_hps.append(interpolate("db_hps"))
+    return memory_usage, memory_with_buffers_usage, swap_usage, load_avgs, db_hps
 
 
 def expand_array(array, with_nulls=True):
@@ -137,13 +138,13 @@ pylab.xlim(0, 24)
 pylab.ylabel(u"requests/sec")
 pylab.xticks(locations, labels)
 
-memory_usage, memory_with_buffers_usage, swap_usage, load_avgs, db_hits = read_monitor_data()
-memory_usage, memory_with_buffers_usage, swap_usage, load_avgs, db_hits = \
+memory_usage, memory_with_buffers_usage, swap_usage, load_avgs, db_hps = read_monitor_data()
+memory_usage, memory_with_buffers_usage, swap_usage, load_avgs, db_hps = \
     expand_array(mollify(memory_usage)), expand_array(mollify(memory_with_buffers_usage)), \
-    expand_array(mollify(swap_usage), with_nulls=False), expand_array(mollify(load_avgs)), expand_array(mollify(db_hits))
+    expand_array(mollify(swap_usage), with_nulls=False), expand_array(mollify(load_avgs)), expand_array(mollify(db_hps))
 
 pylab.subplot(412)
-pylab.fill(x_values, db_hits, edgecolor="b", facecolor="#bbbbff", closed=False)
+pylab.fill(x_values, db_hps, edgecolor="b", facecolor="#bbbbff", closed=False)
 pylab.title(u"PostgreSQL server load")
 pylab.xticks(locations, labels)
 pylab.xlim(0, 24)
