@@ -11,15 +11,23 @@ It is not necessary to be root for this.
 
 from __future__ import division
 import subprocess, datetime, re, os, pickle, time
-from copy import copy
 from chantal.common import SystemInfo, Availability
+import psycopg2
+
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read("/var/lib/chantal/chantal.auth")
+credentials = dict(credentials.items("DEFAULT"))
+
 
 filename = "/home/www-data/online/monitor.pickle"
 remote_monitor_pickle_file_name = "/home/www-data/online/remote_monitor.pickle"
 
+
 total_pattern = re.compile(r"Mem:\s*(\d+)\s+(\d+)")
 used_pattern = re.compile(r"-/\+ buffers/cache:\s*(\d+)")
 swap_pattern = re.compile(r"Swap:\s*(\d+)\s+(\d+)")
+
 def get_free_memory():
     free = subprocess.Popen(["free", "-b"], stdout=subprocess.PIPE)
     for line in free.stdout:
@@ -34,21 +42,30 @@ def get_free_memory():
             swap, swap_used = int(match.group(1)), int(match.group(2))
     return used/total*100, used_with_buffers/total*100, swap_used/swap*100
 
+
+def get_db_hits():
+    connection = psycopg2.connect("user='chantal' password='%s'" % credentials["postgresql_password"]);
+    cursor = connection.cursor()
+    cursor.execute("SELECT tup_returned + tup_fetched + tup_inserted + tup_updated + tup_deleted "
+                   "FROM pg_stat_database WHERE datname='chantal';")
+    number_of_queries = cursor.fetchall()[0][0]
+    connection.close()
+    return number_of_queries
+
+
 try:
     monitor_data = pickle.load(open(filename, "rb"))
 except IOError:
     monitor_data = []
 
-if isinstance(monitor_data[0], tuple):
-    old_monitor_data = copy(monitor_data)
-    monitor_data = []
-    for data in old_monitor_data:
-        monitor_data.append(SystemInfo(data[0], data[1], data[2], 0, data[3]+1))
+
+waiting_time = 5*60  # in seconds
 
 while True:
     now = datetime.datetime.now()
     used, used_with_buffers, used_swap = get_free_memory()
-    monitor_data.append(SystemInfo(now, used, used_with_buffers, used_swap, os.getloadavg()[1]))
+    monitor_data.append(SystemInfo(now, used, used_with_buffers, used_swap, os.getloadavg()[1],
+                                   get_db_hits() / waiting_time))
     while monitor_data and now - monitor_data[0].timestamp > datetime.timedelta(1.1):
         del monitor_data[0]
     pickle.dump(monitor_data, open(filename, "wb"))
@@ -56,4 +73,4 @@ while True:
         pickle.dump(Availability(), open(remote_monitor_pickle_file_name, "wb"))
     except IOError:
         pass
-    time.sleep(5*60)
+    time.sleep(waiting_time)
