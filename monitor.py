@@ -11,7 +11,6 @@ It is not necessary to be root for this.
 
 from __future__ import division
 import subprocess, datetime, re, os, pickle, time
-from copy import copy
 from chantal.common import SystemInfo, Availability
 import psycopg2
 
@@ -58,11 +57,6 @@ try:
     monitor_data = pickle.load(open(filename, "rb"))
 except IOError:
     monitor_data = []
-if isinstance(monitor_data[0], tuple):
-    old_monitor_data = copy(monitor_data)
-    monitor_data = []
-    for data in old_monitor_data:
-        monitor_data.append(SystemInfo(data[0], data[1], data[2], 0, data[3]+1))
 
 
 last_db_hits = None
