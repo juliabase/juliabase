@@ -83,7 +83,7 @@ def read_monitor_data():
     monitor_data = pickle.load(open(monitor_file_name, "rb"))
     for i, data in enumerate(monitor_data):
         data.load_avg_5 = max(0, data.load_avg_5 - 1)
-        monitor_data.db_hps = monitor_data[i].db_hits - monitor_data[i-1].db_hits if i > 0 else 0  # hits per second
+        monitor_data[i].db_hps = monitor_data[i].db_hits - monitor_data[i-1].db_hits if i > 0 else 0  # hits per second
     memory_usage = []
     memory_with_buffers_usage = []
     swap_usage = []
