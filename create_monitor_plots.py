@@ -51,13 +51,12 @@ def read_times_apache():
             break
     return times
 
-postgresql_date_pattern = re.compile(ur"^\d{4}-\d\d-\d\d (\d| )\d:\d\d:\d\d")
-db_hit_pattern = re.compile(ur"(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\s+[A-Z]{2,4} (ANWEISUNG|STATEMENT)")
+postgresql_date_pattern = re.compile(ur"^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d")
+db_hit_pattern = re.compile(ur"(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)\s+[A-Z]{2,4} (ANWEISUNG|STATEMENT):  (SELECT|INSERT|UPDATE|DELETE)")
 def read_times_postgresql():
     times = number_of_slots * [0]
     read_further = True
-    # FixMe: Logrotate muß noch beachtet werden
-    for filename in sorted(glob.glob("/var/log/postgresql/postgresql-*-main.log")):
+    for filename in sorted(glob.glob("/var/log/postgresql/postgresql-*-main.log*")):
         if filename.endswith(".gz"):
             logfile = gzip.open(filename)
         else:
@@ -65,20 +64,19 @@ def read_times_postgresql():
         timedelta = datetime.timedelta(0)
         index = None
         for linenumber, line in enumerate(logfile):
-            date_match = postgresql_date_pattern.match(line)
-            if date_match:
-                date = date_match.group()
-                if date[7] == " ":
-                    date = date[:7] + "0" + date[8:]
-                timestamp = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-                timedelta = now - timestamp
-                timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
-                index = (24*3600 - timedelta_seconds)//binning
-            if index is not None and db_hit_pattern.match(line):
-                if 0 <= index < number_of_slots:
-                    times[index] += 1/binning
-                else:
-                    read_further = False
+            if not line.startswith("        !"):
+                date_match = postgresql_date_pattern.match(line)
+                if date_match:
+                    date = date_match.group()
+                    timestamp = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+                    timedelta = now - timestamp
+                    timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
+                    index = (24*3600 - timedelta_seconds)//binning
+                if index is not None and db_hit_pattern.match(line):
+                    if 0 <= index < number_of_slots:
+                        times[index] += 1/binning
+                    else:
+                        read_further = False
         logfile.close()
         if not read_further:
             break
