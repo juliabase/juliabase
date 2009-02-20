@@ -3,10 +3,10 @@
 
 u"""This module is the connection to the database.  It contains the *models*,
 i.e. Python classes which represent the tables in the relational database.
-Every class which inherits from ``models.Model`` is a MySQL table at the same
-time, unless it has ``abstract = True`` set in their ``Meta`` subclass.
+Every class which inherits from ``models.Model`` is a PostgreSQL table at the
+same time, unless it has ``abstract = True`` set in their ``Meta`` subclass.
 
-If you add fields to models, and you have a MySQL database running which
+If you add fields to models, and you have a PostgreSQL database running which
 contains already valuable data, you have to add the fields manually with SQL
 commands to the database, too.  (There is a project called `“Django
 Evolution”`_ that tries to improve this situation.)

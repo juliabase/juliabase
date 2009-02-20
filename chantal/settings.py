@@ -25,10 +25,10 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'mysql'      # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+DATABASE_ENGINE = 'postgresql_psycopg2' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
 DATABASE_NAME = 'chantal'      # Or path to database file if using sqlite3.
-DATABASE_USER = 'root'         # Not used with sqlite3.
-DATABASE_PASSWORD = CREDENTIALS["mysql_password"]    # Not used with sqlite3.
+DATABASE_USER = 'chantal'      # Not used with sqlite3.
+DATABASE_PASSWORD = CREDENTIALS["postgresql_password"]    # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
@@ -137,8 +137,9 @@ def _scan_version(package):
     return match.group("version") if match else None
 APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER or WITH_EPYDOC else os.stat("/var/run/apache2.pid")[9]
-MYSQL_VERSION = _scan_version("mysql-server")
-MYSQL_STARTUP_TIME = os.stat("/var/run/mysqld/mysqld.pid")[9]
+POSTGRESQL_VERSION = _scan_version("postgresql")
+# FixMe: PostgreSQL version shouldn't be fixed
+POSTGRESQL_STARTUP_TIME = os.stat("/var/run/postgresql/8.3-main.pid")[9]
 PYTHON_VERSION = _scan_version("python")
 CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
 
