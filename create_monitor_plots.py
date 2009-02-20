@@ -148,7 +148,7 @@ pylab.fill(x_values, db_hps, edgecolor="b", facecolor="#bbbbff", closed=False)
 pylab.title(u"PostgreSQL server load")
 pylab.xticks(locations, labels)
 pylab.xlim(0, 24)
-pylab.ylabel(u"queries/sec")
+pylab.ylabel(u"rows/sec")
 
 pylab.subplot(413)
 pylab.fill(x_values, load_avgs, edgecolor="k", facecolor="#c2c2c2", closed=False)
