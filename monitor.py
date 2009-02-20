@@ -48,7 +48,7 @@ def get_db_hits():
     cursor = connection.cursor()
     cursor.execute("SELECT tup_returned + tup_fetched + tup_inserted + tup_updated + tup_deleted "
                    "FROM pg_stat_database WHERE datname='chantal';")
-    number_of_queries = cursor.fetchall()[0]
+    number_of_queries = cursor.fetchall()[0][0]
     connection.close()
     return number_of_queries
 
