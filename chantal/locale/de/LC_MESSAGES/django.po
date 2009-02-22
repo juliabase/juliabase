@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-19 15:03+0100\n"
-"PO-Revision-Date: 2009-02-19 15:04+0100\n"
+"POT-Creation-Date: 2009-02-22 10:35+0100\n"
+"PO-Revision-Date: 2009-02-22 10:35+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1034,892 +1034,6 @@ msgstr ""
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
-msgid "Yes"
-msgstr "Ja"
-
-msgid "No"
-msgstr "Nein"
-
-#, python-format
-msgid "with %(markdown_link)s syntax"
-msgstr "mit %(markdown_link)s-Syntax"
-
-msgid "%Y-%m-%d %H<sup>h</sup>"
-msgstr "%Y-%m-%d %H<sup>h</sup>"
-
-msgid "%b %Y"
-msgstr "%b %Y"
-
-msgid "date unknown"
-msgstr "Datum unbekannt"
-
-msgid "Initials"
-msgstr "Kürzel"
-
-msgid "New name"
-msgstr "Neuer Name"
-
-msgid "New name must be a valid “new-style” name."
-msgstr "Der neue Name muss ein gültiger Name der „neuen Art“ sein."
-
-msgid "This sample name exists already."
-msgstr "Dieser Probenname ist schon vergeben."
-
-msgid "This sample name has been used already on this page."
-msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
-
-msgid ""
-"Please give the list of provisional samples names (without the asterisk, but "
-"with leading zeros) as a comma-separated list without whitespace in the "
-"“numbers” query string parameter."
-msgstr ""
-"Bitte geben Sie eine Liste der provisorischen Namen an (ohne Sternchen, aber "
-"mit führenden Nullen) als eine Komma-separierte Liste ohne Leerraum, im "
-"„numbers“-Querystring-Parameter."
-
-msgid "You may change the sample names, but you must choose initials first."
-msgstr ""
-"Sie können die Probennamen setzen, aber erst müssen Sie sich ein Kürzel "
-"ausdenken."
-
-msgid "Successfully renamed the samples."
-msgstr "Proben erfolgreich umbenannt."
-
-msgid "Giving new-style names"
-msgstr "Probennamen nach „neuer Art“ vergeben"
-
-msgid "Column groups"
-msgstr "Spalten-Gruppen"
-
-msgid "Columns"
-msgstr "Spalten"
-
-#, python-format
-msgid "Table export for “%s”"
-msgstr "Tabellen-Export für „%s“"
-
-#, python-format
-msgid "The external operator “%s” was successfully added."
-msgstr "Der externe Operateur „%s“ wurde erfolgreich neu angelegt."
-
-msgid "Add external operator"
-msgstr "Neuen externen Operateur anlegen"
-
-msgid "Concact person"
-msgstr "Kontaktperson"
-
-#, python-format
-msgid "The external operator “%s” was successfully changed."
-msgstr "Der externe Operateur „%s“ wurde erfolgreich geändert."
-
-#, python-format
-msgid "Edit external operator “%s”"
-msgstr "Externen Operateur „%s“ ändern"
-
-#, python-format
-msgid "External operator “%(name)s”"
-msgstr "Externer Operateur „%(name)s“"
-
-msgid "You have no external contacts."
-msgstr "Sie haben keine externen Kontakte."
-
-msgid "All you external contacts"
-msgstr "Alle Ihre externen Kontakte"
-
-msgid "You must add a \"hash\" parameter to the query string."
-msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
-
-#, python-format
-msgid "Chantal news for %s"
-msgstr "Chantal-Neuigkeiten für %s"
-
-msgid "The timestamp must not be in the future."
-msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
-
-msgid "Number of layers to be added"
-msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
-
-msgid "Nickname of My Layer to be added"
-msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
-
-msgid ""
-"The initials must start with two uppercase letters.  They must contain "
-"uppercase letters and digits only.  Digits must be at the end."
-msgstr ""
-"Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
-"Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
-
-msgid "These initials are already used."
-msgstr "Dieses Namenskürzel ist schon vergeben."
-
-msgid "Description of edit"
-msgstr "Beschreibung der Änderung"
-
-msgid "Important edit"
-msgstr "Wichtige Änderung"
-
-msgid "Samples"
-msgstr "Proben"
-
-msgid "Time must be given in the form HH:MM:SS."
-msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
-
-msgid "Minutes and seconds must be smaller than 60."
-msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
-
-msgid "Must be a physical quantity with number and unit."
-msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
-
-#, python-format
-msgid "The unit is invalid.  Valid units are: %s"
-msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
-
-msgid "Invalid deposition number.  It must be of the form YYL-NNN."
-msgstr ""
-"Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
-
-#, python-format
-msgid "The deposition letter must be an uppercase “%s”."
-msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
-
-msgid "You mustn't use image and headings syntax in Markdown markup."
-msgstr ""
-"Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
-
-msgid "Name of new group"
-msgstr "Name der neuen Gruppe"
-
-msgid "This group name is already used."
-msgstr "Dieser Gruppenname ist bereits vergeben."
-
-#, python-format
-msgid "Group %s was successfully created."
-msgstr "Die Gruppe %s wurde erfolgreich angelegt."
-
-msgid "Add new group"
-msgstr "Neue Gruppe hinzufügen"
-
-msgid "List of all groups"
-msgstr "Liste aller Gruppen"
-
-msgid "Members"
-msgstr "Mitglieder"
-
-msgid ""
-"In restricted groups, at least one member must have permission to change "
-"groups."
-msgstr ""
-"Wenigstens ein Mitglied in einer beschränkten Gruppe muss die Berechtigung "
-"haben, Gruppen zu ändern."
-
-#, python-format
-msgid "Members of group “%s” were successfully updated."
-msgstr ""
-"Die Mitglieder der Gruppe „%s“ wurden erfolgreich auf den neuesten Stand "
-"gebracht."
-
-#, python-format
-msgid "Change group memberships of “%s”"
-msgstr "Mitglieder der Gruppe “%s” ändern"
-
-msgid "year"
-msgstr "Jahr"
-
-msgid "month"
-msgstr "Monat"
-
-#, python-format
-msgid "Lab notebook for %s"
-msgstr "Laborbuch für %s"
-
-msgid "Operator"
-msgstr "Operateur"
-
-msgid "The first two digits must match the year of the deposition."
-msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
-
-msgid "Remove deposited samples from My Samples"
-msgstr "Entferne deponierte Proben von Meine Proben"
-
-msgid "duplicate this layer"
-msgstr "diese Schicht duplizieren"
-
-msgid "remove this layer"
-msgstr "diese Schicht löschen"
-
-msgid "move this layer"
-msgstr "diese Schicht verschieben"
-
-msgid "---------"
-msgstr "---------"
-
-msgid "up"
-msgstr "hoch"
-
-msgid "down"
-msgstr "runter"
-
-msgid "You can't duplicate, move, or remove a layer at the same time."
-msgstr ""
-"Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
-"verschieben."
-
-msgid "No layers given."
-msgstr "Keine Schichten angebeben."
-
-msgid "You can't change the number of the first layer."
-msgstr "Sie können nicht die Nummer des ersten Layers ändern."
-
-msgid "New layers collide with following deposition."
-msgstr "Die neuen Schichten kollidieren mit der nachfolgenden Deposition."
-
-msgid "Overlap with previous deposition numbers."
-msgstr "Überlapp mit der vorherigen Depositionsnummer."
-
-#, python-format
-msgid "The sample %s is already dead at this time."
-msgid_plural "The samples %s are already dead at this time."
-msgstr[0] "Die Probe %s ist zu diesem Zeitpunkt schon tot."
-msgstr[1] "Die Proben %s sind zu diesem Zeitpunkt schon tot."
-
-msgid "Layer number is not consecutive."
-msgstr "Die Schichtnummern nicht nicht aufeinanderfolgend."
-
-#, python-format
-msgid "Deposition %s was successfully changed in the database."
-msgstr "Die Deposition %s wurde erfolgreich in der Datenbank geändert."
-
-#, python-format
-msgid "Deposition %s was successfully added to the database."
-msgstr "Die Deposition %s wurde erfolgreich zur Datenbank hinzugefügt."
-
-#, python-format
-msgid "Large-area deposition “%s”"
-msgstr "Großflächige Deposition „%s“"
-
-msgid "Add large-area deposition"
-msgstr "Großflächige Deposition hinzufügen"
-
-msgid "MainMenu"
-msgstr "MainMenu"
-
-msgid "Main menu"
-msgstr "Hauptmenü"
-
-msgid "Deposition number pattern"
-msgstr "Muster für Depositionsnummer"
-
-msgid "Search for deposition"
-msgstr "Nach Deposition suchen"
-
-msgid "Sandbox"
-msgstr "Sandkasten"
-
-msgid "MarkdownMarkup"
-msgstr "MarkdownMarkup"
-
-msgid "Markdown sandbox"
-msgstr "Markdown-Sandkasten"
-
-msgid "Nickname"
-msgstr "Spitzname"
-
-msgid "Layer identifier"
-msgstr "Schicht-Bezeichnung"
-
-msgid "in the form \"deposition number\"-\"layer number\""
-msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
-
-msgid "Delete"
-msgstr "Löschen"
-
-msgid "Deposition and layer number must be separated by \"-\"."
-msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
-
-msgid "Deposition number doesn't exist."
-msgstr "Diese Deposition gibt es nicht."
-
-msgid "Layer number isn't a number."
-msgstr "Die Schichtnummer ist keine Zahl."
-
-msgid "This layer does not exist in this deposition."
-msgstr "In dieser Deposition gibt es diesen Layer nicht."
-
-msgid "Nickname is already given."
-msgstr "Dieser Spitzname ist schon vergeben."
-
-msgid "You can't access the “My Layers” section of another user."
-msgstr ""
-"Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
-
-msgid "My Layers"
-msgstr "Meine Schichten"
-
-msgid "My Samples"
-msgstr "Meine Proben"
-
-msgid "New currently responsible person"
-msgstr "Neuer aktuell Verantwortlicher"
-
-msgid "New Group"
-msgstr "Neue Gruppe"
-
-msgid "New current location"
-msgstr "Neuer Probenort"
-
-msgid "Copy to user"
-msgstr "Zu Benutzer kopieren"
-
-msgid "Comment for recipient"
-msgstr "Kommentar für Empfänger"
-
-msgid "Remove from “My Samples”"
-msgstr "Entferne von „Meine Proben“"
-
-msgid ""
-"If you copy samples over to another person, you must enter a short comment."
-msgstr ""
-"Wenn Sie Proben zu einer anderen Person kopieren, müssen Sie einen kurzen "
-"Kommentar eingeben."
-
-msgid "If you edit samples, you must enter a short comment."
-msgstr "Wenn Sie Proben ändern, müssen Sie einen kurzen Kommentar eingeben."
-
-msgid ""
-"You must be the currently responsible person for samples you'd like to "
-"change."
-msgstr ""
-"Sie müssen die aktuell verantwortliche Person sein für die Proben, die Sie "
-"ändern wollen."
-
-msgid "You can't access the “My Samples” section of another user."
-msgstr "Sie düfen nicht auf „Meine Proben“ eines anderen Benutzers zugreifen."
-
-msgid "Successfully processed “My Samples”."
-msgstr "Erfolgreich „Meine Proben“ verarbeitet."
-
-#, python-format
-msgid "Edit “My Samples” of %s"
-msgstr "„Meine Proben“ von %s ändern"
-
-msgid "Sample"
-msgstr "Probe"
-
-msgid "Couldn't open datafile."
-msgstr "Konnte Daten-Datei nicht öffnen."
-
-msgid "Overwrite with file data"
-msgstr "Mit Datei-Daten überschreiben"
-
-msgid "Remove measured sample from My Samples"
-msgstr "Entferne gemessene Probe von Meine Proben"
-
-msgid "This PDS number is already in use."
-msgstr "Diese PDS-Nummer ist schon vergeben."
-
-msgid "Sample is already dead at this time."
-msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
-
-#, python-format
-msgid "%s was successfully changed in the database."
-msgstr "%s wurde erfolgreich in der Datenbank geändert."
-
-#, python-format
-msgid "%s was successfully added to the database."
-msgstr "%s wurde erfolgreich zur Datenbank hinzugefügt."
-
-#, python-format
-msgid "PDS measurement %s"
-msgstr "PDS-Messung %s"
-
-msgid "Add PDS measurement"
-msgstr "PDS-Messung hinzufügen"
-
-msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
-msgstr "Ungültiges Dateiformat.  Nur PDF, PNG und JPEG sind erlaubt."
-
-msgid "Sample serieses"
-msgstr "Probenserien"
-
-msgid "Image file"
-msgstr "Bilddatei"
-
-msgid ""
-"You don't have the permission to add the result to all selected samples/"
-"series."
-msgstr ""
-"Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
-"Serien zu ändern."
-
-msgid "You must select at least one samples/series."
-msgstr "Sie müssen mindestens eine Probe/Serie markieren."
-
-msgid "Number of quantities"
-msgstr "Anzahl der Messgrößen"
-
-msgid "Number of values"
-msgstr "Anzahl der Werte"
-
-msgid "Quantity name"
-msgstr "Messgrößen-Name"
-
-msgid "Value"
-msgstr "Wert"
-
-msgid "Adding samples or sample series must be marked as important."
-msgstr ""
-"Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert "
-"werden."
-
-msgid "This quantity is already used in this table."
-msgstr "Diese Messgröße wurde in dieser Tabelle schon verwendet."
-
-msgid "Edit result"
-msgstr "Ergebnis ändern"
-
-msgid "New result"
-msgstr "Ergebnis hinzufügen"
-
-#, python-format
-msgid "Result “%s”"
-msgstr "Ergebnis „%s“"
-
-msgid "is amongst My Samples"
-msgstr "gehört zu Meinen Proben"
-
-msgid "Currently responsible person"
-msgstr "Aktuell Verantwortlicher"
-
-msgid "Group"
-msgstr "Gruppe"
-
-msgid ""
-"Changing the group or the responsible person must be marked as important."
-msgstr ""
-"Änderungen der Gruppe oder des Verantwortlichen müssen immer als „wichtig“ "
-"markiert werden."
-
-#, python-format
-msgid "Sample %s was successfully changed in the database."
-msgstr "Die Probe %s wurde erfolgreich in der Datenbank geändert."
-
-#, python-format
-msgid "Edit sample “%s”"
-msgstr "Ändern der Probe „%s“"
-
-msgid "split"
-msgstr "Spaltung"
-
-#, python-format
-msgid ""
-"You are not allowed to add any processes to the sample %s because neither "
-"are you its currently responsible person, nor in its group, nor do you have "
-"special permissions for a physical process."
-msgstr ""
-"Sie dürfen keine Prozesse zur Probe %s hinzufügen, weil Sie weder ihr "
-"aktueller Verantwortlicher sind, noch in ihrer Gruppe sind, noch spezielle "
-"Berechtigungen für physikalische Prozesse haben."
-
-#, python-format
-msgid "Sample %s was added to Your Samples."
-msgstr "Probe %s wurde zu Meinen Proben hinzugefügt."
-
-#, python-format
-msgid "Sample %s was removed from Your Samples."
-msgstr "Probe %s wurde von Meinen Proben entfernt."
-
-msgid "Number of samples"
-msgstr "Anzahl der Proben"
-
-msgid "Substrate"
-msgstr "Substrat"
-
-msgid "Substrate comments"
-msgstr "Substrat-Kommentare"
-
-msgid "Substrate originator"
-msgstr "Substrat-Urheber"
-
-msgid "Current location"
-msgstr "Aktueller Probenort"
-
-msgid "Purpose"
-msgstr "Zweck"
-
-msgid "Tags"
-msgstr "Tags"
-
-msgid "Give names"
-msgstr "Namen vergeben"
-
-msgid "For a custom substrate, you must give substrate comments."
-msgstr ""
-"Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
-"beschreiben."
-
-msgid "You selected “no substrate”, so your substrate comments would be lost."
-msgstr ""
-"Sie haben „kein Substrat“ gewählt, also würden Ihre Substrat-Kommentare "
-"verloren gehen."
-
-msgid "You selected “no substrate”, so the external originator would be lost."
-msgstr ""
-"Sie haben „kein Substrat“ gewählt, also würde der externe Operateur verloren "
-"gehen."
-
-#, python-format
-msgid ""
-"Your samples have the provisional names from %(first_name)s to %(last_name)"
-"s.  They were added to “My Samples”."
-msgstr ""
-"Ihre Proben haben die provisorischen Namen von %(first_name)s bis %"
-"(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
-
-#, python-format
-msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
-msgstr ""
-"Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ "
-"hinzugefügt."
-
-msgid "Add samples"
-msgstr "Proben hinzufügen"
-
-#, python-format
-msgid "Add process to sample “%s”"
-msgstr "Prozess zu Probe „%s“ hinzufügen"
-
-msgid "Name pattern"
-msgstr "Namensmuster"
-
-msgid "Search for sample"
-msgstr "Nach Proben suchen"
-
-msgid "Last process wasn't a split."
-msgstr "Der letzte Prozess war keine Spaltung."
-
-#. FixMe: Feed entries
-#, python-format
-msgid "Sample “%s” was killed."
-msgstr "Probe „%s“ wurde getötet."
-
-#, python-format
-msgid "Kill sample “%s”"
-msgstr "Töten der Probe „%s“"
-
-msgid "Name"
-msgstr "Name"
-
-#, python-format
-msgid "Sample series “%s”"
-msgstr "Probenserie „%s“"
-
-#, python-format
-msgid "Sample series %s was successfully updated in the database."
-msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
-
-#, python-format
-msgid "Edit sample series “%s”"
-msgstr "Ändern der Probenserie „%s“"
-
-msgid "This sample series name is already given."
-msgstr "Dieser Probenserienname ist schon vergeben."
-
-#, python-format
-msgid "The name is %d letter too long."
-msgid_plural "The name is %d letters too long."
-msgstr[0] "Der Name ist %d Buchstaben zu lang."
-msgstr[1] "Der Name ist %d Buchstaben zu lang."
-
-#, python-format
-msgid "Sample series %s was successfully added to the database."
-msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
-
-msgid "Create new sample series"
-msgstr "Neue Probenserie anlegen"
-
-msgid "This deposition number exists already."
-msgstr "Diese Depositionsnummer ist schon vergeben."
-
-msgid "Number is a duplicate."
-msgstr "Die Nummer ist ein Duplikat."
-
-#, python-format
-msgid "6-chamber deposition “%s”"
-msgstr "6-Kammer-Deposition „%s“"
-
-msgid "New 6-chamber deposition"
-msgstr "Neue 6-Kammer-Deposition"
-
-msgid "hotwire"
-msgstr "Hotwire"
-
-msgid "PECVD"
-msgstr "PECVD"
-
-msgid "Layer to be added"
-msgstr "Schicht, die hinzugefügt werden soll"
-
-#, python-format
-msgid "Small cluster tool deposition “%s”"
-msgstr "Kleine-Cluster-Tool-Depositionen „%s“"
-
-msgid "New small cluster tool deposition"
-msgstr "Neue Kleine-Cluster-Tool-Deposition"
-
-msgid "Old sample name"
-msgstr "Alter Probenname"
-
-msgid "Pieces"
-msgstr "Stücke"
-
-msgid "You must get rid of the provisional sample name."
-msgstr "Sie müssen den provisorischen Probennamen aufgeben."
-
-msgid "No sample with this name found."
-msgstr "Keine Probe dieses Namens gefunden."
-
-msgid "Alias is not unique."
-msgstr "Der Alias ist nicht eindeutig."
-
-msgid "No sample with this ID found."
-msgstr "Keine Probe mit dieser ID gefunden."
-
-msgid "Invalid ID format."
-msgstr "Ungültiges ID-Format."
-
-msgid "Must be at least 1."
-msgstr "Muss mindestens 1 sein."
-
-msgid "If you choose a new-style name, it must not change."
-msgstr "Wenn Sie einen Namen „neuer Art“ wählen, dürfen Sie ihn nicht ändern."
-
-msgid ""
-"If you choose a deposition-style name, it must begin with the deposition "
-"number."
-msgstr ""
-"Wenn Sie einen Depositions-Probennamen wählen, muss er mit der "
-"Depositionsnummer beginnen."
-
-msgid "New sample name"
-msgstr "Neuer Probenname"
-
-msgid "(for all samples; leave empty for no change)"
-msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
-
-#, python-format
-msgid "Sample %s occurs multiple times."
-msgstr "Probe %s kommt mehrfach vor."
-
-#, python-format
-msgid "Sample %s doesn't belong to this deposition."
-msgstr "Probe %s gehört nicht zu dieser Deposition."
-
-msgid ""
-"Since there is more than one piece, the new name must not be exactly the "
-"deposition's name."
-msgstr ""
-"Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
-"Depositionsname sein."
-
-msgid "At least one sample of the original deposition is missing."
-msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
-
-msgid "If you don't split, you can't rename the single piece."
-msgstr ""
-"Wenn Sie nicht spalten, dürfen Sie das einzelne Stück nicht umbenennen."
-
-msgid ""
-"If you choose a deposition-style name, it must begin with the parent's new "
-"name."
-msgstr ""
-"Wenn Sie einen Depositions-Probennamen wählen, muss er mit dem neuen Namen "
-"der Mutterprobe beginnen."
-
-msgid "Samples were successfully split and/or renamed."
-msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
-
-#, python-format
-msgid "Bulk sample rename for %s"
-msgstr "Probenumbenennung für %s"
-
-msgid "New sample purpose"
-msgstr "Neuer Probenzweck"
-
-msgid "The sample name has an invalid format."
-msgstr "Dieser Probenname hat ein ungültiges Format."
-
-msgid "The new sample name must start with the parent sample's name."
-msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
-
-msgid "Name does already exist in database."
-msgstr "Name existiert schon in der Datenbank."
-
-msgid "All pieces completely entered"
-msgstr "Alle Stücke vollständig eingegeben"
-
-msgid "Sample was completely split"
-msgstr "Probe wurde vollständig gespalten"
-
-msgid "Sample series"
-msgstr "Probenserie"
-
-msgid "You must split into at least one piece."
-msgstr "Sie müssen mindestens in ein Stück spalten."
-
-msgid "You must split into at least two pieces if the split is complete."
-msgstr ""
-"Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig "
-"ist."
-
-msgid "Name is already given."
-msgstr "Dieser Name ist schon vergeben."
-
-msgid "This split is not the last one in the sample's process list."
-msgstr ""
-"Dieser Split ist nicht der letzte Prozess, der auf die Probe angewendet "
-"wurde."
-
-#, python-format
-msgid "Sample “%s” was successfully split."
-msgstr "Die Probe „%s“ wurde erfolgreich gespalten."
-
-#, python-format
-msgid "Split sample “%s”"
-msgstr "Spalten der Probe „%s“"
-
-#, python-format
-msgid "%(count)d year"
-msgid_plural "%(count)d years"
-msgstr[0] "%(count)d Jahr"
-msgstr[1] "%(count)d Jahren"
-
-#, python-format
-msgid "%(count)d month"
-msgid_plural "%(count)d months"
-msgstr[0] "%(count)d Monat"
-msgstr[1] "%(count)d Monaten"
-
-#, python-format
-msgid "%(count)d week"
-msgid_plural "%(count)d weeks"
-msgstr[0] "%(count)d Woche"
-msgstr[1] "%(count)d Wochen"
-
-#, python-format
-msgid "%(count)d day"
-msgid_plural "%(count)d days"
-msgstr[0] "%(count)d Tag"
-msgstr[1] "%(count)d Tagen"
-
-#, python-format
-msgid "%(count)d hour"
-msgid_plural "%(count)d hours"
-msgstr[0] "%(count)d Stunde"
-msgstr[1] "%(count)d Stunden"
-
-#, python-format
-msgid "%(count)d minute"
-msgid_plural "%(count)d minutes"
-msgstr[0] "%(count)d Minute"
-msgstr[1] "%(count)d Minuten"
-
-#, python-format
-msgid "%(count)d second"
-msgid_plural "%(count)d seconds"
-msgstr[0] "%(count)d Sekunde"
-msgstr[1] "%(count)d Sekunden"
-
-msgid " and "
-msgstr " und "
-
-msgid ", "
-msgstr ", "
-
-msgid ", and "
-msgstr " und "
-
-msgid "today, %H:%M"
-msgstr "heute, %H:%M"
-
-msgid "yesterday, %H:%M"
-msgstr "gestern, %H:%M"
-
-msgid "%A, %b %d, %Y, %H:%M"
-msgstr "%A, %d. %b %Y, %H:%M"
-
-msgid "%b %d, %Y, %H:%M"
-msgstr "%d. %b %Y, %H:%M"
-
-msgid "100.0 %"
-msgstr "100,0 %"
-
-msgid "%H:%M"
-msgstr "%H:%M"
-
-#, python-format
-msgid "%(from)s until %(to)s (%(minutes)d minute)"
-msgid_plural "%(from)s until %(to)s (%(minutes)d minutes)"
-msgstr[0] "%(from)s bis %(to)s (%(minutes)d Minute)"
-msgstr[1] "%(from)s bis %(to)s (%(minutes)d Minuten)"
-
-msgid "%H:%M today"
-msgstr "heute %H:%M"
-
-msgid "%H:%M yesterday"
-msgstr "gestern %H:%M"
-
-#, python-format
-msgid "successful, %s"
-msgstr "erfolgreich, %s"
-
-#, python-format
-msgid "failed, %s"
-msgstr "fehlgeschlagen, %s"
-
-msgid "no log data found"
-msgstr "keine Logdaten gefunden"
-
-#, python-format
-msgid "for %(time)s"
-msgstr "seit %(time)s"
-
-msgid "Chantal server statistics"
-msgstr "Chantal Server-Statistik"
-
-#, python-format
-msgid "Chantal revision %s"
-msgstr "Chantal-Revision %s"
-
-msgid "Chantal is presented to you by …"
-msgstr "Chantal wird Ihnen präsentiert von …"
-
-msgid "You can't access the preferences of another user."
-msgstr ""
-"Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
-
-msgid "The preferences were successfully updated."
-msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
-
-#, python-format
-msgid "Change preferences for %s"
-msgstr "Ändere Einstellungen für %s"
-
-msgid "You can't access the list of groups and permissions of another user."
-msgstr ""
-"Sie können nicht auf die Gruppenliste und Berechtigungen eines anderen "
-"Benutzers zugreifen."
-
-#, python-format
-msgid "Groups and permissions for %s"
-msgstr "Gruppen und Berechtigungen von %s"
-
-#, python-format
-msgid "Sample %s could not be found (neither as an alias)."
-msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
-
-msgid ", and"
-msgstr " und "
-
 msgid "woman with binoculars"
 msgstr "Frau mit Fernglas"
 
@@ -2043,6 +1157,9 @@ msgstr "DB-Zugriffszeit:"
 
 msgid "Welcome,"
 msgstr "Willkommen,"
+
+msgid "Main menu"
+msgstr "Hauptmenü"
 
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
@@ -2223,6 +1340,9 @@ msgstr "Fehler im Wert"
 
 msgid "Error in sample series"
 msgstr "Fehler in Probenserie"
+
+msgid "duplicate this layer"
+msgstr "diese Schicht duplizieren"
 
 msgid "delete this layer"
 msgstr "diese Schicht löschen"
@@ -2713,6 +1833,9 @@ msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
+msgid "My Samples"
+msgstr "Meine Proben"
+
 msgid "edit"
 msgstr "ändern"
 
@@ -2724,6 +1847,12 @@ msgstr ""
 
 msgid "Add things"
 msgstr "Dinge hinzufügen"
+
+msgid "Samples"
+msgstr "Proben"
+
+msgid "Sample series"
+msgstr "Probenserie"
 
 msgid "Result"
 msgstr "Ergebnis"
@@ -2740,11 +1869,17 @@ msgstr "Laborbücher"
 msgid "Edit groups"
 msgstr "Gruppen ändern"
 
+msgid "Add new group"
+msgstr "Neue Gruppe hinzufügen"
+
 msgid "Change group memberships"
 msgstr "Mitglieder von Gruppen ändern"
 
 msgid "External operators"
 msgstr "Externe Operateure"
+
+msgid "Add external operator"
+msgstr "Neuen externen Operateur anlegen"
 
 msgid "Edit external operator"
 msgstr "Externen Operateur ändern"
@@ -2869,6 +2004,10 @@ msgstr "Markieren Sie Proben, um sie zu „Meine Proben“ hinzuzufügen."
 msgid "Nothing found."
 msgstr "Nichts gefunden."
 
+#, python-format
+msgid "External operator “%(name)s”"
+msgstr "Externer Operateur „%(name)s“"
+
 msgid ""
 "\n"
 "  This external contact is <em>restricted</em>, which means that only the "
@@ -2981,6 +2120,9 @@ msgstr "Diese Probenserie umfasst die folgenden Proben:"
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
+msgid "Group"
+msgstr "Gruppe"
+
 msgid "The parental sample"
 msgstr "Die elterliche Probe"
 
@@ -3083,6 +2225,9 @@ msgstr "Uptime der Komponenten"
 msgid "Component"
 msgstr "Komponente"
 
+msgid "Name"
+msgstr "Name"
+
 msgid "up and running …"
 msgstr "up and running …"
 
@@ -3162,6 +2307,861 @@ msgstr "Inspizierte Objekte"
 
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"
+
+#, python-format
+msgid "with %(markdown_link)s syntax"
+msgstr "mit %(markdown_link)s-Syntax"
+
+msgid "%Y-%m-%d %H<sup>h</sup>"
+msgstr "%Y-%m-%d %H<sup>h</sup>"
+
+msgid "%b %Y"
+msgstr "%b %Y"
+
+msgid "date unknown"
+msgstr "Datum unbekannt"
+
+msgid "Initials"
+msgstr "Kürzel"
+
+msgid "New name"
+msgstr "Neuer Name"
+
+msgid "New name must be a valid “new-style” name."
+msgstr "Der neue Name muss ein gültiger Name der „neuen Art“ sein."
+
+msgid "This sample name exists already."
+msgstr "Dieser Probenname ist schon vergeben."
+
+msgid "This sample name has been used already on this page."
+msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
+
+msgid ""
+"Please give the list of provisional samples names (without the asterisk, but "
+"with leading zeros) as a comma-separated list without whitespace in the "
+"“numbers” query string parameter."
+msgstr ""
+"Bitte geben Sie eine Liste der provisorischen Namen an (ohne Sternchen, aber "
+"mit führenden Nullen) als eine Komma-separierte Liste ohne Leerraum, im "
+"„numbers“-Querystring-Parameter."
+
+msgid "You may change the sample names, but you must choose initials first."
+msgstr ""
+"Sie können die Probennamen setzen, aber erst müssen Sie sich ein Kürzel "
+"ausdenken."
+
+msgid "Successfully renamed the samples."
+msgstr "Proben erfolgreich umbenannt."
+
+msgid "Giving new-style names"
+msgstr "Probennamen nach „neuer Art“ vergeben"
+
+msgid "Column groups"
+msgstr "Spalten-Gruppen"
+
+msgid "Columns"
+msgstr "Spalten"
+
+#, python-format
+msgid "Table export for “%s”"
+msgstr "Tabellen-Export für „%s“"
+
+#, python-format
+msgid "The external operator “%s” was successfully added."
+msgstr "Der externe Operateur „%s“ wurde erfolgreich neu angelegt."
+
+msgid "Concact person"
+msgstr "Kontaktperson"
+
+#, python-format
+msgid "The external operator “%s” was successfully changed."
+msgstr "Der externe Operateur „%s“ wurde erfolgreich geändert."
+
+#, python-format
+msgid "Edit external operator “%s”"
+msgstr "Externen Operateur „%s“ ändern"
+
+msgid "You have no external contacts."
+msgstr "Sie haben keine externen Kontakte."
+
+msgid "All you external contacts"
+msgstr "Alle Ihre externen Kontakte"
+
+msgid "You must add a \"hash\" parameter to the query string."
+msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
+
+#, python-format
+msgid "Chantal news for %s"
+msgstr "Chantal-Neuigkeiten für %s"
+
+msgid "The timestamp must not be in the future."
+msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
+
+msgid "Number of layers to be added"
+msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
+
+msgid "Nickname of My Layer to be added"
+msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
+
+msgid ""
+"The initials must start with two uppercase letters.  They must contain "
+"uppercase letters and digits only.  Digits must be at the end."
+msgstr ""
+"Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
+"Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
+
+msgid "These initials are already used."
+msgstr "Dieses Namenskürzel ist schon vergeben."
+
+msgid "Description of edit"
+msgstr "Beschreibung der Änderung"
+
+msgid "Important edit"
+msgstr "Wichtige Änderung"
+
+msgid "Time must be given in the form HH:MM:SS."
+msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
+
+msgid "Minutes and seconds must be smaller than 60."
+msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
+
+msgid "Must be a physical quantity with number and unit."
+msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
+
+#, python-format
+msgid "The unit is invalid.  Valid units are: %s"
+msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
+
+msgid "Invalid deposition number.  It must be of the form YYL-NNN."
+msgstr ""
+"Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
+
+#, python-format
+msgid "The deposition letter must be an uppercase “%s”."
+msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
+
+msgid "You mustn't use image and headings syntax in Markdown markup."
+msgstr ""
+"Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
+
+msgid "Name of new group"
+msgstr "Name der neuen Gruppe"
+
+msgid "This group name is already used."
+msgstr "Dieser Gruppenname ist bereits vergeben."
+
+#, python-format
+msgid "Group %s was successfully created."
+msgstr "Die Gruppe %s wurde erfolgreich angelegt."
+
+msgid "List of all groups"
+msgstr "Liste aller Gruppen"
+
+msgid "Members"
+msgstr "Mitglieder"
+
+msgid ""
+"In restricted groups, at least one member must have permission to change "
+"groups."
+msgstr ""
+"Wenigstens ein Mitglied in einer beschränkten Gruppe muss die Berechtigung "
+"haben, Gruppen zu ändern."
+
+#, python-format
+msgid "Members of group “%s” were successfully updated."
+msgstr ""
+"Die Mitglieder der Gruppe „%s“ wurden erfolgreich auf den neuesten Stand "
+"gebracht."
+
+#, python-format
+msgid "Change group memberships of “%s”"
+msgstr "Mitglieder der Gruppe “%s” ändern"
+
+msgid "year"
+msgstr "Jahr"
+
+msgid "month"
+msgstr "Monat"
+
+#, python-format
+msgid "Lab notebook for %s"
+msgstr "Laborbuch für %s"
+
+msgid "Operator"
+msgstr "Operateur"
+
+msgid "The first two digits must match the year of the deposition."
+msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
+
+msgid "Remove deposited samples from My Samples"
+msgstr "Entferne deponierte Proben von Meine Proben"
+
+msgid "remove this layer"
+msgstr "diese Schicht löschen"
+
+msgid "move this layer"
+msgstr "diese Schicht verschieben"
+
+msgid "---------"
+msgstr "---------"
+
+msgid "up"
+msgstr "hoch"
+
+msgid "down"
+msgstr "runter"
+
+msgid "You can't duplicate, move, or remove a layer at the same time."
+msgstr ""
+"Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
+"verschieben."
+
+msgid "No layers given."
+msgstr "Keine Schichten angebeben."
+
+msgid "You can't change the number of the first layer."
+msgstr "Sie können nicht die Nummer des ersten Layers ändern."
+
+msgid "New layers collide with following deposition."
+msgstr "Die neuen Schichten kollidieren mit der nachfolgenden Deposition."
+
+msgid "Overlap with previous deposition numbers."
+msgstr "Überlapp mit der vorherigen Depositionsnummer."
+
+#, python-format
+msgid "The sample %s is already dead at this time."
+msgid_plural "The samples %s are already dead at this time."
+msgstr[0] "Die Probe %s ist zu diesem Zeitpunkt schon tot."
+msgstr[1] "Die Proben %s sind zu diesem Zeitpunkt schon tot."
+
+msgid "Layer number is not consecutive."
+msgstr "Die Schichtnummern nicht nicht aufeinanderfolgend."
+
+#, python-format
+msgid "Deposition %s was successfully changed in the database."
+msgstr "Die Deposition %s wurde erfolgreich in der Datenbank geändert."
+
+#, python-format
+msgid "Deposition %s was successfully added to the database."
+msgstr "Die Deposition %s wurde erfolgreich zur Datenbank hinzugefügt."
+
+#, python-format
+msgid "Large-area deposition “%s”"
+msgstr "Großflächige Deposition „%s“"
+
+msgid "Add large-area deposition"
+msgstr "Großflächige Deposition hinzufügen"
+
+msgid "MainMenu"
+msgstr "MainMenu"
+
+msgid "Deposition number pattern"
+msgstr "Muster für Depositionsnummer"
+
+msgid "Search for deposition"
+msgstr "Nach Deposition suchen"
+
+msgid "Sandbox"
+msgstr "Sandkasten"
+
+msgid "MarkdownMarkup"
+msgstr "MarkdownMarkup"
+
+msgid "Markdown sandbox"
+msgstr "Markdown-Sandkasten"
+
+msgid "Nickname"
+msgstr "Spitzname"
+
+msgid "Layer identifier"
+msgstr "Schicht-Bezeichnung"
+
+msgid "in the form \"deposition number\"-\"layer number\""
+msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Deposition and layer number must be separated by \"-\"."
+msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
+
+msgid "Deposition number doesn't exist."
+msgstr "Diese Deposition gibt es nicht."
+
+msgid "Layer number isn't a number."
+msgstr "Die Schichtnummer ist keine Zahl."
+
+msgid "This layer does not exist in this deposition."
+msgstr "In dieser Deposition gibt es diesen Layer nicht."
+
+msgid "Nickname is already given."
+msgstr "Dieser Spitzname ist schon vergeben."
+
+msgid "You can't access the “My Layers” section of another user."
+msgstr ""
+"Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
+
+msgid "My Layers"
+msgstr "Meine Schichten"
+
+msgid "New currently responsible person"
+msgstr "Neuer aktuell Verantwortlicher"
+
+msgid "New Group"
+msgstr "Neue Gruppe"
+
+msgid "New current location"
+msgstr "Neuer Probenort"
+
+msgid "Copy to user"
+msgstr "Zu Benutzer kopieren"
+
+msgid "Comment for recipient"
+msgstr "Kommentar für Empfänger"
+
+msgid "Remove from “My Samples”"
+msgstr "Entferne von „Meine Proben“"
+
+msgid ""
+"If you copy samples over to another person, you must enter a short comment."
+msgstr ""
+"Wenn Sie Proben zu einer anderen Person kopieren, müssen Sie einen kurzen "
+"Kommentar eingeben."
+
+msgid "If you edit samples, you must enter a short comment."
+msgstr "Wenn Sie Proben ändern, müssen Sie einen kurzen Kommentar eingeben."
+
+msgid ""
+"You must be the currently responsible person for samples you'd like to "
+"change."
+msgstr ""
+"Sie müssen die aktuell verantwortliche Person sein für die Proben, die Sie "
+"ändern wollen."
+
+msgid "You can't access the “My Samples” section of another user."
+msgstr "Sie düfen nicht auf „Meine Proben“ eines anderen Benutzers zugreifen."
+
+msgid "Successfully processed “My Samples”."
+msgstr "Erfolgreich „Meine Proben“ verarbeitet."
+
+#, python-format
+msgid "Edit “My Samples” of %s"
+msgstr "„Meine Proben“ von %s ändern"
+
+msgid "Sample"
+msgstr "Probe"
+
+msgid "Couldn't open datafile."
+msgstr "Konnte Daten-Datei nicht öffnen."
+
+msgid "Overwrite with file data"
+msgstr "Mit Datei-Daten überschreiben"
+
+msgid "Remove measured sample from My Samples"
+msgstr "Entferne gemessene Probe von Meine Proben"
+
+msgid "This PDS number is already in use."
+msgstr "Diese PDS-Nummer ist schon vergeben."
+
+msgid "Sample is already dead at this time."
+msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
+
+#, python-format
+msgid "%s was successfully changed in the database."
+msgstr "%s wurde erfolgreich in der Datenbank geändert."
+
+#, python-format
+msgid "%s was successfully added to the database."
+msgstr "%s wurde erfolgreich zur Datenbank hinzugefügt."
+
+#, python-format
+msgid "PDS measurement %s"
+msgstr "PDS-Messung %s"
+
+msgid "Add PDS measurement"
+msgstr "PDS-Messung hinzufügen"
+
+msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
+msgstr "Ungültiges Dateiformat.  Nur PDF, PNG und JPEG sind erlaubt."
+
+msgid "Sample serieses"
+msgstr "Probenserien"
+
+msgid "Image file"
+msgstr "Bilddatei"
+
+msgid ""
+"You don't have the permission to add the result to all selected samples/"
+"series."
+msgstr ""
+"Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
+"Serien zu ändern."
+
+msgid "You must select at least one samples/series."
+msgstr "Sie müssen mindestens eine Probe/Serie markieren."
+
+msgid "Number of quantities"
+msgstr "Anzahl der Messgrößen"
+
+msgid "Number of values"
+msgstr "Anzahl der Werte"
+
+msgid "Quantity name"
+msgstr "Messgrößen-Name"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Adding samples or sample series must be marked as important."
+msgstr ""
+"Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert "
+"werden."
+
+msgid "This quantity is already used in this table."
+msgstr "Diese Messgröße wurde in dieser Tabelle schon verwendet."
+
+msgid "Edit result"
+msgstr "Ergebnis ändern"
+
+msgid "New result"
+msgstr "Ergebnis hinzufügen"
+
+#, python-format
+msgid "Result “%s”"
+msgstr "Ergebnis „%s“"
+
+msgid "is amongst My Samples"
+msgstr "gehört zu Meinen Proben"
+
+msgid "Currently responsible person"
+msgstr "Aktuell Verantwortlicher"
+
+msgid ""
+"Changing the group or the responsible person must be marked as important."
+msgstr ""
+"Änderungen der Gruppe oder des Verantwortlichen müssen immer als „wichtig“ "
+"markiert werden."
+
+#, python-format
+msgid "Sample %s was successfully changed in the database."
+msgstr "Die Probe %s wurde erfolgreich in der Datenbank geändert."
+
+#, python-format
+msgid "Edit sample “%s”"
+msgstr "Ändern der Probe „%s“"
+
+msgid "split"
+msgstr "Spaltung"
+
+#, python-format
+msgid ""
+"You are not allowed to add any processes to the sample %s because neither "
+"are you its currently responsible person, nor in its group, nor do you have "
+"special permissions for a physical process."
+msgstr ""
+"Sie dürfen keine Prozesse zur Probe %s hinzufügen, weil Sie weder ihr "
+"aktueller Verantwortlicher sind, noch in ihrer Gruppe sind, noch spezielle "
+"Berechtigungen für physikalische Prozesse haben."
+
+#, python-format
+msgid "Sample %s was added to Your Samples."
+msgstr "Probe %s wurde zu Meinen Proben hinzugefügt."
+
+#, python-format
+msgid "Sample %s was removed from Your Samples."
+msgstr "Probe %s wurde von Meinen Proben entfernt."
+
+msgid "Number of samples"
+msgstr "Anzahl der Proben"
+
+msgid "Substrate"
+msgstr "Substrat"
+
+msgid "Substrate comments"
+msgstr "Substrat-Kommentare"
+
+msgid "Substrate originator"
+msgstr "Substrat-Urheber"
+
+msgid "Current location"
+msgstr "Aktueller Probenort"
+
+msgid "Purpose"
+msgstr "Zweck"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Give names"
+msgstr "Namen vergeben"
+
+msgid "For a custom substrate, you must give substrate comments."
+msgstr ""
+"Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
+"beschreiben."
+
+msgid "You selected “no substrate”, so your substrate comments would be lost."
+msgstr ""
+"Sie haben „kein Substrat“ gewählt, also würden Ihre Substrat-Kommentare "
+"verloren gehen."
+
+msgid "You selected “no substrate”, so the external originator would be lost."
+msgstr ""
+"Sie haben „kein Substrat“ gewählt, also würde der externe Operateur verloren "
+"gehen."
+
+#, python-format
+msgid ""
+"Your samples have the provisional names from %(first_name)s to %(last_name)"
+"s.  They were added to “My Samples”."
+msgstr ""
+"Ihre Proben haben die provisorischen Namen von %(first_name)s bis %"
+"(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
+
+#, python-format
+msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
+msgstr ""
+"Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ "
+"hinzugefügt."
+
+msgid "Add samples"
+msgstr "Proben hinzufügen"
+
+#, python-format
+msgid "Add process to sample “%s”"
+msgstr "Prozess zu Probe „%s“ hinzufügen"
+
+msgid "Name pattern"
+msgstr "Namensmuster"
+
+msgid "Search for sample"
+msgstr "Nach Proben suchen"
+
+msgid "Last process wasn't a split."
+msgstr "Der letzte Prozess war keine Spaltung."
+
+#. FixMe: Feed entries
+#, python-format
+msgid "Sample “%s” was killed."
+msgstr "Probe „%s“ wurde getötet."
+
+#, python-format
+msgid "Kill sample “%s”"
+msgstr "Töten der Probe „%s“"
+
+#, python-format
+msgid "Sample series “%s”"
+msgstr "Probenserie „%s“"
+
+#, python-format
+msgid "Sample series %s was successfully updated in the database."
+msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
+
+#, python-format
+msgid "Edit sample series “%s”"
+msgstr "Ändern der Probenserie „%s“"
+
+msgid "This sample series name is already given."
+msgstr "Dieser Probenserienname ist schon vergeben."
+
+#, python-format
+msgid "The name is %d letter too long."
+msgid_plural "The name is %d letters too long."
+msgstr[0] "Der Name ist %d Buchstaben zu lang."
+msgstr[1] "Der Name ist %d Buchstaben zu lang."
+
+#, python-format
+msgid "Sample series %s was successfully added to the database."
+msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
+
+msgid "Create new sample series"
+msgstr "Neue Probenserie anlegen"
+
+msgid "This deposition number exists already."
+msgstr "Diese Depositionsnummer ist schon vergeben."
+
+msgid "Number is a duplicate."
+msgstr "Die Nummer ist ein Duplikat."
+
+#, python-format
+msgid "6-chamber deposition “%s”"
+msgstr "6-Kammer-Deposition „%s“"
+
+msgid "New 6-chamber deposition"
+msgstr "Neue 6-Kammer-Deposition"
+
+msgid "hotwire"
+msgstr "Hotwire"
+
+msgid "PECVD"
+msgstr "PECVD"
+
+msgid "Layer to be added"
+msgstr "Schicht, die hinzugefügt werden soll"
+
+#, python-format
+msgid "Small cluster tool deposition “%s”"
+msgstr "Kleine-Cluster-Tool-Depositionen „%s“"
+
+msgid "New small cluster tool deposition"
+msgstr "Neue Kleine-Cluster-Tool-Deposition"
+
+msgid "Old sample name"
+msgstr "Alter Probenname"
+
+msgid "Pieces"
+msgstr "Stücke"
+
+msgid "You must get rid of the provisional sample name."
+msgstr "Sie müssen den provisorischen Probennamen aufgeben."
+
+msgid "No sample with this name found."
+msgstr "Keine Probe dieses Namens gefunden."
+
+msgid "Alias is not unique."
+msgstr "Der Alias ist nicht eindeutig."
+
+msgid "No sample with this ID found."
+msgstr "Keine Probe mit dieser ID gefunden."
+
+msgid "Invalid ID format."
+msgstr "Ungültiges ID-Format."
+
+msgid "Must be at least 1."
+msgstr "Muss mindestens 1 sein."
+
+msgid "If you choose a new-style name, it must not change."
+msgstr "Wenn Sie einen Namen „neuer Art“ wählen, dürfen Sie ihn nicht ändern."
+
+msgid ""
+"If you choose a deposition-style name, it must begin with the deposition "
+"number."
+msgstr ""
+"Wenn Sie einen Depositions-Probennamen wählen, muss er mit der "
+"Depositionsnummer beginnen."
+
+msgid "New sample name"
+msgstr "Neuer Probenname"
+
+msgid "(for all samples; leave empty for no change)"
+msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
+
+#, python-format
+msgid "Sample %s occurs multiple times."
+msgstr "Probe %s kommt mehrfach vor."
+
+#, python-format
+msgid "Sample %s doesn't belong to this deposition."
+msgstr "Probe %s gehört nicht zu dieser Deposition."
+
+msgid ""
+"Since there is more than one piece, the new name must not be exactly the "
+"deposition's name."
+msgstr ""
+"Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
+"Depositionsname sein."
+
+msgid "At least one sample of the original deposition is missing."
+msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
+
+msgid "If you don't split, you can't rename the single piece."
+msgstr ""
+"Wenn Sie nicht spalten, dürfen Sie das einzelne Stück nicht umbenennen."
+
+msgid ""
+"If you choose a deposition-style name, it must begin with the parent's new "
+"name."
+msgstr ""
+"Wenn Sie einen Depositions-Probennamen wählen, muss er mit dem neuen Namen "
+"der Mutterprobe beginnen."
+
+msgid "Samples were successfully split and/or renamed."
+msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
+
+#, python-format
+msgid "Bulk sample rename for %s"
+msgstr "Probenumbenennung für %s"
+
+msgid "New sample purpose"
+msgstr "Neuer Probenzweck"
+
+msgid "The sample name has an invalid format."
+msgstr "Dieser Probenname hat ein ungültiges Format."
+
+msgid "The new sample name must start with the parent sample's name."
+msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
+
+msgid "Name does already exist in database."
+msgstr "Name existiert schon in der Datenbank."
+
+msgid "All pieces completely entered"
+msgstr "Alle Stücke vollständig eingegeben"
+
+msgid "Sample was completely split"
+msgstr "Probe wurde vollständig gespalten"
+
+msgid "You must split into at least one piece."
+msgstr "Sie müssen mindestens in ein Stück spalten."
+
+msgid "You must split into at least two pieces if the split is complete."
+msgstr ""
+"Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig "
+"ist."
+
+msgid "Name is already given."
+msgstr "Dieser Name ist schon vergeben."
+
+msgid "This split is not the last one in the sample's process list."
+msgstr ""
+"Dieser Split ist nicht der letzte Prozess, der auf die Probe angewendet "
+"wurde."
+
+#, python-format
+msgid "Sample “%s” was successfully split."
+msgstr "Die Probe „%s“ wurde erfolgreich gespalten."
+
+#, python-format
+msgid "Split sample “%s”"
+msgstr "Spalten der Probe „%s“"
+
+#, python-format
+msgid "%(count)d year"
+msgid_plural "%(count)d years"
+msgstr[0] "%(count)d Jahr"
+msgstr[1] "%(count)d Jahren"
+
+#, python-format
+msgid "%(count)d month"
+msgid_plural "%(count)d months"
+msgstr[0] "%(count)d Monat"
+msgstr[1] "%(count)d Monaten"
+
+#, python-format
+msgid "%(count)d week"
+msgid_plural "%(count)d weeks"
+msgstr[0] "%(count)d Woche"
+msgstr[1] "%(count)d Wochen"
+
+#, python-format
+msgid "%(count)d day"
+msgid_plural "%(count)d days"
+msgstr[0] "%(count)d Tag"
+msgstr[1] "%(count)d Tagen"
+
+#, python-format
+msgid "%(count)d hour"
+msgid_plural "%(count)d hours"
+msgstr[0] "%(count)d Stunde"
+msgstr[1] "%(count)d Stunden"
+
+#, python-format
+msgid "%(count)d minute"
+msgid_plural "%(count)d minutes"
+msgstr[0] "%(count)d Minute"
+msgstr[1] "%(count)d Minuten"
+
+#, python-format
+msgid "%(count)d second"
+msgid_plural "%(count)d seconds"
+msgstr[0] "%(count)d Sekunde"
+msgstr[1] "%(count)d Sekunden"
+
+msgid " and "
+msgstr " und "
+
+msgid ", "
+msgstr ", "
+
+msgid ", and "
+msgstr " und "
+
+msgid "today, %H:%M"
+msgstr "heute, %H:%M"
+
+msgid "yesterday, %H:%M"
+msgstr "gestern, %H:%M"
+
+msgid "%A, %b %d, %Y, %H:%M"
+msgstr "%A, %d. %b %Y, %H:%M"
+
+msgid "%b %d, %Y, %H:%M"
+msgstr "%d. %b %Y, %H:%M"
+
+msgid "100.0 %"
+msgstr "100,0 %"
+
+msgid "%H:%M"
+msgstr "%H:%M"
+
+#, python-format
+msgid "%(from)s until %(to)s (%(minutes)d minute)"
+msgid_plural "%(from)s until %(to)s (%(minutes)d minutes)"
+msgstr[0] "%(from)s bis %(to)s (%(minutes)d Minute)"
+msgstr[1] "%(from)s bis %(to)s (%(minutes)d Minuten)"
+
+msgid "%H:%M today"
+msgstr "heute %H:%M"
+
+msgid "%H:%M yesterday"
+msgstr "gestern %H:%M"
+
+#, python-format
+msgid "successful, %s"
+msgstr "erfolgreich, %s"
+
+#, python-format
+msgid "failed, %s"
+msgstr "fehlgeschlagen, %s"
+
+msgid "no log data found"
+msgstr "keine Logdaten gefunden"
+
+#, python-format
+msgid "for %(time)s"
+msgstr "seit %(time)s"
+
+msgid "Chantal server statistics"
+msgstr "Chantal Server-Statistik"
+
+#, python-format
+msgid "Chantal revision %s"
+msgstr "Chantal-Revision %s"
+
+msgid "Chantal is presented to you by …"
+msgstr "Chantal wird Ihnen präsentiert von …"
+
+msgid "You can't access the preferences of another user."
+msgstr ""
+"Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
+
+msgid "The preferences were successfully updated."
+msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
+
+#, python-format
+msgid "Change preferences for %s"
+msgstr "Ändere Einstellungen für %s"
+
+msgid "You can't access the list of groups and permissions of another user."
+msgstr ""
+"Sie können nicht auf die Gruppenliste und Berechtigungen eines anderen "
+"Benutzers zugreifen."
+
+#, python-format
+msgid "Groups and permissions for %s"
+msgstr "Gruppen und Berechtigungen von %s"
+
+#, python-format
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
+
+msgid ", and"
+msgstr " und "
 
 #~ msgid "counts"
 #~ msgstr "Counts"
