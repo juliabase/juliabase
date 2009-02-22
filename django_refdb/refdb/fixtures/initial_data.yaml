@@ -1,0 +1,13 @@
+-   fields:
+        email: bronger@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: sha1$95699$95d8f7082fae70337aa9b38183fafa76fda57c11
+        user_permissions: []
+        username: bronger
+    model: auth.user
+    pk: 1
