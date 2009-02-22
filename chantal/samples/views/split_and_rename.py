@@ -4,6 +4,8 @@
 u"""Here are the views for an ordinary sample split.
 """
 
+from __future__ import absolute_import
+
 import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -12,9 +14,9 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
-from chantal.samples import models, permissions
+from samples import models, permissions
 import django.core.urlresolvers
-from chantal.samples.views import utils, form_utils, feed_utils
+from samples.views import utils, form_utils, feed_utils
 
 
 class NewNameForm(forms.Form):

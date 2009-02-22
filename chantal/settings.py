@@ -78,10 +78,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'chantal.middleware.chantal.LocaleMiddleware',
+    'chantal.samples.middleware.chantal.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    'chantal.middleware.chantal.ExceptionsMiddleware',
+    'chantal.samples.middleware.chantal.ExceptionsMiddleware',
 )
 APPEND_SLASH = False
 

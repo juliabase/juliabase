@@ -4,6 +4,8 @@
 u"""View for killing a sample.
 """
 
+from __future__ import absolute_import
+
 import datetime
 from django.shortcuts import render_to_response
 from django.http import Http404
@@ -12,8 +14,8 @@ from django.forms.util import ValidationError
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
-from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from samples import models, permissions
+from samples.views import utils
 
 
 class SampleDeathForm(forms.ModelForm):

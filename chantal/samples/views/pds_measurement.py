@@ -6,6 +6,8 @@ the views for deposition systems (mostly because the rearrangement of layers
 doesn't happen here).
 """
 
+from __future__ import absolute_import
+
 import datetime, os.path, re, codecs
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -16,8 +18,8 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 import django.contrib.auth.models
-from chantal.samples.views import utils, form_utils, feed_utils
-from chantal.samples import models, permissions
+from samples.views import utils, form_utils, feed_utils
+from samples import models, permissions
 
 
 root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"

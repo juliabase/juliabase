@@ -20,7 +20,7 @@ Note that this module doesn't define any models itself.  It is only the
 container where all models are finally brought together by module inclusion.
 The number and complexity of Chantal's models is too big for one file.
 Therefore, we have a few model modules, all starting with ``models_...`` and
-residing in this directory.  With ``from chantal.samples.models_... import *``
+residing in this directory.  With ``from samples.models_... import *``
 I can give the rest of Chantal's modules the illusion that all models are
 actually here.
 
@@ -35,12 +35,14 @@ actually here.
 :type physical_process_models: dict mapping ``str`` to ``class``.
 """
 
+from __future__ import absolute_import
+
 import copy, inspect
 from django.db import models
-from chantal.samples.models_common import *
-from chantal.samples.models_physical_processes import *
-from chantal.samples.models_depositions import *
-from chantal.samples.models_feeds import *
+from samples.models_common import *
+from samples.models_physical_processes import *
+from samples.models_depositions import *
+from samples.models_feeds import *
 
 
 _globals = copy.copy(globals())

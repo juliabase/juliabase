@@ -5,9 +5,11 @@ u"""Code for generating feed entries.  They are called by views shortly after
 the database was changed in one way or another.
 """
 
-from chantal.samples import models
-from chantal.samples.views import utils
-from chantal.samples import permissions
+from __future__ import absolute_import
+
+from samples import models
+from samples.views import utils
+from samples import permissions
 
 
 class Reporter(object):

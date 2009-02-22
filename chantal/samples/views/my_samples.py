@@ -6,6 +6,8 @@ example, copying them to the “My Samples” list of another user, or simply
 removing them from the list.
 """
 
+from __future__ import absolute_import
+
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404
@@ -14,8 +16,8 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils, feed_utils
+from samples import models, permissions
+from samples.views import utils, form_utils, feed_utils
 
 
 class MySamplesForm(forms.Form):

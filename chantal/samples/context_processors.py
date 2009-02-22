@@ -6,6 +6,8 @@ to `settings.TEMPLATE_CONTEXT_PROCESSORS`.  They add further data to the
 dictionary passed to the templates.
 """
 
+from __future__ import absolute_import
+
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _

@@ -5,18 +5,20 @@ u"""All views and helper routines directly connected with samples themselves
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
+from __future__ import absolute_import
+
 import time, datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
 import django.forms as forms
-from chantal.samples.models import Sample
-from chantal.samples import models, permissions
+from samples.models import Sample
+from samples import models, permissions
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal.samples.views import utils, form_utils, feed_utils, csv_export
+from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 
 

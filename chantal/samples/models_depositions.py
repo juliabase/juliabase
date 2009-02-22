@@ -9,15 +9,17 @@ the one to 6-chamber deposition channels.
   string.
 """
 
+from __future__ import absolute_import
+
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib import admin
 import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
-from chantal.samples.models_common import Process
-from chantal.samples import permissions
-from chantal.samples.csv_common import CSVNode, CSVItem
+from samples.models_common import Process
+from samples import permissions
+from samples.csv_common import CSVNode, CSVItem
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default

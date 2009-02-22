@@ -4,6 +4,8 @@
 u"""Views for showing, editing, and creating external operators.
 """
 
+from __future__ import absolute_import
+
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -11,8 +13,8 @@ from django.http import Http404
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils
+from samples import models, permissions
+from samples.views import utils, form_utils
 
 
 class AddExternalOperatorForm(forms.ModelForm):

@@ -6,7 +6,9 @@ have only one comprehensive statistics page.  However, I need many helper
 functions for it.
 """
 
+from __future__ import absolute_import
 from __future__ import division
+
 import pickle, time, datetime, re, locale
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.shortcuts import render_to_response

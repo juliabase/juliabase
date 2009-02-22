@@ -27,6 +27,8 @@ Portions of this module are taken from
 <http://www.djangosnippets.org/snippets/501/>.
 """
 
+from __future__ import absolute_import
+
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.mail import mail_admins

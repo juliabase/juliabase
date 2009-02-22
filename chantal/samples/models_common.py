@@ -8,6 +8,8 @@ here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
+from __future__ import absolute_import
+
 import hashlib, os.path, shutil, subprocess, datetime
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
@@ -18,9 +20,9 @@ from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
-from chantal.samples import permissions
-from chantal.samples.views import shared_utils
-from chantal.samples.csv_common import CSVNode, CSVItem
+from samples import permissions
+from samples.views import shared_utils
+from samples.csv_common import CSVNode, CSVItem
 
 import matplotlib
 matplotlib.use("Agg")

@@ -6,18 +6,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-02-22 10:35+0100\n"
+"POT-Creation-Date: 2009-02-22 11:47+0100\n"
 "PO-Revision-Date: 2009-02-22 10:35+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "Access denied"
-msgstr "Zugriff verweigert"
-
-msgid "Ambiguous sample name"
-msgstr "Mehrdeutiger Probenname"
 
 msgid "German"
 msgstr "Deutsch"
@@ -1033,6 +1027,12 @@ msgstr ""
 
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
+
+msgid "Access denied"
+msgstr "Zugriff verweigert"
+
+msgid "Ambiguous sample name"
+msgstr "Mehrdeutiger Probenname"
 
 msgid "woman with binoculars"
 msgstr "Frau mit Fernglas"

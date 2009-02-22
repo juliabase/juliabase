@@ -14,10 +14,12 @@ So far, it sets users which can't be found anymore in the Active Directory to
 “inactive”, and expires all feed entries which are older than six weeks.
 """
 
+from __future__ import absolute_import
+
 import datetime
 from django.http import HttpResponse, Http404
 import django.contrib.auth.models
-from chantal.samples import models
+from samples import models
 from django.conf import settings
 from django.core.mail import mail_admins
 import ldap

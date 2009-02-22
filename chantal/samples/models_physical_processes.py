@@ -7,14 +7,16 @@ measurements must get a module of their own if the number of Chantal models
 increases further.
 """
 
+from __future__ import absolute_import
+
 import django.contrib.auth.models, os, codecs
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib import admin
 from django.db import models
 import django.core.urlresolvers
 from django.conf import settings
-from chantal.samples import permissions
-from chantal.samples.models_common import Process, Sample, PlotError
+from samples import permissions
+from samples.models_common import Process, Sample, PlotError
 import pylab
 
 

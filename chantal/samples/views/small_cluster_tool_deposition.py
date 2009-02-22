@@ -6,6 +6,8 @@ tool deposition system.  This includes adding, editing, and viewing such
 processes.
 """
 
+from __future__ import absolute_import
+
 import datetime
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -15,8 +17,8 @@ from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.contrib.auth.decorators import login_required
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, feed_utils, form_utils
+from samples import models, permissions
+from samples.views import utils, feed_utils, form_utils
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
 
 

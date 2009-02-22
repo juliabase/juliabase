@@ -5,17 +5,19 @@ u"""Model for the main menu view and some miscellaneous views that don't have a
 better place to be (yet).
 """
 
+from __future__ import absolute_import
 from __future__ import division
+
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from chantal.samples import models, permissions
+from samples import models, permissions
 from django.http import HttpResponsePermanentRedirect
 import django.core.urlresolvers
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
-from chantal.samples.views import utils
-from chantal.samples.views.utils import help_link
+from samples.views import utils
+from samples.views.utils import help_link
 
 
 class MySeries(object):

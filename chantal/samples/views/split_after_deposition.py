@@ -6,8 +6,10 @@ to the actual split view, you see all samples of the deposition at once, and
 you can rename and/or split them.
 """
 
+from __future__ import absolute_import
+
 import datetime
-from chantal.samples import models, permissions
+from samples import models, permissions
 from django.template import RequestContext
 from django.http import Http404
 from django.shortcuts import render_to_response, get_object_or_404
@@ -18,7 +20,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from chantal.samples.views import utils, form_utils, feed_utils
+from samples.views import utils, form_utils, feed_utils
 
 
 class OriginalDataForm(Form):

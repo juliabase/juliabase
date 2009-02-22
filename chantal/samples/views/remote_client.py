@@ -6,12 +6,14 @@ visit these links with their browser directly, it is not really useful what
 they get there.
 """
 
+from __future__ import absolute_import
+
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
-from chantal.samples.views import utils
-from chantal.samples import models, permissions
+from samples.views import utils
+from samples import models, permissions
 
 
 @login_required

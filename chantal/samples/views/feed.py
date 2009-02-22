@@ -4,6 +4,8 @@
 u"""Generating an Atom 1.0 feed with the user's news.
 """
 
+from __future__ import absolute_import
+
 import datetime, time
 import xml.etree.ElementTree as ElementTree
 import django.contrib.auth.models
@@ -12,10 +14,10 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
-from chantal.samples import permissions
+from samples import permissions
 from django.conf import settings
 import django.core.urlresolvers
-from chantal.samples.views import utils
+from samples.views import utils
 
 
 from chantal.settings import WITH_EPYDOC

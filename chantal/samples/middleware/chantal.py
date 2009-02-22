@@ -8,9 +8,9 @@ from django.utils.cache import patch_vary_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
-from chantal.samples.models import UserDetails
-from chantal.samples.views import utils
-from chantal.samples.permissions import PermissionError
+from samples.models import UserDetails
+from samples.views import utils
+from samples.permissions import PermissionError
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http

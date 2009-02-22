@@ -10,6 +10,8 @@ Note that all names defined here are also available in `utils`, so this module
 is really only interesting for the Remote Client.
 """
 
+from __future__ import absolute_import
+
 import re, string, codecs, os.path
 import cPickle as pickle
 import base64

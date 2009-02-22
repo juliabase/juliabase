@@ -11,6 +11,8 @@ explicitly to ``urls.py``.  Look at the large-area deposition entry as an
 example.
 """
 
+from __future__ import absolute_import
+
 import datetime, re
 from django.http import Http404
 from django.shortcuts import render_to_response
@@ -20,9 +22,9 @@ import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, csv_export
-from chantal.samples.csv_common import CSVNode
+from samples import models, permissions
+from samples.views import utils, csv_export
+from samples.csv_common import CSVNode
 
 
 class YearMonthForm(forms.Form):

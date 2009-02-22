@@ -5,6 +5,8 @@ u"""Views for showing and editing user data, i.e. real names, contact
 information, and preferences.
 """
 
+from __future__ import absolute_import
+
 import re
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -13,8 +15,8 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils
+from samples import models, permissions
+from samples.views import utils, form_utils
 
 
 @login_required

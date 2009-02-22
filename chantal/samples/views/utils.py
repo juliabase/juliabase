@@ -6,6 +6,8 @@ views package.  All symbols from `shared_utils` are also available here.  So
 `shared_utils` should be useful only for the Remote Client.
 """
 
+from __future__ import absolute_import
+
 import re, string, copy, datetime, jsonpickle
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -15,8 +17,8 @@ from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
 from django.db.models import Q
-from chantal.samples import models, permissions
-from chantal.samples.views.shared_utils import *
+from samples import models, permissions
+from samples.views.shared_utils import *
 
 
 class HttpResponseSeeOther(HttpResponse):

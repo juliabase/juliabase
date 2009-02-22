@@ -4,6 +4,8 @@
 u"""Views for editing and creating results (aka result processes).
 """
 
+from __future__ import absolute_import
+
 import datetime, os, shutil, re
 from django.template import RequestContext
 from django.http import Http404
@@ -12,8 +14,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, form_utils, feed_utils, csv_export
+from samples import models, permissions
+from samples.views import utils, form_utils, feed_utils, csv_export
 
 
 def save_image_file(image_data, result, related_data_form):

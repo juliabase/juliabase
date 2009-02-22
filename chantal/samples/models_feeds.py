@@ -11,13 +11,15 @@ afterwards which would render old feed entries incorrect.  Therefor, the feed
 entries are self-contained.
 """
 
+from __future__ import absolute_import
+
 import hashlib
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.contrib import admin
 from django.db import models
 import django.core.urlresolvers
-from chantal.samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
+from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
 
 
 class FeedEntry(models.Model):

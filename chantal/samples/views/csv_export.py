@@ -93,6 +93,8 @@ database model classes will show you how to use it (they are all very
 strightforward).
 """
 
+from __future__ import absolute_import
+
 import csv, cStringIO, codecs, copy
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -101,8 +103,8 @@ import django.forms as forms
 from django.forms.util import ValidationError
 from django.template import defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal.samples.views import utils
-from chantal.samples.csv_common import CSVNode
+from samples.views import utils
+from samples.csv_common import CSVNode
 import django.core.urlresolvers
 
 

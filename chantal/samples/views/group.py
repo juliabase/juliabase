@@ -6,6 +6,8 @@ a list of them, and change user memberships in groups.  The list of groups is
 actually only a stepping stone to the membership edit view.
 """
 
+from __future__ import absolute_import
+
 from django.shortcuts import render_to_response, get_object_or_404
 import django.utils.http
 from django.contrib.auth.decorators import login_required
@@ -14,8 +16,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
-from chantal.samples import models, permissions
-from chantal.samples.views import utils, feed_utils, form_utils
+from samples import models, permissions
+from samples.views import utils, feed_utils, form_utils
 
 
 def set_restriction_status(group, restricted):

@@ -5,6 +5,8 @@ u"""Helper classes and function which have something to do with form generation
 and validation.
 """
 
+from __future__ import absolute_import
+
 import re, datetime
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict
@@ -12,8 +14,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
-from chantal.samples import models, permissions
-from chantal.samples.views import utils
+from samples import models, permissions
+from samples.views import utils
 
 
 class ProcessForm(ModelForm):

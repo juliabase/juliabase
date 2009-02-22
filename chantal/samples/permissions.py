@@ -21,13 +21,15 @@ permission just means that e.g. a link is not generated (for example, in the
 ``get_additional_template_context`` methods in the models).
 """
 
+from __future__ import absolute_import
+
 import hashlib
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
 # Attention! This is a cyclic import.  Don't use models in top-level code.
 import chantal.samples.models
-from chantal.samples.views import shared_utils
+from samples.views import shared_utils
 
 
 def translate_permission(permission_codename):
