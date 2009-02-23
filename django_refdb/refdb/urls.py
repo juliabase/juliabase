@@ -3,6 +3,7 @@
 
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns("samples.views",
+urlpatterns = patterns("refdb.views",
                        (r"^$", "main.main_menu"),
+                       (r"^view/(?P<citation_key>.*)", "reference.view"),
                        )

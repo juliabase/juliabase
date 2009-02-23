@@ -3,6 +3,10 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+import sys
+if "/home/bronger/src/pyrefdb/main/" not in sys.path:
+    sys.path.append("/home/bronger/src/pyrefdb/main/")
+
 import ConfigParser, os.path
 credentials = ConfigParser.SafeConfigParser()
 read_files = credentials.read(os.path.expanduser("~/django-refdb.auth"))
