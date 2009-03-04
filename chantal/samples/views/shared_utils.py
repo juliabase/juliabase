@@ -226,4 +226,4 @@ def unicode_strftime(timestamp, format_string):
 
     :rtype: unicode
     """
-    timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+    return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
