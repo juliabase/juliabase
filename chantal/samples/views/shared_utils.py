@@ -203,3 +203,27 @@ def ascii_unpickle(string):
     :rtype: object
     """
     return pickle.loads(base64.b64decode(string))
+
+
+def unicode_strftime(timestamp, format_string):
+    u"""Formats a timestamp to a string.  Unfortunately, the built-in method
+    ``strftime`` of ``datetime.datetime`` objects is not unicode-safe.
+    Therefore, I have to do a conversion into an UTF-8 intermediate
+    representation.  In Python 3.0, this problem is probably gone.
+
+    :Parameters:
+      - `timestamp`: the timestamp to be converted
+      - `format_string`: The format string that contains the pattern (i.e. all
+        the ``"%..."`` sequences) according to which the timestamp should be
+        formatted.  Note that if it should be translatable, you mast do this in
+        the calling context.
+
+    :type timestamp: ``datetime.datetime``
+    :type format_string: unicode
+
+    :Return:
+      the formatted timestamp, as a Unicode string
+
+    :rtype: unicode
+    """
+    timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")

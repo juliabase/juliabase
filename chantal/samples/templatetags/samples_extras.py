@@ -216,12 +216,12 @@ def calculate_silane_concentration(value):
     return float(u"%5.2f" % (100 * silane / (silane + hydrogen)))
 
 
-timestamp_formats = ("%Y-%m-%d %H:%M:%S",
-                     "%Y-%m-%d %H:%M",
+timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
+                     u"%Y-%m-%d %H:%M",
                      _(u"%Y-%m-%d %H<sup>h</sup>"),
-                     "%Y-%m-%d",
+                     u"%Y-%m-%d",
                      _(u"%b %Y"),
-                     "%Y",
+                     u"%Y",
                      _(u"date unknown"))
 @register.filter
 def timestamp(value):
@@ -244,7 +244,7 @@ def timestamp(value):
     else:
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
-    return mark_safe(timestamp_.strftime(str(unicode(timestamp_formats[inaccuracy]))))
+    return mark_safe(utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
 sample_name_pattern = \
