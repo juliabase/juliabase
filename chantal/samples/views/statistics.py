@@ -213,6 +213,8 @@ def analyze_last_database_backup():
             timestamp = datetime.datetime.strptime(match.group("date"), "%Y-%m-%d %H:%M:%S")
             type_ = match.group("type")
             message = match.group("message")
+            # FixMe: It should only save the last timestamp and generate the
+            # message string after the loop.
             if type_ == "INFO" and message.startswith("Database dump was successfully created"):
                 last_backup = _(u"successful, %s") % format_timestamp(timestamp)
             elif type_ == "INFO" and message.startswith("Database backups were successfully copied"):
