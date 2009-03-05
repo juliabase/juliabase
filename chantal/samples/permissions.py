@@ -118,7 +118,7 @@ def get_editable_sample_series(user):
 
     :rtype: ``QuerySet``
     """
-    return chantal.samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
+    return samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
 
 
 def get_allowed_physical_processes(user):
@@ -143,7 +143,7 @@ def get_allowed_physical_processes(user):
     :rtype: list of dict mapping str to unicode
     """
     allowed_physical_processes = []
-    for physical_process_class in chantal.samples.models.physical_process_models.itervalues():
+    for physical_process_class in samples.models.physical_process_models.itervalues():
         if has_permission_to_add_edit_physical_process(user, None, physical_process_class):
             try:
                 url = physical_process_class.get_add_link()
@@ -175,7 +175,7 @@ def is_restricted(group):
         return False
     try:
         return bool(group.details.restricted)
-    except chantal.samples.models.GroupDetails.DoesNotExist:
+    except samples.models.GroupDetails.DoesNotExist:
         return False
 
 
@@ -381,7 +381,7 @@ def assert_can_add_result_process(user, sample_or_series):
         process to the sample or series
     """
     if sample_or_series.currently_responsible_person != user and sample_or_series.group not in user.groups.all():
-        if isinstance(sample_or_series, chantal.samples.models.Sample):
+        if isinstance(sample_or_series, samples.models.Sample):
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
                             u"responsible person for this sample, nor are you a member of its group.") % sample_or_series
         else:

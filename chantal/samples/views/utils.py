@@ -98,7 +98,7 @@ def help_link(link):
     return decorate
 
 
-from chantal.settings import WITH_EPYDOC
+from settings import WITH_EPYDOC
 if WITH_EPYDOC:
     help_link = lambda x: lambda y: y
 

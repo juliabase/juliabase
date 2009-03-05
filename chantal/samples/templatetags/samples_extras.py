@@ -12,10 +12,10 @@ from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 import django.utils.http
 import django.core.urlresolvers
-import chantal.samples.models, django.contrib.auth.models
+import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
-import chantal.samples.views.utils
+import samples.views.utils
 
 register = template.Library()
 
@@ -90,7 +90,7 @@ class VerboseNameNode(template.Node):
             if model == "django.contrib.auth.models.User":
                 model = django.contrib.auth.models.User
             else:
-                model = chantal.samples.models.__dict__[model]
+                model = samples.models.__dict__[model]
             verbose_name = unicode(model._meta.get_field(field).verbose_name)
         if verbose_name:
             verbose_name = verbose_name[0].upper() + verbose_name[1:]
@@ -173,7 +173,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
 
     """
     if isinstance(user, django.contrib.auth.models.User):
-        full_name = chantal.samples.views.utils.get_really_full_name(user)
+        full_name = samples.views.utils.get_really_full_name(user)
         if autoescape:
             full_name = conditional_escape(full_name)
         if anchor_type == "http":
@@ -185,7 +185,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
             return mark_safe(full_name)
         else:
             return u""
-    elif isinstance(user, chantal.samples.models.ExternalOperator):
+    elif isinstance(user, samples.models.ExternalOperator):
         full_name = user.name
         if autoescape:
             full_name = conditional_escape(full_name)
@@ -238,7 +238,7 @@ def timestamp(value):
 
     :rtype: unicode
     """
-    if isinstance(value, chantal.samples.models.Process):
+    if isinstance(value, samples.models.Process):
         timestamp_ = value.timestamp
         inaccuracy = value.timestamp_inaccuracy
     else:
@@ -266,7 +266,7 @@ def markdown(value):
     the entities, however, I can't easily do that without allowing HTML tags,
     too.
     """
-    value = escape(chantal.samples.views.utils.substitute_html_entities(unicode(value)))
+    value = escape(samples.views.utils.substitute_html_entities(unicode(value)))
     position = 0
     result = u""
     while position < len(value):
@@ -283,13 +283,13 @@ def markdown(value):
             name = match.group("name")
             database_item = None
             if next_is_sample:
-                sample = chantal.samples.views.utils.get_sample(name)
-                if isinstance(sample, chantal.samples.models.Sample):
+                sample = samples.views.utils.get_sample(name)
+                if isinstance(sample, samples.models.Sample):
                     database_item = sample
             else:
                 try:
-                    database_item = chantal.samples.models.SampleSeries.objects.get(name=name)
-                except chantal.samples.models.SampleSeries.DoesNotExist:
+                    database_item = samples.models.SampleSeries.objects.get(name=name)
+                except samples.models.SampleSeries.DoesNotExist:
                     pass
             name = name
             result += "[%s](%s)" % (name, database_item.get_absolute_url()) if database_item else name
@@ -358,7 +358,7 @@ class ValueFieldNode(template.Node):
             if model == "User":
                 model = django.contrib.auth.models.User
             else:
-                model = chantal.samples.models.__dict__[model]
+                model = samples.models.__dict__[model]
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = verbose_name[0].upper() + verbose_name[1:]
         if self.unit == "yes/no":
