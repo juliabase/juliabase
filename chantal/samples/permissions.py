@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
 # Attention! This is a cyclic import.  Don't use models in top-level code.
-import chantal.samples.models
+import samples.models
 from samples.views import shared_utils
 
 
