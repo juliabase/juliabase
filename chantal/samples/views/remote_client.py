@@ -3,7 +3,8 @@
 
 u"""Views that are intended only for the Remote Client.  While also users can
 visit these links with their browser directly, it is not really useful what
-they get there.
+they get there.  Note that the whole communication to the remote client happens
+in JSON format.
 """
 
 from __future__ import absolute_import
@@ -19,13 +20,12 @@ from samples import models, permissions
 @login_required
 @never_cache
 def primary_keys(request):
-    u"""Generate a pickle document in plain text (*no* HTML!) containing
-    mappings of names of database objects to primary keys.  While this can be
-    used by everyone by entering the URL directly, this view is intended to be
-    used only by the remote client program to get primary keys.  The reason for
-    this is simple: In forms, you have to give primary keys in POST data sent
-    to the web server.  However, a priori, the remote client doesn't know
-    them.  Therefore, it can query this view to get them.
+    u"""Return the mappings of names of database objects to primary keys.
+    While this can be used by everyone by entering the URL directly, this view
+    is intended to be used only by the remote client program to get primary
+    keys.  The reason for this is simple: In forms, you have to give primary
+    keys in POST data sent to the web server.  However, a priori, the remote
+    client doesn't know them.  Therefore, it can query this view to get them.
 
     The syntax of the query string to be appended to the URL is very simple.
     If you say::
@@ -40,7 +40,7 @@ def primary_keys(request):
     in the query string.  If you pass ``"*"`` instead of a values list, you get
     *all* primary keys.  For samples, however, this is limited to “My Samples”.
 
-    The result is a pickled representation of the resulting nested dictionary.
+    The result is the JSON representation of the resulting nested dictionary.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -90,8 +90,8 @@ def login_remote_client(request):
     :type request: ``HttpRequest``
 
     :Returns:
-      the HTTP response object.  It is a pickled boolean object, whether the
-      login was successful or not.
+      the HTTP response object.  It is a JSON boolean object, whether the login
+      was successful or not.
 
     :rtype: ``HttpResponse``
     """
@@ -117,7 +117,7 @@ def logout_remote_client(request):
     :type request: ``HttpRequest``
 
     :Returns:
-      the HTTP response object.  It is a pickled boolean object and always
+      the HTTP response object.  It is a JSON boolean object and always
       ``True``.
 
     :rtype: ``HttpResponse``

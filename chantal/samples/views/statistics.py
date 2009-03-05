@@ -16,6 +16,7 @@ from django.template import RequestContext
 from django.conf import settings
 import django
 from chantal.common import Availability
+from chantal.samples.views import utils
 
 
 def breakup_time(seconds):
@@ -120,11 +121,11 @@ def get_adsm_results():
         if "--- SCHEDULEREC STATUS BEGIN" in line:
             timestamp = datetime.datetime.strptime(line[:19], "%m/%d/%y   %H:%M:%S")
             if timestamp.date() == datetime.date.today():
-                last_timestamp = timestamp.strftime(str(_("today, %H:%M")))
+                last_timestamp = utils.unicode_strftime(timestamp, _("today, %H:%M"))
             elif timestamp.date() == datetime.date.today() - datetime.timedelta(1):
-                last_timestamp = timestamp.strftime(str(_("yesterday, %H:%M")))
+                last_timestamp = utils.unicode_strftime(timestamp, _("yesterday, %H:%M"))
             else:
-                last_timestamp = timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+                last_timestamp = utils.unicode_strftime(timestamp, _("%A, %b %d, %Y, %H:%M"))
             in_record = True
         elif "--- SCHEDULEREC STATUS END" in line:
             in_record = False
@@ -160,7 +161,7 @@ def get_availability_data():
         availability = pickle.load(open("/home/www-data/online/remote_monitor.pickle", "rb"))
     except IOError:
         return None
-    result["start_date"] = availability.start_of_log.strftime(str(_("%b %d, %Y, %H:%M")))
+    result["start_date"] = utils.unicode_strftime(availability.start_of_log, _("%b %d, %Y, %H:%M"))
     accuracy = 100000000
     a = availability.availability
     a = int(round(a * accuracy))
@@ -171,11 +172,11 @@ def get_availability_data():
     result["downtimes"] = []
     for interval in availability.downtime_intervals[-10:]:
         minutes = int(round((interval[1] - interval[0]).seconds / 60))
-        from_ = interval[0].strftime(str(_("%b %d, %Y, %H:%M")))
+        from_ = utils.unicode_strftime(interval[0], _("%b %d, %Y, %H:%M"))
         if interval[0].date() == interval[1].date():
-            to = interval[1].strftime(str(_("%H:%M")))
+            to = utils.unicode_strftime(interval[1], _("%H:%M"))
         else:
-            to = interval[1].strftime(str(_("%b %d, %Y, %H:%M")))
+            to = utils.unicode_strftime(interval[1], _("%b %d, %Y, %H:%M"))
         result["downtimes"].append(ungettext(u"%(from)s until %(to)s (%(minutes)d minute)",
                                              u"%(from)s until %(to)s (%(minutes)d minutes)", minutes) %
                                    {"from": from_, "to": to, "minutes": minutes})
@@ -198,11 +199,11 @@ def analyze_last_database_backup():
     """
     def format_timestamp(timestamp):
         if timestamp.date() == datetime.date.today():
-            return timestamp.strftime(str(_("%H:%M today")))
+            return utils.unicode_strftime(timestamp, _("%H:%M today"))
         elif timestamp.date() == datetime.date.today() - datetime.timedelta(1):
-            return timestamp.strftime(str(_("%H:%M yesterday")))
+            return utils.unicode_strftime(timestamp, _("%H:%M yesterday"))
         else:
-            return timestamp.strftime(str(_("%A, %b %d, %Y, %H:%M")))
+            return utils.unicode_strftime(timestamp, _("%A, %b %d, %Y, %H:%M"))
     try:
         logfile = open("/home/www-data/backups/postgresql/postgresql_backup.log")
     except IOError:
@@ -214,6 +215,8 @@ def analyze_last_database_backup():
             timestamp = datetime.datetime.strptime(match.group("date"), "%Y-%m-%d %H:%M:%S")
             type_ = match.group("type")
             message = match.group("message")
+            # FixMe: It should only save the last timestamp and generate the
+            # message string after the loop.
             if type_ == "INFO" and message.startswith("Database dump was successfully created"):
                 last_backup = _(u"successful, %s") % format_timestamp(timestamp)
             elif type_ == "INFO" and message.startswith("Database backups were successfully copied"):
@@ -281,6 +284,7 @@ def about(request):
                                              "is_testserver": settings.IS_TESTSERVER,
                                              "db_version": settings.POSTGRESQL_VERSION,
                                              "language_version": settings.PYTHON_VERSION,
+                                             "matplotlib_version": settings.MATPLOTLIB_VERSION,
                                              "framework_version": django.get_version().replace("-SVN-unknown", ""),
                                              "short_messages": short_messages
                                              },

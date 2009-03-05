@@ -62,12 +62,12 @@ class ChantalConnection(object):
         if is_pickled:
             return jsonpickle.decode(response.read())
         else:
-            logging.error("Resonse was not in pickle format.  Probably failed validation.")
+            logging.error("Resonse was not in JSON format.  Probably failed validation.")
             text = response.read()
             logfile = open("chantal_remote.html", "wb")
             logfile.write(text)
             logfile.close()
-            raise ResponseError("Response was not in pickle format!")
+            raise ResponseError("Response was not in JSON format!")
 
     def login(self, username, password):
         self.username = username
@@ -150,7 +150,7 @@ class SixChamberLayer(object):
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
-        self.chamber = self.chamber = self.pressure = self.time = \
+        self.chamber = self.pressure = self.time = \
             self.substrate_electrode_distance = self.comments = self.transfer_in_chamber = self.pre_heat = \
             self.gas_pre_heat_gas = self.gas_pre_heat_pressure = self.gas_pre_heat_time = self.heating_temperature = \
             self.transfer_out_of_chamber = self.plasma_start_power = self.plasma_start_with_carrier = \
@@ -236,7 +236,7 @@ class LargeAreaLayer(object):
     def __init__(self, deposition):
         self.deposition = deposition
         deposition.layers.append(self)
-        self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.sc = self.tmb = self.ch4 = \
+        self.date = self.layer_type = self.station = self.sih4 = self.h2 = self.tmb = self.ch4 = \
             self.co2 = self.ph3 = self.power = self.pressure = self.temperature = self.hf_frequency = self.time = \
             self.dc_bias = self.electrode = self.electrodes_distance = None
 
@@ -248,7 +248,6 @@ class LargeAreaLayer(object):
                 prefix+"station": self.station,
                 prefix+"sih4": self.sih4,
                 prefix+"h2": self.h2,
-                prefix+"sc": self.sc,
                 prefix+"tmb": self.tmb,
                 prefix+"ch4": self.ch4,
                 prefix+"co2": self.co2,

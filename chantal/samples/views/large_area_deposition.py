@@ -173,9 +173,7 @@ class FormSet(object):
         :type post_data: ``QueryDict``
         """
         self.post_data = post_data
-        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition,
-                                              initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                                       "number": utils.get_next_deposition_number("L")})
+        self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
         self.add_layers_form = form_utils.AddLayersForm(self.user_details, models.LargeAreaDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
@@ -494,8 +492,8 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-            feed_utils.Reporter(self.user).report_physical_process(
-                deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
+#             feed_utils.Reporter(self.user).report_physical_process(
+#                 deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 
     def get_context_dict(self):

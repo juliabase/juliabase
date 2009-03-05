@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import xml.etree.ElementTree as ElementTree
+import xml.etree.cElementTree as ElementTree
 import cPickle as pickle, re, codecs, os.path
 
 import ConfigParser

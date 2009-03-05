@@ -141,6 +141,8 @@ POSTGRESQL_VERSION = _scan_version("postgresql")
 # FixMe: PostgreSQL version shouldn't be fixed
 POSTGRESQL_STARTUP_TIME = os.stat("/var/run/postgresql/8.3-main.pid")[9]
 PYTHON_VERSION = _scan_version("python")
+import matplotlib
+MATPLOTLIB_VERSION = matplotlib.__version__
 CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
 
 # LDAP binding
