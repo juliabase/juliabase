@@ -100,7 +100,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.markup',
-    'chantal.samples',
+    'samples',
 )
 
 CACHE_BACKEND = "file:///var/tmp/django_cache"

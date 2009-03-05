@@ -15,8 +15,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 import django
-from chantal.common import Availability
-from chantal.samples.views import utils
+from ..common import Availability
+from samples.views import utils
 
 
 def breakup_time(seconds):
