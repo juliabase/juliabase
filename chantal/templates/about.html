@@ -43,6 +43,14 @@
         <span class="version">{{ db_version }}</span></p></td>
   </tr>
   <tr>
+    <th>{% trans 'Programming framework' %}:</th>
+    <td style="vertical-align: bottom">
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}"
+            ><img class="helper-program-logo" src="/media/django.png" alt="{% trans 'Django logo' %}"/></a></p>
+      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a>
+        <span class="version">{{ framework_version }}</span></p></td>
+  </tr>
+  <tr>
     <th>{% trans 'Plotting system' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Matplotlib' %}"
@@ -50,14 +58,6 @@
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Matplotlib' %}">Matplotlib</a>
         <span class="version">{{ matplotlib_version }}</span></p>
     </td>
-  </tr>
-  <tr>
-    <th>{% trans 'Programming framework' %}:</th>
-    <td style="vertical-align: bottom">
-      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}"
-            ><img class="helper-program-logo" src="/media/django.png" alt="{% trans 'Django logo' %}"/></a></p>
-      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a>
-        <span class="version">{{ framework_version }}</span></p></td>
   </tr>
 </table>
 
