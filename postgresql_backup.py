@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-u"""This program creates backup dumps of the MySQL database.  It should be
+u"""This program creates backup dumps of the PostgreSQL database.  It should be
 called hourly as a cron job.  It will write the backups in gzip format in the
-directory ``/home/www-data/backups/mysql/``.
+directory ``/home/www-data/backups/postgresql/``.
 
 The program contains a rotation scheme: Only the last 24 backups are kept, then
 one of each day of the past week, then one of each week of the last four weeks,
 and the same for months.
-
-Note that the MySQL root login and password are hard-coded in this file.
 """
 
 import datetime, os.path, subprocess, pickle, logging
@@ -17,13 +15,18 @@ import datetime, os.path, subprocess, pickle, logging
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s %(levelname)-8s %(message)s",
                     datefmt="%Y-%m-%d %H:%M:%S",
-                    filename="/home/www-data/backups/mysql/mysql_backup.log",
+                    filename="/home/www-data/backups/postgresql/postgresql_backup.log",
                     filemode="a")
 
-pickle_filename = "/home/www-data/backups/mysql/dump_rotation.pickle"
+import ConfigParser
+credentials = ConfigParser.SafeConfigParser()
+credentials.read("/var/lib/chantal/chantal.auth")
+credentials = dict(credentials.items("DEFAULT"))
+
+pickle_filename = "/home/www-data/backups/postgresql/dump_rotation.pickle"
 
 class DumpRotation(object):
-    def __init__(self, backup_dir="/home/www-data/backups/mysql/"):
+    def __init__(self, backup_dir="/home/www-data/backups/postgresql/"):
         self.backup_dir = backup_dir
         self.queue_hourly = []
         self.queue_daily = []
@@ -36,19 +39,19 @@ class DumpRotation(object):
         this implicitly calls `rotate`.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H%M")
-        filename = os.path.join(self.backup_dir, "mysql_dump_%s.sql.gz" % timestamp)
+        filename = os.path.join(self.backup_dir, "postgresql_dump_%s.sql.gz" % timestamp)
         outfile = open(filename, "wb")
-        mysqldump = subprocess.Popen(["mysqldump", "--user=root", "--password=Sonne", "--compact", "chantal"],
-                                     stdout=subprocess.PIPE)
-        gzip = subprocess.Popen(["gzip"], stdin=mysqldump.stdout, stdout=outfile)
+        postgresql_dump = subprocess.Popen(["pg_dump", "--username=chantal", "chantal"],
+                                           stdout=subprocess.PIPE, env={"PGPASSWORD": credentials["postgresql_password"]})
+        gzip = subprocess.Popen(["gzip"], stdin=postgresql_dump.stdout, stdout=outfile)
         return_code_gzip = gzip.wait()
         outfile.close()
-        return_code_mysqldump = mysqldump.wait()
-        if return_code_mysqldump != 0:
-            logging.error("Database dump failed; mysqldump returned with exit code %d." % return_code_mysqldump)
+        return_code_postgresql_dump = postgresql_dump.wait()
+        if return_code_postgresql_dump != 0:
+            logging.error("Database dump failed; postgresql_dump returned with exit code %d." % return_code_postgresql_dump)
         if return_code_gzip != 0:
             logging.error("Database dump failed; gzip returned with exit code %d." % return_code_gzip)
-        if return_code_mysqldump != 0 or return_code_gzip != 0:
+        if return_code_postgresql_dump != 0 or return_code_gzip != 0:
             try:
                 os.remove(filename)
             except OSError:
@@ -102,7 +105,7 @@ def copy_to_sonne():
     that this also implies that outdated (and therefore removed) backup files
     are removed from sonne, too.
     """
-    result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/www-data/backups/mysql/",
+    result_code = subprocess.call(["rsync", "--modify-window=2", "-a", "--delete", "/home/www-data/backups/postgresql/",
                                    "/windows/T_www-data/datenbank/chantal/backups/"])
     if result_code == 0:
         logging.info("Database backups were successfully copied to sonne.")

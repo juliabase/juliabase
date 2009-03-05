@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-28 15:19+0100\n"
-"PO-Revision-Date: 2008-12-28 22:06+0100\n"
+"POT-Creation-Date: 2009-02-19 15:03+0100\n"
+"PO-Revision-Date: 2009-02-19 15:04+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -338,6 +338,21 @@ msgstr "Schichten"
 msgid "layer %d"
 msgstr "Schicht %d"
 
+msgid "in sccm"
+msgstr "in sccm"
+
+msgid "2% PH₃ in SiH₄"
+msgstr "2% PH₃ in SiH₄"
+
+msgid "1% TMB in He"
+msgstr "1% TMB in He"
+
+msgid "5ppm B₂H₆ in H₂"
+msgstr "5ppm B₂H₆ in H₂"
+
+msgid "10 ppm PH₃ in H₂"
+msgstr "10 ppm PH₃ in H₂"
+
 msgid "chamber"
 msgstr "Kammer"
 
@@ -389,7 +404,6 @@ msgstr "Startleistung Plasma"
 msgid "in W"
 msgstr "in W"
 
-#. FixMe:  Maybe NullBooleanField?
 msgid "plasma start with carrier"
 msgstr "Plasma startet mit Carrier"
 
@@ -439,18 +453,6 @@ msgstr "p_Basis/Torr"
 msgid "(in sccm)"
 msgstr "(in sccm)"
 
-msgid "2% PH₃ in SiH₄"
-msgstr "2% PH₃ in SiH₄"
-
-msgid "1% TMB in He"
-msgstr "1% TMB in He"
-
-msgid "5ppm B₂H₆ in H₂"
-msgstr "5ppm B₂H₆ in H₂"
-
-msgid "10 ppm PH₃ in H₂"
-msgstr "10 ppm PH₃ in H₂"
-
 msgid "channel"
 msgstr "Channel"
 
@@ -459,9 +461,6 @@ msgstr "Gas und Verdünnung"
 
 msgid "flow rate"
 msgstr "Flussrate"
-
-msgid "in sccm"
-msgstr "in sccm"
 
 msgid "6-chamber channel"
 msgstr "6-Kammer-Channel"
@@ -566,6 +565,60 @@ msgstr "DC-Bias/V"
 
 msgid "elec. dist./mm"
 msgstr "Elektr.-Abst./mm"
+
+msgid "small cluster tool deposition"
+msgstr "Kleine-Cluster-Tool-Deposition"
+
+msgid "small cluster tool depositions"
+msgstr "Kleine-Cluster-Tool-Depositionen"
+
+msgid "Can create and edit small cluster tool depositions"
+msgstr "Darf Kleine-Cluster-Tool-Depositionen anlegen und ändern"
+
+msgid "small cluster tool layer"
+msgstr "Schicht des kleinen Cluster-Tools"
+
+msgid "small cluster tool layers"
+msgstr "Schichten des kleinen Cluster-Tools"
+
+msgid "rhenium"
+msgstr "Rhenium"
+
+msgid "tantalum"
+msgstr "Tantal"
+
+msgid "tungsten"
+msgstr "Wolfram"
+
+msgid "substrate–wire distance"
+msgstr "Abstand Substrat–Draht"
+
+msgid "filament temperature"
+msgstr "Filament-Temperatur"
+
+msgid "wire current"
+msgstr "Drahtstrom"
+
+msgid "in A"
+msgstr "in A"
+
+msgid "wire voltage"
+msgstr "Drahtspannung"
+
+msgid "wire material"
+msgstr "Drahtmaterial"
+
+msgid "small cluster tool hotwire layer"
+msgstr "Hotwire-Schicht im kleinen Cluster-Tool"
+
+msgid "small cluster tool hotwire layers"
+msgstr "Hotwire-Schichten im kleinen Cluster-Tool"
+
+msgid "small cluster tool PECVD layer"
+msgstr "PECVD-Schicht im kleinen Cluster-Tool"
+
+msgid "small cluster tool PECVD layers"
+msgstr "PECVD-Schichten im kleinen Cluster-Tool"
 
 msgid "originator"
 msgstr "Ersteller"
@@ -798,8 +851,8 @@ msgstr "PDS-Messung #%d"
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-msgid "counts"
-msgstr "Counts"
+msgid "α in cm⁻¹"
+msgstr "α in cm⁻¹"
 
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
@@ -807,13 +860,17 @@ msgstr "Zugriff verweigert: "
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "group, nor are you its currently responsible person."
-msgstr "Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, noch ihr aktuell Verantwortlicher sind."
+msgstr ""
+"Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, "
+"noch ihr aktuell Verantwortlicher sind."
 
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "group, nor are you its currently responsible person, nor are you a senior "
 "user."
-msgstr "Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, noch ihr aktuell Verantwortlicher sind, noch Seniornutzer sind."
+msgstr ""
+"Sie dürfen die Probe nicht sehen, da Sie weder in der Gruppe der Probe sind, "
+"noch ihr aktuell Verantwortlicher sind, noch Seniornutzer sind."
 
 #, python-format
 msgid ""
@@ -1101,6 +1158,9 @@ msgstr "Beschreibung der Änderung"
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
+msgid "Samples"
+msgstr "Proben"
+
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
@@ -1171,9 +1231,6 @@ msgstr "Monat"
 #, python-format
 msgid "Lab notebook for %s"
 msgstr "Laborbuch für %s"
-
-msgid "Samples"
-msgstr "Proben"
 
 msgid "Operator"
 msgstr "Operateur"
@@ -1580,12 +1637,6 @@ msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
-msgid "Name is unknown."
-msgstr "Dieser Name ist unbekannt."
-
-msgid "Gas type is unknown."
-msgstr "Dieser Gastyp ist unbekannt."
-
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
@@ -1598,6 +1649,22 @@ msgstr "6-Kammer-Deposition „%s“"
 
 msgid "New 6-chamber deposition"
 msgstr "Neue 6-Kammer-Deposition"
+
+msgid "hotwire"
+msgstr "Hotwire"
+
+msgid "PECVD"
+msgstr "PECVD"
+
+msgid "Layer to be added"
+msgstr "Schicht, die hinzugefügt werden soll"
+
+#, python-format
+msgid "Small cluster tool deposition “%s”"
+msgstr "Kleine-Cluster-Tool-Depositionen „%s“"
+
+msgid "New small cluster tool deposition"
+msgstr "Neue Kleine-Cluster-Tool-Deposition"
 
 msgid "Old sample name"
 msgstr "Alter Probenname"
@@ -1920,11 +1987,11 @@ msgstr "Apache-Logo"
 msgid "Database"
 msgstr "Datenbank"
 
-msgid "http://en.wikipedia.org/wiki/MySQL"
-msgstr "http://de.wikipedia.org/wiki/MySQL"
+msgid "http://en.wikipedia.org/wiki/PostgreSQL"
+msgstr "http://de.wikipedia.org/wiki/PostgreSQL"
 
-msgid "MySQL logo"
-msgstr "MySQL-Logo"
+msgid "PostgreSQL logo"
+msgstr "PostgreSQL-Logo"
 
 msgid "Programming runtime"
 msgstr "Programm-Laufzeitsystem"
@@ -2171,6 +2238,9 @@ msgstr "Anzahl der Channels, die hinzugefügt werden sollen:"
 
 msgid "Number of layers to be added:"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen:"
+
+msgid "Gas flows in sccm"
+msgstr "Gasflüsse in sccm"
 
 #, python-format
 msgid ""
@@ -3093,6 +3163,18 @@ msgstr "Inspizierte Objekte"
 msgid "Objects failed"
 msgstr "Fehlgeschlagene Objekte"
 
+#~ msgid "counts"
+#~ msgstr "Counts"
+
+#~ msgid "small cluster tool deposition lab"
+#~ msgstr "6-Kammer-Depositionslabor"
+
+#~ msgid "Name is unknown."
+#~ msgstr "Dieser Name ist unbekannt."
+
+#~ msgid "Gas type is unknown."
+#~ msgstr "Dieser Gastyp ist unbekannt."
+
 #~ msgid "History of sample “"
 #~ msgstr "Geschichte der Probe „"
 
@@ -3266,9 +3348,6 @@ msgstr "Fehlgeschlagene Objekte"
 
 #~ msgid "Add result"
 #~ msgstr "Ergebnis hinzufügen"
-
-#~ msgid "Search for depositions"
-#~ msgstr "Nach Depositionen suchen"
 
 #~ msgid "comment about %s"
 #~ msgstr "Kommentar über %s"

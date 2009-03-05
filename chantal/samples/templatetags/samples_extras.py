@@ -363,15 +363,21 @@ class ValueFieldNode(template.Node):
         verbose_name = verbose_name[0].upper() + verbose_name[1:]
         if self.unit == "yes/no":
             field = fancy_bool(field)
-            self.unit = None
+            unit = None
         elif self.unit == "user":
             field = get_really_full_name(field)
-            self.unit = None
+            unit = None
+        elif self.unit == "sccm_collapse":
+            if not field:
+                return u"""<td colspan="2"/>"""
+            unit = "sccm"
         elif not field and field != 0:
-            self.unit = None
+            unit = None
             field = u"—"
+        else:
+            unit = self.unit
         return u"""<td class="label">%(label)s:</td><td class="value">%(value)s</td>""" % \
-            {"label": verbose_name, "value": field if self.unit is None else quantity(field, self.unit)}
+            {"label": verbose_name, "value": field if unit is None else quantity(field, unit)}
 
 
 @register.tag
@@ -385,7 +391,8 @@ def value_field(parser, token):
 
     The unit (``"W"`` for “Watt”) is optional.  If you have a boolean field,
     you can give ``"yes/no"`` as the unit, which converts the boolean value to
-    a yes/no string (in the current language).
+    a yes/no string (in the current language).  For gas flow fields that should
+    collapse if the gas wasn't used, use ``"sccm_collapse"``.
     """
     tokens = token.split_contents()
     if len(tokens) == 3:

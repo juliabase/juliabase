@@ -203,7 +203,7 @@ def analyze_last_database_backup():
         else:
             return utils.unicode_strftime(timestamp, _("%A, %b %d, %Y, %H:%M"))
     try:
-        logfile = open("/home/www-data/backups/mysql/mysql_backup.log")
+        logfile = open("/home/www-data/backups/postgresql/postgresql_backup.log")
     except IOError:
         return None
     last_backup = last_copy = None
@@ -246,7 +246,7 @@ def statistics(request):
     """
     web_server_uptime = \
         _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.APACHE_STARTUP_TIME)}
-    db_uptime = _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.MYSQL_STARTUP_TIME)}
+    db_uptime = _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.POSTGRESQL_STARTUP_TIME)}
     os_uptime = float(open("/proc/uptime").read().split()[0])
     os_uptime = _(u"for %(time)s") % {"time": breakup_time(os_uptime)}
     return render_to_response("statistics.html", {"title": _(u"Chantal server statistics"),
@@ -280,7 +280,7 @@ def about(request):
     return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
                                              "web_server_version": settings.APACHE_VERSION,
                                              "is_testserver": settings.IS_TESTSERVER,
-                                             "db_version": settings.MYSQL_VERSION,
+                                             "db_version": settings.POSTGRESQL_VERSION,
                                              "language_version": settings.PYTHON_VERSION,
                                              "matplotlib_version": settings.MATPLOTLIB_VERSION,
                                              "framework_version": django.get_version().replace("-SVN-unknown", ""),
