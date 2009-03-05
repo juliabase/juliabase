@@ -140,6 +140,8 @@ APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER or WITH_EPYDOC else os.stat("
 MYSQL_VERSION = _scan_version("mysql-server")
 MYSQL_STARTUP_TIME = os.stat("/var/run/mysqld/mysqld.pid")[9]
 PYTHON_VERSION = _scan_version("python")
+import matplotlib
+MATPLOTLIB_VERSION = matplotlib.__version__
 CHANTAL_REVNO = subprocess.Popen(["bzr", "revno", ROOTDIR], stdout=subprocess.PIPE).communicate()[0].strip()
 
 # LDAP binding
