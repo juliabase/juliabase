@@ -9,8 +9,7 @@ the data from the AD.  Of course, groups and permissions have yet to be set.
 
 Every night the maintenance routine chacks which active users cannot be found
 anymore in the AD, sets them to inactive and removes all their groups and
-permissions.  See the `chantal.samples.views.maintenance.mark_inactive_users`
-function.
+permissions.  See the `samples.views.maintenance.mark_inactive_users` function.
 
 A seldom but possible problem is if someone tries to login, he is known in the
 AD, but it also known in Chantal as “inactive”.  This can mean one of two

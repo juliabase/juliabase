@@ -156,7 +156,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     u"""Unfortunately, Django's get_full_name method for users returns the
     empty string if the user has no first and surname set. However, it'd be
     sensible to use the login name as a fallback then. This is realised here.
-    See also `chantal.samples.views.utils.get_really_full_name`.
+    See also `samples.views.utils.get_really_full_name`.
 
     The optional parameter to this filter determines whether the name should be
     linked or not, and if so, how.  There are three possible parameter values:
@@ -260,11 +260,10 @@ def markdown(value):
     at least Python Markdown 1.7 or later so that this works.
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
-    `chantal.samples.views.utils.substitute_html_entities`.  This creates a
-    mild escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of
-    ``\&amp;``.  It can only be solved by getting python-markdown to replace
-    the entities, however, I can't easily do that without allowing HTML tags,
-    too.
+    `samples.views.utils.substitute_html_entities`.  This creates a mild
+    escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.
+    It can only be solved by getting python-markdown to replace the entities,
+    however, I can't easily do that without allowing HTML tags, too.
     """
     value = escape(samples.views.utils.substitute_html_entities(unicode(value)))
     position = 0

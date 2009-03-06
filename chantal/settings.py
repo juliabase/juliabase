@@ -78,10 +78,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'chantal.samples.middleware.chantal.LocaleMiddleware',
+    'samples.middleware.chantal.LocaleMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    'chantal.samples.middleware.chantal.ExceptionsMiddleware',
+    'samples.middleware.chantal.ExceptionsMiddleware',
 )
 APPEND_SLASH = False
 
@@ -118,7 +118,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.debug",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
-                               "chantal.samples.context_processors.default",
+                               "samples.context_processors.default",
                                )
 
 AUTH_PROFILE_MODULE = 'samples.userdetails'
@@ -153,4 +153,4 @@ AD_SEARCH_DN = "CN=Users,dc=example,dc=local"
 AD_NT4_DOMAIN = "example.local"
 AD_SEARCH_FIELDS = ["mail", "givenName", "sn", "sAMAccountName"]
 AD_LDAP_URL = "ldap://%s:%s" % (AD_DNS_NAME, AD_LDAP_PORT)
-#AUTHENTICATION_BACKENDS = ("chantal.samples.auth.ActiveDirectoryBackend",)
+#AUTHENTICATION_BACKENDS = ("samples.auth.ActiveDirectoryBackend",)

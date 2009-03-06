@@ -411,8 +411,9 @@ class FormSet(object):
 
     def serialize_quantities_and_values(self):
         u"""Serialise the result table data (quantities and values) to a string
-        which is ready to be written to the database.  See
-        `models.Result.quantities_and_values` for further information.
+        which is ready to be written to the database.  See the
+        ``quantities_and_values`` attribute of `samples.models.Result` for
+        further information.
 
         :Return:
           the serialised result values table, as an ASCII-only string

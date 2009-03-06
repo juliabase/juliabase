@@ -265,7 +265,7 @@ admin.site.register(FeedCopiedMySamples)
 class FeedEditedSamples(FeedEntry):
     u"""Model for feed entries for edited samples.  This includes changed
     currently responsible persons.  The respective view generates three entries
-    for that, however, see `chantal.samples.views.sample.edit`.
+    for that, however, see `samples.views.sample.edit`.
 
     FixMe: This should also include sample deaths.
     """
@@ -316,7 +316,7 @@ admin.site.register(FeedSampleSplit)
 class FeedEditedSampleSeries(FeedEntry):
     u"""Model for feed entries for edited sample series.  This includes changed
     currently responsible persons.  The respective view generates two entries
-    for that, however, see `chantal.samples.views.sample_series.edit`.
+    for that, however, see `samples.views.sample_series.edit`.
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
     description = models.TextField(_(u"description"))

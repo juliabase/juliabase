@@ -483,7 +483,7 @@ class FormSet(object):
 @login_required
 def edit(request, deposition_number):
     u"""Central view for editing, creating, and duplicating 6-chamber
-    depositions.  If `deposition_number` is ``None``, a new depositon is
+    depositions.  If ``deposition_number`` is ``None``, a new depositon is
     created (possibly by duplicating another one).
 
     :Parameters:

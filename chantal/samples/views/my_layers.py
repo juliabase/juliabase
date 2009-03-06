@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 u"""View for editing the “My Layers” structure.  See
-`models.UserDetails.my_layers` for the syntax of the “My Layers” field.
+``models.UserDetails.my_layers`` for the syntax of the “My Layers” field.
 """
 
 from __future__ import absolute_import
@@ -53,8 +53,8 @@ class MyLayerForm(forms.Form):
 layer_item_pattern = re.compile(ur"\s*(?P<nickname>.+?)\s*:\s*(?P<raw_layer_identifier>.+?)\s*(?:,\s*|\Z)")
 def forms_from_database(user):
     u"""Generate the “My Layers” forms for the current user.  Convert the
-        notation ``<deposition ID>-<layer number>`` of the database to
-        ``<deposition number>-<layer number>``.
+    notation ``<deposition ID>-<layer number>`` of the database to
+    ``<deposition number>-<layer number>``.
 
     :Parameters:
       - `user`: the current user

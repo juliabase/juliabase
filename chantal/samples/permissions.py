@@ -27,8 +27,10 @@ import hashlib
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
-# Attention! This is a cyclic import.  Don't use models in top-level code.
-import samples.models
+from settings import WITH_EPYDOC
+if not WITH_EPYDOC:
+    # Attention! This is a cyclic import.  Don't use models in top-level code.
+    import samples.models
 from samples.views import shared_utils
 
 

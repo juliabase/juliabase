@@ -171,12 +171,12 @@ class Layer(models.Model):
     def get_data(self):
         u"""Extract the data of this layer as a CSV node with a list of
         key–value pairs, ready to be used for the CSV table export.  See the
-        `chantal.samples.views.csv_export` module for all the glory details.
+        `samples.views.csv_export` module for all the glory details.
 
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = CSVNode(self, _(u"layer %d") % self.number)
@@ -222,7 +222,7 @@ u"""Contains all possible choices for `SixChamberLayer.chamber`.
 class SixChamberLayer(Layer):
     u"""One layer in a 6-chamber deposition.
 
-    FixMe: Maybe `chamber` should become optional, too?
+    FixMe: Maybe ``SixChamberLayer.chamber`` should become optional, too?
     """
     deposition = models.ForeignKey(SixChamberDeposition, related_name="layers", verbose_name=_(u"deposition"))
     chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)

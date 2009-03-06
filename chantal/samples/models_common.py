@@ -294,13 +294,13 @@ class Process(models.Model):
     def get_data(self):
         u"""Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the CSV table
-        export.  See the `chantal.samples.views.csv_export` module for all the
-        glory details.
+        export.  See the `samples.views.csv_export` module for all the glory
+        details.
 
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.CSVNode`
         """
         csv_node = CSVNode(self)
         csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
@@ -400,12 +400,12 @@ class Sample(models.Model):
         u"""Extract the data of this sample as a tree of nodes with lists of
         key–value pairs, ready to be used for the CSV table export.  Every
         child of the top-level node is a process of the sample.  See the
-        `chantal.samples.views.csv_export` module for all the glory details.
+        `samples.views.csv_export` module for all the glory details.
 
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = CSVNode(self, unicode(self))
@@ -422,7 +422,7 @@ class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
     aliases needn't be unique.  Two old names may be the same.  However, they
-    must not be equal to a `Sample.name`.
+    must not be equal to a ``Sample.name``.
     """
     name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
@@ -713,8 +713,8 @@ class Result(Process):
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for the
-        CSV table export.  See the `chantal.samples.views.csv_export` module
-        for all the glory details.
+        CSV table export.  See the `samples.views.csv_export` module for all
+        the glory details.
 
         However, I should point out the peculiarities of result processes in
         this respect.  Result comments are not exported, just the table.  If
@@ -728,7 +728,7 @@ class Result(Process):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = super(Result, self).get_data()
@@ -749,8 +749,8 @@ admin.site.register(Result)
 class SampleSeries(models.Model):
     u"""A sample series groups together zero or more `Sample`.  It must belong
     to a group, and it may contain processes, however, only *result processes*.
-    The `name` and the `timestamp` of a sample series can never change after it
-    has been created.
+    The ``name`` and the ``timestamp`` of a sample series can never change
+    after it has been created.
     """
     name = models.CharField(_(u"name"), max_length=50, primary_key=True,
                             help_text=_(u"must be of the form “originator-YY-name”"))
@@ -777,13 +777,12 @@ class SampleSeries(models.Model):
         u"""Extract the data of this sample series as a tree of nodes with
         lists of key–value pairs, ready to be used for the CSV table export.
         Every child of the top-level node is a sample of the sample series.
-        See the `chantal.samples.views.csv_export` module for all the glory
-        details.
+        See the `samples.views.csv_export` module for all the glory details.
 
         :Return:
           a node for building a CSV tree
 
-        :rtype: `chantal.samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.CSVNode`
         """
         _ = ugettext
         csv_node = CSVNode(self, unicode(self))
