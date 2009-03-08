@@ -3,13 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-03-07 14:27-0600\n"
-"PO-Revision-Date: 2009-03-07 21:28+0100\n"
+"PO-Revision-Date: 2009-03-08 23:01+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,109 +22,109 @@ msgid "Authors"
 msgstr "Autoren"
 
 msgid "abstract reference"
-msgstr ""
+msgstr "Abstract-Referenz"
 
 msgid "audiovisual material"
-msgstr ""
+msgstr "audio-visuelles Material"
 
 msgid "art work"
-msgstr ""
+msgstr "Kunstwerk"
 
 msgid "bill/resolution"
-msgstr ""
+msgstr "Gesetzesentwurf/Resolution"
 
 msgid "whole book reference"
-msgstr ""
+msgstr "Referenz eines ganzen Buches"
 
 msgid "case"
-msgstr ""
+msgstr "Gerichtsfall"
 
 msgid "book chapter reference"
-msgstr ""
+msgstr "Buchkapitel-Referenz"
 
 msgid "computer program"
-msgstr ""
+msgstr "Computerprogramm"
 
 msgid "conference proceeding"
-msgstr ""
+msgstr "Konferenz-Proceedings"
 
 msgid "catalog"
-msgstr ""
+msgstr "Katalog"
 
 msgid "data file"
-msgstr ""
+msgstr "Datendatei"
 
 msgid "electronic citation"
-msgstr ""
+msgstr "elektronisches Zitat"
 
 msgid "generic"
-msgstr ""
+msgstr "unspezifiziert"
 
 msgid "internet communication"
-msgstr ""
+msgstr "Internet-Kommunikation"
 
 msgid "in press reference"
-msgstr ""
+msgstr "Presse-Referenz"
 
 msgid "journal – full"
-msgstr ""
+msgstr "Journal – komplett"
 
 msgid "journal reference"
 msgstr "Journal-Artikel"
 
 msgid "map"
-msgstr ""
+msgstr "Karte"
 
 msgid "magazine article"
-msgstr ""
+msgstr "Magazin-Artikel"
 
 msgid "motion picture"
-msgstr ""
+msgstr "Spielfilm"
 
 msgid "music score"
-msgstr ""
+msgstr "Musikwerk"
 
 msgid "newspaper"
-msgstr ""
+msgstr "Zeitung"
 
 msgid "pamphlet"
-msgstr ""
+msgstr "Flugschrift"
 
 msgid "patent"
-msgstr ""
+msgstr "Patent"
 
 msgid "personal communication"
-msgstr ""
+msgstr "persönliche Mitteilung"
 
 msgid "report"
-msgstr ""
+msgstr "Bericht"
 
 msgid "serial – book, monograph"
-msgstr ""
+msgstr "Reihe – Buch, Monographie"
 
 msgid "slide"
-msgstr ""
+msgstr "Folie"
 
 msgid "sound recording"
-msgstr ""
+msgstr "Tonaufzeichnung"
 
 msgid "statute"
-msgstr ""
+msgstr "Gesetz"
 
 msgid "thesis/dissertation"
-msgstr ""
+msgstr "Abschlussarbeit/Dissertation"
 
 msgid "unenacted bill/resolution"
-msgstr ""
+msgstr "nicht-erlassener Gesetzesentwurf/Resolution"
 
 msgid "unpublished work reference"
-msgstr ""
+msgstr "unveröffentlichte Arbeit"
 
 msgid "video recording"
-msgstr ""
+msgstr "Videoaufzeichnung"
 
 msgid "Main menu"
-msgstr ""
+msgstr "Hauptmenü"
 
 msgid "View reference"
-msgstr ""
+msgstr "Referenz betrachten"
