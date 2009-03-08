@@ -1,0 +1,20 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load refdb_extras %}
+
+{% block content %}
+  <p>{{ body.type|display_reference_type }}</p>
+  {% if body.part %}
+    <div>
+      <p>{% trans 'Title' %}: {{ body.part.title }}</p>
+      <p>{% trans 'Authors' %}: {% for author in body.part.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>
+    </div>
+  {% endif %}
+  <div>
+    <p>{% trans 'Title' %}: {{ body.publication.title }}</p>
+    {% if body.publication.authors %}
+      <p>{% trans 'Authors' %}: {% for author in body.publication.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>
+    {% endif %}
+  </div>
+{% endblock %}

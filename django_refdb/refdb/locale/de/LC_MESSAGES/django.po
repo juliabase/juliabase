@@ -1,0 +1,131 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-03-07 14:27-0600\n"
+"PO-Revision-Date: 2009-03-07 21:28+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Authors"
+msgstr "Autoren"
+
+msgid "abstract reference"
+msgstr ""
+
+msgid "audiovisual material"
+msgstr ""
+
+msgid "art work"
+msgstr ""
+
+msgid "bill/resolution"
+msgstr ""
+
+msgid "whole book reference"
+msgstr ""
+
+msgid "case"
+msgstr ""
+
+msgid "book chapter reference"
+msgstr ""
+
+msgid "computer program"
+msgstr ""
+
+msgid "conference proceeding"
+msgstr ""
+
+msgid "catalog"
+msgstr ""
+
+msgid "data file"
+msgstr ""
+
+msgid "electronic citation"
+msgstr ""
+
+msgid "generic"
+msgstr ""
+
+msgid "internet communication"
+msgstr ""
+
+msgid "in press reference"
+msgstr ""
+
+msgid "journal – full"
+msgstr ""
+
+msgid "journal reference"
+msgstr "Journal-Artikel"
+
+msgid "map"
+msgstr ""
+
+msgid "magazine article"
+msgstr ""
+
+msgid "motion picture"
+msgstr ""
+
+msgid "music score"
+msgstr ""
+
+msgid "newspaper"
+msgstr ""
+
+msgid "pamphlet"
+msgstr ""
+
+msgid "patent"
+msgstr ""
+
+msgid "personal communication"
+msgstr ""
+
+msgid "report"
+msgstr ""
+
+msgid "serial – book, monograph"
+msgstr ""
+
+msgid "slide"
+msgstr ""
+
+msgid "sound recording"
+msgstr ""
+
+msgid "statute"
+msgstr ""
+
+msgid "thesis/dissertation"
+msgstr ""
+
+msgid "unenacted bill/resolution"
+msgstr ""
+
+msgid "unpublished work reference"
+msgstr ""
+
+msgid "video recording"
+msgstr ""
+
+msgid "Main menu"
+msgstr ""
+
+msgid "View reference"
+msgstr ""
