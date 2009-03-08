@@ -266,7 +266,7 @@ def markdown(value):
     the entities, however, I can't easily do that without allowing HTML tags,
     too.
     """
-    value = escape(chantal.samples.views.utils.substitute_html_entities(unicode(value)))
+    value = escape(chantal.samples.views.utils.substitute_html_entities(value))
     position = 0
     result = u""
     while position < len(value):
