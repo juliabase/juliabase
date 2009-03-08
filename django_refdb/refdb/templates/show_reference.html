@@ -4,17 +4,109 @@
 {% load refdb_extras %}
 
 {% block content %}
-  <p>{{ body.type|display_reference_type }}</p>
-  {% if body.part %}
-    <div>
-      <p>{% trans 'Title' %}: {{ body.part.title }}</p>
-      <p>{% trans 'Authors' %}: {% for author in body.part.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>
-    </div>
-  {% endif %}
-  <div>
-    <p>{% trans 'Title' %}: {{ body.publication.title }}</p>
-    {% if body.publication.authors %}
-      <p>{% trans 'Authors' %}: {% for author in body.publication.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</p>
+  <table width="100%">
+    <tr>
+      <td colspan="6">{{ body.type|display_reference_type }}</td>
+    </tr>
+    {% if body.part %}
+      <tr>
+        <td>{% trans 'Title' %}:</td>
+        <td colspan="5">{{ body.part.title }}</td>
+      </tr>
+      <tr>
+        <td>{% trans 'Authors' %}:</td>
+        <td colspan="5">{% for author in body.part.authors %}{{ author }}{% if not forloop.last %};
+          {% endif %}{% endfor %}</td>
+      </tr>
     {% endif %}
-  </div>
+    <tr>
+      <td>{% trans 'Title' %}:</td>
+      <td colspan="5">{{ body.publication.title }}</td>
+    </tr>
+    {% if body.publication.authors %}
+    <tr>
+      <td>{% trans 'Authors' %}:</td>
+      <td>{% for author in body.publication.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>{% trans 'Date' %}:</td>
+      <td>{{ body.publication.pub_info.pub_date }}</td>
+      <td>{% trans 'Relevance' %}:</td>
+      <td>{{ body.publication.pub_info.user_defs.1 }}</td>
+      <td>{% trans 'PDF' %}:</td>
+      <td>
+        {% if body.publication.lib_info.links.pdf %}
+          {{ body.publication.lib_info.links.pdf }}
+        {% else %}
+          {{ body.publication.pub_info.links.pdf }}
+        {% endif %}
+      </td>
+    </tr>
+    {% with body.publication.pub_info as pub_info %}
+      <tr>
+        <td>{% trans 'Volume' %}:</td>
+        <td>{{ pub_info.volume|default:"" }}</td>
+        <td>{% trans 'Issue' %}:</td>
+        <td>{{ pub_info.issue|default:"" }}</td>
+        <td>{% trans 'Pages' %}:</td>
+        <td>{{ pub_info.startpage|default:"" }}{% if pub_info.endpage %}–{% endif %}{{ pub_info.endpage|default:"" }}</td>
+      </tr>
+      <tr>
+        <td>{% trans 'Publisher' %}:</td>
+        <td>{{ pub_info.publisher|default:"" }}</td>
+        <td>{% trans 'City' %}:</td>
+        <td>{{ pub_info.city|default:"" }}</td>
+        <td>{% trans 'Address' %}:</td>
+        <td>{{ pub_info.address|default:"" }}</td>
+      </tr>
+      <tr>
+        <td>{% trans 'Serial' %}:</td>
+        <td>{{ pub_info.publisher|default:"" }}</td>
+        <td>{% trans 'DOI' %}:</td>
+        <td>{{ pub_info.links.doi|default:"" }}</td>
+        <td>{% trans 'URL' %}:</td>
+        <td>{{ pub_info.links.url|default:"" }}</td>
+      </tr>
+    {% endwith %}
+    <tr>
+      <td>{% trans 'Notes' %}:</td>
+      <td colspan="5">{{ body.publication.pub_info.user_defs.2|markdown }}</td>
+    </tr>
+    {% ifequal body.publication.pub_info.user_defs.4 "1" %}
+      <tr>
+        <td colspan="6">{% trans "This is an institute's publication." %}</td>
+      </tr>
+    {% endifequal %}
+    <tr>
+      <td>{% trans 'Reprint locations' %}:</td>
+      <td colspan="5">{{ body.publication.pub_info.links.fulltext }}</td>
+    </tr>
+    <tr>
+      <td>{% trans 'Abstract' %}:</td>
+      <td colspan="5">{{ body.contents.abstract }}</td>
+    </tr>
+    <tr>
+      <td>{% trans 'Keywords' %}:</td>
+      <td colspan="5">{% for keyword in body.contents.keywords %}{{ keyword }}{% if not forloop.last %};
+        {% endif %}{% endfor %}</td>
+    </tr>
+  </table>
+  {% with body.lib_infos.0 as lib_info %}
+    <table width="100%">
+      <caption>{% trans 'Personal information for this reference' %}</caption>
+      <tr>
+        <td>{% trans 'Notes' %}:</td>
+        <td>{{ lib_info.notes|markdown }}</td>
+      </tr>
+      <tr>
+        <td>{% trans 'Reprint available' %}:</td>
+        <td>{{ lib_info.reprint }}</td>
+      </tr>
+      <tr>
+        <td>{% trans 'Reprint location' %}:</td>
+        <td>{{ lib_info.availability }}</td>
+      </tr>
+    </table>
+  {% endwith %}
 {% endblock %}
