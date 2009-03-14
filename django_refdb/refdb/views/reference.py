@@ -40,6 +40,14 @@ def parse_authors(serialized_authors):
     return authors
 
 
+def de_escape(string):
+    return string.replace(u"\x2028", "\n")
+
+
+def escape(string):
+    return string.replace(u"\n", "\x2028")
+
+
 class ReferenceForm(forms.Form):
 
     _ = ugettext_lazy
@@ -72,12 +80,36 @@ class ReferenceForm(forms.Form):
     def __init__(self, reference, *args, **kwargs):
         initial = kwargs.get("initial") or {}
         if reference:
+            initial["reference_type"] = reference.type
             if reference.part:
                 initial["part_title"] = reference.part.title
                 initial["part_authors"] = serialize_authors(reference.part.authors)
             initial["publication_title"] = reference.publication.title
             initial["publication_authors"] = serialize_authors(reference.publication.authors)
-            initial["date"] = unicode(reference.publication.pub_info.pub_date)
+            pub_info = reference.publication.pub_info
+            initial["date"] = unicode(pub_info.pub_date or u"")
+            initial["relevance"] = pub_info.user_defs.get(1, u"")
+            initial["pdf"] = pub_info.links.get("pdf", u"")
+            initial["volume"] = pub_info.volume or u""
+            initial["issue"] = pub_info.issue or u""
+            initial["pages"] = "%s-%s" % (pub_info.startpage, pub_info.endpage) if pub_info.startpage and pub_info.endpage \
+                else pub_info.startpage or u""
+            initial["publisher"] = pub_info.publisher or u""
+            initial["city"] = pub_info.city or u""
+            initial["address"] = pub_info.address or u""
+            initial["serial"] = pub_info.serial or u""
+            initial["doi"] = pub_info.links.get("doi", u"")
+            initial["weblink"] = pub_info.links.get("url", u"")
+            initial["global_notes"] = de_escape(pub_info.user_defs.get(2, u""))
+            initial["institute_publication"] = pub_info.user_defs.get(4) == u"1"
+            initial["global_reprint_locations"] = pub_info.links.get("fulltext", u"")
+            initial["abstract"] = de_escape(reference.abstract or u"")
+            initial["keywords"] = u"; ".join(reference.keywords)
+            if reference.lib_infos:
+                lib_info = reference.lib_infos[0]
+                initial["private_notes"] = de_escape(lib_info.notes)
+                initial["private_reprint_available"] = lib_info.reprint_status == "IN FILE"
+                initial["private_reprint_location"] = lib_info.availability or u""
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
 
