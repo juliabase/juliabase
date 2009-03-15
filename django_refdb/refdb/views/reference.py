@@ -76,9 +76,12 @@ class ReferenceForm(forms.Form):
     private_notes = forms.CharField(label=_("Private notes"), required=False, widget=forms.Textarea)
     private_reprint_available = forms.BooleanField(label=_("Private reprint available"), required=False)
     private_reprint_location = forms.CharField(label=_("Private reprint location"), required=False)
+    lists = forms.MultipleChoiceField(label=_("Lists"))
 
-    def __init__(self, reference, *args, **kwargs):
+    def __init__(self, user, reference, *args, **kwargs):
         initial = kwargs.get("initial") or {}
+        lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
+        print lists_choices, lists_initial
         if reference:
             initial["reference_type"] = reference.type
             if reference.part:
@@ -110,8 +113,11 @@ class ReferenceForm(forms.Form):
                 initial["private_notes"] = de_escape(lib_info.notes)
                 initial["private_reprint_available"] = lib_info.reprint_status == "IN FILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
+            initial["lists"] = lists_initial
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
+        self.fields["lists"].choices = lists_choices
+        self.old_lists = lists_initial
 
 
 @login_required
@@ -125,9 +131,9 @@ def edit(request, citation_key):
     else:
         reference = None
     if request.method == "POST":
-        reference_form = ReferenceForm(reference, request.POST)
+        reference_form = ReferenceForm(request.user, reference, request.POST)
     else:
-        reference_form = ReferenceForm(reference)
+        reference_form = ReferenceForm(request.user, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
     return render_to_response("edit_reference.html", {"title": title, "reference": reference_form},
                               context_instance=RequestContext(request))

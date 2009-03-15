@@ -7,19 +7,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-07 14:27-0600\n"
-"PO-Revision-Date: 2009-03-08 23:01+0100\n"
+"POT-Creation-Date: 2009-03-13 04:49-0500\n"
+"PO-Revision-Date: 2009-03-13 10:50+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "Title"
-msgstr "Titel"
-
-msgid "Authors"
-msgstr "Autoren"
 
 msgid "abstract reference"
 msgstr "Abstract-Referenz"
@@ -123,8 +117,119 @@ msgstr "unveröffentlichte Arbeit"
 msgid "video recording"
 msgstr "Videoaufzeichnung"
 
+msgid "Title"
+msgstr "Titel"
+
+msgid "Authors"
+msgstr "Autoren"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Relevance"
+msgstr "Relevanz"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Volume"
+msgstr "Band"
+
+msgid "Issue"
+msgstr "Ausgabe"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Publisher"
+msgstr "Verlag"
+
+msgid "City"
+msgstr "Stadt"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Serial"
+msgstr "Seriennummer"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Notes"
+msgstr "Bemerkungen"
+
+msgid "This is an institute's publication."
+msgstr "Dies ist eine Institutspublikation."
+
+msgid "Reprint locations"
+msgstr "Orte eines Ausdrucks"
+
+msgid "Abstract"
+msgstr "Zusammenfassung"
+
+msgid "Keywords"
+msgstr "Schlüsselworte"
+
+msgid "Personal information for this reference"
+msgstr "Persönliche Informationen zu dieser Referenz"
+
+msgid "Reprint available"
+msgstr "Ausdruck vorhanden"
+
+msgid "Reprint location"
+msgstr "Ort des Ausdrucks"
+
 msgid "Main menu"
 msgstr "Hauptmenü"
+
+msgid "Type"
+msgstr "Art"
+
+msgid "Publication title"
+msgstr "Titel der Publikation"
+
+msgid "Either YYYY or YYYY-MM-DD."
+msgstr "Entweder JJJJ oder JJJJ-MM-TT."
+
+msgid "Relative link."
+msgstr "Relativer Link."
+
+msgid "Either PPP or AAA-EEE."
+msgstr "Entweder SSS oder AAA-EEE."
+
+msgid "Contact address to the author."
+msgstr "Kontaktadresse des Autors."
+
+msgid "Weblink"
+msgstr "Weblink"
+
+msgid "Global notes"
+msgstr "Globale Bemerkungen"
+
+msgid "Institute publication"
+msgstr "Institutspublikation"
+
+msgid "Global reprint locations"
+msgstr "Globale Orte eines Ausdrucks"
+
+msgid "Private notes"
+msgstr "Private Notizen"
+
+msgid "Private reprint available"
+msgstr "Privater Ausdruck vorhanden"
+
+msgid "Private reprint location"
+msgstr "Ort des privaten Ausdrucks"
+
+msgid "Edit reference"
+msgstr "Referenz ändern"
+
+msgid "Add reference"
+msgstr "Referenz hinzufügen"
 
 msgid "View reference"
 msgstr "Referenz betrachten"
