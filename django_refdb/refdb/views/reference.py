@@ -10,6 +10,8 @@ from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+import django.contrib.auth.models
+from django.conf import settings
 from .. import utils
 
 
@@ -48,6 +50,44 @@ def escape(string):
     return string.replace(u"\n", "\x2028")
 
 
+class MultipleGroupField(forms.MultipleChoiceField):
+    u"""Form field class for the selection of groups.
+    """
+
+    def set_groups(self, user, additional_groups=frozenset()):
+        u"""Set the group list shown in the widget.  You *must* call this
+        method in the constructor of the form in which you use this field,
+        otherwise the selection box will remain emtpy.  The selection list will
+        consist of all currently active groups, plus the given additional group
+        if any.  The “currently active groups” are all groups with at least one
+        active user amongst its members.
+
+        :Parameters:
+          - `user`: the currently logged-in user
+          - `additional_groups`: Optional additional groups to be included into
+            the list.  Typically, it is the current groups of the reference,
+            for example.
+
+        :type user: ``django.contrib.auth.models.User``
+        :type additional_groups: set of ``django.contrib.auth.models.Group``
+        """
+        all_groups = django.contrib.auth.models.Group.objects.filter(user__is_active=True).distinct()
+        user_groups = user.groups.all()
+        try:
+            is_restricted = settings.restricted_group_test
+        except AttributeError:
+            is_restricted = lambda x: False
+        groups = set(group for group in all_groups if not is_restricted(group) or group in user_groups)
+        groups |= additional_groups
+        groups = sorted(groups, key=lambda group: group.name)
+        self.choices = [(group.pk, unicode(group)) for group in groups] or [(u"", 9*u"-")]
+
+    def clean(self, value):
+        value = super(MultipleGroupField, self).clean(value)
+        if value:
+            return django.contrib.auth.models.Group.objects.get(pk=int(value))
+
+
 class ReferenceForm(forms.Form):
 
     _ = ugettext_lazy
@@ -76,12 +116,13 @@ class ReferenceForm(forms.Form):
     private_notes = forms.CharField(label=_("Private notes"), required=False, widget=forms.Textarea)
     private_reprint_available = forms.BooleanField(label=_("Private reprint available"), required=False)
     private_reprint_location = forms.CharField(label=_("Private reprint location"), required=False)
-    lists = forms.MultipleChoiceField(label=_("Lists"))
+    lists = forms.MultipleChoiceField(label=_("Lists"), required=False)
+    groups = MultipleGroupField(label=_("Groups"), required=False)
 
     def __init__(self, user, reference, *args, **kwargs):
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
-        print lists_choices, lists_initial
+        reference_groups = set()
         if reference:
             initial["reference_type"] = reference.type
             if reference.part:
@@ -114,10 +155,14 @@ class ReferenceForm(forms.Form):
                 initial["private_reprint_available"] = lib_info.reprint_status == "IN FILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
+            group_ids = [int(id_) for id_ in pub_info.user_defs.get(3, u"").split(":")[1:-1]]
+            reference_groups = set(django.contrib.auth.models.Group.objects.filter(id__in=group_ids))
+            initial["groups"] = group_ids
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
+        self.fields["groups"].set_groups(user, reference_groups)
 
 
 @login_required
