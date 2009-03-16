@@ -21,14 +21,13 @@ def get_refdb_connection(user):
 
 
 def get_lists(user, citation_key=None):
-    extended_notes = get_refdb_connection(user).get_extended_notes(":NID:>0")
+    refdb_username = "drefdbuser%d" % user.id
+    extended_notes = get_refdb_connection(user).get_extended_notes(":NCK:~^%s-" % refdb_username)
     choices = []
     initial = []
-    refdb_username = "drefdbuser%d" % user.id
     for note in extended_notes:
-        title = note.find("title").text
-        if title and title.startswith(refdb_username + u"-"):
-            short_name = title[len(refdb_username)+1:]
+        short_name = note.attrib["citekey"].partition("-")[2]
+        if short_name:
             verbose_name = note.findtext("content") or short_name
             if verbose_name == refdb_username:
                 verbose_name = _(u"main list")
