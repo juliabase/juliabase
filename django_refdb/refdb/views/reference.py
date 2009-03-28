@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404
 from django import forms
+from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django.contrib.auth.models
@@ -98,7 +99,6 @@ class ReferenceForm(forms.Form):
     publication_authors = forms.CharField(label=_("Authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
     relevance = forms.CharField(label=_("Relevance"), required=False)
-    pdf = forms.CharField(label=_("PDF"), required=False, help_text=_("Relative link."))
     volume = forms.CharField(label=_("Volume"), required=False)
     issue = forms.CharField(label=_("Issue"), required=False)
     pages = forms.CharField(label=_("Pages"), required=False, help_text=_("Either PPP or AAA-EEE."))
@@ -118,6 +118,8 @@ class ReferenceForm(forms.Form):
     private_reprint_location = forms.CharField(label=_("Private reprint location"), required=False)
     lists = forms.MultipleChoiceField(label=_("Lists"), required=False)
     groups = MultipleGroupField(label=_("Groups"), required=False)
+    pdf = forms.FileField(label=_(u"PDF file"), required=False)
+    pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
     def __init__(self, user, reference, *args, **kwargs):
         initial = kwargs.get("initial") or {}
@@ -164,6 +166,12 @@ class ReferenceForm(forms.Form):
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
 
+    def clean_pdf(self):
+        if self.cleaned_data["pdf"].read(4) != "%PDF":
+            raise ValidationError(_(u"The uploaded file was not a PDF file."))
+        else:
+            self.cleaned_data["pdf"].open() 
+
 
 @login_required
 def edit(request, citation_key):
@@ -176,7 +184,9 @@ def edit(request, citation_key):
     else:
         reference = None
     if request.method == "POST":
-        reference_form = ReferenceForm(request.user, reference, request.POST)
+        reference_form = ReferenceForm(request.user, reference, request.POST, request.FILES)
+        if reference_form.is_valid():
+            pass
     else:
         reference_form = ReferenceForm(request.user, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
