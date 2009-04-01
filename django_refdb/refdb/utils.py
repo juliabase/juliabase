@@ -6,7 +6,8 @@ from __future__ import absolute_import
 import hashlib
 import pyrefdb
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext as _
 
 
 def get_refdb_password(user):
@@ -38,6 +39,27 @@ def get_lists(user, citation_key=None):
                         initial.append(short_name)
                         break
     return choices, initial
+
+
+def slugify_reference(reference):
+    if reference.part and reference.part.authors:
+        authors = reference.part.authors
+    else:
+        authors = reference.publication.authors
+    author = authors[0] if authors else u""
+    name = author.lastname or author.name
+    if len(authors) > 1:
+        name += u" et al"
+    if reference.part and reference.part.title:
+        title = reference.part.title
+    else:
+        title = reference.publication.title or u""
+    try:
+        year = reference.publication.pub_info.pub_date.year
+        year = str(year) if year is not None else u""
+    except AttributeError:
+        year = u""
+    return u"%s--%s--%s" % (slugify(name), slugify(year), slugify(title[:50]))
 
 
 reference_types = {
