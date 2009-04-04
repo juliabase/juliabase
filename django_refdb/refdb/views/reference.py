@@ -202,10 +202,12 @@ class ReferenceForm(forms.Form):
                         shutil.move(os.path.join(path, old_filename), os.path.join(path, new_filename))
         pdf_file = self.cleaned_data.get("pdf")
         if pdf_file:
-            path_components = [rootdir, new_filename]
+            directory = rootdir
             if self.cleaned_data["pdf_is_private"]:
-                path_components.insert(1, str(self.user.pk))
-            destination = open(os.path.join(*path_components), "wb+")
+                directory = os.path.join(directory, str(self.user.pk))
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            destination = open(os.path.join(directory, new_filename), "wb+")
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
         destination.close()
