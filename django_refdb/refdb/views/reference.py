@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import
 
+import os.path, shutil
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -162,15 +163,52 @@ class ReferenceForm(forms.Form):
             initial["groups"] = group_ids
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
+        self.user = user
+        self.reference = reference
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
 
     def clean_pdf(self):
-        if self.cleaned_data["pdf"].read(4) != "%PDF":
-            raise ValidationError(_(u"The uploaded file was not a PDF file."))
+        pdf_file = self.cleaned_data["pdf"]
+        if pdf_file:
+            if pdf_file.read(4) != "%PDF":
+                raise ValidationError(_(u"The uploaded file was not a PDF file."))
+            pdf_file.open()
+        return pdf_file
+
+    def get_reference(self):
+        reference = self.reference or pyrefdb.Reference()
+        reference.type = self.cleaned_data["reference_type"]
+
+        return reference
+
+    def save(self):
+        old_filename = utils.slugify_reference(self.reference) + ".pdf" if self.reference else None
+        new_reference = self.get_reference()
+        if self.reference:
+            utils.get_refdb_connection(self.user).update_references([new_reference])
         else:
-            self.cleaned_data["pdf"].open() 
+            utils.get_refdb_connection(self.user).add_references([new_reference])
+        new_filename = utils.slugify_reference(new_reference) + ".pdf"
+        rootdir = os.path.join(settings.MEDIA_ROOT, "references", new_reference.id)
+        if os.path.exists(rootdir) and old_filename != new_filename:
+            for name in os.listdir(rootdir):
+                if name == old_filename:
+                    shutil.move(os.path.join(rootdir, old_filename), os.path.join(rootdir, new_filename))
+                else:
+                    path = os.path.join(rootdir, name)
+                    if os.path.isdir(path):
+                        shutil.move(os.path.join(path, old_filename), os.path.join(path, new_filename))
+        pdf_file = self.cleaned_data.get("pdf")
+        if pdf_file:
+            path_components = [rootdir, new_filename]
+            if self.cleaned_data["pdf_is_private"]:
+                path_components.insert(1, str(self.user.pk))
+            destination = open(os.path.join(*path_components), "wb+")
+            for chunk in pdf_file.chunks():
+                destination.write(chunk)
+        destination.close()
 
 
 @login_required
@@ -186,7 +224,7 @@ def edit(request, citation_key):
     if request.method == "POST":
         reference_form = ReferenceForm(request.user, reference, request.POST, request.FILES)
         if reference_form.is_valid():
-            pass
+            reference_form.save()
     else:
         reference_form = ReferenceForm(request.user, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
