@@ -29,13 +29,13 @@ def escape(string):
     return string.replace(u"\n", "\x2028")
 
 
-class EscapedTextField(form.TextField):
+class EscapedTextField(forms.CharField):
 
     def clean(self, value):
         return escape(super(EscapedTextField, self).clean(value)) or None
 
 
-class CharNoneField(form.CharField):
+class CharNoneField(forms.CharField):
 
     def clean(self, value):
         return super(CharNoneField, self).clean(value) or None
@@ -103,12 +103,12 @@ class ReferenceForm(forms.Form):
     serial = CharNoneField(label=_("Serial"), required=False)
     doi = CharNoneField(label=_("DOI"), required=False)
     weblink = forms.URLField(label=_("Weblink"), required=False)
-    global_notes = forms.EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
+    global_notes = EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
     global_reprint_locations = CharNoneField(label=_("Global reprint locations"), required=False)
-    abstract = forms.EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
+    abstract = EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
     keywords = forms.CharField(label=_("Keywords"), required=False)
-    private_notes = forms.EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
+    private_notes = EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
     private_reprint_available = forms.BooleanField(label=_("Private reprint available"), required=False)
     private_reprint_location = CharNoneField(label=_("Private reprint location"), required=False)
     lists = forms.MultipleChoiceField(label=_("Lists"), required=False)
@@ -145,10 +145,10 @@ class ReferenceForm(forms.Form):
             initial["global_reprint_locations"] = pub_info.links.get("fulltext", u"")
             initial["abstract"] = de_escape(reference.abstract or u"")
             initial["keywords"] = u"; ".join(reference.keywords)
-            if reference.lib_infos:
-                lib_info = reference.lib_infos[0]
-                initial["private_notes"] = de_escape(lib_info.notes)
-                initial["private_reprint_available"] = lib_info.reprint_status == "IN FILE"
+            lib_info = self.get_lib_info(user, reference)
+            if lib_info:
+                initial["private_notes"] = de_escape(lib_info.notes or u"")
+                initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
             group_ids = [int(id_) for id_ in pub_info.user_defs.get(3, u"").split(":")[1:-1]]
@@ -161,6 +161,23 @@ class ReferenceForm(forms.Form):
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
+
+    @staticmethod
+    def get_lib_info(user, reference):
+        refdb_username = "drefdbuser%d" % user.id
+        try:
+            lib_info = [lib_info for lib_info in reference.lib_infos if lib_info.user == refdb_username][0]
+        except IndexError:
+            lib_info = None
+        return lib_info
+        
+    def get_or_create_lib_info(self, reference):
+        lib_info = self.get_lib_info(self.user, reference)
+        if not lib_info:
+            lib_info = pyrefdb.LibInfo()
+            lib_info.user = "drefdbuser%d" % self.user.id
+            reference.lib_infos.append(lib_info)
+        return lib_info
 
     def clean_part_authors(self):
         return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
@@ -199,7 +216,7 @@ class ReferenceForm(forms.Form):
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"]])
 
     def clean_private_reprint_available(self):
-        return u"IN FILE" if self.cleaned_data["private_reprint_available"] else u"NOT IN FILE"
+        return u"INFILE" if self.cleaned_data["private_reprint_available"] else u"NOTINFILE"
 
     def clean_pdf(self):
         pdf_file = self.cleaned_data["pdf"]
@@ -227,14 +244,9 @@ class ReferenceForm(forms.Form):
             reference.publication = pyrefdb.Publication()
         reference.publication.title = self.cleaned_data["publication_title"]
         reference.publication.authors = self.cleaned_data["publication_authors"]
-        if reference.lib_infos:
-            lib_info = reference.lib_infos[0]
-        else:
-            lib_info = pyrefdb.LibInfo()
-            lib_info.user = "drefdbuser%d" % user.id
-            reference.lib_infos = [lib_info]
+        lib_info = self.get_or_create_lib_info(reference)
         lib_info.notes = self.cleaned_data["private_notes"]
-        lib_info.reprint_status = "IN FILE" if self.cleaned_data["private_reprint_available"] else "NOT IN FILE"
+        lib_info.reprint_status = "INFILE" if self.cleaned_data["private_reprint_available"] else "NOTINFILE"
         lib_info.availability = self.cleaned_data["private_reprint_location"]
         if not reference.publication.pub_info:
             reference.publication.pub_info = pyrefdb.PubInfo()
@@ -243,7 +255,8 @@ class ReferenceForm(forms.Form):
         pub_info.user_defs[1] = self.cleaned_data["relevance"]
         pub_info.volume = self.cleaned_data["volume"]
         pub_info.issue = self.cleaned_data["issue"]
-        pub_info.startpage, pub_info.endpage = self.cleaned_data["pages"]
+        pub_info.startpage = self.cleaned_data["startpage"]
+        pub_info.endpage = self.cleaned_data["endpage"]
         pub_info.publisher = self.cleaned_data["publisher"]
         pub_info.city = self.cleaned_data["city"]
         pub_info.address = self.cleaned_data["address"]
@@ -260,12 +273,14 @@ class ReferenceForm(forms.Form):
 
     def embed_related_information(self, reference, filename):
         if self.cleaned_data["pdf"]:
+            lib_info = self.get_or_create_lib_info(reference)
             if self.cleaned_data["pdf_is_private"]:
-                reference.lib_infos[0].links["pdf"] = \
-                    "%sreferences/%s/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, self.user.pk, filename)
+                lib_info.links["pdf"] = \
+                    "%sreferences/%s/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, self.user.id, filename)
             else:
                 reference.publication.pub_info.links["pdf"] = \
                     "%sreferences/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, filename)
+            utils.get_refdb_connection(self.user).update_references(reference)
 
     def save_lists(self, reference):
         for list_ in self.cleaned_data["lists"]:
@@ -282,11 +297,11 @@ class ReferenceForm(forms.Form):
         new_reference = self.get_reference()
         if self.reference:
             utils.get_refdb_connection(self.user).update_references(new_reference)
-            citation_key = new_reference.citation_key
         else:
             citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
+            new_reference.citation_key = citation_key
         new_filename = utils.slugify_reference(new_reference) + ".pdf"
-        rootdir = os.path.join(settings.MEDIA_ROOT, "references", citation_key)
+        rootdir = os.path.join(settings.MEDIA_ROOT, "references", new_reference.citation_key)
         if os.path.exists(rootdir) and old_filename != new_filename:
             for name in os.listdir(rootdir):
                 if name == old_filename:
@@ -305,9 +320,8 @@ class ReferenceForm(forms.Form):
             destination = open(os.path.join(directory, new_filename), "wb+")
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
-        destination.close()
+            destination.close()
         self.embed_related_information(new_reference, new_filename)
-        utils.get_refdb_connection(self.user).update_references(new_reference)
         self.save_lists(new_reference)
 
 
