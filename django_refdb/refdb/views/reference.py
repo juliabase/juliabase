@@ -21,29 +21,6 @@ def serialize_authors(authors):
     return u"; ".join(unicode(author) for author in authors)
 
 
-def parse_authors(serialized_authors):
-    authors = []
-    for serialized_author in serialized_authors.split(";"):
-        author = pyrefdb.Author()
-        parts = [part.strip() for part in serialized_author.split(",")]
-        author.lastname = parts[0]
-        if len(parts) > 1:
-            first_and_middlenames = []
-            for name in parts[1].split():
-                abbreviated_names = name.split(".")
-                abbreviated_names[:-1] = [name + u"." for name in abbreviated_names[:-1]]
-                if abbreviated_names[-1] == ".":
-                    del abbreviated_names[-1]
-                first_and_middlenames.extend(abbreviated_names)
-            if first_and_middlenames:
-                author.firstname = first_and_middlenames[0]
-            author.middlenames = first_and_middlenames[1:]
-            if len(parts) == 3:
-                author.suffix = parts[2]
-        authors.append(author)
-    return authors
-
-
 def de_escape(string):
     return string.replace(u"\x2028", "\n")
 
@@ -136,7 +113,6 @@ class ReferenceForm(forms.Form):
             pub_info = reference.publication.pub_info
             initial["date"] = unicode(pub_info.pub_date or u"")
             initial["relevance"] = pub_info.user_defs.get(1, u"")
-            initial["pdf"] = pub_info.links.get("pdf", u"")
             initial["volume"] = pub_info.volume or u""
             initial["issue"] = pub_info.issue or u""
             initial["pages"] = "%s-%s" % (pub_info.startpage, pub_info.endpage) if pub_info.startpage and pub_info.endpage \
@@ -169,6 +145,33 @@ class ReferenceForm(forms.Form):
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
 
+    def clean_part_title(self):
+        return self.cleaned_data["part_title"] or None
+
+    def clean_part_authors(self):
+        return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
+
+    def clean_publication_authors(self):
+        return [pyrefdb.Author(author) for author in self.cleaned_data["publication_authors"].split(";")]
+
+    def clean_volume(self):
+        return self.cleaned_data["colume"] or None
+
+    def clean_issue(self):
+        return self.cleaned_data["issue"] or None
+
+    def clean_publisher(self):
+        return self.cleaned_data["publisher"] or None
+
+    def clean_city(self):
+        return self.cleaned_data["city"] or None
+
+    def clean_address(self):
+        return self.cleaned_data["address"] or None
+
+    def clean_serial(self):
+        return self.cleaned_data["serial"] or None
+
     def clean_pdf(self):
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
@@ -180,18 +183,74 @@ class ReferenceForm(forms.Form):
     def get_reference(self):
         reference = self.reference or pyrefdb.Reference()
         reference.type = self.cleaned_data["reference_type"]
-
+        if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
+            if not reference.part:
+                reference.part = pyrefdb.Part()
+            reference.part.title = self.cleaned_data["part_title"]
+            reference.part.authors = self.cleaned_data["part_authors"]
+        if not reference.publication:
+            reference.publication = pyrefdb.Publication()
+        reference.publication.title = self.cleaned_data["publication_title"]
+        reference.publication.authors = self.cleaned_data["publication_authors"]
+        if reference.lib_infos:
+            lib_info = reference.lib_infos[0]
+        else:
+            lib_info = pyrefdb.LibInfo()
+            lib_info.user = "drefdbuser%d" % user.id
+            reference.lib_infos = [lib_info]
+        lib_info.notes = self.cleaned_data["private_notes"]
+        lib_info.reprint_status = "IN FILE" if self.cleaned_data["private_reprint_available"] else "NOT IN FILE"
+        lib_info.availability = self.cleaned_data["private_reprint_location"]
+        if not reference.publication.pub_info:
+            reference.publication.pub_info = pyrefdb.PubInfo()
+        pub_info = reference.publication.pub_info
+        pub_info.pub_date = self.cleaned_data["date"]
+        pub_info.user_defs[1] = self.cleaned_data["relevance"]
+        pub_info.volume = self.cleaned_data["volume"]
+        pub_info.issue = self.cleaned_data["issue"]
+        pub_info.startpage, pub_info.endpage = self.cleaned_data["pages"]
+        pub_info.publisher = self.cleaned_data["publisher"]
+        pub_info.city = self.cleaned_data["city"]
+        pub_info.address = self.cleaned_data["address"]
+        pub_info.serial = self.cleaned_data["serial"]
+        pub_info.links["doi"] = self.cleaned_data["doi"]
+        pub_info.links["url"] = self.cleaned_data["weblink"]
+        pub_info.user_defs[2] = self.cleaned_data["global_notes"]
+        pub_info.user_defs[4] = self.cleaned_data["institute_publication"]
+        pub_info.links["fulltext"] = self.cleaned_data["global_reprint_locations"]
+        reference.abstract = self.cleaned_data["abstract"]
+        reference.keywords = self.cleaned_data["keywords"]
+        pub_info.user_defs[3] = self.cleaned_data["groups"]
         return reference
+
+    def embed_related_information(self, reference, filename):
+        if self.cleaned_data["pdf"]:
+            if self.cleaned_data["pdf_is_private"]:
+                reference.lib_infos[0].links["pdf"] = \
+                    "%sreferences/%s/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, self.user.pk, filename)
+            else:
+                reference.publication.pub_info.links["pdf"] = \
+                    "%sreferences/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, filename)
+
+    def save_lists(self, reference):
+        for list_ in self.cleaned_data["lists"]:
+            if list_ not in self.old_lists:
+                listname = list_.partition("-")[2]
+                utils.get_refdb_connection(self.user).pick_references([reference.id], listname or None)
+        for list_ in self.old_lists:
+            if list_ not in self.cleaned_data["lists"]:
+                listname = list_.partition("-")[2]
+                utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def save(self):
         old_filename = utils.slugify_reference(self.reference) + ".pdf" if self.reference else None
         new_reference = self.get_reference()
         if self.reference:
-            utils.get_refdb_connection(self.user).update_references([new_reference])
+            utils.get_refdb_connection(self.user).update_references(new_reference)
         else:
-            utils.get_refdb_connection(self.user).add_references([new_reference])
+            utils.get_refdb_connection(self.user).add_references(new_reference)
         new_filename = utils.slugify_reference(new_reference) + ".pdf"
-        rootdir = os.path.join(settings.MEDIA_ROOT, "references", new_reference.id)
+        rootdir = os.path.join(settings.MEDIA_ROOT, "references", new_reference.citation_key)
         if os.path.exists(rootdir) and old_filename != new_filename:
             for name in os.listdir(rootdir):
                 if name == old_filename:
@@ -200,17 +259,20 @@ class ReferenceForm(forms.Form):
                     path = os.path.join(rootdir, name)
                     if os.path.isdir(path):
                         shutil.move(os.path.join(path, old_filename), os.path.join(path, new_filename))
-        pdf_file = self.cleaned_data.get("pdf")
+        pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
             directory = rootdir
             if self.cleaned_data["pdf_is_private"]:
-                directory = os.path.join(directory, str(self.user.pk))
+                directory = os.path.join(directory, str(self.user.id))
             if not os.path.exists(directory):
                 os.makedirs(directory)
             destination = open(os.path.join(directory, new_filename), "wb+")
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
         destination.close()
+        self.embed_related_information(new_reference, new_filename)
+        utils.get_refdb_connection(self.user).update_references(new_reference)
+        self.save_lists(new_reference)
 
 
 @login_required
