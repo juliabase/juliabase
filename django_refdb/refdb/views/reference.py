@@ -3,13 +3,13 @@
 
 from __future__ import absolute_import
 
-import os.path, shutil
+import os.path, shutil, re
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404
 from django import forms
-from django.forms.util import ValidationError
+from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django.contrib.auth.models
@@ -67,6 +67,10 @@ class MultipleGroupField(forms.MultipleChoiceField):
             return django.contrib.auth.models.Group.objects.get(pk=int(value))
 
 
+date_pattern = re.compile(r"(\d{4})$|(\d{4})-(\d\d?)-(\d\d?)$")
+relevance_pattern = re.compile(r"\*{,4}$")
+pages_pattern = re.compile(r"(.+?)(?:--(.+))?")
+
 class ReferenceForm(forms.Form):
 
     _ = ugettext_lazy
@@ -79,7 +83,8 @@ class ReferenceForm(forms.Form):
     relevance = forms.CharField(label=_("Relevance"), required=False)
     volume = forms.CharField(label=_("Volume"), required=False)
     issue = forms.CharField(label=_("Issue"), required=False)
-    pages = forms.CharField(label=_("Pages"), required=False, help_text=_("Either PPP or AAA-EEE."))
+    startpage = forms.CharField(label=_("Start page"), required=False)
+    endpage = forms.CharField(label=_("End page"), required=False)
     publisher = forms.CharField(label=_("Publisher"), required=False)
     city = forms.CharField(label=_("City"), required=False)
     address = forms.CharField(label=_("Address"), required=False, help_text=_("Contact address to the author."))
@@ -115,7 +120,7 @@ class ReferenceForm(forms.Form):
             initial["relevance"] = pub_info.user_defs.get(1, u"")
             initial["volume"] = pub_info.volume or u""
             initial["issue"] = pub_info.issue or u""
-            initial["pages"] = "%s-%s" % (pub_info.startpage, pub_info.endpage) if pub_info.startpage and pub_info.endpage \
+            initial["pages"] = "%s--%s" % (pub_info.startpage, pub_info.endpage) if pub_info.startpage and pub_info.endpage \
                 else pub_info.startpage or u""
             initial["publisher"] = pub_info.publisher or u""
             initial["city"] = pub_info.city or u""
@@ -124,7 +129,7 @@ class ReferenceForm(forms.Form):
             initial["doi"] = pub_info.links.get("doi", u"")
             initial["weblink"] = pub_info.links.get("url", u"")
             initial["global_notes"] = de_escape(pub_info.user_defs.get(2, u""))
-            initial["institute_publication"] = pub_info.user_defs.get(4) == u"1"
+            initial["institute_publication"] = pub_info.user_defs.get(4) == u"institute publication"
             initial["global_reprint_locations"] = pub_info.links.get("fulltext", u"")
             initial["abstract"] = de_escape(reference.abstract or u"")
             initial["keywords"] = u"; ".join(reference.keywords)
@@ -154,11 +159,38 @@ class ReferenceForm(forms.Form):
     def clean_publication_authors(self):
         return [pyrefdb.Author(author) for author in self.cleaned_data["publication_authors"].split(";")]
 
+    def clean_date(self):
+        date_string = self.cleaned_data["date"]
+        if date_string:
+            date = pyrefdb.Date()
+            match = date_pattern.match(date_string)
+            if match:
+                if match.group(1):
+                    date.year = int(match.group(1))
+                else:
+                    date.year, date.month, date.day = map(int, match.group(2, 3, 4))
+                return date
+            else:
+                raise ValidationError(_(u"Must be either of the form YYYY or YYYY-MM-DD."))
+
+    def clean_relevance(self):
+        relevance = self.cleaned_data["relevance"]
+        if not relevance_pattern.match(relevance):
+            raise ValidationError(_(u"Must be up to four “*”."))
+        else:
+            return relevance
+
     def clean_volume(self):
         return self.cleaned_data["colume"] or None
 
     def clean_issue(self):
         return self.cleaned_data["issue"] or None
+
+    def clean_startpage(self):
+        return self.cleaned_data["startpage"] or None
+
+    def clean_endpage(self):
+        return self.cleaned_data["endpage"] or None
 
     def clean_publisher(self):
         return self.cleaned_data["publisher"] or None
@@ -172,6 +204,36 @@ class ReferenceForm(forms.Form):
     def clean_serial(self):
         return self.cleaned_data["serial"] or None
 
+    def clean_doi(self):
+        return self.cleaned_data["doi"] or None
+
+    def clean_weblink(self):
+        return self.cleaned_data["weblink"] or None
+
+    def clean_global_notes(self):
+        return escape(self.cleaned_data["global_notes"]) or None
+
+    def clean_institute_publication(self):
+        return u"institute publication" if self.cleaned_data["institute_publication"] else u"not institute publication"
+
+    def clean_global_reprint_locations(self):
+        return self.cleaned_data["global_reprint_locations"] or None
+
+    def clean_abstract(self):
+        return self.cleaned_data["weblink"] or None
+
+    def clean_keywords(self):
+        return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"]])
+
+    def clean_private_notes(self):
+        return escape(self.cleaned_data["private_notes"]) or None
+
+    def clean_private_reprint_available(self):
+        return u"IN FILE" if self.cleaned_data["private_reprint_available"] else u"NOT IN FILE"
+
+    def clean_private_reprint_location(self):
+        return self.cleaned_data["private_reprint_location"] or None
+
     def clean_pdf(self):
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
@@ -179,6 +241,12 @@ class ReferenceForm(forms.Form):
                 raise ValidationError(_(u"The uploaded file was not a PDF file."))
             pdf_file.open()
         return pdf_file
+
+    def clean(self):
+        if self.cleaned_data["endpage"] and not self.cleaned_data["startpage"]:
+            self._errors["endpage"] = ErrorList([_(u"You must not give an end page if there is no start page.")])
+            del self.cleaned_data["endpage"]
+        return self.cleaned_data
 
     def get_reference(self):
         reference = self.reference or pyrefdb.Reference()
