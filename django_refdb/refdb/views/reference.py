@@ -315,10 +315,11 @@ class ReferenceForm(forms.Form):
         new_reference = self.get_reference()
         if self.reference:
             utils.get_refdb_connection(self.user).update_references(new_reference)
+            citation_key = new_reference.citation_key
         else:
-            utils.get_refdb_connection(self.user).add_references(new_reference)
+            citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
         new_filename = utils.slugify_reference(new_reference) + ".pdf"
-        rootdir = os.path.join(settings.MEDIA_ROOT, "references", new_reference.citation_key)
+        rootdir = os.path.join(settings.MEDIA_ROOT, "references", citation_key)
         if os.path.exists(rootdir) and old_filename != new_filename:
             for name in os.listdir(rootdir):
                 if name == old_filename:
