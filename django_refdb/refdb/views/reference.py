@@ -29,6 +29,18 @@ def escape(string):
     return string.replace(u"\n", "\x2028")
 
 
+class EscapedTextField(form.TextField):
+
+    def clean(self, value):
+        return escape(super(EscapedTextField, self).clean(value)) or None
+
+
+class CharNoneField(form.CharField):
+
+    def clean(self, value):
+        return super(CharNoneField, self).clean(value) or None
+
+
 class MultipleGroupField(forms.MultipleChoiceField):
     u"""Form field class for the selection of groups.
     """
@@ -75,30 +87,30 @@ class ReferenceForm(forms.Form):
 
     _ = ugettext_lazy
     reference_type = forms.ChoiceField(label=_("Type"), choices=utils.reference_types.items())
-    part_title = forms.CharField(label=_("Title"), required=False)
+    part_title = CharNoneField(label=_("Title"), required=False)
     part_authors = forms.CharField(label=_("Authors"), required=False)
     publication_title = forms.CharField(label=_("Publication title"))
     publication_authors = forms.CharField(label=_("Authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
     relevance = forms.CharField(label=_("Relevance"), required=False)
-    volume = forms.CharField(label=_("Volume"), required=False)
-    issue = forms.CharField(label=_("Issue"), required=False)
-    startpage = forms.CharField(label=_("Start page"), required=False)
-    endpage = forms.CharField(label=_("End page"), required=False)
-    publisher = forms.CharField(label=_("Publisher"), required=False)
-    city = forms.CharField(label=_("City"), required=False)
-    address = forms.CharField(label=_("Address"), required=False, help_text=_("Contact address to the author."))
-    serial = forms.CharField(label=_("Serial"), required=False)
-    doi = forms.CharField(label=_("DOI"), required=False)
+    volume = CharNoneField(label=_("Volume"), required=False)
+    issue = CharNoneField(label=_("Issue"), required=False)
+    startpage = CharNoneField(label=_("Start page"), required=False)
+    endpage = CharNoneField(label=_("End page"), required=False)
+    publisher = CharNoneField(label=_("Publisher"), required=False)
+    city = CharNoneField(label=_("City"), required=False)
+    address = CharNoneField(label=_("Address"), required=False, help_text=_("Contact address to the author."))
+    serial = CharNoneField(label=_("Serial"), required=False)
+    doi = CharNoneField(label=_("DOI"), required=False)
     weblink = forms.URLField(label=_("Weblink"), required=False)
-    global_notes = forms.CharField(label=_("Global notes"), required=False, widget=forms.Textarea)
+    global_notes = forms.EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
-    global_reprint_locations = forms.CharField(label=_("Global reprint locations"), required=False)
-    abstract = forms.CharField(label=_("Abstract"), required=False, widget=forms.Textarea)
+    global_reprint_locations = CharNoneField(label=_("Global reprint locations"), required=False)
+    abstract = forms.EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
     keywords = forms.CharField(label=_("Keywords"), required=False)
-    private_notes = forms.CharField(label=_("Private notes"), required=False, widget=forms.Textarea)
+    private_notes = forms.EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
     private_reprint_available = forms.BooleanField(label=_("Private reprint available"), required=False)
-    private_reprint_location = forms.CharField(label=_("Private reprint location"), required=False)
+    private_reprint_location = CharNoneField(label=_("Private reprint location"), required=False)
     lists = forms.MultipleChoiceField(label=_("Lists"), required=False)
     groups = MultipleGroupField(label=_("Groups"), required=False)
     pdf = forms.FileField(label=_(u"PDF file"), required=False)
@@ -150,9 +162,6 @@ class ReferenceForm(forms.Form):
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
 
-    def clean_part_title(self):
-        return self.cleaned_data["part_title"] or None
-
     def clean_part_authors(self):
         return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
 
@@ -180,59 +189,17 @@ class ReferenceForm(forms.Form):
         else:
             return relevance
 
-    def clean_volume(self):
-        return self.cleaned_data["colume"] or None
-
-    def clean_issue(self):
-        return self.cleaned_data["issue"] or None
-
-    def clean_startpage(self):
-        return self.cleaned_data["startpage"] or None
-
-    def clean_endpage(self):
-        return self.cleaned_data["endpage"] or None
-
-    def clean_publisher(self):
-        return self.cleaned_data["publisher"] or None
-
-    def clean_city(self):
-        return self.cleaned_data["city"] or None
-
-    def clean_address(self):
-        return self.cleaned_data["address"] or None
-
-    def clean_serial(self):
-        return self.cleaned_data["serial"] or None
-
-    def clean_doi(self):
-        return self.cleaned_data["doi"] or None
-
     def clean_weblink(self):
         return self.cleaned_data["weblink"] or None
-
-    def clean_global_notes(self):
-        return escape(self.cleaned_data["global_notes"]) or None
 
     def clean_institute_publication(self):
         return u"institute publication" if self.cleaned_data["institute_publication"] else u"not institute publication"
 
-    def clean_global_reprint_locations(self):
-        return self.cleaned_data["global_reprint_locations"] or None
-
-    def clean_abstract(self):
-        return self.cleaned_data["weblink"] or None
-
     def clean_keywords(self):
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"]])
 
-    def clean_private_notes(self):
-        return escape(self.cleaned_data["private_notes"]) or None
-
     def clean_private_reprint_available(self):
         return u"IN FILE" if self.cleaned_data["private_reprint_available"] else u"NOT IN FILE"
-
-    def clean_private_reprint_location(self):
-        return self.cleaned_data["private_reprint_location"] or None
 
     def clean_pdf(self):
         pdf_file = self.cleaned_data["pdf"]
