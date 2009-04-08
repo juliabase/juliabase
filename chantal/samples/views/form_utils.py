@@ -586,6 +586,8 @@ def append_error(form, error_message, fieldname="__all__"):
     :type fieldname: str
     :type error_message: unicode
     """
+    # FixMe: Is it really a good idea to call ``is_valid`` here?
+    # ``append_error`` is also called in ``clean`` methods after all.
     form.is_valid()
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
