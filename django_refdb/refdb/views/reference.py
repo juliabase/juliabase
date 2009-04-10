@@ -145,7 +145,7 @@ class ReferenceForm(forms.Form):
             initial["global_reprint_locations"] = pub_info.links.get("fulltext", u"")
             initial["abstract"] = de_escape(reference.abstract or u"")
             initial["keywords"] = u"; ".join(reference.keywords)
-            lib_info = self.get_lib_info(user, reference)
+            lib_info = reference.get_lib_info("drefdbuser%d" % user.id)
             if lib_info:
                 initial["private_notes"] = de_escape(lib_info.notes or u"")
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
@@ -161,23 +161,6 @@ class ReferenceForm(forms.Form):
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
-
-    @staticmethod
-    def get_lib_info(user, reference):
-        refdb_username = "drefdbuser%d" % user.id
-        try:
-            lib_info = [lib_info for lib_info in reference.lib_infos if lib_info.user == refdb_username][0]
-        except IndexError:
-            lib_info = None
-        return lib_info
-        
-    def get_or_create_lib_info(self, reference):
-        lib_info = self.get_lib_info(self.user, reference)
-        if not lib_info:
-            lib_info = pyrefdb.LibInfo()
-            lib_info.user = "drefdbuser%d" % self.user.id
-            reference.lib_infos.append(lib_info)
-        return lib_info
 
     def clean_part_authors(self):
         return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
@@ -244,7 +227,7 @@ class ReferenceForm(forms.Form):
             reference.publication = pyrefdb.Publication()
         reference.publication.title = self.cleaned_data["publication_title"]
         reference.publication.authors = self.cleaned_data["publication_authors"]
-        lib_info = self.get_or_create_lib_info(reference)
+        lib_info = reference.get_or_create_lib_info("drefdbuser%d" % self.user.id)
         lib_info.notes = self.cleaned_data["private_notes"]
         lib_info.reprint_status = "INFILE" if self.cleaned_data["private_reprint_available"] else "NOTINFILE"
         lib_info.availability = self.cleaned_data["private_reprint_location"]
@@ -273,7 +256,7 @@ class ReferenceForm(forms.Form):
 
     def embed_related_information(self, reference, filename):
         if self.cleaned_data["pdf"]:
-            lib_info = self.get_or_create_lib_info(reference)
+            lib_info = self.get_or_create_lib_info("drefdbuser%d" % self.user.id)
             if self.cleaned_data["pdf_is_private"]:
                 lib_info.links["pdf"] = \
                     "%sreferences/%s/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, self.user.id, filename)
@@ -351,5 +334,9 @@ def view(request, citation_key):
     reference = utils.get_refdb_connection(request.user).get_references(":CK:=" + citation_key)
     if not reference:
         raise Http404("Citation key \"%s\" not found." % citation_key)
-    return render_to_response("show_reference.html", {"title": _(u"View reference"), "body": reference[0]},
+    else:
+        reference = reference[0]
+        lib_info = reference.get_lib_info("drefdbuser%d" % request.user.id)
+    return render_to_response("show_reference.html", {"title": _(u"View reference"),
+                                                      "reference": reference, "lib_info": lib_info},
                               context_instance=RequestContext(request))

@@ -6,44 +6,44 @@
 {% block content %}
   <table width="100%">
     <tr>
-      <td colspan="6">{{ body.type|display_reference_type }}</td>
+      <td colspan="6">{{ reference.type|display_reference_type }}</td>
     </tr>
-    {% if body.part %}
+    {% if reference.part %}
       <tr>
         <td>{% trans 'Title' %}:</td>
-        <td colspan="5">{{ body.part.title }}</td>
+        <td colspan="5">{{ reference.part.title }}</td>
       </tr>
       <tr>
         <td>{% trans 'Authors' %}:</td>
-        <td colspan="5">{% for author in body.part.authors %}{{ author }}{% if not forloop.last %};
+        <td colspan="5">{% for author in reference.part.authors %}{{ author }}{% if not forloop.last %};
           {% endif %}{% endfor %}</td>
       </tr>
     {% endif %}
     <tr>
       <td>{% trans 'Title' %}:</td>
-      <td colspan="5">{{ body.publication.title }}</td>
+      <td colspan="5">{{ reference.publication.title }}</td>
     </tr>
-    {% if body.publication.authors %}
+    {% if reference.publication.authors %}
     <tr>
       <td>{% trans 'Authors' %}:</td>
-      <td>{% for author in body.publication.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
+      <td>{% for author in reference.publication.authors %}{{ author }}{% if not forloop.last %}; {% endif %}{% endfor %}</td>
     </tr>
     {% endif %}
     <tr>
       <td>{% trans 'Date' %}:</td>
-      <td>{{ body.publication.pub_info.pub_date }}</td>
+      <td>{{ reference.publication.pub_info.pub_date }}</td>
       <td>{% trans 'Relevance' %}:</td>
-      <td>{{ body.publication.pub_info.user_defs.1 }}</td>
+      <td>{{ reference.publication.pub_info.user_defs.1 }}</td>
       <td>{% trans 'PDF' %}:</td>
       <td>
-        {% if body.publication.lib_info.links.pdf %}
-          {{ body.publication.lib_info.links.pdf }}
+        {% if reference.publication.lib_info.links.pdf %}
+          {{ reference.publication.lib_info.links.pdf }}
         {% else %}
-          {{ body.publication.pub_info.links.pdf }}
+          {{ reference.publication.pub_info.links.pdf }}
         {% endif %}
       </td>
     </tr>
-    {% with body.publication.pub_info as pub_info %}
+    {% with reference.publication.pub_info as pub_info %}
       <tr>
         <td>{% trans 'Volume' %}:</td>
         <td>{{ pub_info.volume|default:"" }}</td>
@@ -71,28 +71,28 @@
     {% endwith %}
     <tr>
       <td>{% trans 'Notes' %}:</td>
-      <td colspan="5">{{ body.publication.pub_info.user_defs.2|markdown }}</td>
+      <td colspan="5">{{ reference.publication.pub_info.user_defs.2|markdown }}</td>
     </tr>
-    {% ifequal body.publication.pub_info.user_defs.4 "1" %}
+    {% ifequal reference.publication.pub_info.user_defs.4 "1" %}
       <tr>
         <td colspan="6">{% trans "This is an institute's publication." %}</td>
       </tr>
     {% endifequal %}
     <tr>
       <td>{% trans 'Reprint locations' %}:</td>
-      <td colspan="5">{{ body.publication.pub_info.links.fulltext }}</td>
+      <td colspan="5">{{ reference.publication.pub_info.links.fulltext }}</td>
     </tr>
     <tr>
       <td>{% trans 'Abstract' %}:</td>
-      <td colspan="5">{{ body.contents.abstract }}</td>
+      <td colspan="5">{{ reference.contents.abstract }}</td>
     </tr>
     <tr>
       <td>{% trans 'Keywords' %}:</td>
-      <td colspan="5">{% for keyword in body.contents.keywords %}{{ keyword }}{% if not forloop.last %};
+      <td colspan="5">{% for keyword in reference.contents.keywords %}{{ keyword }}{% if not forloop.last %};
         {% endif %}{% endfor %}</td>
     </tr>
   </table>
-  {% with body.lib_infos.0 as lib_info %}
+  {% if lib_info %}
     <table width="100%">
       <caption>{% trans 'Personal information for this reference' %}</caption>
       <tr>
@@ -108,5 +108,5 @@
         <td>{{ lib_info.availability }}</td>
       </tr>
     </table>
-  {% endwith %}
+  {% endif %}
 {% endblock %}
