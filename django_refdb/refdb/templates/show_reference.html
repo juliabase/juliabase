@@ -93,7 +93,7 @@
     </tr>
   </table>
   {% if lib_info %}
-    <table width="100%">
+    <table>
       <caption>{% trans 'Personal information for this reference' %}</caption>
       <tr>
         <td>{% trans 'Notes' %}:</td>
@@ -101,11 +101,11 @@
       </tr>
       <tr>
         <td>{% trans 'Reprint available' %}:</td>
-        <td>{{ lib_info.reprint }}</td>
+        <td>{{ lib_info.reprint|yesno }}</td>
       </tr>
       <tr>
         <td>{% trans 'Reprint location' %}:</td>
-        <td>{{ lib_info.availability }}</td>
+        <td>{{ lib_info.availability|default:"" }}</td>
       </tr>
     </table>
   {% endif %}
