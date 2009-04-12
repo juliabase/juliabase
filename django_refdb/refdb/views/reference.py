@@ -196,7 +196,7 @@ class ReferenceForm(forms.Form):
         return u"institute publication" if self.cleaned_data["institute_publication"] else u"not institute publication"
 
     def clean_keywords(self):
-        return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"]])
+        return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
 
     def clean_private_reprint_available(self):
         return u"INFILE" if self.cleaned_data["private_reprint_available"] else u"NOTINFILE"
@@ -256,13 +256,15 @@ class ReferenceForm(forms.Form):
 
     def embed_related_information(self, reference, filename):
         if self.cleaned_data["pdf"]:
-            lib_info = self.get_or_create_lib_info("drefdbuser%d" % self.user.id)
+            lib_info = reference.get_or_create_lib_info("drefdbuser%d" % self.user.id)
             if self.cleaned_data["pdf_is_private"]:
                 lib_info.links["pdf"] = \
-                    "%sreferences/%s/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, self.user.id, filename)
+                    "%sreferences/%s/%s/%s" % (settings.MEDIA_URL, reference.citation_key, self.user.id, filename)
             else:
                 reference.publication.pub_info.links["pdf"] = \
-                    "%sreferences/%s/%s.pdf" % (settings.MEDIA_URL, reference.citation_key, filename)
+                    "%sreferences/%s/%s" % (settings.MEDIA_URL, reference.citation_key, filename)
+            lib_info.links["pdf"] = "PRIVATE"
+            reference.publication.pub_info.links["pdf"] = "PUBLIC"
             utils.get_refdb_connection(self.user).update_references(reference)
 
     def save_lists(self, reference):
@@ -337,6 +339,14 @@ def view(request, citation_key):
     else:
         reference = reference[0]
         lib_info = reference.get_lib_info("drefdbuser%d" % request.user.id)
+    pdf_path = lib_info and lib_info.links.get("pdf")
+    print repr(pdf_path)
+    if pdf_path:
+        pdf_is_private = True
+    else:
+        pdf_is_private = False
+        pdf_path = reference.publication.pub_info and reference.publication.pub_info.links.get("pdf")
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
-                                                      "reference": reference, "lib_info": lib_info},
+                                                      "reference": reference, "lib_info": lib_info,
+                                                      "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},
                               context_instance=RequestContext(request))
