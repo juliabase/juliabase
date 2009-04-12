@@ -50,6 +50,7 @@ def slugify_reference(reference):
     name = author.lastname or author.name
     if len(authors) > 1:
         name += u" et al"
+    name = name.replace(" ", "_")
     if reference.part and reference.part.title:
         title = reference.part.title
     else:
@@ -59,6 +60,7 @@ def slugify_reference(reference):
         year = str(year) if year is not None else u""
     except AttributeError:
         year = u""
+    title = title.replace(" ", "_")
     return u"%s--%s--%s" % (slugify(name), slugify(year), slugify(title[:50]))
 
 
