@@ -109,4 +109,10 @@
       </tr>
     </table>
   {% endif %}
+  {% if pdf_path %}
+    <a href="{{ pdf_path }}">{% trans 'link to PDF' %}</a>
+    {% if pdf_is_private %}
+      {% trans '(is private)' %}
+    {% endif %}
+  {% endif %}
 {% endblock %}
