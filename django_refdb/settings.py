@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Django settings for django_refdb project.
 
 DEBUG = True
@@ -93,3 +96,6 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'refdb',
 )
+
+INSTITUTION = u"IEF-5, Forschungszentrum Jülich, Germany"
+REFDB_USERNAME_PREFIX = "drefdbuser"
