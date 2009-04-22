@@ -14,16 +14,19 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
-from .. import utils
+from .. import utils, models
 
 
-def pdf_filepath(reference, user, needs_privacy_info=False):
-    directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
+def pdf_filepath(reference, user, existing=False):
     private = bool(reference.django_instance.users_with_personal_pdf.filter(pk=user.pk).count()) if user else False
-    if private:
-        directory = os.path.join(directory, str(user.id))
-    filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
-    return (filepath, private) if needs_privacy_info else filepath
+    if existing and (not private and not reference.django_instance.global_pdf_available):
+        filepath = None
+    else:
+        directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
+        if private:
+            directory = os.path.join(directory, str(user.id))
+        filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
+    return (filepath, private) if existing else filepath
 
 
 def serialize_authors(authors):
@@ -83,9 +86,10 @@ class MultipleGroupField(forms.MultipleChoiceField):
         self.choices = [(group.pk, unicode(group)) for group in groups] or [(u"", 9*u"-")]
 
     def clean(self, value):
+        if value == [u""]:
+            value = []
         value = super(MultipleGroupField, self).clean(value)
-        if value:
-            return django.contrib.auth.models.Group.objects.get(pk=int(value))
+        return django.contrib.auth.models.Group.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
 date_pattern = re.compile(r"(\d{4})$|(\d{4})-(\d\d?)-(\d\d?)$")
@@ -114,7 +118,7 @@ class ReferenceForm(forms.Form):
     weblink = forms.URLField(label=_("Weblink"), required=False)
     global_notes = EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
-    global_reprint_locations = CharField(label=_("Global reprint locations"), required=False)
+    global_reprint_locations = forms.CharField(label=_("Global reprint locations"), required=False)
     abstract = EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
     keywords = forms.CharField(label=_("Keywords"), required=False)
     private_notes = EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
@@ -193,15 +197,11 @@ class ReferenceForm(forms.Form):
             else:
                 raise ValidationError(_(u"Must be either of the form YYYY or YYYY-MM-DD."))
 
-    def clean_relevance(self):
-        relevance = self.cleaned_data["relevance"]
-        if not relevance_pattern.match(relevance):
-            raise ValidationError(_(u"Must be up to four “*”."))
-        else:
-            return relevance
-
     def clean_weblink(self):
         return self.cleaned_data["weblink"] or None
+
+    def clean_global_notes(self):
+        return self.cleaned_data["global_notes"] or u""
 
     def clean_keywords(self):
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
@@ -264,7 +264,6 @@ class ReferenceForm(forms.Form):
         reference.django_instance.offprint_locations = self.cleaned_data["global_reprint_locations"]
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
-        reference.django_instance.groups = self.cleaned_data["groups"]
         return reference
 
     def save_lists(self, reference):
@@ -278,7 +277,6 @@ class ReferenceForm(forms.Form):
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def save(self):
-        old_filename = utils.slugify_reference(self.reference) + ".pdf" if self.reference else None
         new_reference = self.get_reference()
         if self.reference:
             utils.get_refdb_connection(self.user).update_references(new_reference)
@@ -286,11 +284,11 @@ class ReferenceForm(forms.Form):
             citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
             new_reference.citation_key = new_reference.django_instance.citation_key = citation_key
         self.save_lists(new_reference)
-        new_filename = utils.slugify_reference(new_reference) + ".pdf"
-        if self.reference.django_instance.global_pdf_available:
-            shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
-        for user in self.reference.djano_instance.users_with_personal_pdf.all():
-            shutil.move(pdf_filepath(self.reference, user), pdf_filepath(new_reference, user))
+        if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
+            if self.reference.django_instance.global_pdf_available:
+                shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
+            for user in self.reference.djano_instance.users_with_personal_pdf.all():
+                shutil.move(pdf_filepath(self.reference, user), pdf_filepath(new_reference, user))
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
             private = self.cleaned_data["pdf_is_private"]
@@ -306,7 +304,8 @@ class ReferenceForm(forms.Form):
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
             destination.close()
-        self.new_reference.django_instance.save()
+        new_reference.django_instance.save()
+        new_reference.django_instance.groups = self.cleaned_data["groups"]
 
 
 @login_required
@@ -339,7 +338,7 @@ def view(request, citation_key):
     utils.embed_django_instances(references)
     reference = references[0]
     lib_info = reference.get_lib_info(utils.refdb_username(request.user.id))
-    pdf_path, pdf_is_private = pdf_filepath(reference, request.user, needs_privacy_info=True)
+    pdf_path, pdf_is_private = pdf_filepath(reference, request.user, existing=True)
     print repr(pdf_path)
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
                                                       "reference": reference, "lib_info": lib_info,

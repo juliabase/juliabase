@@ -17,8 +17,8 @@ class Reference(models.Model):
     users_with_personal_pdf = models.ManyToManyField(django.contrib.auth.models.User, null=True, blank=True,
                                                      related_name="references_with_personal_pdf",
                                                      verbose_name=_(u"users with personal PDF"))
-    creator = models.ForeignField(django.contrib.auth.models.User, null=True, blank=True,
-                                  related_name="references", verbose_name=_(u"creator"))
+    creator = models.ForeignKey(django.contrib.auth.models.User, null=True, blank=True,
+                                related_name="references", verbose_name=_(u"creator"))
 
     class Meta:
         verbose_name = _(u"reference")
