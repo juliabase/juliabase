@@ -75,6 +75,10 @@ class ExceptionsMiddleware(object):
     handle only `PermissionError` and `AmbiguityException` here.  These
     exceptions mean a redirect in one way or another.  An HTTP 404 code is only
     handled here if the client was the Remote Client.
+
+    It is important that this class is the last one in ``MIDDLEWARE_CLASSES``
+    in the ``settings`` module, otherwise the above mentioned exceptions may
+    propagate to other middleware which treats them as real errors.
     """
 
     def process_exception(self, request, exception):
