@@ -64,16 +64,17 @@ class LocaleMiddleware(object):
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
     u"""The response sent back in case of a permission error.  This is another
-    missing response class in Dango.  I have no clue why they leave out such
+    missing response class in Django.  I have no clue why they leave out such
     trivial code.
     """
     status_code = 401
 
 
 class ExceptionsMiddleware(object):
-    u"""Middleware for catching all exceptions raised by views.  An exception
-    means a redirect in one way or another.  An HTTP 404 code is only handled
-    here if the client was the Remote Client.
+    u"""Middleware for catching all exceptions raised by views.  However, I
+    handle only `PermissionError` and `AmbiguityException` here.  These
+    exceptions mean a redirect in one way or another.  An HTTP 404 code is only
+    handled here if the client was the Remote Client.
     """
 
     def process_exception(self, request, exception):
