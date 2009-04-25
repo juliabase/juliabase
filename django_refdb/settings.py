@@ -77,6 +77,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'refdb.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'urls'

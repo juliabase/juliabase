@@ -129,7 +129,8 @@ class ReferenceForm(forms.Form):
     pdf = forms.FileField(label=_(u"PDF file"), required=False)
     pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
-    def __init__(self, user, reference, *args, **kwargs):
+    def __init__(self, request, reference, *args, **kwargs):
+        user = request.user
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
         reference_groups = set()
@@ -141,23 +142,24 @@ class ReferenceForm(forms.Form):
             initial["publication_title"] = reference.publication.title
             initial["publication_authors"] = serialize_authors(reference.publication.authors)
             pub_info = reference.publication.pub_info
-            initial["date"] = unicode(pub_info.pub_date or u"")
+            if pub_info:
+                initial["date"] = unicode(pub_info.pub_date or u"")
+                initial["volume"] = pub_info.volume or u""
+                initial["issue"] = pub_info.issue or u""
+                initial["pages"] = "%s--%s" % (pub_info.startpage, pub_info.endpage) \
+                    if pub_info.startpage and pub_info.endpage else pub_info.startpage or u""
+                initial["publisher"] = pub_info.publisher or u""
+                initial["city"] = pub_info.city or u""
+                address = pub_info.address or u""
+                if address.endswith("; " + settings.INSTITUTION):
+                    address = address[:-len("; " + settings.INSTITUTION)]
+                initial["address"] = address
+                initial["serial"] = pub_info.serial or u""
+                initial["doi"] = pub_info.links.get("doi", u"")
+                initial["weblink"] = pub_info.links.get("url", u"")
+                initial["institute_publication"] = pub_info.user_defs.get(4) == u"institute publication"
             initial["relevance"] = reference.django_instance.get_relevance_display()
-            initial["volume"] = pub_info.volume or u""
-            initial["issue"] = pub_info.issue or u""
-            initial["pages"] = "%s--%s" % (pub_info.startpage, pub_info.endpage) if pub_info.startpage and pub_info.endpage \
-                else pub_info.startpage or u""
-            initial["publisher"] = pub_info.publisher or u""
-            initial["city"] = pub_info.city or u""
-            address = pub_info.address or u""
-            if address.endswith("; " + settings.INSTITUTION):
-                address = address[:-len("; " + settings.INSTITUTION)]
-            initial["address"] = address
-            initial["serial"] = pub_info.serial or u""
-            initial["doi"] = pub_info.links.get("doi", u"")
-            initial["weblink"] = pub_info.links.get("url", u"")
             initial["global_notes"] = de_escape(reference.django_instance.comments)
-            initial["institute_publication"] = pub_info.user_defs.get(4) == u"institute publication"
             initial["global_reprint_locations"] = reference.django_instance.offprint_locations
             initial["abstract"] = de_escape(reference.abstract or u"")
             initial["keywords"] = u"; ".join(reference.keywords)
@@ -167,12 +169,13 @@ class ReferenceForm(forms.Form):
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
-            reference_groups = reference.django_instance.groups
+            reference_groups = set(reference.django_instance.groups.all())
             initial["groups"] = [group.pk for group in reference_groups]
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
         self.user = user
         self.reference = reference
+        self.refdb_rollback_actions = request.refdb_rollback_actions
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
@@ -269,19 +272,24 @@ class ReferenceForm(forms.Form):
     def save_lists(self, reference):
         for list_ in self.cleaned_data["lists"]:
             if list_ not in self.old_lists:
-                listname = list_.partition("-")[2]
-                utils.get_refdb_connection(self.user).pick_references([reference.id], listname or None)
+                listname = list_.partition("-")[2] or None
+                self.refdb_rollback_actions.append(utils.DumprefRollback(self.user, reference.id, listname))
+                utils.get_refdb_connection(self.user).pick_references([reference.id], listname)
+                
         for list_ in self.old_lists:
             if list_ not in self.cleaned_data["lists"]:
                 listname = list_.partition("-")[2]
+                self.refdb_rollback_actions.append(utils.PickrefRollback(self.user, reference.id, listname))
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def save(self):
         new_reference = self.get_reference()
         if self.reference:
+            self.refdb_rollback_actions.append(utils.UpdaterefRollback(self.user, self.reference))
             utils.get_refdb_connection(self.user).update_references(new_reference)
         else:
             citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
+            self.refdb_rollback_actions.append(utils.DeleterefRollback(self.user, citation_key))
             new_reference.citation_key = new_reference.django_instance.citation_key = citation_key
         self.save_lists(new_reference)
         if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
@@ -320,11 +328,11 @@ def edit(request, citation_key):
     else:
         reference = None
     if request.method == "POST":
-        reference_form = ReferenceForm(request.user, reference, request.POST, request.FILES)
+        reference_form = ReferenceForm(request, reference, request.POST, request.FILES)
         if reference_form.is_valid():
             reference_form.save()
     else:
-        reference_form = ReferenceForm(request.user, reference)
+        reference_form = ReferenceForm(request, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
     return render_to_response("edit_reference.html", {"title": title, "reference": reference_form},
                               context_instance=RequestContext(request))
@@ -339,7 +347,6 @@ def view(request, citation_key):
     reference = references[0]
     lib_info = reference.get_lib_info(utils.refdb_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user, existing=True)
-    print repr(pdf_path)
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
                                                       "reference": reference, "lib_info": lib_info,
                                                       "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},

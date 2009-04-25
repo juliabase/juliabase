@@ -11,6 +11,55 @@ from django.utils.translation import ugettext as _
 from . import models
 
 
+class RefDBRollback(object):
+
+    def __init__(self, user):
+        self.user = user
+
+    def execute(self):
+        raise NotImplementedError
+
+
+class PickrefRollback(RefDBRollback):
+
+    def __init__(self, user, reference_id, list_name):
+        super(PickrefRollback, self).__init__(user)
+        self.reference_id, self.list_name = reference_id, list_name
+
+    def execute(self):
+        get_refdb_connection(self.user).pick_references([self.reference_id], self.list_name)
+
+
+class DumprefRollback(RefDBRollback):
+
+    def __init__(self, user, reference_id, list_name):
+        super(DumprefRollback, self).__init__(user)
+        self.reference_id, self.list_name = reference_id, list_name or None
+
+    def execute(self):
+        get_refdb_connection(self.user).dump_references([self.reference_id], self.list_name)
+
+
+class UpdaterefRollback(RefDBRollback):
+
+    def __init__(self, user, reference):
+        super(UpdaterefRollback, self).__init__(user)
+        self.reference = reference
+
+    def execute(self):
+        get_refdb_connection(self.user).update_references(self.reference)
+
+
+class DeleterefRollback(RefDBRollback):
+
+    def __init__(self, user, citation_key):
+        super(UpdaterefRollback, self).__init__(user)
+        self.reference_id = get_refdb_connection(self.user).get_references(":CK:=" + citation_key, "ids")[0]
+
+    def execute(self):
+        get_refdb_connection(self.user).delete_references([self.reference_id])
+
+
 def get_refdb_password(user):
     user_hash = hashlib.sha1()
     user_hash.update(settings.SECRET_KEY)
