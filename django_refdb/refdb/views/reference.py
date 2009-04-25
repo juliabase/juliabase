@@ -14,7 +14,19 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
-from .. import utils
+from .. import utils, models
+
+
+def pdf_filepath(reference, user, existing=False):
+    private = bool(reference.django_instance.users_with_personal_pdf.filter(pk=user.pk).count()) if user else False
+    if existing and (not private and not reference.django_instance.global_pdf_available):
+        filepath = None
+    else:
+        directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
+        if private:
+            directory = os.path.join(directory, str(user.id))
+        filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
+    return (filepath, private) if existing else filepath
 
 
 def serialize_authors(authors):
@@ -74,9 +86,10 @@ class MultipleGroupField(forms.MultipleChoiceField):
         self.choices = [(group.pk, unicode(group)) for group in groups] or [(u"", 9*u"-")]
 
     def clean(self, value):
+        if value == [u""]:
+            value = []
         value = super(MultipleGroupField, self).clean(value)
-        if value:
-            return django.contrib.auth.models.Group.objects.get(pk=int(value))
+        return django.contrib.auth.models.Group.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
 date_pattern = re.compile(r"(\d{4})$|(\d{4})-(\d\d?)-(\d\d?)$")
@@ -92,7 +105,7 @@ class ReferenceForm(forms.Form):
     publication_title = forms.CharField(label=_("Publication title"))
     publication_authors = forms.CharField(label=_("Authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
-    relevance = forms.CharField(label=_("Relevance"), required=False)
+    relevance = forms.ChoiceField(label=_("Relevance"), required=False, choices=models.relevance_choices)
     volume = CharNoneField(label=_("Volume"), required=False)
     issue = CharNoneField(label=_("Issue"), required=False)
     startpage = CharNoneField(label=_("Start page"), required=False)
@@ -105,7 +118,7 @@ class ReferenceForm(forms.Form):
     weblink = forms.URLField(label=_("Weblink"), required=False)
     global_notes = EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
-    global_reprint_locations = CharNoneField(label=_("Global reprint locations"), required=False)
+    global_reprint_locations = forms.CharField(label=_("Global reprint locations"), required=False)
     abstract = EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
     keywords = forms.CharField(label=_("Keywords"), required=False)
     private_notes = EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
@@ -116,7 +129,8 @@ class ReferenceForm(forms.Form):
     pdf = forms.FileField(label=_(u"PDF file"), required=False)
     pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
-    def __init__(self, user, reference, *args, **kwargs):
+    def __init__(self, request, reference, *args, **kwargs):
+        user = request.user
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
         reference_groups = set()
@@ -128,36 +142,40 @@ class ReferenceForm(forms.Form):
             initial["publication_title"] = reference.publication.title
             initial["publication_authors"] = serialize_authors(reference.publication.authors)
             pub_info = reference.publication.pub_info
-            initial["date"] = unicode(pub_info.pub_date or u"")
-            initial["relevance"] = pub_info.user_defs.get(1, u"")
-            initial["volume"] = pub_info.volume or u""
-            initial["issue"] = pub_info.issue or u""
-            initial["pages"] = "%s--%s" % (pub_info.startpage, pub_info.endpage) if pub_info.startpage and pub_info.endpage \
-                else pub_info.startpage or u""
-            initial["publisher"] = pub_info.publisher or u""
-            initial["city"] = pub_info.city or u""
-            initial["address"] = pub_info.address or u""
-            initial["serial"] = pub_info.serial or u""
-            initial["doi"] = pub_info.links.get("doi", u"")
-            initial["weblink"] = pub_info.links.get("url", u"")
-            initial["global_notes"] = de_escape(pub_info.user_defs.get(2, u""))
-            initial["institute_publication"] = pub_info.user_defs.get(4) == u"institute publication"
-            initial["global_reprint_locations"] = pub_info.links.get("fulltext", u"")
+            if pub_info:
+                initial["date"] = unicode(pub_info.pub_date or u"")
+                initial["volume"] = pub_info.volume or u""
+                initial["issue"] = pub_info.issue or u""
+                initial["pages"] = "%s--%s" % (pub_info.startpage, pub_info.endpage) \
+                    if pub_info.startpage and pub_info.endpage else pub_info.startpage or u""
+                initial["publisher"] = pub_info.publisher or u""
+                initial["city"] = pub_info.city or u""
+                address = pub_info.address or u""
+                if address.endswith("; " + settings.INSTITUTION):
+                    address = address[:-len("; " + settings.INSTITUTION)]
+                initial["address"] = address
+                initial["serial"] = pub_info.serial or u""
+                initial["doi"] = pub_info.links.get("doi", u"")
+                initial["weblink"] = pub_info.links.get("url", u"")
+                initial["institute_publication"] = pub_info.user_defs.get(4) == u"institute publication"
+            initial["relevance"] = reference.django_instance.get_relevance_display()
+            initial["global_notes"] = de_escape(reference.django_instance.comments)
+            initial["global_reprint_locations"] = reference.django_instance.offprint_locations
             initial["abstract"] = de_escape(reference.abstract or u"")
             initial["keywords"] = u"; ".join(reference.keywords)
-            lib_info = reference.get_lib_info("drefdbuser%d" % user.id)
+            lib_info = reference.get_lib_info(utils.refdb_username(user.id))
             if lib_info:
                 initial["private_notes"] = de_escape(lib_info.notes or u"")
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
-            group_ids = [int(id_) for id_ in pub_info.user_defs.get(3, u"").split(":")[1:-1]]
-            reference_groups = set(django.contrib.auth.models.Group.objects.filter(id__in=group_ids))
-            initial["groups"] = group_ids
+            reference_groups = set(reference.django_instance.groups.all())
+            initial["groups"] = [group.pk for group in reference_groups]
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
         self.user = user
         self.reference = reference
+        self.refdb_rollback_actions = request.refdb_rollback_actions
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
@@ -182,18 +200,11 @@ class ReferenceForm(forms.Form):
             else:
                 raise ValidationError(_(u"Must be either of the form YYYY or YYYY-MM-DD."))
 
-    def clean_relevance(self):
-        relevance = self.cleaned_data["relevance"]
-        if not relevance_pattern.match(relevance):
-            raise ValidationError(_(u"Must be up to four “*”."))
-        else:
-            return relevance
-
     def clean_weblink(self):
         return self.cleaned_data["weblink"] or None
 
-    def clean_institute_publication(self):
-        return u"institute publication" if self.cleaned_data["institute_publication"] else u"not institute publication"
+    def clean_global_notes(self):
+        return self.cleaned_data["global_notes"] or u""
 
     def clean_keywords(self):
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
@@ -216,7 +227,11 @@ class ReferenceForm(forms.Form):
         return self.cleaned_data
 
     def get_reference(self):
-        reference = self.reference or pyrefdb.Reference()
+        if self.reference:
+            reference = self.reference
+        else:
+            reference = pyrefdb.Reference()
+            reference.django_instance = models.Reference(creator=self.user)
         reference.type = self.cleaned_data["reference_type"]
         if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
             if not reference.part:
@@ -227,7 +242,7 @@ class ReferenceForm(forms.Form):
             reference.publication = pyrefdb.Publication()
         reference.publication.title = self.cleaned_data["publication_title"]
         reference.publication.authors = self.cleaned_data["publication_authors"]
-        lib_info = reference.get_or_create_lib_info("drefdbuser%d" % self.user.id)
+        lib_info = reference.get_or_create_lib_info(utils.refdb_username(self.user.id))
         lib_info.notes = self.cleaned_data["private_notes"]
         lib_info.reprint_status = "INFILE" if self.cleaned_data["private_reprint_available"] else "NOTINFILE"
         lib_info.availability = self.cleaned_data["private_reprint_location"]
@@ -235,7 +250,7 @@ class ReferenceForm(forms.Form):
             reference.publication.pub_info = pyrefdb.PubInfo()
         pub_info = reference.publication.pub_info
         pub_info.pub_date = self.cleaned_data["date"]
-        pub_info.user_defs[1] = self.cleaned_data["relevance"]
+        reference.django_instance.relevance = self.cleaned_data["relevance"]
         pub_info.volume = self.cleaned_data["volume"]
         pub_info.issue = self.cleaned_data["issue"]
         pub_info.startpage = self.cleaned_data["startpage"]
@@ -246,86 +261,78 @@ class ReferenceForm(forms.Form):
         pub_info.serial = self.cleaned_data["serial"]
         pub_info.links["doi"] = self.cleaned_data["doi"]
         pub_info.links["url"] = self.cleaned_data["weblink"]
-        pub_info.user_defs[2] = self.cleaned_data["global_notes"]
-        pub_info.user_defs[4] = self.cleaned_data["institute_publication"]
-        pub_info.links["fulltext"] = self.cleaned_data["global_reprint_locations"]
+        reference.django_instance.comments = self.cleaned_data["global_notes"]
+        if self.cleaned_data["institute_publication"]:
+            pub_info.address += "; " + settings.INSTITUTION
+        reference.django_instance.offprint_locations = self.cleaned_data["global_reprint_locations"]
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
-        pub_info.user_defs[3] = self.cleaned_data["groups"]
         return reference
-
-    def embed_related_information(self, reference, filename):
-        if self.cleaned_data["pdf"]:
-            lib_info = reference.get_or_create_lib_info("drefdbuser%d" % self.user.id)
-            if self.cleaned_data["pdf_is_private"]:
-                lib_info.links["pdf"] = \
-                    "%sreferences/%s/%s/%s" % (settings.MEDIA_URL, reference.citation_key, self.user.id, filename)
-            else:
-                reference.publication.pub_info.links["pdf"] = \
-                    "%sreferences/%s/%s" % (settings.MEDIA_URL, reference.citation_key, filename)
-            lib_info.links["pdf"] = "PRIVATE"
-            reference.publication.pub_info.links["pdf"] = "PUBLIC"
-            utils.get_refdb_connection(self.user).update_references(reference)
 
     def save_lists(self, reference):
         for list_ in self.cleaned_data["lists"]:
             if list_ not in self.old_lists:
-                listname = list_.partition("-")[2]
-                utils.get_refdb_connection(self.user).pick_references([reference.id], listname or None)
+                listname = list_.partition("-")[2] or None
+                self.refdb_rollback_actions.append(utils.DumprefRollback(self.user, reference.id, listname))
+                utils.get_refdb_connection(self.user).pick_references([reference.id], listname)
+                
         for list_ in self.old_lists:
             if list_ not in self.cleaned_data["lists"]:
                 listname = list_.partition("-")[2]
+                self.refdb_rollback_actions.append(utils.PickrefRollback(self.user, reference.id, listname))
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def save(self):
-        old_filename = utils.slugify_reference(self.reference) + ".pdf" if self.reference else None
         new_reference = self.get_reference()
         if self.reference:
+            self.refdb_rollback_actions.append(utils.UpdaterefRollback(self.user, self.reference))
             utils.get_refdb_connection(self.user).update_references(new_reference)
         else:
             citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
-            new_reference.citation_key = citation_key
-        new_filename = utils.slugify_reference(new_reference) + ".pdf"
-        rootdir = os.path.join(settings.MEDIA_ROOT, "references", new_reference.citation_key)
-        if os.path.exists(rootdir) and old_filename != new_filename:
-            for name in os.listdir(rootdir):
-                if name == old_filename:
-                    shutil.move(os.path.join(rootdir, old_filename), os.path.join(rootdir, new_filename))
-                else:
-                    path = os.path.join(rootdir, name)
-                    if os.path.isdir(path):
-                        shutil.move(os.path.join(path, old_filename), os.path.join(path, new_filename))
+            self.refdb_rollback_actions.append(utils.DeleterefRollback(self.user, citation_key))
+            new_reference.citation_key = new_reference.django_instance.citation_key = citation_key
+        self.save_lists(new_reference)
+        if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
+            if self.reference.django_instance.global_pdf_available:
+                shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
+            for user in self.reference.djano_instance.users_with_personal_pdf.all():
+                shutil.move(pdf_filepath(self.reference, user), pdf_filepath(new_reference, user))
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
-            directory = rootdir
-            if self.cleaned_data["pdf_is_private"]:
-                directory = os.path.join(directory, str(self.user.id))
+            private = self.cleaned_data["pdf_is_private"]
+            if private:
+                new_reference.django_instance.users_with_personal_pdf.add(self.user)
+            else:
+                new_reference.django_instance.global_pdf_available = True
+            filepath = pdf_filepath(new_reference, self.user if private else None)
+            directory = os.path.dirname(filepath)
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            destination = open(os.path.join(directory, new_filename), "wb+")
+            destination = open(filepath, "wb+")
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
             destination.close()
-        self.embed_related_information(new_reference, new_filename)
-        self.save_lists(new_reference)
+        new_reference.django_instance.save()
+        new_reference.django_instance.groups = self.cleaned_data["groups"]
 
 
 @login_required
 def edit(request, citation_key):
     if citation_key:
-        reference = utils.get_refdb_connection(request.user).get_references(":CK:=" + citation_key)
-        if not reference:
+        references = utils.get_refdb_connection(request.user).get_references(":CK:=" + citation_key)
+        if not references:
             raise Http404("Citation key \"%s\" not found." % citation_key)
         else:
-            reference = reference[0]
+            utils.embed_django_instances(references)
+            reference = references[0]
     else:
         reference = None
     if request.method == "POST":
-        reference_form = ReferenceForm(request.user, reference, request.POST, request.FILES)
+        reference_form = ReferenceForm(request, reference, request.POST, request.FILES)
         if reference_form.is_valid():
             reference_form.save()
     else:
-        reference_form = ReferenceForm(request.user, reference)
+        reference_form = ReferenceForm(request, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
     return render_to_response("edit_reference.html", {"title": title, "reference": reference_form},
                               context_instance=RequestContext(request))
@@ -333,19 +340,13 @@ def edit(request, citation_key):
 
 @login_required
 def view(request, citation_key):
-    reference = utils.get_refdb_connection(request.user).get_references(":CK:=" + citation_key)
-    if not reference:
+    references = utils.get_refdb_connection(request.user).get_references(":CK:=" + citation_key)
+    if not references:
         raise Http404("Citation key \"%s\" not found." % citation_key)
-    else:
-        reference = reference[0]
-        lib_info = reference.get_lib_info("drefdbuser%d" % request.user.id)
-    pdf_path = lib_info and lib_info.links.get("pdf")
-    print repr(pdf_path)
-    if pdf_path:
-        pdf_is_private = True
-    else:
-        pdf_is_private = False
-        pdf_path = reference.publication.pub_info and reference.publication.pub_info.links.get("pdf")
+    utils.embed_django_instances(references)
+    reference = references[0]
+    lib_info = reference.get_lib_info(utils.refdb_username(request.user.id))
+    pdf_path, pdf_is_private = pdf_filepath(reference, request.user, existing=True)
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
                                                       "reference": reference, "lib_info": lib_info,
                                                       "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},

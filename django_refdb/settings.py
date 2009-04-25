@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 # Django settings for django_refdb project.
 
 DEBUG = True
@@ -74,6 +77,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'refdb.middleware.transaction.TransactionMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -93,3 +98,6 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'refdb',
 )
+
+INSTITUTION = u"IEF-5, Forschungszentrum Jülich, Germany"
+REFDB_USERNAME_PREFIX = "drefdbuser"

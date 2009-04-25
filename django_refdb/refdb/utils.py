@@ -8,6 +8,56 @@ import pyrefdb
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
+from . import models
+
+
+class RefDBRollback(object):
+
+    def __init__(self, user):
+        self.user = user
+
+    def execute(self):
+        raise NotImplementedError
+
+
+class PickrefRollback(RefDBRollback):
+
+    def __init__(self, user, reference_id, list_name):
+        super(PickrefRollback, self).__init__(user)
+        self.reference_id, self.list_name = reference_id, list_name
+
+    def execute(self):
+        get_refdb_connection(self.user).pick_references([self.reference_id], self.list_name)
+
+
+class DumprefRollback(RefDBRollback):
+
+    def __init__(self, user, reference_id, list_name):
+        super(DumprefRollback, self).__init__(user)
+        self.reference_id, self.list_name = reference_id, list_name or None
+
+    def execute(self):
+        get_refdb_connection(self.user).dump_references([self.reference_id], self.list_name)
+
+
+class UpdaterefRollback(RefDBRollback):
+
+    def __init__(self, user, reference):
+        super(UpdaterefRollback, self).__init__(user)
+        self.reference = reference
+
+    def execute(self):
+        get_refdb_connection(self.user).update_references(self.reference)
+
+
+class DeleterefRollback(RefDBRollback):
+
+    def __init__(self, user, citation_key):
+        super(UpdaterefRollback, self).__init__(user)
+        self.reference_id = get_refdb_connection(self.user).get_references(":CK:=" + citation_key, "ids")[0]
+
+    def execute(self):
+        get_refdb_connection(self.user).delete_references([self.reference_id])
 
 
 def get_refdb_password(user):
@@ -17,20 +67,24 @@ def get_refdb_password(user):
     return user_hash.hexdigest()[:10]
 
 
+def refdb_username(user_id):
+    return settings.REFDB_USERNAME_PREFIX + str(user_id)
+
+
 def get_refdb_connection(user):
-    return pyrefdb.Connection("drefdbuser%d" % user.id, get_refdb_password(user))
+    return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
 
 
 def get_lists(user, citation_key=None):
-    refdb_username = "drefdbuser%d" % user.id
-    extended_notes = get_refdb_connection(user).get_extended_notes(":NCK:~^%s-" % refdb_username)
+    username = refdb_username(user.id)
+    extended_notes = get_refdb_connection(user).get_extended_notes(":NCK:~^%s-" % username)
     choices = []
     initial = []
     for note in extended_notes:
         short_name = note.attrib["citekey"].partition("-")[2]
         if short_name:
             verbose_name = note.findtext("content") or short_name
-            if verbose_name == refdb_username:
+            if verbose_name == username:
                 verbose_name = _(u"main list")
             choices.append((short_name, verbose_name))
             if citation_key:
@@ -99,3 +153,10 @@ reference_types = {
     "UNBILL": _(u"unenacted bill/resolution"),
     "UNPB": _(u"unpublished work reference"),
     "VIDEO": _(u"video recording")}
+
+
+def embed_django_instances(references):
+    for reference in references:
+        if reference.citation_key:
+            django_instance, __ = models.Reference.objects.get_or_create(citation_key=reference.citation_key)
+            reference.django_instance = django_instance
