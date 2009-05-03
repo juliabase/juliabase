@@ -220,11 +220,40 @@ class ReferenceForm(forms.Form):
             pdf_file.open()
         return pdf_file
 
+    def _forbid_field(self, fieldname, reference_types):
+        if self.cleaned_data[fieldname] and self.cleaned_data["reference_type"] in reference_types:
+            self._errors[fieldname] = ErrorList([_(u"This field is forbidden for this reference type.")])
+            del self.cleaned_data[fieldname]
+
     def clean(self):
-        if self.cleaned_data["endpage"] and not self.cleaned_data["startpage"]:
+        cleaned_data = self.cleaned_data
+        if cleaned_data["endpage"] and not cleaned_data["startpage"]:
             self._errors["endpage"] = ErrorList([_(u"You must not give an end page if there is no start page.")])
-            del self.cleaned_data["endpage"]
-        return self.cleaned_data
+            del cleaned_data["endpage"]
+        if cleaned_data["reference_type"] != "GEN" and not cleaned_data["date"]:
+            self._errors["date"] = ErrorList([_(u"This field is required for this reference type.")])
+            del cleaned_data["date"]
+        reference_types = ["ART", "ADVS", "BILL", "BOOK", "CASE", "CTLG", "COMP", "DATA", "ELEC", "HEAR",
+                           "ICOMM", "MAP", "MPCT", "MUSIC", "PAMP", "PAT", "PCOMM", "RPRT", "SER",
+                           "SLIDE", "SOUND", "STAT", "THES", "UNBILL", "UNPB", "VIDEO"]
+        self._forbid_field("part_title", reference_types)
+        self._forbid_field("part_authors", reference_types)
+        if cleaned_data["reference_type"] in ["ABST", "INPR", "JOUR", "JFULL", "MGZN", "NEWS"] \
+                and not cleaned_data["publication_title"]:
+            self._errors["publication_title"] = ErrorList([_(u"This field is required for this reference type.")])
+            del cleaned_data["publication_title"]
+        self._forbid_field("volume", ["ART", "CTLG", "COMP", "INPR", "ICOMM", "MAP", "MPCT", "PAMP", "PCOMM", "SLIDE",
+                                      "SOUND", "UNPB", "VIDEO"])
+        self._forbid_field("issue", ["ART", "ADVS", "BILL", "BOOK", "CONF", "ELEC", "HEAR", "ICOMM",
+                                     "MPCT", "MUSIC", "PAMP", "PCOMM", "RPRT", "SER", "SLIDE", "SOUND", "STAT",
+                                     "UNBILL", "UNPB", "VIDEO"])
+        self._forbid_field("startpage", ["ART", "CTLG", "COMP", "HEAR", "INPR", "ICOMM", "MAP", "MPCT",
+                                         "MUSIC", "PAMP", "PCOMM", "SLIDE", "SOUND", "THES", "UNBILL", "UNPB", "VIDEO"])
+        self._forbid_field("endpage", ["ART", "CTLG", "COMP", "HEAR", "INPR", "ICOMM", "MAP", "MPCT",
+                                       "MUSIC", "PAMP", "PCOMM", "SLIDE", "SOUND", "UNBILL", "UNPB", "VIDEO"])
+        self._forbid_field("publisher", ["BILL", "ICOMM", "PAT", "PCOMM", "SLIDE", "STAT", "UNBILL", "UNPB"])
+        self._forbid_field("city", ["BILL", "ELEC", "HEAR", "ICOMM", "PCOMM", "SLIDE", "STAT", "UNBILL", "UNPB"])
+        return cleaned_data
 
     def get_reference(self):
         if self.reference:
