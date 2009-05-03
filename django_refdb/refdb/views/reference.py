@@ -100,10 +100,10 @@ class ReferenceForm(forms.Form):
 
     _ = ugettext_lazy
     reference_type = forms.ChoiceField(label=_("Type"), choices=utils.reference_types.items())
-    part_title = CharNoneField(label=_("Title"), required=False)
-    part_authors = forms.CharField(label=_("Authors"), required=False)
+    part_title = CharNoneField(label=_("Part title"), required=False)
+    part_authors = forms.CharField(label=_("Part authors"), required=False)
     publication_title = forms.CharField(label=_("Publication title"))
-    publication_authors = forms.CharField(label=_("Authors"), required=False)
+    publication_authors = forms.CharField(label=_("Publication authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
     relevance = forms.ChoiceField(label=_("Relevance"), required=False, choices=models.relevance_choices)
     volume = CharNoneField(label=_("Volume"), required=False)
@@ -111,7 +111,7 @@ class ReferenceForm(forms.Form):
     startpage = CharNoneField(label=_("Start page"), required=False)
     endpage = CharNoneField(label=_("End page"), required=False)
     publisher = CharNoneField(label=_("Publisher"), required=False)
-    city = CharNoneField(label=_("City"), required=False)
+    city = CharNoneField(label=_("Publication place"), required=False)
     address = CharNoneField(label=_("Address"), required=False, help_text=_("Contact address to the author."))
     serial = CharNoneField(label=_("Serial"), required=False)
     doi = CharNoneField(label=_("DOI"), required=False)
