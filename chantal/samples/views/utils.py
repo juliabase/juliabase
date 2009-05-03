@@ -490,6 +490,7 @@ def parse_query_string(request):
 
     :rtype: dict mapping unicode to unicode
     """
+    # FixMe: Use urlparse.parse_qs() for this
     def decode(string):
         string = string.replace("+", " ")
         string = re.sub('%(..)', lambda match: chr(int(match.group(1), 16)), string)
