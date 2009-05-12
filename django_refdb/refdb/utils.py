@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-import hashlib
+import hashlib, urlparse
 import pyrefdb
 from django.conf import settings
 from django.template.defaultfilters import slugify
@@ -160,3 +160,12 @@ def embed_django_instances(references):
         if reference.citation_key:
             django_instance, __ = models.Reference.objects.get_or_create(citation_key=reference.citation_key)
             reference.django_instance = django_instance
+
+
+def parse_query_string(request):
+    query_string = request.META["QUERY_STRING"] or u""
+    result = {}
+    for key, value in urlparse.parse_qs(query_string).iteritems():
+        if len(value) == 1:
+            result[key.decode("utf-8")] = value[0].decode("utf-8")
+    return result

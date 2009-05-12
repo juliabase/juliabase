@@ -380,3 +380,19 @@ def view(request, citation_key):
                                                       "reference": reference, "lib_info": lib_info,
                                                       "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},
                               context_instance=RequestContext(request))
+
+
+class SearchForm(forms.Form):
+
+    _ = ugettext_lazy
+    query_string = forms.CharField(label=_("Query string"), required=False)
+
+
+@login_required
+def search(request):
+    form_data = utils.parse_query_string(request)
+    search_form = SearchForm(form_data)
+    query_string = form_data.get("query_string")
+    references = utils.get_refdb_connection(request.user).get_references(query_string) if query_string else []
+    return render_to_response("search.html", {"title": _(u"Search"), "search": search_form, "references": references},
+                              context_instance=RequestContext(request))
