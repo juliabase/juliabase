@@ -60,6 +60,60 @@ class DeleterefRollback(RefDBRollback):
         get_refdb_connection(self.user).delete_references([self.reference_id])
 
 
+class AddnoteRollback(RefDBRollback):
+
+    def __init__(self, user, extended_note):
+        super(AddnoteRollback, self).__init__(user)
+        self.extended_note = extended_note
+
+    def execute(self):
+        get_refdb_connection(self.user).add_extended_notes(self.extended_note)
+
+
+class DeletenoteRollback(RefDBRollback):
+
+    def __init__(self, user, note_citation_key):
+        super(DeletenoteRollback, self).__init__(user)
+        self.note_citation_key = note_citation_key
+
+    def execute(self):
+        extended_note = get_refdb_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key,
+                                                                           only_of_current_user=True)[0]
+        get_refdb_connection(self.user).delete_extended_notes([extended_note.id])
+
+
+class UpdatenoteRollback(RefDBRollback):
+
+    def __init__(self, user, extended_note):
+        super(UpdatenoteRollback, self).__init__(user)
+        self.extended_note = extended_note
+
+    def execute(self):
+        get_refdb_connection(self.user).update_extended_notes(self.extended_note)
+
+
+class LinknoteRollback(RefDBRollback):
+
+    def __init__(self, user, note_citation_key, reference_citation_key):
+        super(LinknoteRollback, self).__init__(user)
+        self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
+
+    def execute(self):
+        get_refdb_connection(self.user).add_note_links(":NCK:=" + self.note_citation_key,
+                                                       ":CK:=" + self.reference_citation_key)
+
+
+class UnlinknoteRollback(RefDBRollback):
+
+    def __init__(self, user, note_citation_key, reference_citation_key):
+        super(UnlinknoteRollback, self).__init__(user)
+        self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
+
+    def execute(self):
+        get_refdb_connection(self.user).remove_note_links(":NCK:=" + self.note_citation_key,
+                                                          ":CK:=" + self.reference_citation_key)
+
+
 def get_refdb_password(user):
     user_hash = hashlib.sha1()
     user_hash.update(settings.SECRET_KEY)
