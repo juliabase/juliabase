@@ -3,11 +3,12 @@
 
 from __future__ import absolute_import
 
-import hashlib
+import hashlib, re
 import pyrefdb
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
+import django.contrib.auth.models
 from . import models
 
 
@@ -209,8 +210,63 @@ reference_types = {
     "VIDEO": _(u"video recording")}
 
 
-def embed_django_instances(references):
+class ExtendedData(object):
+    def __init__(self):
+        self.groups = []
+        self.global_pdf_available = False
+        self.users_with_offprint = []
+        self.relevance = None
+        self.comments = None
+        self.users_with_personal_pdfs = []
+        self.creator = None
+
+
+citation_key_pattern = re.compile(r"""django-refdb-(?:
+                                   group-(?P<group_id>\d+) |
+                                   (?P<global_pdfs>global-pdfs) |
+                                   offprints-(?P<user_id_with_offprint>\d+) |
+                                   relevance-(?P<relevance>\d+) |
+                                   comments-(?P<comment_ck>.+) |
+                                   personal-pdfs-(?P<user_id_with_personal_pdf>\d+) |
+                                   creator-(?P<creator_id>\d+) |
+                                  )$""", re.VERBOSE)
+
+
+def get_user(user_id, extended_note):
+    try:
+        return django.contrib.auth.models.User.objects.get(pk=int(user_id))
+    except django.contrib.auth.models.User.DoesNotExist:
+        # FixMe: Delete this extended note without making it rollback-able
+        pass
+    
+
+def get_group(group_id, extended_note):
+    try:
+        return django.contrib.auth.models.Group.objects.get(pk=int(group_id))
+    except django.contrib.auth.models.Group.DoesNotExist:
+        # FixMe: Delete this extended note without making it rollback-able
+        pass
+    
+
+def embed_extended_data(references):
     for reference in references:
-        if reference.citation_key:
-            django_instance, __ = models.Reference.objects.get_or_create(citation_key=reference.citation_key)
-            reference.django_instance = django_instance
+        reference.extended_data = ExtendedData()
+        for extended_note in reference.extended_notes:
+            match = citation_key_pattern.match(extended_note.citation_key)
+            if match:
+                group_id, global_pdfs, user_id_with_offprint, relevance, \
+                    comment_ck, user_id_with_personal_pdf, creator_id = match.groups()
+                if group_id:
+                    reference.extended_data.groups.append(get_group(group_id))
+                elif global_pdfs:
+                    reference.extended_data.global_pdf_available = True
+                elif user_id_with_offprint:
+                    reference.extended_data.users_with_offprint.append(get_user(user_id_with_offprint))
+                elif relevance:
+                    self.relevance = int(relevance)
+                elif comment_ck:
+                    self.comments = extended_note
+                elif user_id_with_personal_pdf:
+                    reference.extended_data.users_with_personal_pdfs.append(get_user(user_id_with_personal_pdf))
+                elif creator_id:
+                    reference.extended_data.creator = get_user(creator_id)
