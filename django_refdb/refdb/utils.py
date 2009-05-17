@@ -55,10 +55,11 @@ class DeleterefRollback(RefDBRollback):
 
     def __init__(self, user, citation_key):
         super(UpdaterefRollback, self).__init__(user)
-        self.reference_id = get_refdb_connection(self.user).get_references(":CK:=" + citation_key, "ids")[0]
+        self.citation_key = citation_key
 
     def execute(self):
-        get_refdb_connection(self.user).delete_references([self.reference_id])
+        reference_id = get_refdb_connection(self.user).get_references(":CK:=" + self.citation_key, "ids")[0]
+        get_refdb_connection(self.user).delete_references([reference_id])
 
 
 class AddnoteRollback(RefDBRollback):
@@ -213,7 +214,7 @@ reference_types = {
 class ExtendedData(object):
 
     def __init__(self):
-        self.groups = set()
+        self.groups = []
         self.global_pdf_available = False
         self.users_with_offprint = set()
         self.relevance = None
@@ -248,7 +249,7 @@ def embed_extended_data(references):
                 group_id, global_pdfs, user_id_with_offprint, relevance, \
                     comment_ck, user_id_with_personal_pdf, creator_id = match.groups()
                 if group_id:
-                    reference.extended_data.groups.add(int(group_id))
+                    reference.extended_data.groups.append(int(group_id))
                 elif global_pdfs:
                     reference.extended_data.global_pdf_available = True
                 elif user_id_with_offprint:
