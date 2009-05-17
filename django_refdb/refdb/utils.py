@@ -211,14 +211,21 @@ reference_types = {
 
 
 class ExtendedData(object):
+
     def __init__(self):
-        self.groups = []
+        self.groups = set()
         self.global_pdf_available = False
-        self.users_with_offprint = []
+        self.users_with_offprint = set()
         self.relevance = None
         self.comments = None
-        self.users_with_personal_pdfs = []
+        self.users_with_personal_pdfs = set()
         self.creator = None
+
+    def set_comments(self, comments):
+        if not self.comments:
+            self.comments = pyrefdb.XNote()
+            self.comments.content = ElementTree.Element("content")
+        self.comments.content.text = comments
 
 
 citation_key_pattern = re.compile(r"""django-refdb-(?:
@@ -257,16 +264,16 @@ def embed_extended_data(references):
                 group_id, global_pdfs, user_id_with_offprint, relevance, \
                     comment_ck, user_id_with_personal_pdf, creator_id = match.groups()
                 if group_id:
-                    reference.extended_data.groups.append(get_group(group_id))
+                    reference.extended_data.groups.add(get_group(group_id))
                 elif global_pdfs:
                     reference.extended_data.global_pdf_available = True
                 elif user_id_with_offprint:
-                    reference.extended_data.users_with_offprint.append(get_user(user_id_with_offprint))
+                    reference.extended_data.users_with_offprint.add(get_user(user_id_with_offprint))
                 elif relevance:
                     self.relevance = int(relevance)
                 elif comment_ck:
                     self.comments = extended_note
                 elif user_id_with_personal_pdf:
-                    reference.extended_data.users_with_personal_pdfs.append(get_user(user_id_with_personal_pdf))
+                    reference.extended_data.users_with_personal_pdfs.add(get_user(user_id_with_personal_pdf))
                 elif creator_id:
                     reference.extended_data.creator = get_user(creator_id)
