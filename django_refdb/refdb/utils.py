@@ -239,22 +239,6 @@ citation_key_pattern = re.compile(r"""django-refdb-(?:
                                   )$""", re.VERBOSE)
 
 
-def get_user(user_id, extended_note):
-    try:
-        return django.contrib.auth.models.User.objects.get(pk=int(user_id))
-    except django.contrib.auth.models.User.DoesNotExist:
-        # FixMe: Delete this extended note without making it rollback-able
-        pass
-    
-
-def get_group(group_id, extended_note):
-    try:
-        return django.contrib.auth.models.Group.objects.get(pk=int(group_id))
-    except django.contrib.auth.models.Group.DoesNotExist:
-        # FixMe: Delete this extended note without making it rollback-able
-        pass
-    
-
 def embed_extended_data(references):
     for reference in references:
         reference.extended_data = ExtendedData()
@@ -264,16 +248,16 @@ def embed_extended_data(references):
                 group_id, global_pdfs, user_id_with_offprint, relevance, \
                     comment_ck, user_id_with_personal_pdf, creator_id = match.groups()
                 if group_id:
-                    reference.extended_data.groups.add(get_group(group_id))
+                    reference.extended_data.groups.add(int(group_id))
                 elif global_pdfs:
                     reference.extended_data.global_pdf_available = True
                 elif user_id_with_offprint:
-                    reference.extended_data.users_with_offprint.add(get_user(user_id_with_offprint))
+                    reference.extended_data.users_with_offprint.add(int(user_id_with_offprint))
                 elif relevance:
                     self.relevance = int(relevance)
                 elif comment_ck:
                     self.comments = extended_note
                 elif user_id_with_personal_pdf:
-                    reference.extended_data.users_with_personal_pdfs.add(get_user(user_id_with_personal_pdf))
+                    reference.extended_data.users_with_personal_pdfs.add(int(user_id_with_personal_pdf))
                 elif creator_id:
-                    reference.extended_data.creator = get_user(creator_id)
+                    reference.extended_data.creator = int(creator_id)
