@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
-from .. import utils, models
+from .. import utils
 
 
 def pdf_filepath(reference, user, existing=False):
@@ -104,7 +104,7 @@ class ReferenceForm(forms.Form):
     publication_title = forms.CharField(label=_("Publication title"))
     publication_authors = forms.CharField(label=_("Publication authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
-    relevance = forms.ChoiceField(label=_("Relevance"), required=False, choices=models.relevance_choices)
+    relevance = forms.ChoiceField(label=_("Relevance"), required=False, choices=((1, "*"), (2, "**"), (3, "***"), (4, "****")))
     volume = CharNoneField(label=_("Volume"), required=False)
     issue = CharNoneField(label=_("Issue"), required=False)
     startpage = CharNoneField(label=_("Start page"), required=False)
