@@ -222,43 +222,56 @@ class ExtendedData(object):
         self.users_with_personal_pdfs = set()
         self.creator = None
 
-    def set_comments(self, comments):
-        if not self.comments:
-            self.comments = pyrefdb.XNote()
-            self.comments.content = ElementTree.Element("content")
-        self.comments.content.text = comments
-
 
 citation_key_pattern = re.compile(r"""django-refdb-(?:
                                    group-(?P<group_id>\d+) |
-                                   (?P<global_pdfs>global-pdfs) |
+                                   (?P<global_pdf>global-pdfs) |
                                    offprints-(?P<user_id_with_offprint>\d+) |
                                    relevance-(?P<relevance>\d+) |
-                                   comments-(?P<comment_ck>.+) |
+                                   comments-(?P<reference_ck>.+) |
                                    personal-pdfs-(?P<user_id_with_personal_pdf>\d+) |
                                    creator-(?P<creator_id>\d+) |
                                   )$""", re.VERBOSE)
 
 
-def embed_extended_data(references):
+def extended_notes_to_data(references):
     for reference in references:
         reference.extended_data = ExtendedData()
         for extended_note in reference.extended_notes:
             match = citation_key_pattern.match(extended_note.citation_key)
             if match:
                 group_id, global_pdfs, user_id_with_offprint, relevance, \
-                    comment_ck, user_id_with_personal_pdf, creator_id = match.groups()
+                    reference_ck, user_id_with_personal_pdf, creator_id = match.groups()
                 if group_id:
                     reference.extended_data.groups.append(int(group_id))
-                elif global_pdfs:
+                elif global_pdf:
                     reference.extended_data.global_pdf_available = True
                 elif user_id_with_offprint:
                     reference.extended_data.users_with_offprint.add(int(user_id_with_offprint))
                 elif relevance:
                     self.relevance = int(relevance)
-                elif comment_ck:
+                elif reference_ck:
                     self.comments = extended_note
                 elif user_id_with_personal_pdf:
                     reference.extended_data.users_with_personal_pdfs.add(int(user_id_with_personal_pdf))
                 elif creator_id:
                     reference.extended_data.creator = int(creator_id)
+
+
+def extended_data_to_notes(reference):
+    reference.extended_notes = pyrefdb.XNoteList()
+    extended_data = reference.extended_data
+    for group_id in extended_data.groups:
+        reference.extended_notes.add("django-refdb-group-%d" % group_id)
+    if extended_data.global_pdf_available:
+        reference.extended_notes.add("django-refdb-global-pdfs")
+    for user_id in extended_data.users_with_offprint:
+        reference.extended_notes.add("django-refdb-offprints-%d" % user_id)
+    if extended_data.relevance:
+        reference.extended_notes.add("django-refdb-relevance-%d" % extended_data.relevance)
+    if extended_data.comments:
+        reference.extended_notes.add(extended_data.comments)
+    for user_id in extended_data.users_with_personal_pdfs:
+        reference.extended_notes.add("django-refdb-personal-pdfs-%d" % user_id)
+    if extended_data.creator:
+        reference.extended_notes.add("django-refdb-creator-%d" % extended_data.creator)
