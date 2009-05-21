@@ -39,3 +39,18 @@ def remove_refdb_group(sender, **kwargs):
     utils.get_refdb_connection("root").delete_extended_note([id_])
 
 signals.pre_delete.connect(remove_refdb_group, sender=django.contrib.auth.models.Group)
+
+
+def add_extended_note_if_nonexistent(citation_key):
+    if not utils.get_refdb_connection("root").get_extended_notes(":NCK:=" + citation_key):
+        note = pyrefdb.XNote()
+        note.citation_key = citation_key
+        utils.get_refdb_connection("root").get_extended_notes(note)
+
+
+def add_global_extended_notes(sender, **kwargs):
+    for relevance in range(1, 5):
+        add_extended_note_if_nonexistent("django-refdb-relevance-%d" % relevance)
+    add_extended_note_if_nonexistent("django-refdb-global-pdfs")
+
+signals.post_syncdb.connect(add_global_extended_notes)
