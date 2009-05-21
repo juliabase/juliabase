@@ -79,8 +79,7 @@ class DeletenoteRollback(RefDBRollback):
         self.note_citation_key = note_citation_key
 
     def execute(self):
-        extended_note = get_refdb_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key,
-                                                                           only_of_current_user=True)[0]
+        extended_note = get_refdb_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key)[0]
         get_refdb_connection(self.user).delete_extended_notes([extended_note.id])
 
 
@@ -128,7 +127,10 @@ def refdb_username(user_id):
 
 
 def get_refdb_connection(user):
-    return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
+    if user == "root":
+        return pyrefdb.Connection(settings.DATABASE_USER, settings.DATABASE_PASSWORD)
+    else:
+        return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
 
 
 def get_lists(user, citation_key=None):
