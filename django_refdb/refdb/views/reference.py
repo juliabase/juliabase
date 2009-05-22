@@ -150,14 +150,11 @@ class ReferenceForm(forms.Form):
                     if pub_info.startpage and pub_info.endpage else pub_info.startpage or u""
                 initial["publisher"] = pub_info.publisher or u""
                 initial["city"] = pub_info.city or u""
-                address = pub_info.address or u""
-                if address.endswith("; " + settings.INSTITUTION):
-                    address = address[:-len("; " + settings.INSTITUTION)]
-                initial["address"] = address
+                initial["address"] = pub_info.address or u""
                 initial["serial"] = pub_info.serial or u""
                 initial["doi"] = pub_info.links.get("doi", u"")
                 initial["weblink"] = pub_info.links.get("url", u"")
-                initial["institute_publication"] = pub_info.user_defs.get(4) == u"institute publication"
+            initial["institute_publication"] = reference.extended_data.institute_publication
             initial["relevance"] = reference.extended_data.relevance
             if reference.extended_data.comments:
                 initial["global_notes"] = reference.extended_data.comments.content.text
@@ -295,8 +292,8 @@ class ReferenceForm(forms.Form):
             reference.extended_data.comments = pyrefdb.XNote()
         if reference.extended_data.comments:
             reference.extended_data.comments.set_text_content(self.cleaned_data["global_notes"])
-        if self.cleaned_data["institute_publication"]:
-            pub_info.address += "; " + settings.INSTITUTION
+        reference.extended_data.institute_publication = self.cleaned_data["institute_publication"]
+        reference.extended_data.groups = set(group.id for group in self.cleaned_data["groups"])
         if self.cleaned_data["has_reprint"]:
             reference.extended_data.users_with_offprint.add(self.user.pk)
         else:

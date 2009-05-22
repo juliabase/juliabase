@@ -223,6 +223,7 @@ class ExtendedData(object):
         self.comments = None
         self.users_with_personal_pdfs = set()
         self.creator = None
+        self.institute_publication = False
 
 
 citation_key_pattern = re.compile(r"""django-refdb-(?:
@@ -233,6 +234,7 @@ citation_key_pattern = re.compile(r"""django-refdb-(?:
                                    comments-(?P<reference_ck>.+) |
                                    personal-pdfs-(?P<user_id_with_personal_pdf>\d+) |
                                    creator-(?P<creator_id>\d+) |
+                                   (?P<institute_publication>institute-publication)
                                   )$""", re.VERBOSE)
 
 
@@ -243,7 +245,7 @@ def extended_notes_to_data(references):
             match = citation_key_pattern.match(extended_note.citation_key)
             if match:
                 group_id, global_pdf, user_id_with_offprint, relevance, \
-                    reference_ck, user_id_with_personal_pdf, creator_id = match.groups()
+                    reference_ck, user_id_with_personal_pdf, creator_id, institute_publication = match.groups()
                 if group_id:
                     reference.extended_data.groups.append(int(group_id))
                 elif global_pdf:
@@ -258,6 +260,8 @@ def extended_notes_to_data(references):
                     reference.extended_data.users_with_personal_pdfs.add(int(user_id_with_personal_pdf))
                 elif creator_id:
                     reference.extended_data.creator = int(creator_id)
+                elif institute_publication:
+                    reference.extended_data.institute_publication = True
 
 
 def extended_data_to_notes(reference):
@@ -277,3 +281,5 @@ def extended_data_to_notes(reference):
         reference.extended_notes.append("django-refdb-personal-pdfs-%d" % user_id)
     if extended_data.creator:
         reference.extended_notes.append("django-refdb-creator-%d" % extended_data.creator)
+    if extended_data.institute_publication:
+        reference.extended_notes.append("django-refdb-institute-publication")

@@ -32,5 +32,6 @@ def sync_extended_notes(sender, created_models, interactive, **kwargs):
     for relevance in range(1, 5):
         add_extended_note_if_nonexistent("django-refdb-relevance-%d" % relevance)
     add_extended_note_if_nonexistent("django-refdb-global-pdfs")
+    add_extended_note_if_nonexistent("django-refdb-institute-publication")
 
 signals.post_syncdb.connect(sync_extended_notes, sender=refdb_app)
