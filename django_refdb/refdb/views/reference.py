@@ -104,7 +104,8 @@ class ReferenceForm(forms.Form):
     publication_title = forms.CharField(label=_("Publication title"))
     publication_authors = forms.CharField(label=_("Publication authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
-    relevance = forms.ChoiceField(label=_("Relevance"), required=False, choices=((1, "*"), (2, "**"), (3, "***"), (4, "****")))
+    relevance = forms.TypedChoiceField(label=_("Relevance"), required=False, coerce=int, empty_value=None,
+                                       choices=(("", 9*u"-"), (1, "*"), (2, "**"), (3, "***"), (4, "****")))
     volume = CharNoneField(label=_("Volume"), required=False)
     issue = CharNoneField(label=_("Issue"), required=False)
     startpage = CharNoneField(label=_("Start page"), required=False)
@@ -117,7 +118,7 @@ class ReferenceForm(forms.Form):
     weblink = forms.URLField(label=_("Weblink"), required=False)
     global_notes = EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
-    has_reprint = forms.CharField(label=_("I have a reprint"), required=False)
+    has_reprint = forms.BooleanField(label=_("I have a reprint"), required=False)
     abstract = EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
     keywords = forms.CharField(label=_("Keywords"), required=False)
     private_notes = EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
@@ -160,7 +161,7 @@ class ReferenceForm(forms.Form):
             initial["relevance"] = reference.extended_data.relevance
             if reference.extended_data.comments:
                 initial["global_notes"] = reference.extended_data.comments.content.text
-            initial["has_preprint"] = user.pk in reference.extended_data.users_with_offprint
+            initial["has_reprint"] = user.pk in reference.extended_data.users_with_offprint
             initial["abstract"] = de_escape(reference.abstract or u"")
             initial["keywords"] = u"; ".join(reference.keywords)
             lib_info = reference.get_lib_info(utils.refdb_username(user.id))
@@ -296,7 +297,7 @@ class ReferenceForm(forms.Form):
             reference.extended_data.comments.set_text_content(self.cleaned_data["global_notes"])
         if self.cleaned_data["institute_publication"]:
             pub_info.address += "; " + settings.INSTITUTION
-        if self.cleaned_data["has_preprint"]:
+        if self.cleaned_data["has_reprint"]:
             reference.extended_data.users_with_offprint.add(self.user.pk)
         else:
             reference.extended_data.users_with_offprint.discard(self.user.pk)
