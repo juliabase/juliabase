@@ -3,11 +3,12 @@
 
 from __future__ import absolute_import
 
-import hashlib, urlparse
+import hashlib, re
 import pyrefdb
 from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
+import django.contrib.auth.models
 from . import models
 
 
@@ -54,10 +55,64 @@ class DeleterefRollback(RefDBRollback):
 
     def __init__(self, user, citation_key):
         super(UpdaterefRollback, self).__init__(user)
-        self.reference_id = get_refdb_connection(self.user).get_references(":CK:=" + citation_key, "ids")[0]
+        self.citation_key = citation_key
 
     def execute(self):
-        get_refdb_connection(self.user).delete_references([self.reference_id])
+        reference_id = get_refdb_connection(self.user).get_references(":CK:=" + self.citation_key, "ids")[0]
+        get_refdb_connection(self.user).delete_references([reference_id])
+
+
+class AddnoteRollback(RefDBRollback):
+
+    def __init__(self, user, extended_note):
+        super(AddnoteRollback, self).__init__(user)
+        self.extended_note = extended_note
+
+    def execute(self):
+        get_refdb_connection(self.user).add_extended_notes(self.extended_note)
+
+
+class DeletenoteRollback(RefDBRollback):
+
+    def __init__(self, user, note_citation_key):
+        super(DeletenoteRollback, self).__init__(user)
+        self.note_citation_key = note_citation_key
+
+    def execute(self):
+        extended_note = get_refdb_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key)[0]
+        get_refdb_connection(self.user).delete_extended_notes([extended_note.id])
+
+
+class UpdatenoteRollback(RefDBRollback):
+
+    def __init__(self, user, extended_note):
+        super(UpdatenoteRollback, self).__init__(user)
+        self.extended_note = extended_note
+
+    def execute(self):
+        get_refdb_connection(self.user).update_extended_notes(self.extended_note)
+
+
+class LinknoteRollback(RefDBRollback):
+
+    def __init__(self, user, note_citation_key, reference_citation_key):
+        super(LinknoteRollback, self).__init__(user)
+        self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
+
+    def execute(self):
+        get_refdb_connection(self.user).add_note_links(":NCK:=" + self.note_citation_key,
+                                                       ":CK:=" + self.reference_citation_key)
+
+
+class UnlinknoteRollback(RefDBRollback):
+
+    def __init__(self, user, note_citation_key, reference_citation_key):
+        super(UnlinknoteRollback, self).__init__(user)
+        self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
+
+    def execute(self):
+        get_refdb_connection(self.user).remove_note_links(":NCK:=" + self.note_citation_key,
+                                                          ":CK:=" + self.reference_citation_key)
 
 
 def get_refdb_password(user):
@@ -72,7 +127,10 @@ def refdb_username(user_id):
 
 
 def get_refdb_connection(user):
-    return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
+    if user == "root":
+        return pyrefdb.Connection(settings.DATABASE_USER, settings.DATABASE_PASSWORD)
+    else:
+        return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
 
 
 def get_lists(user, citation_key=None):
@@ -81,15 +139,15 @@ def get_lists(user, citation_key=None):
     choices = []
     initial = []
     for note in extended_notes:
-        short_name = note.attrib["citekey"].partition("-")[2]
+        short_name = note.citation_key.partition("-")[2]
         if short_name:
-            verbose_name = note.findtext("content") or short_name
+            verbose_name = note.content.text or short_name
             if verbose_name == username:
                 verbose_name = _(u"main list")
             choices.append((short_name, verbose_name))
             if citation_key:
-                for link in note.findall("link"):
-                    if link.attrib["type"] == "reference" and link.attrib["target"] == citation_key:
+                for link in note.links:
+                    if link[0] == "reference" and link[1] == citation_key:
                         initial.append(short_name)
                         break
     return choices, initial
@@ -155,17 +213,73 @@ reference_types = {
     "VIDEO": _(u"video recording")}
 
 
-def embed_django_instances(references):
+class ExtendedData(object):
+
+    def __init__(self):
+        self.groups = []
+        self.global_pdf_available = False
+        self.users_with_offprint = set()
+        self.relevance = None
+        self.comments = None
+        self.users_with_personal_pdfs = set()
+        self.creator = None
+        self.institute_publication = False
+
+
+citation_key_pattern = re.compile(r"""django-refdb-(?:
+                                   group-(?P<group_id>\d+) |
+                                   (?P<global_pdf>global-pdfs) |
+                                   offprints-(?P<user_id_with_offprint>\d+) |
+                                   relevance-(?P<relevance>\d+) |
+                                   comments-(?P<reference_ck>.+) |
+                                   personal-pdfs-(?P<user_id_with_personal_pdf>\d+) |
+                                   creator-(?P<creator_id>\d+) |
+                                   (?P<institute_publication>institute-publication)
+                                  )$""", re.VERBOSE)
+
+
+def extended_notes_to_data(references):
     for reference in references:
-        if reference.citation_key:
-            django_instance, __ = models.Reference.objects.get_or_create(citation_key=reference.citation_key)
-            reference.django_instance = django_instance
+        reference.extended_data = ExtendedData()
+        for extended_note in reference.extended_notes:
+            match = citation_key_pattern.match(extended_note.citation_key)
+            if match:
+                group_id, global_pdf, user_id_with_offprint, relevance, \
+                    reference_ck, user_id_with_personal_pdf, creator_id, institute_publication = match.groups()
+                if group_id:
+                    reference.extended_data.groups.append(int(group_id))
+                elif global_pdf:
+                    reference.extended_data.global_pdf_available = True
+                elif user_id_with_offprint:
+                    reference.extended_data.users_with_offprint.add(int(user_id_with_offprint))
+                elif relevance:
+                    reference.extended_data.relevance = int(relevance)
+                elif reference_ck:
+                    reference.extended_data.comments = extended_note
+                elif user_id_with_personal_pdf:
+                    reference.extended_data.users_with_personal_pdfs.add(int(user_id_with_personal_pdf))
+                elif creator_id:
+                    reference.extended_data.creator = int(creator_id)
+                elif institute_publication:
+                    reference.extended_data.institute_publication = True
 
 
-def parse_query_string(request):
-    query_string = request.META["QUERY_STRING"] or u""
-    result = {}
-    for key, value in urlparse.parse_qs(query_string).iteritems():
-        if len(value) == 1:
-            result[key.decode("utf-8")] = value[0].decode("utf-8")
-    return result
+def extended_data_to_notes(reference):
+    reference.extended_notes = pyrefdb.XNoteList()
+    extended_data = reference.extended_data
+    for group_id in extended_data.groups:
+        reference.extended_notes.append("django-refdb-group-%d" % group_id)
+    if extended_data.global_pdf_available:
+        reference.extended_notes.append("django-refdb-global-pdfs")
+    for user_id in extended_data.users_with_offprint:
+        reference.extended_notes.append("django-refdb-offprints-%d" % user_id)
+    if extended_data.relevance:
+        reference.extended_notes.append("django-refdb-relevance-%d" % extended_data.relevance)
+    if extended_data.comments:
+        reference.extended_notes.append(extended_data.comments)
+    for user_id in extended_data.users_with_personal_pdfs:
+        reference.extended_notes.append("django-refdb-personal-pdfs-%d" % user_id)
+    if extended_data.creator:
+        reference.extended_notes.append("django-refdb-creator-%d" % extended_data.creator)
+    if extended_data.institute_publication:
+        reference.extended_notes.append("django-refdb-institute-publication")
