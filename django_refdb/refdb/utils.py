@@ -139,15 +139,15 @@ def get_lists(user, citation_key=None):
     choices = []
     initial = []
     for note in extended_notes:
-        short_name = note.attrib["citekey"].partition("-")[2]
+        short_name = note.citation_key.partition("-")[2]
         if short_name:
-            verbose_name = note.findtext("content") or short_name
+            verbose_name = note.content.text or short_name
             if verbose_name == username:
                 verbose_name = _(u"main list")
             choices.append((short_name, verbose_name))
             if citation_key:
-                for link in note.findall("link"):
-                    if link.attrib["type"] == "reference" and link.attrib["target"] == citation_key:
+                for link in note.links:
+                    if link[0] == "reference" and link[1] == citation_key:
                         initial.append(short_name)
                         break
     return choices, initial
@@ -242,7 +242,7 @@ def extended_notes_to_data(references):
         for extended_note in reference.extended_notes:
             match = citation_key_pattern.match(extended_note.citation_key)
             if match:
-                group_id, global_pdfs, user_id_with_offprint, relevance, \
+                group_id, global_pdf, user_id_with_offprint, relevance, \
                     reference_ck, user_id_with_personal_pdf, creator_id = match.groups()
                 if group_id:
                     reference.extended_data.groups.append(int(group_id))
@@ -251,9 +251,9 @@ def extended_notes_to_data(references):
                 elif user_id_with_offprint:
                     reference.extended_data.users_with_offprint.add(int(user_id_with_offprint))
                 elif relevance:
-                    self.relevance = int(relevance)
+                    reference.extended_data.relevance = int(relevance)
                 elif reference_ck:
-                    self.comments = extended_note
+                    reference.extended_data.comments = extended_note
                 elif user_id_with_personal_pdf:
                     reference.extended_data.users_with_personal_pdfs.add(int(user_id_with_personal_pdf))
                 elif creator_id:
@@ -264,16 +264,16 @@ def extended_data_to_notes(reference):
     reference.extended_notes = pyrefdb.XNoteList()
     extended_data = reference.extended_data
     for group_id in extended_data.groups:
-        reference.extended_notes.add("django-refdb-group-%d" % group_id)
+        reference.extended_notes.append("django-refdb-group-%d" % group_id)
     if extended_data.global_pdf_available:
-        reference.extended_notes.add("django-refdb-global-pdfs")
+        reference.extended_notes.append("django-refdb-global-pdfs")
     for user_id in extended_data.users_with_offprint:
-        reference.extended_notes.add("django-refdb-offprints-%d" % user_id)
+        reference.extended_notes.append("django-refdb-offprints-%d" % user_id)
     if extended_data.relevance:
-        reference.extended_notes.add("django-refdb-relevance-%d" % extended_data.relevance)
+        reference.extended_notes.append("django-refdb-relevance-%d" % extended_data.relevance)
     if extended_data.comments:
-        reference.extended_notes.add(extended_data.comments)
+        reference.extended_notes.append(extended_data.comments)
     for user_id in extended_data.users_with_personal_pdfs:
-        reference.extended_notes.add("django-refdb-personal-pdfs-%d" % user_id)
+        reference.extended_notes.append("django-refdb-personal-pdfs-%d" % user_id)
     if extended_data.creator:
-        reference.extended_notes.add("django-refdb-creator-%d" % extended_data.creator)
+        reference.extended_notes.append("django-refdb-creator-%d" % extended_data.creator)

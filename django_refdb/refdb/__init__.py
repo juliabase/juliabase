@@ -9,15 +9,22 @@ from django.db.models import signals
 from . import utils
 
 
+class SharedXNote(pyrefdb.XNote):
+
+    def __init__(self, citation_key):
+        super(SharedXNote, self).__init__(citation_key=citation_key)
+        self.share = "public"
+
+
 def add_refdb_user(sender, **kwargs):
     user = kwargs["instance"]
     utils.get_refdb_connection("root").add_user(utils.refdb_username(user.id), utils.get_refdb_password(user))
-    utils.get_refdb_connection("root").add_extended_notes(pyrefdb.XNote(citation_key="django-refdb-offprints-%d" % user.id))
-    utils.get_refdb_connection("root").add_extended_notes(
-        pyrefdb.XNote(citation_key="django-refdb-personal-pdfs-%d" % user.id))
-    utils.get_refdb_connection("root").add_extended_notes(pyrefdb.XNote(citation_key="django-refdb-creator-%d" % user.id))
+    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-offprints-%d" % user.id))
+    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
+    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
 
-signals.pre_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
+# It must be "post_save", otherwise, the ID may be ``None``.
+signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
 
 
 def delete_extended_note(citation_key):
@@ -37,9 +44,10 @@ signals.pre_delete.connect(remove_refdb_user, sender=django.contrib.auth.models.
 
 def add_refdb_group(sender, **kwargs):
     group = kwargs["instance"]
-    utils.get_refdb_connection("root").add_extended_note(pyrefdb.XNote(citation_key="django-refdb-group-%d" % group.id))
+    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-group-%d" % group.id))
 
-signals.pre_save.connect(add_refdb_group, sender=django.contrib.auth.models.Group)
+# It must be "post_save", otherwise, the ID may be ``None``.
+signals.post_save.connect(add_refdb_group, sender=django.contrib.auth.models.Group)
 
 
 def remove_refdb_group(sender, **kwargs):

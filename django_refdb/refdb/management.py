@@ -8,16 +8,16 @@ import django.contrib.auth.models
 from django.db.models import signals
 from . import utils
 from . import models as refdb_app
+from . import add_refdb_user, add_refdb_group, SharedXNote
 
 
 def add_extended_note_if_nonexistent(citation_key):
     if not utils.get_refdb_connection("root").get_extended_notes(":NCK:=" + citation_key):
-        utils.get_refdb_connection("root").add_extended_notes(pyrefdb.XNote(citation_key=citation_key))
+        utils.get_refdb_connection("root").add_extended_notes(SharedXNote(citation_key))
 
 
 def sync_extended_notes(sender, created_models, interactive, **kwargs):
-    if django.contrib.auth.models.User in created_models or django.contrib.auth.models.Group in created_models and \
-            interactive:
+    if interactive:
         confirm = raw_input("\nDo you want to reset all Django-RefDB-related extended notes "
                             "in the RefDB database? (yes/no): ")
         while confirm not in ["yes", "no"]:
