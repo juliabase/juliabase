@@ -186,9 +186,6 @@ class ReferenceForm(forms.Form):
     def clean_weblink(self):
         return self.cleaned_data["weblink"] or None
 
-    def clean_global_notes(self):
-        return self.cleaned_data["global_notes"] or u""
-
     def clean_keywords(self):
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
 
