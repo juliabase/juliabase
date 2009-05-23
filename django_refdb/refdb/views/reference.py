@@ -33,20 +33,6 @@ def serialize_authors(authors):
     return u"; ".join(unicode(author) for author in authors)
 
 
-def de_escape(string):
-    return string.replace(u"\x2028", "\n")
-
-
-def escape(string):
-    return string.replace(u"\n", "\x2028")
-
-
-class EscapedTextField(forms.CharField):
-
-    def clean(self, value):
-        return escape(super(EscapedTextField, self).clean(value)) or None
-
-
 class CharNoneField(forms.CharField):
 
     def clean(self, value):
@@ -116,12 +102,12 @@ class ReferenceForm(forms.Form):
     serial = CharNoneField(label=_("Serial"), required=False)
     doi = CharNoneField(label=_("DOI"), required=False)
     weblink = forms.URLField(label=_("Weblink"), required=False)
-    global_notes = EscapedTextField(label=_("Global notes"), required=False, widget=forms.Textarea)
+    global_notes = forms.CharField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
     has_reprint = forms.BooleanField(label=_("I have a reprint"), required=False)
-    abstract = EscapedTextField(label=_("Abstract"), required=False, widget=forms.Textarea)
+    abstract = forms.CharField(label=_("Abstract"), required=False, widget=forms.Textarea)
     keywords = forms.CharField(label=_("Keywords"), required=False)
-    private_notes = EscapedTextField(label=_("Private notes"), required=False, widget=forms.Textarea)
+    private_notes = forms.CharField(label=_("Private notes"), required=False, widget=forms.Textarea)
     private_reprint_available = forms.BooleanField(label=_("Private reprint available"), required=False)
     private_reprint_location = CharNoneField(label=_("Private reprint location"), required=False)
     lists = forms.MultipleChoiceField(label=_("Lists"), required=False)
@@ -159,11 +145,11 @@ class ReferenceForm(forms.Form):
             if reference.extended_data.comments:
                 initial["global_notes"] = reference.extended_data.comments.content.text
             initial["has_reprint"] = user.pk in reference.extended_data.users_with_offprint
-            initial["abstract"] = de_escape(reference.abstract or u"")
+            initial["abstract"] = reference.abstract or u""
             initial["keywords"] = u"; ".join(reference.keywords)
             lib_info = reference.get_lib_info(utils.refdb_username(user.id))
             if lib_info:
-                initial["private_notes"] = de_escape(lib_info.notes or u"")
+                initial["private_notes"] = lib_info.notes or u""
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
