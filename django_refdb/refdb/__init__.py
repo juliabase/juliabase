@@ -24,15 +24,17 @@ class SharedXNote(pyrefdb.XNote):
         self.share = "public"
 
 
-def add_refdb_user(sender, **kwargs):
+def add_refdb_user(sender, instance, **kwargs):
     u"""Adds a newly-created Django user to RefDB.
 
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``User`` model
+      - `instance`: the newly-added user
 
     :type sender: model class
+    :type instance: ``django.contrib.auth.models.User``
     """
-    user = kwargs["instance"]
+    user = instance
     utils.get_refdb_connection("root").add_user(utils.refdb_username(user.id), utils.get_refdb_password(user))
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-offprints-%d" % user.id))
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
@@ -55,15 +57,17 @@ def delete_extended_note(citation_key):
     utils.get_refdb_connection("root").delete_extended_notes([id_])
 
 
-def remove_refdb_user(sender, **kwargs):
+def remove_refdb_user(sender, instance, **kwargs):
     u"""Removes a newly-deleted Django user from RefDB.
 
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``User`` model
+      - `instance`: the newly-deleted user
 
     :type sender: model class
+    :type instance: ``django.contrib.auth.models.User``
     """
-    user = kwargs["instance"]
+    user = instance
     delete_extended_note("django-refdb-offprints-%d" % user.id)
     delete_extended_note("django-refdb-personal-pdfs-%d" % user.id)
     delete_extended_note("django-refdb-creator-%d" % user.id)
@@ -72,32 +76,36 @@ def remove_refdb_user(sender, **kwargs):
 signals.pre_delete.connect(remove_refdb_user, sender=django.contrib.auth.models.User)
 
 
-def add_refdb_group(sender, **kwargs):
+def add_refdb_group(sender, instance, **kwargs):
     u"""Adds a newly-added Django group from RefDB by adding an appropriate
     extended note.
 
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``Group`` model
+      - `instance`: the newly-added group
 
     :type sender: model class
+    :type instance: ``django.contrib.auth.models.Group``
     """
-    group = kwargs["instance"]
+    group = instance
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-group-%d" % group.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_refdb_group, sender=django.contrib.auth.models.Group)
 
 
-def remove_refdb_group(sender, **kwargs):
+def remove_refdb_group(sender, instance, **kwargs):
     u"""Removes a newly-deleted Django group from RefDB by deleting its
     extended note.
 
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``Group`` model
+      - `instance`: the newly-deleted group
 
     :type sender: model class
+    :type instance: ``django.contrib.auth.models.Group``
     """
-    group = kwargs["instance"]
+    group = instance
     delete_extended_note(":NCK:=django-refdb-group-%d" % group.id)
 
 signals.pre_delete.connect(remove_refdb_group, sender=django.contrib.auth.models.Group)
