@@ -158,8 +158,8 @@ def slugify_reference(reference):
         authors = reference.part.authors
     else:
         authors = reference.publication.authors
-    author = authors[0] if authors else u""
-    name = author.lastname or author.name
+    author = authors[0] if authors else None
+    name = (author.lastname or author.name) if author else u""
     if len(authors) > 1:
         name += u" et al"
     name = name.replace(" ", "_")
