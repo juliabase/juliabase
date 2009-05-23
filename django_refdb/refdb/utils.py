@@ -260,7 +260,7 @@ class UnlinknoteRollback(RefDBRollback):
 
 
 def get_refdb_password(user):
-    u"""Retrieve the RefDB password for a user.  For connection to RefDB, both
+    u"""Retrieves the RefDB password for a user.  For connection to RefDB, both
     username and password are computed from the Django user ID.  In this
     routine, I calculate the password, which is a shortened, salted SHA-1 hash
     of the user ID.
@@ -282,7 +282,7 @@ def get_refdb_password(user):
 
 
 def refdb_username(user_id):
-    u"""Retrieve the RefDB username for a user.  For connection to RefDB, both
+    u"""Retrieves the RefDB username for a user.  For connection to RefDB, both
     username and password are computed from the Django user ID.  In this
     routine, I calculate the username, which is the user ID with a constant
     prefix, namely `settings.REFDB_USERNAME_PREFIX`.
@@ -303,7 +303,7 @@ def refdb_username(user_id):
 
 
 def get_refdb_connection(user):
-    u"""Get a RefDB connection object for the user, or get a RefDB root
+    u"""Returns a RefDB connection object for the user, or returns a RefDB root
     connection.
 
     :Parameters:
@@ -325,7 +325,7 @@ def get_refdb_connection(user):
 
 
 def get_lists(user, citation_key=None):
-    u"""Retrieve the personal reference lists for a user.  Additionally, if
+    u"""Retrieves the personal reference lists for a user.  Additionally, if
     ``citation_key`` is given, return a list of all personal reference lists in
     which this reference occurs.
 
@@ -365,7 +365,7 @@ def get_lists(user, citation_key=None):
 
 
 def slugify_reference(reference):
-    u"""Convert a reference to a filename for e.g. the PDF file.  This routine
+    u"""Converts a reference to a filename for e.g. the PDF file.  This routine
     takes the main attributes of a reference (authors, title, year) and creates
     a Unicode string from them which can be used in e.g. a filename.
 
@@ -503,9 +503,9 @@ citation_key_pattern = re.compile(r"""django-refdb-(?:
                                   )$""", re.VERBOSE)
 
 def extended_notes_to_data(references):
-    u"""Walk through the extended notes of references and convert extended data
-    found there to `ExtendedData` objects added to the references.  For each
-    given reference, the links extended notes are searched for “special”
+    u"""Walks through the extended notes of references and convert extended
+    data found there to `ExtendedData` objects added to the references.  For
+    each given reference, the links extended notes are searched for “special”
     extended notes containing extended data (see `ExtendedData`).  From this,
     an `ExtendedData` object is contructed, which is written as an
     ``extended_data`` attribute into the respective reference.  This way, the
@@ -545,11 +545,11 @@ def extended_notes_to_data(references):
 
 
 def extended_data_to_notes(reference):
-    u"""Take the ``extended_data`` attribute of the given reference and convert
+    u"""Takes the ``extended_data`` attribute of the given reference and convert
     it to extended notes and links to extended notes.  This way, the reference
     is ready for being written back to the RefDB database.  Obviously, this is
-    done after all modifications to the reference have been taken plave (in
-    partcular the modifications to the extended data).
+    done after all modifications to the reference have been taken place (in
+    particular the modifications to the extended data).
 
     Attention: The given reference in modified in-place.
 
