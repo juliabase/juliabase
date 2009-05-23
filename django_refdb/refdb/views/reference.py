@@ -101,7 +101,7 @@ class ReferenceForm(forms.Form):
     address = CharNoneField(label=_("Address"), required=False, help_text=_("Contact address to the author."))
     serial = CharNoneField(label=_("Serial"), required=False)
     doi = CharNoneField(label=_("DOI"), required=False)
-    weblink = forms.URLField(label=_("Weblink"), required=False)
+    weblink = CharNoneField(label=_("Weblink"), required=False)
     global_notes = forms.CharField(label=_("Global notes"), required=False, widget=forms.Textarea)
     institute_publication = forms.BooleanField(label=_("Institute publication"), required=False)
     has_reprint = forms.BooleanField(label=_("I have a reprint"), required=False)
@@ -182,9 +182,6 @@ class ReferenceForm(forms.Form):
                 return date
             else:
                 raise ValidationError(_(u"Must be either of the form YYYY or YYYY-MM-DD."))
-
-    def clean_weblink(self):
-        return self.cleaned_data["weblink"] or None
 
     def clean_keywords(self):
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
