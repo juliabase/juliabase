@@ -3,7 +3,7 @@
 
 from __future__ import absolute_import
 
-import os.path, shutil, re
+import os.path, shutil, re, copy
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -254,7 +254,7 @@ class ReferenceForm(forms.Form):
 
     def get_reference(self):
         if self.reference:
-            reference = self.reference
+            reference = copy.deepcopy(self.reference)
         else:
             reference = pyrefdb.Reference()
             reference.extended_data = utils.ExtendedData()
