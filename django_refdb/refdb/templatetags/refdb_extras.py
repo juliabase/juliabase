@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# FixMe: Probably too man imports
+u"""Collection of tags and filters that I found useful for Django-RefDB.
+"""
+
+# FixMe: Probably too many imports
 import string, re, codecs, os.path
 from django.template.defaultfilters import stringfilter
 from django import template
@@ -19,6 +22,9 @@ register = template.Library()
 
 @register.filter
 def display_reference_type(value):
+    u"""Filter for converting a short-form reference type into its verbose
+    form, e.g. ``"JOUR"`` becomes ``"journal paper"``.
+    """
     return utils.reference_types[value]
 
 
