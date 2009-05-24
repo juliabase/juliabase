@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Views for viewing, editing, adding, and searching for references.
+"""
+
 from __future__ import absolute_import
 
 import os.path, shutil, re, copy
@@ -17,7 +20,31 @@ from django.conf import settings
 from .. import utils
 
 
+# FixMe: Here, we have two function in one.  This should be disentangled.
 def pdf_filepath(reference, user, existing=False):
+    u"""Calculates the absolute filepath of the uploaded PDF in the local
+    filesystem.
+
+    :Parameters:
+      - `reference`: the reference whose PDF file path should be calculated
+      - `user`: the user who tries to retrieve the file; this is important
+        because it is possible to upload *private* PDFs.
+      - `existing`: Whether the PDF should be existing.  If ``False``, this
+        routine returns ``None`` for the filepath if the PDF doesn't exist.
+
+    :type reference: ``pyrefdb.Reference``, with the ``extended_data``
+      attribute
+    :type user: ``django.contrib.auth.models.User``
+    :type existing: bool
+
+    :Return:
+      If ``existing==False``, it only returns the absolute path to the uploaded
+      PDF file, no matter whether it exists or not.  If ``existing==True``, it
+      returns the absolute path (``None`` if not existing) and whether the PDF
+      is a private one
+
+    :rtype: unicode or (unicode, bool)
+    """
     private = user.pk in reference.extended_data.users_with_personal_pdfs if user else False
     if existing and (not private and not reference.extended_data.global_pdf_available):
         filepath = None
@@ -30,10 +57,28 @@ def pdf_filepath(reference, user, existing=False):
 
 
 def serialize_authors(authors):
+    u"""Converts a list of authors into a string, ready-to-be-used as the
+    initial value in an author form field.
+
+    :Parameters:
+      - `authors`: the authors
+
+    :type: list of ``pyrefdb.Author``
+
+    :Return:
+      the serialised authors, separated by semicolons
+
+    :rtype: unicode
+    """
     return u"; ".join(unicode(author) for author in authors)
 
 
 class CharNoneField(forms.CharField):
+    u"""Special form field class which returns ``None`` if the field was not
+    filled.  This is interesting because then, the respective RISX field is not
+    generated at all.  It may not make any difference but it's cleaner this way
+    (at least, easier to debug).
+    """
 
     def clean(self, value):
         return super(CharNoneField, self).clean(value) or None
@@ -82,6 +127,8 @@ date_pattern = re.compile(r"(\d{4})$|(\d{4})-(\d\d?)-(\d\d?)$")
 pages_pattern = re.compile(r"(.+?)(?:--(.+))?")
 
 class ReferenceForm(forms.Form):
+    u"""Form for editing and adding a reference.
+    """
 
     _ = ugettext_lazy
     reference_type = forms.ChoiceField(label=_("Type"), choices=utils.reference_types.items())
@@ -116,6 +163,14 @@ class ReferenceForm(forms.Form):
     pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
     def __init__(self, request, reference, *args, **kwargs):
+        u"""
+        :Parameters:
+          - `request`: the current HTTP request
+          - `reference`: the reference to be edited; if ``None``, add a new one
+
+        :type request: ``HttpRequest``
+        :type reference: ``pyrefdb.Reference`` or ``NoneType``
+        """
         user = request.user
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
@@ -164,12 +219,35 @@ class ReferenceForm(forms.Form):
         self.fields["groups"].set_groups(user, reference_groups)
 
     def clean_part_authors(self):
+        u"""Cleans the author string.  It is split at the semicolons and then
+        parsed into ``Author`` instances.
+        
+        :Return:
+          all authors
+
+        :rtype: list of ``pyrefdb.Author``
+        """
         return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
 
     def clean_publication_authors(self):
+        u"""Cleans the author string.  It is split at the semicolons and then
+        parsed into ``Author`` instances.
+        
+        :Return:
+          all authors
+
+        :rtype: list of ``pyrefdb.Author``
+        """
         return [pyrefdb.Author(author) for author in self.cleaned_data["publication_authors"].split(";")]
 
     def clean_date(self):
+        u"""Cleans the date string into a proper ``Date` .
+
+        :Return:
+          the given date
+
+        :rytpe: ``pyrefdb.Date``
+        """
         date_string = self.cleaned_data["date"]
         if date_string:
             date = pyrefdb.Date()
@@ -184,12 +262,29 @@ class ReferenceForm(forms.Form):
                 raise ValidationError(_(u"Must be either of the form YYYY or YYYY-MM-DD."))
 
     def clean_keywords(self):
+        u"""Splits the keywords at the semicolons.
+
+        :Return:
+          the keywords
+
+        :rtype: list of unicode
+        """
         return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
 
     def clean_private_reprint_available(self):
         return u"INFILE" if self.cleaned_data["private_reprint_available"] else u"NOTINFILE"
 
     def clean_pdf(self):
+        u"""Cleans the field for an uploaded PDF file.  The important thing
+        here is that I scan the first four bytes of the file in order to check
+        for the magic number of PDF files.
+
+        :Return:
+          the original file object, re-opened so that further processing of the
+          file starts at the very beginning of the file
+
+        :rtype: ``UploadedFile``
+        """
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
             if pdf_file.read(4) != "%PDF":
@@ -198,11 +293,34 @@ class ReferenceForm(forms.Form):
         return pdf_file
 
     def _forbid_field(self, fieldname, reference_types):
+        u"""Generates a form error message if the given field must not be
+        filled with data for the selected reference type.  This is an internal
+        method only used in `clean`.
+
+        :Parameters:
+          - `fieldname`: name of the form field
+          - `reference_types`: the reference types for which the field must not
+            be filled
+
+        :type fieldname: str
+        :type reference_types: list of str
+        """
         if self.cleaned_data[fieldname] and self.cleaned_data["reference_type"] in reference_types:
             self._errors[fieldname] = ErrorList([_(u"This field is forbidden for this reference type.")])
             del self.cleaned_data[fieldname]
 
     def clean(self):
+        u"""General clean routine of this form.  Its main task is to detect
+        missing or wrongly-filled fields according to the selected reference
+        type.  The RIS specification contains (often odd) rules about which
+        fields are required, and which fields must not be filled for a given
+        reference type.  This is enforced here, among minor other checks.
+
+        :Return:
+          the cleaned data
+
+        :rtype: dict mapping str to ``object``
+        """
         cleaned_data = self.cleaned_data
         if cleaned_data["endpage"] and not cleaned_data["startpage"]:
             self._errors["endpage"] = ErrorList([_(u"You must not give an end page if there is no start page.")])
@@ -233,6 +351,20 @@ class ReferenceForm(forms.Form):
         return cleaned_data
 
     def get_reference(self):
+        u"""Creates a new reference object and puts all user input into it.  In
+        case of editing an existing reference, this method makes a deep copy of
+        the extisting reference instance and modifies it accoring to what the
+        user changed.  And in case of creating a new reference, it creates a
+        new reference object from the user's input.
+
+        Nothing is actually saved to the database here.  This is a helper
+        routine, exclusively used in `save`.
+
+        :Return:
+          a new reference object, containing all user input
+
+        :rtype: ``pyrefdb.Reference``
+        """
         if self.reference:
             reference = copy.deepcopy(self.reference)
         else:
@@ -284,6 +416,17 @@ class ReferenceForm(forms.Form):
         return reference
 
     def save_lists(self, reference):
+        u"""Stores the new personal references lists that the user selected in
+        the RefDB database.  It does so by comparing the new lists with the old
+        lists and dumping or picking the changed items.
+
+        :Parameters:
+          - `reference`: the reference that should be added to or removed from
+            the lists
+
+        :type reference: ``pyrefdb.Reference``
+        """
+        # FixMe: This method could be made more efficient with sets.
         for list_ in self.cleaned_data["lists"]:
             if list_ not in self.old_lists:
                 listname = list_.partition("-")[2] or None
@@ -297,6 +440,11 @@ class ReferenceForm(forms.Form):
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def save(self):
+        u"""Stores the currently edited reference in the database, and saves
+        the possibly uploaded PDF file in the appropriate place.  Additionally,
+        if the changes in the reference also affect the file name of the PDF,
+        it renames the PDFs accordingly.
+        """
         new_reference = self.get_reference()
         if self.reference:
             self.refdb_rollback_actions.append(utils.UpdaterefRollback(self.user, self.reference))
@@ -305,7 +453,10 @@ class ReferenceForm(forms.Form):
             citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
             self.refdb_rollback_actions.append(utils.DeleterefRollback(self.user, citation_key))
             new_reference.citation_key = citation_key
-            
+
+        # FixMe: The following lines should be made an internal method of its
+        # own.  By the way, they can serve as an example for how to extend the
+        # RefDB data model with further fields, in this case, global comments.
         comments_note = new_reference.extended_data.comments
         if comments_note:
             if comments_note.citation_key:
@@ -341,6 +492,21 @@ class ReferenceForm(forms.Form):
 
 @login_required
 def edit(request, citation_key):
+    u"""Adds or creates a reference.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `citation_key`: the citation key of the reference to be edited; if
+        ``None``, create a new one
+
+    :type request: ``HttpRequest``
+    :type citation_key: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     if citation_key:
         references = utils.get_refdb_connection(request.user). \
             get_references(":CK:=" + citation_key, with_extended_notes=True,
@@ -365,6 +531,20 @@ def edit(request, citation_key):
 
 @login_required
 def view(request, citation_key):
+    u"""Shows a reference.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `citation_key`: the citation key of the reference
+
+    :type request: ``HttpRequest``
+    :type citation_key: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     references = utils.get_refdb_connection(request.user). \
         get_references(":CK:=" + citation_key, with_extended_notes=True,
                        extended_notes_constraints=":NCK:~^django-refdb-")
@@ -381,6 +561,9 @@ def view(request, citation_key):
 
 
 class SearchForm(forms.Form):
+    u"""Form class for the search filters.  Currently, it only accepts a RefDB
+    query string.
+    """
 
     _ = ugettext_lazy
     query_string = forms.CharField(label=_("Query string"), required=False)
@@ -388,6 +571,18 @@ class SearchForm(forms.Form):
 
 @login_required
 def search(request):
+    u"""Searchs for references and presents the search results.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     form_data = utils.parse_query_string(request)
     search_form = SearchForm(form_data)
     query_string = form_data.get("query_string")
