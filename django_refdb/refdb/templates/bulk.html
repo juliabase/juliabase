@@ -3,6 +3,25 @@
 {% load i18n %}
 
 {% block content %}
+  <div>
+    {% if prev_link %}
+      <a href="{{ prev_link }}">&lt;&lt;</a>
+    {% else %}
+       &lt;&lt;
+    {% endif %}
+    {% for page in pages %}
+        {% if page %}
+          <a href="{{ page }}">{{ forloop.counter }}</a>
+        {% else %}
+           {{ forloop.counter }}
+        {% endif %}
+    {% endfor %}
+    {% if next_link %}
+      <a href="{{ next_link }}">&gt;&gt;</a>
+    {% else %}
+       &gt;&gt;
+    {% endif %}
+  </div>
   {% for reference in references %}
     {{ reference.citation_key }}
   {% endfor %}

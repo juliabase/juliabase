@@ -6,7 +6,7 @@ u"""Views for viewing, editing, adding, and searching for references.
 
 from __future__ import absolute_import
 
-import os.path, shutil, re, copy
+import os.path, shutil, re, copy, urllib
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -595,7 +595,34 @@ def form_fields_to_query(form_fields):
 
 @login_required
 def bulk(request):
+
+    def build_page_link(new_offset):
+        new_query_dict = request.GET.copy()
+        new_query_dict["offset"] = new_offset
+        new_query_dict["limit"] = limit
+        return "?" + urllib.urlencode(new_query_dict) \
+            if 0 <= new_offset < number_of_references and new_offset != offset else None
+        
     query_string = form_fields_to_query(request.GET)
-    references = utils.get_refdb_connection(request.user).get_references(query_string) if query_string else []
-    return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references},
+    offset = request.GET.get("offset")
+    limit = request.GET.get("limit")
+    try:
+        offset = int(offset)
+    except (TypeError, ValueError):
+        offset = 0
+    try:
+        limit = int(limit)
+    except (TypeError, ValueError):
+        limit = 10
+    refdb_connection = utils.get_refdb_connection(request.user)
+    number_of_references = refdb_connection.count_references(query_string)
+    prev_link = build_page_link(offset - limit)
+    next_link = build_page_link(offset + limit)
+    pages = []
+    for i in range(number_of_references // limit + 1):
+        link = build_page_link(i * limit)
+        pages.append(link)
+    references = refdb_connection.get_references(query_string, offset=offset, limit=limit)
+    return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
+                                            "prev_link": prev_link, "next_link": next_link, "pages": pages},
                               context_instance=RequestContext(request))
