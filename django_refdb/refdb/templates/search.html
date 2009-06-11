@@ -3,13 +3,10 @@
 {% load i18n %}
 
 {% block content %}
-  <form method="get" action="">
+  <form method="get" action="bulk">
     <table>
       {{ search }}
     </table>
     <p><input type="submit"/></p>
   </form>
-  {% for reference in references %}
-    {{ reference.citation_key }}
-  {% endfor %}
 {% endblock %}

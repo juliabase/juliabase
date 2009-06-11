@@ -7,7 +7,7 @@ contains an additional abstraction layer between Django-RefDB and PyRefDB.
 
 from __future__ import absolute_import
 
-import hashlib, re
+import hashlib, re, urlparse
 import pyrefdb
 from django.conf import settings
 from django.template.defaultfilters import slugify
@@ -576,3 +576,12 @@ def extended_data_to_notes(reference):
         reference.extended_notes.append("django-refdb-creator-%d" % extended_data.creator)
     if extended_data.institute_publication:
         reference.extended_notes.append("django-refdb-institute-publication")
+
+
+def parse_query_string(request):
+    query_string = request.META["QUERY_STRING"] or u""
+    result = {}
+    for key, value in urlparse.parse_qs(query_string).iteritems():
+        if len(value) == 1:
+            result[key.decode("utf-8")] = value[0].decode("utf-8")
+    return result

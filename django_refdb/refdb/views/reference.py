@@ -583,9 +583,19 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
-    form_data = utils.parse_query_string(request)
-    search_form = SearchForm(form_data)
-    query_string = form_data.get("query_string")
+    search_form = SearchForm(request.GET)
+    return render_to_response("search.html", {"title": _(u"Search"), "search": search_form},
+                              context_instance=RequestContext(request))
+
+
+def form_fields_to_query(form_fields):
+    query_string = form_fields.get("query_string", "")
+    return query_string
+    
+
+@login_required
+def bulk(request):
+    query_string = form_fields_to_query(request.GET)
     references = utils.get_refdb_connection(request.user).get_references(query_string) if query_string else []
-    return render_to_response("search.html", {"title": _(u"Search"), "search": search_form, "references": references},
+    return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references},
                               context_instance=RequestContext(request))

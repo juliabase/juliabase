@@ -1,0 +1,9 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  {% for reference in references %}
+    {{ reference.citation_key }}
+  {% endfor %}
+{% endblock %}
