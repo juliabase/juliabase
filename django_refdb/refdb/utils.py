@@ -576,3 +576,21 @@ def extended_data_to_notes(reference):
         reference.extended_notes.append("django-refdb-creator-%d" % extended_data.creator)
     if extended_data.institute_publication:
         reference.extended_notes.append("django-refdb-institute-publication")
+
+
+def last_modified(user, references):
+    if not isinstance(references, (list, tuple)):
+        references = [references]
+    timestamps = []
+    for reference in references:
+        try:
+            id_ = reference.id
+        except AttributeError:
+            id_ = reference
+        django_reference, __ = models.Reference.get_or_create(reference_id=id_)
+        try:
+            user_modification = django_reference.user_modifications.get(user=user)
+            timestamps.append(user_modification.last_modified)
+        except models.UserModification.DoesNotExist:
+            timestamps.append(django_reference.last_modified)
+    return max(timestamps)

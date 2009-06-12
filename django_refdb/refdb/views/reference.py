@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 import django.contrib.auth.models
 from django.conf import settings
-from .. import utils
+from .. import utils, models
 
 
 # FixMe: Here, we have two function in one.  This should be disentangled.
@@ -439,11 +439,16 @@ class ReferenceForm(forms.Form):
                 self.refdb_rollback_actions.append(utils.PickrefRollback(self.user, reference.id, listname))
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
+    def _update_last_modification(self, new_reference):
+        django_object, __ = models.Reference.get_or_create(reference_id=)
+
     def save(self):
         u"""Stores the currently edited reference in the database, and saves
-        the possibly uploaded PDF file in the appropriate place.  Additionally,
-        if the changes in the reference also affect the file name of the PDF,
-        it renames the PDFs accordingly.
+        the possibly uploaded PDF file in the appropriate place.  Moreover, if
+        the changes in the reference also affect the file name of the PDF, it
+        renames the PDFs accordingly.  And finally, it updates the „last
+        modified“ fields in the Django models so that the caching framework can
+        work efficiently and properly.
         """
         new_reference = self.get_reference()
         if self.reference:
@@ -488,6 +493,7 @@ class ReferenceForm(forms.Form):
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
             destination.close()
+        self._update_last_modification()
 
 
 @login_required
@@ -622,6 +628,7 @@ def bulk(request):
     for i in range(number_of_references // limit + 1):
         link = build_page_link(i * limit)
         pages.append(link)
+    print repr(refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit))
     references = refdb_connection.get_references(query_string, offset=offset, limit=limit)
     return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
                                             "prev_link": prev_link, "next_link": next_link, "pages": pages},
