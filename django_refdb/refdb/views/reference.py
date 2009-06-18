@@ -11,6 +11,7 @@ import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404
+from django.views.decorators.http import last_modified
 from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
@@ -440,7 +441,19 @@ class ReferenceForm(forms.Form):
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def _update_last_modification(self, new_reference):
-        django_object, __ = models.Reference.get_or_create(reference_id=)
+        # FixMe: As long as RefDB's addref doesn't return the IDs of the added
+        # references, I can't have the "id" attribute set in ``new_reference``
+        # in case of a newly added reference.  See
+        # https://sourceforge.net/tracker/?func=detail&aid=2805372&group_id=26091&atid=385994
+        # for further information.  So I have to re-fetch the reference in this
+        # case.  Fortunately, it isn't a frequent case.
+        id_ = new_reference.id
+        if id_ is None:
+            id_ = utils.get_refdb_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
+        django_object, created = models.Reference.get_or_create(reference_id=id_)
+        if not created:
+            django_object.mark_modified()
+            django_object.save()
 
     def save(self):
         u"""Stores the currently edited reference in the database, and saves
@@ -597,18 +610,18 @@ def search(request):
 def form_fields_to_query(form_fields):
     query_string = form_fields.get("query_string", "")
     return query_string
-    
 
-@login_required
-def bulk(request):
 
-    def build_page_link(new_offset):
-        new_query_dict = request.GET.copy()
-        new_query_dict["offset"] = new_offset
-        new_query_dict["limit"] = limit
-        return "?" + urllib.urlencode(new_query_dict) \
-            if 0 <= new_offset < number_of_references and new_offset != offset else None
-        
+class CommonBulkViewData(object):
+
+    def __init__(self, query_string, offset, limit, refdb_connection):
+        self.query_string, self.offset, self.limit, self.refdb_connection = query_string, offset, limit, refdb_connection
+
+    def get_all_values(self):
+        return self.query_string, self.offset, self.limit, self.refdb_connection
+
+
+def get_last_modification_date(request):
     query_string = form_fields_to_query(request.GET)
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
@@ -621,6 +634,24 @@ def bulk(request):
     except (TypeError, ValueError):
         limit = 10
     refdb_connection = utils.get_refdb_connection(request.user)
+    request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection)
+
+    ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
+    return utils.last_modified(request.user, ids)
+
+
+@login_required
+@last_modified(get_last_modification_date)
+def bulk(request):
+
+    def build_page_link(new_offset):
+        new_query_dict = request.GET.copy()
+        new_query_dict["offset"] = new_offset
+        new_query_dict["limit"] = limit
+        return "?" + urllib.urlencode(new_query_dict) \
+            if 0 <= new_offset < number_of_references and new_offset != offset else None
+
+    query_string, offset, limit, refdb_connection = request.common_data.get_all_values()
     number_of_references = refdb_connection.count_references(query_string)
     prev_link = build_page_link(offset - limit)
     next_link = build_page_link(offset + limit)
@@ -628,7 +659,6 @@ def bulk(request):
     for i in range(number_of_references // limit + 1):
         link = build_page_link(i * limit)
         pages.append(link)
-    print repr(refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit))
     references = refdb_connection.get_references(query_string, offset=offset, limit=limit)
     return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
                                             "prev_link": prev_link, "next_link": next_link, "pages": pages},
