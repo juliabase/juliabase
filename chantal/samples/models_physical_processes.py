@@ -132,7 +132,8 @@ class PDSMeasurement(Process):
         pylab.ylabel(_(u"α in cm⁻¹"))
 
     def get_datafile_name(self, number):
-        return os.path.join(pds_root_dir, self.evaluated_datafile)
+        if self.evaluated_datafile:
+            return os.path.join(pds_root_dir, self.evaluated_datafile)
 
     def get_imagefile_basename(self, number):
         try:
