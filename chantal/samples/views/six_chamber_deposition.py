@@ -486,7 +486,7 @@ def edit(request, deposition_number):
     :type request: ``QueryDict``
     :type deposition_number: unicode or ``NoneType``
 
-    :Returns:
+    :Return:
       the HTTP response object
 
     :rtype: ``HttpResponse``
@@ -573,7 +573,7 @@ def show(request, deposition_number):
     :type request: ``HttpRequest``
     :type deposition_number: unicode
 
-    :Returns:
+    :Return:
       the HTTP response object
 
     :rtype: ``HttpResponse``
