@@ -614,11 +614,12 @@ def form_fields_to_query(form_fields):
 
 class CommonBulkViewData(object):
 
-    def __init__(self, query_string, offset, limit, refdb_connection):
-        self.query_string, self.offset, self.limit, self.refdb_connection = query_string, offset, limit, refdb_connection
+    def __init__(self, query_string, offset, limit, refdb_connection, ids):
+        self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
+            query_string, offset, limit, refdb_connection, ids
 
     def get_all_values(self):
-        return self.query_string, self.offset, self.limit, self.refdb_connection
+        return self.query_string, self.offset, self.limit, self.refdb_connection, self.ids
 
 
 def get_last_modification_date(request):
@@ -634,9 +635,8 @@ def get_last_modification_date(request):
     except (TypeError, ValueError):
         limit = 10
     refdb_connection = utils.get_refdb_connection(request.user)
-    request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection)
-
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
+    request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
     return utils.last_modified(request.user, ids)
 
 
@@ -651,7 +651,7 @@ def bulk(request):
         return "?" + urllib.urlencode(new_query_dict) \
             if 0 <= new_offset < number_of_references and new_offset != offset else None
 
-    query_string, offset, limit, refdb_connection = request.common_data.get_all_values()
+    query_string, offset, limit, refdb_connection, ids = request.common_data.get_all_values()
     number_of_references = refdb_connection.count_references(query_string)
     prev_link = build_page_link(offset - limit)
     next_link = build_page_link(offset + limit)
