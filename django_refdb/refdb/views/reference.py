@@ -512,7 +512,7 @@ class ReferenceForm(forms.Form):
 
 @login_required
 def edit(request, citation_key):
-    u"""Adds or creates a reference.
+    u"""Edits or creates a reference.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -672,7 +672,7 @@ def bulk(request):
     response = render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
                                                 "prev_link": prev_link, "next_link": next_link, "pages": pages},
                                   context_instance=RequestContext(request))
-    # I must do it here because the render_to_response call may have polulated
+    # I must do it here because the render_to_response call may have populated
     # some extended_data fields in the references.
     for reference in references:
         cache.set(cache_prefix + reference.id, reference)
