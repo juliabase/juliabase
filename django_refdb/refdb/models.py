@@ -15,7 +15,7 @@ class Reference(models.Model):
 
     def mark_modified(self):
         self.last_modified = datetime.datetime.now()
-        self.user_modifications.delete()
+        self.user_modifications.all().delete()
 
 class UserModification(models.Model):
     user = models.ForeignKey(django.contrib.auth.models.User, related_name="user_modifications", verbose_name=_(u"user"))
