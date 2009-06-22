@@ -352,7 +352,7 @@ def get_lists(user, citation_key=None):
     for note in extended_notes:
         short_name = note.citation_key.partition("-")[2]
         if short_name:
-            verbose_name = note.content.text or short_name
+            verbose_name = (note.content.text if note.content else None) or short_name
             if verbose_name == username:
                 verbose_name = _(u"main list")
             choices.append((short_name, verbose_name))

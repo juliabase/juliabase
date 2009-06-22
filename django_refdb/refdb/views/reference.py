@@ -23,20 +23,20 @@ from .. import utils, models
 
 
 # FixMe: Here, we have two function in one.  This should be disentangled.
-def pdf_filepath(reference, user, existing=False):
+def pdf_filepath(reference, user_id=None, existing=False):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
     filesystem.
 
     :Parameters:
       - `reference`: the reference whose PDF file path should be calculated
-      - `user`: the user who tries to retrieve the file; this is important
-        because it is possible to upload *private* PDFs.
+      - `user_id`: the ID of the user who tries to retrieve the file; this is
+        important because it is possible to upload *private* PDFs.
       - `existing`: Whether the PDF should be existing.  If ``False``, this
         routine returns ``None`` for the filepath if the PDF doesn't exist.
 
     :type reference: ``pyrefdb.Reference``, with the ``extended_data``
       attribute
-    :type user: ``django.contrib.auth.models.User``
+    :type user_id: int
     :type existing: bool
 
     :Return:
@@ -451,7 +451,7 @@ class ReferenceForm(forms.Form):
         id_ = new_reference.id
         if id_ is None:
             id_ = utils.get_refdb_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
-        django_object, created = models.Reference.get_or_create(reference_id=id_)
+        django_object, created = models.Reference.objects.get_or_create(reference_id=id_)
         if not created:
             django_object.mark_modified()
             django_object.save()
@@ -490,8 +490,8 @@ class ReferenceForm(forms.Form):
         if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
             if self.reference.extended_data.global_pdf_available:
                 shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
-            for user in self.reference.djano_instance.users_with_personal_pdf.all():
-                shutil.move(pdf_filepath(self.reference, user), pdf_filepath(new_reference, user))
+            for user_id in self.reference.extended_data.users_with_personal_pdfs:
+                shutil.move(pdf_filepath(self.reference, user_id), pdf_filepath(new_reference, user_id))
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
             private = self.cleaned_data["pdf_is_private"]
@@ -499,7 +499,7 @@ class ReferenceForm(forms.Form):
                 new_reference.extended_data.users_with_personal_pdf.add(self.user)
             else:
                 new_reference.extended_data.global_pdf_available = True
-            filepath = pdf_filepath(new_reference, self.user if private else None)
+            filepath = pdf_filepath(new_reference, self.user.pk if private else None)
             directory = os.path.dirname(filepath)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -507,7 +507,7 @@ class ReferenceForm(forms.Form):
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
             destination.close()
-        self._update_last_modification()
+        self._update_last_modification(new_reference)
         return new_reference
         
 
@@ -583,7 +583,7 @@ def view(request, citation_key):
     utils.extended_notes_to_data(references)
     reference = references[0]
     lib_info = reference.get_lib_info(utils.refdb_username(request.user.id))
-    pdf_path, pdf_is_private = pdf_filepath(reference, request.user, existing=True)
+    pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
                                                       "reference": reference, "lib_info": lib_info,
                                                       "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},
