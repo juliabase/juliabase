@@ -508,6 +508,8 @@ class ReferenceForm(forms.Form):
                 destination.write(chunk)
             destination.close()
         self._update_last_modification()
+        return new_reference
+        
 
 
 @login_required
@@ -541,12 +543,20 @@ def edit(request, citation_key):
     if request.method == "POST":
         reference_form = ReferenceForm(request, reference, request.POST, request.FILES)
         if reference_form.is_valid():
-            reference_form.save()
+            new_reference = reference_form.save()
+            # We don't need this in the cache.  It's only needed for saving,
+            # and then it has to be recalculated anyway.
+            del new_reference.extended_notes
+            cache.set(cache_prefix + new_reference.id, new_reference)
     else:
         reference_form = ReferenceForm(request, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
     return render_to_response("edit_reference.html", {"title": title, "reference": reference_form},
                               context_instance=RequestContext(request))
+
+
+cache_prefix = "refdb-reference-"
+length_cache_prefix = len(cache_prefix)
 
 
 @login_required
@@ -643,8 +653,6 @@ def get_last_modification_date(request):
 @login_required
 @last_modified(get_last_modification_date)
 def bulk(request):
-    cache_prefix = "refdb-reference-"
-    length_cache_prefix = len(cache_prefix)
 
     def build_page_link(new_offset):
         new_query_dict = request.GET.copy()
