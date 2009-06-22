@@ -16,6 +16,7 @@ from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+from django.core.cache import cache
 import django.contrib.auth.models
 from django.conf import settings
 from .. import utils, models
@@ -639,10 +640,11 @@ def get_last_modification_date(request):
     request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
     return utils.last_modified(request.user, ids)
 
-
 @login_required
 @last_modified(get_last_modification_date)
 def bulk(request):
+    cache_prefix = "refdb-reference-"
+    length_cache_prefix = len(cache_prefix)
 
     def build_page_link(new_offset):
         new_query_dict = request.GET.copy()
@@ -659,7 +661,19 @@ def bulk(request):
     for i in range(number_of_references // limit + 1):
         link = build_page_link(i * limit)
         pages.append(link)
-    references = refdb_connection.get_references(query_string, offset=offset, limit=limit)
-    return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
-                                            "prev_link": prev_link, "next_link": next_link, "pages": pages},
-                              context_instance=RequestContext(request))
+    all_references = cache.get_many(cache_prefix + id_ for id_ in ids)
+    all_references = dict((cache_id[length_cache_prefix:], reference) for cache_id, reference in all_references.iteritems())
+    missing_ids = set(ids) - set(all_references)
+    if missing_ids:
+        missing_references = refdb_connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
+        missing_references = dict((reference.id, reference) for reference in missing_references)
+        all_references.update(missing_references)
+    references = [all_references[id_] for id_ in ids]
+    response = render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
+                                                "prev_link": prev_link, "next_link": next_link, "pages": pages},
+                                  context_instance=RequestContext(request))
+    # I must do it here because the render_to_response call may have polulated
+    # some extended_data fields in the references.
+    for reference in references:
+        cache.set(cache_prefix + reference.id, reference)
+    return response
