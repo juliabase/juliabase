@@ -199,7 +199,7 @@ class ReferenceForm(forms.Form):
             initial["relevance"] = reference.relevance
             if reference.comments:
                 initial["global_notes"] = reference.comments.content.text
-            initial["has_reprint"] = user.pk in reference.users_with_offprint
+            initial["has_reprint"] = user.pk in reference.users_with_offprint.keywords
             initial["abstract"] = reference.abstract or u""
             initial["keywords"] = u"; ".join(reference.keywords)
             lib_info = reference.get_lib_info(utils.refdb_username(user.id))
@@ -407,9 +407,9 @@ class ReferenceForm(forms.Form):
         reference.institute_publication = self.cleaned_data["institute_publication"]
         reference.groups = set(group.id for group in self.cleaned_data["groups"])
         if self.cleaned_data["has_reprint"]:
-            reference.users_with_offprint.add(self.user.pk)
+            reference.users_with_offprint.keywords.add(self.user.pk)
         else:
-            reference.users_with_offprint.discard(self.user.pk)
+            reference.users_with_offprint.keywords.discard(self.user.pk)
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
         reference.freeze()
