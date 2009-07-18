@@ -558,9 +558,9 @@ def view(request, citation_key):
 
     :rtype: ``HttpResponse``
     """
-    references = utils.get_refdb_connection(request.user). \
-        get_references(":CK:=" + citation_key, with_extended_notes=True,
-                       extended_notes_constraints=":NCK:~^django-refdb-")
+    connection = utils.get_refdb_connection(request.user)
+    references = connection.get_references(":CK:=" + citation_key, with_extended_notes=True,
+                                           extended_notes_constraints=":NCK:~^django-refdb-")
     if not references:
         raise Http404("Citation key \"%s\" not found." % citation_key)
     reference = references[0]
