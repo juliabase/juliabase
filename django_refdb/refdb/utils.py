@@ -468,7 +468,7 @@ def fetch(self, attribute_names, connection, user_id):
         return attribute_name in attribute_names and getattr(self, attribute_name) is None
 
     def fetch_extended_notes(partial_query_string):
-        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, partial_query_string)):
+        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, partial_query_string))
         citation_keys = set(note.citation_key for note in notes)
         self._saved_extended_notes_cks |= citation_keys
         return notes, citation_keys
