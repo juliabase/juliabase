@@ -594,3 +594,77 @@ def last_modified(user, references):
         except models.UserModification.DoesNotExist:
             timestamps.append(django_reference.last_modified)
     return max(timestamps) if timestamps else None
+
+
+def fetch(self, attribute_names, connection, user_id):
+
+    def necessary(attribute_name, empty_value=None):
+        return attribute_name in attribute_names and getattr(self, attribute_name) is None
+
+    def fetch_extended_notes(partial_query_string):
+        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, partial_query_string)):
+        citation_keys = set(note.citation_key for note in notes)
+        self._saved_extended_notes_cks |= citation_keys
+        return notes, citation_keys
+
+    if not hasattr(self, "groups"):
+        self.groups = None                  # is a set of integers
+        self.global_pdf_available = None    # is a boolean
+        self.users_with_offprint = None     # is an extended note
+        self.relevance = None               # is an integer
+        self.comments = None                # is an extended note
+        self.pdf_is_private = {}
+        self.creator = None                 # is an integer
+        self.institute_publication = None   # is a boolean
+    if necessary("groups"):
+        citation_keys = fetch_extended_notes(":NCK:~^django-refdb-group-")[1]
+        prefix_length = len("django-refdb-group-")
+        self.groups = set(int(citation_key[prefix_length:]) for citation_key in citation_keys)
+    if necessary("global_pdf_available"):
+        notes = fetch_extended_notes(":NCK:=django-refdb-global-pdfs")[0]
+        self.global_pdf_available = bool(notes)
+    if necessary("users_with_offprint"):
+        notes = fetch_extended_notes(":NCK:=django-refdb-users_with_offprint-" + self.citation_key)[0]
+        self.users_with_offprint = notes[0] if notes else False
+    if necessary("relevance"):
+        citation_keys = fetch_extended_notes(":NCK:~^django-refdb-relevance-")[1]
+        assert 0 <= len(citation_keys) <= 1
+        self.relevance = int(citation_keys[0][len("django-refdb-relevance-"):]) if citation_keys else False
+    if necessary("comments"):
+        notes = fetch_extended_notes(":NCK:=django-refdb-comments-" + self.citation_key)[0]
+        self.comments = notes[0] if notes else False
+    if user_id not in self.pdf_is_private:
+        citation_keys = fetch_extended_notes(":NCK:=django-refdb-personal-pdfs-%d" % user_id)[1]
+        assert 0 <= len(citation_keys) <= 1
+        self.pdf_is_private[user_id] = bool(citation_keys)
+    if necessary("creator"):
+        citation_keys = fetch_extended_notes(":NCK:~^django-refdb-creator-")[1]
+        assert 0 <= len(citation_keys) <= 1
+        self.creator = int(citation_keys[0][len("django-refdb-creator-"):]) if citation_keys else False
+    if necessary("institute_publication"):
+        citation_keys = fetch_extended_notes(":NCK:=django-refdb-institute-publication")[1]
+        assert 0 <= len(citation_keys) <= 1
+        self.institute_publication = bool(citation_keys)
+
+pyrefdb.Reference.fetch = fetch
+
+
+def freeze(self):
+    self.extended_notes = pyrefdb.XNoteList()
+    self.extended_notes.extend("django-refdb-group-%d" % group for group in self.groups)
+    if self.global_pdf_available:
+        self.extended_notes.append("django-refdb-global-pdfs")
+    if self.users_with_offprint:
+        self.extended_notes.append(self.users_with_offprint)
+    if self.relevance:
+        self.extended_notes.append("django-refdb-relevance-%d" % self.relevance)
+    if self.comments:
+        self.extended_notes.append(self.comments)
+    self.extended_notes.extend("django-refdb-personal-pdfs-%s" % user_id
+                               for user_id, pdf_is_private in self.pdf_is_private if pdf_is_private)
+    if self.creator:
+        self.extended_notes.append("django-refdb-creator-%d" % self.creator)
+    if self.institute_publication:
+        self.extended_notes.append("django-refdb-institute-publication")
+
+pyrefdb.Reference.freeze = freeze
