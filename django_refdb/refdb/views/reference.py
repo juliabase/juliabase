@@ -21,7 +21,6 @@ import django.contrib.auth.models
 from django.conf import settings
 from .. import utils, models
 
-
 # FixMe: Here, we have two function in one.  This should be disentangled.
 def pdf_filepath(reference, user_id=None, existing=False):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
@@ -479,6 +478,7 @@ class ReferenceForm(forms.Form):
         comments_note = new_reference.extended_data.comments
         if comments_note:
             if comments_note.citation_key:
+                # FixMe: This rollback seems like a no-op 
                 self.refdb_rollback_actions.append(utils.UpdatenoteRollback(self.user, comments_note))
                 utils.get_refdb_connection(self.user).update_extended_notes(comments_note)
             else:
