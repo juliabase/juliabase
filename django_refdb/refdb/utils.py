@@ -527,7 +527,7 @@ def freeze(self):
     if self.comments:
         self.extended_notes.append(self.comments)
     self.extended_notes.extend("django-refdb-personal-pdfs-%s" % user_id
-                               for user_id, pdf_is_private in self.pdf_is_private if pdf_is_private)
+                               for user_id, pdf_is_private in self.pdf_is_private.iteritems() if pdf_is_private)
     if self.creator:
         self.extended_notes.append("django-refdb-creator-%d" % self.creator)
     if self.institute_publication:
