@@ -444,140 +444,6 @@ names.
 """
 
 
-class ExtendedData(object):
-    u"""Class holding extended data for references.  RefDB can't store all data
-    that Django-RefDB needs to be stored with every reference.  This data is
-    put into an ``ExtendedData`` object and injected into the RefDB reference
-    object into the ``extended_data`` attribute.  This way, the ``pyrefdb``
-    routines still work, and all data is in the same instance.
-
-    Actually this extended data is stored in extended notes in the RefDB
-    databse.  However, this data is not conveniently accessible by the Django
-    routines.  Therefore, the extended notes are “converted” to
-    ``ExtendedData`` when extracting the reference, and converted back when
-    storing the reference into the RefDB database.
-
-    :ivar groups: Django group IDs this reference belongs to
-    :ivar global_pdf_available: whether a PDF file downloadable by everyone is
-      available
-    :ivar users_with_offprint: IDs of users with physical copies of this
-      reference
-    :ivar relevance: value from 1 to 4, denoting the relevance of the reference
-    :ivar comments: globally visible comments on the reference
-    :ivar users_with_personal_pdfs: IDs of users who uploaded a private PDF
-      file of the reference
-    :ivar creator: ID of the user who added this reference
-    :ivar institute_publication: whether this reference is an institute
-      publication
-
-    :ivar groups: list of int
-    :ivar global_pdf_available: bool
-    :ivar users_with_offprint: set of int
-    :ivar relevance: int or ``NoneType``
-    :ivar comments: ``pyrefdb.XNote`` or ``NoneType``
-    :ivar users_with_personal_pdfs: set of int
-    :ivar creator: int
-    :ivar institute_publication: bool
-    """
-
-    def __init__(self):
-        self.groups = []
-        self.global_pdf_available = False
-        self.users_with_offprint = set()
-        self.relevance = None
-        self.comments = None
-        self.users_with_personal_pdfs = set()
-        self.creator = None
-        self.institute_publication = False
-
-
-citation_key_pattern = re.compile(r"""django-refdb-(?:
-                                   group-(?P<group_id>\d+) |
-                                   (?P<global_pdf>global-pdfs) |
-                                   offprints-(?P<user_id_with_offprint>\d+) |
-                                   relevance-(?P<relevance>\d+) |
-                                   comments-(?P<reference_ck>.+) |
-                                   personal-pdfs-(?P<user_id_with_personal_pdf>\d+) |
-                                   creator-(?P<creator_id>\d+) |
-                                   (?P<institute_publication>institute-publication)
-                                  )$""", re.VERBOSE)
-
-def extended_notes_to_data(references):
-    u"""Walks through the extended notes of references and convert extended
-    data found there to `ExtendedData` objects added to the references.  For
-    each given reference, the links extended notes are searched for “special”
-    extended notes containing extended data (see `ExtendedData`).  From this,
-    an `ExtendedData` object is contructed, which is written as an
-    ``extended_data`` attribute into the respective reference.  This way, the
-    Django views can access this data much more conveniently.
-
-    Attention: The given references are modified in-place.
-    
-    :Parameters:
-      - `references`: the references into which the ``extended_data``
-        attributes should be injected
-
-    :type references: iterable of ``pyrefdb.Reference``
-    """
-    for reference in references:
-        reference.extended_data = ExtendedData()
-        for extended_note in reference.extended_notes:
-            match = citation_key_pattern.match(extended_note.citation_key)
-            if match:
-                group_id, global_pdf, user_id_with_offprint, relevance, \
-                    reference_ck, user_id_with_personal_pdf, creator_id, institute_publication = match.groups()
-                if group_id:
-                    reference.extended_data.groups.append(int(group_id))
-                elif global_pdf:
-                    reference.extended_data.global_pdf_available = True
-                elif user_id_with_offprint:
-                    reference.extended_data.users_with_offprint.add(int(user_id_with_offprint))
-                elif relevance:
-                    reference.extended_data.relevance = int(relevance)
-                elif reference_ck:
-                    reference.extended_data.comments = extended_note
-                elif user_id_with_personal_pdf:
-                    reference.extended_data.users_with_personal_pdfs.add(int(user_id_with_personal_pdf))
-                elif creator_id:
-                    reference.extended_data.creator = int(creator_id)
-                elif institute_publication:
-                    reference.extended_data.institute_publication = True
-
-
-def extended_data_to_notes(reference):
-    u"""Takes the ``extended_data`` attribute of the given reference and convert
-    it to extended notes and links to extended notes.  This way, the reference
-    is ready for being written back to the RefDB database.  Obviously, this is
-    done after all modifications to the reference have been taken place (in
-    particular the modifications to the extended data).
-
-    Attention: The given reference in modified in-place.
-
-    :Parameters:
-      - `reference`: the reference whose extended data should be converted
-
-    :type reference: ``pyrefdb.Reference``
-    """
-    reference.extended_notes = pyrefdb.XNoteList()
-    extended_data = reference.extended_data
-    for group_id in extended_data.groups:
-        reference.extended_notes.append("django-refdb-group-%d" % group_id)
-    if extended_data.global_pdf_available:
-        reference.extended_notes.append("django-refdb-global-pdfs")
-    for user_id in extended_data.users_with_offprint:
-        reference.extended_notes.append("django-refdb-offprints-%d" % user_id)
-    if extended_data.relevance:
-        reference.extended_notes.append("django-refdb-relevance-%d" % extended_data.relevance)
-    if extended_data.comments:
-        reference.extended_notes.append(extended_data.comments)
-    for user_id in extended_data.users_with_personal_pdfs:
-        reference.extended_notes.append("django-refdb-personal-pdfs-%d" % user_id)
-    if extended_data.creator:
-        reference.extended_notes.append("django-refdb-creator-%d" % extended_data.creator)
-    if extended_data.institute_publication:
-        reference.extended_notes.append("django-refdb-institute-publication")
-
-
 def last_modified(user, references):
     if not isinstance(references, (list, tuple)):
         references = [references]
@@ -624,7 +490,7 @@ def fetch(self, attribute_names, connection, user_id):
         notes = fetch_extended_notes(":NCK:=django-refdb-global-pdfs")[0]
         self.global_pdf_available = bool(notes)
     if necessary("users_with_offprint"):
-        notes = fetch_extended_notes(":NCK:=django-refdb-users_with_offprint-" + self.citation_key)[0]
+        notes = fetch_extended_notes(":NCK:=django-refdb-users-with-offprint-" + self.citation_key)[0]
         self.users_with_offprint = notes[0] if notes else False
     if necessary("relevance"):
         citation_keys = fetch_extended_notes(":NCK:~^django-refdb-relevance-")[1]
