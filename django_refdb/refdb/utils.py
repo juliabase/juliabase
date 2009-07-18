@@ -633,7 +633,7 @@ def fetch(self, attribute_names, connection, user_id):
     if necessary("comments"):
         notes = fetch_extended_notes(":NCK:=django-refdb-comments-" + self.citation_key)[0]
         self.comments = notes[0] if notes else False
-    if user_id not in self.pdf_is_private:
+    if "pdf_is_private" in attribute_names and user_id not in self.pdf_is_private:
         citation_keys = fetch_extended_notes(":NCK:=django-refdb-personal-pdfs-%d" % user_id)[1]
         assert 0 <= len(citation_keys) <= 1
         self.pdf_is_private[user_id] = bool(citation_keys)
