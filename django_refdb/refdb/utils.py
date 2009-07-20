@@ -464,14 +464,25 @@ def last_modified(user, references):
 
 def fetch(self, attribute_names, connection, user_id):
 
-    def necessary(attribute_name, empty_value=None):
-        return attribute_name in attribute_names and getattr(self, attribute_name) is None
-
-    def fetch_extended_notes(partial_query_string):
-        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, partial_query_string))
-        citation_keys = set(note.citation_key for note in notes)
-        self._saved_extended_notes_cks |= citation_keys
-        return notes, citation_keys
+    # This routine could be optimised further by splitting it into two phases:
+    # fetch1 just looks which extended notes citation keys are needed and
+    # returns them.  The caller collects them and does *one* RefDB call for all
+    # extended notes.  The result is used to create a data structure which
+    # collects the extended notes that belong to a certain reference ID.  These
+    # are passed to fetch2, which generates the extended attributes from them.
+    #
+    # However, this makes the code much more complicates, and it makes only
+    # sense if very many references are shown in the bulk view at the same
+    # time.
+    
+    def necessary(attribute_name):
+        if attribute_name in attribute_names:
+            if attribute_name == "pdf_is_private":
+                return user_id not in self.pdf_is_private
+            else:
+                return getattr(self, attribute_name) is None
+        else:
+            return False
 
     if not hasattr(self, "groups"):
         self.groups = None                  # is a set of integers
@@ -482,35 +493,46 @@ def fetch(self, attribute_names, connection, user_id):
         self.pdf_is_private = {}
         self.creator = None                 # is an integer
         self.institute_publication = None   # is a boolean
-    if necessary("groups"):
-        citation_keys = fetch_extended_notes(":NCK:~^django-refdb-group-")[1]
-        prefix_length = len("django-refdb-group-")
-        self.groups = set(int(citation_key[prefix_length:]) for citation_key in citation_keys)
-    if necessary("global_pdf_available"):
-        notes = fetch_extended_notes(":NCK:=django-refdb-global-pdfs")[0]
-        self.global_pdf_available = bool(notes)
-    if necessary("users_with_offprint"):
-        notes = fetch_extended_notes(":NCK:=django-refdb-users-with-offprint-" + self.citation_key)[0]
-        self.users_with_offprint = notes[0] if notes else False
-    if necessary("relevance"):
-        citation_keys = fetch_extended_notes(":NCK:~^django-refdb-relevance-")[1]
-        assert 0 <= len(citation_keys) <= 1
-        self.relevance = int(citation_keys[0][len("django-refdb-relevance-"):]) if citation_keys else False
-    if necessary("comments"):
-        notes = fetch_extended_notes(":NCK:=django-refdb-comments-" + self.citation_key)[0]
-        self.comments = notes[0] if notes else False
-    if "pdf_is_private" in attribute_names and user_id not in self.pdf_is_private:
-        citation_keys = fetch_extended_notes(":NCK:=django-refdb-personal-pdfs-%d" % user_id)[1]
-        assert 0 <= len(citation_keys) <= 1
-        self.pdf_is_private[user_id] = bool(citation_keys)
-    if necessary("creator"):
-        citation_keys = fetch_extended_notes(":NCK:~^django-refdb-creator-")[1]
-        assert 0 <= len(citation_keys) <= 1
-        self.creator = int(citation_keys[0][len("django-refdb-creator-"):]) if citation_keys else False
-    if necessary("institute_publication"):
-        citation_keys = fetch_extended_notes(":NCK:=django-refdb-institute-publication")[1]
-        assert 0 <= len(citation_keys) <= 1
-        self.institute_publication = bool(citation_keys)
+    needed_notes_cks = {"groups": ":NCK:~^django-refdb-group-",
+                        "global_pdf_available": ":NCK:=django-refdb-global-pdfs",
+                        "users_with_offprint": ":NCK:=django-refdb-users-with-offprint-" + self.citation_key,
+                        "relevance": ":NCK:~^django-refdb-relevance-",
+                        "comments": ":NCK:=django-refdb-comments-" + self.citation_key,
+                        "pdf_is_private": ":NCK:=django-refdb-personal-pdfs-%d" % user_id,
+                        "creator": ":NCK:~^django-refdb-creator-",
+                        "institute_publication": ":NCK:=django-refdb-institute-publication"}
+    query_string_components = []
+    for name, needed_cks in needed_notes_cks.iteritems():
+        if necessary(name):
+            query_string_components.append(needed_cks)
+    if query_string_components:
+        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, " OR ".join(query_string_components)))
+        notes = dict((note.citation_key, note) for note in notes)
+        self._saved_extended_notes_cks |= set(notes)
+        if necessary("groups"):
+            prefix = "django-refdb-group-"
+            prefix_length = len(prefix)
+            self.groups = set(int(citation_key[prefix_length:]) for citation_key in notes if citation_key.startswith(prefix))
+        if necessary("global_pdf_available"):
+            self.global_pdf_available = "django-refdb-global-pdfs" in notes
+        if necessary("users_with_offprint"):
+            self.users_with_offprint = notes.get("django-refdb-users-with-offprint-" + self.citation_key, False)
+        if necessary("relevance"):
+            prefix = "django-refdb-relevance-"
+            citation_keys = [citation_key for citation_key in notes if citation_key.startswith(prefix)]
+            assert 0 <= len(citation_keys) <= 1
+            self.relevance = int(citation_keys[0][len(prefix):]) if citation_keys else False
+        if necessary("comments"):
+            self.comments = notes.get("django-refdb-comments-" + self.citation_key, False)
+        if necessary("pdf_is_private"):
+            self.pdf_is_private[user_id] = "django-refdb-personal-pdfs-%d" % user_id in notes
+        if necessary("creator"):
+            prefix = "django-refdb-creator-"
+            citation_keys = [citation_key for citation_key in notes if citation_key.startswith(prefix)]
+            assert 0 <= len(citation_keys) <= 1
+            self.creator = int(citation_keys[0][len(prefix):]) if citation_keys else False
+        if necessary("institute_publication"):
+            self.institute_publication = "django-refdb-institute-publication" in notes
 
 pyrefdb.Reference.fetch = fetch
 
