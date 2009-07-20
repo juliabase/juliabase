@@ -463,6 +463,32 @@ def last_modified(user, references):
 
 
 def fetch(self, attribute_names, connection, user_id):
+    u"""Fetches the extended attributes for the reference.  This method assures
+    that the given attributes exist in the reference instance.  If one of them
+    doesn't exist, it is filled with the current value from RefDB.
+
+    “Extended atrribute” means that it is not a standard field of RefDB but
+    realised through so-called extended notes.  Since reading of extended notes
+    is a costly operation, it is done only if necessary.
+
+    Note that this method does not guarantee that the extended attribute have
+    current values.  Other code outside this method must assure that the
+    contents of extended attributes is kept up-to-date.
+
+    It is very important to see that this is a *method* if the
+    `pyrefdb.Connection` class.  It is injected into that class (aka monkey
+    patching).
+
+    :Parameters:
+      - `attribute_names`: the names of the extended attributes that should be
+        fetched from RefDB if they don't exist yet in the reference.
+      - `connection`: the connection instance to RefDB
+      - `user_id`: the ID of the user who wants to retrieve the reference
+
+    :type attribute_names: list of str
+    :type connection: `pyrefdb.Connection`
+    :type user_id: int
+    """
 
     # This routine could be optimised further by splitting it into two phases:
     # fetch1 just looks which extended notes citation keys are needed and
@@ -471,7 +497,7 @@ def fetch(self, attribute_names, connection, user_id):
     # collects the extended notes that belong to a certain reference ID.  These
     # are passed to fetch2, which generates the extended attributes from them.
     #
-    # However, this makes the code much more complicates, and it makes only
+    # However, this makes the code much more complicated, and it makes only
     # sense if very many references are shown in the bulk view at the same
     # time.
     
@@ -484,6 +510,10 @@ def fetch(self, attribute_names, connection, user_id):
         else:
             return False
 
+    # ``None`` means “not yet fetched”.  Everythin else, in particular
+    # ``False``, means “fetched”.  The exception is ``pdf_is_private``.  Here,
+    # an entry for a yet un-fetched user simply doesn't exist in the
+    # dictionary.
     if not hasattr(self, "groups"):
         self.groups = None                  # is a set of integers
         self.global_pdf_available = None    # is a boolean
@@ -538,6 +568,22 @@ pyrefdb.Reference.fetch = fetch
 
 
 def freeze(self):
+    u"""Creates extended notes from all set extended attributes.  This method
+    fills the ``extended_notes`` attribute by looking at the values of the
+    extended attributes (remember that they were generated from extended
+    notes).  It must be called just before saving the object to RefDB.  (It is
+    superfluous to call the method when writing the object to the cache.)
+
+    It is very important to see that this is a *method* if the
+    `pyrefdb.Connection` class.  It is injected into that class (aka monkey
+    patching).
+
+    Note that this method does not save the extended notes themselves.  It just
+    perpares the object so that the *links* to extended notes are updated.  In
+    most cases, this is enough.  However, for global comments and “users with
+    offprints”, there is a one-to-one relationship with an extended note which
+    must be created and saved separately.
+    """
     self.extended_notes = pyrefdb.XNoteList()
     self.extended_notes.extend("django-refdb-group-%d" % group for group in self.groups)
     if self.global_pdf_available:
