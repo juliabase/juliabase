@@ -135,7 +135,7 @@ class ReferenceForm(forms.Form):
     reference_type = forms.ChoiceField(label=_("Type"), choices=utils.reference_types.items())
     part_title = CharNoneField(label=_("Part title"), required=False)
     part_authors = forms.CharField(label=_("Part authors"), required=False)
-    publication_title = forms.CharField(label=_("Publication title"))
+    publication_title = forms.CharField(label=_("Publication title"), required=False)
     publication_authors = forms.CharField(label=_("Publication authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
     relevance = forms.TypedChoiceField(label=_("Relevance"), required=False, coerce=int, empty_value=None,
