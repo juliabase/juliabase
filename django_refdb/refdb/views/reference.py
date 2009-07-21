@@ -201,7 +201,7 @@ class ReferenceForm(forms.Form):
             if reference.comments:
                 initial["global_notes"] = reference.comments.content.text
             if reference.users_with_offprint:
-                initial["has_reprint"] = user.pk in reference.users_with_offprint.keywords
+                initial["has_reprint"] = unicode(user.pk) in reference.users_with_offprint.keywords
             initial["abstract"] = reference.abstract or u""
             initial["keywords"] = u"; ".join(reference.keywords)
             lib_info = reference.get_lib_info(utils.refdb_username(user.id))
@@ -411,9 +411,9 @@ class ReferenceForm(forms.Form):
         if self.cleaned_data["has_reprint"] and not reference.users_with_offprint:
             reference.users_with_offprint = pyrefdb.XNote()
         if self.cleaned_data["has_reprint"]:
-            reference.users_with_offprint.keywords.add(self.user.pk)
+            reference.users_with_offprint.keywords.add(str(self.user.pk))
         else:
-            reference.users_with_offprint.keywords.discard(self.user.pk)
+            reference.users_with_offprint.keywords.discard(str(self.user.pk))
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
         reference.freeze()
@@ -461,7 +461,7 @@ class ReferenceForm(forms.Form):
                 self.refdb_rollback_actions.append(utils.UpdatenoteRollback(self.user, extended_note))
                 utils.get_refdb_connection(self.user).update_extended_notes(extended_note)
             else:
-                extended_note.citation_key = "django-refdb-comments-" + citation_key
+                extended_note.citation_key = citation_key
                 utils.get_refdb_connection(self.user).add_extended_notes(extended_note)
                 self.refdb_rollback_actions.append(utils.DeletenoteRollback(self.user, extended_note))
 
@@ -545,8 +545,7 @@ def edit(request, citation_key):
     """
     if citation_key:
         connection = utils.get_refdb_connection(request.user)
-        references = connection.get_references(":CK:=" + citation_key, with_extended_notes=True,
-                                               extended_notes_constraints=":NCK:~^django-refdb-")
+        references = connection.get_references(":CK:=" + citation_key)
         if not references:
             raise Http404("Citation key \"%s\" not found." % citation_key)
         else:
