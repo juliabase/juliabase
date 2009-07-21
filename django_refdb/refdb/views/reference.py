@@ -489,16 +489,28 @@ class ReferenceForm(forms.Form):
         work efficiently and properly.
         """
         new_reference = self.get_reference()
+        # I defer the update of the extended note to after having written the
+        # extended notes.  The altervative to this arguably ugly operation is
+        # to avoid using the reference's citation key in the citation key of
+        # the extended notes.  Instead, one would have to use a random suffix,
+        # which is alos not very nice.  In particular, it would make the lookup
+        # slightly slower and debugging more cumbersome.
+        extended_notes = new_reference.extended_notes
+        new_reference.extended_notes = None
+        connection = utils.get_refdb_connection(self.user)
         if self.reference:
             self.refdb_rollback_actions.append(utils.UpdaterefRollback(self.user, self.reference))
-            utils.get_refdb_connection(self.user).update_references(new_reference)
+            connection.update_references(new_reference)
         else:
-            citation_key = utils.get_refdb_connection(self.user).add_references(new_reference)[0][0]
+            citation_key = connection.add_references(new_reference)[0][0]
             self.refdb_rollback_actions.append(utils.DeleterefRollback(self.user, citation_key))
             new_reference.citation_key = citation_key
 
-        self._save_extended_note(new_reference.comments, "django-refdb-comments-" + citation_key)
-        self._save_extended_note(new_reference.users_with_offprint, "django-refdb-users-with-offprint-" + citation_key)
+        self._save_extended_note(new_reference.comments, "django-refdb-comments-" + new_reference.citation_key)
+        self._save_extended_note(
+            new_reference.users_with_offprint, "django-refdb-users-with-offprint-" + new_reference.citation_key)
+        new_reference.extended_notes = extended_notes
+        connection.update_note_links(new_reference)
 
         self.save_lists(new_reference)
         if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
