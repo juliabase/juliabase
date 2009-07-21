@@ -704,11 +704,10 @@ def bulk(request):
         missing_references = dict((reference.id, reference) for reference in missing_references)
         all_references.update(missing_references)
     references = [all_references[id_] for id_ in ids]
-    response = render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
-                                                "prev_link": prev_link, "next_link": next_link, "pages": pages},
-                                  context_instance=RequestContext(request))
-    # I must do it here because the render_to_response call may have populated
-    # some extended_data fields in the references.
     for reference in references:
+        reference.fetch(["groups", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
         cache.set(cache_prefix + reference.id, reference)
-    return response
+    return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
+                                            "prev_link": prev_link, "next_link": next_link, "pages": pages},
+                              context_instance=RequestContext(request))
