@@ -27,6 +27,6 @@ urlpatterns = patterns("refdb.views",
                        (r"^view/add/$", "reference.edit", {"citation_key": None}),
                        (r"^view/search$", "reference.search"),
                        (r"^view/bulk$", "reference.bulk"),
-                       (r"^view/(?P<citation_key>.*)/edit/$", "reference.edit"),
-                       (r"^view/(?P<citation_key>.*)", "reference.view"),
+                       (r"^view/(?P<citation_key>.+)/edit/$", "reference.edit"),
+                       (r"^view/(?P<citation_key>.+)", "reference.view"),
                        )

@@ -1,0 +1,2 @@
+#! /bin/sh
+dropdb --username chantal django-refdb && createdb --username chantal django-refdb
