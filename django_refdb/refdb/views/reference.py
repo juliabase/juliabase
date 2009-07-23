@@ -221,6 +221,22 @@ class ReferenceForm(forms.Form):
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
 
+    def _split_on_semicolon(self, fieldname):
+        u"""Splits the content of a character field at all semicolons.  The
+        returned list is empty if the field was empty.
+
+        :Parameters:
+          - `fieldname`: name of the form field
+
+        :type fieldname: str
+
+        :Return:
+          all components of the field
+
+        :rtype: list of unicode
+        """
+        return filter(None, [item.strip() for item in self.cleaned_data[fieldname].split(";")])
+
     def clean_part_authors(self):
         u"""Cleans the author string.  It is split at the semicolons and then
         parsed into ``Author`` instances.
@@ -230,7 +246,7 @@ class ReferenceForm(forms.Form):
 
         :rtype: list of ``pyrefdb.Author``
         """
-        return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
+        return [pyrefdb.Author(author) for author in self._split_on_semicolon("part_authors")]
 
     def clean_publication_authors(self):
         u"""Cleans the author string.  It is split at the semicolons and then
@@ -241,7 +257,7 @@ class ReferenceForm(forms.Form):
 
         :rtype: list of ``pyrefdb.Author``
         """
-        return [pyrefdb.Author(author) for author in self.cleaned_data["publication_authors"].split(";")]
+        return [pyrefdb.Author(author) for author in self._split_on_semicolon("publication_authors")]
 
     def clean_date(self):
         u"""Cleans the date string into a proper ``Date` .
@@ -272,7 +288,7 @@ class ReferenceForm(forms.Form):
 
         :rtype: list of unicode
         """
-        return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
+        return self._split_on_semicolon("keywords")
 
     def clean_private_reprint_available(self):
         return u"INFILE" if self.cleaned_data["private_reprint_available"] else u"NOTINFILE"
