@@ -6,7 +6,7 @@ u"""Views for viewing, editing, adding, and searching for references.
 
 from __future__ import absolute_import
 
-import os.path, shutil, re, copy, urllib
+import os.path, shutil, re, copy
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -15,6 +15,7 @@ from django.views.decorators.http import last_modified
 from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
+from django.utils.http import urlencode
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.core.cache import cache
 import django.contrib.auth.models
@@ -220,6 +221,22 @@ class ReferenceForm(forms.Form):
         self.old_lists = lists_initial
         self.fields["groups"].set_groups(user, reference_groups)
 
+    def _split_on_semicolon(self, fieldname):
+        u"""Splits the content of a character field at all semicolons.  The
+        returned list is empty if the field was empty.
+
+        :Parameters:
+          - `fieldname`: name of the form field
+
+        :type fieldname: str
+
+        :Return:
+          all components of the field
+
+        :rtype: list of unicode
+        """
+        return filter(None, [item.strip() for item in self.cleaned_data[fieldname].split(";")])
+
     def clean_part_authors(self):
         u"""Cleans the author string.  It is split at the semicolons and then
         parsed into ``Author`` instances.
@@ -229,7 +246,7 @@ class ReferenceForm(forms.Form):
 
         :rtype: list of ``pyrefdb.Author``
         """
-        return [pyrefdb.Author(author) for author in self.cleaned_data["part_authors"].split(";")]
+        return [pyrefdb.Author(author) for author in self._split_on_semicolon("part_authors")]
 
     def clean_publication_authors(self):
         u"""Cleans the author string.  It is split at the semicolons and then
@@ -240,7 +257,7 @@ class ReferenceForm(forms.Form):
 
         :rtype: list of ``pyrefdb.Author``
         """
-        return [pyrefdb.Author(author) for author in self.cleaned_data["publication_authors"].split(";")]
+        return [pyrefdb.Author(author) for author in self._split_on_semicolon("publication_authors")]
 
     def clean_date(self):
         u"""Cleans the date string into a proper ``Date` .
@@ -271,7 +288,7 @@ class ReferenceForm(forms.Form):
 
         :rtype: list of unicode
         """
-        return filter(None, [keyword.strip() for keyword in self.cleaned_data["keywords"].split(";")])
+        return self._split_on_semicolon("keywords")
 
     def clean_private_reprint_available(self):
         return u"INFILE" if self.cleaned_data["private_reprint_available"] else u"NOTINFILE"
@@ -412,7 +429,7 @@ class ReferenceForm(forms.Form):
             reference.users_with_offprint = pyrefdb.XNote()
         if self.cleaned_data["has_reprint"]:
             reference.users_with_offprint.keywords.add(str(self.user.pk))
-        else:
+        elif reference.users_with_offprint:
             reference.users_with_offprint.keywords.discard(str(self.user.pk))
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
@@ -685,8 +702,7 @@ def bulk(request):
         new_query_dict = request.GET.copy()
         new_query_dict["offset"] = new_offset
         new_query_dict["limit"] = limit
-        return "?" + urllib.urlencode(new_query_dict) \
-            if 0 <= new_offset < number_of_references and new_offset != offset else None
+        return "?" + urlencode(new_query_dict) if 0 <= new_offset < number_of_references and new_offset != offset else None
 
     query_string, offset, limit, refdb_connection, ids = request.common_data.get_all_values()
     number_of_references = refdb_connection.count_references(query_string)

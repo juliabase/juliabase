@@ -22,7 +22,5 @@
        &gt;&gt;
     {% endif %}
   </div>
-  {% for reference in references %}
-    {{ reference.citation_key }}
-  {% endfor %}
+  {% include "list_compact.html" %}
 {% endblock %}
