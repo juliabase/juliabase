@@ -11,17 +11,17 @@
     {% if reference.part %}
       <tr>
         <td>{% trans 'Title' %}:</td>
-        <td colspan="5">{{ reference.part.title }}</td>
+        <td colspan="5">{{ reference.part.title|default:"" }}</td>
       </tr>
       <tr>
         <td>{% trans 'Authors' %}:</td>
-        <td colspan="5">{% for author in reference.part.authors %}{{ author }}{% if not forloop.last %};
+        <td colspan="5">{% for author in reference.part.authors %}{{ author.pretty_print }}{% if not forloop.last %};
           {% endif %}{% endfor %}</td>
       </tr>
     {% endif %}
     <tr>
       <td>{% trans 'Title' %}:</td>
-      <td colspan="5">{{ reference.publication.title }}</td>
+      <td colspan="5">{{ reference.publication.title|default:"" }}</td>
     </tr>
     {% if reference.publication.authors %}
     <tr>
@@ -62,7 +62,7 @@
       </tr>
       <tr>
         <td>{% trans 'Serial' %}:</td>
-        <td>{{ pub_info.publisher|default:"" }}</td>
+        <td>{{ pub_info.serial|default:"" }}</td>
         <td>{% trans 'DOI' %}:</td>
         <td>{{ pub_info.links.doi|default:"" }}</td>
         <td>{% trans 'URL' %}:</td>
@@ -84,11 +84,11 @@
     </tr>
     <tr>
       <td>{% trans 'Abstract' %}:</td>
-      <td colspan="5">{{ reference.contents.abstract }}</td>
+      <td colspan="5">{{ reference.abstract|default:"" }}</td>
     </tr>
     <tr>
       <td>{% trans 'Keywords' %}:</td>
-      <td colspan="5">{% for keyword in reference.contents.keywords %}{{ keyword }}{% if not forloop.last %};
+      <td colspan="5">{% for keyword in reference.keywords %}{{ keyword }}{% if not forloop.last %};
         {% endif %}{% endfor %}</td>
     </tr>
   </table>
