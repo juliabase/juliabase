@@ -2,3 +2,14 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block content %}
+  <div style="float: right; width: 60%">
+    {% include "list_compact.html" %}
+  </div>
+  <form method="get" action="view/bulk">
+    <table>
+      {{ search }}
+    </table>
+    <p><input type="submit"/></p>
+  </form>
+{% endblock %}
