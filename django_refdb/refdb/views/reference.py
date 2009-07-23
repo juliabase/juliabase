@@ -6,7 +6,7 @@ u"""Views for viewing, editing, adding, and searching for references.
 
 from __future__ import absolute_import
 
-import os.path, shutil, re, copy, urllib
+import os.path, shutil, re, copy
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -15,6 +15,7 @@ from django.views.decorators.http import last_modified
 from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
+from django.utils.http import urlencode
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.core.cache import cache
 import django.contrib.auth.models
@@ -685,8 +686,7 @@ def bulk(request):
         new_query_dict = request.GET.copy()
         new_query_dict["offset"] = new_offset
         new_query_dict["limit"] = limit
-        return "?" + urllib.urlencode(new_query_dict) \
-            if 0 <= new_offset < number_of_references and new_offset != offset else None
+        return "?" + urlencode(new_query_dict) if 0 <= new_offset < number_of_references and new_offset != offset else None
 
     query_string, offset, limit, refdb_connection, ids = request.common_data.get_all_values()
     number_of_references = refdb_connection.count_references(query_string)
