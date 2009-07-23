@@ -429,7 +429,7 @@ class ReferenceForm(forms.Form):
             reference.users_with_offprint = pyrefdb.XNote()
         if self.cleaned_data["has_reprint"]:
             reference.users_with_offprint.keywords.add(str(self.user.pk))
-        else:
+        elif reference.users_with_offprint:
             reference.users_with_offprint.keywords.discard(str(self.user.pk))
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
