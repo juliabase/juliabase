@@ -25,27 +25,44 @@ class SharedXNote(pyrefdb.XNote):
         self.share = "public"
 
 
-def add_refdb_user(sender, instance, **kwargs):
+def add_refdb_user(sender, instance, created=True, **kwargs):
     u"""Adds a newly-created Django user to RefDB.
 
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``User`` model
       - `instance`: the newly-added user
+      - `created`: whether the user was newly created.
 
     :type sender: model class
     :type instance: ``django.contrib.auth.models.User``
+    :type created: bool
     """
-    user = instance
-    utils.get_refdb_connection("root").add_user(utils.refdb_username(user.id), utils.get_refdb_password(user))
-    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
-    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
+    if created:
+        user = instance
+        utils.get_refdb_connection("root").add_user(utils.refdb_username(user.id), utils.get_refdb_password(user))
+        utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
+        utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
 
 
-def add_user_details(sender, instance, **kwargs):
-    refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=utils.refdb_username(instance.id))
+def add_user_details(sender, instance, created=True, **kwargs):
+    u"""Adds a `models.UserDetails` instance for every newly-created Django
+    user.  Hoever, you can also call it for existing users (``management.py``
+    does it) because this function is idempotent.
+
+    :Parameters:
+      - `sender`: the sender of the signal; will always be the ``User`` model
+      - `instance`: the newly-added user
+      - `created`: whether the user was newly created.
+
+    :type sender: model class
+    :type instance: ``django.contrib.auth.models.User``
+    :type created: bool
+    """
+    if created:
+        refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=utils.refdb_username(instance.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
@@ -83,19 +100,22 @@ def remove_refdb_user(sender, instance, **kwargs):
 signals.pre_delete.connect(remove_refdb_user, sender=django.contrib.auth.models.User)
 
 
-def add_refdb_group(sender, instance, **kwargs):
+def add_refdb_group(sender, instance, created=True, **kwargs):
     u"""Adds a newly-added Django group from RefDB by adding an appropriate
     extended note.
 
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``Group`` model
       - `instance`: the newly-added group
+      - `created`: whether the group was newly created.
 
     :type sender: model class
     :type instance: ``django.contrib.auth.models.Group``
+    :type created: bool
     """
-    group = instance
-    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-group-%d" % group.id))
+    if created:
+        group = instance
+        utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-group-%d" % group.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_refdb_group, sender=django.contrib.auth.models.Group)
