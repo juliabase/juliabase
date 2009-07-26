@@ -12,6 +12,7 @@ import pyrefdb
 import django.contrib.auth.models
 from django.db.models import signals
 from . import utils
+from . import models as refdb_app
 
 
 class SharedXNote(pyrefdb.XNote):
@@ -38,6 +39,13 @@ def add_refdb_user(sender, instance, **kwargs):
     utils.get_refdb_connection("root").add_user(utils.refdb_username(user.id), utils.get_refdb_password(user))
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
+
+# It must be "post_save", otherwise, the ID may be ``None``.
+signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
+
+
+def add_user_details(sender, instance, **kwargs):
+    refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=utils.refdb_username(instance.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
