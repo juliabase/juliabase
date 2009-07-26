@@ -26,17 +26,6 @@ class UserModification(models.Model):
     last_modified = models.DateTimeField(_(u"last modified"), auto_now=True)
 
 
-class ReferencesList(models.Model):
-    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"))
-    name = models.CharField(_(u"short list name"), max_length=255, blank=True)
-    verbose_name = models.CharField(_(u"verbose list name"), max_length=255, blank=True)
-
-    class Meta:
-        unique_together = (("user", "name"),)
-
-admin.site.register(ReferencesList)
-
-
 languages = (
     ("de", u"Deutsch"),
     ("en", u"English"),
@@ -51,7 +40,7 @@ class UserDetails(models.Model):
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
-    current_list = models.ForeignKey(ReferencesList, verbose_name=_(u"current references list"))
+    current_list = models.CharField(_(u"current references list"), max_length=255)
 
     class Meta:
         verbose_name = _(u"user details")
