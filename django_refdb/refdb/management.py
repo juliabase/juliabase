@@ -19,7 +19,7 @@ import django.contrib.auth.models
 from django.db.models import signals
 from . import utils
 from . import models as refdb_app
-from . import add_refdb_user, add_refdb_group, SharedXNote
+from . import add_refdb_user, add_user_details, add_refdb_group, SharedXNote
 
 
 def add_extended_note_if_nonexistent(citation_key):
