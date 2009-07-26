@@ -36,7 +36,6 @@ def add_refdb_user(sender, instance, **kwargs):
     """
     user = instance
     utils.get_refdb_connection("root").add_user(utils.refdb_username(user.id), utils.get_refdb_password(user))
-    utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-offprints-%d" % user.id))
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
     utils.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
 
