@@ -24,9 +24,11 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns("refdb.views",
                        (r"^$", "main.main_menu"),
+                       (r"^change_list/$", "main.change_list"),
                        (r"^view/add/$", "reference.edit", {"citation_key": None}),
                        (r"^view/search$", "reference.search"),
                        (r"^view/bulk$", "reference.bulk"),
                        (r"^view/(?P<citation_key>.+)/edit/$", "reference.edit"),
+                       (r"^view/(?P<citation_key>.+)/add_to_list/$", "reference.add_to_list"),
                        (r"^view/(?P<citation_key>.+)", "reference.view"),
                        )

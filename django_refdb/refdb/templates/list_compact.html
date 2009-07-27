@@ -12,7 +12,14 @@
       <td>{{ reference.publication.pub_info.pub_date.year|default_if_none:"" }}</td>
       <td>{{ reference.journal|default:"" }}</td>
       <td><a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}">{{ _("Details") }}</a><br/>
-	<a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}/edit/">{{ _("Edit") }}</a></td>
+	<a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}/edit/">{{ _("Edit") }}</a><br/>
+	<form method="post" action="{% url refdb.views.reference.view citation_key=reference.citation_key %}/add_to_list/">
+	  <table>
+	    {{ add_to_list }}
+	  </table>
+	  <p><input type="submit"/></p>
+	</form>
+      </td>
     </tr>
   {% endfor %}
 </table>

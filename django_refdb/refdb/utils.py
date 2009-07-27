@@ -10,10 +10,32 @@ from __future__ import absolute_import
 import hashlib, re, urlparse
 import pyrefdb
 from django.conf import settings
+from django.http import HttpResponse
+from django.utils.encoding import iri_to_uri
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 import django.contrib.auth.models
 from . import models
+
+
+# FixMe: This class is code duplication to Chantal
+
+class HttpResponseSeeOther(HttpResponse):
+    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
+    same wrong thing as most other web frameworks: it knows only one type of
+    redirect, with the HTTP status code 302.  However, this is very often not
+    desirable.  In Django-RefDB, we've frequently the use case where an HTTP
+    POST request was successful, and we want to redirect the user back to the
+    main page, for example.
+
+    This must be done with status code 303, and therefore, this class exists.
+    It can simply be used as a drop-in replacement of HttpResponseRedirect.
+    """
+    status_code = 303
+
+    def __init__(self, redirect_to):
+        super(HttpResponseSeeOther, self).__init__()
+        self["Location"] = iri_to_uri(redirect_to)
 
 
 class RefDBRollback(object):
@@ -321,6 +343,7 @@ def get_refdb_connection(user):
     if user == "root":
         return pyrefdb.Connection(settings.DATABASE_USER, settings.DATABASE_PASSWORD)
     else:
+#         print refdb_username(user.id), get_refdb_password(user)
         return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
 
 
@@ -352,7 +375,7 @@ def get_lists(user, citation_key=None):
     for note in extended_notes:
         short_name = note.citation_key.partition("-")[2]
         if short_name:
-            verbose_name = (note.content.text if note.content else None) or short_name
+            verbose_name = (note.content.text if note.content is not None else None) or short_name
             if verbose_name == username:
                 verbose_name = _(u"main list")
             choices.append((short_name, verbose_name))

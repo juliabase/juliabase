@@ -1,0 +1,15 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{# Actually, you should *never* get into this template, unless you don't use a
+   normal browser. #}
+
+{% block content %}
+  <form method="post" action="">
+    <table>
+      {{ add_to_list }}
+    </table>
+    <p><input type="submit"/></p>
+  </form>
+{% endblock %}

@@ -12,6 +12,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import Http404
 from django.views.decorators.http import last_modified
+from django.template import defaultfilters
 from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
@@ -724,6 +725,57 @@ def bulk(request):
         reference.fetch(["groups", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                          "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
         cache.set(cache_prefix + reference.id, reference)
+    add_to_list_form = AddToListForm(request.user)
     return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
-                                            "prev_link": prev_link, "next_link": next_link, "pages": pages},
+                                            "prev_link": prev_link, "next_link": next_link, "pages": pages,
+                                            "add_to_list": add_to_list_form},
+                              context_instance=RequestContext(request))
+
+
+class AddToListForm(forms.Form):
+    _ = ugettext_lazy
+    existing_list = forms.ChoiceField(label=_("List"), required=False)
+    new_list = forms.CharField(label=_("New list"), max_length=255, required=False)
+
+    def __init__(self, user, *args, **kwargs):
+        super(AddToListForm, self).__init__(*args, **kwargs)
+        lists = utils.get_lists(user)[0]
+        print lists
+        self.short_listnames = set(list_[0] for list_ in lists)
+        self.fields["existing_list"].choices = [("", 9*"-")] + lists
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        if cleaned_data["existing_list"] and cleaned_data["new_list"]:
+            self._errors["new_list"] = ErrorList([_(u"You must not give both an existing and a new list.")])
+            del cleaned_data["new_list"], cleaned_data["existing_list"]
+        elif not cleaned_data["existing_list"] and not cleaned_data["new_list"]:
+            self._errors["new_list"] = ErrorList([_(u"You must give either an existing or a new list.")])
+            del cleaned_data["new_list"], cleaned_data["existing_list"]
+        elif cleaned_data["new_list"] and cleaned_data["new_list"] in self.short_listnames:
+            self._errors["new_list"] = ErrorList([_(u"This listname is already given.")])
+            del cleaned_data["new_list"]
+        return cleaned_data
+
+
+@login_required
+def add_to_list(request, citation_key):
+    add_to_list_form = AddToListForm(request.user, request.POST)
+    if add_to_list_form.is_valid():
+        if add_to_list_form.cleaned_data["existing_list"]:
+            listname = add_to_list_form.cleaned_data["existing_list"]
+        else:
+            verbose_name = add_to_list_form.cleaned_data["new_list"]
+            listname = defaultfilters.slugify(verbose_name)
+        connection = utils.get_refdb_connection(request.user)
+        reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
+        connection.pick_references([reference_id], listname)
+        if add_to_list_form.cleaned_data["new_list"]:
+            extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (utils.refdb_username(request.user.id), listname))[0]
+            extended_note.set_text_content(verbose_name)
+            connection.update_extended_notes(extended_note)
+        next_url = django.core.urlresolvers.reverse(view, kwargs=dict(citation_key=citation_key))
+        return utils.HttpResponseSeeOther(next_url)
+    # With an unmanipulated browser, you never get this far
+    return render_to_response("add_to_list.html", {"title": _(u"Add to references list"), "add_to_list": add_to_list_form},
                               context_instance=RequestContext(request))
