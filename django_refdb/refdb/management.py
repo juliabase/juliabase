@@ -62,9 +62,10 @@ def sync_extended_notes(sender, created_models, interactive, **kwargs):
             utils.get_refdb_connection("root").delete_extended_notes(ids)
             for user in django.contrib.auth.models.User.objects.all():
                 add_refdb_user(sender=None, instance=user)
-                add_user_details(sender=None, instance=user)
             for group in django.contrib.auth.models.Group.objects.all():
                 add_refdb_group(sender=None, instance=group)
+        for user in django.contrib.auth.models.User.objects.all():
+            add_user_details(sender=None, instance=user)
     for relevance in range(1, 5):
         add_extended_note_if_nonexistent("django-refdb-relevance-%d" % relevance)
     add_extended_note_if_nonexistent("django-refdb-global-pdfs")
