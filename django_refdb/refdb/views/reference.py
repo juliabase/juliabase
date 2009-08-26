@@ -740,7 +740,6 @@ class AddToListForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         super(AddToListForm, self).__init__(*args, **kwargs)
         lists = utils.get_lists(user)[0]
-        print lists
         self.short_listnames = set(list_[0] for list_ in lists)
         self.fields["existing_list"].choices = [("", 9*"-")] + lists
 
