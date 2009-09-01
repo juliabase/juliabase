@@ -663,6 +663,11 @@ def search(request):
                               context_instance=RequestContext(request))
 
 
+class SelectionBoxForm(forms.Form):
+    _ = ugettext_lazy
+    selected = forms.BooleanField(label=_("selected"), required=False)
+
+
 def form_fields_to_query(form_fields):
     query_string = form_fields.get("query_string", "")
     return query_string
@@ -725,10 +730,9 @@ def bulk(request):
         reference.fetch(["groups", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                          "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
         cache.set(cache_prefix + reference.id, reference)
-    add_to_list_form = AddToListForm(request.user)
+        reference.selection_box = SelectionBoxForm(prefix=reference.id)
     return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
-                                            "prev_link": prev_link, "next_link": next_link, "pages": pages,
-                                            "add_to_list": add_to_list_form},
+                                            "prev_link": prev_link, "next_link": next_link, "pages": pages},
                               context_instance=RequestContext(request))
 
 

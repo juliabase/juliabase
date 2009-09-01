@@ -22,5 +22,13 @@
        &gt;&gt;
     {% endif %}
   </div>
-  {% include "list_compact.html" %}
+  <form method="POST" action="{% url reference.dispatch %}">
+    {% include "list_compact.html" %}
+    {% comment %}
+    <table>
+      {{ collective_actions }}
+    </table>
+    {% endcommend %}
+    <p><input type="submit"/></p>
+  </form>
 {% endblock %}
