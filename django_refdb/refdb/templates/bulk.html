@@ -22,7 +22,7 @@
        &gt;&gt;
     {% endif %}
   </div>
-  <form method="POST" action="{% url reference.dispatch %}">
+  <form method="POST" action="{% url refdb.views.reference.dispatch %}">
     {% include "list_compact.html" %}
     {% comment %}
     <table>
