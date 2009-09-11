@@ -10,8 +10,8 @@ import os.path, shutil, re, copy
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.http import Http404
-from django.views.decorators.http import last_modified
+from django.http import Http404, HttpResponseNotAllowed, HttpResponse
+from django.views.decorators.http import last_modified, require_http_methods
 from django.template import defaultfilters
 from django import forms
 from django.forms.util import ValidationError, ErrorList
@@ -668,6 +668,27 @@ class SelectionBoxForm(forms.Form):
     selected = forms.BooleanField(label=_("selected"), required=False)
 
 
+output_format_choices = (
+    ("", 9*u"-"),
+    ("ris", u"RIS"),
+    ("html", u"HTML"),
+    ("xhtml", u"XHTML"),
+    ("db31", u"DocBook 3.1"),
+    ("db31x", u"DocBook XML 3.1"),
+    ("db50", u"DocBook 5.0"),
+    ("db50x", u"DocBook XML 3.1"),
+    ("teix", u"TEI XML"),
+    ("tei5x", u"TEI 5 XML"),
+    ("mods", u"MODS"),
+    ("bibtex", u"BibTeX"),
+    ("rtf", u"RTF")
+    )
+
+class CollectiveActionsForm(forms.Form):
+    _ = ugettext_lazy
+    export = forms.ChoiceField(label=_("Export as"), choices=output_format_choices, required=False)
+
+
 def form_fields_to_query(form_fields):
     query_string = form_fields.get("query_string", "")
     return query_string
@@ -731,8 +752,10 @@ def bulk(request):
                          "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
         cache.set(cache_prefix + reference.id, reference)
         reference.selection_box = SelectionBoxForm(prefix=reference.id)
+    collective_actions_form = CollectiveActionsForm()
     return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
-                                            "prev_link": prev_link, "next_link": next_link, "pages": pages},
+                                            "prev_link": prev_link, "next_link": next_link, "pages": pages,
+                                            "collective_actions": collective_actions_form},
                               context_instance=RequestContext(request))
 
 
@@ -782,3 +805,46 @@ def add_to_list(request, citation_key):
     # With an unmanipulated browser, you never get this far
     return render_to_response("add_to_list.html", {"title": _(u"Add to references list"), "add_to_list": add_to_list_form},
                               context_instance=RequestContext(request))
+
+
+output_format_meta_info = {
+    "ris": ("text/plain", ".ris"),
+    "html": ("text/html", ".html"),
+    "xhtml": ("application/xhtml+xml", ".xhtml"),
+    "db31": ("text/plain", ".dbk"),
+    "db31x": ("text/plain", ".dbk"),
+    "db50": ("text/plain", ".dbk"),
+    "db50x": ("text/plain", ".dbk"),
+    "teix": ("text/xml", ".xml"),
+    "tei5x": ("text/xml", ".xml"),
+    "mods": ("text/xml", ".mods"),
+    "bibtex": ("text/plain", ".bib"),
+    "rtf": ("text/rtf", ".rtf")
+    }
+
+@login_required
+@require_http_methods(["GET"])
+def export(request):
+    format = request.GET.get("format")
+    try:
+        content_type, file_extension = output_format_meta_info[format]
+    except KeyError:
+        error_string = _(u"No format given.") if not format else _(u"Format “%s” is unknown.") % format
+        raise Http404(error_string)
+    ids = set()
+    for key, value in request.GET.iteritems():
+        if key.endswith("-selected") and value == "on":
+            ids.add(key.partition("-")[0])
+    output = utils.get_refdb_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
+                                                                     output_format=format)
+    response = HttpResponse(content_type=content_type + "; charset=utf-8")
+    response['Content-Disposition'] = "attachment; filename=references" + file_extension
+    response.write(output)
+    return response
+
+    
+@login_required
+@require_http_methods(["POST"])
+def dispatch(request):
+    pass
+

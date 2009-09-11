@@ -24,11 +24,9 @@
   </div>
   <form method="POST" action="{% url refdb.views.reference.dispatch %}">
     {% include "list_compact.html" %}
-    {% comment %}
     <table>
       {{ collective_actions }}
     </table>
-    {% endcomment %}
     <p><input type="submit"/></p>
   </form>
 {% endblock %}
