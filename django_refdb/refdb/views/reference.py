@@ -87,45 +87,6 @@ class CharNoneField(forms.CharField):
         return super(CharNoneField, self).clean(value) or None
 
 
-class MultipleGroupField(forms.MultipleChoiceField):
-    u"""Form field class for the selection of groups.
-    """
-
-    def set_groups(self, user, additional_groups=frozenset()):
-        u"""Set the group list shown in the widget.  You *must* call this
-        method in the constructor of the form in which you use this field,
-        otherwise the selection box will remain emtpy.  The selection list will
-        consist of all currently active groups, plus the given additional group
-        if any.  The “currently active groups” are all groups with at least one
-        active user amongst its members.
-
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `additional_groups`: Optional additional groups to be included into
-            the list.  Typically, it is the current groups of the reference,
-            for example.
-
-        :type user: ``django.contrib.auth.models.User``
-        :type additional_groups: set of ``django.contrib.auth.models.Group``
-        """
-        all_groups = django.contrib.auth.models.Group.objects.filter(user__is_active=True).distinct()
-        user_groups = user.groups.all()
-        try:
-            is_restricted = settings.restricted_group_test
-        except AttributeError:
-            is_restricted = lambda x: False
-        groups = set(group for group in all_groups if not is_restricted(group) or group in user_groups)
-        groups |= additional_groups
-        groups = sorted(groups, key=lambda group: group.name)
-        self.choices = [(group.pk, unicode(group)) for group in groups] or [(u"", 9*u"-")]
-
-    def clean(self, value):
-        if value == [u""]:
-            value = []
-        value = super(MultipleGroupField, self).clean(value)
-        return django.contrib.auth.models.Group.objects.in_bulk([int(pk) for pk in set(value)]).values()
-
-
 date_pattern = re.compile(r"(\d{4})$|(\d{4})-(\d\d?)-(\d\d?)$")
 pages_pattern = re.compile(r"(.+?)(?:--(.+))?")
 
@@ -161,7 +122,7 @@ class ReferenceForm(forms.Form):
     private_reprint_available = forms.BooleanField(label=_("Private reprint available"), required=False)
     private_reprint_location = CharNoneField(label=_("Private reprint location"), required=False)
     lists = forms.MultipleChoiceField(label=_("Lists"), required=False)
-    groups = MultipleGroupField(label=_("Groups"), required=False)
+    shelves = forms.MultipleChoiceField(label=_("Shelves"), required=False)
     pdf = forms.FileField(label=_(u"PDF file"), required=False)
     pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
@@ -177,7 +138,7 @@ class ReferenceForm(forms.Form):
         user = request.user
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
-        reference_groups = set()
+        reference_shelves = set()
         if reference:
             initial["reference_type"] = reference.type
             if reference.part:
@@ -212,7 +173,8 @@ class ReferenceForm(forms.Form):
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
-            initial["groups"] = reference.groups
+            initial["shelves"] = reference.shelves
+            reference_shelves = reference.shelves
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
         self.user = user
@@ -220,7 +182,14 @@ class ReferenceForm(forms.Form):
         self.refdb_rollback_actions = request.refdb_rollback_actions
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
-        self.fields["groups"].set_groups(user, reference_groups)
+        all_shelves = sorted(set(models.Shelf.objects.all()) | reference_shelves, key=lambda shelf: unicode(shelf))
+        self.fields["shelves"].choices = [(shelf.pk, unicode(shelf)) for shelf in shelves] or [(u"", 9*u"-")]
+
+    def clean_shelves(self):
+        value = self.cleaned_data["shelves"]
+        if value == [u""]:
+            value = []
+        return models.Shelf.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
     def _split_on_semicolon(self, fieldname):
         u"""Splits the content of a character field at all semicolons.  The
@@ -425,7 +394,7 @@ class ReferenceForm(forms.Form):
         if reference.comments:
             reference.comments.set_text_content(self.cleaned_data["global_notes"])
         reference.institute_publication = self.cleaned_data["institute_publication"]
-        reference.groups = set(group.id for group in self.cleaned_data["groups"])
+        reference.shelves = set(shelf.id for shelf in self.cleaned_data["shelves"])
         if self.cleaned_data["has_reprint"] and not reference.users_with_offprint:
             reference.users_with_offprint = pyrefdb.XNote()
         if self.cleaned_data["has_reprint"]:
@@ -580,7 +549,7 @@ def edit(request, citation_key):
             raise Http404("Citation key \"%s\" not found." % citation_key)
         else:
             reference = references[0]
-            reference.fetch(["groups", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+            reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                              "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
     else:
         reference = None
@@ -625,7 +594,7 @@ def view(request, citation_key):
     if not references:
         raise Http404("Citation key \"%s\" not found." % citation_key)
     reference = references[0]
-    reference.fetch(["groups", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+    reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
     lib_info = reference.get_lib_info(utils.refdb_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
@@ -748,14 +717,17 @@ def bulk(request):
         all_references.update(missing_references)
     references = [all_references[id_] for id_ in ids]
     for reference in references:
-        reference.fetch(["groups", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+        reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                          "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
         cache.set(cache_prefix + reference.id, reference)
         reference.selection_box = SelectionBoxForm(prefix=reference.id)
-    collective_actions_form = CollectiveActionsForm()
+    export_form = ExportForm()
+    add_to_shelf_form = AddToShelfForm()
+    add_to_list_form = AddToListForm(request.user)
     return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
                                             "prev_link": prev_link, "next_link": next_link, "pages": pages,
-                                            "collective_actions": collective_actions_form},
+                                            "add_to_shelf": add_to_shelf_form, "export": export_form,
+                                            "add_to_list": add_to_list_form},
                               context_instance=RequestContext(request))
 
 

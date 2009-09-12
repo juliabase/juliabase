@@ -5,7 +5,7 @@ import datetime
 import django.contrib.auth.models
 from django.contrib import admin
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class Reference(models.Model):
@@ -50,3 +50,16 @@ class UserDetails(models.Model):
         return unicode(self.user)
 
 admin.site.register(UserDetails)
+
+
+class Shelf(models.Model):
+    name = models.CharField(_(u"name"), max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = _(u"shelf")
+        verbose_name_plural = _(u"shelves")
+
+    def __unicode__(self):
+        return ugettext(self.name)
+
+admin.site.register(Shelf)

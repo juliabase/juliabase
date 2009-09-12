@@ -533,12 +533,12 @@ def fetch(self, attribute_names, connection, user_id):
         else:
             return False
 
-    # ``None`` means “not yet fetched”.  Everythin else, in particular
+    # ``None`` means “not yet fetched”.  Everything else, in particular
     # ``False``, means “fetched”.  The exception is ``pdf_is_private``.  Here,
     # an entry for a yet un-fetched user simply doesn't exist in the
     # dictionary.
-    if not hasattr(self, "groups"):
-        self.groups = None                  # is a set of integers
+    if not hasattr(self, "shelves"):
+        self.shelves = None                 # is a set of integers
         self.global_pdf_available = None    # is a boolean
         self.users_with_offprint = None     # is an extended note
         self.relevance = None               # is an integer
@@ -546,7 +546,7 @@ def fetch(self, attribute_names, connection, user_id):
         self.pdf_is_private = {}
         self.creator = None                 # is an integer
         self.institute_publication = None   # is a boolean
-    needed_notes_cks = {"groups": ":NCK:~^django-refdb-group-",
+    needed_notes_cks = {"shelves": ":NCK:~^django-refdb-shelf-",
                         "global_pdf_available": ":NCK:=django-refdb-global-pdfs",
                         "users_with_offprint": ":NCK:=django-refdb-users-with-offprint-" + self.citation_key,
                         "relevance": ":NCK:~^django-refdb-relevance-",
@@ -562,10 +562,10 @@ def fetch(self, attribute_names, connection, user_id):
         notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, " OR ".join(query_string_components)))
         notes = dict((note.citation_key, note) for note in notes)
         self._saved_extended_notes_cks |= set(notes)
-        if necessary("groups"):
-            prefix = "django-refdb-group-"
+        if necessary("shelves"):
+            prefix = "django-refdb-shelf-"
             prefix_length = len(prefix)
-            self.groups = set(int(citation_key[prefix_length:]) for citation_key in notes if citation_key.startswith(prefix))
+            self.shelves = set(int(citation_key[prefix_length:]) for citation_key in notes if citation_key.startswith(prefix))
         if necessary("global_pdf_available"):
             self.global_pdf_available = "django-refdb-global-pdfs" in notes
         if necessary("users_with_offprint"):
@@ -608,7 +608,7 @@ def freeze(self):
     must be created and saved separately.
     """
     self.extended_notes = pyrefdb.XNoteList()
-    self.extended_notes.extend("django-refdb-group-%d" % group for group in self.groups)
+    self.extended_notes.extend("django-refdb-shelf-%d" % shelf for shelf in self.shelves)
     if self.global_pdf_available:
         self.extended_notes.append("django-refdb-global-pdfs")
     if self.users_with_offprint:
