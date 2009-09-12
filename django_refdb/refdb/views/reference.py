@@ -13,15 +13,37 @@ from django.shortcuts import render_to_response
 from django.http import Http404, HttpResponseNotAllowed, HttpResponse
 from django.views.decorators.http import last_modified, require_http_methods
 from django.template import defaultfilters
+from django.http import QueryDict
+import django.core.urlresolvers
 from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
+from django.utils.encoding import iri_to_uri
 from django.utils.http import urlencode
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.core.cache import cache
 import django.contrib.auth.models
 from django.conf import settings
 from .. import utils, models
+
+
+class HttpResponseSeeOther(HttpResponse):
+    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
+    same wrong thing as most other web frameworks: it knows only one type of
+    redirect, with the HTTP status code 302.  However, this is very often not
+    desirable.  In Chantal, we've frequently the use case where an HTTP POST
+    request was successful, and we want to redirect the user back to the main
+    page, for example.
+
+    This must be done with status code 303, and therefore, this class exists.
+    It can simply be used as a drop-in replacement of HttpResponseRedirect.
+    """
+    status_code = 303
+
+    def __init__(self, redirect_to):
+        super(HttpResponseSeeOther, self).__init__()
+        self["Location"] = iri_to_uri(redirect_to)
+
 
 # FixMe: Here, we have two function in one.  This should be disentangled.
 def pdf_filepath(reference, user_id=None, existing=False):
@@ -138,7 +160,6 @@ class ReferenceForm(forms.Form):
         user = request.user
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
-        reference_shelves = set()
         if reference:
             initial["reference_type"] = reference.type
             if reference.part:
@@ -174,7 +195,6 @@ class ReferenceForm(forms.Form):
                 initial["private_reprint_location"] = lib_info.availability or u""
             initial["lists"] = lists_initial
             initial["shelves"] = reference.shelves
-            reference_shelves = reference.shelves
         kwargs["initial"] = initial
         super(ReferenceForm, self).__init__(*args, **kwargs)
         self.user = user
@@ -182,8 +202,8 @@ class ReferenceForm(forms.Form):
         self.refdb_rollback_actions = request.refdb_rollback_actions
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
-        all_shelves = sorted(set(models.Shelf.objects.all()) | reference_shelves, key=lambda shelf: unicode(shelf))
-        self.fields["shelves"].choices = [(shelf.pk, unicode(shelf)) for shelf in shelves] or [(u"", 9*u"-")]
+        self.fields["shelves"].choices = [(shelf.pk, unicode(shelf)) for shelf in models.Shelf.objects.all()] \
+            or [(u"", 9*u"-")]
 
     def clean_shelves(self):
         value = self.cleaned_data["shelves"]
@@ -751,37 +771,46 @@ class AddToListForm(forms.Form):
         lists = utils.get_lists(user)[0]
         self.short_listnames = set(list_[0] for list_ in lists)
         self.fields["existing_list"].choices = [("", 9*"-")] + lists
+        self.optional = True
 
     def clean(self):
         cleaned_data = self.cleaned_data
         if cleaned_data["existing_list"] and cleaned_data["new_list"]:
-            self._errors["new_list"] = ErrorList([_(u"You must not give both an existing and a new list.")])
+            append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
-        elif not cleaned_data["existing_list"] and not cleaned_data["new_list"]:
-            self._errors["new_list"] = ErrorList([_(u"You must give either an existing or a new list.")])
+        elif not self.optional and not cleaned_data["existing_list"] and not cleaned_data["new_list"]:
+            append_error(self, _(u"You must give either an existing or a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif cleaned_data["new_list"] and cleaned_data["new_list"] in self.short_listnames:
-            self._errors["new_list"] = ErrorList([_(u"This listname is already given.")])
+            append_error(self, _(u"This listname is already given."), "new_list")
             del cleaned_data["new_list"]
         return cleaned_data
 
 
+def add_references_to_list(ids, add_to_list_form, user):
+    # add_to_list_form must be bound and valid
+    if add_to_list_form.cleaned_data["existing_list"]:
+        listname = add_to_list_form.cleaned_data["existing_list"]
+    else:
+        verbose_name = add_to_list_form.cleaned_data["new_list"]
+        listname = defaultfilters.slugify(verbose_name)
+    connection = utils.get_refdb_connection(user)
+    reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
+    connection.pick_references(ids, listname)
+    if add_to_list_form.cleaned_data["new_list"]:
+        extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (utils.refdb_username(user.id), listname))[0]
+        extended_note.set_text_content(verbose_name)
+        connection.update_extended_notes(extended_note)
+
+
 @login_required
+@require_http_methods(["POST"])
 def add_to_list(request, citation_key):
+    # This is not used currently.  I may become an API view.
     add_to_list_form = AddToListForm(request.user, request.POST)
+    add_to_list_form.optional = False
     if add_to_list_form.is_valid():
-        if add_to_list_form.cleaned_data["existing_list"]:
-            listname = add_to_list_form.cleaned_data["existing_list"]
-        else:
-            verbose_name = add_to_list_form.cleaned_data["new_list"]
-            listname = defaultfilters.slugify(verbose_name)
-        connection = utils.get_refdb_connection(request.user)
-        reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
-        connection.pick_references([reference_id], listname)
-        if add_to_list_form.cleaned_data["new_list"]:
-            extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (utils.refdb_username(request.user.id), listname))[0]
-            extended_note.set_text_content(verbose_name)
-            connection.update_extended_notes(extended_note)
+        add_references_to_list([reference_id], add_to_list_form, request.user)
         next_url = django.core.urlresolvers.reverse(view, kwargs=dict(citation_key=citation_key))
         return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
@@ -845,21 +874,20 @@ def append_error(form, error_message, fieldname="__all__"):
     # FixMe: Is it really a good idea to call ``is_valid`` here?
     # ``append_error`` is also called in ``clean`` methods after all.
     form.is_valid()
-    print form._errors
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
 
-def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, global_dummy_form):
+def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, selection_box_forms, global_dummy_form):
     referentially_valid = True
     action = None
-    actions = set()
+    actions = []
     if export_form.is_valid() and export_form.cleaned_data["format"]:
-        actions.add("export")
+        actions.append("export")
     if add_to_shelf_form.is_valid() and add_to_shelf_form.cleaned_data["new_shelf"]:
-        actions.add("shelf")
+        actions.append("shelf")
     if add_to_list_form.is_valid() and (
         add_to_list_form.cleaned_data["existing_list"] or add_to_list_form.cleaned_data["new_list"]):
-        actions.add("list")
+        actions.append("list")
     if not actions:
         append_error(global_dummy_form, _(u"You must select an action."))
         referentially_valid = False
@@ -878,11 +906,38 @@ def dispatch(request):
     add_to_shelf_form = AddToShelfForm(request.POST)
     add_to_list_form = AddToListForm(request.user, request.POST)
     global_dummy_form = forms.Form(request.POST)
+    ids = set()
+    for key, value in request.POST.iteritems():
+        id_, dash, name = key.partition("-")
+        if name == "selected" and value == "on":
+            ids.add(id_)
+    selection_box_forms = [SelectionBoxForm(request.POST, prefix=id_) for id_ in ids]
+    if not selection_box_forms:
+        return render_to_response("nothing_selected.html", {"title": _(u"Nothing selected")},
+                                  context_instance=RequestContext(request))
     all_valid = export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid()
-    referentially_valid, action = is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, global_dummy_form)
+    all_valid = all([form.is_valid() for form in selection_box_forms]) and all_valid
+    referentially_valid, action = is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form,
+                                                         selection_box_forms, global_dummy_form)
     if all_valid and referentially_valid:
-        pass
+        if action == "export":
+            query_dict = {"format": export_form.cleaned_data["format"]}
+            query_dict.update((id_ + "-selected", "on") for id_ in ids)
+            query_string = urlencode(query_dict)
+            return HttpResponseSeeOther(django.core.urlresolvers.reverse(export) + "?" + query_string)
+        elif action == "shelf":
+            # FixMe: This must be changed from using citation keys to using
+            # IDs.  However, first
+            # https://sourceforge.net/tracker/?func=detail&aid=2857792&group_id=26091&atid=385991
+            # needs to be fixed.
+            citation_keys = [reference.citation_key for reference in utils.get_refdb_connection(request.user).
+                             get_references(" OR ".join(":ID:=" + id_ for id_ in ids))]
+            utils.get_refdb_connection(request.user).add_note_links(
+                ":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
+                u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
+        elif action == "list":
+            add_references_to_list(ids, add_to_list_form, request.user)
     return render_to_response("dispatch.html", {"title": _(u"Action dispatch"), "export": export_form,
                                                 "add_to_shelf": add_to_shelf_form, "add_to_list": add_to_list_form,
-                                                "global_dummy": global_dummy_form},
+                                                "global_dummy": global_dummy_form, "selection_boxes": selection_box_forms},
                               context_instance=RequestContext(request))

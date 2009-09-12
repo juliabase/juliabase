@@ -4,7 +4,13 @@
 
 {% block content %}
   <form method="POST" action="">
+    <table style="visibility: collapse">
+      {% for selection_box in selection_boxes %}
+        {{ selection_box }}
+      {% endfor %}
+    </table>
     <table>
+      {{ global_dummy }}
       {{ add_to_shelf }}
       {{ add_to_list }}
       {{ export }}
