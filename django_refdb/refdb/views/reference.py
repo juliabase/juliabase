@@ -653,9 +653,19 @@ output_format_choices = (
     ("rtf", u"RTF")
     )
 
-class CollectiveActionsForm(forms.Form):
+class ExportForm(forms.Form):
     _ = ugettext_lazy
-    export = forms.ChoiceField(label=_("Export as"), choices=output_format_choices, required=False)
+    format = forms.ChoiceField(label=_("Export as"), choices=output_format_choices, required=False)
+
+
+class AddToShelfForm(forms.Form):
+    _ = ugettext_lazy
+    new_shelf = forms.ChoiceField(label=_("Add to shelf"), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(AddToShelfForm, self).__init__(*args, **kwargs)
+        self.fields["new_shelf"].choices = \
+            [("", 9*u"-")] + [(shelf.pk, unicode(shelf)) for shelf in models.Shelf.objects.all()]
 
 
 def form_fields_to_query(form_fields):
@@ -814,9 +824,65 @@ def export(request):
     response.write(output)
     return response
 
-    
+
+def append_error(form, error_message, fieldname="__all__"):
+    u"""This function is called if a validation error is found in form data
+    which cannot be found by the ``is_valid`` method itself.  The reason is
+    very simple: For many types of invalid data, you must take other forms in
+    the same view into account.
+
+    :Parameters:
+      - `form`: the form to which the erroneous field belongs
+      - `error_message`: the message to be presented to the user
+      - `fieldname`: the name of the field that triggered the validation
+        error.  It is optional, and if not given, the error is considered an
+        error of the form as a whole.
+
+    :type form: ``forms.Form`` or ``forms.ModelForm``.
+    :type fieldname: str
+    :type error_message: unicode
+    """
+    # FixMe: Is it really a good idea to call ``is_valid`` here?
+    # ``append_error`` is also called in ``clean`` methods after all.
+    form.is_valid()
+    print form._errors
+    form._errors.setdefault(fieldname, ErrorList()).append(error_message)
+
+
+def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, global_dummy_form):
+    referentially_valid = True
+    action = None
+    actions = set()
+    if export_form.is_valid() and export_form.cleaned_data["format"]:
+        actions.add("export")
+    if add_to_shelf_form.is_valid() and add_to_shelf_form.cleaned_data["new_shelf"]:
+        actions.add("shelf")
+    if add_to_list_form.is_valid() and (
+        add_to_list_form.cleaned_data["existing_list"] or add_to_list_form.cleaned_data["new_list"]):
+        actions.add("list")
+    if not actions:
+        append_error(global_dummy_form, _(u"You must select an action."))
+        referentially_valid = False
+    elif len(actions) > 1:
+        append_error(global_dummy_form, _(u"You can't do more that one thing at the same time."))
+        referentially_valid = False
+    else:
+        action = actions[0]
+    return referentially_valid, action
+
+
 @login_required
 @require_http_methods(["POST"])
 def dispatch(request):
-    pass
-
+    export_form = ExportForm(request.POST)
+    add_to_shelf_form = AddToShelfForm(request.POST)
+    add_to_list_form = AddToListForm(request.user, request.POST)
+    global_dummy_form = forms.Form(request.POST)
+    all_valid = export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid()
+    referentially_valid, action = is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, global_dummy_form)
+    if all_valid and referentially_valid:
+        pass
+    return render_to_response("dispatch.html", {"title": _(u"Action dispatch"), "export": export_form,
+                                                "add_to_shelf": add_to_shelf_form, "add_to_list": add_to_list_form,
+                                                "global_dummy": global_dummy_form},
+                              context_instance=RequestContext(request))

@@ -1,0 +1,14 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <form method="POST" action="">
+    <table>
+      {{ add_to_shelf }}
+      {{ add_to_list }}
+      {{ export }}
+    </table>
+    <p><input type="submit"/></p>
+  </form>
+{% endblock %}

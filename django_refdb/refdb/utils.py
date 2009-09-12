@@ -498,7 +498,7 @@ def fetch(self, attribute_names, connection, user_id):
     current values.  Other code outside this method must assure that the
     contents of extended attributes is kept up-to-date.
 
-    It is very important to see that this is a *method* if the
+    It is very important to see that this is a *method* in the
     `pyrefdb.Connection` class.  It is injected into that class (aka monkey
     patching).
 
