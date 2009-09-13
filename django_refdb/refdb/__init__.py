@@ -65,7 +65,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
         refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=utils.refdb_username(instance.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
-signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
+signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
 
 def delete_extended_note(citation_key):
