@@ -11,6 +11,9 @@
     </table>
     <table>
       {{ global_dummy }}
+      {% if remove_from_list_form %}
+        {{ remove_from_list_form }}
+      {% endif %}
       {{ add_to_shelf }}
       {{ add_to_list }}
       {{ export }}

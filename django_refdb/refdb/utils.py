@@ -387,6 +387,17 @@ def get_lists(user, citation_key=None):
     return choices, initial
 
 
+def get_verbose_listname(short_listname, user):
+    username = refdb_username(user.id)
+    if short_listname == username:
+        return _(u"main list")
+    try:
+        note = get_refdb_connection(user).get_extended_notes(":NCK:=%s-%s" % (username, short_listname))[0]
+    except IndexError:
+        return None
+    return (note.content.text if note.content is not None else None) or short_listname
+
+
 def slugify_reference(reference):
     u"""Converts a reference to a filename for e.g. the PDF file.  This routine
     takes the main attributes of a reference (authors, title, year) and creates

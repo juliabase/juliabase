@@ -92,7 +92,6 @@ def remove_refdb_user(sender, instance, **kwargs):
     :type instance: ``django.contrib.auth.models.User``
     """
     user = instance
-    delete_extended_note("django-refdb-offprints-%d" % user.id)
     delete_extended_note("django-refdb-personal-pdfs-%d" % user.id)
     delete_extended_note("django-refdb-creator-%d" % user.id)
     utils.get_refdb_connection("root").remove_user(utils.refdb_username(user.id))

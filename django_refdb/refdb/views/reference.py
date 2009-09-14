@@ -678,6 +678,18 @@ class ExportForm(forms.Form):
     format = forms.ChoiceField(label=_("Export as"), choices=output_format_choices, required=False)
 
 
+class RemoveFromListForm(forms.Form):
+    _ = ugettext_lazy
+    remove = forms.BooleanField(required=False)
+    listname = forms.CharField(max_length=255, label=_("List"), widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        verbose_listname = kwargs.pop("verbose_listname", None)
+        super(RemoveFromListForm, self).__init__(*args, **kwargs)
+        if verbose_listname:
+            self.fields["remove"].label = _(u"Remove from list “%s”") % verbose_listname
+
+
 class AddToShelfForm(forms.Form):
     _ = ugettext_lazy
     new_shelf = forms.ChoiceField(label=_("Add to shelf"), required=False)
@@ -754,10 +766,19 @@ def bulk(request):
     export_form = ExportForm()
     add_to_shelf_form = AddToShelfForm()
     add_to_list_form = AddToListForm(request.user)
-    return render_to_response("bulk.html", {"title": _(u"Bulk view"), "references": references,
+    reference_list = request.GET.get("list")
+    if reference_list:
+        verbose_listname = utils.get_verbose_listname(reference_list, request.user)
+        remove_from_list_form = RemoveFromListForm(
+            initial={"listname": reference_list}, verbose_listname=verbose_listname, prefix="remove")
+    else:
+        remove_from_list_form = None
+    title = _(u"Bulk view") if not reference_list else _(u"List view of %s") % verbose_listname
+    return render_to_response("bulk.html", {"title": title, "references": references,
                                             "prev_link": prev_link, "next_link": next_link, "pages": pages,
                                             "add_to_shelf": add_to_shelf_form, "export": export_form,
-                                            "add_to_list": add_to_list_form},
+                                            "add_to_list": add_to_list_form,
+                                            "remove_from_list": remove_from_list_form},
                               context_instance=RequestContext(request))
 
 
@@ -795,7 +816,6 @@ def add_references_to_list(ids, add_to_list_form, user):
         verbose_name = add_to_list_form.cleaned_data["new_list"]
         listname = defaultfilters.slugify(verbose_name)
     connection = utils.get_refdb_connection(user)
-    reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
     connection.pick_references(ids, listname)
     if add_to_list_form.cleaned_data["new_list"]:
         extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (utils.refdb_username(user.id), listname))[0]
@@ -810,6 +830,7 @@ def add_to_list(request, citation_key):
     add_to_list_form = AddToListForm(request.user, request.POST)
     add_to_list_form.optional = False
     if add_to_list_form.is_valid():
+        reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
         add_references_to_list([reference_id], add_to_list_form, request.user)
         next_url = django.core.urlresolvers.reverse(view, kwargs=dict(citation_key=citation_key))
         return utils.HttpResponseSeeOther(next_url)
@@ -877,7 +898,8 @@ def append_error(form, error_message, fieldname="__all__"):
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
 
-def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, selection_box_forms, global_dummy_form):
+def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form,
+                           selection_box_forms, global_dummy_form):
     referentially_valid = True
     action = None
     actions = []
@@ -888,6 +910,8 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, sel
     if add_to_list_form.is_valid() and (
         add_to_list_form.cleaned_data["existing_list"] or add_to_list_form.cleaned_data["new_list"]):
         actions.append("list")
+    if remove_from_list_form and remove_from_list_form.is_valid() and remove_from_list_form.cleaned_data["remove"]:
+        actions.append("remove")
     if not actions:
         append_error(global_dummy_form, _(u"You must select an action."))
         referentially_valid = False
@@ -896,6 +920,12 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, sel
         referentially_valid = False
     else:
         action = actions[0]
+    # The following is actually already tested in `dispatch` but maybe this
+    # changes, so I test it here, too.
+    if not any(selection_box_form.is_valid() and selection_box_form.cleaned_data["selected"]
+               for selection_box_form in selection_box_forms):
+        append_error(global_dummy_form, _(u"You must select at least one sample."))
+        referentially_valid = False
     return referentially_valid, action
 
 
@@ -905,6 +935,7 @@ def dispatch(request):
     export_form = ExportForm(request.POST)
     add_to_shelf_form = AddToShelfForm(request.POST)
     add_to_list_form = AddToListForm(request.user, request.POST)
+    remove_from_list_form = RemoveFromListForm(request.POST, prefix="remove") if "remove-listname" in request.POST else None
     global_dummy_form = forms.Form(request.POST)
     ids = set()
     for key, value in request.POST.iteritems():
@@ -916,8 +947,10 @@ def dispatch(request):
         return render_to_response("nothing_selected.html", {"title": _(u"Nothing selected")},
                                   context_instance=RequestContext(request))
     all_valid = export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid()
+    if remove_from_list_form:
+        all_valid = remove_from_list_form.is_valid() and all_valid
     all_valid = all([form.is_valid() for form in selection_box_forms]) and all_valid
-    referentially_valid, action = is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form,
+    referentially_valid, action = is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form,
                                                          selection_box_forms, global_dummy_form)
     if all_valid and referentially_valid:
         if action == "export":
@@ -937,7 +970,10 @@ def dispatch(request):
                 u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
         elif action == "list":
             add_references_to_list(ids, add_to_list_form, request.user)
+        elif action == "remove":
+            utils.get_refdb_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
     return render_to_response("dispatch.html", {"title": _(u"Action dispatch"), "export": export_form,
                                                 "add_to_shelf": add_to_shelf_form, "add_to_list": add_to_list_form,
-                                                "global_dummy": global_dummy_form, "selection_boxes": selection_box_forms},
+                                                "global_dummy": global_dummy_form, "selection_boxes": selection_box_forms,
+                                                "remove_from_list": remove_from_list_form},
                               context_instance=RequestContext(request))
