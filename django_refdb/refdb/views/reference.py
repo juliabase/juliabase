@@ -29,24 +29,6 @@ from . import utils
 from .rollbacks import *
 
 
-class HttpResponseSeeOther(HttpResponse):
-    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
-    same wrong thing as most other web frameworks: it knows only one type of
-    redirect, with the HTTP status code 302.  However, this is very often not
-    desirable.  In Chantal, we've frequently the use case where an HTTP POST
-    request was successful, and we want to redirect the user back to the main
-    page, for example.
-
-    This must be done with status code 303, and therefore, this class exists.
-    It can simply be used as a drop-in replacement of HttpResponseRedirect.
-    """
-    status_code = 303
-
-    def __init__(self, redirect_to):
-        super(HttpResponseSeeOther, self).__init__()
-        self["Location"] = iri_to_uri(redirect_to)
-
-
 # FixMe: Here, we have two function in one.  This should be disentangled.
 def pdf_filepath(reference, user_id=None, existing=False):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
@@ -959,7 +941,7 @@ def dispatch(request):
             query_dict = {"format": export_form.cleaned_data["format"]}
             query_dict.update((id_ + "-selected", "on") for id_ in ids)
             query_string = urlencode(query_dict)
-            return HttpResponseSeeOther(django.core.urlresolvers.reverse(export) + "?" + query_string)
+            return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(export) + "?" + query_string)
         elif action == "shelf":
             # FixMe: This must be changed from using citation keys to using
             # IDs.  However, first
