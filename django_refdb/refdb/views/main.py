@@ -48,7 +48,7 @@ def main_menu(request):
     search_form = SimpleSearchForm()
     change_list_form = ChangeListForm(request.user)
     current_list = models.UserDetails.objects.get(user=request.user).current_list
-    references = refdb.get_refdb_connection(request.user).get_references(":ID:>0", listname=current_list)
+    references = refdb.get_connection(request.user).get_references(":ID:>0", listname=current_list)
     print len(references)
     return render_to_response("main_menu.html", {"title": _(u"Main menu"), "search": search_form, "references": references,
                                                  "change_list": change_list_form},

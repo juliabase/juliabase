@@ -39,9 +39,9 @@ def add_refdb_user(sender, instance, created=True, **kwargs):
     """
     if created:
         user = instance
-        refdb.get_refdb_connection("root").add_user(refdb.refdb_username(user.id), refdb.get_refdb_password(user))
-        refdb.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
-        refdb.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
+        refdb.get_connection("root").add_user(refdb.refdb_username(user.id), refdb.get_password(user))
+        refdb.get_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
+        refdb.get_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_refdb_user, sender=django.contrib.auth.models.User)
@@ -77,8 +77,8 @@ def delete_extended_note(citation_key):
 
     :type citation_key: str
     """
-    id_ = refdb.get_refdb_connection("root").get_extended_notes(":NCK:=" + citation_key)[0].id
-    refdb.get_refdb_connection("root").delete_extended_notes([id_])
+    id_ = refdb.get_connection("root").get_extended_notes(":NCK:=" + citation_key)[0].id
+    refdb.get_connection("root").delete_extended_notes([id_])
 
 
 def remove_refdb_user(sender, instance, **kwargs):
@@ -94,7 +94,7 @@ def remove_refdb_user(sender, instance, **kwargs):
     user = instance
     delete_extended_note("django-refdb-personal-pdfs-%d" % user.id)
     delete_extended_note("django-refdb-creator-%d" % user.id)
-    refdb.get_refdb_connection("root").remove_user(refdb.refdb_username(user.id))
+    refdb.get_connection("root").remove_user(refdb.refdb_username(user.id))
 
 signals.pre_delete.connect(remove_refdb_user, sender=django.contrib.auth.models.User)
 
@@ -114,7 +114,7 @@ def add_shelf(sender, instance, created=True, **kwargs):
     """
     if created:
         shelf = instance
-        refdb.get_refdb_connection("root").add_extended_notes(SharedXNote("django-refdb-shelf-%d" % shelf.id))
+        refdb.get_connection("root").add_extended_notes(SharedXNote("django-refdb-shelf-%d" % shelf.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_shelf, sender=refdb_app.Shelf)

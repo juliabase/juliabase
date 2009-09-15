@@ -38,7 +38,7 @@ class HttpResponseSeeOther(HttpResponse):
         self["Location"] = iri_to_uri(redirect_to)
 
 
-def get_refdb_password(user):
+def get_password(user):
     u"""Retrieves the RefDB password for a user.  For connection to RefDB, both
     username and password are computed from the Django user ID.  In this
     routine, I calculate the password, which is a shortened, salted SHA-1 hash
@@ -81,7 +81,7 @@ def refdb_username(user_id):
     return settings.REFDB_USERNAME_PREFIX + str(user_id)
 
 
-def get_refdb_connection(user):
+def get_connection(user):
     u"""Returns a RefDB connection object for the user, or returns a RefDB root
     connection.
 
@@ -100,8 +100,8 @@ def get_refdb_connection(user):
     if user == "root":
         return pyrefdb.Connection(settings.REFDB_USER, settings.REFDB_PASSWORD)
     else:
-#         print refdb_username(user.id), get_refdb_password(user)
-        return pyrefdb.Connection(refdb_username(user.id), get_refdb_password(user))
+#         print refdb_username(user.id), get_password(user)
+        return pyrefdb.Connection(refdb_username(user.id), get_password(user))
 
 
 def get_lists(user, citation_key=None):
@@ -126,7 +126,7 @@ def get_lists(user, citation_key=None):
     :rtype: list of (str, unicode), list of str
     """
     username = refdb_username(user.id)
-    extended_notes = get_refdb_connection(user).get_extended_notes(":NCK:~^%s-" % username)
+    extended_notes = get_connection(user).get_extended_notes(":NCK:~^%s-" % username)
     choices = []
     initial = []
     for note in extended_notes:
@@ -149,7 +149,7 @@ def get_verbose_listname(short_listname, user):
     if short_listname == username:
         return _(u"main list")
     try:
-        note = get_refdb_connection(user).get_extended_notes(":NCK:=%s-%s" % (username, short_listname))[0]
+        note = get_connection(user).get_extended_notes(":NCK:=%s-%s" % (username, short_listname))[0]
     except IndexError:
         return None
     return (note.content.text if note.content is not None else None) or short_listname

@@ -443,13 +443,13 @@ class ReferenceForm(forms.Form):
             if list_ not in self.old_lists:
                 listname = list_.partition("-")[2] or None
                 self.refdb_rollback_actions.append(DumprefRollback(self.user, reference.id, listname))
-                refdb.get_refdb_connection(self.user).pick_references([reference.id], listname)
+                refdb.get_connection(self.user).pick_references([reference.id], listname)
                 
         for list_ in self.old_lists:
             if list_ not in self.cleaned_data["lists"]:
                 listname = list_.partition("-")[2]
                 self.refdb_rollback_actions.append(PickrefRollback(self.user, reference.id, listname))
-                refdb.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
+                refdb.get_connection(self.user).dump_references([reference.id], listname or None)
 
     def _save_extended_note(self, extended_note, citation_key):
         u"""Stores an extended note in the RefDB database.  This is used as a
@@ -467,10 +467,10 @@ class ReferenceForm(forms.Form):
         if extended_note:
             if extended_note.citation_key:
                 self.refdb_rollback_actions.append(UpdatenoteRollback(self.user, extended_note))
-                refdb.get_refdb_connection(self.user).update_extended_notes(extended_note)
+                refdb.get_connection(self.user).update_extended_notes(extended_note)
             else:
                 extended_note.citation_key = citation_key
-                refdb.get_refdb_connection(self.user).add_extended_notes(extended_note)
+                refdb.get_connection(self.user).add_extended_notes(extended_note)
                 self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
 
     def _update_last_modification(self, new_reference):
@@ -482,7 +482,7 @@ class ReferenceForm(forms.Form):
         # case.  Fortunately, it isn't a frequent case.
         id_ = new_reference.id
         if id_ is None:
-            id_ = refdb.get_refdb_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
+            id_ = refdb.get_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
         django_object, created = models.Reference.objects.get_or_create(reference_id=id_)
         if not created:
             django_object.mark_modified()
@@ -505,7 +505,7 @@ class ReferenceForm(forms.Form):
         # slightly slower and debugging more cumbersome.
         extended_notes = new_reference.extended_notes
         new_reference.extended_notes = None
-        connection = refdb.get_refdb_connection(self.user)
+        connection = refdb.get_connection(self.user)
         if self.reference:
             self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
             connection.update_references(new_reference)
@@ -564,7 +564,7 @@ def edit(request, citation_key):
     :rtype: ``HttpResponse``
     """
     if citation_key:
-        connection = refdb.get_refdb_connection(request.user)
+        connection = refdb.get_connection(request.user)
         references = connection.get_references(":CK:=" + citation_key)
         if not references:
             raise Http404("Citation key \"%s\" not found." % citation_key)
@@ -609,7 +609,7 @@ def view(request, citation_key):
 
     :rtype: ``HttpResponse``
     """
-    connection = refdb.get_refdb_connection(request.user)
+    connection = refdb.get_connection(request.user)
     references = connection.get_references(":CK:=" + citation_key, with_extended_notes=True,
                                            extended_notes_constraints=":NCK:~^django-refdb-")
     if not references:
@@ -728,7 +728,7 @@ def get_last_modification_date(request):
         limit = int(limit)
     except (TypeError, ValueError):
         limit = 10
-    refdb_connection = refdb.get_refdb_connection(request.user)
+    refdb_connection = refdb.get_connection(request.user)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
     request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
     return refdb.last_modified(request.user, ids)
@@ -816,7 +816,7 @@ def add_references_to_list(ids, add_to_list_form, user):
     else:
         verbose_name = add_to_list_form.cleaned_data["new_list"]
         listname = defaultfilters.slugify(verbose_name)
-    connection = refdb.get_refdb_connection(user)
+    connection = refdb.get_connection(user)
     connection.pick_references(ids, listname)
     if add_to_list_form.cleaned_data["new_list"]:
         extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (refdb.refdb_username(user.id), listname))[0]
@@ -868,7 +868,7 @@ def export(request):
     for key, value in request.GET.iteritems():
         if key.endswith("-selected") and value == "on":
             ids.add(key.partition("-")[0])
-    output = refdb.get_refdb_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
+    output = refdb.get_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
                                                                      output_format=format)
     response = HttpResponse(content_type=content_type + "; charset=utf-8")
     response['Content-Disposition'] = "attachment; filename=references" + file_extension
@@ -964,15 +964,15 @@ def dispatch(request):
             # IDs.  However, first
             # https://sourceforge.net/tracker/?func=detail&aid=2857792&group_id=26091&atid=385991
             # needs to be fixed.
-            citation_keys = [reference.citation_key for reference in refdb.get_refdb_connection(request.user).
+            citation_keys = [reference.citation_key for reference in refdb.get_connection(request.user).
                              get_references(" OR ".join(":ID:=" + id_ for id_ in ids))]
-            refdb.get_refdb_connection(request.user).add_note_links(
+            refdb.get_connection(request.user).add_note_links(
                 ":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
                 u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
         elif action == "list":
             add_references_to_list(ids, add_to_list_form, request.user)
         elif action == "remove":
-            refdb.get_refdb_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
+            refdb.get_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
     return render_to_response("dispatch.html", {"title": _(u"Action dispatch"), "export": export_form,
                                                 "add_to_shelf": add_to_shelf_form, "add_to_list": add_to_list_form,
                                                 "global_dummy": global_dummy_form, "selection_boxes": selection_box_forms,
