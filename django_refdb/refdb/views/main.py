@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response
 from django import forms
 import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy
 from .. import refdb, models
 from . import utils
 

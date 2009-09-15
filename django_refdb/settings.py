@@ -108,3 +108,4 @@ INSTITUTION = u"IEF-5, Forschungszentrum Jülich, Germany"
 REFDB_USERNAME_PREFIX = "drefdbuser"
 REFDB_USER = CREDENTIALS["refdb_user"]
 REFDB_PASSWORD = CREDENTIALS["refdb_password"]
+REFDB_CACHE_PREFIX = "refdb-reference-"

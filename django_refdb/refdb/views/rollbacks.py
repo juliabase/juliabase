@@ -231,7 +231,7 @@ class LinknoteRollback(RefDBRollback):
 
     def execute(self):
         refdb.get_connection(self.user).add_note_links(":NCK:=" + self.note_citation_key,
-                                                             ":CK:=" + self.reference_citation_key)
+                                                       ":CK:=" + self.reference_citation_key)
 
 
 class UnlinknoteRollback(RefDBRollback):
@@ -256,4 +256,4 @@ class UnlinknoteRollback(RefDBRollback):
 
     def execute(self):
         refdb.get_connection(self.user).remove_note_links(":NCK:=" + self.note_citation_key,
-                                                                ":CK:=" + self.reference_citation_key)
+                                                          ":CK:=" + self.reference_citation_key)

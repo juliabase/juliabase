@@ -11,7 +11,6 @@ from django import template
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 import django.utils.http
-import django.core.urlresolvers
 import refdb.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
