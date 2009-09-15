@@ -15,7 +15,8 @@ import django.core.urlresolvers
 import refdb.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
-from refdb import utils
+from refdb import utils  # This *must* be absolute because otherwise, a Django
+                         # module of the same name is imported.
 
 register = template.Library()
 
