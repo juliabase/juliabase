@@ -10,6 +10,7 @@ import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from .. import refdb, models
+from . import utils
 
 
 class SimpleSearchForm(forms.Form):
@@ -63,7 +64,7 @@ def change_list(request):
         user_details.current_list = change_list_form.cleaned_data["new_list"]
         user_details.save()
         next_url = django.core.urlresolvers.reverse(main_menu)
-        return refdb.HttpResponseSeeOther(next_url)
+        return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
     return render_to_response("change_list.html", {"title": _(u"Change default list"), "change_list": change_list_form},
                               context_instance=RequestContext(request))

@@ -25,6 +25,7 @@ from django.core.cache import cache
 import django.contrib.auth.models
 from django.conf import settings
 from .. import refdb, models
+from . import utils
 from .rollbacks import *
 
 
@@ -78,7 +79,7 @@ def pdf_filepath(reference, user_id=None, existing=False):
         directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
         if private:
             directory = os.path.join(directory, str(user_id))
-        filepath = os.path.join(directory, refdb.slugify_reference(reference) + ".pdf")
+        filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
     return (filepath, private) if existing else filepath
 
 
@@ -118,7 +119,7 @@ class ReferenceForm(forms.Form):
     """
 
     _ = ugettext_lazy
-    reference_type = forms.ChoiceField(label=_("Type"), choices=refdb.reference_types.items())
+    reference_type = forms.ChoiceField(label=_("Type"), choices=utils.reference_types.items())
     part_title = CharNoneField(label=_("Part title"), required=False)
     part_authors = forms.CharField(label=_("Part authors"), required=False)
     publication_title = forms.CharField(label=_("Publication title"), required=False)
@@ -379,7 +380,7 @@ class ReferenceForm(forms.Form):
             reference = copy.deepcopy(self.reference)
         else:
             reference = pyrefdb.Reference()
-            reference.extended_data = refdb.ExtendedData()
+            reference.extended_data = utils.ExtendedData()
             reference.creator = self.user.pk
         reference.type = self.cleaned_data["reference_type"]
         if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
@@ -521,7 +522,7 @@ class ReferenceForm(forms.Form):
         connection.update_note_links(new_reference)
 
         self.save_lists(new_reference)
-        if self.reference and refdb.slugify_reference(new_reference) != refdb.slugify_reference(self.reference):
+        if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
             if self.reference.global_pdf_available:
                 shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
             for user_id in self.reference.pdf_is_private:
@@ -731,7 +732,7 @@ def get_last_modification_date(request):
     refdb_connection = refdb.get_connection(request.user)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
     request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
-    return refdb.last_modified(request.user, ids)
+    return utils.last_modified(request.user, ids)
 
 @login_required
 @last_modified(get_last_modification_date)
@@ -834,7 +835,7 @@ def add_to_list(request, citation_key):
         reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
         add_references_to_list([reference_id], add_to_list_form, request.user)
         next_url = django.core.urlresolvers.reverse(view, kwargs=dict(citation_key=citation_key))
-        return refdb.HttpResponseSeeOther(next_url)
+        return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
     return render_to_response("add_to_list.html", {"title": _(u"Add to references list"), "add_to_list": add_to_list_form},
                               context_instance=RequestContext(request))

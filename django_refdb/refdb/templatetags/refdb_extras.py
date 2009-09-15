@@ -15,8 +15,9 @@ import django.core.urlresolvers
 import refdb.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
-from refdb import refdb  # This *must* be absolute because otherwise, a Django
-                         # module of the same name is imported.
+# This *must* be absolute because otherwise, a Django module of the same name
+# is imported.
+from refdb.views import utils  
 
 register = template.Library()
 
@@ -26,7 +27,7 @@ def display_reference_type(value):
     u"""Filter for converting a short-form reference type into its verbose
     form, e.g. ``"JOUR"`` becomes ``"journal paper"``.
     """
-    return refdb.reference_types[value]
+    return utils.reference_types[value]
 
 
 entities = {}
