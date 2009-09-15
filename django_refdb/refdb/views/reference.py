@@ -25,6 +25,7 @@ from django.core.cache import cache
 import django.contrib.auth.models
 from django.conf import settings
 from .. import utils, models
+from .rollbacks import *
 
 
 class HttpResponseSeeOther(HttpResponse):
@@ -441,13 +442,13 @@ class ReferenceForm(forms.Form):
         for list_ in self.cleaned_data["lists"]:
             if list_ not in self.old_lists:
                 listname = list_.partition("-")[2] or None
-                self.refdb_rollback_actions.append(utils.DumprefRollback(self.user, reference.id, listname))
+                self.refdb_rollback_actions.append(DumprefRollback(self.user, reference.id, listname))
                 utils.get_refdb_connection(self.user).pick_references([reference.id], listname)
                 
         for list_ in self.old_lists:
             if list_ not in self.cleaned_data["lists"]:
                 listname = list_.partition("-")[2]
-                self.refdb_rollback_actions.append(utils.PickrefRollback(self.user, reference.id, listname))
+                self.refdb_rollback_actions.append(PickrefRollback(self.user, reference.id, listname))
                 utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def _save_extended_note(self, extended_note, citation_key):
@@ -465,12 +466,12 @@ class ReferenceForm(forms.Form):
         """
         if extended_note:
             if extended_note.citation_key:
-                self.refdb_rollback_actions.append(utils.UpdatenoteRollback(self.user, extended_note))
+                self.refdb_rollback_actions.append(UpdatenoteRollback(self.user, extended_note))
                 utils.get_refdb_connection(self.user).update_extended_notes(extended_note)
             else:
                 extended_note.citation_key = citation_key
                 utils.get_refdb_connection(self.user).add_extended_notes(extended_note)
-                self.refdb_rollback_actions.append(utils.DeletenoteRollback(self.user, extended_note))
+                self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
 
     def _update_last_modification(self, new_reference):
         # FixMe: As long as RefDB's addref doesn't return the IDs of the added
@@ -506,11 +507,11 @@ class ReferenceForm(forms.Form):
         new_reference.extended_notes = None
         connection = utils.get_refdb_connection(self.user)
         if self.reference:
-            self.refdb_rollback_actions.append(utils.UpdaterefRollback(self.user, self.reference))
+            self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
             connection.update_references(new_reference)
         else:
             citation_key = connection.add_references(new_reference)[0][0]
-            self.refdb_rollback_actions.append(utils.DeleterefRollback(self.user, citation_key))
+            self.refdb_rollback_actions.append(DeleterefRollback(self.user, citation_key))
             new_reference.citation_key = citation_key
 
         self._save_extended_note(new_reference.comments, "django-refdb-comments-" + new_reference.citation_key)
