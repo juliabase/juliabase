@@ -190,7 +190,7 @@ class ReferenceForm(forms.Form):
                 initial["has_reprint"] = unicode(user.pk) in reference.users_with_offprint.keywords
             initial["abstract"] = reference.abstract or u""
             initial["keywords"] = u"; ".join(reference.keywords)
-            lib_info = reference.get_lib_info(refdb.refdb_username(user.id))
+            lib_info = reference.get_lib_info(refdb.get_username(user.id))
             if lib_info:
                 initial["private_notes"] = lib_info.notes or u""
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
@@ -392,7 +392,7 @@ class ReferenceForm(forms.Form):
             reference.publication = pyrefdb.Publication()
         reference.publication.title = self.cleaned_data["publication_title"]
         reference.publication.authors = self.cleaned_data["publication_authors"]
-        lib_info = reference.get_or_create_lib_info(refdb.refdb_username(self.user.id))
+        lib_info = reference.get_or_create_lib_info(refdb.get_username(self.user.id))
         lib_info.notes = self.cleaned_data["private_notes"]
         lib_info.reprint_status = "INFILE" if self.cleaned_data["private_reprint_available"] else "NOTINFILE"
         lib_info.availability = self.cleaned_data["private_reprint_location"]
@@ -618,7 +618,7 @@ def view(request, citation_key):
     reference = references[0]
     reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
-    lib_info = reference.get_lib_info(refdb.refdb_username(request.user.id))
+    lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
                                                       "reference": reference, "lib_info": lib_info,
@@ -820,7 +820,7 @@ def add_references_to_list(ids, add_to_list_form, user):
     connection = refdb.get_connection(user)
     connection.pick_references(ids, listname)
     if add_to_list_form.cleaned_data["new_list"]:
-        extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (refdb.refdb_username(user.id), listname))[0]
+        extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (refdb.get_username(user.id), listname))[0]
         extended_note.set_text_content(verbose_name)
         connection.update_extended_notes(extended_note)
 

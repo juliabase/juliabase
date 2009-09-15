@@ -34,7 +34,7 @@ def get_password(user):
     return user_hash.hexdigest()[:10]
 
 
-def refdb_username(user_id):
+def get_username(user_id):
     u"""Retrieves the RefDB username for a user.  For connection to RefDB, both
     username and password are computed from the Django user ID.  In this
     routine, I calculate the username, which is the user ID with a constant
@@ -74,8 +74,8 @@ def get_connection(user):
     if user == "root":
         return pyrefdb.Connection(settings.REFDB_USER, settings.REFDB_PASSWORD)
     else:
-#         print refdb_username(user.id), get_password(user)
-        return pyrefdb.Connection(refdb_username(user.id), get_password(user))
+#         print get_username(user.id), get_password(user)
+        return pyrefdb.Connection(get_username(user.id), get_password(user))
 
 
 def get_lists(user, citation_key=None):
@@ -99,7 +99,7 @@ def get_lists(user, citation_key=None):
 
     :rtype: list of (str, unicode), list of str
     """
-    username = refdb_username(user.id)
+    username = get_username(user.id)
     extended_notes = get_connection(user).get_extended_notes(":NCK:~^%s-" % username)
     choices = []
     initial = []
@@ -119,7 +119,7 @@ def get_lists(user, citation_key=None):
 
 
 def get_verbose_listname(short_listname, user):
-    username = refdb_username(user.id)
+    username = get_username(user.id)
     if short_listname == username:
         return _(u"main list")
     try:

@@ -39,7 +39,7 @@ def add_refdb_user(sender, instance, created=True, **kwargs):
     """
     if created:
         user = instance
-        refdb.get_connection("root").add_user(refdb.refdb_username(user.id), refdb.get_password(user))
+        refdb.get_connection("root").add_user(refdb.get_username(user.id), refdb.get_password(user))
         refdb.get_connection("root").add_extended_notes(SharedXNote("django-refdb-personal-pdfs-%d" % user.id))
         refdb.get_connection("root").add_extended_notes(SharedXNote("django-refdb-creator-%d" % user.id))
 
@@ -62,7 +62,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
     :type created: bool
     """
     if created:
-        refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=refdb.refdb_username(instance.id))
+        refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=refdb.get_username(instance.id))
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
@@ -94,7 +94,7 @@ def remove_refdb_user(sender, instance, **kwargs):
     user = instance
     delete_extended_note("django-refdb-personal-pdfs-%d" % user.id)
     delete_extended_note("django-refdb-creator-%d" % user.id)
-    refdb.get_connection("root").remove_user(refdb.refdb_username(user.id))
+    refdb.get_connection("root").remove_user(refdb.get_username(user.id))
 
 signals.pre_delete.connect(remove_refdb_user, sender=django.contrib.auth.models.User)
 
