@@ -17,7 +17,7 @@ from __future__ import absolute_import
 import pyrefdb
 import django.contrib.auth.models
 from django.db.models import signals
-from . import utils
+from . import refdb
 from . import models as refdb_app
 from . import add_refdb_user, add_user_details, add_shelf, SharedXNote
 
@@ -32,8 +32,8 @@ def add_extended_note_if_nonexistent(citation_key):
 
     :type citation_key: str
     """
-    if not utils.get_refdb_connection("root").get_extended_notes(":NCK:=" + citation_key):
-        utils.get_refdb_connection("root").add_extended_notes(SharedXNote(citation_key))
+    if not refdb.get_refdb_connection("root").get_extended_notes(":NCK:=" + citation_key):
+        refdb.get_refdb_connection("root").add_extended_notes(SharedXNote(citation_key))
 
 
 def sync_extended_notes(sender, created_models, interactive, **kwargs):
@@ -58,8 +58,8 @@ def sync_extended_notes(sender, created_models, interactive, **kwargs):
         while confirm not in ["yes", "no"]:
             confirm = raw_input('Please enter either "yes" or "no": ')
         if confirm:
-            ids = [note.id for note in utils.get_refdb_connection("root").get_extended_notes(":NCK:~^django-refdb-")]
-            utils.get_refdb_connection("root").delete_extended_notes(ids)
+            ids = [note.id for note in refdb.get_refdb_connection("root").get_extended_notes(":NCK:~^django-refdb-")]
+            refdb.get_refdb_connection("root").delete_extended_notes(ids)
             for user in django.contrib.auth.models.User.objects.all():
                 add_refdb_user(sender=None, instance=user)
             for shelf in refdb_app.Shelf.objects.all():

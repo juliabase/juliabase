@@ -9,7 +9,7 @@ state in RefDB is restored.  Hopefully.
 
 from __future__ import absolute_import
 
-from .. import utils
+from .. import refdb
 
 
 __all__ = ["PickrefRollback", "DumprefRollback", "UpdaterefRollback", "DeleterefRollback",
@@ -66,7 +66,7 @@ class PickrefRollback(RefDBRollback):
         self.reference_id, self.list_name = reference_id, list_name
 
     def execute(self):
-        utils.get_refdb_connection(self.user).pick_references([self.reference_id], self.list_name)
+        refdb.get_refdb_connection(self.user).pick_references([self.reference_id], self.list_name)
 
 
 class DumprefRollback(RefDBRollback):
@@ -90,7 +90,7 @@ class DumprefRollback(RefDBRollback):
         self.reference_id, self.list_name = reference_id, list_name or None
 
     def execute(self):
-        utils.get_refdb_connection(self.user).dump_references([self.reference_id], self.list_name)
+        refdb.get_refdb_connection(self.user).dump_references([self.reference_id], self.list_name)
 
 
 class UpdaterefRollback(RefDBRollback):
@@ -118,7 +118,7 @@ class UpdaterefRollback(RefDBRollback):
         self.reference = reference
 
     def execute(self):
-        utils.get_refdb_connection(self.user).update_references(self.reference)
+        refdb.get_refdb_connection(self.user).update_references(self.reference)
 
 
 class DeleterefRollback(RefDBRollback):
@@ -139,8 +139,8 @@ class DeleterefRollback(RefDBRollback):
         self.citation_key = citation_key
 
     def execute(self):
-        reference_id = utils.get_refdb_connection(self.user).get_references(":CK:=" + self.citation_key, "ids")[0]
-        utils.get_refdb_connection(self.user).delete_references([reference_id])
+        reference_id = refdb.get_refdb_connection(self.user).get_references(":CK:=" + self.citation_key, "ids")[0]
+        refdb.get_refdb_connection(self.user).delete_references([reference_id])
 
 
 class AddnoteRollback(RefDBRollback):
@@ -162,7 +162,7 @@ class AddnoteRollback(RefDBRollback):
         self.extended_note = extended_note
 
     def execute(self):
-        utils.get_refdb_connection(self.user).add_extended_notes(self.extended_note)
+        refdb.get_refdb_connection(self.user).add_extended_notes(self.extended_note)
 
 
 class DeletenoteRollback(RefDBRollback):
@@ -183,8 +183,8 @@ class DeletenoteRollback(RefDBRollback):
         self.note_citation_key = note_citation_key
 
     def execute(self):
-        extended_note = utils.get_refdb_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key)[0]
-        utils.get_refdb_connection(self.user).delete_extended_notes([extended_note.id])
+        extended_note = refdb.get_refdb_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key)[0]
+        refdb.get_refdb_connection(self.user).delete_extended_notes([extended_note.id])
 
 
 class UpdatenoteRollback(RefDBRollback):
@@ -206,7 +206,7 @@ class UpdatenoteRollback(RefDBRollback):
         self.extended_note = extended_note
 
     def execute(self):
-        utils.get_refdb_connection(self.user).update_extended_notes(self.extended_note)
+        refdb.get_refdb_connection(self.user).update_extended_notes(self.extended_note)
 
 
 class LinknoteRollback(RefDBRollback):
@@ -230,7 +230,7 @@ class LinknoteRollback(RefDBRollback):
         self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
 
     def execute(self):
-        utils.get_refdb_connection(self.user).add_note_links(":NCK:=" + self.note_citation_key,
+        refdb.get_refdb_connection(self.user).add_note_links(":NCK:=" + self.note_citation_key,
                                                              ":CK:=" + self.reference_citation_key)
 
 
@@ -255,5 +255,5 @@ class UnlinknoteRollback(RefDBRollback):
         self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
 
     def execute(self):
-        utils.get_refdb_connection(self.user).remove_note_links(":NCK:=" + self.note_citation_key,
+        refdb.get_refdb_connection(self.user).remove_note_links(":NCK:=" + self.note_citation_key,
                                                                 ":CK:=" + self.reference_citation_key)

@@ -24,7 +24,7 @@ from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.core.cache import cache
 import django.contrib.auth.models
 from django.conf import settings
-from .. import utils, models
+from .. import refdb, models
 from .rollbacks import *
 
 
@@ -78,7 +78,7 @@ def pdf_filepath(reference, user_id=None, existing=False):
         directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
         if private:
             directory = os.path.join(directory, str(user_id))
-        filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
+        filepath = os.path.join(directory, refdb.slugify_reference(reference) + ".pdf")
     return (filepath, private) if existing else filepath
 
 
@@ -118,7 +118,7 @@ class ReferenceForm(forms.Form):
     """
 
     _ = ugettext_lazy
-    reference_type = forms.ChoiceField(label=_("Type"), choices=utils.reference_types.items())
+    reference_type = forms.ChoiceField(label=_("Type"), choices=refdb.reference_types.items())
     part_title = CharNoneField(label=_("Part title"), required=False)
     part_authors = forms.CharField(label=_("Part authors"), required=False)
     publication_title = forms.CharField(label=_("Publication title"), required=False)
@@ -160,7 +160,7 @@ class ReferenceForm(forms.Form):
         """
         user = request.user
         initial = kwargs.get("initial") or {}
-        lists_choices, lists_initial = utils.get_lists(user, reference.citation_key if reference else None)
+        lists_choices, lists_initial = refdb.get_lists(user, reference.citation_key if reference else None)
         if reference:
             initial["reference_type"] = reference.type
             if reference.part:
@@ -189,7 +189,7 @@ class ReferenceForm(forms.Form):
                 initial["has_reprint"] = unicode(user.pk) in reference.users_with_offprint.keywords
             initial["abstract"] = reference.abstract or u""
             initial["keywords"] = u"; ".join(reference.keywords)
-            lib_info = reference.get_lib_info(utils.refdb_username(user.id))
+            lib_info = reference.get_lib_info(refdb.refdb_username(user.id))
             if lib_info:
                 initial["private_notes"] = lib_info.notes or u""
                 initial["private_reprint_available"] = lib_info.reprint_status == "INFILE"
@@ -379,7 +379,7 @@ class ReferenceForm(forms.Form):
             reference = copy.deepcopy(self.reference)
         else:
             reference = pyrefdb.Reference()
-            reference.extended_data = utils.ExtendedData()
+            reference.extended_data = refdb.ExtendedData()
             reference.creator = self.user.pk
         reference.type = self.cleaned_data["reference_type"]
         if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
@@ -391,7 +391,7 @@ class ReferenceForm(forms.Form):
             reference.publication = pyrefdb.Publication()
         reference.publication.title = self.cleaned_data["publication_title"]
         reference.publication.authors = self.cleaned_data["publication_authors"]
-        lib_info = reference.get_or_create_lib_info(utils.refdb_username(self.user.id))
+        lib_info = reference.get_or_create_lib_info(refdb.refdb_username(self.user.id))
         lib_info.notes = self.cleaned_data["private_notes"]
         lib_info.reprint_status = "INFILE" if self.cleaned_data["private_reprint_available"] else "NOTINFILE"
         lib_info.availability = self.cleaned_data["private_reprint_location"]
@@ -443,13 +443,13 @@ class ReferenceForm(forms.Form):
             if list_ not in self.old_lists:
                 listname = list_.partition("-")[2] or None
                 self.refdb_rollback_actions.append(DumprefRollback(self.user, reference.id, listname))
-                utils.get_refdb_connection(self.user).pick_references([reference.id], listname)
+                refdb.get_refdb_connection(self.user).pick_references([reference.id], listname)
                 
         for list_ in self.old_lists:
             if list_ not in self.cleaned_data["lists"]:
                 listname = list_.partition("-")[2]
                 self.refdb_rollback_actions.append(PickrefRollback(self.user, reference.id, listname))
-                utils.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
+                refdb.get_refdb_connection(self.user).dump_references([reference.id], listname or None)
 
     def _save_extended_note(self, extended_note, citation_key):
         u"""Stores an extended note in the RefDB database.  This is used as a
@@ -467,10 +467,10 @@ class ReferenceForm(forms.Form):
         if extended_note:
             if extended_note.citation_key:
                 self.refdb_rollback_actions.append(UpdatenoteRollback(self.user, extended_note))
-                utils.get_refdb_connection(self.user).update_extended_notes(extended_note)
+                refdb.get_refdb_connection(self.user).update_extended_notes(extended_note)
             else:
                 extended_note.citation_key = citation_key
-                utils.get_refdb_connection(self.user).add_extended_notes(extended_note)
+                refdb.get_refdb_connection(self.user).add_extended_notes(extended_note)
                 self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
 
     def _update_last_modification(self, new_reference):
@@ -482,7 +482,7 @@ class ReferenceForm(forms.Form):
         # case.  Fortunately, it isn't a frequent case.
         id_ = new_reference.id
         if id_ is None:
-            id_ = utils.get_refdb_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
+            id_ = refdb.get_refdb_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
         django_object, created = models.Reference.objects.get_or_create(reference_id=id_)
         if not created:
             django_object.mark_modified()
@@ -505,7 +505,7 @@ class ReferenceForm(forms.Form):
         # slightly slower and debugging more cumbersome.
         extended_notes = new_reference.extended_notes
         new_reference.extended_notes = None
-        connection = utils.get_refdb_connection(self.user)
+        connection = refdb.get_refdb_connection(self.user)
         if self.reference:
             self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
             connection.update_references(new_reference)
@@ -521,7 +521,7 @@ class ReferenceForm(forms.Form):
         connection.update_note_links(new_reference)
 
         self.save_lists(new_reference)
-        if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
+        if self.reference and refdb.slugify_reference(new_reference) != refdb.slugify_reference(self.reference):
             if self.reference.global_pdf_available:
                 shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
             for user_id in self.reference.pdf_is_private:
@@ -564,7 +564,7 @@ def edit(request, citation_key):
     :rtype: ``HttpResponse``
     """
     if citation_key:
-        connection = utils.get_refdb_connection(request.user)
+        connection = refdb.get_refdb_connection(request.user)
         references = connection.get_references(":CK:=" + citation_key)
         if not references:
             raise Http404("Citation key \"%s\" not found." % citation_key)
@@ -609,7 +609,7 @@ def view(request, citation_key):
 
     :rtype: ``HttpResponse``
     """
-    connection = utils.get_refdb_connection(request.user)
+    connection = refdb.get_refdb_connection(request.user)
     references = connection.get_references(":CK:=" + citation_key, with_extended_notes=True,
                                            extended_notes_constraints=":NCK:~^django-refdb-")
     if not references:
@@ -617,7 +617,7 @@ def view(request, citation_key):
     reference = references[0]
     reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
-    lib_info = reference.get_lib_info(utils.refdb_username(request.user.id))
+    lib_info = reference.get_lib_info(refdb.refdb_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
     return render_to_response("show_reference.html", {"title": _(u"View reference"),
                                                       "reference": reference, "lib_info": lib_info,
@@ -728,10 +728,10 @@ def get_last_modification_date(request):
         limit = int(limit)
     except (TypeError, ValueError):
         limit = 10
-    refdb_connection = utils.get_refdb_connection(request.user)
+    refdb_connection = refdb.get_refdb_connection(request.user)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
     request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
-    return utils.last_modified(request.user, ids)
+    return refdb.last_modified(request.user, ids)
 
 @login_required
 @last_modified(get_last_modification_date)
@@ -769,7 +769,7 @@ def bulk(request):
     add_to_list_form = AddToListForm(request.user)
     reference_list = request.GET.get("list")
     if reference_list:
-        verbose_listname = utils.get_verbose_listname(reference_list, request.user)
+        verbose_listname = refdb.get_verbose_listname(reference_list, request.user)
         remove_from_list_form = RemoveFromListForm(
             initial={"listname": reference_list}, verbose_listname=verbose_listname, prefix="remove")
     else:
@@ -790,7 +790,7 @@ class AddToListForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super(AddToListForm, self).__init__(*args, **kwargs)
-        lists = utils.get_lists(user)[0]
+        lists = refdb.get_lists(user)[0]
         self.short_listnames = set(list_[0] for list_ in lists)
         self.fields["existing_list"].choices = [("", 9*"-")] + lists
         self.optional = True
@@ -816,10 +816,10 @@ def add_references_to_list(ids, add_to_list_form, user):
     else:
         verbose_name = add_to_list_form.cleaned_data["new_list"]
         listname = defaultfilters.slugify(verbose_name)
-    connection = utils.get_refdb_connection(user)
+    connection = refdb.get_refdb_connection(user)
     connection.pick_references(ids, listname)
     if add_to_list_form.cleaned_data["new_list"]:
-        extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (utils.refdb_username(user.id), listname))[0]
+        extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (refdb.refdb_username(user.id), listname))[0]
         extended_note.set_text_content(verbose_name)
         connection.update_extended_notes(extended_note)
 
@@ -834,7 +834,7 @@ def add_to_list(request, citation_key):
         reference_id = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
         add_references_to_list([reference_id], add_to_list_form, request.user)
         next_url = django.core.urlresolvers.reverse(view, kwargs=dict(citation_key=citation_key))
-        return utils.HttpResponseSeeOther(next_url)
+        return refdb.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
     return render_to_response("add_to_list.html", {"title": _(u"Add to references list"), "add_to_list": add_to_list_form},
                               context_instance=RequestContext(request))
@@ -868,7 +868,7 @@ def export(request):
     for key, value in request.GET.iteritems():
         if key.endswith("-selected") and value == "on":
             ids.add(key.partition("-")[0])
-    output = utils.get_refdb_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
+    output = refdb.get_refdb_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
                                                                      output_format=format)
     response = HttpResponse(content_type=content_type + "; charset=utf-8")
     response['Content-Disposition'] = "attachment; filename=references" + file_extension
@@ -964,15 +964,15 @@ def dispatch(request):
             # IDs.  However, first
             # https://sourceforge.net/tracker/?func=detail&aid=2857792&group_id=26091&atid=385991
             # needs to be fixed.
-            citation_keys = [reference.citation_key for reference in utils.get_refdb_connection(request.user).
+            citation_keys = [reference.citation_key for reference in refdb.get_refdb_connection(request.user).
                              get_references(" OR ".join(":ID:=" + id_ for id_ in ids))]
-            utils.get_refdb_connection(request.user).add_note_links(
+            refdb.get_refdb_connection(request.user).add_note_links(
                 ":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
                 u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
         elif action == "list":
             add_references_to_list(ids, add_to_list_form, request.user)
         elif action == "remove":
-            utils.get_refdb_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
+            refdb.get_refdb_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
     return render_to_response("dispatch.html", {"title": _(u"Action dispatch"), "export": export_form,
                                                 "add_to_shelf": add_to_shelf_form, "add_to_list": add_to_list_form,
                                                 "global_dummy": global_dummy_form, "selection_boxes": selection_box_forms,
