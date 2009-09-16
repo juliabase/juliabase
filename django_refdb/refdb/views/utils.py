@@ -193,6 +193,20 @@ def fetch(self, attribute_names, connection, user_id):
     # time.
     
     def necessary(attribute_name):
+        u"""Sees whether it is necessary to fetch data for the given extended
+        attribute.  It checks a) whether the attribute was requested by the
+        caller of the ``fetch`` method, and checks b) whether the attribute has
+        been fetched already.
+
+        :Parameters:
+          - `attribute_name`: name of the extended attribute; this name is an
+            internal label only used for the context of extended notes fetching
+
+        :type attribute_name: str
+
+        :Return:
+          whether the
+        """
         if attribute_name in attribute_names:
             if attribute_name == "pdf_is_private":
                 return user_id not in self.pdf_is_private
@@ -233,7 +247,8 @@ def fetch(self, attribute_names, connection, user_id):
         if necessary("shelves"):
             prefix = "django-refdb-shelf-"
             prefix_length = len(prefix)
-            self.shelves = set(int(citation_key[prefix_length:]) for citation_key in notes if citation_key.startswith(prefix))
+            self.shelves = \
+                set(int(citation_key[prefix_length:]) for citation_key in notes if citation_key.startswith(prefix))
         if necessary("global_pdf_available"):
             self.global_pdf_available = "django-refdb-global-pdfs" in notes
         if necessary("users_with_offprint"):
