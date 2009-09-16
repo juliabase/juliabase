@@ -115,6 +115,27 @@ names.
 
 
 def last_modified(user, references):
+    u"""Calculates the timestamp of last modification for a given set of
+    references.  It is important to see that the last modification is
+    calculated “seen” from a given user.  For example, it user A has modified
+    his personal notes for a given reference, this is a modification with
+    respect to him.  It is *not* a modification with respect to user B because
+    his personal notes about the reference haven't changed.
+
+    :Parameters:
+      - `user`: current user
+      - `references`: references for which the last modification should be
+        calculated
+
+    :type user: ``django.contrib.auth.models.User``
+    :type references: list of `models.Reference`
+
+    :Return:
+      the timestamp of last modification of the given references, with respect
+      to the given user
+
+    :rtype: ``Datetime.Datetime``
+    """
     if not isinstance(references, (list, tuple)):
         references = [references]
     timestamps = []
