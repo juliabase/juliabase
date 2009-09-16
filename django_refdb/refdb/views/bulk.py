@@ -51,21 +51,86 @@ def search(request):
 
 
 def form_fields_to_query(form_fields):
+    u"""Takes the GET parameters of the bulk view and distills a RefDB query
+    string from them.
+
+    :Parameters:
+      - `form_fields`: dictionary which maps all search parameters to their
+        values (and maybe more, which is ignored)
+
+    :type form_fields: ``django.http.QueryDict``
+
+    :Return:
+      the RefDB query string representing the search
+
+    :rtype: unicode
+    """
     query_string = form_fields.get("query_string", "")
     return query_string
 
 
 class CommonBulkViewData(object):
+    u"""Container class for data used in `get_last_modification_date` as well
+    as in the `bulk` view itself.  The rationale for this class is the
+    ``get_last_modification_date`` has to calculate some data in a somewhat
+    expensive manner – for example, it has to make a RefDB server connection.
+    This data is also used in the ``bulk`` view, and it would be wasteful to
+    calculate it there again.
+
+    Thus, an instance of this class holds the data and is written as an
+    attribute to the ``request`` object.
+    """
 
     def __init__(self, query_string, offset, limit, refdb_connection, ids):
+        u"""Class constructor.
+
+        :Parameters:
+          - `query_string`: RefDB query string of this search
+          - `offset`: the starting index of the bulk list amongst the search
+            hits
+          - `limit`: the number of displayed hits
+          - `refdb_connection`: connection object to the RefDB server
+          - `ids`: IDs of the found references (within ``offset`` and
+            ``limit``)
+
+        :type query_string: unicode
+        :type offset: int
+        :type limit: int
+        :type refdb_connection: ``pyrefdb.Connection``
+        :type ids: list of str
+        """
         self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
             query_string, offset, limit, refdb_connection, ids
 
     def get_all_values(self):
+        u"""Returns all data stored in the instance.
+
+        :Return:
+          query string, search hits offset, maximal number of search hits,
+          RefDB connection, IDs of found references
+
+        :rtype: unicode, int, int, ``pyrefdb.Connection``, list of str
+        """
         return self.query_string, self.offset, self.limit, self.refdb_connection, self.ids
 
 
 def get_last_modification_date(request):
+    u"""Returns the last modification of the references found for the bulk
+    view.  Note that this only includes the actually *displayed* references on
+    the current page, not all references from all pages.
+
+    The routine is only used in the ``last_modified`` decorator in `bulk`.
+
+    :Parameters:
+      - `request`: current HTTP request object
+
+    :type request: ``HttpRequest``
+
+    :Return:
+      timestamp of last modification of the displayed references
+
+    :rtype: ``Datetime.Datetime``
+    """
     query_string = form_fields_to_query(request.GET)
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
@@ -86,6 +151,21 @@ def get_last_modification_date(request):
 @last_modified(get_last_modification_date)
 @require_http_methods(["GET"])
 def bulk(request):
+    u"""The bulk view for references.  It gets the search parameters in the
+    GET, and displays all references which matches the search parameters.  If
+    they are too many, the list is split up into pages where you can navigate
+    through.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
 
     def build_page_link(new_offset):
         new_query_dict = request.GET.copy()
