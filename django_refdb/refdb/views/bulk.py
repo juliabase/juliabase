@@ -11,7 +11,7 @@ from __future__ import absolute_import
 from . import form_utils
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.views.decorators.http import last_modified
+from django.views.decorators.http import last_modified, require_http_methods
 from django.utils.http import urlencode
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.contrib.auth.decorators import login_required
@@ -84,6 +84,7 @@ def get_last_modification_date(request):
 
 @login_required
 @last_modified(get_last_modification_date)
+@require_http_methods(["GET"])
 def bulk(request):
 
     def build_page_link(new_offset):
