@@ -168,8 +168,24 @@ def bulk(request):
     """
 
     def build_page_link(new_offset):
+        u"""Generate the URL to another page of the current search view.  If
+        there are too many search hits, the hits are split on multiple pages
+        with their own offsets.  This routine builds the relative URLs to
+        them.  Since ``bulk`` is a pure GET view, I just need to make sure that
+        all GET parameters survive in the link.
+
+        :Parameters:
+          - `new_offset`: search hits offset for the destination page
+
+        :type new_offset: int
+
+        :Return:
+          the relative URL to a page with the same GET parameters
+        """
         new_query_dict = request.GET.copy()
         new_query_dict["offset"] = new_offset
+        # I also set ``limit`` because it may have been adjusted in
+        # `get_last_modification_date`
         new_query_dict["limit"] = limit
         return "?" + urlencode(new_query_dict) if 0 <= new_offset < number_of_references and new_offset != offset else None
 
