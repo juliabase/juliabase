@@ -22,6 +22,18 @@ from . import utils, form_utils
 
 
 def add_references_to_list(ids, add_to_list_form, user):
+    u"""Add references to a references list.
+
+    :Parameters:
+      - `ids`: RefDB IDs of the references to be added
+      - `add_to_list_form`: bound and valid form containing the list to be
+        added to
+      - `user`: current user
+
+    :type ids: list of str
+    :type add_to_list_form: ``django.forms.Form``
+    :type user: ``django.contrib.auth.models.User``
+    """
     # add_to_list_form must be bound and valid
     if add_to_list_form.cleaned_data["existing_list"]:
         listname = add_to_list_form.cleaned_data["existing_list"]
@@ -36,8 +48,36 @@ def add_references_to_list(ids, add_to_list_form, user):
         connection.update_extended_notes(extended_note)
 
 
-def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form,
-                           selection_box_forms, global_dummy_form):
+def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form, selection_box_forms, global_dummy_form):
+    u"""Test whether all forms are consistent with each other.  In particular,
+    the user must use exactly one of the given forms.  He must not try to
+    export references and add them to a shelf at the same time.
+
+    :Parameters:
+      - `export_form`: bound form for exporting references
+      - `add_to_shelf_form`: bound form for adding references to a shelf
+      - `add_to_list_form`: bound form for adding references to a references
+        list
+      - `remove_from_list_form`: bound form for removing references form a
+        references list; may be ``None`` if the search is not limited to a
+        particular references list
+      - `selection_box_forms`: bound forms with the selected samples
+      - `global_dummy_form`: bound form which contains global error messages
+        which occur here
+
+    :type export_form: ``form_utils.ExportForm``
+    :type add_to_shelf_form: ``form_utils.AddToShelfForm``
+    :type add_to_list_form: ``form_utils.AddToListForm``
+    :type remove_from_list_form: ``form_utils.RemoveFromListForm`` or
+      ``NoneType``
+    :type selection_box_forms: list of ``form_utils.SelectionBoxForm``
+    :type global_dummy_form: ``django.forms.Form``
+
+    :Return:
+      whether all forms are consistent and obey to the constraints
+
+    :rtype: bool
+    """
     referentially_valid = True
     action = None
     actions = []
@@ -70,6 +110,20 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
 @login_required
 @require_http_methods(["POST"])
 def dispatch(request):
+    u"""POST-only view for doing things on multiple samples.  This covers
+    exporting in various formats, adding to a shelf or a references list, and
+    removeing from a references list.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     export_form = form_utils.ExportForm(request.POST)
     add_to_shelf_form = form_utils.AddToShelfForm(request.POST)
     add_to_list_form = form_utils.AddToListForm(request.user, request.POST)

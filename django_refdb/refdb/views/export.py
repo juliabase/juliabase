@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""The references export view.
+
+:var output_format_meta_info: dictionary which maps short names of export
+formats to tuples which contain the MIME type and the file extention for that
+export format
+
+:type output_format_meta_info: dict mapping str to (str, str)
+"""
+
 from __future__ import absolute_import
 
 from django.views.decorators.http import require_http_methods
@@ -23,10 +32,23 @@ output_format_meta_info = {
     "bibtex": ("text/plain", ".bib"),
     "rtf": ("text/rtf", ".rtf")
     }
-
+ 
 @login_required
 @require_http_methods(["GET"])
 def export(request):
+    u"""GET-only view for exporting references into various output formats like
+    RIS or BibTeX.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     format = request.GET.get("format")
     try:
         content_type, file_extension = output_format_meta_info[format]
@@ -38,7 +60,7 @@ def export(request):
         if key.endswith("-selected") and value == "on":
             ids.add(key.partition("-")[0])
     output = refdb.get_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
-                                                                     output_format=format)
+                                                               output_format=format)
     response = HttpResponse(content_type=content_type + "; charset=utf-8")
     response['Content-Disposition'] = "attachment; filename=references" + file_extension
     response.write(output)

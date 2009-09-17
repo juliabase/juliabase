@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Utility classes and routines for form handling.  In particular, all form
+classes which are used in more than one module are included here.
+"""
+
 from __future__ import absolute_import
 
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
@@ -32,6 +36,10 @@ def append_error(form, error_message, fieldname="__all__"):
 
 
 class SelectionBoxForm(forms.Form):
+    u"""Form class for the tick box for each reference.  This micro-form is
+    generated for each reference in the bulk view.  The actions of the central
+    dispatch are performed only on selected references.
+    """
     _ = ugettext_lazy
     selected = forms.BooleanField(label=_("selected"), required=False)
 
@@ -52,11 +60,24 @@ output_format_choices = (
     )
 
 class ExportForm(forms.Form):
+    u"""Form class for exporting references to a particular output format.
+    """
     _ = ugettext_lazy
     format = forms.ChoiceField(label=_("Export as"), choices=(("", 9*u"-"),) + output_format_choices, required=False)
 
 
 class RemoveFromListForm(forms.Form):
+    u"""Form class for removing references from a references list.
+
+    The `listname` field is the short name (= RefDB name) of the references
+    list.  It is *not* given by the user (therefore, the widget is hidden).
+    Instead, it is given an initial value by the creator of the form instance
+    in order to have it available when the bound form is processed.
+
+    The underlying problem is that this form is created in the bulk view but
+    processed in the dispatch, which means that the information from which list
+    should be removed would be lost otherwise.
+    """
     _ = ugettext_lazy
     remove = forms.BooleanField(required=False)
     listname = forms.CharField(max_length=255, label=_("List"), widget=forms.HiddenInput)
@@ -69,6 +90,8 @@ class RemoveFromListForm(forms.Form):
 
 
 class AddToShelfForm(forms.Form):
+    u"""Form class for adding references to a shelf.
+    """
     _ = ugettext_lazy
     new_shelf = forms.ChoiceField(label=_("Add to shelf"), required=False)
 
@@ -78,14 +101,23 @@ class AddToShelfForm(forms.Form):
             [("", 9*u"-")] + [(shelf.pk, unicode(shelf)) for shelf in models.Shelf.objects.all()]
 
 
-
-
 class AddToListForm(forms.Form):
+    u"""Form class for adding references to a references list.  The user has
+    the option to add to an existing list (only `existing_list` is filled) or
+    to a new list (only `new_list` is filled).  He must not give both fields.
+    """
     _ = ugettext_lazy
     existing_list = forms.ChoiceField(label=_("List"), required=False)
     new_list = forms.CharField(label=_("New list"), max_length=255, required=False)
 
     def __init__(self, user, *args, **kwargs):
+        u"""Class constructor.
+
+        :Parameters:
+          - `user`: current user
+
+        :type user: ``django.contrib.auth.models.User``
+        """
         super(AddToListForm, self).__init__(*args, **kwargs)
         lists = refdb.get_lists(user)[0]
         self.short_listnames = set(list_[0] for list_ in lists)
@@ -93,6 +125,10 @@ class AddToListForm(forms.Form):
         self.optional = True
 
     def clean(self):
+        u"""Class clean method which assures that at most one of the fields is
+        given.  Additionally, it checks that the name for a new list doesn't
+        already exist in the database.
+        """
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data["existing_list"] and cleaned_data["new_list"]:
