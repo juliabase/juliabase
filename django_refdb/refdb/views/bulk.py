@@ -1,0 +1,230 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+u"""View and routines for the bulk view.  In the bulk view, the results of a
+search are displayed in pages.  Additionally, it is used to visualise
+references lists.
+"""
+
+from __future__ import absolute_import
+
+from . import form_utils
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+from django.views.decorators.http import last_modified, require_http_methods
+from django.utils.http import urlencode
+from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+from django.contrib.auth.decorators import login_required
+from django import forms
+from django.core.cache import cache
+from django.conf import settings
+from .. import refdb
+from . import utils, form_utils
+
+
+class SearchForm(forms.Form):
+    u"""Form class for the search filters.  Currently, it only accepts a RefDB
+    query string.
+    """
+
+    _ = ugettext_lazy
+    query_string = forms.CharField(label=_("Query string"), required=False)
+
+
+@login_required
+def search(request):
+    u"""Searchs for references and presents the search results.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    search_form = SearchForm(request.GET)
+    return render_to_response("search.html", {"title": _(u"Search"), "search": search_form},
+                              context_instance=RequestContext(request))
+
+
+def form_fields_to_query(form_fields):
+    u"""Takes the GET parameters of the bulk view and distills a RefDB query
+    string from them.
+
+    :Parameters:
+      - `form_fields`: dictionary which maps all search parameters to their
+        values (and maybe more, which is ignored)
+
+    :type form_fields: ``django.http.QueryDict``
+
+    :Return:
+      the RefDB query string representing the search
+
+    :rtype: unicode
+    """
+    query_string = form_fields.get("query_string", "")
+    return query_string
+
+
+class CommonBulkViewData(object):
+    u"""Container class for data used in `get_last_modification_date` as well
+    as in the `bulk` view itself.  The rationale for this class is the
+    ``get_last_modification_date`` has to calculate some data in a somewhat
+    expensive manner – for example, it has to make a RefDB server connection.
+    This data is also used in the ``bulk`` view, and it would be wasteful to
+    calculate it there again.
+
+    Thus, an instance of this class holds the data and is written as an
+    attribute to the ``request`` object.
+    """
+
+    def __init__(self, query_string, offset, limit, refdb_connection, ids):
+        u"""Class constructor.
+
+        :Parameters:
+          - `query_string`: RefDB query string of this search
+          - `offset`: the starting index of the bulk list amongst the search
+            hits
+          - `limit`: the number of displayed hits
+          - `refdb_connection`: connection object to the RefDB server
+          - `ids`: IDs of the found references (within ``offset`` and
+            ``limit``)
+
+        :type query_string: unicode
+        :type offset: int
+        :type limit: int
+        :type refdb_connection: ``pyrefdb.Connection``
+        :type ids: list of str
+        """
+        self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
+            query_string, offset, limit, refdb_connection, ids
+
+    def get_all_values(self):
+        u"""Returns all data stored in the instance.
+
+        :Return:
+          query string, search hits offset, maximal number of search hits,
+          RefDB connection, IDs of found references
+
+        :rtype: unicode, int, int, ``pyrefdb.Connection``, list of str
+        """
+        return self.query_string, self.offset, self.limit, self.refdb_connection, self.ids
+
+
+def get_last_modification_date(request):
+    u"""Returns the last modification of the references found for the bulk
+    view.  Note that this only includes the actually *displayed* references on
+    the current page, not all references from all pages.
+
+    The routine is only used in the ``last_modified`` decorator in `bulk`.
+
+    :Parameters:
+      - `request`: current HTTP request object
+
+    :type request: ``HttpRequest``
+
+    :Return:
+      timestamp of last modification of the displayed references
+
+    :rtype: ``Datetime.Datetime``
+    """
+    query_string = form_fields_to_query(request.GET)
+    offset = request.GET.get("offset")
+    limit = request.GET.get("limit")
+    try:
+        offset = int(offset)
+    except (TypeError, ValueError):
+        offset = 0
+    try:
+        limit = int(limit)
+    except (TypeError, ValueError):
+        limit = 10
+    refdb_connection = refdb.get_connection(request.user)
+    ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
+    request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
+    return utils.last_modified(request.user, ids)
+
+@login_required
+@last_modified(get_last_modification_date)
+@require_http_methods(["GET"])
+def bulk(request):
+    u"""The bulk view for references.  It gets the search parameters in the
+    GET, and displays all references which matches the search parameters.  If
+    they are too many, the list is split up into pages where you can navigate
+    through.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+
+    def build_page_link(new_offset):
+        u"""Generate the URL to another page of the current search view.  If
+        there are too many search hits, the hits are split on multiple pages
+        with their own offsets.  This routine builds the relative URLs to
+        them.  Since ``bulk`` is a pure GET view, I just need to make sure that
+        all GET parameters survive in the link.
+
+        :Parameters:
+          - `new_offset`: search hits offset for the destination page
+
+        :type new_offset: int
+
+        :Return:
+          the relative URL to a page with the same GET parameters
+        """
+        new_query_dict = request.GET.copy()
+        new_query_dict["offset"] = new_offset
+        # I also set ``limit`` because it may have been adjusted in
+        # `get_last_modification_date`
+        new_query_dict["limit"] = limit
+        return "?" + urlencode(new_query_dict) if 0 <= new_offset < number_of_references and new_offset != offset else None
+
+    query_string, offset, limit, refdb_connection, ids = request.common_data.get_all_values()
+    number_of_references = refdb_connection.count_references(query_string)
+    prev_link = build_page_link(offset - limit)
+    next_link = build_page_link(offset + limit)
+    pages = []
+    for i in range(number_of_references // limit + 1):
+        link = build_page_link(i * limit)
+        pages.append(link)
+    all_references = cache.get_many(settings.REFDB_CACHE_PREFIX + id_ for id_ in ids)
+    length_cache_prefix = len(settings.REFDB_CACHE_PREFIX)
+    all_references = dict((cache_id[length_cache_prefix:], reference) for cache_id, reference in all_references.iteritems())
+    missing_ids = set(ids) - set(all_references)
+    if missing_ids:
+        missing_references = refdb_connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
+        missing_references = dict((reference.id, reference) for reference in missing_references)
+        all_references.update(missing_references)
+    references = [all_references[id_] for id_ in ids]
+    for reference in references:
+        reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
+        cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
+        reference.selection_box = form_utils.SelectionBoxForm(prefix=reference.id)
+    export_form = form_utils.ExportForm()
+    add_to_shelf_form = form_utils.AddToShelfForm()
+    add_to_list_form = form_utils.AddToListForm(request.user)
+    reference_list = request.GET.get("list")
+    if reference_list:
+        verbose_listname = refdb.get_verbose_listname(reference_list, request.user)
+        remove_from_list_form = form_utils.RemoveFromListForm(
+            initial={"listname": reference_list}, verbose_listname=verbose_listname, prefix="remove")
+    else:
+        remove_from_list_form = None
+    title = _(u"Bulk view") if not reference_list else _(u"List view of %s") % verbose_listname
+    return render_to_response("bulk.html", {"title": title, "references": references,
+                                            "prev_link": prev_link, "next_link": next_link, "pages": pages,
+                                            "add_to_shelf": add_to_shelf_form, "export": export_form,
+                                            "add_to_list": add_to_list_form,
+                                            "remove_from_list": remove_from_list_form},
+                              context_instance=RequestContext(request))

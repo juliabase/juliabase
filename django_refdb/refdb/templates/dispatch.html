@@ -1,0 +1,23 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  <form method="POST" action="">
+    <table style="visibility: collapse">
+      {% for selection_box in selection_boxes %}
+        {{ selection_box }}
+      {% endfor %}
+    </table>
+    <table>
+      {{ global_dummy }}
+      {% if remove_from_list_form %}
+        {{ remove_from_list_form }}
+      {% endif %}
+      {{ add_to_shelf }}
+      {{ add_to_list }}
+      {{ export }}
+    </table>
+    <p><input type="submit"/></p>
+  </form>
+{% endblock %}

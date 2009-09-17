@@ -22,13 +22,16 @@
        &gt;&gt;
     {% endif %}
   </div>
-  <form method="POST" action="{% url reference.dispatch %}">
+  <form method="POST" action="{% url refdb.views.dispatch.dispatch %}">
     {% include "list_compact.html" %}
-    {% comment %}
     <table>
-      {{ collective_actions }}
+      {% if remove_from_list %}
+        {{ remove_from_list }}
+      {% endif %}
+      {{ add_to_shelf }}
+      {{ add_to_list }}
+      {{ export }}
     </table>
-    {% endcommend %}
     <p><input type="submit"/></p>
   </form>
 {% endblock %}

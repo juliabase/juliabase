@@ -4,18 +4,14 @@
 u"""Collection of tags and filters that I found useful for Django-RefDB.
 """
 
-# FixMe: Probably too many imports
-import string, re, codecs, os.path
+import re, codecs, os.path
 from django.template.defaultfilters import stringfilter
 from django import template
-from django.utils.html import conditional_escape, escape
-from django.utils.safestring import mark_safe
-import django.utils.http
-import django.core.urlresolvers
-import refdb.models, django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.html import escape
 from django.contrib.markup.templatetags import markup
-from refdb import utils
+# This *must* be absolute because otherwise, a Django module of the same name
+# is imported.
+from refdb.views import utils  
 
 register = template.Library()
 
@@ -31,7 +27,9 @@ def display_reference_type(value):
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
     entities[line[:12].rstrip()] = line[12]
+
 entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
+
 def substitute_html_entities(text):
     u"""Searches for all ``&entity;`` named entities in the input and replaces
     them by their unicode counterparts.  For example, ``&alpha;``

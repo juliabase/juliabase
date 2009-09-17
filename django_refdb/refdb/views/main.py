@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""The main menu view.
+"""
+
 from __future__ import absolute_import
 
 from django.template import RequestContext
@@ -8,26 +11,30 @@ from django.shortcuts import render_to_response
 from django import forms
 import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
-from .. import utils, models
+from django.views.decorators.http import require_http_methods
+from django.utils.translation import ugettext as _, ugettext_lazy
+from .. import refdb, models
+from . import utils
 
 
 class SimpleSearchForm(forms.Form):
     u"""Form class for the simple search filters.  Currently, it only accepts a
     RefDB query string.
     """
-
     _ = ugettext_lazy
     query_string = forms.CharField(label=_("Query string"), required=False)
 
 
 class ChangeListForm(forms.Form):
+    u"""Form class for changing the default references list which is displayed
+    on the main menu page.
+    """
     _ = ugettext_lazy
     new_list = forms.ChoiceField(label=_("New list"))
 
     def __init__(self, user, *args, **kwargs):
         super(ChangeListForm, self).__init__(*args, **kwargs)
-        self.fields["new_list"].choices, __ = utils.get_lists(user)
+        self.fields["new_list"].choices, __ = refdb.get_lists(user)
         self.fields["new_list"].initial = models.UserDetails.objects.get(user=user).current_list
 
 
@@ -48,15 +55,28 @@ def main_menu(request):
     search_form = SimpleSearchForm()
     change_list_form = ChangeListForm(request.user)
     current_list = models.UserDetails.objects.get(user=request.user).current_list
-    references = utils.get_refdb_connection(request.user).get_references(":ID:>0", listname=current_list)
-    print len(references)
+    references = refdb.get_connection(request.user).get_references(":ID:>0", listname=current_list)
     return render_to_response("main_menu.html", {"title": _(u"Main menu"), "search": search_form, "references": references,
                                                  "change_list": change_list_form},
                               context_instance=RequestContext(request))
 
 
 @login_required
+@require_http_methods(["GET"])
 def change_list(request):
+    u"""GET-only view for changing the default references list on the main
+    menue page.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     change_list_form = ChangeListForm(request.user, request.POST)
     if change_list_form.is_valid():
         user_details = models.UserDetails.objects.get(user=request.user)
