@@ -463,7 +463,6 @@ class ReferenceForm(forms.Form):
         django_object, created = models.Reference.objects.get_or_create(reference_id=id_)
         if not created:
             django_object.mark_modified()
-            django_object.save()
 
     def save(self):
         u"""Stores the currently edited reference in the database, and saves
@@ -478,7 +477,7 @@ class ReferenceForm(forms.Form):
         # extended notes.  The altervative to this arguably ugly operation is
         # to avoid using the reference's citation key in the citation key of
         # the extended notes.  Instead, one would have to use a random suffix,
-        # which is alos not very nice.  In particular, it would make the lookup
+        # which is also not very nice.  In particular, it would make the lookup
         # slightly slower and debugging more cumbersome.
         extended_notes = new_reference.extended_notes
         new_reference.extended_notes = None
