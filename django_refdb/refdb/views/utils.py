@@ -145,11 +145,7 @@ def last_modified(user, references):
         except AttributeError:
             id_ = reference
         django_reference, __ = models.Reference.objects.get_or_create(reference_id=id_)
-        try:
-            user_modification = django_reference.user_modifications.get(user=user)
-            timestamps.append(user_modification.last_modified)
-        except models.UserModification.DoesNotExist:
-            timestamps.append(django_reference.last_modified)
+        timestamps.append(django_reference.get_last_modification(user))
     return max(timestamps) if timestamps else None
 
 
