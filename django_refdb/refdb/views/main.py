@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""The main menu view.
+"""
+
 from __future__ import absolute_import
 
 from django.template import RequestContext
@@ -18,12 +21,14 @@ class SimpleSearchForm(forms.Form):
     u"""Form class for the simple search filters.  Currently, it only accepts a
     RefDB query string.
     """
-
     _ = ugettext_lazy
     query_string = forms.CharField(label=_("Query string"), required=False)
 
 
 class ChangeListForm(forms.Form):
+    u"""Form class for changing the default references list which is displayed
+    on the main menu page.
+    """
     _ = ugettext_lazy
     new_list = forms.ChoiceField(label=_("New list"))
 
@@ -59,6 +64,19 @@ def main_menu(request):
 @login_required
 @require_http_methods(["GET"])
 def change_list(request):
+    u"""GET-only view for changing the default references list on the main
+    menue page.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     change_list_form = ChangeListForm(request.user, request.POST)
     if change_list_form.is_valid():
         user_details = models.UserDetails.objects.get(user=request.user)
