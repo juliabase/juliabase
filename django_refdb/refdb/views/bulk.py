@@ -129,7 +129,7 @@ def get_last_modification_date(request):
     :Return:
       timestamp of last modification of the displayed references
 
-    :rtype: ``Datetime.Datetime``
+    :rtype: ``datetime.datetime``
     """
     query_string = form_fields_to_query(request.GET)
     offset = request.GET.get("offset")
@@ -155,6 +155,12 @@ def bulk(request):
     GET, and displays all references which matches the search parameters.  If
     they are too many, the list is split up into pages where you can navigate
     through.
+
+    I do agressive caching here.  First, I use the ``@last_modified`` decorator
+    for making use of the browser cache.  Secondly, I cache all references
+    objects requested for later use, including their “extended attributes”.  If
+    a second request needs more extended atttibutes, only the missing ones are
+    fetched.
 
     :Parameters:
       - `request`: the current HTTP Request object

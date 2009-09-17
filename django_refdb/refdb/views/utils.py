@@ -134,7 +134,7 @@ def last_modified(user, references):
       the timestamp of last modification of the given references, with respect
       to the given user
 
-    :rtype: ``Datetime.Datetime``
+    :rtype: ``datetime.datetime``
     """
     if not isinstance(references, (list, tuple)):
         references = [references]
