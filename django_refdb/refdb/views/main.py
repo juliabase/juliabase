@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response
 from django import forms
 import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _, ugettext_lazy
 from .. import refdb, models
 from . import utils
@@ -50,13 +51,13 @@ def main_menu(request):
     change_list_form = ChangeListForm(request.user)
     current_list = models.UserDetails.objects.get(user=request.user).current_list
     references = refdb.get_connection(request.user).get_references(":ID:>0", listname=current_list)
-    print len(references)
     return render_to_response("main_menu.html", {"title": _(u"Main menu"), "search": search_form, "references": references,
                                                  "change_list": change_list_form},
                               context_instance=RequestContext(request))
 
 
 @login_required
+@require_http_methods(["GET"])
 def change_list(request):
     change_list_form = ChangeListForm(request.user, request.POST)
     if change_list_form.is_valid():
