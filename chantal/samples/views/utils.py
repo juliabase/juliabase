@@ -518,7 +518,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
         /chantal/6-chamber_deposition/08B410/edit/?next=/chantal/samples/08B410a
 
     This routine generated the proper ``HttpResponse`` object that contains the
-    redirection.  It always has HTPP status code 303 (“see other”).
+    redirection.  It always has HTTP status code 303 (“see other”).
 
     If the request came from the Chantal Remote Client, the response is a
     pickled ``remote_client_response``.  (Normally, a simple ``True``.)
