@@ -33,12 +33,52 @@ class Reference(models.Model):
     class Meta:
         get_latest_by = "last_modified"
 
-    def mark_modified(self):
-        u"""Marks the reference as a whole as modified.  This method must be
-        called after a global RefDB field was changed.
+    def mark_modified(self, user=None):
+        u"""Marks the reference as modified.  This method must be called after
+        a global RefDB field was changed.  If `user` is given, the reference is
+        only marked modified for this user, e.g. if only his private notes for
+        the reference were changed.  This is not limited to core RefDB fields.
+        It may also be the “extended attributes” or the membership in shelves
+        or references lists, or uploaded PDFs.
+
+        Note that you needn't call the ``save`` method afterwards.
+
+        :Parameters:
+          - `user`: the user who touched the reference; ``None`` if the changes
+            also affect other users
+
+        :type user: ``django.contrib.auth.models.User``
         """
-        self.last_modified = datetime.datetime.now()
-        self.user_modifications.all().delete()
+        if user:
+            user_modification, created = UserModification.objects.get_or_create(user=user, reference=self)
+            if not created:
+                user_modification.save()
+        else:
+            self.user_modifications.all().delete()
+            self.save()
+
+    def get_last_modification(self, user):
+        u"""Determines the timestamp of the last modification of this
+        reference.  The modification is “seend” from the user, i.e. personal
+        changes that he has made to the reference (e.g. editing private notes)
+        are taken into account.  Personal changes of other users are ignored.
+
+        :Parameters:
+          - `user`: the user for which the last modification of this reference
+            should be determined
+
+        :type user: ``django.contrib.auth.models.User``
+
+        :Return:
+          the timestamp of the last modification
+
+        :rtype: ``datetime.datetime``
+        """
+        try:
+            user_modification = self.user_modifications.get(user=user)
+            return user_modification.last_modified
+        except UserModification.DoesNotExist:
+            return self.last_modified
 
 
 class UserModification(models.Model):
