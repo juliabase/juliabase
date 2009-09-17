@@ -558,9 +558,16 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     next_url = parse_query_string(request).get("next")
     if next_url is not None:
         if forced:
-            #FixMe: Pass "next" to the next URL somehow
+            # FixMe: Pass "next" to the next URL somehow in order to allow for
+            # really nested forwarding.  So far, the “deeper” views must know
+            # by themselves how to get back to the first one (which is the case
+            # for all current Chantal views).
             pass
         else:
+            # FixMe: So far, the outmost next-URL is used for the See-Other.
+            # However, this is wrong behaviour.  Instead, the
+            # most-deeply-nested next-URL must be used.  This could be achieved
+            # by iterated unpacking.
             return HttpResponseSeeOther(next_url)
     if query_string:
         query_string = "?" + query_string
