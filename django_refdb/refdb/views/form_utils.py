@@ -37,7 +37,6 @@ class SelectionBoxForm(forms.Form):
 
 
 output_format_choices = (
-    ("", 9*u"-"),
     ("ris", u"RIS"),
     ("html", u"HTML"),
     ("xhtml", u"XHTML"),
@@ -54,7 +53,7 @@ output_format_choices = (
 
 class ExportForm(forms.Form):
     _ = ugettext_lazy
-    format = forms.ChoiceField(label=_("Export as"), choices=output_format_choices, required=False)
+    format = forms.ChoiceField(label=_("Export as"), choices=(("", 9*u"-"),) + output_format_choices, required=False)
 
 
 class RemoveFromListForm(forms.Form):
