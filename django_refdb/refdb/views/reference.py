@@ -440,6 +440,9 @@ class ReferenceForm(forms.Form):
           - `citation_key`: Extended note citatation key to be used if the
             extended note is new (i.e. not yet in the RefDB database).
             However, it means no harm to give this parameter always.
+
+        :type extended_note: ``pyrefdb.XNote``
+        :type citation_key: str
         """
         if extended_note:
             if extended_note.citation_key:
