@@ -13,12 +13,12 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.views.decorators.http import last_modified, require_http_methods
 from django.utils.http import urlencode
-from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.core.cache import cache
 from django.conf import settings
-from .. import refdb
+from .. import refdb, models
 from . import utils, form_utils
 
 
@@ -195,6 +195,36 @@ def add_references_to_list(ids, add_to_list_form, user):
 
 
 def is_all_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form, selection_box_forms):
+    u"""Checks whether all forms are valid.  This routine guarantees that the
+    ``is_valid`` method of all forms is called.
+
+    :Parameters:
+      - `export_form`: bound form for exporting references
+      - `add_to_shelf_form`: bound form for adding references to a shelf
+      - `add_to_list_form`: bound form for adding references to a references
+        list
+      - `remove_from_list_form`: bound form for removing references form a
+        references list; may be ``None`` if the search is not limited to a
+        particular references list
+      - `selection_box_forms`: bound forms with the selected samples
+      - `global_dummy_form`: bound form which contains global error messages
+        which occur here
+      - `references_list`: the references list the bulk view is limited to
+
+    :type export_form: `ExportForm`
+    :type add_to_shelf_form: `AddToShelfForm`
+    :type add_to_list_form: `AddToListForm`
+    :type remove_from_list_form: `RemoveFromListForm` or
+      ``NoneType``
+    :type selection_box_forms: list of `SelectionBoxForm`
+    :type global_dummy_form: ``django.forms.Form``
+    :type references_list: unicode
+
+    :Return:
+      whether all forms are valid
+
+    :rtype: bool
+    """
     all_valid = export_form.is_valid()
     all_valid = add_to_shelf_form.is_valid() and all_valid
     all_valid = add_to_list_form.is_valid() and all_valid
@@ -222,12 +252,12 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
         which occur here
       - `references_list`: the references list the bulk view is limited to
 
-    :type export_form: ``form_utils.ExportForm``
-    :type add_to_shelf_form: ``form_utils.AddToShelfForm``
-    :type add_to_list_form: ``form_utils.AddToListForm``
-    :type remove_from_list_form: ``form_utils.RemoveFromListForm`` or
+    :type export_form: `ExportForm`
+    :type add_to_shelf_form: `AddToShelfForm`
+    :type add_to_list_form: `AddToListForm`
+    :type remove_from_list_form: `RemoveFromListForm` or
       ``NoneType``
-    :type selection_box_forms: list of ``form_utils.SelectionBoxForm``
+    :type selection_box_forms: list of `SelectionBoxForm`
     :type global_dummy_form: ``django.forms.Form``
     :type references_list: unicode
 
@@ -311,6 +341,14 @@ class CommonBulkViewData(object):
 
 
 def embed_common_data(request):
+    u"""Add a ``common_data`` attribute to request, containing various data
+    used across the view.  See ``CommonBulkViewData`` for further information.
+
+    :Parameters:
+      - `request`: current HTTP request object
+
+    :type request: ``HttpRequest``
+    """
     query_string = form_fields_to_query(request.GET)
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
@@ -328,6 +366,24 @@ def embed_common_data(request):
 
 
 def fetch_references(request):
+    u"""Fetches all references needed for the bulk view from the RefDB
+    database.  If possible, it takes the references from the cache.
+    Additionally, we create the links to all other pages of the same bulk list
+    here.  The references contain also all the extended attributes, see
+    `utils.fetch`.
+
+    :Parameters:
+      - `request`: current HTTP request object; it must have the
+        ``common_data`` attribute, see `CommonBulkViewData`
+
+    :type request: ``HttpRequest``
+
+    :Return:
+      references, link to previous page, link to next page, all page links
+
+    :rtype:
+      list of ``pyrefdb.Reference``, str, str, list of str
+    """
 
     def build_page_link(new_offset):
         u"""Generate the URL to another page of the current search view.  If
@@ -426,17 +482,17 @@ def bulk(request):
     """
     references_list = request.GET.get("list")
     if request.method == "POST":
-        export_form = form_utils.ExportForm(request.POST)
-        add_to_shelf_form = form_utils.AddToShelfForm(request.POST)
-        add_to_list_form = form_utils.AddToListForm(request.user, request.POST)
-        remove_from_list_form = form_utils.RemoveFromListForm(request.POST)
+        export_form = ExportForm(request.POST)
+        add_to_shelf_form = AddToShelfForm(request.POST)
+        add_to_list_form = AddToListForm(request.user, request.POST)
+        remove_from_list_form = RemoveFromListForm(request.POST)
         global_dummy_form = forms.Form(request.POST)
         ids = set()
         for key, value in request.POST.iteritems():
             id_, dash, name = key.partition("-")
             if name == "selected" and value == "on":
                 ids.add(id_)
-        selection_box_forms = [form_utils.SelectionBoxForm(request.POST, prefix=id_) for id_ in ids]
+        selection_box_forms = [SelectionBoxForm(request.POST, prefix=id_) for id_ in ids]
         all_valid = \
             is_all_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form, selection_box_forms)
         referentially_valid, action = is_referentially_valid(
@@ -464,24 +520,27 @@ def bulk(request):
                 add_references_to_list(ids, add_to_list_form, request.user)
             elif action == "remove":
                 refdb.get_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
+        # Since the POST request is processed now, we create *now* the list
+        # itself.  The reason for this is that the references data has changed
+        # by processing the request, so we get a fresh list here.  This delayed
+        # list generation is the reason for `embed_common_data` and
+        # `CommonBulkViewData` in the first place.
         embed_common_data(request)
         if not valid_post_data:
             references, prev_link, next_link, pages = fetch_references(request)
             for reference in references:
-                reference.selection_box = form_utils.SelectionBoxForm(request.POST, prefix=reference.id)
-    else:
-        valid_post_data = False
+                reference.selection_box = SelectionBoxForm(request.POST, prefix=reference.id)
     if request.method == "GET" or valid_post_data:
         references, prev_link, next_link, pages = fetch_references(request)
         for reference in references:
-            reference.selection_box = form_utils.SelectionBoxForm(prefix=reference.id)
-        export_form = form_utils.ExportForm()
-        add_to_shelf_form = form_utils.AddToShelfForm()
-        add_to_list_form = form_utils.AddToListForm(request.user)
+            reference.selection_box = SelectionBoxForm(prefix=reference.id)
+        export_form = ExportForm()
+        add_to_shelf_form = AddToShelfForm()
+        add_to_list_form = AddToListForm(request.user)
         global_dummy_form = forms.Form()
         if references_list:
             verbose_listname = refdb.get_verbose_listname(references_list, request.user)
-            remove_from_list_form = form_utils.RemoveFromListForm(
+            remove_from_list_form = RemoveFromListForm(
                 initial={"listname": references_list}, verbose_listname=verbose_listname, prefix="remove")
         else:
             remove_from_list_form = None
