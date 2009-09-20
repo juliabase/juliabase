@@ -9,6 +9,7 @@ from __future__ import absolute_import
 
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django import forms
+from django.forms.util import ErrorList
 from .. import refdb, models
 
 
