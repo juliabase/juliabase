@@ -96,8 +96,17 @@ def add_references_to_list(ids, add_to_list_form, user):
         connection.update_extended_notes(extended_note)
 
 
+def is_all_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form, selection_box_forms):
+    all_valid = export_form.is_valid()
+    all_valid = add_to_shelf_form.is_valid() and all_valid
+    all_valid = add_to_list_form.is_valid() and all_valid
+    all_valid = remove_from_list_form.is_valid() and all_valid
+    all_valid = all([form.is_valid() for form in selection_box_forms]) and all_valid
+    return all_valid
+
+
 def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form,
-                           selection_box_forms, global_dummy_form):
+                           selection_box_forms, global_dummy_form, references_list):
     u"""Test whether all forms are consistent with each other.  In particular,
     the user must use exactly one of the given forms.  He must not try to
     export references and add them to a shelf at the same time.
@@ -113,6 +122,7 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
       - `selection_box_forms`: bound forms with the selected samples
       - `global_dummy_form`: bound form which contains global error messages
         which occur here
+      - `references_list`: the references list the bulk view is limited to
 
     :type export_form: ``form_utils.ExportForm``
     :type add_to_shelf_form: ``form_utils.AddToShelfForm``
@@ -121,6 +131,7 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
       ``NoneType``
     :type selection_box_forms: list of ``form_utils.SelectionBoxForm``
     :type global_dummy_form: ``django.forms.Form``
+    :type references_list: unicode
 
     :Return:
       whether all forms are consistent and obey to the constraints
@@ -137,11 +148,13 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     if add_to_list_form.is_valid() and (
         add_to_list_form.cleaned_data["existing_list"] or add_to_list_form.cleaned_data["new_list"]):
         actions.append("list")
-    if remove_from_list_form and remove_from_list_form.is_valid() and remove_from_list_form.cleaned_data["remove"]:
+    if references_list and remove_from_list_form.is_valid() and remove_from_list_form.cleaned_data["remove"]:
         actions.append("remove")
     if not actions:
-        form_utils.append_error(global_dummy_form, _(u"You must select an action."))
         referentially_valid = False
+        if export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid() and \
+                remove_from_list_form.is_valid():
+            form_utils.append_error(global_dummy_form, _(u"You must select an action."))
     elif len(actions) > 1:
         form_utils.append_error(global_dummy_form, _(u"You can't do more that one thing at the same time."))
         referentially_valid = False
@@ -313,13 +326,12 @@ def bulk(request):
 
     :rtype: ``HttpResponse``
     """
-    reference_list = request.GET.get("list")
+    references_list = request.GET.get("list")
     if request.method == "POST":
         export_form = form_utils.ExportForm(request.POST)
         add_to_shelf_form = form_utils.AddToShelfForm(request.POST)
         add_to_list_form = form_utils.AddToListForm(request.user, request.POST)
-        remove_from_list_form = form_utils.RemoveFromListForm(request.POST, prefix="remove") \
-            if "remove-listname" in request.POST else None
+        remove_from_list_form = form_utils.RemoveFromListForm(request.POST)
         global_dummy_form = forms.Form(request.POST)
         ids = set()
         for key, value in request.POST.iteritems():
@@ -327,12 +339,11 @@ def bulk(request):
             if name == "selected" and value == "on":
                 ids.add(id_)
         selection_box_forms = [form_utils.SelectionBoxForm(request.POST, prefix=id_) for id_ in ids]
-        all_valid = export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid()
-        if remove_from_list_form:
-            all_valid = remove_from_list_form.is_valid() and all_valid
-        all_valid = all([form.is_valid() for form in selection_box_forms]) and all_valid
-        referentially_valid, action = is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form,
-                                                             remove_from_list_form, selection_box_forms, global_dummy_form)
+        all_valid = \
+            is_all_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form, selection_box_forms)
+        referentially_valid, action = is_referentially_valid(
+            export_form, add_to_shelf_form, add_to_list_form, remove_from_list_form, selection_box_forms, global_dummy_form,
+            references_list)
         valid_post_data = all_valid and referentially_valid
         if valid_post_data:
             if action == "export":
@@ -369,13 +380,13 @@ def bulk(request):
         add_to_shelf_form = form_utils.AddToShelfForm()
         add_to_list_form = form_utils.AddToListForm(request.user)
         global_dummy_form = forms.Form()
-        if reference_list:
-            verbose_listname = refdb.get_verbose_listname(reference_list, request.user)
+        if references_list:
+            verbose_listname = refdb.get_verbose_listname(references_list, request.user)
             remove_from_list_form = form_utils.RemoveFromListForm(
-                initial={"listname": reference_list}, verbose_listname=verbose_listname, prefix="remove")
+                initial={"listname": references_list}, verbose_listname=verbose_listname, prefix="remove")
         else:
             remove_from_list_form = None
-    title = _(u"Bulk view") if not reference_list else _(u"List view of %s") % verbose_listname
+    title = _(u"Bulk view") if not references_list else _(u"List view of %s") % verbose_listname
     return render_to_response("bulk.html", {"title": title, "references": references,
                                             "prev_link": prev_link, "next_link": next_link, "pages": pages,
                                             "add_to_shelf": add_to_shelf_form, "export": export_form,

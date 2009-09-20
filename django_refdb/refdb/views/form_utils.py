@@ -69,19 +69,9 @@ class ExportForm(forms.Form):
 
 class RemoveFromListForm(forms.Form):
     u"""Form class for removing references from a references list.
-
-    The `listname` field is the short name (= RefDB name) of the references
-    list.  It is *not* given by the user (therefore, the widget is hidden).
-    Instead, it is given an initial value by the creator of the form instance
-    in order to have it available when the bound form is processed.
-
-    The underlying problem is that this form is created in the bulk view but
-    processed in the dispatch, which means that the information from which list
-    should be removed would be lost otherwise.
     """
     _ = ugettext_lazy
     remove = forms.BooleanField(required=False)
-    listname = forms.CharField(max_length=255, label=_("List"), widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
         verbose_listname = kwargs.pop("verbose_listname", None)
