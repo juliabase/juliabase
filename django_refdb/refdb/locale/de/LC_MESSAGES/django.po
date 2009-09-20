@@ -7,13 +7,294 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-13 04:49-0500\n"
-"PO-Revision-Date: 2009-03-13 10:50+0100\n"
+"POT-Creation-Date: 2009-09-20 17:00-0500\n"
+"PO-Revision-Date: 2009-09-21 00:09+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "last modified"
+msgstr "letzte Änderung"
+
+msgid "user"
+msgstr "Benutzer"
+
+msgid "reference"
+msgstr "Referenz"
+
+msgid "language"
+msgstr "Sprache"
+
+msgid "current references list"
+msgstr "aktuelle Referenzenliste"
+
+msgid "user details"
+msgstr "Benutzerdetails"
+
+msgid "name"
+msgstr "Name"
+
+msgid "shelf"
+msgstr "Regal"
+
+msgid "shelves"
+msgstr "Regale"
+
+msgid "main list"
+msgstr "Hauptliste"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Year"
+msgstr "Jahr"
+
+msgid "Publication"
+msgstr "Publikation"
+
+msgid "et al."
+msgstr "et al."
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Edit"
+msgstr "ändern"
+
+msgid ""
+"You didn't select a reference.\n"
+"    Please go back and select one or more references."
+msgstr ""
+"Sie haben keine Referenz ausgewählt.\n"
+"Bitte gehen sie zurück und wählen eine oder mehrere Referenzen aus."
+
+msgid "Authors"
+msgstr "Autoren"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Relevance"
+msgstr "Relevanz"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Volume"
+msgstr "Band"
+
+msgid "Issue"
+msgstr "Ausgabe"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Publisher"
+msgstr "Verlag"
+
+msgid "City"
+msgstr "Stadt"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "Serial"
+msgstr "Seriennummer"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Notes"
+msgstr "Bemerkungen"
+
+msgid "This is an institute's publication."
+msgstr "Dies ist eine Institutspublikation."
+
+msgid "Reprint locations"
+msgstr "Orte eines Ausdrucks"
+
+msgid "Abstract"
+msgstr "Zusammenfassung"
+
+msgid "Keywords"
+msgstr "Schlüsselworte"
+
+msgid "Personal information for this reference"
+msgstr "Persönliche Informationen zu dieser Referenz"
+
+msgid "Reprint available"
+msgstr "Ausdruck vorhanden"
+
+msgid "Reprint location"
+msgstr "Ort des Ausdrucks"
+
+msgid "link to PDF"
+msgstr "Link zum PDF"
+
+msgid "(is private)"
+msgstr "(ist privat)"
+
+msgid "Query string"
+msgstr "Anfragestring"
+
+msgid "selected"
+msgstr "gewählt"
+
+msgid "Export as"
+msgstr "exportieren als"
+
+#, python-format
+msgid "Remove from list “%s”"
+msgstr "aus Liste „%s“ entfernen"
+
+msgid "Add to shelf"
+msgstr "zum Regal hinzufügen"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "New list"
+msgstr "neue Liste"
+
+msgid "You must not give both an existing and a new list."
+msgstr "Die dürfen nicht sowohl eine existierende als auch eine neue Liste angeben."
+
+msgid "You must give either an existing or a new list."
+msgstr "Sie müssen entweder eine existierende oder eine neue Liste angeben."
+
+msgid "This listname is already given."
+msgstr "Dieser Listenname ist schon vergeben."
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "You must select an action."
+msgstr "Sie müssen sich für eine Aktion entscheiden."
+
+msgid "You can't do more that one thing at the same time."
+msgstr "Sie können nicht mehr als eine Sache zur gleichen Zeit machen."
+
+msgid "You must select at least one sample."
+msgstr "Sie müssen wenigstens eine Referenz auswählen."
+
+msgid "Bulk view"
+msgstr "Übersicht"
+
+#, python-format
+msgid "List view of %s"
+msgstr "Listenansicht von %s"
+
+msgid "No format given."
+msgstr "Kein Format angegeben."
+
+#, python-format
+msgid "Format “%s” is unknown."
+msgstr "Format „%s“ ist unbekannt."
+
+msgid "Main menu"
+msgstr "Hauptmenü"
+
+#. With an unmanipulated browser, you never get this far
+msgid "Change default list"
+msgstr "Standardliste ändern"
+
+msgid "Type"
+msgstr "Art"
+
+msgid "Part title"
+msgstr "Titel des Teils"
+
+msgid "Part authors"
+msgstr "Autoren des Teils"
+
+msgid "Publication title"
+msgstr "Titel der Publikation"
+
+msgid "Publication authors"
+msgstr "Autoren der Publikation"
+
+msgid "Either YYYY or YYYY-MM-DD."
+msgstr "Entweder JJJJ oder JJJJ-MM-TT."
+
+msgid "Start page"
+msgstr "Startseite"
+
+msgid "End page"
+msgstr "Endseite"
+
+msgid "Publication place"
+msgstr "Ort der Publikation"
+
+msgid "Contact address to the author."
+msgstr "Kontaktadresse des Autors."
+
+msgid "Weblink"
+msgstr "Weblink"
+
+msgid "Global notes"
+msgstr "Globale Bemerkungen"
+
+msgid "Institute publication"
+msgstr "Institutspublikation"
+
+msgid "I have a reprint"
+msgstr "Ich habe ein Reprint"
+
+msgid "Private notes"
+msgstr "Private Notizen"
+
+msgid "Private reprint available"
+msgstr "Privater Ausdruck vorhanden"
+
+msgid "Private reprint location"
+msgstr "Ort des privaten Ausdrucks"
+
+msgid "Lists"
+msgstr "Listen"
+
+msgid "Shelves"
+msgstr "Regale"
+
+msgid "PDF file"
+msgstr "PDF-Datei"
+
+msgid "PDF is private"
+msgstr "PDF ist privat"
+
+msgid "Must be either of the form YYYY or YYYY-MM-DD."
+msgstr "Muss entweder JJJJ oder JJJJ-MM-TT sein."
+
+msgid "The uploaded file was not a PDF file."
+msgstr "Die hochgeladene Datei war kein PDF."
+
+msgid "This field is forbidden for this reference type."
+msgstr "Dieses Feld ist für diesen Referenztyp verboten"
+
+msgid "You must not give an end page if there is no start page."
+msgstr "Sie dürfen keine Endseite angeben, wenn es keine Startseite gibt."
+
+msgid "This field is required for this reference type."
+msgstr "Dieses Feld ist notwendig für diesen Referenztyp."
+
+msgid "Edit reference"
+msgstr "Referenz ändern"
+
+msgid "Add reference"
+msgstr "Referenz hinzufügen"
+
+msgid "View reference"
+msgstr "Referenz betrachten"
 
 msgid "abstract reference"
 msgstr "Abstract-Referenz"
@@ -117,119 +398,11 @@ msgstr "unveröffentlichte Arbeit"
 msgid "video recording"
 msgstr "Videoaufzeichnung"
 
-msgid "Title"
-msgstr "Titel"
+#~ msgid "Relative link."
+#~ msgstr "Relativer Link."
 
-msgid "Authors"
-msgstr "Autoren"
+#~ msgid "Either PPP or AAA-EEE."
+#~ msgstr "Entweder SSS oder AAA-EEE."
 
-msgid "Date"
-msgstr "Datum"
-
-msgid "Relevance"
-msgstr "Relevanz"
-
-msgid "PDF"
-msgstr "PDF"
-
-msgid "Volume"
-msgstr "Band"
-
-msgid "Issue"
-msgstr "Ausgabe"
-
-msgid "Pages"
-msgstr "Seiten"
-
-msgid "Publisher"
-msgstr "Verlag"
-
-msgid "City"
-msgstr "Stadt"
-
-msgid "Address"
-msgstr "Adresse"
-
-msgid "Serial"
-msgstr "Seriennummer"
-
-msgid "DOI"
-msgstr "DOI"
-
-msgid "URL"
-msgstr "URL"
-
-msgid "Notes"
-msgstr "Bemerkungen"
-
-msgid "This is an institute's publication."
-msgstr "Dies ist eine Institutspublikation."
-
-msgid "Reprint locations"
-msgstr "Orte eines Ausdrucks"
-
-msgid "Abstract"
-msgstr "Zusammenfassung"
-
-msgid "Keywords"
-msgstr "Schlüsselworte"
-
-msgid "Personal information for this reference"
-msgstr "Persönliche Informationen zu dieser Referenz"
-
-msgid "Reprint available"
-msgstr "Ausdruck vorhanden"
-
-msgid "Reprint location"
-msgstr "Ort des Ausdrucks"
-
-msgid "Main menu"
-msgstr "Hauptmenü"
-
-msgid "Type"
-msgstr "Art"
-
-msgid "Publication title"
-msgstr "Titel der Publikation"
-
-msgid "Either YYYY or YYYY-MM-DD."
-msgstr "Entweder JJJJ oder JJJJ-MM-TT."
-
-msgid "Relative link."
-msgstr "Relativer Link."
-
-msgid "Either PPP or AAA-EEE."
-msgstr "Entweder SSS oder AAA-EEE."
-
-msgid "Contact address to the author."
-msgstr "Kontaktadresse des Autors."
-
-msgid "Weblink"
-msgstr "Weblink"
-
-msgid "Global notes"
-msgstr "Globale Bemerkungen"
-
-msgid "Institute publication"
-msgstr "Institutspublikation"
-
-msgid "Global reprint locations"
-msgstr "Globale Orte eines Ausdrucks"
-
-msgid "Private notes"
-msgstr "Private Notizen"
-
-msgid "Private reprint available"
-msgstr "Privater Ausdruck vorhanden"
-
-msgid "Private reprint location"
-msgstr "Ort des privaten Ausdrucks"
-
-msgid "Edit reference"
-msgstr "Referenz ändern"
-
-msgid "Add reference"
-msgstr "Referenz hinzufügen"
-
-msgid "View reference"
-msgstr "Referenz betrachten"
+#~ msgid "Global reprint locations"
+#~ msgstr "Globale Orte eines Ausdrucks"
