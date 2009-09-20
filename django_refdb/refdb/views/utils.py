@@ -281,7 +281,7 @@ def freeze(self):
     patching).
 
     Note that this method does not save the extended notes themselves.  It just
-    perpares the object so that the *links* to extended notes are updated.  In
+    prepares the object so that the *links* to extended notes are updated.  In
     most cases, this is enough.  However, for global comments and “users with
     offprints”, there is a one-to-one relationship with an extended note which
     must be created and saved separately.

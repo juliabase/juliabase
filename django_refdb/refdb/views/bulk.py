@@ -4,6 +4,9 @@
 u"""View and routines for the bulk view.  In the bulk view, the results of a
 search are displayed in pages.  Additionally, it is used to visualise
 references lists.
+
+Note that the write operations to the RefDB database are atomic, therefore, I
+don't need rollback actions.
 """
 
 from __future__ import absolute_import
