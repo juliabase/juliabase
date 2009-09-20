@@ -448,7 +448,8 @@ def bulk(request):
                 query_dict = {"format": export_form.cleaned_data["format"]}
                 query_dict.update((id_ + "-selected", "on") for id_ in ids)
                 query_string = urlencode(query_dict)
-                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(export) + "?" + query_string)
+                return utils.HttpResponseSeeOther(
+                    django.core.urlresolvers.reverse("refdb.views.export.export") + "?" + query_string)
             elif action == "shelf":
                 # FixMe: This must be changed from using citation keys to using
                 # IDs.  However, first
