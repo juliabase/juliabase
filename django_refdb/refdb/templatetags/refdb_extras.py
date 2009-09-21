@@ -8,6 +8,7 @@ import re, codecs, os.path
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import escape
+import django.utils.http
 from django.contrib.markup.templatetags import markup
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
@@ -76,3 +77,16 @@ def markdown(value):
     however, I can't easily do that without allowing HTML tags, too.
     """
     return markup.markdown(escape(substitute_html_entities(unicode(value))))
+
+
+@register.filter
+@stringfilter
+def urlquote_plus(value):
+    u"""Filter for quoting URLs so that they can be used within other URLs.
+    This is useful for added “next” URLs in query strings, for example::
+
+        <a href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+               >{% trans 'edit' %}</a>
+    """
+    return django.utils.http.urlquote_plus(value, safe="/")
+urlquote_plus.is_safe = False

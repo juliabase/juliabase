@@ -10,6 +10,9 @@ import sys
 if "/home/bronger/src/pyrefdb/main/" not in sys.path:
     sys.path.append("/home/bronger/src/pyrefdb/main/")
 
+IS_TESTSERVER = len(sys.argv) >= 2
+WITH_EPYDOC = 'epydoc' in sys.modules
+
 import ConfigParser, os.path
 credentials = ConfigParser.SafeConfigParser()
 read_files = credentials.read(os.path.expanduser("~/django-refdb.auth"))
@@ -60,7 +63,7 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/media_admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = CREDENTIALS["salt"]
