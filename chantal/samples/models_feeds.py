@@ -30,7 +30,7 @@ class FeedEntry(models.Model):
     """
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
-    important = models.BooleanField(_(u"is important"), default=True, null=True, blank=True)
+    important = models.BooleanField(_(u"is important"), default=True)
     sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
     u"""You'll never calculate the SHA-1 hash yourself.  It is done in
     `save`."""
@@ -214,7 +214,7 @@ class FeedResult(FeedEntry):
     """
     result = models.ForeignKey(Result, verbose_name=_(u"result"))
     description = models.TextField(_(u"description"), blank=True)
-    is_new = models.BooleanField(_(u"result is new"), null=True, blank=True)
+    is_new = models.BooleanField(_(u"result is new"))
 
     class Meta:
         verbose_name = _(u"result feed entry")
@@ -271,8 +271,7 @@ class FeedEditedSamples(FeedEntry):
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     description = models.TextField(_(u"description"))
-    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False,
-                                                     null=True, blank=True)
+    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False)
 
     class Meta:
         verbose_name = _(u"edited samples feed entry")
@@ -296,7 +295,7 @@ class FeedSampleSplit(FeedEntry):
     u"""Model for feed entries for sample splits.
     """
     sample_split = models.ForeignKey(SampleSplit, verbose_name=_(u"sample split"))
-    sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False, null=True, blank=True)
+    sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False)
 
     class Meta:
         verbose_name = _(u"sample split feed entry")
@@ -320,8 +319,7 @@ class FeedEditedSampleSeries(FeedEntry):
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
     description = models.TextField(_(u"description"))
-    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False,
-                                                     null=True, blank=True)
+    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False)
 
     class Meta:
         verbose_name = _(u"edited sample series feed entry")

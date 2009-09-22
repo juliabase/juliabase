@@ -243,7 +243,7 @@ class SixChamberLayer(Layer):
     transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
     plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
                                              help_text=_(u"in W"))
-    plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False, null=True, blank=True)
+    plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False)
     deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
                                                null=True, blank=True, help_text=_(u"in MHz"))
     deposition_power = models.DecimalField(_(u"deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
@@ -640,7 +640,7 @@ class SmallClusterToolPECVDLayer(SmallClusterToolLayer, AllGases):
     transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
     plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
                                              help_text=_(u"in W"))
-    plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False, null=True, blank=True)
+    plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False)
     deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
                                                null=True, blank=True, help_text=_(u"in MHz"))
     deposition_power = models.DecimalField(_(u"deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,

@@ -48,7 +48,7 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
-    restricted = models.BooleanField(_(u"restricted"), default=False, null=True, blank=True)
+    restricted = models.BooleanField(_(u"restricted"), default=False)
 
     class Meta:
         verbose_name = _(u"external operator")
@@ -842,7 +842,7 @@ class UserDetails(models.Model):
     auto_addition_groups = models.ManyToManyField(
         django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),
         help_text=_(u"new samples in these groups are automatically added to “My Samples”"))
-    only_important_news = models.BooleanField(_(u"get only important news"), default=False, null=True, blank=True)
+    only_important_news = models.BooleanField(_(u"get only important news"), default=False)
     feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed enties"), related_name="users", blank=True)
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
@@ -876,7 +876,7 @@ class GroupDetails(models.Model):
     """
     group = models.OneToOneField(django.contrib.auth.models.Group, primary_key=True, verbose_name=_(u"group"),
                                  related_name="details")
-    restricted = models.BooleanField(_(u"restricted"), default=False, null=True, blank=True)
+    restricted = models.BooleanField(_(u"restricted"), default=False)
 
     class Meta:
         verbose_name = _(u"group details")
