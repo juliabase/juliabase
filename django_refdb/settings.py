@@ -100,6 +100,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'refdb',
+    'staticfiles'
 )
 
 CACHE_BACKEND = 'file:///var/tmp/django_cache'
@@ -107,7 +108,6 @@ CACHE_MIDDLEWARE_SECONDS = 300
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 
-INSTITUTION = u"IEF-5, Forschungszentrum Jülich, Germany"
 REFDB_USERNAME_PREFIX = "drefdbuser"
 REFDB_USER = CREDENTIALS["refdb_user"]
 REFDB_PASSWORD = CREDENTIALS["refdb_password"]
