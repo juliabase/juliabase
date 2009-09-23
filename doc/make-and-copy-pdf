@@ -1,0 +1,2 @@
+#! /bin/sh
+make latex && cd .build/latex && make all-pdf && scp django-refdb.pdf bob:/windows/hobie/
