@@ -1,5 +1,5 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "base.html" %}
+{% extends "refdb/base.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -23,7 +23,7 @@
     {% endif %}
   </div>
   <form method="POST" action="">
-    {% include "list_compact.html" %}
+    {% include "refdb/list_compact.html" %}
     <table>
       {{ global_dummy }}
       {% if remove_from_list %}

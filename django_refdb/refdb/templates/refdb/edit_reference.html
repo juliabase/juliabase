@@ -1,11 +1,12 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "base.html" %}
+{% extends "refdb/base.html" %}
 {% load i18n %}
+{% load refdb_extras %}
 
 {% block content %}
-  <form method="get" action="bulk">
+  <form enctype="multipart/form-data" method="post" action="">
     <table>
-      {{ search }}
+      {{ reference }}
     </table>
     <p><input type="submit"/></p>
   </form>

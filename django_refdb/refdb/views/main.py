@@ -56,8 +56,8 @@ def main_menu(request):
     change_list_form = ChangeListForm(request.user)
     current_list = models.UserDetails.objects.get(user=request.user).current_list
     references = refdb.get_connection(request.user).get_references(":ID:>0", listname=current_list)
-    return render_to_response("main_menu.html", {"title": _(u"Main menu"), "search": search_form, "references": references,
-                                                 "change_list": change_list_form},
+    return render_to_response("refdb/main_menu.html", {"title": _(u"Main menu"), "search": search_form, "references": references,
+                                                       "change_list": change_list_form},
                               context_instance=RequestContext(request))
 
 
@@ -85,5 +85,5 @@ def change_list(request):
         next_url = django.core.urlresolvers.reverse(main_menu)
         return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
-    return render_to_response("change_list.html", {"title": _(u"Change default list"), "change_list": change_list_form},
+    return render_to_response("refdb/change_list.html", {"title": _(u"Change default list"), "change_list": change_list_form},
                               context_instance=RequestContext(request))

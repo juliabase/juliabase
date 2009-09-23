@@ -147,7 +147,7 @@ def search(request):
     :rtype: ``HttpResponse``
     """
     search_form = SearchForm(request.GET)
-    return render_to_response("search.html", {"title": _(u"Search"), "search": search_form},
+    return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form},
                               context_instance=RequestContext(request))
 
 
@@ -548,9 +548,9 @@ def bulk(request):
         else:
             remove_from_list_form = None
     title = _(u"Bulk view") if not references_list else _(u"List view of %s") % verbose_listname
-    return render_to_response("bulk.html", {"title": title, "references": references,
-                                            "prev_link": prev_link, "next_link": next_link, "pages": pages,
-                                            "add_to_shelf": add_to_shelf_form, "export": export_form,
-                                            "add_to_list": add_to_list_form,
-                                            "remove_from_list": remove_from_list_form, "global_dummy": global_dummy_form},
+    return render_to_response("refdb/bulk.html", {"title": title, "references": references,
+                                                  "prev_link": prev_link, "next_link": next_link, "pages": pages,
+                                                  "add_to_shelf": add_to_shelf_form, "export": export_form,
+                                                  "add_to_list": add_to_list_form,
+                                                  "remove_from_list": remove_from_list_form, "global_dummy": global_dummy_form},
                               context_instance=RequestContext(request))

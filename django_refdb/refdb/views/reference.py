@@ -564,7 +564,7 @@ def edit(request, citation_key):
     else:
         reference_form = ReferenceForm(request, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
-    return render_to_response("edit_reference.html", {"title": title, "reference": reference_form},
+    return render_to_response("refdb/edit_reference.html", {"title": title, "reference": reference_form},
                               context_instance=RequestContext(request))
 
 
@@ -594,7 +594,7 @@ def view(request, citation_key):
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
-    return render_to_response("show_reference.html", {"title": _(u"View reference"),
-                                                      "reference": reference, "lib_info": lib_info,
+    return render_to_response("refdb/show_reference.html", {"title": _(u"View reference"),
+                                                            "reference": reference, "lib_info": lib_info,
                                                       "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},
                               context_instance=RequestContext(request))
