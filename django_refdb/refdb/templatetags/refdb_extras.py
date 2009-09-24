@@ -25,6 +25,8 @@ def display_reference_type(value):
     return utils.reference_types[value]
 
 
+# FixMe: This is a duplicate of Chantal
+
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
     entities[line[:12].rstrip()] = line[12]
@@ -63,6 +65,8 @@ def substitute_html_entities(text):
     return result
 
 
+# FixMe: This is a duplicate of Chantal
+
 @register.filter
 @stringfilter
 def markdown(value):
@@ -79,6 +83,8 @@ def markdown(value):
     return markup.markdown(escape(substitute_html_entities(unicode(value))))
 
 
+# FixMe: This is a duplicate of Chantal
+
 @register.filter
 @stringfilter
 def urlquote_plus(value):
@@ -90,3 +96,47 @@ def urlquote_plus(value):
     """
     return django.utils.http.urlquote_plus(value, safe="/")
 urlquote_plus.is_safe = False
+
+
+# FixMe: This is a duplicate of Chantal
+
+@register.simple_tag
+def input_field(field):
+    u"""Tag for inserting a field value into an HTML table as an editable
+    field.  It consists of two ``<td>`` elements, one for the label and one for
+    the value, so it spans two columns.  This tag is primarily used in
+    tamplates of edit views.  Example::
+
+        {% input_field deposition.number %}
+    """
+    result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
+        {"html_name": field.html_name, "label": field.label}
+    help_text = u""" <span class="help">(%s)</span>""" % field.help_text if field.help_text else u""
+    result += u"""<td class="input">%(field)s%(help_text)s</td>""" % {"field": field, "help_text": help_text}
+    return result
+
+
+# FixMe: This is a duplicate of Chantal
+
+@register.inclusion_tag("error_list.html")
+def error_list(form, form_error_title, outest_tag=u"<table>"):
+    u"""Includes a comprehensive error list for one particular form into the
+    page.  It is an HTML table, so take care that the tags are nested
+    properly.  Its template can be found in the file ``"error_list.html"``.
+
+    :Parameters:
+      - `form`: the bound form whose errors should be displayed; if ``None``,
+        nothing is generated
+      - `form_error_title`: The title used for general error messages.  These
+        are not connected to one particular field but the form as a
+        whole. Typically, they are generated in the ``is_referentially_valid``
+        functions.
+      - `outest_tag`: May be ``"<table>"`` or ``"<tr>"``, with ``"<table>"`` as
+        the default.  It is the outmost HTML tag which is generated for the
+        error list.
+
+    :type form: ``forms.Form``
+    :type form_error_title: unicode
+    :type outest_tag: unicode
+    """
+    return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}

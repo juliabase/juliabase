@@ -1,1 +1,7 @@
 @import url('../../chantal/css/print.css');
+@import url('main.css');
+
+tr.list-row-odd { background-color: transparent }
+tr.list-row-even { background-color: #f0f0f0 }
+
+div.pages-links { display: none }

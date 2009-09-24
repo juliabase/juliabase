@@ -1,9 +1,10 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "refdb/base.html" %}
 {% load i18n %}
+{% load refdb_extras %}
 
 {% block frame_content %}
-  <div>
+  <div class="pages-links">
     {% if prev_link %}
       <a href="{{ prev_link }}">&lt;&lt;</a>
     {% else %}
@@ -24,15 +25,31 @@
   </div>
   <form method="POST" action="">
     {% include "refdb/list_compact.html" %}
-    <table>
-      {{ global_dummy }}
-      {% if remove_from_list %}
-        {{ remove_from_list }}
-      {% endif %}
-      {{ add_to_shelf }}
-      {{ add_to_list }}
-      {{ export }}
-    </table>
-    <p><input type="submit"/></p>
+    <div class="screen-only">
+      <div style="margin-top: 4ex"/>
+      {% error_list global_dummy _("General error") %}
+      {% error_list add_to_shelf _("Error while adding to shelf") %}
+      {% error_list add_to_list _("Error while adding to list") %}
+      {% error_list remove_from_list _("Error while removing from shelf") %}
+      <table width="100%">
+        <tr>
+          {% input_field add_to_shelf.new_shelf %}
+          {% input_field add_to_list.existing_list %}
+          {% input_field export.format %}
+        </tr>
+        <tr>
+          {% if remove_from_list %}
+            {% input_field remove_from_list.remove %}
+          {% else %}
+            <td colspan="2"/>
+          {% endif %}
+          {% input_field add_to_list.new_list %}
+          <td colspan="2"/>
+        </tr>
+        <tr>
+          <td colspan="0" style="padding-top: 2ex; text-align: center"><input type="submit"/></td>
+        </tr>
+      </table>
+    </div>
   </form>
 {% endblock %}
