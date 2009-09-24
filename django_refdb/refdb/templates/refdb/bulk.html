@@ -6,9 +6,9 @@
 {% block frame_content %}
   <div class="pages-links">
     {% if prev_link %}
-      <a href="{{ prev_link }}">&lt;&lt;</a>
+      <a href="{{ prev_link }}"><img src="{{ MEDIA_URL }}/refdb/icons/arrow_left.png" alt="{{ _("previous page") }}"/></a>  
     {% else %}
-       &lt;&lt;
+      <img src="{{ MEDIA_URL }}/refdb/icons/arrow_left.png" alt="{{ _("previous page") }}" style="visibility: hidden"/>  
     {% endif %}
     {% for page in pages %}
         {% if page %}
@@ -18,9 +18,9 @@
         {% endif %}
     {% endfor %}
     {% if next_link %}
-      <a href="{{ next_link }}">&gt;&gt;</a>
+        <a href="{{ next_link }}"><img src="{{ MEDIA_URL }}/refdb/icons/arrow_right.png" alt="{{ _("next page") }}"/></a>
     {% else %}
-       &gt;&gt;
+        <img src="{{ MEDIA_URL }}/refdb/icons/arrow_right.png" alt="{{ _("next page") }}" style="visibility: hidden"/>
     {% endif %}
   </div>
   <form method="POST" action="">
