@@ -122,13 +122,13 @@ class AddToListForm(forms.Form):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data["existing_list"] and cleaned_data["new_list"]:
-            append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
+            form_utils.append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif not self.optional and not cleaned_data["existing_list"] and not cleaned_data["new_list"]:
-            append_error(self, _(u"You must give either an existing or a new list."), "new_list")
+            form_utils.append_error(self, _(u"You must give either an existing or a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif cleaned_data["new_list"] and cleaned_data["new_list"] in self.short_listnames:
-            append_error(self, _(u"This listname is already given."), "new_list")
+            form_utils.append_error(self, _(u"This listname is already given."), "new_list")
             del cleaned_data["new_list"]
         return cleaned_data
 
