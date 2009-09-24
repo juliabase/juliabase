@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang='{{ LANGUAGE_CODE|default:"en" }}' 
   xml:lang='{{ LANGUAGE_CODE|default:"en" }}' {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<title>{% block title %}{{ title|escape }}{% endblock %}</title>
+<title>{% block title %}{{ title }}{% endblock %}</title>
 <!--link rel="icon" type="image/png" href="/media/favicon.png" /-->
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <link rel="shortcut icon" href="/media/favicon.ico" type="image/x-icon"/>
@@ -35,7 +35,7 @@
       <td class="login-data">
         {% if user.is_authenticated %}
           {% trans 'Welcome,' %} 
-          {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
+          {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}.
           <a href="{% url samples.views.main.main_menu %}"><img src="/media/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"/></a>
           <a href="/trac/chantal/newticket?reporter={{ user.email|urlquote_plus }}"
                ><img src="/media/icons/bug_add.png" alt="add-bug icon" title="{% trans 'Report feature wish or bug' %}"/></a>
@@ -70,10 +70,8 @@
     <div class="outer-frame">
       <div class="inner-frame">
         {% block float_image %}{% endblock %}
-	{% block content_title %}<h1>{{ title|escape }}</h1>{% endblock %}
-	{% block content %}
-	{{ content }}
-	{% endblock %}
+	{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+	{% block content %}{% endblock %}
         <div style="clear: both"/>
       </div>
     </div>
