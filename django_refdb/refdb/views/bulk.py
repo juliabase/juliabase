@@ -18,6 +18,7 @@ from django.views.decorators.http import last_modified, require_http_methods
 from django.utils.http import urlencode
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.decorators import login_required
+import django.core.urlresolvers
 from django import forms
 from django.core.cache import cache
 from django.conf import settings
