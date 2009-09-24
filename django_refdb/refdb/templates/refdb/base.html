@@ -1,21 +1,16 @@
 {# -*- indent-tabs-mode: nil -*- #}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang='{{ LANGUAGE_CODE|default:"en" }}' 
-  xml:lang='{{ LANGUAGE_CODE|default:"en" }}' {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
-<head>
-<title>{% block title %}{{ title|escape }}{% endblock %}</title>
-<!--link rel="icon" type="image/png" href="{{ MEDIA_URL }}refdb/favicon.png" /-->
-<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-<link rel="shortcut icon" href="{{ MEDIA_URL }}refdb/favicon.ico" type="image/x-icon"/>
-<link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}refdb/css/main.css"/>
-<link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}refdb/css/print.css"/>
-{% block css %}{% endblock %}
-{% block extrahead %}{% endblock %}
-</head>
+{% extends "site_base.html" %}
+
 {% load i18n %}
 {% load refdb_extras %}
 
-<body>
+{% block extrahead %}
+  <link rel="shortcut icon" href="{{ MEDIA_URL }}refdb/favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}refdb/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}refdb/css/print.css"/>
+{% endblock %}
+
+{% block content %}
   <table class="headbar" width="100%" cellspacing="0" cellpadding="0">
     <tr>
       <td class="info">
@@ -25,12 +20,6 @@
                    alt="{% blocktrans with translation_flag.1 as language %}switch to {{ language }}{% endblocktrans %}" 
                    /></a>
         {% endfor %}
-        {% if db_access_time_in_ms %}
-          {% trans 'DB access time:' %}
-          {{ db_access_time_in_ms }} ms
-        {% else %}
-           
-        {% endif %}
       </td>
       <td class="login-data">
         {% if user.is_authenticated %}
@@ -47,7 +36,7 @@
           {% if help_link %}<a href="/trac/chantal/wiki/{{ help_link }}"><img 
                          src="{{ MEDIA_URL }}refdb/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
           <a href="{% url refdb.views.main.main_menu %}"><img src="{{ MEDIA_URL }}refdb/icons/house.png" 
-                                                                alt="log-in icon" title="{% trans 'Log in' %}"/></a>
+                                                              alt="log-in icon" title="{% trans 'Log in' %}"/></a>
         {% endif %}
       </td>
     </tr>
@@ -70,13 +59,10 @@
     <div class="outer-frame">
       <div class="inner-frame">
         {% block float_image %}{% endblock %}
-	{% block content_title %}<h1>{{ title|escape }}</h1>{% endblock %}
-	{% block content %}
-	{{ content }}
-	{% endblock %}
+	{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+	{% block frame_content %}{% endblock %}
         <div style="clear: both"/>
       </div>
     </div>
   </div>
-</body>
-</html>
+{% endblock %}
