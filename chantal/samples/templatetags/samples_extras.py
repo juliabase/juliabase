@@ -19,6 +19,10 @@ import samples.views.utils
 
 register = template.Library()
 
+# FixMe: An audit must be made to see where variable content is not properly
+# escaped.  Candidates are input_field and ValueFieldNode, but there are
+# probably other, too.
+
 
 @register.filter
 def quantity(value, unit=None, autoescape=False):
