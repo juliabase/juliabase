@@ -398,7 +398,6 @@ class ReferenceForm(forms.Form):
             reference.users_with_offprint.keywords.discard(str(self.user.pk))
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
-        reference.freeze()
         return reference
 
     def save_lists(self, reference):
@@ -494,7 +493,6 @@ class ReferenceForm(forms.Form):
         self._save_extended_note(
             new_reference.users_with_offprint, "django-refdb-users-with-offprint-" + new_reference.citation_key)
         new_reference.extended_notes = extended_notes
-        connection.update_note_links(new_reference)
 
         self.save_lists(new_reference)
         if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
@@ -518,6 +516,8 @@ class ReferenceForm(forms.Form):
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
             destination.close()
+        new_reference.freeze()
+        connection.update_note_links(new_reference)
         self._update_last_modification(new_reference)
         return new_reference
 
@@ -592,8 +592,10 @@ def view(request, citation_key):
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
+    title = _(u"%(reference_type)s “%(citation_key)s”") % {"reference_type": utils.reference_types[reference.type],
+                                                           "citation_key": citation_key}
     return render_to_response("refdb/show_reference.html",
-                              {"title": utils.reference_types[reference.type], "reference": reference, "lib_info": lib_info,
+                              {"title": title, "reference": reference, "lib_info": lib_info,
                                "pdf_path": pdf_path, "pdf_is_private": pdf_is_private,
                                "with_part": reference.type not in utils.reference_types_without_part},
                               context_instance=RequestContext(request))
