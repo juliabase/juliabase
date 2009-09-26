@@ -12,7 +12,7 @@ import django.utils.http
 from django.contrib.markup.templatetags import markup
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
-from refdb.views import utils  
+from refdb.views import utils
 
 register = template.Library()
 
@@ -64,8 +64,6 @@ def substitute_html_entities(text):
             break
     return result
 
-
-# FixMe: This is a duplicate of Chantal
 
 @register.filter
 @stringfilter
@@ -140,3 +138,34 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
     :type outest_tag: unicode
     """
     return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
+
+
+class FlexibleFieldNode(template.Node):
+
+    def __init__(self, nodelist, field_name):
+        self.nodelist, self.field_name = nodelist, field_name
+
+    def render(self, context):
+        try:
+            reference_type = template.Variable("reference.type").resolve(context)
+        except template.VariableDoesNotExist:
+            return ""
+        labels = utils.labels[reference_type]
+        if self.field_name in labels:
+            return u"""<td class="label">%s:</td>%s""" % \
+                (escape(labels[self.field_name]), self.nodelist.render(context))
+        else:
+            return u"""<td colspan="2"> </td>"""
+
+
+@register.tag
+def flexible_field(parser, token):
+    try:
+        tag_name, field_name = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError, "%s tag requires exactly one argument" % token.contents.split()[0]
+    if not (field_name[0] == field_name[-1] and field_name[0] in ('"', "'")):
+        raise template.TemplateSyntaxError, "%s tag's argument should be in quotes" % tag_name
+    nodelist = parser.parse(('end_flexible_field',))
+    parser.delete_first_token()
+    return FlexibleFieldNode(nodelist, field_name[1:-1])

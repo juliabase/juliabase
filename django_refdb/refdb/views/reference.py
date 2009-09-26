@@ -315,11 +315,8 @@ class ReferenceForm(forms.Form):
         if cleaned_data["reference_type"] != "GEN" and not cleaned_data["date"]:
             self._errors["date"] = ErrorList([_(u"This field is required for this reference type.")])
             del cleaned_data["date"]
-        reference_types = ["ART", "ADVS", "BILL", "BOOK", "CASE", "CTLG", "COMP", "DATA", "ELEC", "HEAR",
-                           "ICOMM", "MAP", "MPCT", "MUSIC", "PAMP", "PAT", "PCOMM", "RPRT", "SER",
-                           "SLIDE", "SOUND", "STAT", "THES", "UNBILL", "UNPB", "VIDEO"]
-        self._forbid_field("part_title", reference_types)
-        self._forbid_field("part_authors", reference_types)
+        self._forbid_field("part_title", utils.reference_types_without_part)
+        self._forbid_field("part_authors", utils.reference_types_without_part)
         if cleaned_data["reference_type"] in ["ABST", "INPR", "JOUR", "JFULL", "MGZN", "NEWS"] \
                 and not cleaned_data["publication_title"]:
             self._errors["publication_title"] = ErrorList([_(u"This field is required for this reference type.")])
@@ -585,6 +582,7 @@ def view(request, citation_key):
     :rtype: ``HttpResponse``
     """
     connection = refdb.get_connection(request.user)
+    # FixMe: Is "with_extended_notes" sensible?
     references = connection.get_references(":CK:=" + citation_key, with_extended_notes=True,
                                            extended_notes_constraints=":NCK:~^django-refdb-")
     if not references:
@@ -594,7 +592,8 @@ def view(request, citation_key):
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
     pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
-    return render_to_response("refdb/show_reference.html", {"title": _(u"View reference"),
-                                                            "reference": reference, "lib_info": lib_info,
-                                                      "pdf_path": pdf_path, "pdf_is_private": pdf_is_private},
+    return render_to_response("refdb/show_reference.html",
+                              {"title": utils.reference_types[reference.type], "reference": reference, "lib_info": lib_info,
+                               "pdf_path": pdf_path, "pdf_is_private": pdf_is_private,
+                               "with_part": reference.type not in utils.reference_types_without_part},
                               context_instance=RequestContext(request))
