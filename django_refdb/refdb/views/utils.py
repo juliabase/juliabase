@@ -6,11 +6,13 @@ u"""General helper functions for the views.
 
 from __future__ import absolute_import
 
+import hashlib
 import pyrefdb
 from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from .. import models
 
 
@@ -408,3 +410,26 @@ labels = {
 reference_types_without_part = frozenset(["ART", "ADVS", "BILL", "BOOK", "CASE", "CTLG", "COMP", "DATA", "ELEC", "HEAR",
                                           "ICOMM", "MAP", "MPCT", "MUSIC", "PAMP", "PAT", "PCOMM", "RPRT", "SER",
                                           "SLIDE", "SOUND", "STAT", "THES", "UNBILL", "UNPB", "VIDEO"])
+
+
+def get_user_hash(user_id):
+    u"""Retrieves the hash value for a user.  This is used for generating URLs
+    to private PDFs.  The hash value is a shortened, salted SHA-1 hash of the
+    user ID.  Note that it is guaranteed to be different from the user's RefDB
+    password, see `refdb.get_password`.
+
+    :Parameters:
+      - `user_id`: the user ID whose hash should be retrieved
+
+    :type user_id: int
+
+    :Return:
+      the hash value of the user
+
+    :rtype: str
+    """
+    user_hash = hashlib.sha1()
+    user_hash.update(settings.SECRET_KEY)
+    user_hash.update("userhash")
+    user_hash.update(str(user_id))
+    return user_hash.hexdigest()[:10]

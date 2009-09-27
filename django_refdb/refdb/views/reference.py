@@ -45,7 +45,7 @@ def pdf_filepath(reference, user_id=None):
     private = reference.pdf_is_private[user_id] if user_id else False
     directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
     if private:
-        directory = os.path.join(directory, str(user_id))
+        directory = os.path.join(directory, utils.get_user_hash(user_id))
     filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
     return filepath
 
@@ -73,7 +73,7 @@ def pdf_file_url(reference, user_id=None):
     root_url = os.path.join(settings.MEDIA_URL, "references", reference.citation_key)
     filename = utils.slugify_reference(reference) + ".pdf"
     if private:
-        private_url = os.path.join(root_url, str(user_id), filename)
+        private_url = os.path.join(root_url, utils.get_user_hash(user_id), filename)
     if reference.global_pdf_available:
         global_url = os.path.join(root_url, filename)
     return global_url, private_url
