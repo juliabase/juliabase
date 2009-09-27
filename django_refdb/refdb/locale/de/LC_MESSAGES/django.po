@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-26 02:03-0500\n"
-"PO-Revision-Date: 2009-09-26 09:14+0200\n"
+"POT-Creation-Date: 2009-09-26 10:05-0500\n"
+"PO-Revision-Date: 2009-09-26 17:05+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -148,11 +148,14 @@ msgstr "Zusammenfassung"
 msgid "Keywords"
 msgstr "Schlüsselworte"
 
-msgid "Personal information for this reference"
-msgstr "Persönliche Informationen zu dieser Referenz"
-
 msgid "Reprint available"
 msgstr "Ausdruck vorhanden"
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
 
 msgid "Reprint location"
 msgstr "Ort des Ausdrucks"
@@ -323,6 +326,10 @@ msgstr "Referenz ändern"
 
 msgid "Add reference"
 msgstr "Referenz hinzufügen"
+
+#, python-format
+msgid "%(reference_type)s “%(citation_key)s”"
+msgstr "%(reference_type)s „%(citation_key)s“"
 
 msgid "abstract reference"
 msgstr "Abstract-Referenz"
@@ -590,6 +597,9 @@ msgstr "Kommitee"
 
 msgid "Bill number"
 msgstr "Nummer des Gesetzesentwurfs"
+
+#~ msgid "Personal information for this reference"
+#~ msgstr "Persönliche Informationen zu dieser Referenz"
 
 #~ msgid "View reference"
 #~ msgstr "Referenz betrachten"

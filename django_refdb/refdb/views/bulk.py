@@ -430,7 +430,7 @@ def fetch_references(request):
     references = [all_references[id_] for id_ in ids]
     for reference in references:
         reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
+                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
     return references, prev_link, next_link, pages
 

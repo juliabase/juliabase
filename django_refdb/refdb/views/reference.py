@@ -23,8 +23,7 @@ from . import utils
 from .rollbacks import *
 
 
-# FixMe: Here, we have two function in one.  This should be disentangled.
-def pdf_filepath(reference, user_id=None, existing=False):
+def pdf_filepath(reference, user_id=None):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
     filesystem.
 
@@ -32,31 +31,52 @@ def pdf_filepath(reference, user_id=None, existing=False):
       - `reference`: the reference whose PDF file path should be calculated
       - `user_id`: the ID of the user who tries to retrieve the file; this is
         important because it is possible to upload *private* PDFs.
-      - `existing`: Whether the PDF should be existing.  If ``False``, this
-        routine returns ``None`` for the filepath if the PDF doesn't exist.
 
     :type reference: ``pyrefdb.Reference``, with the ``extended_data``
       attribute
     :type user_id: int
-    :type existing: bool
 
     :Return:
-      If ``existing==False``, it only returns the absolute path to the uploaded
-      PDF file, no matter whether it exists or not.  If ``existing==True``, it
-      returns the absolute path (``None`` if not existing) and whether the PDF
-      is a private one
+      the absolute path to the uploaded PDF file, no matter whether it exists
+      or not
 
-    :rtype: unicode or (unicode, bool)
+    :rtype: unicode
     """
     private = reference.pdf_is_private[user_id] if user_id else False
-    if existing and (not private and not reference.global_pdf_available):
-        filepath = None
-    else:
-        directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
-        if private:
-            directory = os.path.join(directory, str(user_id))
-        filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
-    return (filepath, private) if existing else filepath
+    directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
+    if private:
+        directory = os.path.join(directory, str(user_id))
+    filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
+    return filepath
+
+
+def pdf_file_url(reference, user_id=None):
+    u"""Calculates the absolute URL of the uploaded PDF.
+
+    :Parameters:
+      - `reference`: the reference whose PDF file path should be calculated
+      - `user_id`: the ID of the user who tries to retrieve the file; this is
+        important because it is possible to upload *private* PDFs.
+
+    :type reference: ``pyrefdb.Reference``, with the ``extended_data``
+      attribute
+    :type user_id: int
+
+    :Return:
+      the absolute path (``None`` if not existing) and whether the PDF is a
+      private one
+
+    :rtype: unicode, bool
+    """
+    global_url = private_url = None
+    private = reference.pdf_is_private[user_id] if user_id else False
+    root_url = os.path.join(settings.MEDIA_URL, "references", reference.citation_key)
+    filename = utils.slugify_reference(reference) + ".pdf"
+    if private:
+        private_url = os.path.join(root_url, str(user_id), filename)
+    if reference.global_pdf_available:
+        global_url = os.path.join(root_url, filename)
+    return global_url, private_url
 
 
 def serialize_authors(authors):
@@ -163,7 +183,7 @@ class ReferenceForm(forms.Form):
             if reference.comments:
                 initial["global_notes"] = reference.comments.content.text
             if reference.users_with_offprint:
-                initial["has_reprint"] = unicode(user.pk) in reference.users_with_offprint.keywords
+                initial["has_reprint"] = unicode(user.id) in reference.users_with_offprint.keywords
             initial["abstract"] = reference.abstract or u""
             initial["keywords"] = u"; ".join(reference.keywords)
             lib_info = reference.get_lib_info(refdb.get_username(user.id))
@@ -354,7 +374,7 @@ class ReferenceForm(forms.Form):
         else:
             reference = pyrefdb.Reference()
             reference.extended_data = utils.ExtendedData()
-            reference.creator = self.user.pk
+            reference.creator = self.user.id
         reference.type = self.cleaned_data["reference_type"]
         if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
             if not reference.part:
@@ -393,9 +413,9 @@ class ReferenceForm(forms.Form):
         if self.cleaned_data["has_reprint"] and not reference.users_with_offprint:
             reference.users_with_offprint = pyrefdb.XNote()
         if self.cleaned_data["has_reprint"]:
-            reference.users_with_offprint.keywords.add(str(self.user.pk))
+            reference.users_with_offprint.keywords.add(str(self.user.id))
         elif reference.users_with_offprint:
-            reference.users_with_offprint.keywords.discard(str(self.user.pk))
+            reference.users_with_offprint.keywords.discard(str(self.user.id))
         reference.abstract = self.cleaned_data["abstract"]
         reference.keywords = self.cleaned_data["keywords"]
         return reference
@@ -505,10 +525,11 @@ class ReferenceForm(forms.Form):
         if pdf_file:
             private = self.cleaned_data["pdf_is_private"]
             if private:
-                new_reference.users_with_personal_pdf.add(self.user)
+                new_reference.pdf_is_private[self.user.id] = True
             else:
+                new_reference.pdf_is_private[self.user.id] = False
                 new_reference.global_pdf_available = True
-            filepath = pdf_filepath(new_reference, self.user if private else None)
+            filepath = pdf_filepath(new_reference, self.user.id if private else None)
             directory = os.path.dirname(filepath)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -547,7 +568,7 @@ def edit(request, citation_key):
         else:
             reference = references[0]
             reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                             "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
+                             "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     else:
         reference = None
     if request.method == "POST":
@@ -589,13 +610,13 @@ def view(request, citation_key):
         raise Http404("Citation key \"%s\" not found." % citation_key)
     reference = references[0]
     reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                     "pdf_is_private", "creator", "institute_publication"], connection, request.user.pk)
+                     "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
-    pdf_path, pdf_is_private = pdf_filepath(reference, request.user.pk, existing=True)
+    global_url, private_url = pdf_file_url(reference, request.user.id)
     title = _(u"%(reference_type)s “%(citation_key)s”") % {"reference_type": utils.reference_types[reference.type],
                                                            "citation_key": citation_key}
     return render_to_response("refdb/show_reference.html",
-                              {"title": title, "reference": reference, "lib_info": lib_info,
-                               "pdf_path": pdf_path, "pdf_is_private": pdf_is_private,
+                              {"title": title, "reference": reference, "lib_info": lib_info or pyrefdb.LibInfo(),
+                               "global_url": global_url, "private_url": private_url,
                                "with_part": reference.type not in utils.reference_types_without_part},
                               context_instance=RequestContext(request))

@@ -17,14 +17,6 @@ from refdb.views import utils
 register = template.Library()
 
 
-@register.filter
-def display_reference_type(value):
-    u"""Filter for converting a short-form reference type into its verbose
-    form, e.g. ``"JOUR"`` becomes ``"journal paper"``.
-    """
-    return utils.reference_types[value]
-
-
 # FixMe: This is a duplicate of Chantal
 
 entities = {}
@@ -169,3 +161,11 @@ def flexible_field(parser, token):
     nodelist = parser.parse(('end_flexible_field',))
     parser.delete_first_token()
     return FlexibleFieldNode(nodelist, field_name[1:-1])
+
+
+@register.simple_tag
+def markdown_field(field):
+    if not field or field == u"—":
+        return u"""<td colspan="0" class="value">—</td>"""
+    else:
+        return u"""<td colspan="0" class="bulk-text">%s</td>""" % markdown(field)
