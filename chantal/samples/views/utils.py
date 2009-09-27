@@ -479,6 +479,8 @@ def convert_id_to_int(process_id):
         raise Http404(u"Invalid ID: “%s”" % process_id)
 
 
+# FixMe: Possibly the whole function is superfluous because there is
+# "request.GET".
 def parse_query_string(request):
     u"""Parses an URL query string.
 
