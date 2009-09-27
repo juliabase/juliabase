@@ -550,6 +550,10 @@ def edit(request, citation_key):
             # and then it has to be recalculated anyway.
             del new_reference.extended_notes
             cache.set(settings.REFDB_CACHE_PREFIX + new_reference.id, new_reference)
+            success_message = _(u"Reference “%s” successfully edited.") % citation_key if citation_key \
+                else _(u"Reference “%s” successfully added.") % new_reference.citation_key
+            return utils.successful_response(request, success_message, view=view,
+                                             kwargs={"citation_key": new_reference.citation_key})
     else:
         reference_form = ReferenceForm(request, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")

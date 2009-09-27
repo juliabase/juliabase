@@ -104,6 +104,13 @@ INSTALLED_APPS = (
     'staticfiles'
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
+                               "django.core.context_processors.debug",
+                               "django.core.context_processors.i18n",
+                               "django.core.context_processors.media",
+                               "refdb.context_processors.default",
+                               )
+
 CACHE_BACKEND = 'file:///var/tmp/django_cache'
 CACHE_MIDDLEWARE_SECONDS = 300
 CACHE_MIDDLEWARE_KEY_PREFIX = ""

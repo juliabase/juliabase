@@ -12,6 +12,7 @@ from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+import django.core.urlresolvers
 from django.conf import settings
 from .. import models
 
@@ -462,3 +463,71 @@ def pdf_file_url(reference, user_id=None):
     if reference.global_pdf_available:
         global_url = os.path.join(root_url, filename)
     return global_url, private_url
+
+
+# FixMe: This is a duplicate from Chantal, slightly modified (remote client
+# support removed).  However, the original version could also be used in
+# Django-RefDB.
+
+def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False):
+    u"""After a POST request was successfully processed, there is typically a
+    redirect to another page – maybe the main menu, or the page from where the
+    add/edit request was started.
+
+    The latter is appended to the URL as a query string with the ``next`` key,
+    e.g.::
+
+        /chantal/6-chamber_deposition/08B410/edit/?next=/chantal/samples/08B410a
+
+    This routine generated the proper ``HttpResponse`` object that contains the
+    redirection.  It always has HTTP status code 303 (“see other”).
+
+    If the request came from the Chantal Remote Client, the response is a
+    pickled ``remote_client_response``.  (Normally, a simple ``True``.)
+
+    :Parameters:
+      - `request`: the current HTTP request
+      - `success_report`: an optional short success message reported to the
+        user on the next view
+      - `view`: the view name/function to redirect to; defaults to the main
+        menu page (same when ``None`` is given)
+      - `kwargs`: group parameters in the URL pattern that have to be filled
+      - `query_string`: the *quoted* query string to be appended, without the
+        leading ``"?"``
+      - `forced`: If ``True``, go to ``view`` even if a “next” URL is
+        available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
+        using this option to generate some sort of nested forwarding.
+
+    :type request: ``HttpRequest``
+    :type success_report: unicode
+    :type view: str or function
+    :type kwargs: dict
+    :type query_string: unicode
+    :type forced: bool
+
+    :Return:
+      the HTTP response object to be returned to the view's caller
+
+    :rtype: ``HttpResponse``
+    """
+    if success_report:
+        request.session["success_report"] = success_report
+    next_url = request.GET.get("next")
+    if next_url is not None:
+        if forced:
+            # FixMe: Pass "next" to the next URL somehow in order to allow for
+            # really nested forwarding.  So far, the “deeper” views must know
+            # by themselves how to get back to the first one (which is the case
+            # for all current Chantal views).
+            pass
+        else:
+            # FixMe: So far, the outmost next-URL is used for the See-Other.
+            # However, this is wrong behaviour.  Instead, the
+            # most-deeply-nested next-URL must be used.  This could be achieved
+            # by iterated unpacking.
+            return HttpResponseSeeOther(next_url)
+    if query_string:
+        query_string = "?" + query_string
+    print 1
+    return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "refdb.views.main.main_menu", kwargs=kwargs)
+                                + query_string)
