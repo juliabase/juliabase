@@ -3,7 +3,14 @@
 {% load i18n %}
 {% load refdb_extras %}
 
-{% block content_title %}<h1>{{ title }}<a class="edit-icon" href="{% url refdb.views.reference.edit citation_key=reference.citation_key %}"><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a></h1>{% endblock %}
+{% block content_title %}{% spaceless %}<h1>
+  {{ title }}<a class="edit-icon" href="{% url refdb.views.reference.edit citation_key=reference.citation_key %}">
+    <img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/>
+  </a>{% if pdf_url %}<a class="edit-icon" href="{{ pdf_url }}">
+    <img src="{{ MEDIA_URL }}refdb/icons/page_white_acrobat.png" alt="PDF icon" title="{% trans 'view PDF' %}"/>
+  </a>{% endif %}
+</h1>
+{% endspaceless %}{% endblock %}
 
 {% block frame_content %}
   <table width="100%" style="border-collapse: collapse">

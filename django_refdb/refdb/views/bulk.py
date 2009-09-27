@@ -538,6 +538,8 @@ def bulk(request):
         references, prev_link, next_link, pages = fetch_references(request)
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
+            global_url, private_url = utils.pdf_file_url(reference, request.user.id)
+            reference.pdf_url = private_url or global_url
         export_form = ExportForm()
         add_to_shelf_form = AddToShelfForm()
         add_to_list_form = AddToListForm(request.user)

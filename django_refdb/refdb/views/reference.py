@@ -50,35 +50,6 @@ def pdf_filepath(reference, user_id=None):
     return filepath
 
 
-def pdf_file_url(reference, user_id=None):
-    u"""Calculates the absolute URL of the uploaded PDF.
-
-    :Parameters:
-      - `reference`: the reference whose PDF file path should be calculated
-      - `user_id`: the ID of the user who tries to retrieve the file; this is
-        important because it is possible to upload *private* PDFs.
-
-    :type reference: ``pyrefdb.Reference``, with the ``extended_data``
-      attribute
-    :type user_id: int
-
-    :Return:
-      the absolute URL to the global PDF, the absolute URL to the private PDF;
-      (``None`` for each case which is not existing)
-
-    :rtype: unicode, unicode
-    """
-    global_url = private_url = None
-    private = reference.pdf_is_private[user_id] if user_id else False
-    root_url = os.path.join(settings.MEDIA_URL, "references", reference.citation_key)
-    filename = utils.slugify_reference(reference) + ".pdf"
-    if private:
-        private_url = os.path.join(root_url, utils.get_user_hash(user_id), filename)
-    if reference.global_pdf_available:
-        global_url = os.path.join(root_url, filename)
-    return global_url, private_url
-
-
 def serialize_authors(authors):
     u"""Converts a list of authors into a string, ready-to-be-used as the
     initial value in an author form field.
@@ -612,11 +583,12 @@ def view(request, citation_key):
     reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                      "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
-    global_url, private_url = pdf_file_url(reference, request.user.id)
+    global_url, private_url = utils.pdf_file_url(reference, request.user.id)
     title = _(u"%(reference_type)s “%(citation_key)s”") % {"reference_type": utils.reference_types[reference.type],
                                                            "citation_key": citation_key}
     return render_to_response("refdb/show_reference.html",
                               {"title": title, "reference": reference, "lib_info": lib_info or pyrefdb.LibInfo(),
                                "global_url": global_url, "private_url": private_url,
+                               "pdf_url": private_url or global_url,
                                "with_part": reference.type not in utils.reference_types_without_part},
                               context_instance=RequestContext(request))

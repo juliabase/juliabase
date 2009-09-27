@@ -6,7 +6,7 @@ u"""General helper functions for the views.
 
 from __future__ import absolute_import
 
-import hashlib
+import hashlib, os.path
 import pyrefdb
 from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -433,3 +433,32 @@ def get_user_hash(user_id):
     user_hash.update("userhash")
     user_hash.update(str(user_id))
     return user_hash.hexdigest()[:10]
+
+
+def pdf_file_url(reference, user_id=None):
+    u"""Calculates the absolute URL of the uploaded PDF.
+
+    :Parameters:
+      - `reference`: the reference whose PDF file path should be calculated
+      - `user_id`: the ID of the user who tries to retrieve the file; this is
+        important because it is possible to upload *private* PDFs.
+
+    :type reference: ``pyrefdb.Reference``, with the ``extended_data``
+      attribute
+    :type user_id: int
+
+    :Return:
+      the absolute URL to the global PDF, the absolute URL to the private PDF;
+      (``None`` for each case which is not existing)
+
+    :rtype: unicode, unicode
+    """
+    global_url = private_url = None
+    private = reference.pdf_is_private[user_id] if user_id else False
+    root_url = os.path.join(settings.MEDIA_URL, "references", reference.citation_key)
+    filename = slugify_reference(reference) + ".pdf"
+    if private:
+        private_url = os.path.join(root_url, get_user_hash(user_id), filename)
+    if reference.global_pdf_available:
+        global_url = os.path.join(root_url, filename)
+    return global_url, private_url

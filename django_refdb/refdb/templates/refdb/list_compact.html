@@ -19,6 +19,9 @@
       <td class="screen-only">
 	<a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}"><img src="{{ MEDIA_URL }}/refdb/icons/magnifier.png" alt="{{ _("Details") }}"/></a><br/>
 	<a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}/edit/"><img src="{{ MEDIA_URL }}/chantal/icons/pencil.png" alt="{{ _("Edit") }}"/></a>
+	{% if reference.pdf_url %}
+	  <a href="{{ reference.pdf_url }}"><img src="{{ MEDIA_URL }}refdb/icons/page_white_acrobat.png" alt="{{ _("View PDF") }}"/></a>
+        {% endif %}
       </td>
     </tr>
   {% endfor %}
