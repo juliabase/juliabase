@@ -63,10 +63,10 @@ def pdf_file_url(reference, user_id=None):
     :type user_id: int
 
     :Return:
-      the absolute path (``None`` if not existing) and whether the PDF is a
-      private one
+      the absolute URL to the global PDF, the absolute URL to the private PDF;
+      (``None`` for each case which is not existing)
 
-    :rtype: unicode, bool
+    :rtype: unicode, unicode
     """
     global_url = private_url = None
     private = reference.pdf_is_private[user_id] if user_id else False
