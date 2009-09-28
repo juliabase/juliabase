@@ -1,21 +1,28 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "refdb/base.html" %}
 {% load i18n %}
+{% load refdb_extras %}
 
 {% block frame_content %}
-  <div style="float: right; width: 60%">
+  <div style="float: left; margin-top: 2ex; margin-right: 2em">
+    {% error_list search _("Search error") %}
+    <form method="get" action="view/bulk" style="margin-bottom: 4ex ">
+      {% with search.query_string as field %}
+        <label for="id_{{ field.html_name }}">{{ field.label }}:</label><br/>
+        {{ field }}{{ field.help_text }}<br/>
+      {% endwith %}
+      <input type="submit"/>
+    </form>
+    {% error_list change_list _("Change list error") %}
+    <form method="post" action="change_list/">
+      {% with change_list.new_list as field %}
+        <label for="id_{{ field.html_name }}">{{ field.label }}:</label><br/>
+        {{ field }}{{ field.help_text }}<br/>
+      {% endwith %}
+      <input type="submit"/>
+    </form>
+  </div>
+  <div style="font-size: x-small">
     {% include "refdb/list_compact.html" %}
   </div>
-  <form method="get" action="view/bulk">
-    <table>
-      {{ search }}
-    </table>
-    <p><input type="submit"/></p>
-  </form>
-  <form method="post" action="change_list/">
-    <table>
-      {{ change_list }}
-    </table>
-    <p><input type="submit"/></p>
-  </form>
 {% endblock %}
