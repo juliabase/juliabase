@@ -83,6 +83,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'refdb.middleware.transaction.TransactionMiddleware',
+    'refdb.middleware.chantal.ExceptionsMiddleware',
 )
 
 ROOT_URLCONF = 'urls'

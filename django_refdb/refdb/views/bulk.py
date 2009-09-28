@@ -33,6 +33,25 @@ class SearchForm(forms.Form):
 
     _ = ugettext_lazy
     query_string = forms.CharField(label=_("Query string"), required=False)
+    author = forms.CharField(label=_("Author"), required=False)
+    title = forms.CharField(label=_("Title"), required=False)
+    journal = forms.CharField(label=_("Journal"), required=False)
+    year_from = forms.DecimalField(label=_("Year from"), required=False)
+    year_until = forms.DecimalField(label=_("Year until"), required=False)
+
+    def get_query_string(self):
+        u"""Takes the parameters of the form and distills a RefDB query string
+        from them.
+
+        :Return:
+          the RefDB query string representing the search
+
+        :rtype: unicode
+        """
+        components = []
+
+        query_string = self.cleaned_data["query_string"]
+        return query_string
 
 
 class SelectionBoxForm(forms.Form):
@@ -135,7 +154,8 @@ class AddToListForm(forms.Form):
 
 @login_required
 def search(request):
-    u"""Searchs for references and presents the search results.
+    u"""Searchs for references and presents the search results.  It is a
+    GET-only view.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -147,28 +167,14 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
+    # Note that I make a *bound* form here (i.e. no “initial=…”) because I want
+    # form validation errors to be displayed immediately.  It may be a “See
+    # Other” from the bulk view after a failed validation there, and the user
+    # must see the errors after all.  Note that this technique doesn't work
+    # anymore as soon as `SearchForm` contains required fields.
     search_form = SearchForm(request.GET)
     return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form},
                               context_instance=RequestContext(request))
-
-
-def form_fields_to_query(form_fields):
-    u"""Takes the GET parameters of the bulk view and distills a RefDB query
-    string from them.
-
-    :Parameters:
-      - `form_fields`: dictionary which maps all search parameters to their
-        values (and maybe more, which is ignored)
-
-    :type form_fields: ``django.http.QueryDict``
-
-    :Return:
-      the RefDB query string representing the search
-
-    :rtype: unicode
-    """
-    query_string = form_fields.get("query_string", "")
-    return query_string
 
 
 def add_references_to_list(ids, add_to_list_form, user):
@@ -347,13 +353,18 @@ class CommonBulkViewData(object):
 def embed_common_data(request):
     u"""Add a ``common_data`` attribute to request, containing various data
     used across the view.  See ``CommonBulkViewData`` for further information.
+    If the GET parameters of the view are invalid, an ``RedirectException`` the
+    the search view is raised so that the user can see and correct the errors.
 
     :Parameters:
       - `request`: current HTTP request object
 
     :type request: ``HttpRequest``
     """
-    query_string = form_fields_to_query(request.GET)
+    search_form = SearchForm(request.GET)
+    if not search_form.is_valid():
+        raise utils.RedirectException(django.core.urlresolvers.reverse(search) + "?" + request.META.get("QUERY_STRING"))
+    query_string = search_form.get_query_string()
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
     try:

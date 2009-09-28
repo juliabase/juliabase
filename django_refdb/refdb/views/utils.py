@@ -37,6 +37,13 @@ class HttpResponseSeeOther(HttpResponse):
         self["Location"] = iri_to_uri(redirect_to)
 
 
+class RedirectException(Exception):
+
+    def __init__(self, redirect_to):
+        super(RedirectException, self).__init__(self)
+        self.redirect_to = redirect_to
+
+
 def slugify_reference(reference):
     u"""Converts a reference to a filename for e.g. the PDF file.  This routine
     takes the main attributes of a reference (authors, title, year) and creates
