@@ -49,9 +49,24 @@ class SearchForm(forms.Form):
         :rtype: unicode
         """
         components = []
-
-        query_string = self.cleaned_data["query_string"]
-        return query_string
+        if self.cleaned_data["query_string"]:
+            components.append(self.cleaned_data["query_string"])
+        if self.cleaned_data["author"]:
+            components.append(":AX:~" + self.cleaned_data["author"])
+        if self.cleaned_data["title"]:
+            components.append(":TX:~" + self.cleaned_data["title"])
+        if self.cleaned_data["journal"]:
+            components.append(":JO:~" + self.cleaned_data["journal"])
+        if self.cleaned_data["year_from"]:
+            components.append(":PY:>=" + self.cleaned_data["year_from"])
+        if self.cleaned_data["year_until"]:
+            components.append(":PY:<=" + self.cleaned_data["year_until"])
+        if not components:
+            return u":ID:>0"
+        elif len(components) == 1:
+            return components[0]
+        else:
+            return u"(" + u") AND (".join(components) + u")"
 
 
 class SelectionBoxForm(forms.Form):
