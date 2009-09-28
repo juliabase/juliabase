@@ -3,6 +3,13 @@
 {% load i18n %}
 {% load refdb_extras %}
 
+{% block content_title %}{% spaceless %}<h1>
+  {{ title }}<a class="edit-icon" href="{% url refdb.views.bulk.search %}?{{ http_query_string }}">
+    <img src="{{ MEDIA_URL }}chantal/icons/find.png" alt="find icon" title="{% trans 'modify search' %}"/>
+  </a>
+</h1>
+{% endspaceless %}{% endblock %}
+
 {% block frame_content %}
   {% if not pages|length_is:"1" %}
     <div class="pages-links">
