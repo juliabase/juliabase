@@ -528,6 +528,5 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
             return HttpResponseSeeOther(next_url)
     if query_string:
         query_string = "?" + query_string
-    print 1
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "refdb.views.main.main_menu", kwargs=kwargs)
                                 + query_string)
