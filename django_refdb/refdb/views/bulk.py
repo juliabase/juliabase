@@ -18,6 +18,7 @@ from django.views.decorators.http import last_modified, require_http_methods
 from django.utils.http import urlencode
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.decorators import login_required
+import django.core.urlresolvers
 from django import forms
 from django.core.cache import cache
 from django.conf import settings
@@ -121,13 +122,13 @@ class AddToListForm(forms.Form):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data["existing_list"] and cleaned_data["new_list"]:
-            append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
+            form_utils.append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif not self.optional and not cleaned_data["existing_list"] and not cleaned_data["new_list"]:
-            append_error(self, _(u"You must give either an existing or a new list."), "new_list")
+            form_utils.append_error(self, _(u"You must give either an existing or a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif cleaned_data["new_list"] and cleaned_data["new_list"] in self.short_listnames:
-            append_error(self, _(u"This listname is already given."), "new_list")
+            form_utils.append_error(self, _(u"This listname is already given."), "new_list")
             del cleaned_data["new_list"]
         return cleaned_data
 
@@ -147,7 +148,7 @@ def search(request):
     :rtype: ``HttpResponse``
     """
     search_form = SearchForm(request.GET)
-    return render_to_response("search.html", {"title": _(u"Search"), "search": search_form},
+    return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form},
                               context_instance=RequestContext(request))
 
 
@@ -429,7 +430,7 @@ def fetch_references(request):
     references = [all_references[id_] for id_ in ids]
     for reference in references:
         reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.pk)
+                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
     return references, prev_link, next_link, pages
 
@@ -537,6 +538,8 @@ def bulk(request):
         references, prev_link, next_link, pages = fetch_references(request)
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
+            global_url, private_url = utils.pdf_file_url(reference, request.user.id)
+            reference.pdf_url = private_url or global_url
         export_form = ExportForm()
         add_to_shelf_form = AddToShelfForm()
         add_to_list_form = AddToListForm(request.user)
@@ -548,9 +551,9 @@ def bulk(request):
         else:
             remove_from_list_form = None
     title = _(u"Bulk view") if not references_list else _(u"List view of %s") % verbose_listname
-    return render_to_response("bulk.html", {"title": title, "references": references,
-                                            "prev_link": prev_link, "next_link": next_link, "pages": pages,
-                                            "add_to_shelf": add_to_shelf_form, "export": export_form,
-                                            "add_to_list": add_to_list_form,
-                                            "remove_from_list": remove_from_list_form, "global_dummy": global_dummy_form},
+    return render_to_response("refdb/bulk.html", {"title": title, "references": references,
+                                                  "prev_link": prev_link, "next_link": next_link, "pages": pages,
+                                                  "add_to_shelf": add_to_shelf_form, "export": export_form,
+                                                  "add_to_list": add_to_list_form,
+                                                  "remove_from_list": remove_from_list_form, "global_dummy": global_dummy_form},
                               context_instance=RequestContext(request))

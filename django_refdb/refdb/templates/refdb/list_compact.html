@@ -1,0 +1,31 @@
+<table cellpadding="10" class="references">
+  <tr>{% if references.0.selection_box %}<th class="screen-only"/>{% endif %}
+    <th>{{ _("Author") }}</th><th>{{ _("Publication") }}</th><th>{{ _("Year") }}</th><th>{{ _("Title") }}</th>
+    <td class="screen-only"/></tr>
+  {% for reference in references %}
+    <tr class="list-row-{% cycle 'odd' 'even' %}">
+      {% if reference.selection_box %}
+        <td class="screen-only">{{ reference.selection_box.selected }}</td>
+      {% endif %}
+      <td>{% with reference.authors as authors %}
+	    {% if authors %}
+	      {{ authors.0.pretty_print }}
+		{% ifnotequal authors|length 1 %}{{ _("et al.") }}{% endifnotequal %}
+	    {% endif %}
+	  {% endwith %}</td>
+      <td>{{ reference.journal|default:"" }}</td>
+      <td>{{ reference.publication.pub_info.pub_date.year|default_if_none:"" }}</td>
+      <td class="reference-title">{{ reference.title|default:"" }}</td>
+      <td class="screen-only">
+	<a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}"
+	   ><img src="{{ MEDIA_URL }}/refdb/icons/magnifier.png" alt="{{ _("Details") }}"/></a><br/>
+	<a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}/edit/?next={{ current_url }}"
+	   ><img src="{{ MEDIA_URL }}/chantal/icons/pencil.png" alt="{{ _("Edit") }}"/></a>
+	{% if reference.pdf_url %}
+	  <a href="{{ reference.pdf_url }}"><img src="{{ MEDIA_URL }}refdb/icons/page_white_acrobat.png" 
+						 alt="{{ _("View PDF") }}"/></a>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+</table>

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-20 17:00-0500\n"
-"PO-Revision-Date: 2009-09-21 00:09+0200\n"
+"POT-Creation-Date: 2009-09-26 10:05-0500\n"
+"PO-Revision-Date: 2009-09-26 17:05+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -48,17 +48,66 @@ msgstr "Regale"
 msgid "main list"
 msgstr "Hauptliste"
 
+#, python-format
+msgid "switch to %(language)s"
+msgstr "zur Sprache %(language)s wechseln"
+
+msgid "Welcome,"
+msgstr "Willkommen"
+
+msgid "Main menu"
+msgstr "Hauptmenü"
+
+msgid "Report feature wish or bug"
+msgstr "Einen Featurewunsch oder Bug melden"
+
+msgid "Help"
+msgstr "Hilfe"
+
+msgid "Log out"
+msgstr "ausloggen"
+
+msgid "Log in"
+msgstr "einloggen"
+
+msgid "Jülich Forschungszentrum logo"
+msgstr "Logo des Forschungszentrums Jülich"
+
+msgid "IEF-5 logo"
+msgstr "Logo des IEF-5"
+
+msgid "Beyond Beyer's paper piles"
+msgstr "Jenseits von Beyers Papierstapeln"
+
+msgid "previous page"
+msgstr "vorherige Seite"
+
+msgid "next page"
+msgstr "nächste Seite"
+
+msgid "General error"
+msgstr "Allgemeiner Fehler"
+
+msgid "Error while adding to shelf"
+msgstr "Fehler beim hinzufügen zu einem Regal"
+
+msgid "Error while adding to list"
+msgstr "Fehler beim hinzufügen zu einer Liste"
+
+msgid "Error while removing from shelf"
+msgstr "Fehler beim entfernen von einer Liste"
+
 msgid "Author"
 msgstr "Autor"
 
-msgid "Title"
-msgstr "Titel"
+msgid "Publication"
+msgstr "Publikation"
 
 msgid "Year"
 msgstr "Jahr"
 
-msgid "Publication"
-msgstr "Publikation"
+msgid "Title"
+msgstr "Titel"
 
 msgid "et al."
 msgstr "et al."
@@ -69,45 +118,14 @@ msgstr "Details"
 msgid "Edit"
 msgstr "ändern"
 
-msgid ""
-"You didn't select a reference.\n"
-"    Please go back and select one or more references."
-msgstr ""
-"Sie haben keine Referenz ausgewählt.\n"
-"Bitte gehen sie zurück und wählen eine oder mehrere Referenzen aus."
-
-msgid "Authors"
-msgstr "Autoren"
-
-msgid "Date"
-msgstr "Datum"
-
 msgid "Relevance"
 msgstr "Relevanz"
 
 msgid "PDF"
 msgstr "PDF"
 
-msgid "Volume"
-msgstr "Band"
-
-msgid "Issue"
-msgstr "Ausgabe"
-
-msgid "Pages"
-msgstr "Seiten"
-
-msgid "Publisher"
-msgstr "Verlag"
-
-msgid "City"
-msgstr "Stadt"
-
 msgid "Address"
 msgstr "Adresse"
-
-msgid "Serial"
-msgstr "Seriennummer"
 
 msgid "DOI"
 msgstr "DOI"
@@ -130,11 +148,14 @@ msgstr "Zusammenfassung"
 msgid "Keywords"
 msgstr "Schlüsselworte"
 
-msgid "Personal information for this reference"
-msgstr "Persönliche Informationen zu dieser Referenz"
-
 msgid "Reprint available"
 msgstr "Ausdruck vorhanden"
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
 
 msgid "Reprint location"
 msgstr "Ort des Ausdrucks"
@@ -168,7 +189,8 @@ msgid "New list"
 msgstr "neue Liste"
 
 msgid "You must not give both an existing and a new list."
-msgstr "Die dürfen nicht sowohl eine existierende als auch eine neue Liste angeben."
+msgstr ""
+"Die dürfen nicht sowohl eine existierende als auch eine neue Liste angeben."
 
 msgid "You must give either an existing or a new list."
 msgstr "Sie müssen entweder eine existierende oder eine neue Liste angeben."
@@ -202,9 +224,6 @@ msgstr "Kein Format angegeben."
 msgid "Format “%s” is unknown."
 msgstr "Format „%s“ ist unbekannt."
 
-msgid "Main menu"
-msgstr "Hauptmenü"
-
 #. With an unmanipulated browser, you never get this far
 msgid "Change default list"
 msgstr "Standardliste ändern"
@@ -224,8 +243,17 @@ msgstr "Titel der Publikation"
 msgid "Publication authors"
 msgstr "Autoren der Publikation"
 
+msgid "Date"
+msgstr "Datum"
+
 msgid "Either YYYY or YYYY-MM-DD."
 msgstr "Entweder JJJJ oder JJJJ-MM-TT."
+
+msgid "Volume"
+msgstr "Band"
+
+msgid "Issue"
+msgstr "Ausgabe"
 
 msgid "Start page"
 msgstr "Startseite"
@@ -233,11 +261,17 @@ msgstr "Startseite"
 msgid "End page"
 msgstr "Endseite"
 
+msgid "Publisher"
+msgstr "Verlag"
+
 msgid "Publication place"
 msgstr "Ort der Publikation"
 
 msgid "Contact address to the author."
 msgstr "Kontaktadresse des Autors."
+
+msgid "Serial"
+msgstr "Seriennummer"
 
 msgid "Weblink"
 msgstr "Weblink"
@@ -293,8 +327,9 @@ msgstr "Referenz ändern"
 msgid "Add reference"
 msgstr "Referenz hinzufügen"
 
-msgid "View reference"
-msgstr "Referenz betrachten"
+#, python-format
+msgid "%(reference_type)s “%(citation_key)s”"
+msgstr "%(reference_type)s „%(citation_key)s“"
 
 msgid "abstract reference"
 msgstr "Abstract-Referenz"
@@ -397,6 +432,184 @@ msgstr "unveröffentlichte Arbeit"
 
 msgid "video recording"
 msgstr "Videoaufzeichnung"
+
+msgid "Major contributors"
+msgstr "Wichtige Beitragende"
+
+msgid "Release date"
+msgstr "Datum der Freigabe"
+
+msgid "Act title"
+msgstr "Gesetzestitel"
+
+msgid "Title/code number"
+msgstr ""
+
+msgid "Publication date"
+msgstr "Veröffentlichungsdatum"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Authors"
+msgstr "Autoren"
+
+msgid "State/country"
+msgstr "Staat/Land"
+
+msgid "Application number"
+msgstr ""
+
+msgid "Date issued"
+msgstr ""
+
+msgid "Patent number"
+msgstr "Patentnummer"
+
+msgid "Editors"
+msgstr "Herausgeber"
+
+msgid "Chapter title"
+msgstr "Kapitelüberschrift"
+
+msgid "City"
+msgstr "Stadt"
+
+msgid "Book title"
+msgstr "Buchtitel"
+
+msgid "Chapter number"
+msgstr "Kapitelnummer"
+
+msgid "Conference title"
+msgstr "Konferenzname"
+
+msgid "Journal"
+msgstr "Journal"
+
+msgid "Newspaper"
+msgstr "Zeitung"
+
+msgid "Reporters"
+msgstr "Reporter"
+
+msgid "End location"
+msgstr "Endposition"
+
+msgid "Start location"
+msgstr "Startposition"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Location"
+msgstr "Position"
+
+msgid "Last update"
+msgstr "Neuestes Update"
+
+msgid "Date sent"
+msgstr "Sendedatum"
+
+msgid "Institution"
+msgstr "Institution"
+
+msgid "Date of code"
+msgstr ""
+
+msgid "Bill/resolution number"
+msgstr "Nummer des Gesetzesentwurfs/Resolution"
+
+msgid "Report number"
+msgstr "Berichtsnummer"
+
+msgid "Secondary authors"
+msgstr "Sekundäre Autoren"
+
+msgid "Primary title"
+msgstr "Primärtitel"
+
+msgid "Title, secondary"
+msgstr "Titel, sekundärer"
+
+msgid "Primary authors"
+msgstr "Primärautoren"
+
+msgid "Primary date"
+msgstr "Primärdatum"
+
+msgid "Sender"
+msgstr "Absender"
+
+msgid "Date of message"
+msgstr "Datum der Nachricht"
+
+msgid "Subject"
+msgstr "Betreff"
+
+msgid "Counsel"
+msgstr "Rat"
+
+msgid "Court"
+msgstr "Gericht"
+
+msgid "Case name"
+msgstr "Name des Verfahrens"
+
+msgid "Filed"
+msgstr "Eingereicht"
+
+msgid "Reporter number"
+msgstr "Nummer des Reporters"
+
+msgid "Catalog number"
+msgstr "Katalognummer"
+
+msgid "Composers"
+msgstr "Komponisten"
+
+msgid "Magazine"
+msgstr "Zeitschrift"
+
+msgid "Cartographers"
+msgstr "Kartographen"
+
+msgid "Map number"
+msgstr "Kartennummer"
+
+msgid "Studio"
+msgstr "Studio"
+
+msgid "Artists"
+msgstr "Künstler"
+
+msgid "Title/subject"
+msgstr "Titel/Thema"
+
+msgid "Act name"
+msgstr "Name des Gesetzes"
+
+msgid "Hearing date"
+msgstr "Anhörungsdatum"
+
+msgid "Commitee"
+msgstr "Kommitee"
+
+msgid "Bill number"
+msgstr "Nummer des Gesetzesentwurfs"
+
+#~ msgid "Personal information for this reference"
+#~ msgstr "Persönliche Informationen zu dieser Referenz"
+
+#~ msgid "View reference"
+#~ msgstr "Referenz betrachten"
+
+#~ msgid ""
+#~ "You didn't select a reference.\n"
+#~ "    Please go back and select one or more references."
+#~ msgstr ""
+#~ "Sie haben keine Referenz ausgewählt.\n"
+#~ "Bitte gehen sie zurück und wählen eine oder mehrere Referenzen aus."
 
 #~ msgid "Relative link."
 #~ msgstr "Relativer Link."

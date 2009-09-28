@@ -10,6 +10,9 @@ import sys
 if "/home/bronger/src/pyrefdb/main/" not in sys.path:
     sys.path.append("/home/bronger/src/pyrefdb/main/")
 
+IS_TESTSERVER = len(sys.argv) >= 2
+WITH_EPYDOC = 'epydoc' in sys.modules
+
 import ConfigParser, os.path
 credentials = ConfigParser.SafeConfigParser()
 read_files = credentials.read(os.path.expanduser("~/django-refdb.auth"))
@@ -51,6 +54,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(ROOTDIR, 'media/')
+STATIC_ROOT = MEDIA_ROOT
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -60,7 +64,7 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = CREDENTIALS["salt"]
@@ -97,14 +101,21 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'refdb',
+    'staticfiles'
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
+                               "django.core.context_processors.debug",
+                               "django.core.context_processors.i18n",
+                               "django.core.context_processors.media",
+                               "refdb.context_processors.default",
+                               )
 
 CACHE_BACKEND = 'file:///var/tmp/django_cache'
 CACHE_MIDDLEWARE_SECONDS = 300
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 
-INSTITUTION = u"IEF-5, Forschungszentrum Jülich, Germany"
 REFDB_USERNAME_PREFIX = "drefdbuser"
 REFDB_USER = CREDENTIALS["refdb_user"]
 REFDB_PASSWORD = CREDENTIALS["refdb_password"]

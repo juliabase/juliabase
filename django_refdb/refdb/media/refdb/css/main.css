@@ -1,0 +1,12 @@
+@import url('../../chantal/css/main.css') screen;
+
+tr.list-row-odd, tr.list-row-even { vertical-align: top }
+tr.list-row-odd { background-color: #fafafa }
+tr.list-row-even { background-color: #d2d2d2 }
+td.reference-title { font-size: smaller }
+
+div.pages-links { text-align: center }
+
+td.bulk-text p { margin: 0pt }
+
+tr.user-data { background-color: #c0e0c0 }

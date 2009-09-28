@@ -1,0 +1,154 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "refdb/base.html" %}
+{% load i18n %}
+{% load refdb_extras %}
+
+{% block content_title %}{% spaceless %}<h1>
+  {{ title }}<a class="edit-icon" href="{% url refdb.views.reference.edit citation_key=reference.citation_key %}">
+    <img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/>
+  </a>{% if pdf_url %}<a class="edit-icon" href="{{ pdf_url }}">
+    <img src="{{ MEDIA_URL }}refdb/icons/page_white_acrobat.png" alt="PDF icon" title="{% trans 'view PDF' %}"/>
+  </a>{% endif %}
+</h1>
+{% endspaceless %}{% endblock %}
+
+{% block frame_content %}
+  <table width="100%" style="border-collapse: collapse">
+    {% if with_part %}
+      <tr>
+        {% flexible_field "part_title" %}
+          <td class="value" colspan="0">{{ reference.part.title|default:"—" }}</td>
+        {% end_flexible_field %}
+      </tr>
+      <tr>
+        {% flexible_field "part_authors" %}
+          <td class="value" colspan="0">
+            {% if reference.part.authors %}
+              {% for author in reference.part.authors %}{{ author.pretty_print }}{% if not forloop.last %};
+                {% endif %}{% endfor %}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        {% end_flexible_field %}
+      </tr>
+    {% endif %}
+    <tr>
+      {% flexible_field "publication_title" %}
+        <td class="value" colspan="0">{{ reference.publication.title|default:"—" }}</td>
+      {% end_flexible_field %}
+    </tr>
+    <tr style="border-bottom: solid #e6e6e6 4ex">
+      {% flexible_field "date" %}
+        <td class="value" colspan="0">{{ reference.publication.pub_info.pub_date }}</td>
+      {% end_flexible_field %}
+    </tr>
+    <tr class="user-data" style="border-top: solid transparent 2ex">
+      <td class="label">{% trans 'Reprint available' %}:</td>
+      <td class="value">
+        {% ifequal lib_info.reprint_status "INFILE" %}{% trans 'yes' %}{% else %}{% trans 'no' %}{% endifequal %}</td>
+      <td class="label">{% trans 'Reprint location' %}:</td>
+      <td class="value" colspan="0">{{ lib_info.availability|default:"—" }}</td>
+    </tr>
+    {% if private_url %}
+      <tr class="user-data">
+        <td/>
+        <td colspan="0"><a href="{{ private_url }}">{% trans 'link to private PDF' %}</a></td>
+      </tr>
+    {% endif %}
+    <tr class="user-data">
+      <td class="label">{% trans 'Notes' %}:</td>
+      {% markdown_field lib_info.notes %}
+    </tr>
+    {% if global_url %}
+      <tr>
+        <td/>
+        <td colspan="0"><a href="{{ global_url }}">{% trans 'link to global PDF' %}</a></td>
+      </tr>
+    {% endif %}
+    {% flexible_field "publication_authors" %}
+      <td class="value" colspan="0">
+        {% if reference.publication.authors %}
+          {% for author in reference.publication.authors %}{{ author.pretty_print }}{% if not forloop.last %};
+            {% endif %}{% endfor %}
+        {% else %}
+          —
+        {% endif %}
+      </td>
+    {% end_flexible_field %}
+    <tr>
+      <td colspan="2"/>
+      <td class="label">{% trans 'Relevance' %}:</td>
+      <td class="value">{{ reference.relevance|default:"—" }}</td>
+      <td colspan="2"/>
+    </tr>
+    {% with reference.publication.pub_info as pub_info %}
+      <tr>
+        {% flexible_field "volume" %}
+          <td class="value">{{ pub_info.volume|default:"—" }}</td>
+        {% end_flexible_field %}
+        {% flexible_field "issue" %}
+          <td class="value">{{ pub_info.issue|default:"—" }}</td>
+        {% end_flexible_field %}
+        {% flexible_field "pages" %}
+          <td class="value">
+            {% if pub_info.startpage or pub_info.endpage %}
+              {{ pub_info.startpage|default:"—" }}{% if pub_info.endpage %}–{% endif %}{{ pub_info.endpage|default:"—" }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        {% end_flexible_field %}
+      </tr>
+      <tr>
+        {% flexible_field "publisher" %}
+          <td class="value">{{ pub_info.publisher|default:"—" }}</td>
+        {% end_flexible_field %}
+        {% flexible_field "city" %}
+          <td class="value">{{ pub_info.city|default:"—" }}</td>
+        {% end_flexible_field %}
+        <td class="label">{% trans 'Address' %}:</td>
+        <td class="value">{{ pub_info.address|default:"—" }}</td>
+      </tr>
+      <tr>
+        {% flexible_field "serial" %}
+          <td class="value">{{ pub_info.serial|default:"—" }}</td>
+        {% end_flexible_field %}
+        <td class="label">{% trans 'DOI' %}:</td>
+        <td class="value">{{ pub_info.links.doi|default:"—" }}</td>
+        <td class="label">{% trans 'URL' %}:</td>
+        <td class="value">{{ pub_info.links.url|default:"—" }}</td>
+      </tr>
+    {% endwith %}
+    <tr>
+      <td class="label">{% trans 'Notes' %}:</td>
+      {% markdown_field reference.comments %}
+    </tr>
+    {% if reference.institute_publication %}
+      <tr>
+        <td colspan="0">{% trans "This is an institute's publication." %}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <td class="label">{% trans 'Reprint locations' %}:</td>
+      <td colspan="0" class="value">{{ reference.publication.pub_info.links.fulltext|default:"—" }}</td>
+    </tr>
+    <tr>
+      <td class="label">{% trans 'Keywords' %}:</td>
+      <td colspan="0" class="value">
+        {% if reference.keywords %}
+          {% for keyword in reference.keywords %}{{ keyword }}{% if not forloop.last %};
+        {% endif %}{% endfor %}</td>
+        {% else %}
+          —
+        {% endif %}
+    </tr>
+  </table>
+  {% if reference.abstract %}
+    <h2>{% trans 'Abstract' %}</h2>
+
+    <div class="abstract">
+      {{ reference.abstract|markdown }}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,68 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "site_base.html" %}
+
+{# FixMe: This template is a duplicate from Chantal #}
+
+{% load i18n %}
+{% load refdb_extras %}
+
+{% block extrahead %}
+  <link rel="shortcut icon" href="{{ MEDIA_URL }}chantal/favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}chantal/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}chantal/css/print.css"/>
+{% endblock %}
+
+{% block content %}
+  <table class="headbar" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td class="info">
+        {% for translation_flag in translation_flags %}
+          <a href="{{ translation_flag.2 }}"
+             ><img src="{{ MEDIA_URL }}chantal/flags/{{ translation_flag.0 }}.png"
+                   alt="{% blocktrans with translation_flag.1 as language %}switch to {{ language }}{% endblocktrans %}" 
+                   /></a>
+        {% endfor %}
+      </td>
+      <td class="login-data">
+        {% if user.is_authenticated %}
+          {% trans 'Welcome,' %} 
+          {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
+          <a href="{% url refdb.views.main.main_menu %}"><img src="{{ MEDIA_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"/></a>
+          <a href="/trac/chantal/newticket?reporter={{ user.email|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/bug_add.png" alt="add-bug icon" title="{% trans 'Report feature wish or bug' %}"/></a>
+          {% if help_link %} <a href="/trac/chantal/wiki/{{ help_link }}"><img 
+                                    src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
+          <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}chantal/icons/door_open.png" 
+                                                                    alt="log-out icon" title="{% trans 'Log out' %}"/></a>
+        {% else %}
+          {% if help_link %}<a href="/trac/chantal/wiki/{{ help_link }}"><img 
+                         src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
+          <a href="{% url refdb.views.main.main_menu %}"><img src="{{ MEDIA_URL }}chantal/icons/house.png" 
+                                                              alt="log-in icon" title="{% trans 'Log in' %}"/></a>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+  {% if success_report %}
+    <div class="success-report">{{ success_report }}</div>
+  {% endif %}
+
+  <div class="main">
+    <div class="screen-only">
+      <p style="margin:0pt"><img class="logo-fz" src="{{ MEDIA_URL }}chantal/juelich.png"
+                                 alt="{% trans 'Jülich Forschungszentrum logo' %}"/></p>
+      <p class="logo-text">{% block app_title %}{% endblock %}</p>
+      <p class="logo-subtext">{% block app_subtitle %}{% endblock %}</p>
+    </div>
+
+    <div class="outer-frame">
+      <div class="inner-frame">
+        {% block float_image %}{% endblock %}
+	{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+	{% block frame_content %}{% endblock %}
+        <div style="clear: both"/>
+      </div>
+    </div>
+  </div>
+{% endblock %}

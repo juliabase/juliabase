@@ -13,6 +13,7 @@ export format
 from __future__ import absolute_import
 
 from django.views.decorators.http import require_http_methods
+from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from .. import refdb
