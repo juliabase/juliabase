@@ -23,8 +23,12 @@
       <tr>
         {% flexible_field "part_authors" %}
           <td class="value" colspan="0">
-            {% for author in reference.part.authors %}{{ author.pretty_print }}{% if not forloop.last %};
-              {% endif %}{% endfor %}
+            {% if reference.part.authors %}
+              {% for author in reference.part.authors %}{{ author.pretty_print }}{% if not forloop.last %};
+                {% endif %}{% endfor %}
+            {% else %}
+              —
+            {% endif %}
           </td>
         {% end_flexible_field %}
       </tr>
@@ -64,8 +68,12 @@
     {% endif %}
     {% flexible_field "publication_authors" %}
       <td class="value" colspan="0">
-        {% for author in reference.publication.authors %}{{ author.pretty_print }}{% if not forloop.last %};
-          {% endif %}{% endfor %}
+        {% if reference.publication.authors %}
+          {% for author in reference.publication.authors %}{{ author.pretty_print }}{% if not forloop.last %};
+            {% endif %}{% endfor %}
+        {% else %}
+          —
+        {% endif %}
       </td>
     {% end_flexible_field %}
     <tr>
@@ -127,8 +135,13 @@
     </tr>
     <tr>
       <td class="label">{% trans 'Keywords' %}:</td>
-      <td colspan="0" class="value">{% for keyword in reference.keywords %}{{ keyword }}{% if not forloop.last %};
+      <td colspan="0" class="value">
+        {% if reference.keywords %}
+          {% for keyword in reference.keywords %}{{ keyword }}{% if not forloop.last %};
         {% endif %}{% endfor %}</td>
+        {% else %}
+          —
+        {% endif %}
     </tr>
   </table>
   {% if reference.abstract %}
