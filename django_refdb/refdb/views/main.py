@@ -62,7 +62,7 @@ def main_menu(request):
 
 
 @login_required
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def change_list(request):
     u"""GET-only view for changing the default references list on the main
     menue page.
