@@ -12,7 +12,7 @@ don't need rollback actions.
 from __future__ import absolute_import
 
 from . import form_utils
-from django.template import RequestContext
+from django.template import RequestContext, defaultfilters
 from django.shortcuts import render_to_response
 from django.views.decorators.http import last_modified, require_http_methods
 from django.utils.http import urlencode
