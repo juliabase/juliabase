@@ -56,13 +56,13 @@ def main_menu(request):
     change_list_form = ChangeListForm(request.user)
     current_list = models.UserDetails.objects.get(user=request.user).current_list
     references = refdb.get_connection(request.user).get_references(":ID:>0", listname=current_list)
-    return render_to_response("refdb/main_menu.html", {"title": _(u"Main menu"), "search": search_form, "references": references,
-                                                       "change_list": change_list_form},
+    return render_to_response("refdb/main_menu.html", {"title": _(u"Main menu"), "search": search_form,
+                                                       "references": references, "change_list": change_list_form},
                               context_instance=RequestContext(request))
 
 
 @login_required
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def change_list(request):
     u"""GET-only view for changing the default references list on the main
     menue page.

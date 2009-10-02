@@ -3,26 +3,36 @@
 {% load i18n %}
 {% load refdb_extras %}
 
+{% block content_title %}{% spaceless %}<h1>
+  {{ title }}<a class="edit-icon" href="{% url refdb.views.bulk.search %}?{{ http_query_string }}">
+    <img src="{{ MEDIA_URL }}chantal/icons/find.png" alt="find icon" title="{% trans 'modify search' %}"/>
+  </a>
+</h1>
+{% endspaceless %}{% endblock %}
+
 {% block frame_content %}
-  <div class="pages-links">
-    {% if prev_link %}
-      <a href="{{ prev_link }}"><img src="{{ MEDIA_URL }}/refdb/icons/arrow_left.png" alt="{{ _("previous page") }}"/></a>  
-    {% else %}
-      <img src="{{ MEDIA_URL }}/refdb/icons/arrow_left.png" alt="{{ _("previous page") }}" style="visibility: hidden"/>  
-    {% endif %}
-    {% for page in pages %}
-        {% if page %}
-          <a href="{{ page }}">{{ forloop.counter }}</a>
-        {% else %}
-          <strong>{{ forloop.counter }}</strong>
-        {% endif %}
-    {% endfor %}
-    {% if next_link %}
-        <a href="{{ next_link }}"><img src="{{ MEDIA_URL }}/refdb/icons/arrow_right.png" alt="{{ _("next page") }}"/></a>
-    {% else %}
-        <img src="{{ MEDIA_URL }}/refdb/icons/arrow_right.png" alt="{{ _("next page") }}" style="visibility: hidden"/>
-    {% endif %}
-  </div>
+  {% if not pages|length_is:"1" %}
+    <div class="pages-links">
+      {% if prev_link %}
+        <a href="{{ prev_link }}"><img src="{{ MEDIA_URL }}/refdb/icons/arrow_left.png"
+                                       alt="{{ _("previous page") }}"/></a>  
+      {% else %}
+        <img src="{{ MEDIA_URL }}/refdb/icons/arrow_left.png" alt="{{ _("previous page") }}" style="visibility: hidden"/>  
+      {% endif %}
+      {% for page in pages %}
+          {% if page %}
+            <a href="{{ page }}">{{ forloop.counter }}</a>
+          {% else %}
+            <strong>{{ forloop.counter }}</strong>
+          {% endif %}
+      {% endfor %}
+      {% if next_link %}
+          <a href="{{ next_link }}"><img src="{{ MEDIA_URL }}/refdb/icons/arrow_right.png" alt="{{ _("next page") }}"/></a>
+      {% else %}
+          <img src="{{ MEDIA_URL }}/refdb/icons/arrow_right.png" alt="{{ _("next page") }}" style="visibility: hidden"/>
+      {% endif %}
+    </div>
+  {% endif %}
   <form method="POST" action="">
     {% include "refdb/list_compact.html" %}
     <div class="screen-only">

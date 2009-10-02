@@ -8,7 +8,7 @@ dictionary passed to the templates.
 
 # FixMe: The whole module is a duplicate from Chantal.  The only addition is
 # the injection of the current URL into the context in the variable
-# "current_url".
+# "http_query_string" and "current_url".
 
 from __future__ import absolute_import
 
@@ -43,7 +43,8 @@ def default(request):
 
     :rtype: dict mapping str to session data
     """
-    result = {"current_url": request.get_full_path()}
+    result = {"http_query_string": request.META.get("QUERY_STRING", ""),
+              "current_url": request.get_full_path()}
     for key in ["db_access_time_in_ms", "success_report"]:
         if key in request.session:
             result[key] = request.session[key]
