@@ -52,12 +52,32 @@ def embed_common_data(request):
     """
     refdb_connection = refdb.get_connection(request.user)
     current_list = models.UserDetails.objects.get(user=request.user).current_list
-    ids = refdb.get_connection(request.user).get_references(":ID:>0", output_format="ids", listname=current_list)
+    links = refdb.get_connection(request.user).get_extended_notes(
+        ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
+    citation_keys = [link[1] for link in links if link[0] == "reference"]
+    ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
     request.common_data = utils.CommonBulkViewData(refdb_connection, ids)
     request.common_data.current_list = current_list
 
 
 def get_last_modification_date(request):
+    u"""Returns the last modification of the references found in the current
+    references list on the main menu page.  Additionally, the last modification
+    of user settings (language, current list) is taken into account.
+
+    The routine is only used in the ``condition`` decorator in `main_menu`.
+
+    :Parameters:
+      - `request`: current HTTP request object
+
+    :type request: ``HttpRequest``
+
+    :Return:
+      timestamp of last modification of the displayed references and the main
+      manu as a whole
+
+    :rtype: ``datetime.datetime``
+    """
     embed_common_data(request)
     last_modified = utils.last_modified(request.user, request.common_data.ids)
     last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)

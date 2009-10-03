@@ -125,7 +125,7 @@ names.
 """
 
 
-def last_modified(user, references):
+def last_modified(user, ids):
     u"""Calculates the timestamp of last modification for a given set of
     references.  It is important to see that the last modification is
     calculated “seen” from a given user.  For example, it user A has modified
@@ -135,11 +135,11 @@ def last_modified(user, references):
 
     :Parameters:
       - `user`: current user
-      - `references`: references for which the last modification should be
-        calculated
+      - `ids`: the IDs if the references for which the last modification should
+        be calculated
 
     :type user: ``django.contrib.auth.models.User``
-    :type references: list of `models.Reference` or str
+    :type references: list of str
 
     :Return:
       the timestamp of last modification of the given references, with respect
@@ -147,32 +147,21 @@ def last_modified(user, references):
 
     :rtype: ``datetime.datetime``
     """
-    if not isinstance(references, (list, tuple)):
-        references = [references]
     timestamps = []
-    for reference in references:
+    missing_ids = []
+    for id_ in ids:
         try:
-            id_ = reference.id
-            citation_key = reference.citation_key
-        except AttributeError:
-            try:
-                int(reference)
-                id_ = reference
-                citation_key = None
-            except ValueError:
-                id_ = None
-                citation_key = reference
-        try:
-            django_reference = \
-                models.Reference.objects.get(reference_id=id_) if id_ else models.Reference.get(citation_key=citation_key)
+            django_reference = models.Reference.objects.get(reference_id=id_)
         except models.Reference.DoesNotExist:
-            if not citation_key:
-                citation_key = refdb.get_connection(user).get_references(u":ID:=" + id_)[0].citation_key
-            else:
-                id_ = refdb.get_connection(user).get_references(u":CK:=" + citation_key)[0].id
-            django_reference = models.Reference(reference_id=id_, citation_key=citation_key)
-            django_reference.save()
-        timestamps.append(django_reference.get_last_modification(user))
+            missing_ids.append(id_)
+        else:
+            timestamps.append(django_reference.get_last_modification(user))
+    if missing_ids:
+        references = refdb.get_connection(user).get_references(u" OR ".join(u":ID:=" + id_ for id_ in missing_ids))
+        for reference in references:
+            django_reference = models.Reference.objects.create(
+                reference_id=reference.id, citation_key=reference.citation_key)
+            timestamps.append(django_reference.get_last_modification(user))
     return max(timestamps) if timestamps else None
 
 
@@ -181,7 +170,7 @@ def fetch(self, attribute_names, connection, user_id):
     that the given attributes exist in the reference instance.  If one of them
     doesn't exist, it is filled with the current value from RefDB.
 
-    “Extended atrribute” means that it is not a standard field of RefDB but
+    “Extended attribute” means that it is not a standard field of RefDB but
     realised through so-called extended notes.  Since reading of extended notes
     is a costly operation, it is done only if necessary.
 
@@ -590,6 +579,85 @@ class CommonBulkViewData(object):
             query_string, offset, limit, refdb_connection, ids
 
 
+def _is_citation_key(citation_key_or_id):
+    u"""Checks whether a string is a valid RefDB citation key.  This is a mere
+    helper function for `citation_keys_to_ids` and `ids_to_citation_keys`.
+
+    :Parameters:
+      - `citation_key_or_id`: the RefDB citation key or RefDB ID which should
+        be tested
+
+    :type citation_key_or_id: str
+
+    :Return:
+      Whether the parameter was a citation key.  If the parameter was neither a
+      citation key nor an ID, the behaviour is undefined.
+
+    :rtype: bool
+    """
+    try:
+        int(citation_key_or_id)
+    except ValueError:
+        return True
+    return False
+
+
+def citation_keys_to_ids(connection, citation_keys):
+    u"""Returns a dictionary which maps the given citation keys to IDs.  The
+    citation keys must exist in the RefDB database.  It is allowed to have IDs
+    amongst the given citation keys.  Those are mapped to themselves.
+
+    :Parameters:
+      - `connection`: connection to the RefDB database
+      - `citation_keys`: the citation keys to be converted
+
+    :type connection: ``pyrefdb.Connection``
+    :type citation_keys: list of str
+
+    :Return:
+      dictionary mapping the given citation keys to IDs
+
+    :rtype: dict mapping str to str
+    """
+    result = {}
+    for citation_key in citation_keys:
+        if _is_citation_key(citation_key):
+            try:
+                result[citation_key] = models.Reference.objects.get(citation_key=citation_key).reference_id
+            except models.Reference.DoesNotExist:
+                id_ = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
+                models.Reference.objects.create(reference_id=id_, citation_key=citation_key)
+                result[citation_key] = id_
+        else:
+            result[citation_key] = citation_key
+    return result
+
+
+def ids_to_citation_keys(connection, ids):
+    u"""Returns a dictionary which maps the given IDs to citation keys.  The
+    IDs must exist in the RefDB database.  It is allowed to have citation keys
+    amongst the given ids.  Those are mapped to themselves.
+
+    :Parameters:
+      - `connection`: connection to the RefDB database
+      - `ids`: the RefDB IDs to be converted
+
+    :type connection: ``pyrefdb.Connection``
+    :type ids: list of str
+
+    :Return:
+      dictionary mapping the given IDs to citation keys
+
+    :rtype: dict mapping str to str
+    """
+    references = connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in ids if not _is_citation_key(id_)))
+    result = dict((reference.id, reference.citation_key) for reference in references)
+    for id_ in ids_:
+        if _is_citation_key(id_):
+            result[id_] = id_
+    return result
+
+
 def fetch_references(refdb_connection, ids, user_id):
     u"""Fetches all references needed for the references list in the view
     (bulk/main menue) from the RefDB database.  If possible, it takes the
@@ -598,7 +666,7 @@ def fetch_references(refdb_connection, ids, user_id):
 
     :Parameters:
       - `refdb_connection`: connection object to the RefDB server
-      - `ids`: IDs of the found references (within ``offset`` and ``limit``)
+      - `ids`: IDs of the references
       - `user_id`: the ID of the current suer
 
     :type refdb_connection: ``pyrefdb.Connection``

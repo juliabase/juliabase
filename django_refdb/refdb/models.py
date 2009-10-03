@@ -26,6 +26,12 @@ class Reference(models.Model):
     Thus, I store here only things that are never used in a search.  So far,
     this is only the dates of last modification, both for the global data and
     for personal data (aka <libinfo> in RISX).
+
+    The citation key is stored only because it is used in an xnote dataset, so
+    that I can calculate the timestamp of last modification of user references
+    lists faster.  FixMe: Once
+    http://sourceforge.net/tracker/?func=detail&aid=2872243&group_id=26091&atid=385994
+    is solved, one could probably get rid of the ``citation_key`` field.
     """
     reference_id = models.CharField(_(u"ID"), primary_key=True, max_length=10)
     citation_key = models.CharField(_(u"citation key"), unique=True, db_index=True, max_length=255)
