@@ -357,8 +357,8 @@ class CommonBulkViewData(object):
 def embed_common_data(request):
     u"""Add a ``common_data`` attribute to request, containing various data
     used across the view.  See ``CommonBulkViewData`` for further information.
-    If the GET parameters of the view are invalid, an ``RedirectException`` the
-    the search view is raised so that the user can see and correct the errors.
+    If the GET parameters of the view are invalid, a ``RedirectException`` is
+    raised so that the user can see and correct the errors.
 
     :Parameters:
       - `request`: current HTTP request object
