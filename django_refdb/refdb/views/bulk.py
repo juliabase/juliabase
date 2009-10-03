@@ -348,7 +348,8 @@ def embed_common_data(request):
         limit = 10
     refdb_connection = refdb.get_connection(request.user)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
-    request.common_data = utils.CommonBulkViewData(refdb_connection, ids, query_string, offset, limit)
+    request.common_data = utils.CommonBulkViewData(
+        refdb_connection, ids, query_string=query_string, offset=offset, limit=limit)
 
 
 def build_page_links(request):

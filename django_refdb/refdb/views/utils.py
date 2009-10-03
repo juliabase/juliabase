@@ -557,26 +557,20 @@ class CommonBulkViewData(object):
     attribute to the ``request`` object.
     """
 
-    def __init__(self, refdb_connection, ids, query_string=None, offset=None, limit=None):
+    def __init__(self, refdb_connection, ids, **kwargs):
         u"""Class constructor.
 
         :Parameters:
           - `refdb_connection`: connection object to the RefDB server
           - `ids`: IDs of the found references (within ``offset`` and
             ``limit``)
-          - `query_string`: RefDB query string of this search
-          - `offset`: the starting index of the bulk list amongst the search
-            hits
-          - `limit`: the number of displayed hits
 
         :type refdb_connection: ``pyrefdb.Connection``
         :type ids: list of str
-        :type query_string: unicode
-        :type offset: int
-        :type limit: int
         """
-        self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
-            query_string, offset, limit, refdb_connection, ids
+        self.refdb_connection, self.ids = refdb_connection, ids
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
 
 def _is_citation_key(citation_key_or_id):

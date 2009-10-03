@@ -56,8 +56,7 @@ def embed_common_data(request):
         ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
     citation_keys = [link[1] for link in links if link[0] == "reference"]
     ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
-    request.common_data = utils.CommonBulkViewData(refdb_connection, ids)
-    request.common_data.current_list = current_list
+    request.common_data = utils.CommonBulkViewData(refdb_connection, ids, current_list=current_list)
 
 
 def get_last_modification_date(request):
