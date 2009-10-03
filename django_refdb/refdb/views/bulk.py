@@ -470,7 +470,9 @@ def fetch_references(request):
 def get_last_modification_date(request):
     u"""Returns the last modification of the references found for the bulk
     view.  Note that this only includes the actually *displayed* references on
-    the current page, not all references from all pages
+    the current page, not all references from all pages.  Additionally, the
+    last modification of user settings (language, current list) is taken into
+    account.
 
     The routine is only used in the ``last_modified`` decorator in `bulk`.
 
@@ -489,6 +491,7 @@ def get_last_modification_date(request):
         last_modified = utils.last_modified(request.user, request.common_data.ids)
     else:
         last_modified = None
+    last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
     return last_modified
 
 
@@ -590,5 +593,6 @@ def bulk(request):
                                                   "prev_link": prev_link, "next_link": next_link, "pages": pages,
                                                   "add_to_shelf": add_to_shelf_form, "export": export_form,
                                                   "add_to_list": add_to_list_form,
-                                                  "remove_from_list": remove_from_list_form, "global_dummy": global_dummy_form},
+                                                  "remove_from_list": remove_from_list_form,
+                                                  "global_dummy": global_dummy_form},
                               context_instance=RequestContext(request))

@@ -38,7 +38,11 @@ class ChangeListForm(forms.Form):
         self.fields["new_list"].initial = models.UserDetails.objects.get(user=user).current_list
 
 
+def get_last_modification_date(request):
+    pass
+
 @login_required
+#@condition(get_etag, get_last_modification_date)
 def main_menu(request):
     u"""Generates the main page with simple search and main reference list.
 

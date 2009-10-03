@@ -105,9 +105,11 @@ class UserDetails(models.Model):
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
+                                related_name="refdb_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     current_list = models.CharField(_(u"current references list"), max_length=255)
+    settings_last_modified = models.DateTimeField(_(u"settings last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _(u"user details")
