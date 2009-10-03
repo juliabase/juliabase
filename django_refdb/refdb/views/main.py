@@ -6,6 +6,7 @@ u"""The main menu view.
 
 from __future__ import absolute_import
 
+import hashlib
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django import forms
@@ -45,18 +46,24 @@ def embed_common_data(request):
     ``RedirectException`` is raised so that the user can see and correct the
     errors.
 
+    If the ``request`` object already has ``common_data``, this function does
+    nothing.
+
     :Parameters:
       - `request`: current HTTP request object
 
     :type request: ``HttpRequest``
     """
-    refdb_connection = refdb.get_connection(request.user)
-    current_list = models.UserDetails.objects.get(user=request.user).current_list
-    links = refdb.get_connection(request.user).get_extended_notes(
-        ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
-    citation_keys = [link[1] for link in links if link[0] == "reference"]
-    ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
-    request.common_data = utils.CommonBulkViewData(refdb_connection, ids, current_list=current_list)
+    if not hasattr(request, "common_data"):
+        refdb_connection = refdb.get_connection(request.user)
+        current_list = request.user.refdb_user_details.current_list
+        links = refdb.get_connection(request.user).get_extended_notes(
+            ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
+        citation_keys = [link[1] for link in links if link[0] == "reference"]
+        ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
+        references_last_modified = utils.last_modified(request.user, ids)
+        request.common_data = utils.CommonBulkViewData(
+            refdb_connection, ids, current_list=current_list, references_last_modified=references_last_modified)
 
 
 def get_last_modification_date(request):
@@ -78,13 +85,42 @@ def get_last_modification_date(request):
     :rtype: ``datetime.datetime``
     """
     embed_common_data(request)
-    last_modified = utils.last_modified(request.user, request.common_data.ids)
-    last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
-    return last_modified
+    return max(request.common_data.references_last_modified, request.user.refdb_user_details.settings_last_modified)
+
+
+def get_etag(request):
+    u"""Returns the ETag for the current main menu.  Unfortunately, Opera
+    doesn't seem to send If-None-Match at all, an Firefox does only for the
+    latest ETag – which means that Firefox only caches one snapshot of a page
+    at the same time.  This way, the ETag is pretty useless since Last-Modified
+    does a better job.  Anyway.
+
+    The routine is only used in the ``condition`` decorator in `main_menu`.
+
+    :Parameters:
+      - `request`: current HTTP request object
+
+    :type request: ``HttpRequest``
+
+    :Return:
+      current ETag of the main menu
+
+    :rtype: str
+    """
+    embed_common_data(request)
+    etag = hashlib.sha1()
+    etag.update(request.user.refdb_user_details.language)
+    etag.update("--")
+    etag.update(request.common_data.current_list)
+    etag.update("--")
+    etag.update("--".join(request.common_data.ids))
+    etag.update("--")
+    etag.update(repr(request.common_data.references_last_modified))
+    return etag.hexdigest()
 
 
 @login_required
-@condition(last_modified_func=get_last_modification_date)
+@condition(get_etag, get_last_modification_date)
 def main_menu(request):
     u"""Generates the main page with simple search and main reference list.
 
