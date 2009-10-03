@@ -26,8 +26,15 @@ class Reference(models.Model):
     Thus, I store here only things that are never used in a search.  So far,
     this is only the dates of last modification, both for the global data and
     for personal data (aka <libinfo> in RISX).
+
+    The citation key is stored only because it is used in an xnote dataset, so
+    that I can calculate the timestamp of last modification of user references
+    lists faster.  FixMe: Once
+    http://sourceforge.net/tracker/?func=detail&aid=2872243&group_id=26091&atid=385994
+    is solved, one could probably get rid of the ``citation_key`` field.
     """
     reference_id = models.CharField(_(u"ID"), primary_key=True, max_length=10)
+    citation_key = models.CharField(_(u"citation key"), unique=True, db_index=True, max_length=255)
     last_modified = models.DateTimeField(_(u"last modified"), auto_now=True)
 
     class Meta:
@@ -105,9 +112,11 @@ class UserDetails(models.Model):
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
+                                related_name="refdb_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     current_list = models.CharField(_(u"current references list"), max_length=255)
+    settings_last_modified = models.DateTimeField(_(u"settings last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _(u"user details")

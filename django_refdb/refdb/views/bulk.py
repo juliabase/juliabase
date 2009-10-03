@@ -320,56 +320,12 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     return referentially_valid, action
 
 
-class CommonBulkViewData(object):
-    u"""Container class for data used in `get_last_modification_date` as well
-    as in the `bulk` view itself.  The rationale for this class is the
-    ``get_last_modification_date`` has to calculate some data in a somewhat
-    expensive manner – for example, it has to make a RefDB server connection.
-    This data is also used in the ``bulk`` view, and it would be wasteful to
-    calculate it there again.
-
-    Thus, an instance of this class holds the data and is written as an
-    attribute to the ``request`` object.
-    """
-
-    def __init__(self, query_string, offset, limit, refdb_connection, ids):
-        u"""Class constructor.
-
-        :Parameters:
-          - `query_string`: RefDB query string of this search
-          - `offset`: the starting index of the bulk list amongst the search
-            hits
-          - `limit`: the number of displayed hits
-          - `refdb_connection`: connection object to the RefDB server
-          - `ids`: IDs of the found references (within ``offset`` and
-            ``limit``)
-
-        :type query_string: unicode
-        :type offset: int
-        :type limit: int
-        :type refdb_connection: ``pyrefdb.Connection``
-        :type ids: list of str
-        """
-        self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
-            query_string, offset, limit, refdb_connection, ids
-
-    def get_all_values(self):
-        u"""Returns all data stored in the instance.
-
-        :Return:
-          query string, search hits offset, maximal number of search hits,
-          RefDB connection, IDs of found references
-
-        :rtype: unicode, int, int, ``pyrefdb.Connection``, list of str
-        """
-        return self.query_string, self.offset, self.limit, self.refdb_connection, self.ids
-
-
 def embed_common_data(request):
     u"""Add a ``common_data`` attribute to request, containing various data
-    used across the view.  See ``CommonBulkViewData`` for further information.
-    If the GET parameters of the view are invalid, an ``RedirectException`` the
-    the search view is raised so that the user can see and correct the errors.
+    used across the view.  See ``utils.CommonBulkViewData`` for further
+    information.  If the GET parameters of the view are invalid, a
+    ``RedirectException`` is raised so that the user can see and correct the
+    errors.
 
     :Parameters:
       - `request`: current HTTP request object
@@ -392,27 +348,24 @@ def embed_common_data(request):
         limit = 10
     refdb_connection = refdb.get_connection(request.user)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
-    request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
+    request.common_data = utils.CommonBulkViewData(
+        refdb_connection, ids, query_string=query_string, offset=offset, limit=limit)
 
 
-def fetch_references(request):
-    u"""Fetches all references needed for the bulk view from the RefDB
-    database.  If possible, it takes the references from the cache.
-    Additionally, we create the links to all other pages of the same bulk list
-    here.  The references contain also all the extended attributes, see
-    `utils.fetch`.
+def build_page_links(request):
+    u"""Creates the links to all other pages of the same bulk list.
 
     :Parameters:
       - `request`: current HTTP request object; it must have the
-        ``common_data`` attribute, see `CommonBulkViewData`
+        ``common_data`` attribute, see `utils.CommonBulkViewData`
 
     :type request: ``HttpRequest``
 
     :Return:
-      references, link to previous page, link to next page, all page links
+      link to previous page, link to next page, all page links
 
     :rtype:
-      list of ``pyrefdb.Reference``, str, str, list of str
+      str, str, list of str
     """
 
     def build_page_link(new_offset):
@@ -437,34 +390,24 @@ def fetch_references(request):
         new_query_dict["limit"] = limit
         return "?" + urlencode(new_query_dict) if 0 <= new_offset < number_of_references and new_offset != offset else None
 
-    query_string, offset, limit, refdb_connection, ids = request.common_data.get_all_values()
-    number_of_references = refdb_connection.count_references(query_string)
+    common_data = request.common_data
+    number_of_references = common_data.refdb_connection.count_references(common_data.query_string)
+    offset, limit = common_data.offset, common_data.limit
     prev_link = build_page_link(offset - limit)
     next_link = build_page_link(offset + limit)
     pages = []
     for i in range(number_of_references // limit + 1):
         link = build_page_link(i * limit)
         pages.append(link)
-    all_references = cache.get_many(settings.REFDB_CACHE_PREFIX + id_ for id_ in ids)
-    length_cache_prefix = len(settings.REFDB_CACHE_PREFIX)
-    all_references = dict((cache_id[length_cache_prefix:], reference) for cache_id, reference in all_references.iteritems())
-    missing_ids = set(ids) - set(all_references)
-    if missing_ids:
-        missing_references = refdb_connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
-        missing_references = dict((reference.id, reference) for reference in missing_references)
-        all_references.update(missing_references)
-    references = [all_references[id_] for id_ in ids]
-    for reference in references:
-        reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                         "pdf_is_private", "creator", "institute_publication"], refdb_connection, request.user.id)
-        cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
-    return references, prev_link, next_link, pages
-
+    return prev_link, next_link, pages
+    
 
 def get_last_modification_date(request):
     u"""Returns the last modification of the references found for the bulk
     view.  Note that this only includes the actually *displayed* references on
-    the current page, not all references from all pages
+    the current page, not all references from all pages.  Additionally, the
+    last modification of user settings (language, current list) is taken into
+    account.
 
     The routine is only used in the ``last_modified`` decorator in `bulk`.
 
@@ -483,6 +426,7 @@ def get_last_modification_date(request):
         last_modified = utils.last_modified(request.user, request.common_data.ids)
     else:
         last_modified = None
+    last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
     return last_modified
 
 
@@ -494,11 +438,11 @@ def bulk(request):
     they are too many, the list is split up into pages where you can navigate
     through.
 
-    I do agressive caching here.  First, I use the ``@last_modified`` decorator
-    for making use of the browser cache.  Secondly, I cache all references
-    objects requested for later use, including their “extended attributes”.  If
-    a second request needs more extended atttibutes, only the missing ones are
-    fetched.
+    I do aggressive caching here.  First, I use the ``@last_modified``
+    decorator for making use of the browser cache.  Secondly, I cache all
+    references objects requested for later use, including their “extended
+    attributes”.  If a second request needs more extended atttibutes, only the
+    missing ones are fetched.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -554,18 +498,19 @@ def bulk(request):
         # itself.  The reason for this is that the references data has changed
         # by processing the request, so we get a fresh list here.  This delayed
         # list generation is the reason for `embed_common_data` and
-        # `CommonBulkViewData` in the first place.
+        # `utils.CommonBulkViewData` in the first place.
         embed_common_data(request)
         if not valid_post_data:
-            references, prev_link, next_link, pages = fetch_references(request)
+            references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids,
+                                                request.user.id)
+            prev_link, next_link, pages = build_page_links(request)
             for reference in references:
                 reference.selection_box = SelectionBoxForm(request.POST, prefix=reference.id)
     if request.method == "GET" or valid_post_data:
-        references, prev_link, next_link, pages = fetch_references(request)
+        references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
+        prev_link, next_link, pages = build_page_links(request)
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
-            global_url, private_url = utils.pdf_file_url(reference, request.user.id)
-            reference.pdf_url = private_url or global_url
         export_form = ExportForm()
         add_to_shelf_form = AddToShelfForm()
         add_to_list_form = AddToListForm(request.user)
@@ -576,10 +521,14 @@ def bulk(request):
                 initial={"listname": references_list}, verbose_listname=verbose_listname, prefix="remove")
         else:
             remove_from_list_form = None
+    for reference in references:
+        global_url, private_url = utils.pdf_file_url(reference, request.user.id)
+        reference.pdf_url = private_url or global_url
     title = _(u"Bulk view") if not references_list else _(u"List view of %s") % verbose_listname
     return render_to_response("refdb/bulk.html", {"title": title, "references": references,
                                                   "prev_link": prev_link, "next_link": next_link, "pages": pages,
                                                   "add_to_shelf": add_to_shelf_form, "export": export_form,
                                                   "add_to_list": add_to_list_form,
-                                                  "remove_from_list": remove_from_list_form, "global_dummy": global_dummy_form},
+                                                  "remove_from_list": remove_from_list_form,
+                                                  "global_dummy": global_dummy_form},
                               context_instance=RequestContext(request))
