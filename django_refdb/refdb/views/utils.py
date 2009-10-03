@@ -13,6 +13,7 @@ from django.utils.encoding import iri_to_uri
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 import django.core.urlresolvers
+from django.core.cache import cache
 from django.conf import settings
 from .. import models
 
@@ -537,3 +538,74 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
         query_string = "?" + query_string
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "refdb.views.main.main_menu", kwargs=kwargs)
                                 + query_string)
+
+
+class CommonBulkViewData(object):
+    u"""Container class for data used in the functions related to conditional
+    view processing (i.e. LastModified and ETags) as well as in the view
+    itself.  The rationale for this class is that the conditional view
+    functions have to calculate some data in a somewhat expensive manner – for
+    example, it has to make a RefDB server connection.  This data is also used
+    in the view itself, and it would be wasteful to calculate it there again.
+
+    Thus, an instance of this class holds the data and is written as an
+    attribute to the ``request`` object.
+    """
+
+    def __init__(self, refdb_connection, ids, query_string=None, offset=None, limit=None):
+        u"""Class constructor.
+
+        :Parameters:
+          - `refdb_connection`: connection object to the RefDB server
+          - `ids`: IDs of the found references (within ``offset`` and
+            ``limit``)
+          - `query_string`: RefDB query string of this search
+          - `offset`: the starting index of the bulk list amongst the search
+            hits
+          - `limit`: the number of displayed hits
+
+        :type refdb_connection: ``pyrefdb.Connection``
+        :type ids: list of str
+        :type query_string: unicode
+        :type offset: int
+        :type limit: int
+        """
+        self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
+            query_string, offset, limit, refdb_connection, ids
+
+
+def fetch_references(refdb_connection, ids, user_id):
+    u"""Fetches all references needed for the references list in the view
+    (bulk/main menue) from the RefDB database.  If possible, it takes the
+    references from the cache.  The references contain also all the extended
+    attributes, see `fetch`.
+
+    :Parameters:
+      - `refdb_connection`: connection object to the RefDB server
+      - `ids`: IDs of the found references (within ``offset`` and ``limit``)
+      - `user_id`: the ID of the current suer
+
+    :type refdb_connection: ``pyrefdb.Connection``
+    :type ids: list of str
+    :type user_id: int
+
+    :Return:
+      the references
+
+    :rtype:
+      list of ``pyrefdb.Reference``
+    """
+    all_references = cache.get_many(settings.REFDB_CACHE_PREFIX + id_ for id_ in ids)
+    length_cache_prefix = len(settings.REFDB_CACHE_PREFIX)
+    all_references = dict((cache_id[length_cache_prefix:], reference) for cache_id, reference in all_references.iteritems())
+    missing_ids = set(ids) - set(all_references)
+    if missing_ids:
+        missing_references = refdb_connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
+        missing_references = dict((reference.id, reference) for reference in missing_references)
+        all_references.update(missing_references)
+    references = [all_references[id_] for id_ in ids]
+    print references
+    for reference in references:
+        reference.fetch(["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
+        cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
+    return references

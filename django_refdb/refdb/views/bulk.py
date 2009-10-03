@@ -320,45 +320,12 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     return referentially_valid, action
 
 
-class CommonBulkViewData(object):
-    u"""Container class for data used in `get_last_modification_date` as well
-    as in the `bulk` view itself.  The rationale for this class is the
-    ``get_last_modification_date`` has to calculate some data in a somewhat
-    expensive manner – for example, it has to make a RefDB server connection.
-    This data is also used in the ``bulk`` view, and it would be wasteful to
-    calculate it there again.
-
-    Thus, an instance of this class holds the data and is written as an
-    attribute to the ``request`` object.
-    """
-
-    def __init__(self, query_string, offset, limit, refdb_connection, ids):
-        u"""Class constructor.
-
-        :Parameters:
-          - `query_string`: RefDB query string of this search
-          - `offset`: the starting index of the bulk list amongst the search
-            hits
-          - `limit`: the number of displayed hits
-          - `refdb_connection`: connection object to the RefDB server
-          - `ids`: IDs of the found references (within ``offset`` and
-            ``limit``)
-
-        :type query_string: unicode
-        :type offset: int
-        :type limit: int
-        :type refdb_connection: ``pyrefdb.Connection``
-        :type ids: list of str
-        """
-        self.query_string, self.offset, self.limit, self.refdb_connection, self.ids = \
-            query_string, offset, limit, refdb_connection, ids
-
-
 def embed_common_data(request):
     u"""Add a ``common_data`` attribute to request, containing various data
-    used across the view.  See ``CommonBulkViewData`` for further information.
-    If the GET parameters of the view are invalid, a ``RedirectException`` is
-    raised so that the user can see and correct the errors.
+    used across the view.  See ``utils.CommonBulkViewData`` for further
+    information.  If the GET parameters of the view are invalid, a
+    ``RedirectException`` is raised so that the user can see and correct the
+    errors.
 
     :Parameters:
       - `request`: current HTTP request object
@@ -381,7 +348,7 @@ def embed_common_data(request):
         limit = 10
     refdb_connection = refdb.get_connection(request.user)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
-    request.common_data = CommonBulkViewData(query_string, offset, limit, refdb_connection, ids)
+    request.common_data = utils.CommonBulkViewData(refdb_connection, ids, query_string, offset, limit)
 
 
 def build_page_links(request):
@@ -389,7 +356,7 @@ def build_page_links(request):
 
     :Parameters:
       - `request`: current HTTP request object; it must have the
-        ``common_data`` attribute, see `CommonBulkViewData`
+        ``common_data`` attribute, see `utils.CommonBulkViewData`
 
     :type request: ``HttpRequest``
 
@@ -433,39 +400,6 @@ def build_page_links(request):
         pages.append(link)
     return prev_link, next_link, pages
     
-
-def fetch_references(request):
-    u"""Fetches all references needed for the bulk view from the RefDB
-    database.  If possible, it takes the references from the cache.  The
-    references contain also all the extended attributes, see `utils.fetch`.
-
-    :Parameters:
-      - `request`: current HTTP request object; it must have the
-        ``common_data`` attribute, see `CommonBulkViewData`
-
-    :type request: ``HttpRequest``
-
-    :Return:
-      the references
-
-    :rtype:
-      list of ``pyrefdb.Reference``
-    """
-    refdb_connection, ids = request.common_data.refdb_connection, request.common_data.ids
-    all_references = cache.get_many(settings.REFDB_CACHE_PREFIX + id_ for id_ in ids)
-    length_cache_prefix = len(settings.REFDB_CACHE_PREFIX)
-    all_references = dict((cache_id[length_cache_prefix:], reference) for cache_id, reference in all_references.iteritems())
-    missing_ids = set(ids) - set(all_references)
-    if missing_ids:
-        missing_references = refdb_connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
-        missing_references = dict((reference.id, reference) for reference in missing_references)
-        all_references.update(missing_references)
-    references = [all_references[id_] for id_ in ids]
-    for reference in references:
-        reference.fetch(["global_pdf_available", "pdf_is_private"], refdb_connection, request.user.id)
-        cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
-    return references
-
 
 def get_last_modification_date(request):
     u"""Returns the last modification of the references found for the bulk
@@ -563,15 +497,16 @@ def bulk(request):
         # itself.  The reason for this is that the references data has changed
         # by processing the request, so we get a fresh list here.  This delayed
         # list generation is the reason for `embed_common_data` and
-        # `CommonBulkViewData` in the first place.
+        # `utils.CommonBulkViewData` in the first place.
         embed_common_data(request)
         if not valid_post_data:
-            references = fetch_references(request)
+            references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids,
+                                                request.user.id)
             prev_link, next_link, pages = build_page_links(request)
             for reference in references:
                 reference.selection_box = SelectionBoxForm(request.POST, prefix=reference.id)
     if request.method == "GET" or valid_post_data:
-        references = fetch_references(request)
+        references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
         prev_link, next_link, pages = build_page_links(request)
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
