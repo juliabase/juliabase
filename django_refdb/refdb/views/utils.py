@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 import django.core.urlresolvers
 from django.core.cache import cache
 from django.conf import settings
-from .. import models
+from .. import models, refdb
 
 
 # FixMe: This class is code duplication to Chantal
@@ -139,7 +139,7 @@ def last_modified(user, references):
         calculated
 
     :type user: ``django.contrib.auth.models.User``
-    :type references: list of `models.Reference`
+    :type references: list of `models.Reference` or str
 
     :Return:
       the timestamp of last modification of the given references, with respect
@@ -153,9 +153,25 @@ def last_modified(user, references):
     for reference in references:
         try:
             id_ = reference.id
+            citation_key = reference.citation_key
         except AttributeError:
-            id_ = reference
-        django_reference, __ = models.Reference.objects.get_or_create(reference_id=id_)
+            try:
+                int(reference)
+                id_ = reference
+                citation_key = None
+            except ValueError:
+                id_ = None
+                citation_key = reference
+        try:
+            django_reference = \
+                models.Reference.objects.get(reference_id=id_) if id_ else models.Reference.get(citation_key=citation_key)
+        except models.Reference.DoesNotExist:
+            if not citation_key:
+                citation_key = refdb.get_connection(user).get_references(u":ID:=" + id_)[0].citation_key
+            else:
+                id_ = refdb.get_connection(user).get_references(u":CK:=" + citation_key)[0].id
+            django_reference = models.Reference(reference_id=id_, citation_key=citation_key)
+            django_reference.save()
         timestamps.append(django_reference.get_last_modification(user))
     return max(timestamps) if timestamps else None
 
@@ -604,7 +620,6 @@ def fetch_references(refdb_connection, ids, user_id):
         missing_references = dict((reference.id, reference) for reference in missing_references)
         all_references.update(missing_references)
     references = [all_references[id_] for id_ in ids]
-    print references
     for reference in references:
         reference.fetch(["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)

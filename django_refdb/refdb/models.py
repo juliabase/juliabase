@@ -28,6 +28,7 @@ class Reference(models.Model):
     for personal data (aka <libinfo> in RISX).
     """
     reference_id = models.CharField(_(u"ID"), primary_key=True, max_length=10)
+    citation_key = models.CharField(_(u"citation key"), unique=True, db_index=True, max_length=255)
     last_modified = models.DateTimeField(_(u"last modified"), auto_now=True)
 
     class Meta:
