@@ -85,7 +85,10 @@ def get_last_modification_date(request):
     :rtype: ``datetime.datetime``
     """
     embed_common_data(request)
-    return max(request.common_data.references_last_modified, request.user.refdb_user_details.settings_last_modified)
+    last_modified = request.common_data.references_last_modified
+    if last_modified:
+        last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
+    return last_modified
 
 
 def get_etag(request):

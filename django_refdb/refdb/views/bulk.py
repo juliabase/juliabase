@@ -426,7 +426,8 @@ def get_last_modification_date(request):
         last_modified = utils.last_modified(request.user, request.common_data.ids)
     else:
         last_modified = None
-    last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
+    if last_modified:
+        last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
     return last_modified
 
 
