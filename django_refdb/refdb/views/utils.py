@@ -689,9 +689,23 @@ def fetch_references(refdb_connection, ids, user_id):
 
 
 def prettyprint_title_abbreviation(abbreviated_title):
+    u"""Inserts spaces after some full stops in the abbreviated title.  RefDB
+    doesn't use spaces in abbreviated titles, like “Phys.Rev.”.  This function
+    transforms this to “Phys. Rev.”.  The inserted spaces are breaking spaces.
+
+    :Parameters:
+      - `abbreviated_title`: The abbreviated title of the reference or
+        abbreviated name of a journal
+
+    :type abbreviated: unicode
+
+    :Return:
+      the abbreviated title with spaces after all full stops
+
+    :rtype: unicode
+    """
     result = u""
     position = 0
-    max_cyles = 10
     while position < len(abbreviated_title):
         end = abbreviated_title.find(u".", position)
         if end == -1:
