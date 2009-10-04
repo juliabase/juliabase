@@ -6,7 +6,7 @@ u"""General helper functions for the views.
 
 from __future__ import absolute_import
 
-import hashlib, os.path
+import hashlib, os.path, unicodedata
 import pyrefdb
 from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -686,3 +686,20 @@ def fetch_references(refdb_connection, ids, user_id):
         reference.fetch(["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
     return references
+
+
+def prettyprint_title_abbreviation(abbreviated_title):
+    result = u""
+    position = 0
+    max_cyles = 10
+    while position < len(abbreviated_title):
+        end = abbreviated_title.find(u".", position)
+        if end == -1:
+            end = len(abbreviated_title)
+        else:
+            end += 1
+        result += abbreviated_title[position:end]
+        if end != len(abbreviated_title) and unicodedata.category(abbreviated_title[end])[0] == "L":
+            result += u" "
+        position = end
+    return result

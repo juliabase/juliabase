@@ -80,7 +80,22 @@ def concise_title(value):
     doesn't exist too, it returns ``None``, so be aware to use the ``default``
     filter afterwards.
     """
-    return value.title_abbrev or value.title
+    return utils.prettyprint_title_abbreviation(value.title_abbrev) if value.title_abbrev else value.title
+
+
+@register.filter
+def journal(value):
+    u"""Filter to pick the abbreviated name of a journal with higher priority.
+    If it doesn't exist, it takes the full name.  This this doesn't exist too,
+    it returns ``None``, so be aware to use the ``default`` filter afterwards.
+
+    In contrast to the `concise_title` filter, it assures that only a *journal*
+    name is returned.  If the type of references doesn't have a journal name
+    (e.g. it is a book), ``None`` is returned.
+    """
+    if value.type in ["ABST", "INPR", "JOUR", "JFULL", "MGZN", "NEWS"]:
+        return utils.prettyprint_title_abbreviation(value.publication.title_abbrev) if value.publication.title_abbrev \
+            else value.publication.title
 
 
 # FixMe: This is a duplicate of Chantal

@@ -17,7 +17,7 @@
             {% endif %}
           {% endwith %}</td>
       <td class="reference-title">{{ reference.title|default:"" }}</td>
-      <td>{{ reference.journal|default:"" }}</td>
+      <td>{{ reference|journal|default:"" }}</td>
       <td>{{ reference.publication.pub_info.pub_date.year|default_if_none:"" }}</td>
       <td class="screen-only">
         <a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}"
