@@ -73,6 +73,16 @@ def markdown(value):
     return markup.markdown(escape(substitute_html_entities(unicode(value))))
 
 
+@register.filter
+def concise_title(value):
+    u"""Filter to pick the abbreviated title of a publication or series with
+    higher priority.  If it doesn't exist, it takes the full title.  This this
+    doesn't exist too, it returns ``None``, so be aware to use the ``default``
+    filter afterwards.
+    """
+    return value.title_abbrev or value.title
+
+
 # FixMe: This is a duplicate of Chantal
 
 @register.filter

@@ -35,7 +35,7 @@
     {% endif %}
     <tr>
       {% flexible_field "publication_title" %}
-        <td class="value" colspan="0">{{ reference.publication.title|default:"—" }}</td>
+        <td class="value" colspan="0">{{ reference.publication|concise_title|default:"—" }}</td>
       {% end_flexible_field %}
     </tr>
     <tr style="border-bottom: solid #e6e6e6 4ex">
