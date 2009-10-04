@@ -101,16 +101,22 @@ def get_lists(user, citation_key=None):
     """
     username = get_username(user.id)
     extended_notes = get_connection(user).get_extended_notes(":NCK:~^%s-" % username)
-    choices = []
+    choices = [(username, _(u"main list"))]
     initial = []
     for note in extended_notes:
         short_name = note.citation_key.partition("-")[2]
         if short_name:
             verbose_name = (note.content.text if note.content is not None else None) or short_name
-            if verbose_name == username:
-                verbose_name = _(u"main list")
-            choices.append((short_name, verbose_name))
+            if short_name != username:
+                choices.append((short_name, verbose_name))
             if citation_key:
+                references = [link[1] for link in links if link[0] == "reference"]
+                # FixMe: The following code works only if there are only
+                # citation keys in the "target" attributes of the XNote
+                # dataset, and not IDs.
+                #
+                # Maybe this is always the case anyway.  See
+                # <https://sourceforge.net/tracker/?func=detail&aid=2872544&group_id=26091&atid=385991>.
                 for link in note.links:
                     if link[0] == "reference" and link[1] == citation_key:
                         initial.append(short_name)
