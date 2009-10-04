@@ -110,7 +110,6 @@ def get_lists(user, citation_key=None):
             if short_name != username:
                 choices.append((short_name, verbose_name))
             if citation_key:
-                references = [link[1] for link in links if link[0] == "reference"]
                 # FixMe: The following code works only if there are only
                 # citation keys in the "target" attributes of the XNote
                 # dataset, and not IDs.
