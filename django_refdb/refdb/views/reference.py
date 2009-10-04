@@ -141,8 +141,8 @@ class ReferenceForm(forms.Form):
                 initial["date"] = unicode(pub_info.pub_date or u"")
                 initial["volume"] = pub_info.volume or u""
                 initial["issue"] = pub_info.issue or u""
-                initial["pages"] = "%s--%s" % (pub_info.startpage, pub_info.endpage) \
-                    if pub_info.startpage and pub_info.endpage else pub_info.startpage or u""
+                initial["startpage"] = pub_info.startpage or u""
+                initial["endpage"] = pub_info.endpage or u""
                 initial["publisher"] = pub_info.publisher or u""
                 initial["city"] = pub_info.city or u""
                 initial["address"] = pub_info.address or u""
