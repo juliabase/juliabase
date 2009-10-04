@@ -90,6 +90,7 @@ class ReferenceForm(forms.Form):
     part_title = CharNoneField(label=_("Part title"), required=False)
     part_authors = forms.CharField(label=_("Part authors"), required=False)
     publication_title = forms.CharField(label=_("Publication title"), required=False)
+    publication_title_abbrev = forms.CharField(label=_("Abbreviated publication title"), required=False)
     publication_authors = forms.CharField(label=_("Publication authors"), required=False)
     date = forms.CharField(label=_("Date"), required=False, help_text=_("Either YYYY or YYYY-MM-DD."))
     relevance = forms.TypedChoiceField(label=_("Relevance"), required=False, coerce=int, empty_value=None,
@@ -135,6 +136,7 @@ class ReferenceForm(forms.Form):
                 initial["part_title"] = reference.part.title
                 initial["part_authors"] = serialize_authors(reference.part.authors)
             initial["publication_title"] = reference.publication.title
+            initial["publication_title_abbrev"] = reference.publication.title_abbrev
             initial["publication_authors"] = serialize_authors(reference.publication.authors)
             pub_info = reference.publication.pub_info
             if pub_info:
@@ -309,9 +311,11 @@ class ReferenceForm(forms.Form):
         self._forbid_field("part_title", utils.reference_types_without_part)
         self._forbid_field("part_authors", utils.reference_types_without_part)
         if cleaned_data["reference_type"] in ["ABST", "INPR", "JOUR", "JFULL", "MGZN", "NEWS"] \
-                and not cleaned_data["publication_title"]:
-            self._errors["publication_title"] = ErrorList([_(u"This field is required for this reference type.")])
+                and not (cleaned_data["publication_title"] or cleaned_data["publication_title_abbrev"]):
+            self._errors["publication_title"] = \
+                ErrorList([_(u"The publication title (or its abbreviation) is required for this reference type.")])
             del cleaned_data["publication_title"]
+            del cleaned_data["publication_title_abbrev"]
         self._forbid_field("volume", ["ART", "CTLG", "COMP", "INPR", "ICOMM", "MAP", "MPCT", "PAMP", "PCOMM", "SLIDE",
                                       "SOUND", "UNPB", "VIDEO"])
         self._forbid_field("issue", ["ART", "ADVS", "BILL", "BOOK", "CONF", "ELEC", "HEAR", "ICOMM",
@@ -355,6 +359,7 @@ class ReferenceForm(forms.Form):
         if not reference.publication:
             reference.publication = pyrefdb.Publication()
         reference.publication.title = self.cleaned_data["publication_title"]
+        reference.publication.title_abbrev = self.cleaned_data["publication_title_abbrev"]
         reference.publication.authors = self.cleaned_data["publication_authors"]
         lib_info = reference.get_or_create_lib_info(refdb.get_username(self.user.id))
         lib_info.notes = self.cleaned_data["private_notes"]
