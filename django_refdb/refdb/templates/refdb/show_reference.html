@@ -93,7 +93,7 @@
         {% flexible_field "pages" %}
           <td class="value">
             {% if pub_info.startpage or pub_info.endpage %}
-              {{ pub_info.startpage|default:"—" }}{% if pub_info.endpage %}–{% endif %}{{ pub_info.endpage|default:"—" }}
+ {{ pub_info.startpage|default:"—" }}{% if pub_info.endpage %}–{% endif %}{{ pub_info.endpage|default:_("ff.") }}
             {% else %}
               —
             {% endif %}
