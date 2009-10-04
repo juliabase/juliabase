@@ -456,11 +456,13 @@ def bulk(request):
     :rtype: ``HttpResponse``
     """
     references_list = request.GET.get("list")
+    if references_list:
+        verbose_listname = refdb.get_verbose_listname(references_list, request.user)
     if request.method == "POST":
         export_form = ExportForm(request.POST)
         add_to_shelf_form = AddToShelfForm(request.POST)
         add_to_list_form = AddToListForm(request.user, request.POST)
-        remove_from_list_form = RemoveFromListForm(request.POST)
+        remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove")
         global_dummy_form = forms.Form(request.POST)
         ids = set()
         for key, value in request.POST.iteritems():
@@ -494,7 +496,7 @@ def bulk(request):
             elif action == "list":
                 add_references_to_list(ids, add_to_list_form, request.user)
             elif action == "remove":
-                refdb.get_connection(request.user).dump_references(ids, remove_from_list_form.cleaned_data["listname"])
+                refdb.get_connection(request.user).dump_references(ids, references_list)
         # Since the POST request is processed now, we create *now* the list
         # itself.  The reason for this is that the references data has changed
         # by processing the request, so we get a fresh list here.  This delayed
@@ -517,7 +519,6 @@ def bulk(request):
         add_to_list_form = AddToListForm(request.user)
         global_dummy_form = forms.Form()
         if references_list:
-            verbose_listname = refdb.get_verbose_listname(references_list, request.user)
             remove_from_list_form = RemoveFromListForm(
                 initial={"listname": references_list}, verbose_listname=verbose_listname, prefix="remove")
         else:

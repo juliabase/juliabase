@@ -57,8 +57,11 @@ def embed_common_data(request):
     if not hasattr(request, "common_data"):
         refdb_connection = refdb.get_connection(request.user)
         current_list = request.user.refdb_user_details.current_list
-        links = refdb.get_connection(request.user).get_extended_notes(
-            ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
+        try:
+            links = refdb.get_connection(request.user).get_extended_notes(
+                ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
+        except IndexError:
+            links = []
         citation_keys = [link[1] for link in links if link[0] == "reference"]
         ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
         references_last_modified = utils.last_modified(request.user, ids)
