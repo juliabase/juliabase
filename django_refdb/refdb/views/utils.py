@@ -658,6 +658,9 @@ def fetch_references(refdb_connection, ids, user_id):
     references from the cache.  The references contain also all the extended
     attributes, see `fetch`.
 
+    Additionally, a ``pdf_url`` attribute is added to all references containing
+    the link to the (possibly private) PDF, or ``None``.
+
     :Parameters:
       - `refdb_connection`: connection object to the RefDB server
       - `ids`: IDs of the references
@@ -685,6 +688,8 @@ def fetch_references(refdb_connection, ids, user_id):
     for reference in references:
         reference.fetch(["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
+        global_url, private_url = pdf_file_url(reference, user_id)
+        reference.pdf_url = private_url or global_url
     return references
 
 

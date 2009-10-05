@@ -523,9 +523,6 @@ def bulk(request):
                 initial={"listname": references_list}, verbose_listname=verbose_listname, prefix="remove")
         else:
             remove_from_list_form = None
-    for reference in references:
-        global_url, private_url = utils.pdf_file_url(reference, request.user.id)
-        reference.pdf_url = private_url or global_url
     title = _(u"Bulk view") if not references_list else _(u"List view of %s") % verbose_listname
     return render_to_response("refdb/bulk.html", {"title": title, "references": references,
                                                   "prev_link": prev_link, "next_link": next_link, "pages": pages,
