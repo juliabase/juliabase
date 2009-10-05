@@ -365,7 +365,7 @@ labels = {
               u"volume": _(u"Volume"), u"startpage": _(u"Start page"), u"part_authors": _(u"Authors"),
               u"date": _(u"Publication date"), u"issue": _(u"Issue"), u"pages": _(u"Pages")},
     u"PCOMM": {u"publication_authors": _(u"Authors"), u"date": _(u"Date sent"), u"publication_title": _(u"Title")},
-    u"THES": {u"publication_authors": _(u"Serial"), u"publisher": _(u"Institution"), u"endpage": _(u"End page"),
+    u"THES": {u"publication_authors": _(u"Author"), u"publisher": _(u"Institution"), u"endpage": _(u"End page"),
               u"city": _(u"Publication place"), u"publication_title": _(u"Title"), u"volume": _(u"Volume"),
               u"date": _(u"Publication date"), u"issue": _(u"Issue")},
     u"UNBILL": {u"publication_authors": _(u"Serial"), u"date": _(u"Date of code"), u"publication_title": _(u"Act title"),
