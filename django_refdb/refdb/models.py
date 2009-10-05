@@ -87,6 +87,8 @@ class Reference(models.Model):
         except UserModification.DoesNotExist:
             return self.last_modified
 
+admin.site.register(Reference)
+
 
 class UserModification(models.Model):
     u"""Model for storing a personal last-modification timestamp for a
