@@ -27,7 +27,7 @@ def default(request):
     Additionally, the help link on the top (see the
     `samples.views.utils.help_link` decorator) is added to the context by
     extracting it (and removing it from) the request object.  It cannot be in
-    the session because this would reset the cahce every time it is used.
+    the session because this would reset the cache every time it is used.
 
     And finally, it adds tuples with information needed to realise the neat
     little flags on the top left for language switching.  These flags don't
