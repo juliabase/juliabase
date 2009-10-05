@@ -253,7 +253,7 @@ def is_all_valid(export_form, add_to_shelf_form, add_to_list_form, remove_from_l
     all_valid = export_form.is_valid()
     all_valid = add_to_shelf_form.is_valid() and all_valid
     all_valid = add_to_list_form.is_valid() and all_valid
-    all_valid = remove_from_list_form.is_valid() and all_valid
+    all_valid = (remove_from_list_form is None or remove_from_list_form.is_valid()) and all_valid
     all_valid = all([form.is_valid() for form in selection_box_forms]) and all_valid
     return all_valid
 
@@ -306,7 +306,7 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     if not actions:
         referentially_valid = False
         if export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid() and \
-                remove_from_list_form.is_valid():
+                (not references_list or remove_from_list_form.is_valid()):
             form_utils.append_error(global_dummy_form, _(u"You must select an action."))
     elif len(actions) > 1:
         form_utils.append_error(global_dummy_form, _(u"You can't do more that one thing at the same time."))
@@ -462,7 +462,8 @@ def bulk(request):
         export_form = ExportForm(request.POST)
         add_to_shelf_form = AddToShelfForm(request.POST)
         add_to_list_form = AddToListForm(request.user, request.POST)
-        remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove")
+        remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove") \
+            if references_list else None
         global_dummy_form = forms.Form(request.POST)
         ids = set()
         for key, value in request.POST.iteritems():
