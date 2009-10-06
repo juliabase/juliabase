@@ -82,7 +82,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    'refdb.middleware.transaction.TransactionMiddleware',
+    'refdb.middleware.TransactionMiddleware',
+    'refdb.middleware.ConditionalViewMiddleware',
     'refdb.middleware.chantal.ExceptionsMiddleware',
 )
 
