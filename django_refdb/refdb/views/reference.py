@@ -19,7 +19,7 @@ from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from django.core.cache import cache
 from django.conf import settings
 from .. import refdb, models
-from . import utils
+from . import utils, form_utils
 from .rollbacks import *
 
 
@@ -305,8 +305,8 @@ class ReferenceForm(forms.Form):
         if cleaned_data["endpage"] and not cleaned_data["startpage"]:
             self._errors["endpage"] = ErrorList([_(u"You must not give an end page if there is no start page.")])
             del cleaned_data["endpage"]
-        if cleaned_data["reference_type"] != "GEN" and not cleaned_data["date"]:
-            self._errors["date"] = ErrorList([_(u"This field is required for this reference type.")])
+        if cleaned_data["reference_type"] != "GEN" and "date" in cleaned_data and not cleaned_data["date"]:
+            form_utils.append_error(self, _(u"This field is required for this reference type."), "date")
             del cleaned_data["date"]
         self._forbid_field("part_title", utils.reference_types_without_part)
         self._forbid_field("part_authors", utils.reference_types_without_part)
