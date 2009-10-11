@@ -53,6 +53,7 @@ def index_pdf(citation_key, user_hash):
         pdf_filename = glob("*.pdf")[0]
     except IndexError:
         logger.warning("No PDF found!")
+        return
     pdf_timestamp = os.stat(pdf_filename).st_mtime
     try:
         last_indexing = pickle.load(open("last_indexing.pickle", "rb"))
