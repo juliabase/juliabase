@@ -26,6 +26,11 @@ This program calls several external programs: convert, tesseract, pdftotext,
 pdfimages, and pdfinfo.
 
 It writes a log to ``/tmp/index_pdfs.log``.
+
+Normally, this program is started by the web server immediately after a new PDF
+was uploaded.  However, it should also run as an (infrequent) cron job in order
+to update everything that was skipped for some reason (for example, because of
+a lock file).
 """
 
 from __future__ import division
@@ -129,6 +134,10 @@ def index_pdf(citation_key, user_hash):
     :type citation_key: str
     :type user_hash: str
     """
+    # FixMe: This program should use lock files to prevent processing of the
+    # same PDF simultaneously.  The lock file should be placed in the PDF
+    # directory so that it _is_ allowed to process different PDFs at the same
+    # time.  If the PDF is locked, simply bail out.
     pdf_identifier = citation_key + (" for user " + user_hash if user_hash else "")
     logger.info(pdf_identifier + " is processed ...")
     print citation_key, user_hash if user_hash else ""
