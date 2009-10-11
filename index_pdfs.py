@@ -1,6 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+u"""Stand-alone program to update Xapian's index.  Its synopsis is::
+
+    index_pdfs.py <pdfs-root> [<citation-key> [<user-hash>]]
+
+``<pdfs-root>`` is the directory which includes all subdirs with PDFs for the
+given RefDB database.  ``<citation-key>`` is the citation key of the newly
+added PDF.  If it was a private PDF upload, you must also give the
+``<user-hash>`` of the uploading user (don't mix this up with the user ID or
+his RefDB username).
+
+If no citation key is given, all subdirs of ``<pdfs-root>`` are scanned and all
+new PDFs are indexed.
+
+If the citation key is the dash "-", Xapian's index database and all pickle
+files in the PDF directories are deleted.  This effectively resets the
+indexing.
+
+The last path component of ``<pdfs-root>`` is taken as the Xapian index
+database name in the directory ``/var/lib/django_refdb_indices``.  It must be
+allowed to write to this directory.
+
+This program calls several external programs: convert, tesseract, pdftotext,
+pdfimages, and pdfinfo.
+
+It writes a log to ``/tmp/index_pdfs.log``.
+"""
+
 from __future__ import division
 
 import subprocess, sys, os, os.path, re, datetime, codecs, pickle, shutil, logging
@@ -25,23 +52,83 @@ indexer.set_stemmer(stemmer)
 
 
 class LastIndexing(object):
+    u"""Class for information of the last indexing of a particular PDF.  This
+    class is pickled to a file in the same directory inw hich the PDF resides.
+    This way, ``index_pdfs.py`` can see whether is must re-index the PDF
+    because it's newer than the `timestamp`.
+
+    :ivar document_ids: all Xapian document IDs of the pages of the PDF
+
+    :ivar timestamp: the time of modification of the PDF when it was last
+      indexed
+
+    :type document_ids: list of int
+    :type timestamp: int
+    """
     def __init__(self, timestamp):
+        u"""Class constructor.
+
+        :Parameters:
+          - `timestamp`: The time of modification of the PDF which is currently
+            indexed.  It is the result of ``os.stat``'s ``st_mtime``.
+
+        :type timestamp: int
+        """
         self.document_ids = []
         self.timestamp = timestamp
 
 
 def get_number_of_pages(pdf_filename):
+    u"""Returns the number of pages in a PDF.
+
+    :Parameters:
+      - `pdf_filename`: PDF file to be analysed
+
+    :type pdf_filename: str
+
+    :Return:
+      the number of pages in this PDF
+
+    :rtype: int
+    """
     output = subprocess.Popen(["pdfinfo", pdf_filename], stdout=subprocess.PIPE).communicate()[0]
     match = re.search(r"^Pages:\s+(\d+)$", output, re.MULTILINE)
     return int(match.group(1))
 
 
 def clean_directory():
+    u"""Removes all auxillary files from the current directory which were
+    created by index_pdfs.py.  This includes the pickle file.
+    """
+    # FixMe: Actually, this routine doesn't remove all files created by this
+    # program but rather removed all file with certain file extensions.  This
+    # routine should be replaces with more fine-grained file deletion in
+    # `index_pdf`.
     for filename in glob("*.txt") + glob("*.p?m") + glob("*.tif") + glob("*.pickle"):
         os.remove(filename)
 
 
 def index_pdf(citation_key, user_hash):
+    u"""Index one PDF with Xapian.  The PDF is identified by the citation key
+    of the reference it belongs to.
+
+    Here is how Xapian is used for indexing: Every page in the PDF becomes one
+    document in Xapian's notation.  Its associated data (set_data/get_data) is
+    the text content of the page.  Up to three so-called “values” are set:
+    Value 0 is the citation key, value 1 is the page number (note that this is
+    the dull PDF page number rather than a “document page number”), and value 2
+    is the user hash (which may not be set).  The user hash allows for a
+    ``MatchDecider`` to filter out all PDFs from the matches which belong to
+    other users.
+
+    :Parameters:
+      - `citation_key`: the citation key of the reference
+      - `user_hash`: the user hash of the user if it is a private PDF; ``None``
+        if otherwise
+
+    :type citation_key: str
+    :type user_hash: str
+    """
     pdf_identifier = citation_key + (" for user " + user_hash if user_hash else "")
     logger.info(pdf_identifier + " is processed ...")
     print citation_key, user_hash if user_hash else ""
@@ -82,6 +169,8 @@ def index_pdf(citation_key, user_hash):
     if is_scanned:
         logger.info(citation_key + " was scanned.  Firing up Tesseract ...")
         subprocess.call(["pdfimages", pdf_filename, "page"])
+        # FixMe: The tesseract processes should be started parallely in order
+        # to make use of multi-processor systems.
         for filename in glob("page-*.p?m"):
             tif_filename = filename[:-4] + ".tif"
             subprocess.call(["convert", filename, tif_filename])
