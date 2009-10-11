@@ -408,17 +408,15 @@ class ReferenceForm(forms.Form):
         :type reference: ``pyrefdb.Reference``
         """
         # FixMe: This method could be made more efficient with sets.
-        for list_ in self.cleaned_data["lists"]:
-            if list_ not in self.old_lists:
-                listname = list_.partition("-")[2] or None
+        for listname in self.cleaned_data["lists"]:
+            if listname not in self.old_lists:
                 self.refdb_rollback_actions.append(DumprefRollback(self.user, reference.id, listname))
                 refdb.get_connection(self.user).pick_references([reference.id], listname)
                 
-        for list_ in self.old_lists:
-            if list_ not in self.cleaned_data["lists"]:
-                listname = list_.partition("-")[2]
+        for listname in self.old_lists:
+            if listname not in self.cleaned_data["lists"]:
                 self.refdb_rollback_actions.append(PickrefRollback(self.user, reference.id, listname))
-                refdb.get_connection(self.user).dump_references([reference.id], listname or None)
+                refdb.get_connection(self.user).dump_references([reference.id], listname)
 
     def _save_extended_note(self, extended_note, citation_key):
         u"""Stores an extended note in the RefDB database.  This is used as a
