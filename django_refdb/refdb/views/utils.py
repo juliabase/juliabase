@@ -6,7 +6,7 @@ u"""General helper functions for the views.
 
 from __future__ import absolute_import
 
-import hashlib, os.path, unicodedata
+import sys, hashlib, os, os.path, unicodedata
 import pyrefdb
 from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
@@ -722,3 +722,49 @@ def prettyprint_title_abbreviation(abbreviated_title):
             result += u" "
         position = end
     return result
+
+
+def spawn_daemon(path_to_executable, *args):
+    """Spawns a completely detached subprocess (i.e., a daemon).  Taken from
+    http://stackoverflow.com/questions/972362/spawning-process-from-python
+    which in turn was inspired by
+    <http://code.activestate.com/recipes/278731/>.
+
+    :Parameters:
+      - `path_to_executable`: absolute path to the executable to be run
+        detatched
+      - `args`: all arguments to be passed to the subprocess
+
+    :type path_to_executable: str
+    :type args: list of str
+    """
+    try:
+        pid = os.fork()
+    except OSError, e:
+        raise RuntimeError("1st fork failed: %s [%d]" % (e.strerror, e.errno))
+    if pid != 0:
+        os.waitpid(pid, 0)
+        return
+    os.setsid()
+    try:
+        pid = os.fork()
+    except OSError, e:
+        raise RuntimeError("2nd fork failed: %s [%d]" % (e.strerror, e.errno))
+    if pid != 0:
+        os._exit(0)
+    try:
+        maxfd = os.sysconf("SC_OPEN_MAX")
+    except (AttributeError, ValueError):
+        maxfd = 1024
+    for fd in range(maxfd):
+        try:
+           os.close(fd)
+        except OSError:
+           pass
+    os.open(os.devnull, os.O_RDWR)
+    os.dup2(0, 1)
+    os.dup2(0, 2)
+    try:
+        os.execv(path_to_executable, [path_to_executable] + list(filter(lambda arg: arg is not None, args)))
+    except:
+        os._exit(255)

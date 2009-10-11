@@ -6,7 +6,7 @@ u"""Views for viewing, editing, adding, and searching for references.
 
 from __future__ import absolute_import
 
-import os.path, shutil, re, copy
+import os.path, shutil, re, copy, subprocess
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -513,6 +513,9 @@ class ReferenceForm(forms.Form):
             for chunk in pdf_file.chunks():
                 destination.write(chunk)
             destination.close()
+            utils.spawn_daemon("/usr/bin/python", settings.REFDB_PATH_TO_INDEXER,
+                               os.path.join(settings.MEDIA_ROOT, "references"), new_reference.citation_key,
+                               utils.get_user_hash(self.user.id) if private else None)
         new_reference.freeze()
         connection.update_note_links(new_reference)
         self._update_last_modification(new_reference)
