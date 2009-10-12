@@ -50,7 +50,11 @@ citation_key = sys.argv[2] if len(sys.argv) > 2 else None
 user_hash = sys.argv[3] if len(sys.argv) > 3 else None
 
 database_path = os.path.join("/var/lib/django_refdb_indices", os.path.basename(rootdir))
-database = xapian.WritableDatabase(database_path, xapian.DB_CREATE_OR_OPEN)
+try:
+    database = xapian.WritableDatabase(database_path, xapian.DB_CREATE_OR_OPEN)
+except xapian.DatabaseLockError:
+    logger.warning("Could not get lock file, giving up.")
+    sys.exit()
 indexer = xapian.TermGenerator()
 stemmer = xapian.Stem("english")
 indexer.set_stemmer(stemmer)
@@ -134,13 +138,8 @@ def index_pdf(citation_key, user_hash):
     :type citation_key: str
     :type user_hash: str
     """
-    # FixMe: This program should use lock files to prevent processing of the
-    # same PDF simultaneously.  The lock file should be placed in the PDF
-    # directory so that it _is_ allowed to process different PDFs at the same
-    # time.  If the PDF is locked, simply bail out.
     pdf_identifier = citation_key + (" for user " + user_hash if user_hash else "")
     logger.info(pdf_identifier + " is processed ...")
-    print citation_key, user_hash if user_hash else ""
     path = os.path.join(rootdir, citation_key)
     if user_hash:
         path = os.path.join(path, user_hash)
