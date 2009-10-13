@@ -205,6 +205,34 @@ class FullTextInfoNode(template.Node):
 
     @staticmethod
     def highlight(text, words_to_highlight):
+        u"""Extracts the text part with the found hits and highlights them.
+        More accurately, this routine searchs for the first occurence of one of
+        the search terms in the full text of the respective PDF page and
+        extracts the text around it (30 characters before, and 50 characters
+        after it).  Then, it highlights all non-overlapping occurences of the
+        search terms with ``<span>`` tags.
+
+        These span tags can be of four classes: ``highlight-middle`` means that the
+        search term is in the middle of a word, ``highlight-start`` at the
+        start of a word, ``highlight-end`` at the end of the word, and
+        ``highlight`` means that it is a complete word.  In the CSS, this can
+        be used to use box padding smartly.
+
+        :Parameters:
+          - `text`: The complete text of the search hit.  Usually, it is what
+            is returned by ``get_data()`` of a Xapian document.  Note that this
+            *must* be Unicode, otherwise, you get an exception.
+          - `words_to_highlight`: all words that should be highlighted in
+            ``text``
+
+        :type text: unicode
+        :type words_to_highlight: set of unicode
+
+        :Return:
+          HTML code with the highlighted words
+
+        :rtype: unicode
+        """
         if not words_to_highlight:
             return None
         pattern = re.compile("|".join(re.escape(word) for word in words_to_highlight), re.IGNORECASE)
@@ -261,6 +289,14 @@ class FullTextInfoNode(template.Node):
 
 @register.tag
 def full_text_info(parser, token):
+    u"""Template tag for insertig full-text search info.  This means the found
+    page, and the found string in its context on that page.
+
+    The single argument is the reference which must have a ``full_text_info``
+    attribute so that anything is displayed.  Additionally, this tag expects
+    the variable ``words_to_highlight`` in the template context, which is a set
+    of all words which are to be highlighted in the displayed context.
+    """
     try:
         tag_name, reference = token.split_contents()
     except ValueError:

@@ -82,14 +82,22 @@ class SearchForm(forms.Form):
             return u"(" + u") AND (".join(components) + u")"
 
     def extract_words_to_highlight(self):
+        u"""Returns the key words which were used in the full-text search.
+
+        :Return:
+          all words which took part in the full-text search; ``None`` if there
+          was no full-text search
+
+        :rtype: set of unicode
+        """
         full_text_query = self.cleaned_data["full_text_query"]
         if full_text_query:
             words = full_text_query.split()
-            tidy_words = []
+            tidy_words = set()
             for word in words:
                 if word.upper() not in ["NOT", "OR", "AND", "NEAR"]:
-                    tidy_words.append(word.strip('"'))
-        return tidy_words
+                    tidy_words.add(word.strip('"'))
+            return tidy_words
 
 
 class SelectionBoxForm(forms.Form):
@@ -344,16 +352,67 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
 
 
 class MatchDecider(xapian.MatchDecider):
+    u"""Match decider class for limiting a full-text search.  The documents
+    (i.e. PDF pages) which are excluded are those that belong to private PDFs
+    of other users, or which are excluded by other search parameters.
+    """
+
     def __init__(self, citation_keys, user_hash):
+        u"""Class constructor.
+
+        :Parameters:
+          - `citation_keys`: citation keys of references which are allowed in
+            this search; if ``None``, all references are allowed, i.e. the
+            full-text search is the only filter
+          - `user_hash`: user hash of the user who performs the search; see
+            `utils.get_user_hash`
+
+        :type citation_keys: set of str, or ``NoneType``
+        :type user_hash: str
+        """
         super(MatchDecider, self).__init__()
         self.citation_keys, self.user_hash = citation_keys, user_hash
+
     def __call__(self, document):
+        u"""Decides whether a Xapian document should be considered a search
+        hit.
+
+        :Parameters:
+          - `document`: the document to be examined
+
+        :type document: ``xapian.Document``
+
+        :Return:
+          whether the document should be included into the list of search hits
+
+        :rtype: bool
+        """
         include = document.get_value(0) in self.citation_keys
         include = include and (not document.get_value(2) or document.get_value(2) == self.user_hash)
         return include
 
 
 def get_full_text_matches(full_text_query, offset, limit, match_decider):
+    u"""Does the actual full-text search with Xapian.
+
+    :Parameters:
+      - `full_text_query`: the raw query string for the full text search; must
+        not be empty
+      - `offset`: offset of the returned hits within the complete hits list
+      - `limit`: maximal number of returned hits
+      - `match_decider`: Xapian match decider object, e.g. for taking the other
+        search parameters into account
+
+    :type full_text_query: unicode
+    :type offset: int
+    :type limit: int
+    :type match_decider: `MatchDecider`
+
+    :Return:
+      the found matches
+
+    :rtype: ``Xapian.MSet``
+    """
     database = xapian.Database("/var/lib/django_refdb_indices/references")
     enquire = xapian.Enquire(database)
     query_parser = xapian.QueryParser()
@@ -396,7 +455,7 @@ def embed_common_data(request):
     refdb_connection = refdb.get_connection(request.user)
     if full_text_query:
         ids = refdb_connection.get_references(query_string, output_format="ids")
-        citation_keys = utils.ids_to_citation_keys(refdb_connection, ids).values()
+        citation_keys = set(utils.ids_to_citation_keys(refdb_connection, ids).values())
         match_decider = MatchDecider(citation_keys, utils.get_user_hash(request.user.id))
         matches = get_full_text_matches(full_text_query, offset, limit, match_decider)
         full_text_matches = dict((match.document.get_value(0), match) for match in matches)
