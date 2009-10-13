@@ -62,6 +62,9 @@ def embed_common_data(request):
                 ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
         except IndexError:
             links = []
+        # FixMe: Apart from "reference", the value can also be "refid", in
+        # which case an ID is returned.  Those must be added to the resulting
+        # list.
         citation_keys = [link[1] for link in links if link[0] == "reference"]
         ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
         references_last_modified = utils.last_modified(request.user, ids)
