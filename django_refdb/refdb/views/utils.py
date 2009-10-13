@@ -614,16 +614,21 @@ def citation_keys_to_ids(connection, citation_keys):
     :rtype: dict mapping str to str
     """
     result = {}
+    missing_citation_keys = []
     for citation_key in citation_keys:
         if _is_citation_key(citation_key):
             try:
                 result[citation_key] = models.Reference.objects.get(citation_key=citation_key).reference_id
             except models.Reference.DoesNotExist:
-                id_ = connection.get_references(":CK:=" + citation_key, output_format="ids")[0]
-                models.Reference.objects.create(reference_id=id_, citation_key=citation_key)
-                result[citation_key] = id_
+                missing_citation_keys.append(citation_key)
         else:
             result[citation_key] = citation_key
+    if missing_citation_keys:
+        references = connection.get_references(u" OR ".join(":CK:=" + citation_key
+                                                            for citation_key in missing_citation_keys))
+        for reference in references:
+            models.Reference.objects.create(reference_id=reference.id, citation_key=reference.citation_key)
+            result[citation_key] = reference.id
     return result
 
 
@@ -644,11 +649,21 @@ def ids_to_citation_keys(connection, ids):
 
     :rtype: dict mapping str to str
     """
-    references = connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in ids if not _is_citation_key(id_)))
-    result = dict((reference.id, reference.citation_key) for reference in references)
-    for id_ in ids_:
-        if _is_citation_key(id_):
+    result = {}
+    missing_ids = []
+    for id_ in ids:
+        if not _is_citation_key(id_):
+            try:
+                result[id_] = models.Reference.objects.get(reference_id=id_).citation_key
+            except models.Reference.DoesNotExist:
+                missing_ids.append(id_)
+        else:
             result[id_] = id_
+    if missing_ids:
+        references = connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
+        for reference in references:
+            models.Reference.objects.create(reference_id=reference.id, citation_key=reference.citation_key)
+            result[id_] = reference.citation_key
     return result
 
 
