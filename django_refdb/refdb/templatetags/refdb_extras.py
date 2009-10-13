@@ -4,12 +4,13 @@
 u"""Collection of tags and filters that I found useful for Django-RefDB.
 """
 
-import re, codecs, os.path
+import re, codecs, os.path, unicodedata
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import escape
 import django.utils.http
 from django.contrib.markup.templatetags import markup
+from django.utils.translation import ugettext as _
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
 from refdb.views import utils
@@ -194,3 +195,74 @@ def markdown_field(field):
         return u"""<td colspan="0" class="value">—</td>"""
     else:
         return u"""<td colspan="0" class="bulk-text">%s</td>""" % markdown(field)
+
+
+class FullTextInfoNode(template.Node):
+
+    def __init__(self, reference):
+        self.reference = template.Variable(reference)
+        self.words_to_highlight = template.Variable("words_to_highlight")
+
+    @staticmethod
+    def highlight(text, words_to_highlight):
+        if not words_to_highlight:
+            return None
+        pattern = re.compile("|".join(re.escape(word) for word in words_to_highlight), re.IGNORECASE)
+        match = pattern.search(text)
+        if match:
+            start = max(match.start() - 30, 0)
+            end = min(match.end() + 50, len(text))
+        else:
+            return None
+        result = u"" if start == 0 else u"… "
+        position = start
+        while position < end:
+            match = pattern.search(text, position)
+            if match:
+                if match.start() >= end:
+                    result += escape(text[position:end])
+                    break
+                is_letter = lambda character: unicodedata.category(character)[0] == "L"
+                letter_left = match.start() > 0 and is_letter(text[match.start() - 1])
+                letter_right = match.end() < len(text) and is_letter(text[match.end()])
+                if letter_left:
+                    word_boundary = "-middle" if letter_right else "-end"
+                else:
+                    word_boundary = "-start" if letter_right else ""
+                result += escape(text[position:match.start()]) + \
+                    u"""<span class="highlight%s">""" % word_boundary + escape(match.group()) + u"</span>"
+                position = match.end()
+            else:
+                result += escape(text[position:end])
+                break
+        if end != len(text):
+            result += u" …"
+        return result
+
+    def render(self, context):
+        try:
+            reference = self.reference.resolve(context)
+        except template.VariableDoesNotExist:
+            return ""
+        try:
+            words_to_highlight = self.words_to_highlight.resolve(context)
+        except template.VariableDoesNotExist:
+            words_to_highlight = []
+        if not hasattr(reference, "full_text_info"):
+            return u""
+        page_info = escape(_(u"Page %s") % reference.full_text_info.document.get_value(1))
+        result = u"""<div class="full-text-info">""" + page_info
+        highlighted_text = self.highlight(reference.full_text_info.document.get_data().decode("utf-8"), words_to_highlight)
+        if highlighted_text:
+            result += "<br/>" + highlighted_text
+        result += u"</div>"
+        return result
+
+
+@register.tag
+def full_text_info(parser, token):
+    try:
+        tag_name, reference = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError, "%s tag requires exactly one argument" % token.contents.split()[0]
+    return FullTextInfoNode(reference)

@@ -11,6 +11,7 @@ don't need rollback actions.
 
 from __future__ import absolute_import
 
+import xapian
 from . import form_utils
 from django.template import RequestContext, defaultfilters
 from django.shortcuts import render_to_response
@@ -38,11 +39,17 @@ class SearchForm(forms.Form):
     journal = forms.CharField(label=_("Journal"), required=False)
     year_from = forms.DecimalField(label=_("Year from"), required=False)
     year_until = forms.DecimalField(label=_("Year until"), required=False)
+    full_text_query = forms.CharField(label=_("Full text"), required=False)
 
-    def get_query_string(self):
+    def get_query_string(self, user_id):
         u"""Takes the parameters of the form and distills a RefDB query string
         from them.
 
+        :Parameters:
+          - `user_id`: ID of the currently loggeed-in user
+
+        :type user_id: int
+        
         :Return:
           the RefDB query string representing the search
 
@@ -61,12 +68,28 @@ class SearchForm(forms.Form):
             components.append(":PY:>=" + self.cleaned_data["year_from"])
         if self.cleaned_data["year_until"]:
             components.append(":PY:<=" + self.cleaned_data["year_until"])
+        if self.cleaned_data["full_text_query"]:
+            # FixMe: This must be switched on again as soon as
+            # https://sourceforge.net/tracker/?func=detail&aid=2877685&group_id=26091&atid=385991
+            # is fixed.
+            pass
+#            components.append(":NCK:=django-refdb-global-pdfs OR :NCK:=django-refdb-personal-pdfs-%s" % user_id)
         if not components:
             return u":ID:>0"
         elif len(components) == 1:
             return components[0]
         else:
             return u"(" + u") AND (".join(components) + u")"
+
+    def extract_words_to_highlight(self):
+        full_text_query = self.cleaned_data["full_text_query"]
+        if full_text_query:
+            words = full_text_query.split()
+            tidy_words = []
+            for word in words:
+                if word.upper() not in ["NOT", "OR", "AND", "NEAR"]:
+                    tidy_words.append(word.strip('"'))
+        return tidy_words
 
 
 class SelectionBoxForm(forms.Form):
@@ -320,6 +343,29 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     return referentially_valid, action
 
 
+class MatchDecider(xapian.MatchDecider):
+    def __init__(self, citation_keys, user_hash):
+        super(MatchDecider, self).__init__()
+        self.citation_keys, self.user_hash = citation_keys, user_hash
+    def __call__(self, document):
+        include = document.get_value(0) in self.citation_keys
+        include = include and (not document.get_value(2) or document.get_value(2) == self.user_hash)
+        return include
+
+
+def get_full_text_matches(full_text_query, offset, limit, match_decider):
+    database = xapian.Database("/var/lib/django_refdb_indices/references")
+    enquire = xapian.Enquire(database)
+    query_parser = xapian.QueryParser()
+    stemmer = xapian.Stem("english")
+    query_parser.set_stemmer(stemmer)
+    query_parser.set_database(database)
+    query_parser.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
+    query = query_parser.parse_query(full_text_query)
+    enquire.set_query(query)
+    return enquire.get_mset(offset, limit, None, match_decider)
+
+
 def embed_common_data(request):
     u"""Add a ``common_data`` attribute to request, containing various data
     used across the view.  See ``utils.CommonBulkViewData`` for further
@@ -335,7 +381,8 @@ def embed_common_data(request):
     search_form = SearchForm(request.GET)
     if not search_form.is_valid():
         raise utils.RedirectException(django.core.urlresolvers.reverse(search) + "?" + request.META.get("QUERY_STRING"))
-    query_string = search_form.get_query_string()
+    query_string = search_form.get_query_string(request.user.id)
+    full_text_query = search_form.cleaned_data["full_text_query"]
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
     try:
@@ -347,9 +394,22 @@ def embed_common_data(request):
     except (TypeError, ValueError):
         limit = 10
     refdb_connection = refdb.get_connection(request.user)
-    ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
+    if full_text_query:
+        ids = refdb_connection.get_references(query_string, output_format="ids")
+        citation_keys = utils.ids_to_citation_keys(refdb_connection, ids).values()
+        match_decider = MatchDecider(citation_keys, utils.get_user_hash(request.user.id))
+        matches = get_full_text_matches(full_text_query, offset, limit, match_decider)
+        full_text_matches = dict((match.document.get_value(0), match) for match in matches)
+        ids = utils.citation_keys_to_ids(refdb_connection, full_text_matches).values()
+        number_of_references = matches.get_matches_lower_bound()
+    else:
+        ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
+        number_of_references = refdb_connection.count_references(query_string)
+        full_text_matches = None
+    words_to_highlight = search_form.extract_words_to_highlight()
     request.common_data = utils.CommonBulkViewData(
-        refdb_connection, ids, query_string=query_string, offset=offset, limit=limit)
+        refdb_connection, ids, query_string=query_string, full_text_matches=full_text_matches,
+        number_of_references=number_of_references, offset=offset, limit=limit, words_to_highlight=words_to_highlight)
 
 
 def build_page_links(request):
@@ -388,15 +448,15 @@ def build_page_links(request):
         # I also set ``limit`` because it may have been adjusted in
         # `get_last_modification_date`
         new_query_dict["limit"] = limit
-        return "?" + urlencode(new_query_dict) if 0 <= new_offset < number_of_references and new_offset != offset else None
+        return "?" + urlencode(new_query_dict) \
+            if 0 <= new_offset < common_data.number_of_references and new_offset != offset else None
 
     common_data = request.common_data
-    number_of_references = common_data.refdb_connection.count_references(common_data.query_string)
     offset, limit = common_data.offset, common_data.limit
     prev_link = build_page_link(offset - limit)
     next_link = build_page_link(offset + limit)
     pages = []
-    for i in range(number_of_references // limit + 1):
+    for i in range(common_data.number_of_references // limit + 1):
         link = build_page_link(i * limit)
         pages.append(link)
     return prev_link, next_link, pages
@@ -524,11 +584,15 @@ def bulk(request):
                 initial={"listname": references_list}, verbose_listname=verbose_listname, prefix="remove")
         else:
             remove_from_list_form = None
+    if request.common_data.full_text_matches is not None:
+        for reference in references:
+            reference.full_text_info = request.common_data.full_text_matches[reference.citation_key]
     title = _(u"Bulk view") if not references_list else _(u"List view of %s") % verbose_listname
     return render_to_response("refdb/bulk.html", {"title": title, "references": references,
                                                   "prev_link": prev_link, "next_link": next_link, "pages": pages,
                                                   "add_to_shelf": add_to_shelf_form, "export": export_form,
                                                   "add_to_list": add_to_list_form,
                                                   "remove_from_list": remove_from_list_form,
-                                                  "global_dummy": global_dummy_form},
+                                                  "global_dummy": global_dummy_form,
+                                                  "words_to_highlight": request.common_data.words_to_highlight},
                               context_instance=RequestContext(request))

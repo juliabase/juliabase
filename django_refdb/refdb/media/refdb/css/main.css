@@ -10,3 +10,9 @@ div.pages-links { text-align: center }
 td.bulk-text p { margin: 0pt }
 
 tr.user-data { background-color: #c0e0c0 }
+
+span.highlight { background-color: #ffff80; padding-left: 0.2em; padding-right: 0.2em }
+span.highlight-end { background-color: #ffff80; padding-right: 0.2em }
+span.highlight-start { background-color: #ffff80; padding-left: 0.2em }
+span.highlight-middle { background-color: #ffff80 }
+div.full-text-info { margin-top: 0.5ex }
