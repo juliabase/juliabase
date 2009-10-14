@@ -176,6 +176,10 @@ def index_pdf(citation_key, user_hash):
     is_scanned = total_text_length / number_of_pages < 100
     if is_scanned:
         logger.info(citation_key + " was scanned.  Firing up Tesseract ...")
+        # FixMe: pdfimages should be called with the -f and -l arguments like
+        # pdftotext above.  There should be defined behaviour if more than one
+        # image is generated per page.  This way, one could also get rid of the
+        # "if is_scanned" clause below.
         subprocess.call(["pdfimages", pdf_filename, "page"])
         # FixMe: The tesseract processes should be started parallely in order
         # to make use of multi-processor systems.
