@@ -69,11 +69,7 @@ class SearchForm(forms.Form):
         if self.cleaned_data["year_until"]:
             components.append(":PY:<=" + self.cleaned_data["year_until"])
         if self.cleaned_data["full_text_query"]:
-            # FixMe: This must be switched on again as soon as
-            # https://sourceforge.net/tracker/?func=detail&aid=2877685&group_id=26091&atid=385991
-            # is fixed.
-            pass
-#            components.append(":NCK:=django-refdb-global-pdfs OR :NCK:=django-refdb-personal-pdfs-%s" % user_id)
+            components.append(":NCK:=django-refdb-global-pdfs OR :NCK:=django-refdb-personal-pdfs-%s" % user_id)
         if not components:
             return u":ID:>0"
         elif len(components) == 1:
@@ -415,6 +411,7 @@ def get_full_text_matches(full_text_query, offset, limit, match_decider):
     """
     database = xapian.Database("/var/lib/django_refdb_indices/references")
     enquire = xapian.Enquire(database)
+#    enquire.set_collapse_key(0)
     query_parser = xapian.QueryParser()
     stemmer = xapian.Stem("english")
     query_parser.set_stemmer(stemmer)
