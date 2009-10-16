@@ -55,24 +55,26 @@ class SearchForm(forms.Form):
 
         :rtype: unicode
         """
+        # FixMe: Proper escaping of user-provided parameters is still needed.
         components = []
         if self.cleaned_data["query_string"]:
             components.append(self.cleaned_data["query_string"])
         if self.cleaned_data["author"]:
-            components.append(":AX:~" + self.cleaned_data["author"])
+            components.append(u":AX:~" + self.cleaned_data["author"])
         if self.cleaned_data["title"]:
-            components.append(":TX:~" + self.cleaned_data["title"])
+            components.append(u":TX:~" + self.cleaned_data["title"])
         if self.cleaned_data["journal"]:
-            components.append(":JO:~" + self.cleaned_data["journal"])
+            components.append(u":JO:~%s OR :JF:~%s" % (2*(self.cleaned_data["journal"],)))
         if self.cleaned_data["year_from"]:
-            components.append(":PY:>=" + self.cleaned_data["year_from"])
+            components.append(u":PY:>=" + self.cleaned_data["year_from"])
         if self.cleaned_data["year_until"]:
-            components.append(":PY:<=" + self.cleaned_data["year_until"])
+            components.append(u":PY:<=" + self.cleaned_data["year_until"])
         if self.cleaned_data["full_text_query"]:
-            components.append(":NCK:=django-refdb-global-pdfs OR :NCK:=django-refdb-personal-pdfs-%s" % user_id)
+            components.append(u":NCK:=django-refdb-global-pdfs OR :NCK:=django-refdb-personal-pdfs-%s" % user_id)
         if not components:
             return u":ID:>0"
         elif len(components) == 1:
+            print components[0]
             return components[0]
         else:
             return u"(" + u") AND (".join(components) + u")"
