@@ -55,7 +55,7 @@ def get_username(user_id):
     return settings.REFDB_USERNAME_PREFIX + str(user_id)
 
 
-def get_connection(user):
+def get_connection(user, database):
     u"""Returns a RefDB connection object for the user, or returns a RefDB root
     connection.
 
@@ -63,8 +63,10 @@ def get_connection(user):
       - `user`: the user whose RefDB password should be retrieved; if
         ``"root"`` is given instead, a connection with RefDB admin account is
         returned
+      - `database`: the name of the RefDB database
 
     :type user: ``django.contrib.auth.models.User`` or str
+    :type database: unicode
 
     :Return:
       the RefDB connection object
@@ -72,10 +74,10 @@ def get_connection(user):
     :rtype: ``pyrefdb.Connection``
     """
     if user == "root":
-        return pyrefdb.Connection(settings.REFDB_USER, settings.REFDB_PASSWORD)
+        return pyrefdb.Connection(settings.REFDB_USER, settings.REFDB_PASSWORD, database)
     else:
 #         print get_username(user.id), get_password(user)
-        return pyrefdb.Connection(get_username(user.id), get_password(user))
+        return pyrefdb.Connection(get_username(user.id), get_password(user), database)
 
 
 def get_lists(user, citation_key=None):
