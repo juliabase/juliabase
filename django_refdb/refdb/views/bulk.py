@@ -74,7 +74,6 @@ class SearchForm(forms.Form):
         if not components:
             return u":ID:>0"
         elif len(components) == 1:
-            print components[0]
             return components[0]
         else:
             return u"(" + u") AND (".join(components) + u")"
