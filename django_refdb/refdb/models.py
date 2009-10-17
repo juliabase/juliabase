@@ -33,12 +33,14 @@ class Reference(models.Model):
     http://sourceforge.net/tracker/?func=detail&aid=2872243&group_id=26091&atid=385994
     is solved, one could probably get rid of the ``citation_key`` field.
     """
-    reference_id = models.CharField(_(u"ID"), primary_key=True, max_length=10)
-    citation_key = models.CharField(_(u"citation key"), unique=True, db_index=True, max_length=255)
+    database = models.CharField(_(u"database"), max_length=255)
+    reference_id = models.CharField(_(u"ID"), max_length=10)
+    citation_key = models.CharField(_(u"citation key"), max_length=255)
     last_modified = models.DateTimeField(_(u"last modified"), auto_now=True)
 
     class Meta:
         get_latest_by = "last_modified"
+        unique_together = (("database", "reference_id"), ("database", "citation_key"))
 
     def mark_modified(self, user=None):
         u"""Marks the reference as modified.  This method must be called after
@@ -117,7 +119,6 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="refdb_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
-    current_list = models.CharField(_(u"current references list"), max_length=255)
     settings_last_modified = models.DateTimeField(_(u"settings last modified"), auto_now=True)
 
     class Meta:
@@ -134,7 +135,7 @@ class Shelf(models.Model):
     u"""Model for storing a “shelf” which contains an arbitrary numer of
     references.  It is intended to group references thematically.
 
-    FixMe: Actually, this model is suportfluous.  It made sense when still
+    FixMe: Actually, this model is superfluous.  It made sense when still
     Django's ``Group`` model was used for this but now, it is redundant since
     the shelves are stored as extended notes in RefDB.  However, it can stay as
     long as I don't have create/delete views for shelves, so that they can be
@@ -150,3 +151,20 @@ class Shelf(models.Model):
         return ugettext(self.name)
 
 admin.site.register(Shelf)
+
+
+class DatabaseAccount(models.Model):
+    database = models.CharField(_(u"database"), max_length=255)
+    user = models.ForeignKey(django.contrib.auth.models.User, related_name="database_accounts", verbose_name=_(u"user"))
+    current_list = models.CharField(_(u"current references list"), max_length=255)
+    last_modified = models.DateTimeField(_(u"database settings last modified"), auto_now=True)
+
+    class Meta:
+        verbose_name = _(u"database account")
+        verbose_name_plural = _(u"database accounts")
+        unique_together = ("database", "user")
+
+    def __unicode__(self):
+        return u"%s/%s" % (self.database, self.user)
+
+admin.site.register(DatabaseAccount)
