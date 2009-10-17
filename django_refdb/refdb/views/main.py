@@ -39,7 +39,7 @@ class ChangeListForm(forms.Form):
         self.fields["new_list"].initial = models.UserDetails.objects.get(user=user).current_list
 
 
-def embed_common_data(request):
+def embed_common_data(request, database):
     u"""Add a ``common_data`` attribute to request, containing various data
     used across the view.  See ``utils.CommonBulkViewData`` for further
     information.  If the GET parameters of the view are invalid, a
@@ -51,8 +51,10 @@ def embed_common_data(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
     """
     if not hasattr(request, "common_data"):
         refdb_connection = refdb.get_connection(request.user)
@@ -72,7 +74,7 @@ def embed_common_data(request):
             refdb_connection, ids, current_list=current_list, references_last_modified=references_last_modified)
 
 
-def get_last_modification_date(request):
+def get_last_modification_date(request, database):
     u"""Returns the last modification of the references found in the current
     references list on the main menu page.  Additionally, the last modification
     of user settings (language, current list) is taken into account.
@@ -81,8 +83,10 @@ def get_last_modification_date(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Return:
       timestamp of last modification of the displayed references and the main
@@ -90,14 +94,14 @@ def get_last_modification_date(request):
 
     :rtype: ``datetime.datetime``
     """
-    embed_common_data(request)
+    embed_common_data(request, database)
     last_modified = request.common_data.references_last_modified
     if last_modified:
         last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
     return last_modified
 
 
-def get_etag(request):
+def get_etag(request, database):
     u"""Returns the ETag for the current main menu.  Unfortunately, Opera
     doesn't seem to send If-None-Match at all, an Firefox does only for the
     latest ETag – which means that Firefox only caches one snapshot of a page
@@ -108,15 +112,17 @@ def get_etag(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Return:
       current ETag of the main menu
 
     :rtype: str
     """
-    embed_common_data(request)
+    embed_common_data(request, database)
     etag = hashlib.sha1()
     etag.update(request.user.refdb_user_details.language)
     etag.update("--")
@@ -130,13 +136,15 @@ def get_etag(request):
 
 @login_required
 @condition(get_etag, get_last_modification_date)
-def main_menu(request):
+def main_menu(request, database):
     u"""Generates the main page with simple search and main reference list.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -148,20 +156,23 @@ def main_menu(request):
     current_list = request.common_data.current_list
     references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
     return render_to_response("refdb/main_menu.html", {"title": _(u"Main menu"), "search": search_form,
-                                                       "references": references, "change_list": change_list_form},
+                                                       "references": references, "change_list": change_list_form,
+                                                       "database": database},
                               context_instance=RequestContext(request))
 
 
 @login_required
 @require_http_methods(["POST"])
-def change_list(request):
+def change_list(request, database):
     u"""GET-only view for changing the default references list on the main
     menue page.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -173,9 +184,9 @@ def change_list(request):
         user_details = models.UserDetails.objects.get(user=request.user)
         user_details.current_list = change_list_form.cleaned_data["new_list"]
         user_details.save()
-        next_url = django.core.urlresolvers.reverse(main_menu)
+        next_url = django.core.urlresolvers.reverse(main_menu, database=database)
         return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
     return render_to_response("refdb/change_list.html",
-                              {"title": _(u"Change default list"), "change_list": change_list_form},
+                              {"title": _(u"Change default list"), "change_list": change_list_form, "database": database},
                               context_instance=RequestContext(request))

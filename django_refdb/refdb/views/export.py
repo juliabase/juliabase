@@ -36,14 +36,16 @@ output_format_meta_info = {
  
 @login_required
 @require_http_methods(["GET"])
-def export(request):
+def export(request, database):
     u"""GET-only view for exporting references into various output formats like
     RIS or BibTeX.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object

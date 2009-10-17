@@ -521,15 +521,17 @@ class ReferenceForm(forms.Form):
 
 
 @login_required
-def edit(request, citation_key):
+def edit(request, database, citation_key):
     u"""Edits or creates a reference.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
       - `citation_key`: the citation key of the reference to be edited; if
         ``None``, create a new one
 
     :type request: ``HttpRequest``
+    :type database: unicode
     :type citation_key: unicode
 
     :Returns:
@@ -559,23 +561,26 @@ def edit(request, citation_key):
             success_message = _(u"Reference “%s” successfully edited.") % citation_key if citation_key \
                 else _(u"Reference “%s” successfully added.") % new_reference.citation_key
             return utils.successful_response(request, success_message, view=view,
-                                             kwargs={"citation_key": new_reference.citation_key})
+                                             kwargs={"citation_key": new_reference.citation_key, "database": database})
     else:
         reference_form = ReferenceForm(request, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
-    return render_to_response("refdb/edit_reference.html", {"title": title, "reference": reference_form},
+    return render_to_response("refdb/edit_reference.html", {"title": title, "reference": reference_form,
+                                                            "database": database},
                               context_instance=RequestContext(request))
 
 
 @login_required
-def view(request, citation_key):
+def view(request, database, citation_key):
     u"""Shows a reference.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
       - `citation_key`: the citation key of the reference
 
     :type request: ``HttpRequest``
+    :type database: unicode
     :type citation_key: unicode
 
     :Returns:
@@ -600,5 +605,6 @@ def view(request, citation_key):
                               {"title": title, "reference": reference, "lib_info": lib_info or pyrefdb.LibInfo(),
                                "global_url": global_url, "private_url": private_url,
                                "pdf_url": private_url or global_url,
-                               "with_part": reference.type not in utils.reference_types_without_part},
+                               "with_part": reference.type not in utils.reference_types_without_part,
+                               "database": database},
                               context_instance=RequestContext(request))

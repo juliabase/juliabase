@@ -168,14 +168,16 @@ class AddToListForm(forms.Form):
 
 
 @login_required
-def search(request):
+def search(request, database):
     u"""Searchs for references and presents the search results.  It is a
     GET-only view.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -188,7 +190,7 @@ def search(request):
     # must see the errors after all.  Note that this technique doesn't work
     # anymore as soon as `SearchForm` contains required fields.
     search_form = SearchForm(request.GET)
-    return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form},
+    return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form, "database": database},
                               context_instance=RequestContext(request))
 
 
@@ -320,7 +322,7 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     return referentially_valid, action
 
 
-def embed_common_data(request):
+def embed_common_data(request, database):
     u"""Add a ``common_data`` attribute to request, containing various data
     used across the view.  See ``utils.CommonBulkViewData`` for further
     information.  If the GET parameters of the view are invalid, a
@@ -329,12 +331,15 @@ def embed_common_data(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the RefDB database name
 
     :type request: ``HttpRequest``
+    :type database: unicode
     """
     search_form = SearchForm(request.GET)
     if not search_form.is_valid():
-        raise utils.RedirectException(django.core.urlresolvers.reverse(search) + "?" + request.META.get("QUERY_STRING"))
+        raise utils.RedirectException(django.core.urlresolvers.reverse(search, database=database) + "?" +
+                                      request.META.get("QUERY_STRING"))
     query_string = search_form.get_query_string()
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
@@ -402,7 +407,7 @@ def build_page_links(request):
     return prev_link, next_link, pages
     
 
-def get_last_modification_date(request):
+def get_last_modification_date(request, database):
     u"""Returns the last modification of the references found for the bulk
     view.  Note that this only includes the actually *displayed* references on
     the current page, not all references from all pages.  Additionally, the
@@ -413,8 +418,10 @@ def get_last_modification_date(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Return:
       timestamp of last modification of the displayed references
@@ -422,7 +429,7 @@ def get_last_modification_date(request):
     :rtype: ``datetime.datetime``
     """
     if request.method == "GET":
-        embed_common_data(request)
+        embed_common_data(request, database)
         last_modified = utils.last_modified(request.user, request.common_data.ids)
     else:
         last_modified = None
@@ -433,7 +440,7 @@ def get_last_modification_date(request):
 
 @login_required
 @last_modified(get_last_modification_date)
-def bulk(request):
+def bulk(request, database):
     u"""The bulk view for references.  It gets the search parameters in the
     GET, and displays all references which matches the search parameters.  If
     they are too many, the list is split up into pages where you can navigate
@@ -447,8 +454,10 @@ def bulk(request):
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -483,7 +492,7 @@ def bulk(request):
                 query_dict.update((id_ + "-selected", "on") for id_ in ids)
                 query_string = urlencode(query_dict)
                 return utils.HttpResponseSeeOther(
-                    django.core.urlresolvers.reverse("refdb.views.export.export") + "?" + query_string)
+                    django.core.urlresolvers.reverse("refdb.views.export.export", database=database) + "?" + query_string)
             elif action == "shelf":
                 # FixMe: This must be changed from using citation keys to using
                 # IDs.  However, first
@@ -503,7 +512,7 @@ def bulk(request):
         # by processing the request, so we get a fresh list here.  This delayed
         # list generation is the reason for `embed_common_data` and
         # `utils.CommonBulkViewData` in the first place.
-        embed_common_data(request)
+        embed_common_data(request, database)
         if not valid_post_data:
             references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids,
                                                 request.user.id)
@@ -530,5 +539,6 @@ def bulk(request):
                                                   "add_to_shelf": add_to_shelf_form, "export": export_form,
                                                   "add_to_list": add_to_list_form,
                                                   "remove_from_list": remove_from_list_form,
-                                                  "global_dummy": global_dummy_form},
+                                                  "global_dummy": global_dummy_form,
+                                                  "database": database},
                               context_instance=RequestContext(request))

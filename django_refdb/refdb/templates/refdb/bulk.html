@@ -4,7 +4,7 @@
 {% load refdb_extras %}
 
 {% block content_title %}{% spaceless %}<h1>
-  {{ title }}<a class="edit-icon" href="{% url refdb.views.bulk.search %}?{{ http_query_string }}">
+  {{ title }}<a class="edit-icon" href="{% url refdb.views.bulk.search database=database %}?{{ http_query_string }}">
     <img src="{{ MEDIA_URL }}chantal/icons/find.png" alt="find icon" title="{% trans 'modify search' %}"/>
   </a>
 </h1>

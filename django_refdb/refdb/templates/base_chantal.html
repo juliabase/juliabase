@@ -27,17 +27,19 @@
         {% if user.is_authenticated %}
           {% trans 'Welcome,' %} 
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
-          <a href="{% url refdb.views.main.main_menu %}"><img src="{{ MEDIA_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"/></a>
+          <a href="{% url refdb.views.main.main_menu database=database %}"
+             ><img src="{{ MEDIA_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"/></a>
           <a href="/trac/chantal/newticket?reporter={{ user.email|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/bug_add.png" alt="add-bug icon" title="{% trans 'Report feature wish or bug' %}"/></a>
+               ><img src="{{ MEDIA_URL }}chantal/icons/bug_add.png" alt="add-bug icon" 
+                     title="{% trans 'Report feature wish or bug' %}"/></a>
           {% if help_link %} <a href="/trac/chantal/wiki/{{ help_link }}"><img 
-                                    src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
+             src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
           <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}chantal/icons/door_open.png" 
                                                                     alt="log-out icon" title="{% trans 'Log out' %}"/></a>
         {% else %}
           {% if help_link %}<a href="/trac/chantal/wiki/{{ help_link }}"><img 
-                         src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
-          <a href="{% url refdb.views.main.main_menu %}"><img src="{{ MEDIA_URL }}chantal/icons/house.png" 
+            src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
+          <a href="{% url refdb.views.main.main_menu database=database %}"><img src="{{ MEDIA_URL }}chantal/icons/house.png" 
                                                               alt="log-in icon" title="{% trans 'Log in' %}"/></a>
         {% endif %}
       </td>
