@@ -132,6 +132,13 @@ admin.site.register(UserDetails)
 
 
 class DatabaseAccount(models.Model):
+    u"""Database model for a RefDB database account of a particular user.  If a
+    user is added to Django, it has no access to any RefDB database at first.
+    However, the administrator can add an instance of ``DatabaseAccount`` so
+    that the user can connect to a particular RefDB database.  Since
+    Django-RefDB supports RefDB installations with multiple databases, the
+    administrator may add multiple ``DatabaseAccount`` instances for each user.
+    """
     database = models.CharField(_(u"database"), max_length=255)
     user = models.ForeignKey(django.contrib.auth.models.User, related_name="database_accounts", verbose_name=_(u"user"))
     current_list = models.CharField(_(u"current references list"), max_length=255)
