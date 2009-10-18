@@ -259,8 +259,7 @@ def fetch(self, attribute_names, connection, user_id):
         if necessary("shelves"):
             prefix = "django-refdb-shelf-"
             prefix_length = len(prefix)
-            self.shelves = \
-                set(int(citation_key[prefix_length:]) for citation_key in notes if citation_key.startswith(prefix))
+            self.shelves = [citation_key[prefix_length:] for citation_key in notes if citation_key.startswith(prefix)]
         if necessary("global_pdf_available"):
             self.global_pdf_available = "django-refdb-global-pdfs" in notes
         if necessary("users_with_offprint"):
@@ -303,7 +302,7 @@ def freeze(self):
     must be created and saved separately.
     """
     self.extended_notes = pyrefdb.XNoteList()
-    self.extended_notes.extend("django-refdb-shelf-%d" % shelf for shelf in self.shelves)
+    self.extended_notes.extend("django-refdb-shelf-" + name for name in self.shelves)
     if self.global_pdf_available:
         self.extended_notes.append("django-refdb-global-pdfs")
     if self.users_with_offprint:

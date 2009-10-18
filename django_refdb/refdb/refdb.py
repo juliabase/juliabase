@@ -123,6 +123,13 @@ def get_lists(user, citation_key=None):
     return choices, initial
 
 
+def get_shelves():
+    prefix = "django-refdb-shelf-"
+    extended_notes = get_connection("user").get_extended_notes(":NCK:~" + prefix)
+    choices = [(note.citation_key[prefix:], note.content.text) for note in extended_notes]
+    return choices
+
+
 def get_verbose_listname(short_listname, user):
     username = get_username(user.id)
     if short_listname == username:

@@ -121,8 +121,7 @@ class AddToShelfForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(AddToShelfForm, self).__init__(*args, **kwargs)
-        self.fields["new_shelf"].choices = \
-            [("", 9*u"-")] + [(shelf.pk, unicode(shelf)) for shelf in models.Shelf.objects.all()]
+        self.fields["new_shelf"].choices = [("", 9*u"-")] + refdb.get_shelves()
 
 
 class AddToListForm(forms.Form):

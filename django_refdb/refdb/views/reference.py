@@ -173,14 +173,7 @@ class ReferenceForm(forms.Form):
         self.refdb_rollback_actions = request.refdb_rollback_actions
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
-        self.fields["shelves"].choices = [(shelf.pk, unicode(shelf)) for shelf in models.Shelf.objects.all()] \
-            or [(u"", 9*u"-")]
-
-    def clean_shelves(self):
-        value = self.cleaned_data["shelves"]
-        if value == [u""]:
-            value = []
-        return models.Shelf.objects.in_bulk([int(pk) for pk in set(value)]).values()
+        self.fields["shelves"].choices = refdb.get_shelves() or [(u"", 9*u"-")]
 
     def _split_on_semicolon(self, fieldname):
         u"""Splits the content of a character field at all semicolons.  The
@@ -385,7 +378,7 @@ class ReferenceForm(forms.Form):
         if reference.comments:
             reference.comments.set_text_content(self.cleaned_data["global_notes"])
         reference.institute_publication = self.cleaned_data["institute_publication"]
-        reference.shelves = set(shelf.id for shelf in self.cleaned_data["shelves"])
+        reference.shelves = set(self.cleaned_data["shelves"])
         if self.cleaned_data["has_reprint"] and not reference.users_with_offprint:
             reference.users_with_offprint = pyrefdb.XNote()
         if self.cleaned_data["has_reprint"]:
