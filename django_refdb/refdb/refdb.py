@@ -134,8 +134,8 @@ def get_shelves():
     :rtype: list of (str, unicode)
     """
     prefix = "django-refdb-shelf-"
-    extended_notes = get_connection("user").get_extended_notes(":NCK:~" + prefix)
-    choices = [(note.citation_key[prefix:], note.content.text) for note in extended_notes]
+    extended_notes = get_connection("root").get_extended_notes(":NCK:~" + prefix)
+    choices = [(note.citation_key[len(prefix):], note.content.text) for note in extended_notes]
     return choices
 
 
