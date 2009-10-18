@@ -131,28 +131,6 @@ class UserDetails(models.Model):
 admin.site.register(UserDetails)
 
 
-class Shelf(models.Model):
-    u"""Model for storing a “shelf” which contains an arbitrary numer of
-    references.  It is intended to group references thematically.
-
-    FixMe: Actually, this model is superfluous.  It made sense when still
-    Django's ``Group`` model was used for this but now, it is redundant since
-    the shelves are stored as extended notes in RefDB.  However, it can stay as
-    long as I don't have create/delete views for shelves, so that they can be
-    at least generated through the admin interface.
-    """
-    name = models.CharField(_(u"name"), max_length=255, unique=True)
-
-    class Meta:
-        verbose_name = _(u"shelf")
-        verbose_name_plural = _(u"shelves")
-
-    def __unicode__(self):
-        return ugettext(self.name)
-
-admin.site.register(Shelf)
-
-
 class DatabaseAccount(models.Model):
     database = models.CharField(_(u"database"), max_length=255)
     user = models.ForeignKey(django.contrib.auth.models.User, related_name="database_accounts", verbose_name=_(u"user"))

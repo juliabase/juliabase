@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-u"""Module for hooks into the ``User`` model of Django's authentication app as
-well as the ``Shelf`` model.  They assure that every time a user or a shelf is
-added or removed, this is reflected in the RefDB database.
+u"""Module for hooks into the ``DatabaseAccount`` model.  They assure that
+every time a database account for a particular user is added or removed, this
+is reflected in the RefDB database.
 """
 
 from __future__ import absolute_import
@@ -97,41 +97,3 @@ def remove_refdb_user(sender, instance, **kwargs):
     refdb.get_connection("root").remove_user(refdb.get_username(user.id))
 
 signals.pre_delete.connect(remove_refdb_user, sender=django.contrib.auth.models.User)
-
-
-def add_shelf(sender, instance, created=True, **kwargs):
-    u"""Adds a newly-added Django shelf to RefDB by adding an appropriate
-    extended note.
-
-    :Parameters:
-      - `sender`: the sender of the signal; will always be the ``Shelf`` model
-      - `instance`: the newly-added shelf
-      - `created`: whether the shelf was newly created.
-
-    :type sender: model class
-    :type instance: ``refdb_app.Shelf``
-    :type created: bool
-    """
-    if created:
-        shelf = instance
-        refdb.get_connection("root").add_extended_notes(SharedXNote("django-refdb-shelf-%d" % shelf.id))
-
-# It must be "post_save", otherwise, the ID may be ``None``.
-signals.post_save.connect(add_shelf, sender=refdb_app.Shelf)
-
-
-def remove_shelf(sender, instance, **kwargs):
-    u"""Removes a newly-deleted Django shelf from RefDB by deleting its
-    extended note.
-
-    :Parameters:
-      - `sender`: the sender of the signal; will always be the ``Shelf`` model
-      - `instance`: the newly-deleted shelf
-
-    :type sender: model class
-    :type instance: ``refdb_app.Shelf``
-    """
-    shelf = instance
-    delete_extended_note(":NCK:=django-refdb-shelf-%d" % shelf.id)
-
-signals.pre_delete.connect(remove_shelf, sender=refdb_app.Shelf)

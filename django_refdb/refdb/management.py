@@ -19,7 +19,7 @@ import django.contrib.auth.models
 from django.db.models import signals
 from . import refdb
 from . import models as refdb_app
-from . import add_refdb_user, add_user_details, add_shelf, SharedXNote
+from . import add_refdb_user, add_user_details, SharedXNote
 
 
 def add_extended_note_if_nonexistent(citation_key):
@@ -53,19 +53,17 @@ def sync_extended_notes(sender, created_models, interactive, **kwargs):
     :type interactive: bool
     """
     if interactive:
-        confirm = raw_input("\nDo you want to reset user- and shelf-specific extended notes "
+        confirm = raw_input("\nDo you want to reset user-specific extended notes "
                             "of a previous Django-RefDB in the RefDB database? (yes/no): ")
         while confirm not in ["yes", "no"]:
             confirm = raw_input('Please enter either "yes" or "no": ')
         if confirm:
             ids = [note.id for note in refdb.get_connection("root").get_extended_notes(
                     ":NCK:~^django-refdb-users-with-offprint OR :NCK:~^django-refdb-personal-pdfs OR "
-                    ":NCK:~^django-refdb-creator OR :NCK:~^django-refdb-shelf-")]
+                    ":NCK:~^django-refdb-creator")]
             refdb.get_connection("root").delete_extended_notes(ids)
             for user in django.contrib.auth.models.User.objects.all():
                 add_refdb_user(sender=None, instance=user)
-            for shelf in refdb_app.Shelf.objects.all():
-                add_shelf(sender=None, instance=shelf)
     for user in django.contrib.auth.models.User.objects.all():
         add_user_details(sender=None, instance=user)
     for relevance in range(1, 5):
