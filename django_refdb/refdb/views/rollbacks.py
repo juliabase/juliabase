@@ -135,7 +135,7 @@ class DeleterefRollback(RefDBRollback):
         :type user: ``django.contrib.auth.models.User``
         :type citation_key: str
         """
-        super(UpdaterefRollback, self).__init__(user)
+        super(DeleterefRollback, self).__init__(user)
         self.citation_key = citation_key
 
     def execute(self):
