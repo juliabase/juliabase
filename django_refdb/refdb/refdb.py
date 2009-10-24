@@ -128,14 +128,14 @@ def get_lists(user, connection, citation_key=None):
     return choices, initial
 
 
-def get_shelves(database):
+def get_shelves(connection):
     u"""Returns all shelves available in the current database.  The result can
     be used directly for a choice field in a form.
 
     :Parameters:
-      - `database`: name of the RefDB database
+      - `connection`: connection to RefDB
 
-    :type database: str
+    :type connection: ``pyrefdb.Connection``
 
     :Return:
       all shelved available in the database, as (short name, verbose name)
@@ -144,7 +144,7 @@ def get_shelves(database):
     :rtype: list of (str, unicode)
     """
     prefix = "django-refdb-shelf-"
-    extended_notes = get_connection("root", database).get_extended_notes(":NCK:~" + prefix)
+    extended_notes = connection.get_extended_notes(":NCK:~" + prefix)
     choices = [(note.citation_key[len(prefix):], note.content.text) for note in extended_notes]
     return choices
 
