@@ -133,16 +133,18 @@ class AddToListForm(forms.Form):
     existing_list = forms.ChoiceField(label=_("List"), required=False)
     new_list = forms.CharField(label=_("New list"), max_length=255, required=False)
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, connection, *args, **kwargs):
         u"""Class constructor.
 
         :Parameters:
           - `user`: current user
+          - `connection`: connection to RefDB
 
         :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         """
         super(AddToListForm, self).__init__(*args, **kwargs)
-        lists = refdb.get_lists(user)[0]
+        lists = refdb.get_lists(user, connection)[0]
         self.short_listnames = set(list_[0] for list_ in lists)
         self.fields["existing_list"].choices = [("", 9*"-")] + lists
         self.optional = True
@@ -468,9 +470,10 @@ def bulk(request, database):
     if references_list:
         verbose_listname = refdb.get_verbose_listname(references_list, request.user)
     if request.method == "POST":
+        connection = refdb.get_connection(request.user, database)
         export_form = ExportForm(request.POST)
         add_to_shelf_form = AddToShelfForm(request.POST)
-        add_to_list_form = AddToListForm(request.user, request.POST)
+        add_to_list_form = AddToListForm(request.user, connection, request.POST)
         remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove") \
             if references_list else None
         global_dummy_form = forms.Form(request.POST)
@@ -487,7 +490,6 @@ def bulk(request, database):
             references_list)
         valid_post_data = all_valid and referentially_valid
         if valid_post_data:
-            connection = refdb.get_connection(request.user, database)
             if action == "export":
                 query_dict = {"format": export_form.cleaned_data["format"]}
                 query_dict.update((id_ + "-selected", "on") for id_ in ids)
@@ -526,7 +528,7 @@ def bulk(request, database):
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
         export_form = ExportForm()
         add_to_shelf_form = AddToShelfForm()
-        add_to_list_form = AddToListForm(request.user)
+        add_to_list_form = AddToListForm(request.user, request.common_data.refdb_connection)
         global_dummy_form = forms.Form()
         if references_list:
             remove_from_list_form = RemoveFromListForm(

@@ -62,8 +62,8 @@ def export(request, database):
     for key, value in request.GET.iteritems():
         if key.endswith("-selected") and value == "on":
             ids.add(key.partition("-")[0])
-    output = refdb.get_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
-                                                               output_format=format)
+    output = refdb.get_connection(request.user, database).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
+                                                                         output_format=format)
     response = HttpResponse(content_type=content_type + "; charset=utf-8")
     response['Content-Disposition'] = "attachment; filename=references" + file_extension
     response.write(output)

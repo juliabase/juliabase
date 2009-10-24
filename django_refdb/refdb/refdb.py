@@ -80,17 +80,20 @@ def get_connection(user, database):
         return pyrefdb.Connection(get_username(user.id), get_password(user), database)
 
 
-def get_lists(user, citation_key=None):
+def get_lists(user, connection, citation_key=None):
     u"""Retrieves the personal reference lists for a user.  Additionally, if
     ``citation_key`` is given, return a list of all personal reference lists in
     which this reference occurs.
 
     :Parameters:
       - `user`: the user whose personal reference lists should be retrieved
+      - `connection`: connection to RefDB
       - `citation_key`: citation key of a reference whose membership in the
         personal reference lists should be returned
 
     :type user: ``django.contrib.auth.models.User`` or str
+    :type connection: ``pyrefdb.Connection``
+    :type citation_key: str
 
     :Return:
       The personal reference lists of the user as a list of tupes (short name,
@@ -102,7 +105,7 @@ def get_lists(user, citation_key=None):
     :rtype: list of (str, unicode), list of str
     """
     username = get_username(user.id)
-    extended_notes = get_connection(user).get_extended_notes(":NCK:~^%s-" % username)
+    extended_notes = connection.get_extended_notes(":NCK:~^%s-" % username)
     choices = [(username, _(u"main list"))]
     initial = []
     for note in extended_notes:
@@ -125,9 +128,14 @@ def get_lists(user, citation_key=None):
     return choices, initial
 
 
-def get_shelves():
+def get_shelves(database):
     u"""Returns all shelves available in the current database.  The result can
     be used directly for a choice field in a form.
+
+    :Parameters:
+      - `database`: name of the RefDB database
+
+    :type database: str
 
     :Return:
       all shelved available in the database, as (short name, verbose name)
@@ -136,7 +144,7 @@ def get_shelves():
     :rtype: list of (str, unicode)
     """
     prefix = "django-refdb-shelf-"
-    extended_notes = get_connection("root").get_extended_notes(":NCK:~" + prefix)
+    extended_notes = get_connection("root", database).get_extended_notes(":NCK:~" + prefix)
     choices = [(note.citation_key[len(prefix):], note.content.text) for note in extended_notes]
     return choices
 

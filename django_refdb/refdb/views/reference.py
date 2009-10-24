@@ -118,21 +118,23 @@ class ReferenceForm(forms.Form):
     pdf = forms.FileField(label=_(u"PDF file"), required=False)
     pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
-    def __init__(self, request, connection, reference, *args, **kwargs):
+    def __init__(self, request, connection, database, reference, *args, **kwargs):
         u"""
         :Parameters:
           - `request`: the current HTTP request
           - `connection`: connection to RefDB
+          - `database`: name of the RefDB database
           - `reference`: the reference to be edited; if ``None``, add a new one
 
         :type request: ``HttpRequest``
         :type connection: ``pyrefdb.Connection``
+        :type database: str
         :type reference: ``pyrefdb.Reference`` or ``NoneType``
         """
         user = request.user
         self.connection = connection
         initial = kwargs.get("initial") or {}
-        lists_choices, lists_initial = refdb.get_lists(user, reference.citation_key if reference else None)
+        lists_choices, lists_initial = refdb.get_lists(user, self.connection, reference.citation_key if reference else None)
         if reference:
             initial["reference_type"] = reference.type
             if reference.part:
@@ -176,7 +178,7 @@ class ReferenceForm(forms.Form):
         self.refdb_rollback_actions = request.refdb_rollback_actions
         self.fields["lists"].choices = lists_choices
         self.old_lists = lists_initial
-        self.fields["shelves"].choices = refdb.get_shelves() or [(u"", 9*u"-")]
+        self.fields["shelves"].choices = refdb.get_shelves(database) or [(u"", 9*u"-")]
 
     def _split_on_semicolon(self, fieldname):
         u"""Splits the content of a character field at all semicolons.  The
@@ -538,7 +540,7 @@ def edit(request, database, citation_key):
     else:
         reference = None
     if request.method == "POST":
-        reference_form = ReferenceForm(request, connection, reference, request.POST, request.FILES)
+        reference_form = ReferenceForm(request, connection, database, reference, request.POST, request.FILES)
         if reference_form.is_valid():
             new_reference = reference_form.save()
             # We don't need this in the cache.  It's only needed for saving,
@@ -550,7 +552,7 @@ def edit(request, database, citation_key):
             return utils.successful_response(request, success_message, view=view,
                                              kwargs={"citation_key": new_reference.citation_key, "database": database})
     else:
-        reference_form = ReferenceForm(request, reference)
+        reference_form = ReferenceForm(request, connection, database, reference)
     title = _(u"Edit reference") if citation_key else _(u"Add reference")
     return render_to_response("refdb/edit_reference.html", {"title": title, "reference": reference_form,
                                                             "database": database},

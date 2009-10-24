@@ -33,9 +33,9 @@ class ChangeListForm(forms.Form):
     _ = ugettext_lazy
     new_list = forms.ChoiceField(label=_("New list"))
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, connection, *args, **kwargs):
         super(ChangeListForm, self).__init__(*args, **kwargs)
-        self.fields["new_list"].choices, __ = refdb.get_lists(user)
+        self.fields["new_list"].choices, __ = refdb.get_lists(user, connection)
         self.fields["new_list"].initial = models.UserDetails.objects.get(user=user).current_list
 
 
@@ -152,7 +152,7 @@ def main_menu(request, database):
     :rtype: ``HttpResponse``
     """
     search_form = SimpleSearchForm()
-    change_list_form = ChangeListForm(request.user)
+    change_list_form = ChangeListForm(request.user, request.common_data.refdb_connection)
     current_list = request.common_data.current_list
     references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
     return render_to_response("refdb/main_menu.html", {"title": _(u"Main menu"), "search": search_form,
@@ -179,7 +179,7 @@ def change_list(request, database):
 
     :rtype: ``HttpResponse``
     """
-    change_list_form = ChangeListForm(request.user, request.POST)
+    change_list_form = ChangeListForm(request.user, refdb.get_connection(request.user, database), request.POST)
     if change_list_form.is_valid():
         user_details = models.UserDetails.objects.get(user=request.user)
         user_details.current_list = change_list_form.cleaned_data["new_list"]
