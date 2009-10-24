@@ -119,9 +119,9 @@ class AddToShelfForm(forms.Form):
     _ = ugettext_lazy
     new_shelf = forms.ChoiceField(label=_("Add to shelf"), required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, database, *args, **kwargs):
         super(AddToShelfForm, self).__init__(*args, **kwargs)
-        self.fields["new_shelf"].choices = [("", 9*u"-")] + refdb.get_shelves()
+        self.fields["new_shelf"].choices = [("", 9*u"-")] + refdb.get_shelves(database)
 
 
 class AddToListForm(forms.Form):
@@ -472,7 +472,7 @@ def bulk(request, database):
     if request.method == "POST":
         connection = refdb.get_connection(request.user, database)
         export_form = ExportForm(request.POST)
-        add_to_shelf_form = AddToShelfForm(request.POST)
+        add_to_shelf_form = AddToShelfForm(request.POST, database)
         add_to_list_form = AddToListForm(request.user, connection, request.POST)
         remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove") \
             if references_list else None
@@ -527,7 +527,7 @@ def bulk(request, database):
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
         export_form = ExportForm()
-        add_to_shelf_form = AddToShelfForm()
+        add_to_shelf_form = AddToShelfForm(database)
         add_to_list_form = AddToListForm(request.user, request.common_data.refdb_connection)
         global_dummy_form = forms.Form()
         if references_list:
