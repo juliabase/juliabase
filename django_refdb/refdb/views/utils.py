@@ -319,28 +319,8 @@ def freeze(reference):
 
     :type reference: `pyrefdb.Reference`
     """
-<<<<<<< TREE
-    self.extended_notes = pyrefdb.XNoteList()
-    self.extended_notes.extend("django-refdb-shelf-" + name for name in self.shelves)
-    if self.global_pdf_available:
-        self.extended_notes.append("django-refdb-global-pdfs")
-    if self.users_with_offprint:
-        self.extended_notes.append(self.users_with_offprint)
-    if self.relevance:
-        self.extended_notes.append("django-refdb-relevance-%d" % self.relevance)
-    if self.comments:
-        self.extended_notes.append(self.comments)
-    self.extended_notes.extend("django-refdb-personal-pdfs-%s" % user_id
-                               for user_id, pdf_is_private in self.pdf_is_private.iteritems() if pdf_is_private)
-    if self.creator:
-        self.extended_notes.append("django-refdb-creator-%d" % self.creator)
-    if self.institute_publication:
-        self.extended_notes.append("django-refdb-institute-publication")
-
-pyrefdb.Reference.freeze = freeze
-=======
     reference.extended_notes = pyrefdb.XNoteList()
-    reference.extended_notes.extend("django-refdb-shelf-%d" % shelf for shelf in reference.shelves)
+    reference.extended_notes.extend("django-refdb-shelf-" + name for name in reference.shelves)
     if reference.global_pdf_available:
         reference.extended_notes.append("django-refdb-global-pdfs")
     if reference.users_with_offprint:
@@ -355,7 +335,6 @@ pyrefdb.Reference.freeze = freeze
         reference.extended_notes.append("django-refdb-creator-%d" % reference.creator)
     if reference.institute_publication:
         reference.extended_notes.append("django-refdb-institute-publication")
->>>>>>> MERGE-SOURCE
 
 
 labels = {
