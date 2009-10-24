@@ -65,7 +65,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
     :type created: bool
     """
     if created:
-        refdb_app.UserDetails.objects.get_or_create(user=instance, current_list=refdb.get_username(instance.id))
+        refdb_app.UserDetails.objects.get_or_create(user=instance)
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
