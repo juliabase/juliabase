@@ -165,29 +165,56 @@ def last_modified(user, ids):
     return max(timestamps) if timestamps else None
 
 
-def fetch(self, attribute_names, connection, user_id):
-    u"""Fetches the extended attributes for the reference.  This method assures
-    that the given attributes exist in the reference instance.  If one of them
-    doesn't exist, it is filled with the current value from RefDB.
+def initialize_extended_attributes(reference):
+    u"""Initializes the extended attributes with default values.  It overwrites
+    any old values that are in those attributes.  This routine should only be
+    called if the extended attributes doesn't exist yet.  See ``fetch`` for
+    further information.
+
+    :Parameters:
+      - `reference`: the reference whose extended attributes should be set to
+        defaults
+
+    :type reference: `pyrefdb.Reference`
+    """
+    # ``None`` means “not yet fetched”.  Everything else, in particular
+    # ``False``, means “fetched”.  The exception is ``pdf_is_private``.  Here,
+    # an entry for a yet un-fetched user simply doesn't exist in the
+    # dictionary.
+    reference.shelves = None                 # is a set of integers
+    reference.global_pdf_available = None    # is a boolean
+    reference.users_with_offprint = None     # is an extended note
+    reference.relevance = None               # is an integer
+    reference.comments = None                # is an extended note
+    reference.pdf_is_private = {}
+    reference.creator = None                 # is an integer
+    reference.institute_publication = None   # is a boolean
+
+
+def fetch(reference, attribute_names, connection, user_id):
+    u"""Fetches the extended attributes for the reference.  This function
+    assures that the given attributes exist in the reference instance.  If one
+    of them doesn't exist, it is filled with the current value from RefDB.
 
     “Extended attribute” means that it is not a standard field of RefDB but
     realised through so-called extended notes.  Since reading of extended notes
     is a costly operation, it is done only if necessary.
 
-    Note that this method does not guarantee that the extended attribute have
+    Note that this method does not guarantee that the extended attributes have
     current values.  Other code outside this method must assure that the
     contents of extended attributes is kept up-to-date.
 
-    It is very important to see that this is a *method* in the
-    `pyrefdb.Connection` class.  It is injected into that class (aka monkey
-    patching).
+    By the way, it is not necessary to call `initialize_extended_attributes`
+    before calling this function since it does so if necessary itself.
 
     :Parameters:
+      - `reference`: the reference whose extended attributes should be fetched
       - `attribute_names`: the names of the extended attributes that should be
         fetched from RefDB if they don't exist yet in the reference.
       - `connection`: the connection instance to RefDB
       - `user_id`: the ID of the user who wants to retrieve the reference
 
+    :type reference: `pyrefdb.Reference`
     :type attribute_names: list of str
     :type connection: `pyrefdb.Connection`
     :type user_id: int
@@ -221,30 +248,19 @@ def fetch(self, attribute_names, connection, user_id):
         """
         if attribute_name in attribute_names:
             if attribute_name == "pdf_is_private":
-                return user_id not in self.pdf_is_private
+                return user_id not in reference.pdf_is_private
             else:
-                return getattr(self, attribute_name) is None
+                return getattr(reference, attribute_name) is None
         else:
             return False
 
-    # ``None`` means “not yet fetched”.  Everything else, in particular
-    # ``False``, means “fetched”.  The exception is ``pdf_is_private``.  Here,
-    # an entry for a yet un-fetched user simply doesn't exist in the
-    # dictionary.
-    if not hasattr(self, "shelves"):
-        self.shelves = None                 # is a set of integers
-        self.global_pdf_available = None    # is a boolean
-        self.users_with_offprint = None     # is an extended note
-        self.relevance = None               # is an integer
-        self.comments = None                # is an extended note
-        self.pdf_is_private = {}
-        self.creator = None                 # is an integer
-        self.institute_publication = None   # is a boolean
+    if not hasattr(reference, "shelves"):
+        initialize_extended_attributes(reference)
     needed_notes_cks = {"shelves": ":NCK:~^django-refdb-shelf-",
                         "global_pdf_available": ":NCK:=django-refdb-global-pdfs",
-                        "users_with_offprint": ":NCK:=django-refdb-users-with-offprint-" + self.citation_key,
+                        "users_with_offprint": ":NCK:=django-refdb-users-with-offprint-" + reference.citation_key,
                         "relevance": ":NCK:~^django-refdb-relevance-",
-                        "comments": ":NCK:=django-refdb-comments-" + self.citation_key,
+                        "comments": ":NCK:=django-refdb-comments-" + reference.citation_key,
                         "pdf_is_private": ":NCK:=django-refdb-personal-pdfs-%d" % user_id,
                         "creator": ":NCK:~^django-refdb-creator-",
                         "institute_publication": ":NCK:=django-refdb-institute-publication"}
@@ -253,54 +269,55 @@ def fetch(self, attribute_names, connection, user_id):
         if necessary(name):
             query_string_components.append(needed_cks)
     if query_string_components:
-        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (self.id, " OR ".join(query_string_components)))
+        notes = connection.get_extended_notes(":ID:=%s AND (%s)" % (reference.id, " OR ".join(query_string_components)))
         notes = dict((note.citation_key, note) for note in notes)
-        self._saved_extended_notes_cks |= set(notes)
+        reference._saved_extended_notes_cks |= set(notes)
         if necessary("shelves"):
             prefix = "django-refdb-shelf-"
             prefix_length = len(prefix)
-            self.shelves = [citation_key[prefix_length:] for citation_key in notes if citation_key.startswith(prefix)]
+            reference.shelves = [citation_key[prefix_length:] for citation_key in notes if citation_key.startswith(prefix)]
         if necessary("global_pdf_available"):
-            self.global_pdf_available = "django-refdb-global-pdfs" in notes
+            reference.global_pdf_available = "django-refdb-global-pdfs" in notes
         if necessary("users_with_offprint"):
-            self.users_with_offprint = notes.get("django-refdb-users-with-offprint-" + self.citation_key, False)
+            reference.users_with_offprint = notes.get("django-refdb-users-with-offprint-" + reference.citation_key, False)
         if necessary("relevance"):
             prefix = "django-refdb-relevance-"
             citation_keys = [citation_key for citation_key in notes if citation_key.startswith(prefix)]
             assert 0 <= len(citation_keys) <= 1
-            self.relevance = int(citation_keys[0][len(prefix):]) if citation_keys else False
+            reference.relevance = int(citation_keys[0][len(prefix):]) if citation_keys else False
         if necessary("comments"):
-            self.comments = notes.get("django-refdb-comments-" + self.citation_key, False)
+            reference.comments = notes.get("django-refdb-comments-" + reference.citation_key, False)
         if necessary("pdf_is_private"):
-            self.pdf_is_private[user_id] = "django-refdb-personal-pdfs-%d" % user_id in notes
+            reference.pdf_is_private[user_id] = "django-refdb-personal-pdfs-%d" % user_id in notes
         if necessary("creator"):
             prefix = "django-refdb-creator-"
             citation_keys = [citation_key for citation_key in notes if citation_key.startswith(prefix)]
             assert 0 <= len(citation_keys) <= 1
-            self.creator = int(citation_keys[0][len(prefix):]) if citation_keys else False
+            reference.creator = int(citation_keys[0][len(prefix):]) if citation_keys else False
         if necessary("institute_publication"):
-            self.institute_publication = "django-refdb-institute-publication" in notes
-
-pyrefdb.Reference.fetch = fetch
+            reference.institute_publication = "django-refdb-institute-publication" in notes
 
 
-def freeze(self):
-    u"""Creates extended notes from all set extended attributes.  This method
+def freeze(reference):
+    u"""Creates extended notes from all set extended attributes.  This function
     fills the ``extended_notes`` attribute by looking at the values of the
     extended attributes (remember that they were generated from extended
     notes).  It must be called just before saving the object to RefDB.  (It is
-    superfluous to call the method when writing the object to the cache.)
+    superfluous to call the function when writing the object to the cache.)
 
-    It is very important to see that this is a *method* if the
-    `pyrefdb.Connection` class.  It is injected into that class (aka monkey
-    patching).
+    Note that this function does not save the extended notes themselves.  It
+    just prepares the object so that the *links* to extended notes are updated.
+    In most cases, this is enough.  However, for global comments and “users
+    with offprints”, there is a one-to-one relationship with an extended note
+    which must be created and saved separately.
 
-    Note that this method does not save the extended notes themselves.  It just
-    prepares the object so that the *links* to extended notes are updated.  In
-    most cases, this is enough.  However, for global comments and “users with
-    offprints”, there is a one-to-one relationship with an extended note which
-    must be created and saved separately.
+    :Parameters:
+      - `reference`: the reference whose extended attributes should be
+        converted to extended notes
+
+    :type reference: `pyrefdb.Reference`
     """
+<<<<<<< TREE
     self.extended_notes = pyrefdb.XNoteList()
     self.extended_notes.extend("django-refdb-shelf-" + name for name in self.shelves)
     if self.global_pdf_available:
@@ -319,6 +336,24 @@ def freeze(self):
         self.extended_notes.append("django-refdb-institute-publication")
 
 pyrefdb.Reference.freeze = freeze
+=======
+    reference.extended_notes = pyrefdb.XNoteList()
+    reference.extended_notes.extend("django-refdb-shelf-%d" % shelf for shelf in reference.shelves)
+    if reference.global_pdf_available:
+        reference.extended_notes.append("django-refdb-global-pdfs")
+    if reference.users_with_offprint:
+        reference.extended_notes.append(reference.users_with_offprint)
+    if reference.relevance:
+        reference.extended_notes.append("django-refdb-relevance-%d" % reference.relevance)
+    if reference.comments:
+        reference.extended_notes.append(reference.comments)
+    reference.extended_notes.extend("django-refdb-personal-pdfs-%s" % user_id
+                               for user_id, pdf_is_private in reference.pdf_is_private.iteritems() if pdf_is_private)
+    if reference.creator:
+        reference.extended_notes.append("django-refdb-creator-%d" % reference.creator)
+    if reference.institute_publication:
+        reference.extended_notes.append("django-refdb-institute-publication")
+>>>>>>> MERGE-SOURCE
 
 
 labels = {
@@ -700,7 +735,7 @@ def fetch_references(refdb_connection, ids, user_id):
         all_references.update(missing_references)
     references = [all_references[id_] for id_ in ids]
     for reference in references:
-        reference.fetch(["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
+        fetch(reference, ["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
         global_url, private_url = pdf_file_url(reference, user_id)
         reference.pdf_url = private_url or global_url

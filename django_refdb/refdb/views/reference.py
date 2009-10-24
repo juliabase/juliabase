@@ -341,7 +341,7 @@ class ReferenceForm(forms.Form):
             reference = copy.deepcopy(self.reference)
         else:
             reference = pyrefdb.Reference()
-            reference.extended_data = utils.ExtendedData()
+            utils.initialize_extended_attributes(reference)
             reference.creator = self.user.id
         reference.type = self.cleaned_data["reference_type"]
         if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
@@ -437,16 +437,8 @@ class ReferenceForm(forms.Form):
                 self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
 
     def _update_last_modification(self, new_reference):
-        # FixMe: As long as RefDB's addref doesn't return the IDs of the added
-        # references, I can't have the "id" attribute set in ``new_reference``
-        # in case of a newly added reference.  See
-        # https://sourceforge.net/tracker/?func=detail&aid=2805372&group_id=26091&atid=385994
-        # for further information.  So I have to re-fetch the reference in this
-        # case.  Fortunately, it isn't a frequent case.
-        id_ = new_reference.id
-        if id_ is None:
-            id_ = refdb.get_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
-        django_object, created = models.Reference.objects.get_or_create(reference_id=id_)
+        django_object, created = models.Reference.objects.get_or_create(reference_id=new_reference.id,
+                                                                        citation_key=new_reference.citation_key)
         if not created:
             django_object.mark_modified()
 
@@ -472,9 +464,9 @@ class ReferenceForm(forms.Form):
             self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
             connection.update_references(new_reference)
         else:
-            citation_key = connection.add_references(new_reference)[0][0]
-            self.refdb_rollback_actions.append(DeleterefRollback(self.user, citation_key))
-            new_reference.citation_key = citation_key
+            citation_key, id_, __ = connection.add_references(new_reference)[0]
+            self.refdb_rollback_actions.append(DeleterefRollback(self.user, id_))
+            new_reference.citation_key, new_reference.id = citation_key, id_
 
         self._save_extended_note(new_reference.comments, "django-refdb-comments-" + new_reference.citation_key)
         self._save_extended_note(
@@ -507,7 +499,7 @@ class ReferenceForm(forms.Form):
             utils.spawn_daemon("/usr/bin/python", settings.REFDB_PATH_TO_INDEXER,
                                os.path.join(settings.MEDIA_ROOT, "references"), new_reference.citation_key,
                                utils.get_user_hash(self.user.id) if private else None)
-        new_reference.freeze()
+        utils.freeze(new_reference)
         connection.update_note_links(new_reference)
         self._update_last_modification(new_reference)
         return new_reference
@@ -539,8 +531,8 @@ def edit(request, database, citation_key):
             raise Http404("Citation key \"%s\" not found." % citation_key)
         else:
             reference = references[0]
-            reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                             "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
+            utils.fetch(reference, ["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+                                    "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     else:
         reference = None
     if request.method == "POST":
@@ -588,8 +580,8 @@ def view(request, database, citation_key):
     if not references:
         raise Http404("Citation key \"%s\" not found." % citation_key)
     reference = references[0]
-    reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                     "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
+    utils.fetch(reference, ["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+                            "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
     global_url, private_url = utils.pdf_file_url(reference, request.user.id)
     title = _(u"%(reference_type)s “%(citation_key)s”") % {"reference_type": utils.reference_types[reference.type],
