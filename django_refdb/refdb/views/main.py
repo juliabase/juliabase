@@ -69,7 +69,7 @@ def embed_common_data(request, database):
         # list.
         citation_keys = [link[1] for link in links if link[0] == "reference"]
         ids = utils.citation_keys_to_ids(refdb_connection, citation_keys).values()
-        references_last_modified = utils.last_modified(request.user, ids)
+        references_last_modified = utils.last_modified(request.user, refdb_connection, ids)
         request.common_data = utils.CommonBulkViewData(
             refdb_connection, ids, current_list=current_list, references_last_modified=references_last_modified)
 

@@ -429,7 +429,7 @@ def get_last_modification_date(request, database):
     """
     if request.method == "GET":
         embed_common_data(request, database)
-        last_modified = utils.last_modified(request.user, request.common_data.ids)
+        last_modified = utils.last_modified(request.user, request.common_data.refdb_connection, request.common_data.ids)
     else:
         last_modified = None
     if last_modified:

@@ -125,7 +125,7 @@ names.
 """
 
 
-def last_modified(user, ids):
+def last_modified(user, connection, ids):
     u"""Calculates the timestamp of last modification for a given set of
     references.  It is important to see that the last modification is
     calculated “seen” from a given user.  For example, it user A has modified
@@ -135,10 +135,12 @@ def last_modified(user, ids):
 
     :Parameters:
       - `user`: current user
+      - `connection`: connection to RefDB
       - `ids`: the IDs if the references for which the last modification should
         be calculated
 
     :type user: ``django.contrib.auth.models.User``
+    :type connection: ``pyrefdb.Connection``
     :type references: list of str
 
     :Return:
@@ -157,7 +159,7 @@ def last_modified(user, ids):
         else:
             timestamps.append(django_reference.get_last_modification(user))
     if missing_ids:
-        references = refdb.get_connection(user).get_references(u" OR ".join(u":ID:=" + id_ for id_ in missing_ids))
+        references = connection.get_references(u" OR ".join(u":ID:=" + id_ for id_ in missing_ids))
         for reference in references:
             django_reference = models.Reference.objects.create(
                 reference_id=reference.id, citation_key=reference.citation_key)
