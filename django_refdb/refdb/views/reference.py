@@ -408,12 +408,12 @@ class ReferenceForm(forms.Form):
         # FixMe: This method could be made more efficient with sets.
         for listname in self.cleaned_data["lists"]:
             if listname not in self.old_lists:
-                self.refdb_rollback_actions.append(DumprefRollback(self.user, reference.id, listname))
+                self.refdb_rollback_actions.append(DumprefRollback(self.connection, reference.id, listname))
                 self.connection.pick_references([reference.id], listname)
                 
         for listname in self.old_lists:
             if listname not in self.cleaned_data["lists"]:
-                self.refdb_rollback_actions.append(PickrefRollback(self.user, reference.id, listname))
+                self.refdb_rollback_actions.append(PickrefRollback(self.connection, reference.id, listname))
                 self.connection.dump_references([reference.id], listname)
 
     def _save_extended_note(self, extended_note, citation_key):
@@ -434,12 +434,12 @@ class ReferenceForm(forms.Form):
         """
         if extended_note:
             if extended_note.citation_key:
-                self.refdb_rollback_actions.append(UpdatenoteRollback(self.user, extended_note))
+                self.refdb_rollback_actions.append(UpdatenoteRollback(self.connection, extended_note))
                 self.connection.update_extended_notes(extended_note)
             else:
                 extended_note.citation_key = citation_key
                 self.connection.add_extended_notes(extended_note)
-                self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
+                self.refdb_rollback_actions.append(DeletenoteRollback(self.connection, extended_note))
 
     def _update_last_modification(self, new_reference):
         django_object, created = models.Reference.objects.get_or_create(reference_id=new_reference.id,
@@ -465,11 +465,11 @@ class ReferenceForm(forms.Form):
         extended_notes = new_reference.extended_notes
         new_reference.extended_notes = None
         if self.reference:
-            self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
+            self.refdb_rollback_actions.append(UpdaterefRollback(self.connection, self.reference))
             self.connection.update_references(new_reference)
         else:
             citation_key, id_, __ = self.connection.add_references(new_reference)[0]
-            self.refdb_rollback_actions.append(DeleterefRollback(self.user, id_))
+            self.refdb_rollback_actions.append(DeleterefRollback(self.connection, id_))
             new_reference.citation_key, new_reference.id = citation_key, id_
 
         self._save_extended_note(new_reference.comments, "django-refdb-comments-" + new_reference.citation_key)
