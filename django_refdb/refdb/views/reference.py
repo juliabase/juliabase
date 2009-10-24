@@ -348,7 +348,7 @@ class ReferenceForm(forms.Form):
             reference = copy.deepcopy(self.reference)
         else:
             reference = pyrefdb.Reference()
-            reference.extended_data = utils.ExtendedData()
+            utils.initialize_extended_attributes(reference)
             reference.creator = self.user.id
         reference.type = self.cleaned_data["reference_type"]
         if self.cleaned_data["part_title"] or self.cleaned_data["part_authors"]:
@@ -444,16 +444,8 @@ class ReferenceForm(forms.Form):
                 self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
 
     def _update_last_modification(self, new_reference):
-        # FixMe: As long as RefDB's addref doesn't return the IDs of the added
-        # references, I can't have the "id" attribute set in ``new_reference``
-        # in case of a newly added reference.  See
-        # https://sourceforge.net/tracker/?func=detail&aid=2805372&group_id=26091&atid=385994
-        # for further information.  So I have to re-fetch the reference in this
-        # case.  Fortunately, it isn't a frequent case.
-        id_ = new_reference.id
-        if id_ is None:
-            id_ = refdb.get_connection(self.user).get_references(":CK:=" + new_reference.citation_key)[0].id
-        django_object, created = models.Reference.objects.get_or_create(reference_id=id_)
+        django_object, created = models.Reference.objects.get_or_create(reference_id=new_reference.id,
+                                                                        citation_key=new_reference.citation_key)
         if not created:
             django_object.mark_modified()
 
