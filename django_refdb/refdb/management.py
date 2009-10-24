@@ -22,18 +22,21 @@ from . import models as refdb_app
 from . import add_refdb_user, add_user_details, SharedXNote
 
 
-def add_extended_note_if_nonexistent(citation_key):
+def add_extended_note_if_nonexistent(citation_key, database):
     u"""Adds an extended note with the given citation key if it doesn't exist
     yet.  The note will be public (“shared”), but otherwise empty, i.e. no
     title, content etc.
 
     :Paramaters:
       - `citation_key`: the citation key of the extended note
+      - `database`: the name of the RefDB database
 
     :type citation_key: str
+    :type database: unicode
     """
-    if not refdb.get_connection("root").get_extended_notes(":NCK:=" + citation_key):
-        refdb.get_connection("root").add_extended_notes(SharedXNote(citation_key))
+    connection = refdb.get_connection("root", database)
+    if not connection.get_extended_notes(":NCK:=" + citation_key):
+        connection.add_extended_notes(SharedXNote(citation_key))
 
 
 def sync_extended_notes(sender, created_models, interactive, **kwargs):
@@ -52,23 +55,23 @@ def sync_extended_notes(sender, created_models, interactive, **kwargs):
     :type created_models: list of ``django.db.models.Model``
     :type interactive: bool
     """
+    databases = refdb.get_connection("root", None).list_databases()
     if interactive:
         confirm = raw_input("\nDo you want to reset user-specific extended notes "
-                            "of a previous Django-RefDB in the RefDB database? (yes/no): ")
+                            "of a previous Django-RefDB in all available RefDB databases? (yes/no): ")
         while confirm not in ["yes", "no"]:
             confirm = raw_input('Please enter either "yes" or "no": ')
         if confirm:
-            ids = [note.id for note in refdb.get_connection("root").get_extended_notes(
-                    ":NCK:~^django-refdb-users-with-offprint OR :NCK:~^django-refdb-personal-pdfs OR "
-                    ":NCK:~^django-refdb-creator")]
-            refdb.get_connection("root").delete_extended_notes(ids)
-            for user in django.contrib.auth.models.User.objects.all():
-                add_refdb_user(sender=None, instance=user)
-    for user in django.contrib.auth.models.User.objects.all():
-        add_user_details(sender=None, instance=user)
-    for relevance in range(1, 5):
-        add_extended_note_if_nonexistent("django-refdb-relevance-%d" % relevance)
-    add_extended_note_if_nonexistent("django-refdb-global-pdfs")
-    add_extended_note_if_nonexistent("django-refdb-institute-publication")
+            for database in databases:
+                connection = refdb.get_connection("root", database)
+                ids = [note.id for note in connection.get_extended_notes(
+                        ":NCK:~^django-refdb-users-with-offprint OR :NCK:~^django-refdb-personal-pdfs OR "
+                        ":NCK:~^django-refdb-creator")]
+                connection.delete_extended_notes(ids)
+    for database in databases:
+        for relevance in range(1, 5):
+            add_extended_note_if_nonexistent("django-refdb-relevance-%d" % relevance, database)
+        add_extended_note_if_nonexistent("django-refdb-global-pdfs", database)
+        add_extended_note_if_nonexistent("django-refdb-institute-publication", database)
 
 signals.post_syncdb.connect(sync_extended_notes, sender=refdb_app)
