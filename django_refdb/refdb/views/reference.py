@@ -118,16 +118,19 @@ class ReferenceForm(forms.Form):
     pdf = forms.FileField(label=_(u"PDF file"), required=False)
     pdf_is_private = forms.BooleanField(label=_("PDF is private"), required=False)
 
-    def __init__(self, request, reference, *args, **kwargs):
+    def __init__(self, request, connection, reference, *args, **kwargs):
         u"""
         :Parameters:
           - `request`: the current HTTP request
+          - `connection`: connection to RefDB
           - `reference`: the reference to be edited; if ``None``, add a new one
 
         :type request: ``HttpRequest``
+        :type connection: ``pyrefdb.Connection``
         :type reference: ``pyrefdb.Reference`` or ``NoneType``
         """
         user = request.user
+        self.connection = connection
         initial = kwargs.get("initial") or {}
         lists_choices, lists_initial = refdb.get_lists(user, reference.citation_key if reference else None)
         if reference:
@@ -404,12 +407,12 @@ class ReferenceForm(forms.Form):
         for listname in self.cleaned_data["lists"]:
             if listname not in self.old_lists:
                 self.refdb_rollback_actions.append(DumprefRollback(self.user, reference.id, listname))
-                refdb.get_connection(self.user).pick_references([reference.id], listname)
+                self.connection.pick_references([reference.id], listname)
                 
         for listname in self.old_lists:
             if listname not in self.cleaned_data["lists"]:
                 self.refdb_rollback_actions.append(PickrefRollback(self.user, reference.id, listname))
-                refdb.get_connection(self.user).dump_references([reference.id], listname)
+                self.connection.dump_references([reference.id], listname)
 
     def _save_extended_note(self, extended_note, citation_key):
         u"""Stores an extended note in the RefDB database.  This is used as a
@@ -430,10 +433,10 @@ class ReferenceForm(forms.Form):
         if extended_note:
             if extended_note.citation_key:
                 self.refdb_rollback_actions.append(UpdatenoteRollback(self.user, extended_note))
-                refdb.get_connection(self.user).update_extended_notes(extended_note)
+                self.connection.update_extended_notes(extended_note)
             else:
                 extended_note.citation_key = citation_key
-                refdb.get_connection(self.user).add_extended_notes(extended_note)
+                self.connection.add_extended_notes(extended_note)
                 self.refdb_rollback_actions.append(DeletenoteRollback(self.user, extended_note))
 
     def _update_last_modification(self, new_reference):
@@ -459,12 +462,11 @@ class ReferenceForm(forms.Form):
         # slightly slower and debugging more cumbersome.
         extended_notes = new_reference.extended_notes
         new_reference.extended_notes = None
-        connection = refdb.get_connection(self.user)
         if self.reference:
             self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
-            connection.update_references(new_reference)
+            self.connection.update_references(new_reference)
         else:
-            citation_key, id_, __ = connection.add_references(new_reference)[0]
+            citation_key, id_, __ = self.connection.add_references(new_reference)[0]
             self.refdb_rollback_actions.append(DeleterefRollback(self.user, id_))
             new_reference.citation_key, new_reference.id = citation_key, id_
 
@@ -500,7 +502,7 @@ class ReferenceForm(forms.Form):
                                os.path.join(settings.MEDIA_ROOT, "references"), new_reference.citation_key,
                                utils.get_user_hash(self.user.id) if private else None)
         utils.freeze(new_reference)
-        connection.update_note_links(new_reference)
+        self.connection.update_note_links(new_reference)
         self._update_last_modification(new_reference)
         return new_reference
 
@@ -524,8 +526,8 @@ def edit(request, database, citation_key):
 
     :rtype: ``HttpResponse``
     """
+    connection = refdb.get_connection(request.user, database)
     if citation_key:
-        connection = refdb.get_connection(request.user)
         references = connection.get_references(":CK:=" + citation_key)
         if not references:
             raise Http404("Citation key \"%s\" not found." % citation_key)
@@ -536,7 +538,7 @@ def edit(request, database, citation_key):
     else:
         reference = None
     if request.method == "POST":
-        reference_form = ReferenceForm(request, reference, request.POST, request.FILES)
+        reference_form = ReferenceForm(request, connection, reference, request.POST, request.FILES)
         if reference_form.is_valid():
             new_reference = reference_form.save()
             # We don't need this in the cache.  It's only needed for saving,
@@ -573,7 +575,7 @@ def view(request, database, citation_key):
 
     :rtype: ``HttpResponse``
     """
-    connection = refdb.get_connection(request.user)
+    connection = refdb.get_connection(request.user, database)
     # FixMe: Is "with_extended_notes" sensible?
     references = connection.get_references(":CK:=" + citation_key, with_extended_notes=True,
                                            extended_notes_constraints=":NCK:~^django-refdb-")

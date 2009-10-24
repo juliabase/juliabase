@@ -193,7 +193,7 @@ def search(request, database):
                               context_instance=RequestContext(request))
 
 
-def add_references_to_list(ids, add_to_list_form, user):
+def add_references_to_list(ids, add_to_list_form, user, connection):
     u"""Add references to a references list.
 
     :Parameters:
@@ -201,10 +201,12 @@ def add_references_to_list(ids, add_to_list_form, user):
       - `add_to_list_form`: bound and valid form containing the list to be
         added to
       - `user`: current user
+      - `connection`: connection to RefDB
 
     :type ids: list of str
     :type add_to_list_form: ``django.forms.Form``
     :type user: ``django.contrib.auth.models.User``
+    :type connection: ``pyrefdb.Connection``
     """
     # add_to_list_form must be bound and valid
     if add_to_list_form.cleaned_data["existing_list"]:
@@ -212,7 +214,6 @@ def add_references_to_list(ids, add_to_list_form, user):
     else:
         verbose_name = add_to_list_form.cleaned_data["new_list"]
         listname = defaultfilters.slugify(verbose_name)
-    connection = refdb.get_connection(user)
     connection.pick_references(ids, listname)
     if add_to_list_form.cleaned_data["new_list"]:
         extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (refdb.get_username(user.id), listname))[0]
@@ -350,7 +351,7 @@ def embed_common_data(request, database):
         limit = int(limit)
     except (TypeError, ValueError):
         limit = 10
-    refdb_connection = refdb.get_connection(request.user)
+    refdb_connection = refdb.get_connection(request.user, database)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
     request.common_data = utils.CommonBulkViewData(
         refdb_connection, ids, query_string=query_string, offset=offset, limit=limit)
@@ -486,6 +487,7 @@ def bulk(request, database):
             references_list)
         valid_post_data = all_valid and referentially_valid
         if valid_post_data:
+            connection = refdb.get_connection(request.user, database)
             if action == "export":
                 query_dict = {"format": export_form.cleaned_data["format"]}
                 query_dict.update((id_ + "-selected", "on") for id_ in ids)
@@ -497,15 +499,14 @@ def bulk(request, database):
                 # IDs.  However, first
                 # https://sourceforge.net/tracker/?func=detail&aid=2857792&group_id=26091&atid=385991
                 # needs to be fixed.
-                citation_keys = [reference.citation_key for reference in refdb.get_connection(request.user).
+                citation_keys = [reference.citation_key for reference in connection.
                                  get_references(" OR ".join(":ID:=" + id_ for id_ in ids))]
-                refdb.get_connection(request.user).add_note_links(
-                    ":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
-                    u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
+                connection.add_note_links(":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
+                                          u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
             elif action == "list":
-                add_references_to_list(ids, add_to_list_form, request.user)
+                add_references_to_list(ids, add_to_list_form, request.user, connection)
             elif action == "remove":
-                refdb.get_connection(request.user).dump_references(ids, references_list)
+                connection.dump_references(ids, references_list)
         # Since the POST request is processed now, we create *now* the list
         # itself.  The reason for this is that the references data has changed
         # by processing the request, so we get a fresh list here.  This delayed

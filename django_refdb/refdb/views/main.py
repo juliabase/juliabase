@@ -57,10 +57,10 @@ def embed_common_data(request, database):
     :type database: unicode
     """
     if not hasattr(request, "common_data"):
-        refdb_connection = refdb.get_connection(request.user)
+        refdb_connection = refdb.get_connection(request.user, database)
         current_list = request.user.refdb_user_details.current_list
         try:
-            links = refdb.get_connection(request.user).get_extended_notes(
+            links = refdb_connection.get_extended_notes(
                 ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
         except IndexError:
             links = []
