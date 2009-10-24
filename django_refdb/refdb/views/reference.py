@@ -479,9 +479,9 @@ class ReferenceForm(forms.Form):
             self.refdb_rollback_actions.append(UpdaterefRollback(self.user, self.reference))
             connection.update_references(new_reference)
         else:
-            citation_key = connection.add_references(new_reference)[0][0]
-            self.refdb_rollback_actions.append(DeleterefRollback(self.user, citation_key))
-            new_reference.citation_key = citation_key
+            citation_key, id_, __ = connection.add_references(new_reference)[0]
+            self.refdb_rollback_actions.append(DeleterefRollback(self.user, id_))
+            new_reference.citation_key, new_reference.id = citation_key, id_
 
         self._save_extended_note(new_reference.comments, "django-refdb-comments-" + new_reference.citation_key)
         self._save_extended_note(

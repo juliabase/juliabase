@@ -126,21 +126,20 @@ class DeleterefRollback(RefDBRollback):
     current request.
     """
 
-    def __init__(self, user, citation_key):
+    def __init__(self, user, id_):
         u"""
         :Parameters:
           - `user`: currently logged-in user
-          - `citation_key`: citation key of the added reference
+          - `id_`: ID of the added reference
 
         :type user: ``django.contrib.auth.models.User``
-        :type citation_key: str
+        :type id_: str
         """
         super(DeleterefRollback, self).__init__(user)
-        self.citation_key = citation_key
+        self.id = id_
 
     def execute(self):
-        reference_id = refdb.get_connection(self.user).get_references(":CK:=" + self.citation_key, "ids")[0]
-        refdb.get_connection(self.user).delete_references([reference_id])
+        refdb.get_connection(self.user).delete_references([self.id])
 
 
 class AddnoteRollback(RefDBRollback):
