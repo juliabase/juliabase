@@ -514,7 +514,7 @@ class ReferenceForm(forms.Form):
             utils.spawn_daemon("/usr/bin/python", settings.REFDB_PATH_TO_INDEXER,
                                os.path.join(settings.MEDIA_ROOT, "references"), new_reference.citation_key,
                                utils.get_user_hash(self.user.id) if private else None)
-        new_reference.freeze()
+        utils.freeze(new_reference)
         connection.update_note_links(new_reference)
         self._update_last_modification(new_reference)
         return new_reference
@@ -544,8 +544,8 @@ def edit(request, citation_key):
             raise Http404("Citation key \"%s\" not found." % citation_key)
         else:
             reference = references[0]
-            reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                             "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
+            utils.fetch(reference, ["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+                                    "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     else:
         reference = None
     if request.method == "POST":
@@ -590,8 +590,8 @@ def view(request, citation_key):
     if not references:
         raise Http404("Citation key \"%s\" not found." % citation_key)
     reference = references[0]
-    reference.fetch(["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
-                     "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
+    utils.fetch(reference, ["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
+                            "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
     global_url, private_url = utils.pdf_file_url(reference, request.user.id)
     title = _(u"%(reference_type)s “%(citation_key)s”") % {"reference_type": utils.reference_types[reference.type],
