@@ -33,4 +33,5 @@ urlpatterns = patterns("refdb.views",
                        (db_prefix + r"reference/(?P<citation_key>.+)/edit/$", "reference.edit"),
                        (db_prefix + r"reference/(?P<citation_key>.+)", "reference.view"),
                        (db_prefix + r"$", "main.main_menu"),
+                       (r"^$", "main.main_menu", {"database": None}),
                        )

@@ -105,8 +105,8 @@ class UserModification(models.Model):
 
 
 languages = (
-    ("de", u"Deutsch"),
     ("en", u"English"),
+    ("de", u"Deutsch"),
     )
 u"""Contains all possible choices for `UserDetails.language`.
 """

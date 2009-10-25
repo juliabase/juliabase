@@ -36,7 +36,7 @@ class ChangeListForm(forms.Form):
     def __init__(self, user, connection, *args, **kwargs):
         super(ChangeListForm, self).__init__(*args, **kwargs)
         self.fields["new_list"].choices, __ = refdb.get_lists(user, connection)
-        self.fields["new_list"].initial = models.UserDetails.objects.get(user=user).current_list
+        self.fields["new_list"].initial = user.database_accounts.get(database=connection.database).current_list
 
 
 def embed_common_data(request, database):
@@ -58,7 +58,7 @@ def embed_common_data(request, database):
     """
     if not hasattr(request, "common_data"):
         refdb_connection = refdb.get_connection(request.user, database)
-        current_list = request.user.refdb_user_details.current_list
+        current_list = request.user.database_accounts.get(database=database).current_list
         try:
             links = refdb_connection.get_extended_notes(
                 ":NCK:=%s-%s" % (refdb.get_username(request.user.id), current_list))[0].links
@@ -181,9 +181,9 @@ def change_list(request, database):
     """
     change_list_form = ChangeListForm(request.user, refdb.get_connection(request.user, database), request.POST)
     if change_list_form.is_valid():
-        user_details = models.UserDetails.objects.get(user=request.user)
-        user_details.current_list = change_list_form.cleaned_data["new_list"]
-        user_details.save()
+        database_account = request.user.database_accounts.get(database=database)
+        database_account.current_list = change_list_form.cleaned_data["new_list"]
+        database_account.save()
         next_url = django.core.urlresolvers.reverse(main_menu, database=database)
         return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
