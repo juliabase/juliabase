@@ -184,7 +184,7 @@ def change_list(request, database):
         database_account = request.user.database_accounts.get(database=database)
         database_account.current_list = change_list_form.cleaned_data["new_list"]
         database_account.save()
-        next_url = django.core.urlresolvers.reverse(main_menu, database=database)
+        next_url = django.core.urlresolvers.reverse(main_menu, kwargs={"database": database})
         return utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
     return render_to_response("refdb/change_list.html",

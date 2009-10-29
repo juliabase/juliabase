@@ -16,6 +16,8 @@ from django import forms
 from django.forms.util import ValidationError, ErrorList
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+from django.core.servers.basehttp import FileWrapper
+from django.core.exceptions import PermissionDenied
 from django.core.cache import cache
 from django.conf import settings
 from .. import refdb, models
@@ -595,3 +597,48 @@ def view(request, database, citation_key):
                                "with_part": reference.type not in utils.reference_types_without_part,
                                "database": database},
                               context_instance=RequestContext(request))
+
+
+@login_required
+def pdf(request, database, citation_key, username):
+    u"""Retrieves the PDF of a reference.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
+      - `citation_key`: the citation key of the reference
+      - `username`: the name of the user whose private PDF should be retrieved;
+        if the *global* PDF should be retrieved, this is ``None``
+
+    :type request: ``HttpRequest``
+    :type database: unicode
+    :type citation_key: unicode
+    :type username: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    # FixMe: Eventually, this should use something like
+    # <http://code.djangoproject.com/ticket/2131>.
+    if username:
+        if username != request.user.username:
+            raise PermissionDenied()
+        user_id = request.user.id
+    else:
+        user_id = None
+    connection = refdb.get_connection(request.user, database)
+    try:
+        reference = connection.get_references(":CK:=" + citation_key)[0]
+    except IndexError:
+        raise Http404("Citation key \"%s\" not found." % citation_key)
+    utils.fetch(reference, ["global_pdf_available", "pdf_is_private"], connection, request.user.id)
+    if not reference.global_pdf_available:
+        raise Http404("No PDF available for this reference.")
+    filename = pdf_filepath(reference, user_id)
+    wrapper = FileWrapper(open(filename, "rb"))
+    response = HttpResponse(wrapper, content_type="application/pdf")
+    response["Content-Length"] = os.path.getsize(filename)
+    response["Content-Disposition"] = "attachment; filename=%s.pdf" % utils.slugify_reference(reference)
+    return response
