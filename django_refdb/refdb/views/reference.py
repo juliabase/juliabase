@@ -6,7 +6,7 @@ u"""Views for viewing, editing, adding, and searching for references.
 
 from __future__ import absolute_import
 
-import os.path, shutil, re, copy, subprocess
+import os.path, re, copy, subprocess
 import pyrefdb
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -27,7 +27,9 @@ from .rollbacks import *
 
 def pdf_filepath(reference, user_id=None):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
-    filesystem.
+    filesystem.  If a user ID is provided, the private PDF is returned if
+    existing, and the public otheriwse.  If no user ID is provided, the public
+    PDF path is returned always.
 
     :Parameters:
       - `reference`: the reference whose PDF file path should be calculated
@@ -45,11 +47,10 @@ def pdf_filepath(reference, user_id=None):
     :rtype: unicode
     """
     private = reference.pdf_is_private[user_id] if user_id else False
-    directory = os.path.join(settings.MEDIA_ROOT, "references", reference.citation_key)
     if private:
-        directory = os.path.join(directory, utils.get_user_hash(user_id))
-    filepath = os.path.join(directory, utils.slugify_reference(reference) + ".pdf")
-    return filepath
+        os.path.join("/var/lib/django_refdb_pdfs/private", str(user_id), reference.citation_key + ".pdf")
+    else:
+        return os.path.join("/var/lib/django_refdb_pdfs/public", reference.citation_key + ".pdf")
 
 
 def serialize_authors(authors):
@@ -478,12 +479,6 @@ class ReferenceForm(forms.Form):
         new_reference.extended_notes = extended_notes
 
         self.save_lists(new_reference)
-        if self.reference and utils.slugify_reference(new_reference) != utils.slugify_reference(self.reference):
-            if self.reference.global_pdf_available:
-                shutil.move(pdf_filepath(self.reference), pdf_filepath(new_reference))
-            for user_id in self.reference.pdf_is_private:
-                if self.reference.pdf_is_private[user_id]:
-                    shutil.move(pdf_filepath(self.reference, user_id), pdf_filepath(new_reference, user_id))
         pdf_file = self.cleaned_data["pdf"]
         if pdf_file:
             private = self.cleaned_data["pdf_is_private"]
@@ -492,7 +487,7 @@ class ReferenceForm(forms.Form):
             else:
                 new_reference.pdf_is_private[self.user.id] = False
                 new_reference.global_pdf_available = True
-            filepath = pdf_filepath(new_reference, self.user.id if private else None)
+            filepath = pdf_filepath(new_reference, self.user.id)
             directory = os.path.dirname(filepath)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -620,7 +615,7 @@ def pdf(request, database, citation_key, username):
 
     :rtype: ``HttpResponse``
     """
-    # FixMe: Eventually, this should use something like
+    # FixMe: Eventually, this function should use something like
     # <http://code.djangoproject.com/ticket/2131>.
     if username:
         if username != request.user.username:
