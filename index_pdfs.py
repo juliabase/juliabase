@@ -63,7 +63,7 @@ indexer.set_stemmer(stemmer)
 
 class LastIndexing(object):
     u"""Class for information of the last indexing of a particular PDF.  This
-    class is pickled to a file in the same directory inw hich the PDF resides.
+    class is pickled to a file in the same directory in which the PDF resides.
     This way, ``index_pdfs.py`` can see whether is must re-index the PDF
     because it's newer than the `timestamp`.
 
