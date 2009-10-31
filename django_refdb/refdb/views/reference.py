@@ -48,11 +48,12 @@ def pdf_filepath(database, reference, user_id=None):
 
     :rtype: unicode
     """
+    citation_key = reference.citation_key
     private = reference.pdf_is_private[user_id] if user_id else False
     if private:
-        os.path.join("/var/lib/django_refdb_pdfs", database, "private", str(user_id), reference.citation_key + ".pdf")
+        os.path.join("/var/lib/django_refdb_pdfs", database, citation_key, "private", str(user_id), citation_key + ".pdf")
     else:
-        return os.path.join("/var/lib/django_refdb_pdfs", database, "public", reference.citation_key + ".pdf")
+        return os.path.join("/var/lib/django_refdb_pdfs", database, citation_key, "public", citation_key + ".pdf")
 
 
 def serialize_authors(authors):
@@ -634,6 +635,7 @@ def pdf(request, database, citation_key, username):
     if not reference.global_pdf_available:
         raise Http404("No PDF available for this reference.")
     filename = pdf_filepath(database, reference, user_id)
+    print filename
     wrapper = FileWrapper(open(filename, "rb"))
     response = HttpResponse(wrapper, content_type="application/pdf")
     response["Content-Length"] = os.path.getsize(filename)
