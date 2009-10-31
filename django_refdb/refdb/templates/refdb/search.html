@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block frame_content %}
-  <form method="get" action="bulk/">
+  <form method="get" action="{% url refdb.views.bulk.bulk database=database %}">
     <table>
       {{ search }}
     </table>
