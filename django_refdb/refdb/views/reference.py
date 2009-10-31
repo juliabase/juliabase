@@ -25,17 +25,19 @@ from . import utils, form_utils
 from .rollbacks import *
 
 
-def pdf_filepath(reference, user_id=None):
+def pdf_filepath(database, reference, user_id=None):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
     filesystem.  If a user ID is provided, the private PDF is returned if
     existing, and the public otheriwse.  If no user ID is provided, the public
     PDF path is returned always.
 
     :Parameters:
+      - `database`: the name of the RefDB database
       - `reference`: the reference whose PDF file path should be calculated
       - `user_id`: the ID of the user who tries to retrieve the file; this is
         important because it is possible to upload *private* PDFs.
 
+    :type database: unicode
     :type reference: ``pyrefdb.Reference``, with the ``extended_data``
       attribute
     :type user_id: int
@@ -48,9 +50,9 @@ def pdf_filepath(reference, user_id=None):
     """
     private = reference.pdf_is_private[user_id] if user_id else False
     if private:
-        os.path.join("/var/lib/django_refdb_pdfs/private", str(user_id), reference.citation_key + ".pdf")
+        os.path.join("/var/lib/django_refdb_pdfs", database, "private", str(user_id), reference.citation_key + ".pdf")
     else:
-        return os.path.join("/var/lib/django_refdb_pdfs/public", reference.citation_key + ".pdf")
+        return os.path.join("/var/lib/django_refdb_pdfs", database, "public", reference.citation_key + ".pdf")
 
 
 def serialize_authors(authors):
@@ -487,7 +489,7 @@ class ReferenceForm(forms.Form):
             else:
                 new_reference.pdf_is_private[self.user.id] = False
                 new_reference.global_pdf_available = True
-            filepath = pdf_filepath(new_reference, self.user.id)
+            filepath = pdf_filepath(self.connection.database, new_reference, self.user.id)
             directory = os.path.dirname(filepath)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -631,7 +633,7 @@ def pdf(request, database, citation_key, username):
     utils.fetch(reference, ["global_pdf_available", "pdf_is_private"], connection, request.user.id)
     if not reference.global_pdf_available:
         raise Http404("No PDF available for this reference.")
-    filename = pdf_filepath(reference, user_id)
+    filename = pdf_filepath(database, reference, user_id)
     wrapper = FileWrapper(open(filename, "rb"))
     response = HttpResponse(wrapper, content_type="application/pdf")
     response["Content-Length"] = os.path.getsize(filename)
