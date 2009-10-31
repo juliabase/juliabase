@@ -45,12 +45,12 @@ logging.basicConfig(level=logging.INFO, filename="/tmp/index_pdfs.log", filemode
 logger = logging.getLogger()
 
 
-rootdir = os.path.abspath(sys.argv[1])
-database = sys.argv[2]
+database_name = sys.argv[2]
+rootdir = os.path.abspath(os.path.join(sys.argv[1], database_name))
 citation_key = sys.argv[3] if len(sys.argv) > 3 else None
 user_id = sys.argv[4] if len(sys.argv) > 4 else None
 
-database_path = os.path.join("/var/lib/django_refdb_indices", database)
+database_path = os.path.join("/var/lib/django_refdb_indices", database_name)
 try:
     database = xapian.WritableDatabase(database_path, xapian.DB_CREATE_OR_OPEN)
 except xapian.DatabaseLockError:
