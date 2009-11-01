@@ -516,13 +516,12 @@ def bulk(request, database):
         # `utils.CommonBulkViewData` in the first place.
         embed_common_data(request, database)
         if not valid_post_data:
-            references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids,
-                                                request.user.id)
+            references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user)
             prev_link, next_link, pages = build_page_links(request)
             for reference in references:
                 reference.selection_box = SelectionBoxForm(request.POST, prefix=reference.id)
     if request.method == "GET" or valid_post_data:
-        references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
+        references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user)
         prev_link, next_link, pages = build_page_links(request)
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)

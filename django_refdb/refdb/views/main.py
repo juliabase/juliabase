@@ -154,7 +154,7 @@ def main_menu(request, database):
     search_form = SimpleSearchForm()
     change_list_form = ChangeListForm(request.user, request.common_data.refdb_connection)
     current_list = request.common_data.current_list
-    references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
+    references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user)
     return render_to_response("refdb/main_menu.html", {"title": _(u"Main menu"), "search": search_form,
                                                        "references": references, "change_list": change_list_form,
                                                        "database": database},

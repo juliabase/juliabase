@@ -464,32 +464,34 @@ def get_user_hash(user_id):
     return user_hash.hexdigest()[:10]
 
 
-def pdf_file_url(reference, user_id=None):
-    u"""Calculates the absolute URL of the uploaded PDF.
+def pdf_file_url(reference, user, database):
+    u"""Calculates the absolute URL of the uploaded PDF.  if a ``user`` is
+    provided, it returns the link to the private PDF, if not, to the global
+    one.  It returns ``None`` for each case which is not existing
 
     :Parameters:
       - `reference`: the reference whose PDF file path should be calculated
-      - `user_id`: the ID of the user who tries to retrieve the file; this is
-        important because it is possible to upload *private* PDFs.
+      - `user`: the user who tries to retrieve the file
+      - `database`: the name of the RefDB database
 
     :type reference: ``pyrefdb.Reference``, with the ``extended_data``
       attribute
-    :type user_id: int
+    :type user: ``django.contrib.auth.models.User``
+    :type database: unicode
 
     :Return:
       the absolute URL to the global PDF, the absolute URL to the private PDF;
-      (``None`` for each case which is not existing)
 
     :rtype: unicode, unicode
     """
     global_url = private_url = None
-    private = reference.pdf_is_private[user_id] if user_id else False
-    root_url = os.path.join(settings.MEDIA_URL, "references", reference.citation_key)
-    filename = slugify_reference(reference) + ".pdf"
-    if private:
-        private_url = os.path.join(root_url, get_user_hash(user_id), filename)
+    if reference.pdf_is_private[user.id]:
+        private_url = django.core.urlresolvers.reverse("refdb.views.reference.pdf",
+                                                       kwargs={"database": database, "citation_key": reference.citation_key,
+                                                               "username": user.username})
     if reference.global_pdf_available:
-        global_url = os.path.join(root_url, filename)
+        global_url = django.core.urlresolvers.reverse("refdb.views.reference.pdf",
+                                                      kwargs={"database": database, "citation_key": reference.citation_key})
     return global_url, private_url
 
 
@@ -682,7 +684,7 @@ def ids_to_citation_keys(connection, ids):
     return result
 
 
-def fetch_references(refdb_connection, ids, user_id):
+def fetch_references(refdb_connection, ids, user):
     u"""Fetches all references needed for the references list in the view
     (bulk/main menu) from the RefDB database.  If possible, it takes the
     references from the cache.  The references contain also some extended
@@ -694,11 +696,11 @@ def fetch_references(refdb_connection, ids, user_id):
     :Parameters:
       - `refdb_connection`: connection object to the RefDB server
       - `ids`: IDs of the references
-      - `user_id`: the ID of the current user
+      - `user`: the current user
 
     :type refdb_connection: ``pyrefdb.Connection``
     :type ids: list of str
-    :type user_id: int
+    :type user: ``django.contrib.auth.models.User``
 
     :Return:
       the references
@@ -716,9 +718,9 @@ def fetch_references(refdb_connection, ids, user_id):
         all_references.update(missing_references)
     references = [all_references[id_] for id_ in ids]
     for reference in references:
-        fetch(reference, ["global_pdf_available", "pdf_is_private"], refdb_connection, user_id)
+        fetch(reference, ["global_pdf_available", "pdf_is_private"], refdb_connection, user.id)
         cache.set(settings.REFDB_CACHE_PREFIX + reference.id, reference)
-        global_url, private_url = pdf_file_url(reference, user_id)
+        global_url, private_url = pdf_file_url(reference, user, refdb_connection.database)
         reference.pdf_url = private_url or global_url
     return references
 

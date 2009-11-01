@@ -584,7 +584,7 @@ def view(request, database, citation_key):
     utils.fetch(reference, ["shelves", "global_pdf_available", "users_with_offprint", "relevance", "comments",
                             "pdf_is_private", "creator", "institute_publication"], connection, request.user.id)
     lib_info = reference.get_lib_info(refdb.get_username(request.user.id))
-    global_url, private_url = utils.pdf_file_url(reference, request.user.id)
+    global_url, private_url = utils.pdf_file_url(reference, request.user, database)
     title = _(u"%(reference_type)s “%(citation_key)s”") % {"reference_type": utils.reference_types[reference.type],
                                                            "citation_key": citation_key}
     return render_to_response("refdb/show_reference.html",
