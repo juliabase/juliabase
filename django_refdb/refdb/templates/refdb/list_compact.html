@@ -20,10 +20,10 @@
       <td>{{ reference|journal|default:"" }}</td>
       <td>{{ reference.publication.pub_info.pub_date.year|default_if_none:"" }}</td>
       <td class="screen-only">
-        <a href="{% url refdb.views.reference.view citation_key=reference.citation_key %}"
+        <a href="{% url refdb.views.reference.view citation_key=reference.citation_key, database=database %}"
            ><img src="{{ MEDIA_URL }}/refdb/icons/magnifier.png" alt="{{ _("Details") }}"/></a><br/>
 	<a 
-href="{% url refdb.views.reference.view citation_key=reference.citation_key %}/edit/?next={{ current_url|urlquote_plus }}"
+href="{% url refdb.views.reference.view citation_key=reference.citation_key,database=database %}/edit/?next={{ current_url|urlquote_plus }}"
            ><img src="{{ MEDIA_URL }}/chantal/icons/pencil.png" alt="{{ _("Edit") }}"/></a>
         {% if reference.pdf_url %}
           <a href="{{ reference.pdf_url }}"><img src="{{ MEDIA_URL }}refdb/icons/page_white_acrobat.png" 

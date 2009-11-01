@@ -36,14 +36,16 @@ output_format_meta_info = {
  
 @login_required
 @require_http_methods(["GET"])
-def export(request):
+def export(request, database):
     u"""GET-only view for exporting references into various output formats like
     RIS or BibTeX.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -60,8 +62,8 @@ def export(request):
     for key, value in request.GET.iteritems():
         if key.endswith("-selected") and value == "on":
             ids.add(key.partition("-")[0])
-    output = refdb.get_connection(request.user).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
-                                                               output_format=format)
+    output = refdb.get_connection(request.user, database).get_references(u" OR ".join(":ID:=" + id_ for id_ in ids),
+                                                                         output_format=format)
     response = HttpResponse(content_type=content_type + "; charset=utf-8")
     response['Content-Disposition'] = "attachment; filename=references" + file_extension
     response.write(output)

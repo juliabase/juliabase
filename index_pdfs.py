@@ -3,13 +3,13 @@
 
 u"""Stand-alone program to update Xapian's index.  Its synopsis is::
 
-    index_pdfs.py <pdfs-root> [<citation-key> [<user-hash>]]
+    index_pdfs.py <pdfs-root> <database> [<citation-key> [<user-id>]]
 
 ``<pdfs-root>`` is the directory which includes all subdirs with PDFs for the
-given RefDB database.  ``<citation-key>`` is the citation key of the newly
-added PDF.  If it was a private PDF upload, you must also give the
-``<user-hash>`` of the uploading user (don't mix this up with the user ID or
-his RefDB username).
+given Django-RefDB installation.  ``database`` is the name of the RefDB
+database.  ``<citation-key>`` is the citation key of the newly added PDF.  If
+it was a private PDF upload, you must also give the ``<user-id>`` of the
+uploading user.
 
 If no citation key is given, all subdirs of ``<pdfs-root>`` are scanned and all
 new PDFs are indexed.
@@ -45,11 +45,12 @@ logging.basicConfig(level=logging.INFO, filename="/tmp/index_pdfs.log", filemode
 logger = logging.getLogger()
 
 
-rootdir = os.path.abspath(sys.argv[1])
-citation_key = sys.argv[2] if len(sys.argv) > 2 else None
-user_hash = sys.argv[3] if len(sys.argv) > 3 else None
+database_name = sys.argv[2]
+rootdir = os.path.abspath(os.path.join(sys.argv[1], database_name))
+citation_key = sys.argv[3] if len(sys.argv) > 3 else None
+user_id = sys.argv[4] if len(sys.argv) > 4 else None
 
-database_path = os.path.join("/var/lib/django_refdb_indices", os.path.basename(rootdir))
+database_path = os.path.join("/var/lib/django_refdb_indices", database_name)
 try:
     database = xapian.WritableDatabase(database_path, xapian.DB_CREATE_OR_OPEN)
 except xapian.DatabaseLockError:
@@ -62,7 +63,7 @@ indexer.set_stemmer(stemmer)
 
 class LastIndexing(object):
     u"""Class for information of the last indexing of a particular PDF.  This
-    class is pickled to a file in the same directory inw hich the PDF resides.
+    class is pickled to a file in the same directory in which the PDF resides.
     This way, ``index_pdfs.py`` can see whether is must re-index the PDF
     because it's newer than the `timestamp`.
 
@@ -117,7 +118,7 @@ def clean_directory():
         os.remove(filename)
 
 
-def index_pdf(citation_key, user_hash):
+def index_pdf(citation_key, user_id):
     u"""Index one PDF with Xapian.  The PDF is identified by the citation key
     of the reference it belongs to.
 
@@ -126,23 +127,25 @@ def index_pdf(citation_key, user_hash):
     the text content of the page.  Up to three so-called “values” are set:
     Value 0 is the citation key, value 1 is the page number (note that this is
     the dull PDF page number rather than a “document page number”), and value 2
-    is the user hash (which may not be set).  The user hash allows for a
+    is the user ID (which may not be set).  The user ID allows for a
     ``MatchDecider`` to filter out all PDFs from the matches which belong to
     other users.
 
     :Parameters:
       - `citation_key`: the citation key of the reference
-      - `user_hash`: the user hash of the user if it is a private PDF; ``None``
-        if otherwise
+      - `user_id`: the user ID of the user if it is a private PDF; ``None`` if
+        otherwise
 
     :type citation_key: str
-    :type user_hash: str
+    :type user_id: str
     """
-    pdf_identifier = citation_key + (" for user " + user_hash if user_hash else "")
+    pdf_identifier = citation_key + (" for user " + user_id if user_id else "")
     logger.info(pdf_identifier + " is processed ...")
     path = os.path.join(rootdir, citation_key)
-    if user_hash:
-        path = os.path.join(path, user_hash)
+    if user_id:
+        path = os.path.join(path, "private", user_id)
+    else:
+        path = os.path.join(path, "public")
     os.chdir(path)
     try:
         pdf_filename = glob("*.pdf")[0]
@@ -198,8 +201,8 @@ def index_pdf(citation_key, user_hash):
         document.set_data(text)
         document.add_value(0, citation_key)
         document.add_value(1, str(page_number))
-        if user_hash:
-            document.add_value(2, user_hash)
+        if user_id:
+            document.add_value(2, user_id)
         indexer.set_document(document)
         indexer.index_text(text)
         document_id = database.add_document(document)
@@ -213,22 +216,23 @@ logger.info("Start with parameters: " + " ".join(sys.argv[1:]))
 if citation_key == "-":
     for path in glob(os.path.join(rootdir, "*")):
         if os.path.isdir(path):
-            os.chdir(path)
-            clean_directory()
-            for user_path in glob(os.path.join(path, "*")):
+            if os.path.isdir(os.path.join(path, "public")):
+                os.chdir(public_dir)
+                clean_directory()
+            for user_path in glob(os.path.join(path, "private", "*")):
                 if os.path.isdir(user_path):
                     os.chdir(user_path)
                     clean_directory()
     shutil.rmtree(database_path)
 elif citation_key:
-    index_pdf(citation_key, user_hash)
+    index_pdf(citation_key, user_id)
 else:
     for path in glob(os.path.join(rootdir, "*")):
         if os.path.isdir(path):
             citation_key = os.path.basename(path)
-            index_pdf(citation_key, user_hash=None)
-            for user_path in glob(os.path.join(path, "*")):
+            index_pdf(citation_key, user_id=None)
+            for user_path in glob(os.path.join(path, "private", "*")):
                 if os.path.isdir(user_path):
-                    user_hash = os.path.basename(user_path)
-                    index_pdf(citation_key, user_hash)
+                    user_id = os.path.basename(user_path)
+                    index_pdf(citation_key, user_id)
 logger.info("Finished")

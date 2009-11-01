@@ -22,14 +22,18 @@ configuration file, though.
 
 from django.conf.urls.defaults import *
 
+db_prefix = "^(?P<database>[-a-zA-Z0-9_]+)/"
+
 urlpatterns = patterns("refdb.views",
-                       (r"^$", "main.main_menu"),
-                       (r"^change_list/$", "main.change_list"),
-                       (r"^export/$", "export.export"),
-                       (r"^view/add/$", "reference.edit", {"citation_key": None}),
-                       (r"^view/search$", "bulk.search"),
-                       (r"^dispatch/$", "dispatch.dispatch"),
-                       (r"^view/bulk$", "bulk.bulk"),
-                       (r"^view/(?P<citation_key>.+)/edit/$", "reference.edit"),
-                       (r"^view/(?P<citation_key>.+)", "reference.view"),
+                       (db_prefix + r"change_list/$", "main.change_list"),
+                       (db_prefix + r"export/$", "export.export"),
+                       (db_prefix + r"add/$", "reference.edit", {"citation_key": None}),
+                       (db_prefix + r"search/$", "bulk.search"),
+                       (db_prefix + r"bulk/$", "bulk.bulk"),
+                       (db_prefix + r"(?P<citation_key>.+)/edit/$", "reference.edit"),
+                       (db_prefix + r"(?P<citation_key>.+)/(?P<username>.+)/pdf", "reference.pdf"),
+                       (db_prefix + r"(?P<citation_key>.+)/pdf", "reference.pdf", {"username": None}),
+                       (db_prefix + r"(?P<citation_key>.+)", "reference.view"),
+                       (db_prefix + r"$", "main.main_menu"),
+                       (r"^$", "main.main_menu", {"database": None}),
                        )

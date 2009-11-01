@@ -51,7 +51,7 @@ class ConditionalViewMiddleware(object):
 
         :rtype: ``HttpResponse``
         """
-        if request.alternate_etag:
+        if getattr(request, "alternate_etag", False):
             etag = hashlib.sha1()
             etag.update(response.get("ETag", ""))
             etag.update(repr(datetime.datetime.now()))

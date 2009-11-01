@@ -31,14 +31,14 @@ class RefDBRollback(object):
     rather than what they revert.
     """
 
-    def __init__(self, user):
+    def __init__(self, connection):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         """
-        self.user = user
+        self.connection = connection
 
     def execute(self):
         u"""Executes the rollback.
@@ -50,23 +50,23 @@ class PickrefRollback(RefDBRollback):
     u"""Rollback class for re-picking references for a personal reference list.
     """
 
-    def __init__(self, user, reference_id, list_name):
+    def __init__(self, connection, reference_id, list_name):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `reference_id`: RefDB ID of the reference to be re-picked
           - `list_name`: name of the personal reference list; if ``None``, add
             it to the user's default list
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type reference_id: int
         :type list_name: str or ``NoneType``
         """
-        super(PickrefRollback, self).__init__(user)
+        super(PickrefRollback, self).__init__(connection)
         self.reference_id, self.list_name = reference_id, list_name
 
     def execute(self):
-        refdb.get_connection(self.user).pick_references([self.reference_id], self.list_name)
+        self.connection.pick_references([self.reference_id], self.list_name)
 
 
 class DumprefRollback(RefDBRollback):
@@ -74,23 +74,23 @@ class DumprefRollback(RefDBRollback):
     list.
     """
 
-    def __init__(self, user, reference_id, list_name):
+    def __init__(self, connection, reference_id, list_name):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `reference_id`: RefDB ID of the reference to be un-picked
           - `list_name`: name of the personal reference list; if ``None``,
             remove it from the user's default list
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type reference_id: int
         :type list_name: str or ``NoneType``
         """
-        super(DumprefRollback, self).__init__(user)
+        super(DumprefRollback, self).__init__(connection)
         self.reference_id, self.list_name = reference_id, list_name or None
 
     def execute(self):
-        refdb.get_connection(self.user).dump_references([self.reference_id], self.list_name)
+        self.connection.dump_references([self.reference_id], self.list_name)
 
 
 class UpdaterefRollback(RefDBRollback):
@@ -105,20 +105,20 @@ class UpdaterefRollback(RefDBRollback):
     database after a failed request.
     """
 
-    def __init__(self, user, reference):
+    def __init__(self, connection, reference):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `reference`: the original reference to be re-installed
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type reference: ``pyrefdb.Reference``
         """
-        super(UpdaterefRollback, self).__init__(user)
+        super(UpdaterefRollback, self).__init__(connection)
         self.reference = reference
 
     def execute(self):
-        refdb.get_connection(self.user).update_references(self.reference)
+        self.connection.update_references(self.reference)
 
 
 class DeleterefRollback(RefDBRollback):
@@ -126,20 +126,20 @@ class DeleterefRollback(RefDBRollback):
     current request.
     """
 
-    def __init__(self, user, id_):
+    def __init__(self, connection, id_):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `id_`: ID of the added reference
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type id_: str
         """
-        super(DeleterefRollback, self).__init__(user)
+        super(DeleterefRollback, self).__init__(connection)
         self.id = id_
 
     def execute(self):
-        refdb.get_connection(self.user).delete_references([self.id])
+        self.connection.delete_references([self.id])
 
 
 class AddnoteRollback(RefDBRollback):
@@ -148,20 +148,20 @@ class AddnoteRollback(RefDBRollback):
     altered object will be re-added.
     """
 
-    def __init__(self, user, extended_note):
+    def __init__(self, connection, extended_note):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `extended_note`: the extended note to be re-added
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type extended_note: ``pyrefdb.XNote``
         """
-        super(AddnoteRollback, self).__init__(user)
+        super(AddnoteRollback, self).__init__(connection)
         self.extended_note = extended_note
 
     def execute(self):
-        refdb.get_connection(self.user).add_extended_notes(self.extended_note)
+        self.connection.add_extended_notes(self.extended_note)
 
 
 class DeletenoteRollback(RefDBRollback):
@@ -169,21 +169,21 @@ class DeletenoteRollback(RefDBRollback):
     request.
     """
 
-    def __init__(self, user, note_citation_key):
+    def __init__(self, connection, note_citation_key):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `note_citation_key`: citation key of the added extended note
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type note_citation_key: str
         """
-        super(DeletenoteRollback, self).__init__(user)
+        super(DeletenoteRollback, self).__init__(connection)
         self.note_citation_key = note_citation_key
 
     def execute(self):
-        extended_note = refdb.get_connection(self.user).get_extended_notes(":NCK:=" + self.note_citation_key)[0]
-        refdb.get_connection(self.user).delete_extended_notes([extended_note.id])
+        extended_note = self.connection.get_extended_notes(":NCK:=" + self.note_citation_key)[0]
+        self.connection.delete_extended_notes([extended_note.id])
 
 
 class UpdatenoteRollback(RefDBRollback):
@@ -192,20 +192,20 @@ class UpdatenoteRollback(RefDBRollback):
     otherwise, the altered object will be restored.
     """
 
-    def __init__(self, user, extended_note):
+    def __init__(self, connection, extended_note):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `extended_note`: the extended note to be restored
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type extended_note: ``pyrefdb.XNote``
         """
-        super(UpdatenoteRollback, self).__init__(user)
+        super(UpdatenoteRollback, self).__init__(connection)
         self.extended_note = extended_note
 
     def execute(self):
-        refdb.get_connection(self.user).update_extended_notes(self.extended_note)
+        self.connection.update_extended_notes(self.extended_note)
 
 
 class LinknoteRollback(RefDBRollback):
@@ -213,24 +213,23 @@ class LinknoteRollback(RefDBRollback):
     removed during the current request.
     """
 
-    def __init__(self, user, note_citation_key, reference_citation_key):
+    def __init__(self, connection, note_citation_key, reference_citation_key):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `note_citation_key`: citation key of the note to be linked to the
             reference
           - `reference_citation_key`: citation key of the reference
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type note_citation_key: str
         :type reference_citation_key: str
         """
-        super(LinknoteRollback, self).__init__(user)
+        super(LinknoteRollback, self).__init__(connection)
         self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
 
     def execute(self):
-        refdb.get_connection(self.user).add_note_links(":NCK:=" + self.note_citation_key,
-                                                       ":CK:=" + self.reference_citation_key)
+        self.connection.add_note_links(":NCK:=" + self.note_citation_key, ":CK:=" + self.reference_citation_key)
 
 
 class UnlinknoteRollback(RefDBRollback):
@@ -238,21 +237,20 @@ class UnlinknoteRollback(RefDBRollback):
     reference during the current request.
     """
 
-    def __init__(self, user, note_citation_key, reference_citation_key):
+    def __init__(self, connection, note_citation_key, reference_citation_key):
         u"""
         :Parameters:
-          - `user`: currently logged-in user
+          - `connection`: connection to RefDB
           - `note_citation_key`: citation key of the note to be unlinked from
             the reference
           - `reference_citation_key`: citation key of the reference
 
-        :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         :type note_citation_key: str
         :type reference_citation_key: str
         """
-        super(UnlinknoteRollback, self).__init__(user)
+        super(UnlinknoteRollback, self).__init__(connection)
         self.note_citation_key, self.reference_citation_key = note_citation_key, reference_citation_key
 
     def execute(self):
-        refdb.get_connection(self.user).remove_note_links(":NCK:=" + self.note_citation_key,
-                                                          ":CK:=" + self.reference_citation_key)
+        self.connection.remove_note_links(":NCK:=" + self.note_citation_key, ":CK:=" + self.reference_citation_key)

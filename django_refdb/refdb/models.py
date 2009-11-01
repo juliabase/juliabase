@@ -33,12 +33,14 @@ class Reference(models.Model):
     http://sourceforge.net/tracker/?func=detail&aid=2872243&group_id=26091&atid=385994
     is solved, one could probably get rid of the ``citation_key`` field.
     """
-    reference_id = models.CharField(_(u"ID"), primary_key=True, max_length=10)
-    citation_key = models.CharField(_(u"citation key"), unique=True, db_index=True, max_length=255)
+    database = models.CharField(_(u"database"), max_length=255)
+    reference_id = models.CharField(_(u"ID"), max_length=10)
+    citation_key = models.CharField(_(u"citation key"), max_length=255)
     last_modified = models.DateTimeField(_(u"last modified"), auto_now=True)
 
     class Meta:
         get_latest_by = "last_modified"
+        unique_together = (("database", "reference_id"), ("database", "citation_key"))
 
     def mark_modified(self, user=None):
         u"""Marks the reference as modified.  This method must be called after
@@ -103,8 +105,8 @@ class UserModification(models.Model):
 
 
 languages = (
-    ("de", u"Deutsch"),
     ("en", u"English"),
+    ("de", u"Deutsch"),
     )
 u"""Contains all possible choices for `UserDetails.language`.
 """
@@ -117,7 +119,6 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="refdb_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
-    current_list = models.CharField(_(u"current references list"), max_length=255)
     settings_last_modified = models.DateTimeField(_(u"settings last modified"), auto_now=True)
 
     class Meta:
@@ -130,23 +131,25 @@ class UserDetails(models.Model):
 admin.site.register(UserDetails)
 
 
-class Shelf(models.Model):
-    u"""Model for storing a “shelf” which contains an arbitrary numer of
-    references.  It is intended to group references thematically.
-
-    FixMe: Actually, this model is suportfluous.  It made sense when still
-    Django's ``Group`` model was used for this but now, it is redundant since
-    the shelves are stored as extended notes in RefDB.  However, it can stay as
-    long as I don't have create/delete views for shelves, so that they can be
-    at least generated through the admin interface.
+class DatabaseAccount(models.Model):
+    u"""Database model for a RefDB database account of a particular user.  If a
+    user is added to Django, it has no access to any RefDB database at first.
+    However, the administrator can add an instance of ``DatabaseAccount`` so
+    that the user can connect to a particular RefDB database.  Since
+    Django-RefDB supports RefDB installations with multiple databases, the
+    administrator may add multiple ``DatabaseAccount`` instances for each user.
     """
-    name = models.CharField(_(u"name"), max_length=255, unique=True)
+    database = models.CharField(_(u"database"), max_length=255)
+    user = models.ForeignKey(django.contrib.auth.models.User, related_name="database_accounts", verbose_name=_(u"user"))
+    current_list = models.CharField(_(u"current references list"), max_length=255)
+    last_modified = models.DateTimeField(_(u"database settings last modified"), auto_now=True)
 
     class Meta:
-        verbose_name = _(u"shelf")
-        verbose_name_plural = _(u"shelves")
+        verbose_name = _(u"database account")
+        verbose_name_plural = _(u"database accounts")
+        unique_together = ("database", "user")
 
     def __unicode__(self):
-        return ugettext(self.name)
+        return u"%s/%s" % (self.database, self.user)
 
-admin.site.register(Shelf)
+admin.site.register(DatabaseAccount)

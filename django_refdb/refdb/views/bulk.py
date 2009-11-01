@@ -119,10 +119,9 @@ class AddToShelfForm(forms.Form):
     _ = ugettext_lazy
     new_shelf = forms.ChoiceField(label=_("Add to shelf"), required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, connection, *args, **kwargs):
         super(AddToShelfForm, self).__init__(*args, **kwargs)
-        self.fields["new_shelf"].choices = \
-            [("", 9*u"-")] + [(shelf.pk, unicode(shelf)) for shelf in models.Shelf.objects.all()]
+        self.fields["new_shelf"].choices = [("", 9*u"-")] + refdb.get_shelves(connection)
 
 
 class AddToListForm(forms.Form):
@@ -134,16 +133,18 @@ class AddToListForm(forms.Form):
     existing_list = forms.ChoiceField(label=_("List"), required=False)
     new_list = forms.CharField(label=_("New list"), max_length=255, required=False)
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, connection, *args, **kwargs):
         u"""Class constructor.
 
         :Parameters:
           - `user`: current user
+          - `connection`: connection to RefDB
 
         :type user: ``django.contrib.auth.models.User``
+        :type connection: ``pyrefdb.Connection``
         """
         super(AddToListForm, self).__init__(*args, **kwargs)
-        lists = refdb.get_lists(user)[0]
+        lists = refdb.get_lists(user, connection)[0]
         self.short_listnames = set(list_[0] for list_ in lists)
         self.fields["existing_list"].choices = [("", 9*"-")] + lists
         self.optional = True
@@ -168,14 +169,16 @@ class AddToListForm(forms.Form):
 
 
 @login_required
-def search(request):
+def search(request, database):
     u"""Searchs for references and presents the search results.  It is a
     GET-only view.
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -188,11 +191,11 @@ def search(request):
     # must see the errors after all.  Note that this technique doesn't work
     # anymore as soon as `SearchForm` contains required fields.
     search_form = SearchForm(request.GET)
-    return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form},
+    return render_to_response("refdb/search.html", {"title": _(u"Search"), "search": search_form, "database": database},
                               context_instance=RequestContext(request))
 
 
-def add_references_to_list(ids, add_to_list_form, user):
+def add_references_to_list(ids, add_to_list_form, user, connection):
     u"""Add references to a references list.
 
     :Parameters:
@@ -200,10 +203,12 @@ def add_references_to_list(ids, add_to_list_form, user):
       - `add_to_list_form`: bound and valid form containing the list to be
         added to
       - `user`: current user
+      - `connection`: connection to RefDB
 
     :type ids: list of str
     :type add_to_list_form: ``django.forms.Form``
     :type user: ``django.contrib.auth.models.User``
+    :type connection: ``pyrefdb.Connection``
     """
     # add_to_list_form must be bound and valid
     if add_to_list_form.cleaned_data["existing_list"]:
@@ -211,7 +216,6 @@ def add_references_to_list(ids, add_to_list_form, user):
     else:
         verbose_name = add_to_list_form.cleaned_data["new_list"]
         listname = defaultfilters.slugify(verbose_name)
-    connection = refdb.get_connection(user)
     connection.pick_references(ids, listname)
     if add_to_list_form.cleaned_data["new_list"]:
         extended_note = connection.get_extended_notes(":NCK:=%s-%s" % (refdb.get_username(user.id), listname))[0]
@@ -320,7 +324,7 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     return referentially_valid, action
 
 
-def embed_common_data(request):
+def embed_common_data(request, database):
     u"""Add a ``common_data`` attribute to request, containing various data
     used across the view.  See ``utils.CommonBulkViewData`` for further
     information.  If the GET parameters of the view are invalid, a
@@ -329,12 +333,15 @@ def embed_common_data(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the RefDB database name
 
     :type request: ``HttpRequest``
+    :type database: unicode
     """
     search_form = SearchForm(request.GET)
     if not search_form.is_valid():
-        raise utils.RedirectException(django.core.urlresolvers.reverse(search) + "?" + request.META.get("QUERY_STRING"))
+        raise utils.RedirectException(django.core.urlresolvers.reverse(search, database=database) + "?" +
+                                      request.META.get("QUERY_STRING"))
     query_string = search_form.get_query_string()
     offset = request.GET.get("offset")
     limit = request.GET.get("limit")
@@ -346,7 +353,7 @@ def embed_common_data(request):
         limit = int(limit)
     except (TypeError, ValueError):
         limit = 10
-    refdb_connection = refdb.get_connection(request.user)
+    refdb_connection = refdb.get_connection(request.user, database)
     ids = refdb_connection.get_references(query_string, output_format="ids", offset=offset, limit=limit)
     request.common_data = utils.CommonBulkViewData(
         refdb_connection, ids, query_string=query_string, offset=offset, limit=limit)
@@ -402,7 +409,7 @@ def build_page_links(request):
     return prev_link, next_link, pages
     
 
-def get_last_modification_date(request):
+def get_last_modification_date(request, database):
     u"""Returns the last modification of the references found for the bulk
     view.  Note that this only includes the actually *displayed* references on
     the current page, not all references from all pages.  Additionally, the
@@ -413,8 +420,10 @@ def get_last_modification_date(request):
 
     :Parameters:
       - `request`: current HTTP request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Return:
       timestamp of last modification of the displayed references
@@ -422,8 +431,8 @@ def get_last_modification_date(request):
     :rtype: ``datetime.datetime``
     """
     if request.method == "GET":
-        embed_common_data(request)
-        last_modified = utils.last_modified(request.user, request.common_data.ids)
+        embed_common_data(request, database)
+        last_modified = utils.last_modified(request.user, request.common_data.refdb_connection, request.common_data.ids)
     else:
         last_modified = None
     if last_modified:
@@ -433,7 +442,7 @@ def get_last_modification_date(request):
 
 @login_required
 @last_modified(get_last_modification_date)
-def bulk(request):
+def bulk(request, database):
     u"""The bulk view for references.  It gets the search parameters in the
     GET, and displays all references which matches the search parameters.  If
     they are too many, the list is split up into pages where you can navigate
@@ -447,8 +456,10 @@ def bulk(request):
 
     :Parameters:
       - `request`: the current HTTP Request object
+      - `database`: the name of the RefDB database
 
     :type request: ``HttpRequest``
+    :type database: unicode
 
     :Returns:
       the HTTP response object
@@ -459,9 +470,10 @@ def bulk(request):
     if references_list:
         verbose_listname = refdb.get_verbose_listname(references_list, request.user)
     if request.method == "POST":
+        connection = refdb.get_connection(request.user, database)
         export_form = ExportForm(request.POST)
-        add_to_shelf_form = AddToShelfForm(request.POST)
-        add_to_list_form = AddToListForm(request.user, request.POST)
+        add_to_shelf_form = AddToShelfForm(request.POST, connection)
+        add_to_list_form = AddToListForm(request.user, connection, request.POST)
         remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove") \
             if references_list else None
         global_dummy_form = forms.Form(request.POST)
@@ -483,41 +495,39 @@ def bulk(request):
                 query_dict.update((id_ + "-selected", "on") for id_ in ids)
                 query_string = urlencode(query_dict)
                 return utils.HttpResponseSeeOther(
-                    django.core.urlresolvers.reverse("refdb.views.export.export") + "?" + query_string)
+                    django.core.urlresolvers.reverse("refdb.views.export.export", database=database) + "?" + query_string)
             elif action == "shelf":
                 # FixMe: This must be changed from using citation keys to using
                 # IDs.  However, first
                 # https://sourceforge.net/tracker/?func=detail&aid=2857792&group_id=26091&atid=385991
                 # needs to be fixed.
-                citation_keys = [reference.citation_key for reference in refdb.get_connection(request.user).
+                citation_keys = [reference.citation_key for reference in connection.
                                  get_references(" OR ".join(":ID:=" + id_ for id_ in ids))]
-                refdb.get_connection(request.user).add_note_links(
-                    ":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
-                    u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
+                connection.add_note_links(":NCK:=django-refdb-shelf-" + add_to_shelf_form.cleaned_data["new_shelf"],
+                                          u" ".join(":CK:=" + citation_key for citation_key in citation_keys))
             elif action == "list":
-                add_references_to_list(ids, add_to_list_form, request.user)
+                add_references_to_list(ids, add_to_list_form, request.user, connection)
             elif action == "remove":
-                refdb.get_connection(request.user).dump_references(ids, references_list)
+                connection.dump_references(ids, references_list)
         # Since the POST request is processed now, we create *now* the list
         # itself.  The reason for this is that the references data has changed
         # by processing the request, so we get a fresh list here.  This delayed
         # list generation is the reason for `embed_common_data` and
         # `utils.CommonBulkViewData` in the first place.
-        embed_common_data(request)
+        embed_common_data(request, database)
         if not valid_post_data:
-            references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids,
-                                                request.user.id)
+            references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user)
             prev_link, next_link, pages = build_page_links(request)
             for reference in references:
                 reference.selection_box = SelectionBoxForm(request.POST, prefix=reference.id)
     if request.method == "GET" or valid_post_data:
-        references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user.id)
+        references = utils.fetch_references(request.common_data.refdb_connection, request.common_data.ids, request.user)
         prev_link, next_link, pages = build_page_links(request)
         for reference in references:
             reference.selection_box = SelectionBoxForm(prefix=reference.id)
         export_form = ExportForm()
-        add_to_shelf_form = AddToShelfForm()
-        add_to_list_form = AddToListForm(request.user)
+        add_to_shelf_form = AddToShelfForm(request.common_data.refdb_connection)
+        add_to_list_form = AddToListForm(request.user, request.common_data.refdb_connection)
         global_dummy_form = forms.Form()
         if references_list:
             remove_from_list_form = RemoveFromListForm(
@@ -530,5 +540,6 @@ def bulk(request):
                                                   "add_to_shelf": add_to_shelf_form, "export": export_form,
                                                   "add_to_list": add_to_list_form,
                                                   "remove_from_list": remove_from_list_form,
-                                                  "global_dummy": global_dummy_form},
+                                                  "global_dummy": global_dummy_form,
+                                                  "database": database},
                               context_instance=RequestContext(request))
