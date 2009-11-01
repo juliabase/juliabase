@@ -684,7 +684,7 @@ def ids_to_citation_keys(connection, ids):
 
 def fetch_references(refdb_connection, ids, user_id):
     u"""Fetches all references needed for the references list in the view
-    (bulk/main menue) from the RefDB database.  If possible, it takes the
+    (bulk/main menu) from the RefDB database.  If possible, it takes the
     references from the cache.  The references contain also some extended
     attributes, see `fetch`.
 
