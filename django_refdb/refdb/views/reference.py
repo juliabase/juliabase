@@ -499,7 +499,7 @@ class ReferenceForm(forms.Form):
             destination.close()
             utils.spawn_daemon("/usr/bin/python", settings.REFDB_PATH_TO_INDEXER,
                                "/var/lib/django_refdb_pdfs", self.connection.database,
-                               new_reference.citation_key, utils.get_user_hash(self.user.id) if private else None)
+                               new_reference.citation_key, str(self.user.id) if private else None)
         utils.freeze(new_reference)
         self.connection.update_note_links(new_reference)
         self._update_last_modification(new_reference)
