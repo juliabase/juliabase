@@ -27,15 +27,14 @@ from .rollbacks import *
 
 def pdf_filepath(database, reference, user_id=None):
     u"""Calculates the absolute filepath of the uploaded PDF in the local
-    filesystem.  If a user ID is provided, the private PDF is returned if
-    existing, and the public otheriwse.  If no user ID is provided, the public
-    PDF path is returned always.
+    filesystem.  If a user ID is provided, the path to the private PDF is
+    returned.  If no user ID is provided, the public PDF path is returned.
+    Note that this function doesn't care whether the PDF exists or not.
 
     :Parameters:
       - `database`: the name of the RefDB database
       - `reference`: the reference whose PDF file path should be calculated
-      - `user_id`: the ID of the user who tries to retrieve the file; this is
-        important because it is possible to upload *private* PDFs.
+      - `user_id`: the ID of the user who tries to retrieve their private file
 
     :type database: unicode
     :type reference: ``pyrefdb.Reference``, with the ``extended_data``
@@ -49,9 +48,9 @@ def pdf_filepath(database, reference, user_id=None):
     :rtype: unicode
     """
     citation_key = reference.citation_key
-    private = reference.pdf_is_private[user_id] if user_id else False
-    if private:
-        os.path.join("/var/lib/django_refdb_pdfs", database, citation_key, "private", str(user_id), citation_key + ".pdf")
+    if user_id is not None:
+        return os.path.join(
+            "/var/lib/django_refdb_pdfs", database, citation_key, "private", str(user_id), citation_key + ".pdf")
     else:
         return os.path.join("/var/lib/django_refdb_pdfs", database, citation_key, "public", citation_key + ".pdf")
 
@@ -490,7 +489,7 @@ class ReferenceForm(forms.Form):
             else:
                 new_reference.pdf_is_private[self.user.id] = False
                 new_reference.global_pdf_available = True
-            filepath = pdf_filepath(self.connection.database, new_reference, self.user.id)
+            filepath = pdf_filepath(self.connection.database, new_reference, self.user.id if private else None)
             directory = os.path.dirname(filepath)
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -620,22 +619,23 @@ def pdf(request, database, citation_key, username):
     """
     # FixMe: Eventually, this function should use something like
     # <http://code.djangoproject.com/ticket/2131>.
-    if username:
-        if username != request.user.username:
-            raise PermissionDenied()
-        user_id = request.user.id
-    else:
-        user_id = None
     connection = refdb.get_connection(request.user, database)
     try:
         reference = connection.get_references(":CK:=" + citation_key)[0]
     except IndexError:
         raise Http404("Citation key \"%s\" not found." % citation_key)
     utils.fetch(reference, ["global_pdf_available", "pdf_is_private"], connection, request.user.id)
-    if not reference.global_pdf_available:
-        raise Http404("No PDF available for this reference.")
+    if username:
+        user_id = request.user.id
+        if username != request.user.username:
+            raise PermissionDenied()
+        if not reference.pdf_is_private[user_id]:
+            raise Http404("You have no private PDF for this reference.")
+    else:
+        user_id = None
+        if not reference.global_pdf_available:
+            raise Http404("No public PDF available for this reference.")
     filename = pdf_filepath(database, reference, user_id)
-    print filename
     wrapper = FileWrapper(open(filename, "rb"))
     response = HttpResponse(wrapper, content_type="application/pdf")
     response["Content-Length"] = os.path.getsize(filename)
