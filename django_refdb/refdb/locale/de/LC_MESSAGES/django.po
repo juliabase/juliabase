@@ -1,16 +1,18 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# German translations of Django-RefDB
+#
+# Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+#
+# This file is part of Django-RefDB.  Django-RefDB is published under the MIT
+# license.  A copy of this licence is shipped with Django-RefDB in the file
+# LICENSE.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Django-RefDB\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-13 09:12-0500\n"
 "PO-Revision-Date: 2009-10-13 16:20+0200\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"

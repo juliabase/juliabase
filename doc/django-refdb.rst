@@ -1,6 +1,9 @@
-.. Django-RefDB documentation master file, created by sphinx-quickstart on Mon Jan 12 16:20:00 2009.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+
+   This file is part of Django-RefDB.  Django-RefDB is published under the MIT
+   license.  A copy of this licence is shipped with Django-RefDB in the file
+   LICENSE.
+
 
 .. highlight:: python
    :linenothreshold: 10

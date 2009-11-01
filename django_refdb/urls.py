@@ -1,3 +1,10 @@
+# Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+#
+# This file is part of Django-RefDB.  Django-RefDB is published under the MIT
+# license.  A copy of this licence is shipped with Django-RefDB in the file
+# LICENSE.
+
+
 import os.path
 from django.conf.urls.defaults import *
 from django.conf import settings
