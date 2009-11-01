@@ -39,6 +39,34 @@ def add_extended_note_if_nonexistent(citation_key, database):
         connection.add_extended_notes(SharedXNote(citation_key))
 
 
+def ask_user(question, interactive):
+    u"""Asks the user a question and returns whether the user has replied with
+    “yes” to it.  If ``manage.py`` is not in interactive mode, this function
+    always returns ``False``.
+
+    :Parameters:
+      - `question`: the question to be asked; it should end in a question mark
+      - `interactive`: whether the user has requestion interactive mode; it is
+        the same parameter as the `sync_extended_notes` parameter of the same
+        name
+
+    :type question: str
+    :type interactive: bool
+
+    :Return:
+      whether the user has replied with “yes” to the question
+
+    :rtype: bool
+    """
+    if interactive:
+        confirm = raw_input("\n" + question + " (yes/no): ")
+        while confirm not in ["yes", "no"]:
+            confirm = raw_input('Please enter either "yes" or "no": ')
+        return confirm == "yes"
+    else:
+        return False
+    
+
 def sync_extended_notes(sender, created_models, interactive, **kwargs):
     u"""Sychronises the RefDB database with the Django database.  See the
     description of this module for further information.
@@ -56,13 +84,11 @@ def sync_extended_notes(sender, created_models, interactive, **kwargs):
     :type interactive: bool
     """
     databases = refdb.get_connection("root", None).list_databases()
-    if interactive:
-        confirm = raw_input("\nDo you want to reset user-specific extended notes "
-                            "of a previous Django-RefDB in all available RefDB databases? (yes/no): ")
-        while confirm not in ["yes", "no"]:
-            confirm = raw_input('Please enter either "yes" or "no": ')
-        if confirm:
-            for database in databases:
+    if ask_user("Do you want to reset user-specific extended notes "
+                "of a previous Django-RefDB in some or all RefDB databases?", interactive):
+        for database in databases:
+            if ask_user("Do you want to reset user-specific extended notes "
+                        "of the RefDB database \"%s\"?" % database, interactive):
                 connection = refdb.get_connection("root", database)
                 ids = [note.id for note in connection.get_extended_notes(
                         ":NCK:~^django-refdb-users-with-offprint OR :NCK:~^django-refdb-personal-pdfs OR "
