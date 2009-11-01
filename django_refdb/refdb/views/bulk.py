@@ -18,6 +18,7 @@ don't need rollback actions.
 
 from __future__ import absolute_import
 
+import os.path
 import xapian
 from . import form_utils
 from django.template import RequestContext, defaultfilters
@@ -400,10 +401,11 @@ class MatchDecider(xapian.MatchDecider):
         return include
 
 
-def get_full_text_matches(full_text_query, offset, limit, match_decider):
+def get_full_text_matches(database, full_text_query, offset, limit, match_decider):
     u"""Does the actual full-text search with Xapian.
 
     :Parameters:
+      - `database`: the name of the RefDB database
       - `full_text_query`: the raw query string for the full text search; must
         not be empty
       - `offset`: offset of the returned hits within the complete hits list
@@ -411,6 +413,7 @@ def get_full_text_matches(full_text_query, offset, limit, match_decider):
       - `match_decider`: Xapian match decider object, e.g. for taking the other
         search parameters into account
 
+    :type database: unicode
     :type full_text_query: unicode
     :type offset: int
     :type limit: int
@@ -421,7 +424,7 @@ def get_full_text_matches(full_text_query, offset, limit, match_decider):
 
     :rtype: ``Xapian.MSet``
     """
-    database = xapian.Database("/var/lib/django_refdb_indices/references")
+    database = xapian.Database(os.path.join("/var/lib/django_refdb_indices", database))
     enquire = xapian.Enquire(database)
 #    enquire.set_collapse_key(0)
     query_parser = xapian.QueryParser()
@@ -469,7 +472,7 @@ def embed_common_data(request, database):
         ids = refdb_connection.get_references(query_string, output_format="ids")
         citation_keys = set(utils.ids_to_citation_keys(refdb_connection, ids).values())
         match_decider = MatchDecider(citation_keys, utils.get_user_hash(request.user.id))
-        matches = get_full_text_matches(full_text_query, offset, limit, match_decider)
+        matches = get_full_text_matches(database, full_text_query, offset, limit, match_decider)
         full_text_matches = dict((match.document.get_value(0), match) for match in matches)
         ids = utils.citation_keys_to_ids(refdb_connection, full_text_matches).values()
         number_of_references = matches.get_matches_lower_bound()

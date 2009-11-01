@@ -223,7 +223,8 @@ logger.info("Start with parameters: " + " ".join(sys.argv[1:]))
 if citation_key == "-":
     for path in glob(os.path.join(rootdir, "*")):
         if os.path.isdir(path):
-            if os.path.isdir(os.path.join(path, "public")):
+            public_dir = os.path.join(path, "public")
+            if os.path.isdir(public_dir):
                 os.chdir(public_dir)
                 clean_directory()
             for user_path in glob(os.path.join(path, "private", "*")):
