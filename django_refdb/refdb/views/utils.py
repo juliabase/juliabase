@@ -694,7 +694,7 @@ def fetch_references(refdb_connection, ids, user_id):
     :Parameters:
       - `refdb_connection`: connection object to the RefDB server
       - `ids`: IDs of the references
-      - `user_id`: the ID of the current suer
+      - `user_id`: the ID of the current user
 
     :type refdb_connection: ``pyrefdb.Connection``
     :type ids: list of str
