@@ -4,6 +4,7 @@
       <table width="100%" cellspacing="0" cellpadding="0">
     {% endifequal %}
     <tr>
+      {# FixMe: Why doesn't it say colspan="0" here? #}
       <td class="error-messages">
 	{% for field in form %}
 	  {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}

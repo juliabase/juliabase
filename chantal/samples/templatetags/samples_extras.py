@@ -387,7 +387,7 @@ class ValueFieldNode(template.Node):
 def value_field(parser, token):
     u"""Tag for inserting a field value into an HTML table.  It consists of two
     ``<td>`` elements, one for the label and one for the value, so it spans two
-    columns.  This tag is primarily used in tamplates of show views, especially
+    columns.  This tag is primarily used in templates of show views, especially
     those used to compile the sample history.  Example::
 
         {% value_field layer.base_pressure "W" %}
