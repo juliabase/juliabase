@@ -119,7 +119,7 @@ def clean_directory():
     """
     # FixMe: Actually, this routine doesn't remove all files created by this
     # program but rather removed all file with certain file extensions.  This
-    # routine should be replaces with more fine-grained file deletion in
+    # routine should be replaced with more fine-grained file deletion in
     # `index_pdf`.
     for filename in glob("*.txt") + glob("*.p?m") + glob("*.tif") + glob("*.pickle"):
         os.remove(filename)
