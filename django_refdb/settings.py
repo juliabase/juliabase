@@ -91,7 +91,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.transaction.TransactionMiddleware',
     'refdb.middleware.TransactionMiddleware',
     'refdb.middleware.ConditionalViewMiddleware',
-    'refdb.middleware.chantal.ExceptionsMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -110,6 +109,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.markup',
     'refdb',
+    'chantal_common',
     'staticfiles'
 )
 
