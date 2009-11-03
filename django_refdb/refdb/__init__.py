@@ -57,27 +57,6 @@ def add_refdb_user(sender, instance, created=True, **kwargs):
 signals.post_save.connect(add_refdb_user, sender=refdb_app.DatabaseAccount)
 
 
-def add_user_details(sender, instance, created=True, **kwargs):
-    u"""Adds a `models.UserDetails` instance for every newly-created Django
-    user.  However, you can also call it for existing users (``management.py``
-    does it) because this function is idempotent.
-
-    :Parameters:
-      - `sender`: the sender of the signal; will always be the ``User`` model
-      - `instance`: the newly-added user
-      - `created`: whether the user was newly created.
-
-    :type sender: model class
-    :type instance: ``django.contrib.auth.models.User``
-    :type created: bool
-    """
-    if created:
-        refdb_app.UserDetails.objects.get_or_create(user=instance)
-
-# It must be "post_save", otherwise, the ID may be ``None``.
-signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
-
-
 def delete_extended_note(citation_key, database):
     u"""Deletes an extended note from the RefDB database.  The note *must*
     exist.
