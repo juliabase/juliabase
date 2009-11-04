@@ -563,7 +563,7 @@ def get_last_modification_date(request, database):
     else:
         last_modified = None
     if last_modified:
-        last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
+        last_modified = max(last_modified, request.user.chantal_user_details.settings_last_modified)
     return last_modified
 
 
