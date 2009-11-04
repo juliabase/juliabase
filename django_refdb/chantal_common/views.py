@@ -13,7 +13,8 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from . import utils
+from django.contrib.auth.decorators import login_required
+from . import utils, models
 from .utils import help_link
 
 
@@ -57,3 +58,28 @@ def sandbox(request):
     return render_to_response("markdown_sandbox.html", {"title": _(u"Markdown sandbox"), "sandbox": sandbox_form,
                                                         "extracted_content": extracted_content},
                               context_instance=RequestContext(request))
+
+
+@login_required
+def switch_language(request):
+    u"""This view parses the query string and extracts a language code from it,
+    then switches the current user's prefered language to that language, and
+    then goes back to the last URL.  This is used for realising the language
+    switching by the flags on the top left.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    language = request.GET.get("lang")
+    if language in dict(models.languages):
+        user_details = request.user.chantal_user_details
+        user_details.language = language
+        user_details.save()
+    return utils.successful_response(request)

@@ -23,26 +23,7 @@ import django.core.urlresolvers
 from django.core.cache import cache
 from django.conf import settings
 from .. import models, refdb
-
-
-# FixMe: This class is code duplication to Chantal
-
-class HttpResponseSeeOther(HttpResponse):
-    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
-    same wrong thing as most other web frameworks: it knows only one type of
-    redirect, with the HTTP status code 302.  However, this is very often not
-    desirable.  In Django-RefDB, we've frequently the use case where an HTTP
-    POST request was successful, and we want to redirect the user back to the
-    main page, for example.
-
-    This must be done with status code 303, and therefore, this class exists.
-    It can simply be used as a drop-in replacement of HttpResponseRedirect.
-    """
-    status_code = 303
-
-    def __init__(self, redirect_to):
-        super(HttpResponseSeeOther, self).__init__()
-        self["Location"] = iri_to_uri(redirect_to)
+import chantal_common
 
 
 class RedirectException(Exception):
@@ -502,10 +483,6 @@ def pdf_file_url(reference, user, database):
     return global_url, private_url
 
 
-# FixMe: This is a duplicate from Chantal, slightly modified (remote client
-# support removed).  However, the original version could also be used in
-# Django-RefDB.
-
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False):
     u"""After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
@@ -518,9 +495,6 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     This routine generated the proper ``HttpResponse`` object that contains the
     redirection.  It always has HTTP status code 303 (“see other”).
-
-    If the request came from the Chantal Remote Client, the response is a
-    pickled ``remote_client_response``.  (Normally, a simple ``True``.)
 
     :Parameters:
       - `request`: the current HTTP request
@@ -547,26 +521,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :rtype: ``HttpResponse``
     """
-    if success_report:
-        request.session["success_report"] = success_report
-    next_url = request.GET.get("next")
-    if next_url is not None:
-        if forced:
-            # FixMe: Pass "next" to the next URL somehow in order to allow for
-            # really nested forwarding.  So far, the “deeper” views must know
-            # by themselves how to get back to the first one (which is the case
-            # for all current Chantal views).
-            pass
-        else:
-            # FixMe: So far, the outmost next-URL is used for the See-Other.
-            # However, this is wrong behaviour.  Instead, the
-            # most-deeply-nested next-URL must be used.  This could be achieved
-            # by iterated unpacking.
-            return HttpResponseSeeOther(next_url)
-    if query_string:
-        query_string = "?" + query_string
-    return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "refdb.views.main.main_menu", kwargs=kwargs)
-                                + query_string)
+    return chantal_common.utils.successful_response(
+        request, success_report, view or "refdb.views.main.main_menu", kwargs, query_string, forced)
 
 
 class CommonBulkViewData(object):

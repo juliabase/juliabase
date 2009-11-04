@@ -118,6 +118,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
                                "refdb.context_processors.default",
+                               "chantal_common.context_processors.default",
                                )
 
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"

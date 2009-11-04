@@ -12,6 +12,7 @@ from __future__ import absolute_import
 import codecs, re, os.path
 from functools import update_wrapper
 import django.http
+from django.utils.encoding import iri_to_uri
 from django.forms.util import ErrorList, ValidationError
 
 
@@ -21,6 +22,24 @@ class HttpResponseUnauthorized(django.http.HttpResponse):
     trivial code.
     """
     status_code = 401
+
+
+class HttpResponseSeeOther(django.http.HttpResponse):
+    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
+    same wrong thing as most other web frameworks: it knows only one type of
+    redirect, with the HTTP status code 302.  However, this is very often not
+    desirable.  In Django-RefDB, we've frequently the use case where an HTTP
+    POST request was successful, and we want to redirect the user back to the
+    main page, for example.
+
+    This must be done with status code 303, and therefore, this class exists.
+    It can simply be used as a drop-in replacement of HttpResponseRedirect.
+    """
+    status_code = 303
+
+    def __init__(self, redirect_to):
+        super(HttpResponseSeeOther, self).__init__()
+        self["Location"] = iri_to_uri(redirect_to)
 
 
 entities = {}
@@ -150,3 +169,62 @@ def help_link(link):
     return decorate
 
 
+def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False):
+    u"""After a POST request was successfully processed, there is typically a
+    redirect to another page – maybe the main menu, or the page from where the
+    add/edit request was started.
+
+    The latter is appended to the URL as a query string with the ``next`` key,
+    e.g.::
+
+        /chantal/6-chamber_deposition/08B410/edit/?next=/chantal/samples/08B410a
+
+    This routine generated the proper ``HttpResponse`` object that contains the
+    redirection.  It always has HTTP status code 303 (“see other”).
+
+    :Parameters:
+      - `request`: the current HTTP request
+      - `success_report`: an optional short success message reported to the
+        user on the next view
+      - `view`: the view name/function to redirect to; defaults to the main
+        menu page (same when ``None`` is given)
+      - `kwargs`: group parameters in the URL pattern that have to be filled
+      - `query_string`: the *quoted* query string to be appended, without the
+        leading ``"?"``
+      - `forced`: If ``True``, go to ``view`` even if a “next” URL is
+        available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
+        using this option to generate some sort of nested forwarding.
+
+    :type request: ``HttpRequest``
+    :type success_report: unicode
+    :type view: str or function
+    :type kwargs: dict
+    :type query_string: unicode
+    :type forced: bool
+
+    :Return:
+      the HTTP response object to be returned to the view's caller
+
+    :rtype: ``HttpResponse``
+    """
+    if success_report:
+        request.session["success_report"] = success_report
+    next_url = request.GET.get("next")
+    if next_url is not None:
+        if forced:
+            # FixMe: Pass "next" to the next URL somehow in order to allow for
+            # really nested forwarding.  So far, the “deeper” views must know
+            # by themselves how to get back to the first one (which is the case
+            # for all current Chantal views).
+            pass
+        else:
+            # FixMe: So far, the outmost next-URL is used for the See-Other.
+            # However, this is wrong behaviour.  Instead, the
+            # most-deeply-nested next-URL must be used.  This could be achieved
+            # by iterated unpacking.
+            return HttpResponseSeeOther(next_url)
+    if query_string:
+        query_string = "?" + query_string
+    # FixMe: Once chantal_common has gotten its main menu view, this must be
+    # used here as default vor ``view`` instead of the bogus ``None``.
+    return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or None, kwargs=kwargs) + query_string)
