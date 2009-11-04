@@ -58,7 +58,7 @@ def default(request):
         old_query_string = request.META["QUERY_STRING"] or u""
         if old_query_string:
             old_query_string = "?" + old_query_string
-        switch_language_url = django.core.urlresolvers.reverse("samples.views.main.switch_language").replace("%", "%%") + \
+        switch_language_url = django.core.urlresolvers.reverse("chantal_common.views.switch_language").replace("%", "%%") + \
             "?lang=%s&next=" + urlquote_plus(request.path+old_query_string).replace("%", "%%")
         pootle_string = "/trac/chantal/wiki/HumanLanguages"
         result["translation_flags"] = (("de", _(u"German"), switch_language_url % "de"),

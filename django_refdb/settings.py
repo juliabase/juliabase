@@ -89,6 +89,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
+    'chantal_common.middleware.LocaleMiddleware',
     'refdb.middleware.TransactionMiddleware',
     'refdb.middleware.ConditionalViewMiddleware',
 )
@@ -122,9 +123,10 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                )
 
 URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
-
 LOGIN_URL = URL_PREFIX + "login"
 LOGIN_REDIRECT_URL = URL_PREFIX
+
+LOCALES_DICT = {"en": "en_US.utf8", "de": "de_DE.utf8"}
 
 CACHE_BACKEND = 'dummy:///'
 CACHE_BACKEND = 'locmem:///'

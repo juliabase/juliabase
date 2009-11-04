@@ -15,7 +15,7 @@ from django.utils.cache import patch_vary_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
-from refdb.models import UserDetails
+from chantal_common.models import UserDetails
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -28,11 +28,13 @@ u"""Middleware for setting the current language to what can be found in
 
 
 class LocaleMiddleware(object):
-    u"""This is a very simple middleware that parses a request and decides what
+    u"""This is a simple middleware that parses a request and decides what
     translation object to install in the current thread context depending on
     what's found in `models.UserDetails`. This allows pages to be dynamically
     translated to the language the user desires (if the language is available,
     of course).
+
+    It must be after ``AuthenticationMiddleware`` in the list.
     """
     language_pattern = re.compile("[a-zA-Z0-9]+")
 
@@ -40,7 +42,7 @@ class LocaleMiddleware(object):
     def get_language_for_user(request):
         if request.user.is_authenticated():
             try:
-                language = request.user.get_profile().language
+                language = request.user.chantal_user_details.language
                 return language
             except (SiteProfileNotAvailable, UserDetails.DoesNotExist):
                 pass

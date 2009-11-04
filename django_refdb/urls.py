@@ -21,6 +21,7 @@ urlpatterns = patterns("django.contrib.auth.views",
                        )
 urlpatterns += patterns('',
                         (r'^admin/', include(admin.site.urls)),
+                        (r"", include("chantal_common.urls")),
                         (r"", include("refdb.urls")),
                         )
 
