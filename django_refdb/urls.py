@@ -12,12 +12,17 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
-                       (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-                       (r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
-                       (r'^admin/', include(admin.site.urls)),
-                       (r"", include("refdb.urls")),
+urlpatterns = patterns("django.contrib.auth.views",
+                       (r"^change_password$", "password_change", {"template_name": "chantal_common/change_password.html"}),
+                       (r"^change_password/done/$", "password_change_done",
+                        {"template_name": "chantal_common/password_changed.html"}),
+                       (r"^login$", "login", {"template_name": "chantal_common/login.html"}),
+                       (r"^logout$", "logout", {"template_name": "chantal_common/logout.html"}),
                        )
+urlpatterns += patterns('',
+                        (r'^admin/', include(admin.site.urls)),
+                        (r"", include("refdb.urls")),
+                        )
 
 if settings.IS_TESTSERVER:
     urlpatterns = patterns("",

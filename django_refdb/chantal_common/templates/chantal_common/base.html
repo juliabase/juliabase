@@ -1,0 +1,22 @@
+{# -*- indent-tabs-mode: nil -*- #}
+
+{#  Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>           #}
+{#                                                                               #}
+{#  This file is part of Chantal.  Chantal is published under the MIT license.   #}
+{#  A copy of this licence is shipped with Chantal in the file LICENSE.          #}
+
+
+{% extends "base_chantal.html" %}
+
+{% load i18n %}
+
+{% block extrahead %}
+  <link rel="shortcut icon" href="{{ MEDIA_URL }}chantal/favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}chantal/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}chantal/css/print.css"/>
+{% endblock %}
+
+{% block app_title %}Chantal<img class="logo-ief-5" src="{{ MEDIA_URL }}chantal/sonne.png"
+                                 alt="{% trans 'IEF-5 logo' %}"
+                                 /><sup style="color: #ffcccc; font-style: italic">alpha</sup>{% endblock %}
+{% block app_subtitle %}{% trans "The database server" %}{% endblock %}

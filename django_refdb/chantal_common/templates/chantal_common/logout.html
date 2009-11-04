@@ -1,0 +1,18 @@
+{# -*- indent-tabs-mode: nil -*- #}
+
+{#  Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>           #}
+{#                                                                               #}
+{#  This file is part of Chantal.  Chantal is published under the MIT license.   #}
+{#  A copy of this licence is shipped with Chantal in the file LICENSE.          #}
+
+
+{% extends "chantal_common/base.html" %}
+{% load i18n %}
+
+{% block frame_content %}
+
+<p>{% trans "Thanks for spending some quality time with the Web site today." %}</p>
+
+<p><a href="{% url django.contrib.auth.views.login %}">{% trans 'Log in again' %}</a></p>
+
+{% endblock %}
