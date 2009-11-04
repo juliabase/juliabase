@@ -10,7 +10,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from samples.views import utils, form_utils
+from samples.views import form_utils
 from samples.views.utils import help_link
 
 
@@ -19,6 +19,7 @@ class SandboxForm(forms.Form):
     """
     _ = ugettext_lazy
     sandbox = forms.CharField(label=_(u"Sandbox"), widget=forms.Textarea, required=False)
+
     def clean_sandbox(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
