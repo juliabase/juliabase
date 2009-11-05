@@ -131,7 +131,7 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 
 REFDB_USERNAME_PREFIX = "drefdbuser"
-REFDB_USER = CREDENTIALS["refdb_user"]
-REFDB_PASSWORD = CREDENTIALS["refdb_password"]
+REFDB_ROOT_USERNAME = CREDENTIALS["refdb_user"]
+REFDB_ROOT_PASSWORD = CREDENTIALS["refdb_password"]
 REFDB_CACHE_PREFIX = "refdb-reference-"
 REFDB_PATH_TO_INDEXER = "/home/bronger/src/django-refdb/current/index_pdfs.py"
