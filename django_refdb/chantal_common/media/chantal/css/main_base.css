@@ -10,9 +10,6 @@ p.logo-text {
     font-weight: bold;
 }
 
-p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; font-weight: normal }
-img.logo-fz { float: right; margin-right: 0.1em }
-
 div.main {
     margin: 20px 25px 20px;
 }

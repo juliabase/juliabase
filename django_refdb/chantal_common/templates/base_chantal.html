@@ -8,8 +8,6 @@
 
 {% extends "site_base.html" %}
 
-{# FixMe: This template is a duplicate from Chantal #}
-
 {% load i18n %}
 {% load chantal %}
 
@@ -59,10 +57,7 @@
 
   <div class="main">
     <div class="screen-only">
-      <p style="margin:0pt"><img class="logo-fz" src="{{ MEDIA_URL }}chantal/juelich.png"
-                                 alt="{% trans 'Jülich Forschungszentrum logo' %}"/></p>
       <p class="logo-text">{% block app_title %}{% endblock %}</p>
-      <p class="logo-subtext">{% block app_subtitle %}{% endblock %}</p>
     </div>
 
     <div class="outer-frame">
