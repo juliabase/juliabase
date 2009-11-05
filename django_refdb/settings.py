@@ -16,6 +16,7 @@ TEMPLATE_DEBUG = DEBUG
 import sys
 if "/home/bronger/src/pyrefdb/main/" not in sys.path:
     sys.path.append("/home/bronger/src/pyrefdb/main/")
+sys.path.append("/home/bronger/src/chantal_ipv/current/")
 
 IS_TESTSERVER = len(sys.argv) >= 2
 WITH_EPYDOC = 'epydoc' in sys.modules
@@ -78,9 +79,7 @@ SECRET_KEY = CREDENTIALS["salt"]
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -96,21 +95,15 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(ROOTDIR, "templates")
-)
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.markup',
-    'refdb',
+    'chantal_ipv',
     'chantal_common',
+    'refdb',
     'staticfiles'
 )
 
