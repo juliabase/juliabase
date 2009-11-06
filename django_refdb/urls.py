@@ -28,5 +28,5 @@ urlpatterns += patterns('',
 if settings.IS_TESTSERVER:
     urlpatterns = patterns("",
                            (r"^media/(?P<path>.*)$", "django.views.static.serve",
-                            {"document_root": os.path.join(settings.ROOTDIR, "media/")}),
+                            {"document_root": settings.MEDIA_ROOT}),
                            ) + urlpatterns
