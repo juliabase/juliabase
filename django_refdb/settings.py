@@ -13,32 +13,10 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-import sys
-if "/home/bronger/src/pyrefdb/main/" not in sys.path:
-    sys.path.append("/home/bronger/src/pyrefdb/main/")
-sys.path.append("/home/bronger/src/chantal_ipv/current/")
-
-IS_TESTSERVER = len(sys.argv) >= 2
-WITH_EPYDOC = 'epydoc' in sys.modules
-
-import ConfigParser, os.path
-credentials = ConfigParser.SafeConfigParser()
-read_files = credentials.read(os.path.expanduser("~/django-refdb.auth"))
-assert read_files, Exception("file with authentication data not found")
-CREDENTIALS = dict(credentials.items("DEFAULT"))
-
-ROOTDIR = os.path.dirname(os.path.abspath(__file__))
-
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
-
-MANAGERS = ADMINS
-
 DATABASE_ENGINE = 'postgresql_psycopg2'  # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'django-refdb' # Or path to database file if using sqlite3.
-DATABASE_USER = CREDENTIALS["postgresql_user"]            # Not used with sqlite3.
-DATABASE_PASSWORD = CREDENTIALS["postgresql_password"]    # Not used with sqlite3.
+DATABASE_NAME = 'django-refdb'           # Or path to database file if using sqlite3.
+DATABASE_USER = "CHANGETHIS"             # Not used with sqlite3.
+DATABASE_PASSWORD = "CHANGETHIS"         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
@@ -61,7 +39,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(ROOTDIR, 'media/')
+MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media/')
 STATIC_ROOT = MEDIA_ROOT
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -75,7 +53,7 @@ MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = CREDENTIALS["salt"]
+SECRET_KEY = "CHANGETHIS"
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -101,7 +79,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.markup',
-    'chantal_ipv',
     'chantal_common',
     'refdb',
     'staticfiles'
@@ -115,23 +92,15 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
                                "chantal_common.context_processors.default",
                                )
 
-URL_PREFIX = "/" if IS_TESTSERVER else "/chantal/"
-LOGIN_URL = URL_PREFIX + "login"
+LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = URL_PREFIX
 
 LOCALES_DICT = {"en": "en_US.utf8", "de": "de_DE.utf8"}
 
 CACHE_BACKEND = 'dummy:///'
-CACHE_BACKEND = 'locmem:///'
-CACHE_BACKEND = 'file:///var/tmp/django_cache'
-CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
-
-CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
-CACHE_MIDDLEWARE_KEY_PREFIX = ""
-
 
 REFDB_USERNAME_PREFIX = "drefdbuser"
-REFDB_ROOT_USERNAME = CREDENTIALS["refdb_user"]
-REFDB_ROOT_PASSWORD = CREDENTIALS["refdb_password"]
+REFDB_ROOT_USERNAME = "CHANGETHIS"
+REFDB_ROOT_PASSWORD = "CHANGETHIS"
 REFDB_CACHE_PREFIX = "refdb-reference-"
-REFDB_PATH_TO_INDEXER = "/home/bronger/src/django-refdb/current/index_pdfs.py"
+REFDB_PATH_TO_INDEXER = "/path/to/index_pdfs.py"
