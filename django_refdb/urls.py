@@ -25,7 +25,7 @@ urlpatterns += patterns('',
                         (r"", include("refdb.urls")),
                         )
 
-if settings.IS_TESTSERVER:
+if settings.DEBUG:
     urlpatterns = patterns("",
                            (r"^media/(?P<path>.*)$", "django.views.static.serve",
                             {"document_root": settings.MEDIA_ROOT}),
