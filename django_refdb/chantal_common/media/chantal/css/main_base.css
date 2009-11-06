@@ -1,5 +1,3 @@
-@import url('widgets.css');
-
 body { 
     background-color: gray;
     font-family: Frutiger, "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, sans-serif;
@@ -11,9 +9,6 @@ p.logo-text {
     color: #333333;
     font-weight: bold;
 }
-
-p.logo-subtext { margin:0pt; margin-top:-10px; font-size: 15px; color: #333333; font-weight: normal }
-img.logo-fz { float: right; margin-right: 0.1em }
 
 div.main {
     margin: 20px 25px 20px;
@@ -94,18 +89,6 @@ a > img { border: none }
 optgroup { font-weight: bold; font-style: normal }
 
 span.markdown-hint { font-size: small }
-
-table.edit-description { border: inset 2px black; padding: 0.5ex 1ex; background-color: #f0eee1; float: right;
-			 margin: 1em 0px 1em 1em; clear: left }
-
-div.my-samples-groups { margin-left: 2em }
-div.my-samples-series { margin-left: 2em }
-
-ul.sample-series-list { list-style-image: url("/media/icons/chart_organisation.png") }
-ul.sample-list { list-style-image: url("/media/icons/ruby.png") }
-
-div.my-samples { width: 50%; float: right }
-div.my-samples h2 { margin-top: 0pt }
 
 ul.radio-select { list-style-type: none; display: inline; margin-left: 0; padding-left:0 }
 ul.radio-select li { display: inline; margin-right: 1em }

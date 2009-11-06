@@ -81,7 +81,7 @@ def get_connection(user, database):
     :rtype: ``pyrefdb.Connection``
     """
     if user == "root":
-        return pyrefdb.Connection(settings.REFDB_USER, settings.REFDB_PASSWORD, database)
+        return pyrefdb.Connection(settings.REFDB_ROOT_USERNAME, settings.REFDB_ROOT_PASSWORD, database)
     else:
 #         print get_username(user.id), get_password(user)
         return pyrefdb.Connection(get_username(user.id), get_password(user), database)

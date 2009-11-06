@@ -2,20 +2,16 @@
 
 {#  Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>           #}
 {#                                                                               #}
-{#  This file is part of Django-RefDB.  Django-RefDB is published under the MIT  #}
-{#  license.  A copy of this licence is shipped with Django-RefDB in the file    #}
-{#  LICENSE.                                                                     #}
+{#  This file is part of Chantal.  Chantal is published under the MIT license.   #}
+{#  A copy of this licence is shipped with Chantal in the file LICENSE.          #}
 
 
 {% extends "site_base.html" %}
 
-{# FixMe: This template is a duplicate from Chantal #}
-
 {% load i18n %}
-{% load refdb_extras %}
+{% load chantal %}
 
 {% block extrahead %}
-  <link rel="shortcut icon" href="{{ MEDIA_URL }}chantal/favicon.ico" type="image/x-icon"/>
   <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}chantal/css/main.css"/>
   <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}chantal/css/print.css"/>
 {% endblock %}
@@ -60,10 +56,7 @@
 
   <div class="main">
     <div class="screen-only">
-      <p style="margin:0pt"><img class="logo-fz" src="{{ MEDIA_URL }}chantal/juelich.png"
-                                 alt="{% trans 'Jülich Forschungszentrum logo' %}"/></p>
       <p class="logo-text">{% block app_title %}{% endblock %}</p>
-      <p class="logo-subtext">{% block app_subtitle %}{% endblock %}</p>
     </div>
 
     <div class="outer-frame">

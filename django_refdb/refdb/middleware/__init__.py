@@ -12,6 +12,7 @@ u"""All middleware classes of Django-RefDB.
 """
 
 import hashlib, datetime
+from ..views import utils
 
 
 class ConditionalViewMiddleware(object):
@@ -96,3 +97,12 @@ class TransactionMiddleware(object):
         """
         for action in reversed(request.refdb_rollback_actions):
             action.execute()
+
+
+class RedirectMiddleware(object):
+    u"""Middleware for catching redirect exceptions raised in the
+    embed_common_data functions for the main menu and the bulk view.
+    """
+    def process_exception(self, request, exception):
+        if isinstance(exception, utils.RedirectException):
+            return utils.HttpResponseSeeOther(exception.redirect_to)

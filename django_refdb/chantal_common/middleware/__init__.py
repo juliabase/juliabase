@@ -15,7 +15,7 @@ from django.utils.cache import patch_vary_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
-from refdb.models import UserDetails
+from chantal_common.models import UserDetails
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -26,17 +26,15 @@ u"""Middleware for setting the current language to what can be found in
 `models.UserDetails`.
 """
 
-# FixMe: This module is a duplicate from Chantal-samples.  I added the SeeOther
-# support in the exceptions middleware, and deleted the rest.  If we get a
-# unified Chantal app collection, this must be merged of course.
-
 
 class LocaleMiddleware(object):
-    u"""This is a very simple middleware that parses a request and decides what
+    u"""This is a simple middleware that parses a request and decides what
     translation object to install in the current thread context depending on
     what's found in `models.UserDetails`. This allows pages to be dynamically
     translated to the language the user desires (if the language is available,
     of course).
+
+    It must be after ``AuthenticationMiddleware`` in the list.
     """
     language_pattern = re.compile("[a-zA-Z0-9]+")
 
@@ -44,7 +42,7 @@ class LocaleMiddleware(object):
     def get_language_for_user(request):
         if request.user.is_authenticated():
             try:
-                language = request.user.get_profile().language
+                language = request.user.chantal_user_details.language
                 return language
             except (SiteProfileNotAvailable, UserDetails.DoesNotExist):
                 pass
@@ -70,27 +68,3 @@ class LocaleMiddleware(object):
         response["Content-Language"] = translation.get_language()
         translation.deactivate()
         return response
-
-
-class HttpResponseUnauthorized(django.http.HttpResponse):
-    u"""The response sent back in case of a permission error.  This is another
-    missing response class in Django.  I have no clue why they leave out such
-    trivial code.
-    """
-    status_code = 401
-
-
-class ExceptionsMiddleware(object):
-    u"""Middleware for catching all exceptions raised by views.  However, I
-    handle only `PermissionError` and `AmbiguityException` here.  These
-    exceptions mean a redirect in one way or another.  An HTTP 404 code is only
-    handled here if the client was the Remote Client.
-
-    It is important that this class is the last one in ``MIDDLEWARE_CLASSES``
-    in the ``settings`` module, otherwise the above mentioned exceptions may
-    propagate to other middleware which treats them as real errors.
-    """
-
-    def process_exception(self, request, exception):
-        if isinstance(exception, utils.RedirectException):
-            return utils.HttpResponseSeeOther(exception.redirect_to)

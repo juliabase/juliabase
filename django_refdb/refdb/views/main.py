@@ -104,7 +104,7 @@ def get_last_modification_date(request, database):
     embed_common_data(request, database)
     last_modified = request.common_data.references_last_modified
     if last_modified:
-        last_modified = max(last_modified, request.user.refdb_user_details.settings_last_modified)
+        last_modified = max(last_modified, request.user.chantal_user_details.settings_last_modified)
     return last_modified
 
 
@@ -131,7 +131,7 @@ def get_etag(request, database):
     """
     embed_common_data(request, database)
     etag = hashlib.sha1()
-    etag.update(request.user.refdb_user_details.language)
+    etag.update(request.user.chantal_user_details.language)
     etag.update("--")
     etag.update(request.common_data.current_list)
     etag.update("--")

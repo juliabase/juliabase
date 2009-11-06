@@ -1,0 +1,18 @@
+{# -*- indent-tabs-mode: nil -*- #}
+
+{#  Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>           #}
+{#                                                                               #}
+{#  This file is part of Chantal.  Chantal is published under the MIT license.   #}
+{#  A copy of this licence is shipped with Chantal in the file LICENSE.          #}
+
+
+{% extends "base_chantal.html" %}
+
+{% load i18n %}
+
+{% block extrahead %}
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}chantal/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}chantal/css/print.css"/>
+{% endblock %}
+
+{% block app_title %}Chantal{% endblock %}
