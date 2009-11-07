@@ -14,6 +14,8 @@ Django-RefDB
 Django-RefDB is a browser-based frontend to RefDB.  It is built on top of the
 Django Web framework.  It is published under the terms of the AGPL.
 
+Its homepage is <https://launchpad.net/django-refdb>.
+
 
 .. toctree::
    :maxdepth: 2
@@ -137,7 +139,27 @@ Then, get Django-RefDB with
     bzr branch lp:django-refdb
 
 Adjust the settings in ``settings.py``.  This is standard Django work, so I
-just refer to the next section for the Django-RefDB-specific settings.
+just refer to the section `Settings`_ for the Django-RefDB-specific settings.
+
+Note that the middleware classes
+
+1. chantal_common.middleware.LocaleMiddleware
+2. refdb.middleware.TransactionMiddleware
+3. refdb.middleware.ConditionalViewMiddleware
+
+the app names
+
+1. chantal_common
+2. refdb
+3. staticfiles
+
+and the template context processors
+
+* refdb.context_processors.default
+* chantal_common.context_processors.default
+
+are special to Django-RefDB.  Mind the ordering as well as the fact that they
+come *after* the built-in items.
 
 If you want to get updates of Django-RefDB by just pulling from the branch on
 Launchpad, or if you'd like to contribute to Django-RefDB, it may be wise not
@@ -243,16 +265,6 @@ Settings
 
     Full path to the program ``index_pdfs.py`` which indexes the PDFs.  It is
     part of Django-RefDB.
-
-
-Middleware
-----------------
-
-Django-RefDB provides its own middleware class,
-
-    refdb.middleware.transaction.TransactionMiddleware
-
-which must be activated if you want to use Django-RefDB.
 
 
 Chantal
