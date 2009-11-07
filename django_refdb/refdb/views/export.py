@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+# Copyright © 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
 #
-# This file is part of Django-RefDB.  Django-RefDB is published under the MIT
-# license.  A copy of this licence is shipped with Django-RefDB in the file
-# LICENSE.
+# This file is part of Django-RefDB.
+#
+#     Django-RefDB is free software: you can redistribute it and/or
+#     modify it under the terms of the GNU Affero General Public
+#     License as published by the Free Software Foundation, either
+#     version 3 of the License, or (at your option) any later
+#     version.
+#
+#     Django-RefDB is distributed in the hope that it will be
+#     useful, but WITHOUT ANY WARRANTY; without even the implied
+#     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#     PURPOSE.  See the GNU Affero General Public License for more
+#     details.
+#
+#     You should have received a copy of the GNU Affero General
+#     Public License along with Django-RefDB.  If not, see
+#     <http://www.gnu.org/licenses/>.
 
 
 u"""The references export view.
