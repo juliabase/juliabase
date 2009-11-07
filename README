@@ -1,0 +1,30 @@
+
+Django-RefDB
+============
+
+Django-RefDB is a Web frontend for RefDB.  In other words, it is a reference
+management tool, optimised for scientific references (papers/books).
+
+It is in alpha stage, so don't use it productively.
+
+See its homepage at <https://launchpad.net/django-refdb> and its documentation
+at <http://www-users.rwth-aachen.de/torsten.bronger/django-refdb.html>.
+
+
+LICENCE
+=======
+
+Django-RefDB is copyright 2009 Torsten Bronger and published under the terms of
+the AGPL, see the file COPYING.
+
+Django-RefDB uses some icons from the Silk Icons set created by Mark James, see
+<http://www.famfamfam.com/lab/icons/silk/>.  Additionally, it uses flag icons
+from the same author, see <http://www.famfamfam.com/lab/icons/flags/>.
+
+
+AUTHOR
+======
+
+Torsten Bronger
+mailto:bronger@physik.rwth-aachen.de
+xmpp:torsten.bronger@jabber.rwth-aachen.de
