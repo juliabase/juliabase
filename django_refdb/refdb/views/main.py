@@ -35,6 +35,7 @@ import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import condition, require_http_methods
 from django.utils.translation import ugettext as _, ugettext_lazy
+from chantal_common import utils as chantal_utils
 from .. import refdb, models
 from . import utils
 
@@ -206,7 +207,7 @@ def change_list(request, database):
         database_account.current_list = change_list_form.cleaned_data["new_list"]
         database_account.save()
         next_url = django.core.urlresolvers.reverse(main_menu, kwargs={"database": database})
-        return utils.HttpResponseSeeOther(next_url)
+        return chantal_utils.HttpResponseSeeOther(next_url)
     # With an unmanipulated browser, you never get this far
     return render_to_response("refdb/change_list.html",
                               {"title": _(u"Change default list"), "change_list": change_list_form, "database": database},

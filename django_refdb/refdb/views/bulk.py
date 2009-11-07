@@ -34,7 +34,6 @@ from __future__ import absolute_import
 
 import os.path
 import xapian
-from . import form_utils
 from django.template import RequestContext, defaultfilters
 from django.shortcuts import render_to_response
 from django.views.decorators.http import last_modified, require_http_methods
@@ -45,8 +44,9 @@ import django.core.urlresolvers
 from django import forms
 from django.core.cache import cache
 from django.conf import settings
+from chantal_common import utils as chantal_utils
 from .. import refdb, models
-from . import utils, form_utils
+from . import utils
 
 
 class SearchForm(forms.Form):
@@ -207,13 +207,13 @@ class AddToListForm(forms.Form):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data["existing_list"] and cleaned_data["new_list"]:
-            form_utils.append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
+            chantal_utils.append_error(self, _(u"You must not give both an existing and a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif not self.optional and not cleaned_data["existing_list"] and not cleaned_data["new_list"]:
-            form_utils.append_error(self, _(u"You must give either an existing or a new list."), "new_list")
+            chantal_utils.append_error(self, _(u"You must give either an existing or a new list."), "new_list")
             del cleaned_data["new_list"], cleaned_data["existing_list"]
         elif cleaned_data["new_list"] and cleaned_data["new_list"] in self.short_listnames:
-            form_utils.append_error(self, _(u"This listname is already given."), "new_list")
+            chantal_utils.append_error(self, _(u"This listname is already given."), "new_list")
             del cleaned_data["new_list"]
         return cleaned_data
 
@@ -361,15 +361,15 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
         referentially_valid = False
         if export_form.is_valid() and add_to_shelf_form.is_valid() and add_to_list_form.is_valid() and \
                 (not references_list or remove_from_list_form.is_valid()):
-            form_utils.append_error(global_dummy_form, _(u"You must select an action."))
+            chantal_utils.append_error(global_dummy_form, _(u"You must select an action."))
     elif len(actions) > 1:
-        form_utils.append_error(global_dummy_form, _(u"You can't do more that one thing at the same time."))
+        chantal_utils.append_error(global_dummy_form, _(u"You can't do more that one thing at the same time."))
         referentially_valid = False
     else:
         action = actions[0]
     if not any(selection_box_form.is_valid() and selection_box_form.cleaned_data["selected"]
                for selection_box_form in selection_box_forms):
-        form_utils.append_error(global_dummy_form, _(u"You must select at least one sample."))
+        chantal_utils.append_error(global_dummy_form, _(u"You must select at least one sample."))
         referentially_valid = False
     return referentially_valid, action
 
@@ -635,7 +635,7 @@ def bulk(request, database):
                 query_dict = {"format": export_form.cleaned_data["format"]}
                 query_dict.update((id_ + "-selected", "on") for id_ in ids)
                 query_string = urlencode(query_dict)
-                return utils.HttpResponseSeeOther(
+                return chantal_utils.HttpResponseSeeOther(
                     django.core.urlresolvers.reverse("refdb.views.export.export", database=database) + "?" + query_string)
             elif action == "shelf":
                 # FixMe: This must be changed from using citation keys to using

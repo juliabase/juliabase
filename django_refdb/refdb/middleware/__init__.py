@@ -26,6 +26,7 @@ u"""All middleware classes of Django-RefDB.
 """
 
 import hashlib, datetime
+from chantal_common import utils as chantal_utils
 from ..views import utils
 
 
@@ -119,4 +120,4 @@ class RedirectMiddleware(object):
     """
     def process_exception(self, request, exception):
         if isinstance(exception, utils.RedirectException):
-            return utils.HttpResponseSeeOther(exception.redirect_to)
+            return chantal_utils.HttpResponseSeeOther(exception.redirect_to)

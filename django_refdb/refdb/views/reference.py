@@ -41,8 +41,9 @@ from django.core.servers.basehttp import FileWrapper
 from django.core.exceptions import PermissionDenied
 from django.core.cache import cache
 from django.conf import settings
+from chantal_common import utils as chantal_utils
 from .. import refdb, models
-from . import utils, form_utils
+from . import utils
 from .rollbacks import *
 
 
@@ -328,7 +329,7 @@ class ReferenceForm(forms.Form):
             self._errors["endpage"] = ErrorList([_(u"You must not give an end page if there is no start page.")])
             del cleaned_data["endpage"]
         if cleaned_data["reference_type"] != "GEN" and "date" in cleaned_data and not cleaned_data["date"]:
-            form_utils.append_error(self, _(u"This field is required for this reference type."), "date")
+            chantal_utils.append_error(self, _(u"This field is required for this reference type."), "date")
             del cleaned_data["date"]
         self._forbid_field("part_title", utils.reference_types_without_part)
         self._forbid_field("part_authors", utils.reference_types_without_part)
