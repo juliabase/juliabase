@@ -28,7 +28,7 @@
 {% block frame_content %}
   <div style="float: left; margin-top: 2ex; margin-right: 2em">
     {% error_list search _("Search error") %}
-    <form method="get" action="view/bulk" style="margin-bottom: 4ex ">
+    <form method="get" action="bulk/" style="margin-bottom: 4ex ">
       {% with search.query_string as field %}
         <label for="id_{{ field.html_name }}">{{ field.label }}:</label><br/>
         {{ field }}{{ field.help_text }}<br/>
