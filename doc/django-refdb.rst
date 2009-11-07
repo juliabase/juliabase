@@ -51,7 +51,7 @@ Django a superior platform for the creation of resuable Web applications and we
 had already a Django site running in the institute.
 
 Thus, following the not-invented-here syndrome, I decided to indulge in
-creating such a tool of my own, using Django.
+creating such a tool on my own, using Django.
 
 .. _Refbase: http://www.refbase.net
 
@@ -60,8 +60,8 @@ Goals
 -------
 
 Django-RefDB is supposed to become an open-source Django application for
-managing scientific references.  It must useful for a single person as well as
-for a big team.  It should scale reasonably well.  It must deal with PDFs as
+managing scientific references.  It must be useful for a single person as well
+as for a big team.  It should scale reasonably well.  It must deal with PDFs as
 first-class citizens (multiple PDFs per reference, full-text search).
 
 Eventually, it should also help with getting closer to the paperless office,
@@ -73,7 +73,7 @@ Current status
 
 Django-RefDB is still alpha because it is not feature-complete.  The features
 that we have are usable, though.  I myself use it productively, but I still
-discourage people from doing so because it's still not tested well enough.
+discourage people from doing so because it isn't tested well enough.
 
 Fortunately, it uses RefDB as its backend, so that you always have command-line
 access to your references.  Additionally, RefDB assures a good degree of
@@ -99,7 +99,8 @@ RefDB.
 However, Django-RefDB also stores some things in an own database through
 Django's ORM.  This data is not vital, so losing it causes inconveniences at
 most.  For example, you lose information about who created a certain reference
-originally and when.
+originally and when.  This is fortunate because while developing Django-RefDB,
+it's sometimes sensible to reset the database models.
 
 Django-RefDB uses `pyrefdb`_ for connecting to the RefDB server.  The RefDB
 server may run on a different machine, and it may serve multiple Django-RefDB
@@ -214,45 +215,6 @@ RefDB database that Django-RefDB uses for its own purposes.  It doesn't really
 change the RefDB database.  This process is idempotent.
 
 
-URLs
--------
-
-Normally, the URL scheme doesn't matter as long as all links work.  However,
-since Django-RefDB lacks some functionality, most notable a top-level database
-selection, two features are only accessibly by entering the URL manually.
-
-The most important thing is that the name of the RefDB database is the first
-component of the path.  For example, the “biblio” database can be seen at
-``http://127.0.0.1:8000/biblio/``.  If you want to search in this database,
-visit ``http://127.0.0.1:8000/biblio/search/``.  Note that Django-RefDB
-intentionally is very petty about trailing slashs.
-
-The rest should be accessible by mouse clicks.
-
-
-Getting involved
---------------------
-
-Besides `reporting bugs`_ and adding `translations`_ you can also directly
-contribute to Django-RefDB's code.
-
-For this, you must have a `Launchpad`_ account.  Join the `Django-RefDB team`_
-and subscribe to its `mailing list`_.  Then you can pull the Bazaar branch and
-work on it.
-
-For todo lists, have a look at the bugs and the `blueprints`_.  The blueprints
-are only summaries so far and need to be fleshed out.  You may do so in the
-`Django-Refdb wiki`_ on Wikia.
-
-.. _`reporting bugs`: https://bugs.launchpad.net/django-refdb
-.. _`translations`: https://translations.launchpad.net/django-refdb
-.. _`Launchpad`: https://launchpad.net/
-.. _`Django-RefDB team`: https://launchpad.net/~django-refdb
-.. _`mailing list`: mailto:django-refdb@lists.launchpad.net
-.. _`blueprints`: https://blueprints.launchpad.net/django-refdb
-.. _`Django-RefDB wiki`: http://django-refdb.wikia.com/wiki/Django-RefDB_Wiki
-
-
 Settings
 -----------
 
@@ -281,6 +243,45 @@ Settings
     part of Django-RefDB.
 
 
+URLs
+-------
+
+Normally, the URL scheme doesn't matter as long as all links work.  However,
+since Django-RefDB lacks some functionality, most notable a top-level database
+selection, two features are only accessibly by entering the URL manually.
+
+The most important thing is that the name of the RefDB database is the first
+component of the path.  For example, the “biblio” database can be seen at
+``http://127.0.0.1:8000/biblio/``.  If you want to search in this database,
+visit ``http://127.0.0.1:8000/biblio/search/``.  Note that Django-RefDB
+intentionally is very petty about trailing slashs.
+
+The rest should be accessible by mouse clicks.
+
+
+Getting involved
+--------------------
+
+Besides `reporting bugs`_ and adding `translations`_ you can also directly
+contribute to Django-RefDB's code.
+
+For this, you must have a `Launchpad`_ account.  Join the `Django-RefDB team`_
+and subscribe to its mailing list.  Then you can pull the Bazaar branch and
+work on it.
+
+For todo lists, have a look at the `bugs`_ and the `blueprints`_.  The
+blueprints are only summaries so far and need to be fleshed out.  You may do so
+in the `Django-Refdb wiki`_ on Wikia.
+
+.. _`reporting bugs`: https://bugs.launchpad.net/django-refdb
+.. _`translations`: https://translations.launchpad.net/django-refdb
+.. _`Launchpad`: https://launchpad.net/
+.. _`Django-RefDB team`: https://launchpad.net/~django-refdb
+.. _`bugs`: https://bugs.launchpad.net/django-refdb
+.. _`blueprints`: https://blueprints.launchpad.net/django-refdb
+.. _`Django-RefDB wiki`: http://django-refdb.wikia.com/wiki/Django-RefDB_Wiki
+
+
 Chantal
 ----------
 
@@ -296,5 +297,5 @@ name is “Chantal”.  Django-RefDB is meant to reside next to Chantal someday.
 Therefore, I wanted to have all shared code in an own app in order to avoid
 code duplication.
 
-But don't worry, this only affects my institute.  The only effect on
+But don't worry, this affects merely my institute.  The only effect on
 Django-RefDB is the funny name “chantal_common” for the shared code module.
