@@ -32,6 +32,7 @@ from django.utils.html import escape
 import django.utils.http
 from django.contrib.markup.templatetags import markup
 from django.utils.translation import ugettext as _
+import chantal_common
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
 from refdb.views import utils
@@ -100,7 +101,7 @@ def markdown_field(field):
     if not field or field == u"—":
         return u"""<td colspan="0" class="value">—</td>"""
     else:
-        return u"""<td colspan="0" class="bulk-text">%s</td>""" % markdown(field)
+        return u"""<td colspan="0" class="bulk-text">%s</td>""" % chantal_common.templatetags.chantal.markdown(field)
 
 
 class FullTextInfoNode(template.Node):
