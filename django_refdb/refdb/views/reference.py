@@ -467,8 +467,8 @@ class ReferenceForm(forms.Form):
                 self.refdb_rollback_actions.append(DeletenoteRollback(self.connection, extended_note))
 
     def _update_last_modification(self, new_reference):
-        django_object, created = models.Reference.objects.get_or_create(reference_id=new_reference.id,
-                                                                        citation_key=new_reference.citation_key)
+        django_object, created = models.Reference.objects.get_or_create(
+            reference_id=new_reference.id, citation_key=new_reference.citation_key, database=self.connection.database)
         if not created:
             django_object.mark_modified()
 

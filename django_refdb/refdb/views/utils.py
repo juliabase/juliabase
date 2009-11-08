@@ -164,7 +164,7 @@ def last_modified(user, connection, ids):
         references = connection.get_references(u" OR ".join(u":ID:=" + id_ for id_ in missing_ids))
         for reference in references:
             django_reference = models.Reference.objects.create(
-                reference_id=reference.id, citation_key=reference.citation_key)
+                reference_id=reference.id, citation_key=reference.citation_key, database=connection.database)
             timestamps.append(django_reference.get_last_modification(user))
     return max(timestamps) if timestamps else None
 
@@ -621,7 +621,8 @@ def citation_keys_to_ids(connection, citation_keys):
         references = connection.get_references(u" OR ".join(":CK:=" + citation_key
                                                             for citation_key in missing_citation_keys))
         for reference in references:
-            models.Reference.objects.create(reference_id=reference.id, citation_key=reference.citation_key)
+            models.Reference.objects.create(reference_id=reference.id, citation_key=reference.citation_key,
+                                            database=connection.database)
             result[citation_key] = reference.id
     return result
 
@@ -656,7 +657,8 @@ def ids_to_citation_keys(connection, ids):
     if missing_ids:
         references = connection.get_references(u" OR ".join(":ID:=" + id_ for id_ in missing_ids))
         for reference in references:
-            models.Reference.objects.create(reference_id=reference.id, citation_key=reference.citation_key)
+            models.Reference.objects.create(reference_id=reference.id, citation_key=reference.citation_key,
+                                            database=connection.database)
             result[id_] = reference.citation_key
     return result
 
