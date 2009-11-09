@@ -88,9 +88,9 @@ class SearchForm(forms.Form):
         if self.cleaned_data["journal"]:
             components.append(u":JO:~%s OR :JF:~%s" % (2*(self.cleaned_data["journal"],)))
         if self.cleaned_data["year_from"]:
-            components.append(u":PY:>=" + self.cleaned_data["year_from"])
+            components.append(u":PY:>=" + str(self.cleaned_data["year_from"]))
         if self.cleaned_data["year_until"]:
-            components.append(u":PY:<=" + self.cleaned_data["year_until"])
+            components.append(u":PY:<=" + str(self.cleaned_data["year_until"]))
         if self.cleaned_data["full_text_query"]:
             components.append(u":NCK:=django-refdb-global-pdfs OR :NCK:=django-refdb-personal-pdfs-%s" % user_id)
         if not components:
