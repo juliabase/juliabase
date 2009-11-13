@@ -1,0 +1,141 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-11-13 17:47-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "German"
+msgstr ""
+
+msgid "English"
+msgstr ""
+
+msgid "Chinese"
+msgstr ""
+
+msgid "Ukrainian"
+msgstr ""
+
+msgid "Russian"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "Dutch"
+msgstr ""
+
+msgid "user"
+msgstr ""
+
+msgid "language"
+msgstr ""
+
+msgid "settings last modified"
+msgstr ""
+
+msgid "user details"
+msgstr ""
+
+msgid "You mustn't use image and headings syntax in Markdown markup."
+msgstr ""
+
+msgid "Sandbox"
+msgstr ""
+
+msgid "MarkdownMarkup"
+msgstr ""
+
+msgid "Markdown sandbox"
+msgstr ""
+
+#, python-format
+msgid "switch to %(language)s"
+msgstr ""
+
+msgid "Welcome,"
+msgstr ""
+
+msgid "Main menu"
+msgstr ""
+
+msgid "Report feature wish or bug"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+msgid "Password change"
+msgstr ""
+
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+msgid "Old password:"
+msgstr ""
+
+msgid "New password:"
+msgstr ""
+
+msgid "Confirm password:"
+msgstr ""
+
+msgid "Change my password"
+msgstr ""
+
+msgid "Chantal login"
+msgstr ""
+
+msgid "Your username and password didn't match. Please try again."
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "login"
+msgstr ""
+
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr ""
+
+msgid "Log in again"
+msgstr ""
+
+msgid "Password change successful"
+msgstr ""
+
+msgid "Your password was changed."
+msgstr ""
+
+#, python-format
+msgid "with %(markdown_link)s syntax"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""

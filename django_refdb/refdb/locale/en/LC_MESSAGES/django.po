@@ -1,0 +1,614 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-11-13 17:49-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "database"
+msgstr ""
+
+msgid "ID"
+msgstr ""
+
+msgid "citation key"
+msgstr ""
+
+msgid "last modified"
+msgstr ""
+
+msgid "user"
+msgstr ""
+
+msgid "reference"
+msgstr ""
+
+msgid "current references list"
+msgstr ""
+
+msgid "database settings last modified"
+msgstr ""
+
+msgid "database account"
+msgstr ""
+
+msgid "database accounts"
+msgstr ""
+
+msgid "main list"
+msgstr ""
+
+msgid "modify search"
+msgstr ""
+
+msgid "previous page"
+msgstr ""
+
+msgid "next page"
+msgstr ""
+
+msgid "General error"
+msgstr ""
+
+msgid "Error while adding to shelf"
+msgstr ""
+
+msgid "Error while adding to list"
+msgstr ""
+
+msgid "Error while removing from shelf"
+msgstr ""
+
+msgid "Author"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Journal"
+msgstr ""
+
+msgid "Year"
+msgstr ""
+
+msgid "et al."
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "View PDF"
+msgstr ""
+
+msgid "Search error"
+msgstr ""
+
+msgid "Change list error"
+msgstr ""
+
+msgid "edit"
+msgstr ""
+
+msgid "view PDF"
+msgstr ""
+
+msgid "Reprint available"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "Reprint location"
+msgstr ""
+
+msgid "link to private PDF"
+msgstr ""
+
+msgid "Notes"
+msgstr ""
+
+msgid "link to global PDF"
+msgstr ""
+
+msgid "Relevance"
+msgstr ""
+
+msgid "ff."
+msgstr ""
+
+msgid "Address"
+msgstr ""
+
+msgid "DOI"
+msgstr ""
+
+msgid "URL"
+msgstr ""
+
+msgid "This is an institute's publication."
+msgstr ""
+
+msgid "Reprint locations"
+msgstr ""
+
+msgid "Keywords"
+msgstr ""
+
+msgid "Abstract"
+msgstr ""
+
+#, python-format
+msgid "Page %s"
+msgstr ""
+
+msgid "Query string"
+msgstr ""
+
+msgid "Year from"
+msgstr ""
+
+msgid "Year until"
+msgstr ""
+
+msgid "Full text"
+msgstr ""
+
+msgid "selected"
+msgstr ""
+
+msgid "Export as"
+msgstr ""
+
+#, python-format
+msgid "Remove from list “%s”"
+msgstr ""
+
+msgid "Add to shelf"
+msgstr ""
+
+msgid "List"
+msgstr ""
+
+msgid "New list"
+msgstr ""
+
+msgid "You must not give both an existing and a new list."
+msgstr ""
+
+msgid "You must give either an existing or a new list."
+msgstr ""
+
+msgid "This listname is already given."
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "You must select an action."
+msgstr ""
+
+msgid "You can't do more that one thing at the same time."
+msgstr ""
+
+msgid "You must select at least one sample."
+msgstr ""
+
+msgid "Bulk view"
+msgstr ""
+
+#, python-format
+msgid "List view of %s"
+msgstr ""
+
+msgid "No format given."
+msgstr ""
+
+#, python-format
+msgid "Format “%s” is unknown."
+msgstr ""
+
+msgid "Main menu"
+msgstr ""
+
+msgid "Change default list"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Part title"
+msgstr ""
+
+msgid "Part authors"
+msgstr ""
+
+msgid "Publication title"
+msgstr ""
+
+msgid "Abbreviated publication title"
+msgstr ""
+
+msgid "Publication authors"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Either YYYY or YYYY-MM-DD."
+msgstr ""
+
+msgid "Volume"
+msgstr ""
+
+msgid "Issue"
+msgstr ""
+
+msgid "Start page"
+msgstr ""
+
+msgid "End page"
+msgstr ""
+
+msgid "Publisher"
+msgstr ""
+
+msgid "Publication place"
+msgstr ""
+
+msgid "Contact address to the author."
+msgstr ""
+
+msgid "Serial"
+msgstr ""
+
+msgid "Weblink"
+msgstr ""
+
+msgid "Global notes"
+msgstr ""
+
+msgid "Institute publication"
+msgstr ""
+
+msgid "I have a reprint"
+msgstr ""
+
+msgid "Private notes"
+msgstr ""
+
+msgid "Private reprint available"
+msgstr ""
+
+msgid "Private reprint location"
+msgstr ""
+
+msgid "Lists"
+msgstr ""
+
+msgid "Shelves"
+msgstr ""
+
+msgid "PDF file"
+msgstr ""
+
+msgid "PDF is private"
+msgstr ""
+
+msgid "Must be either of the form YYYY or YYYY-MM-DD."
+msgstr ""
+
+msgid "The uploaded file was not a PDF file."
+msgstr ""
+
+msgid "This field is forbidden for this reference type."
+msgstr ""
+
+msgid "You must not give an end page if there is no start page."
+msgstr ""
+
+msgid "This field is required for this reference type."
+msgstr ""
+
+msgid ""
+"The publication title (or its abbreviation) is required for this reference "
+"type."
+msgstr ""
+
+#, python-format
+msgid "Reference “%s” successfully edited."
+msgstr ""
+
+#, python-format
+msgid "Reference “%s” successfully added."
+msgstr ""
+
+msgid "Edit reference"
+msgstr ""
+
+msgid "Add reference"
+msgstr ""
+
+#, python-format
+msgid "%(reference_type)s “%(citation_key)s”"
+msgstr ""
+
+msgid "abstract reference"
+msgstr ""
+
+msgid "audiovisual material"
+msgstr ""
+
+msgid "art work"
+msgstr ""
+
+msgid "bill/resolution"
+msgstr ""
+
+msgid "whole book reference"
+msgstr ""
+
+msgid "case"
+msgstr ""
+
+msgid "book chapter reference"
+msgstr ""
+
+msgid "computer program"
+msgstr ""
+
+msgid "conference proceeding"
+msgstr ""
+
+msgid "catalog"
+msgstr ""
+
+msgid "data file"
+msgstr ""
+
+msgid "electronic citation"
+msgstr ""
+
+msgid "generic"
+msgstr ""
+
+msgid "internet communication"
+msgstr ""
+
+msgid "in press reference"
+msgstr ""
+
+msgid "journal – full"
+msgstr ""
+
+msgid "journal reference"
+msgstr ""
+
+msgid "map"
+msgstr ""
+
+msgid "magazine article"
+msgstr ""
+
+msgid "motion picture"
+msgstr ""
+
+msgid "music score"
+msgstr ""
+
+msgid "newspaper"
+msgstr ""
+
+msgid "pamphlet"
+msgstr ""
+
+msgid "patent"
+msgstr ""
+
+msgid "personal communication"
+msgstr ""
+
+msgid "report"
+msgstr ""
+
+msgid "serial – book, monograph"
+msgstr ""
+
+msgid "slide"
+msgstr ""
+
+msgid "sound recording"
+msgstr ""
+
+msgid "statute"
+msgstr ""
+
+msgid "thesis/dissertation"
+msgstr ""
+
+msgid "unenacted bill/resolution"
+msgstr ""
+
+msgid "unpublished work reference"
+msgstr ""
+
+msgid "video recording"
+msgstr ""
+
+msgid "Major contributors"
+msgstr ""
+
+msgid "Release date"
+msgstr ""
+
+msgid "Act title"
+msgstr ""
+
+msgid "Title/code number"
+msgstr ""
+
+msgid "Publication date"
+msgstr ""
+
+msgid "Pages"
+msgstr ""
+
+msgid "Authors"
+msgstr ""
+
+msgid "State/country"
+msgstr ""
+
+msgid "Application number"
+msgstr ""
+
+msgid "Date issued"
+msgstr ""
+
+msgid "Patent number"
+msgstr ""
+
+msgid "Editors"
+msgstr ""
+
+msgid "Chapter title"
+msgstr ""
+
+msgid "City"
+msgstr ""
+
+msgid "Book title"
+msgstr ""
+
+msgid "Chapter number"
+msgstr ""
+
+msgid "Conference title"
+msgstr ""
+
+msgid "Newspaper"
+msgstr ""
+
+msgid "Reporters"
+msgstr ""
+
+msgid "End location"
+msgstr ""
+
+msgid "Start location"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "Last update"
+msgstr ""
+
+msgid "Date sent"
+msgstr ""
+
+msgid "Institution"
+msgstr ""
+
+msgid "Date of code"
+msgstr ""
+
+msgid "Bill/resolution number"
+msgstr ""
+
+msgid "Report number"
+msgstr ""
+
+msgid "Secondary authors"
+msgstr ""
+
+msgid "Primary title"
+msgstr ""
+
+msgid "Title, secondary"
+msgstr ""
+
+msgid "Primary authors"
+msgstr ""
+
+msgid "Primary date"
+msgstr ""
+
+msgid "Sender"
+msgstr ""
+
+msgid "Date of message"
+msgstr ""
+
+msgid "Subject"
+msgstr ""
+
+msgid "Counsel"
+msgstr ""
+
+msgid "Court"
+msgstr ""
+
+msgid "Case name"
+msgstr ""
+
+msgid "Filed"
+msgstr ""
+
+msgid "Reporter number"
+msgstr ""
+
+msgid "Catalog number"
+msgstr ""
+
+msgid "Composers"
+msgstr ""
+
+msgid "Magazine"
+msgstr ""
+
+msgid "Cartographers"
+msgstr ""
+
+msgid "Map number"
+msgstr ""
+
+msgid "Studio"
+msgstr ""
+
+msgid "Artists"
+msgstr ""
+
+msgid "Title/subject"
+msgstr ""
+
+msgid "Act name"
+msgstr ""
+
+msgid "Hearing date"
+msgstr ""
+
+msgid "Commitee"
+msgstr ""
+
+msgid "Bill number"
+msgstr ""
