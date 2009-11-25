@@ -1,1 +1,716 @@
-de/LC_MESSAGES/django.po
+# German translations of Django-RefDB
+#
+# Copyright © 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+#
+# This file is part of Django-RefDB.
+#
+#     Django-RefDB is free software: you can redistribute it and/or
+#     modify it under the terms of the GNU Affero General Public
+#     License as published by the Free Software Foundation, either
+#     version 3 of the License, or (at your option) any later
+#     version.
+#
+#     Django-RefDB is distributed in the hope that it will be
+#     useful, but WITHOUT ANY WARRANTY; without even the implied
+#     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#     PURPOSE.  See the GNU Affero General Public License for more
+#     details.
+#
+#     You should have received a copy of the GNU Affero General
+#     Public License along with Django-RefDB.  If not, see
+#     <http://www.gnu.org/licenses/>.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Django-RefDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-10-13 09:12-0500\n"
+"PO-Revision-Date: 2009-10-13 16:20+0200\n"
+"Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "Chinese"
+msgstr "Chinesisch"
+
+msgid "Ukrainian"
+msgstr "Ukrainisch"
+
+msgid "Russian"
+msgstr "Russisch"
+
+msgid "French"
+msgstr "Französisch"
+
+msgid "Dutch"
+msgstr "Niederländisch"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "citation key"
+msgstr "Zitierschlüssel"
+
+msgid "last modified"
+msgstr "letzte Änderung"
+
+msgid "user"
+msgstr "Benutzer"
+
+msgid "reference"
+msgstr "Referenz"
+
+msgid "language"
+msgstr "Sprache"
+
+msgid "current references list"
+msgstr "aktuelle Referenzenliste"
+
+msgid "settings last modified"
+msgstr "letzte Änderung der Einstellungen"
+
+msgid "user details"
+msgstr "Benutzerdetails"
+
+msgid "name"
+msgstr "Name"
+
+msgid "shelf"
+msgstr "Regal"
+
+msgid "shelves"
+msgstr "Regale"
+
+msgid "main list"
+msgstr "Hauptliste"
+
+#, python-format
+msgid "switch to %(language)s"
+msgstr "zur Sprache %(language)s wechseln"
+
+msgid "Welcome,"
+msgstr "Willkommen"
+
+msgid "Main menu"
+msgstr "Hauptmenü"
+
+msgid "Report feature wish or bug"
+msgstr "Einen Featurewunsch oder Bug melden"
+
+msgid "Help"
+msgstr "Hilfe"
+
+msgid "Log out"
+msgstr "ausloggen"
+
+msgid "Log in"
+msgstr "einloggen"
+
+msgid "Jülich Forschungszentrum logo"
+msgstr "Logo des Forschungszentrums Jülich"
+
+msgid "IEF-5 logo"
+msgstr "Logo des IEF-5"
+
+msgid "Beyond Beyer's paper piles"
+msgstr "Jenseits von Beyers Papierstapeln"
+
+msgid "modify search"
+msgstr "Suche modifizieren"
+
+msgid "previous page"
+msgstr "vorherige Seite"
+
+msgid "next page"
+msgstr "nächste Seite"
+
+msgid "General error"
+msgstr "Allgemeiner Fehler"
+
+msgid "Error while adding to shelf"
+msgstr "Fehler beim hinzufügen zu einem Regal"
+
+msgid "Error while adding to list"
+msgstr "Fehler beim hinzufügen zu einer Liste"
+
+msgid "Error while removing from shelf"
+msgstr "Fehler beim entfernen von einer Liste"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Journal"
+msgstr "Journal"
+
+msgid "Year"
+msgstr "Jahr"
+
+msgid "et al."
+msgstr "et al."
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Edit"
+msgstr "ändern"
+
+msgid "View PDF"
+msgstr "PDF ansehen"
+
+msgid "Search error"
+msgstr "Fehler bei der Suche"
+
+msgid "Change list error"
+msgstr "Fehler beim ändern der Liste"
+
+msgid "edit"
+msgstr "ändern"
+
+msgid "view PDF"
+msgstr "PDF ansehen"
+
+msgid "Reprint available"
+msgstr "Ausdruck vorhanden"
+
+msgid "yes"
+msgstr "ja"
+
+msgid "no"
+msgstr "nein"
+
+msgid "Reprint location"
+msgstr "Ort des Ausdrucks"
+
+msgid "link to private PDF"
+msgstr "Link zum privaten PDF"
+
+msgid "Notes"
+msgstr "Bemerkungen"
+
+msgid "link to global PDF"
+msgstr "Link zum globalen PDF"
+
+msgid "Relevance"
+msgstr "Relevanz"
+
+msgid "ff."
+msgstr "ff."
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "DOI"
+msgstr "DOI"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "This is an institute's publication."
+msgstr "Dies ist eine Institutspublikation."
+
+msgid "Reprint locations"
+msgstr "Orte eines Ausdrucks"
+
+msgid "Keywords"
+msgstr "Schlüsselworte"
+
+msgid "Abstract"
+msgstr "Zusammenfassung"
+
+#, python-format
+msgid "Page %s"
+msgstr "Seite %s"
+
+msgid "Query string"
+msgstr "Anfragestring"
+
+msgid "Year from"
+msgstr "Jahr von"
+
+msgid "Year until"
+msgstr "Jahr bis"
+
+msgid "Full text"
+msgstr "Volltext"
+
+msgid "selected"
+msgstr "gewählt"
+
+msgid "Export as"
+msgstr "exportieren als"
+
+#, python-format
+msgid "Remove from list “%s”"
+msgstr "aus Liste „%s“ entfernen"
+
+msgid "Add to shelf"
+msgstr "zum Regal hinzufügen"
+
+msgid "List"
+msgstr "Liste"
+
+msgid "New list"
+msgstr "neue Liste"
+
+msgid "You must not give both an existing and a new list."
+msgstr ""
+"Die dürfen nicht sowohl eine existierende als auch eine neue Liste angeben."
+
+msgid "You must give either an existing or a new list."
+msgstr "Sie müssen entweder eine existierende oder eine neue Liste angeben."
+
+msgid "This listname is already given."
+msgstr "Dieser Listenname ist schon vergeben."
+
+msgid "Search"
+msgstr "Suche"
+
+msgid "You must select an action."
+msgstr "Sie müssen sich für eine Aktion entscheiden."
+
+msgid "You can't do more that one thing at the same time."
+msgstr "Sie können nicht mehr als eine Sache zur gleichen Zeit machen."
+
+msgid "You must select at least one sample."
+msgstr "Sie müssen wenigstens eine Referenz auswählen."
+
+msgid "Bulk view"
+msgstr "Übersicht"
+
+#, python-format
+msgid "List view of %s"
+msgstr "Listenansicht von %s"
+
+msgid "No format given."
+msgstr "Kein Format angegeben."
+
+#, python-format
+msgid "Format “%s” is unknown."
+msgstr "Format „%s“ ist unbekannt."
+
+msgid "Change default list"
+msgstr "Standardliste ändern"
+
+msgid "Type"
+msgstr "Art"
+
+msgid "Part title"
+msgstr "Titel des Teils"
+
+msgid "Part authors"
+msgstr "Autoren des Teils"
+
+msgid "Publication title"
+msgstr "Titel der Publikation"
+
+msgid "Abbreviated publication title"
+msgstr "Abgekürzter Titel der Publikation"
+
+msgid "Publication authors"
+msgstr "Autoren der Publikation"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Either YYYY or YYYY-MM-DD."
+msgstr "Entweder JJJJ oder JJJJ-MM-TT."
+
+msgid "Volume"
+msgstr "Band"
+
+msgid "Issue"
+msgstr "Ausgabe"
+
+msgid "Start page"
+msgstr "Startseite"
+
+msgid "End page"
+msgstr "Endseite"
+
+msgid "Publisher"
+msgstr "Verlag"
+
+msgid "Publication place"
+msgstr "Ort der Publikation"
+
+msgid "Contact address to the author."
+msgstr "Kontaktadresse des Autors."
+
+msgid "Serial"
+msgstr "Seriennummer"
+
+msgid "Weblink"
+msgstr "Weblink"
+
+msgid "Global notes"
+msgstr "Globale Bemerkungen"
+
+msgid "Institute publication"
+msgstr "Institutspublikation"
+
+msgid "I have a reprint"
+msgstr "Ich habe ein Reprint"
+
+msgid "Private notes"
+msgstr "Private Notizen"
+
+msgid "Private reprint available"
+msgstr "Privater Ausdruck vorhanden"
+
+msgid "Private reprint location"
+msgstr "Ort des privaten Ausdrucks"
+
+msgid "Lists"
+msgstr "Listen"
+
+msgid "Shelves"
+msgstr "Regale"
+
+msgid "PDF file"
+msgstr "PDF-Datei"
+
+msgid "PDF is private"
+msgstr "PDF ist privat"
+
+msgid "Must be either of the form YYYY or YYYY-MM-DD."
+msgstr "Muss entweder JJJJ oder JJJJ-MM-TT sein."
+
+msgid "The uploaded file was not a PDF file."
+msgstr "Die hochgeladene Datei war kein PDF."
+
+msgid "This field is forbidden for this reference type."
+msgstr "Dieses Feld ist für diesen Referenztyp verboten"
+
+msgid "You must not give an end page if there is no start page."
+msgstr "Sie dürfen keine Endseite angeben, wenn es keine Startseite gibt."
+
+msgid "This field is required for this reference type."
+msgstr "Dieses Feld ist notwendig für diesen Referenztyp."
+
+msgid ""
+"The publication title (or its abbreviation) is required for this reference "
+"type."
+msgstr "Der Publikationstitel (oder seine Abkürzung) ist notwendig für diesen Referenztyp."
+
+#, python-format
+msgid "Reference “%s” successfully edited."
+msgstr "Referenz „%s“ wurde erfolgreich geändert."
+
+#, python-format
+msgid "Reference “%s” successfully added."
+msgstr "Referenz „%s“ wurde erfolgreich hinzugefügt."
+
+msgid "Edit reference"
+msgstr "Referenz ändern"
+
+msgid "Add reference"
+msgstr "Referenz hinzufügen"
+
+#, python-format
+msgid "%(reference_type)s “%(citation_key)s”"
+msgstr "%(reference_type)s „%(citation_key)s“"
+
+msgid "abstract reference"
+msgstr "Abstract-Referenz"
+
+msgid "audiovisual material"
+msgstr "audio-visuelles Material"
+
+msgid "art work"
+msgstr "Kunstwerk"
+
+msgid "bill/resolution"
+msgstr "Gesetzesentwurf/Resolution"
+
+msgid "whole book reference"
+msgstr "Referenz eines ganzen Buches"
+
+msgid "case"
+msgstr "Gerichtsfall"
+
+msgid "book chapter reference"
+msgstr "Buchkapitel-Referenz"
+
+msgid "computer program"
+msgstr "Computerprogramm"
+
+msgid "conference proceeding"
+msgstr "Konferenz-Proceedings"
+
+msgid "catalog"
+msgstr "Katalog"
+
+msgid "data file"
+msgstr "Datendatei"
+
+msgid "electronic citation"
+msgstr "elektronisches Zitat"
+
+msgid "generic"
+msgstr "unspezifiziert"
+
+msgid "internet communication"
+msgstr "Internet-Kommunikation"
+
+msgid "in press reference"
+msgstr "Presse-Referenz"
+
+msgid "journal – full"
+msgstr "Journal – komplett"
+
+msgid "journal reference"
+msgstr "Journal-Artikel"
+
+msgid "map"
+msgstr "Karte"
+
+msgid "magazine article"
+msgstr "Magazin-Artikel"
+
+msgid "motion picture"
+msgstr "Spielfilm"
+
+msgid "music score"
+msgstr "Musikwerk"
+
+msgid "newspaper"
+msgstr "Zeitung"
+
+msgid "pamphlet"
+msgstr "Flugschrift"
+
+msgid "patent"
+msgstr "Patent"
+
+msgid "personal communication"
+msgstr "persönliche Mitteilung"
+
+msgid "report"
+msgstr "Bericht"
+
+msgid "serial – book, monograph"
+msgstr "Reihe – Buch, Monographie"
+
+msgid "slide"
+msgstr "Folie"
+
+msgid "sound recording"
+msgstr "Tonaufzeichnung"
+
+msgid "statute"
+msgstr "Gesetz"
+
+msgid "thesis/dissertation"
+msgstr "Abschlussarbeit/Dissertation"
+
+msgid "unenacted bill/resolution"
+msgstr "nicht-erlassener Gesetzesentwurf/Resolution"
+
+msgid "unpublished work reference"
+msgstr "unveröffentlichte Arbeit"
+
+msgid "video recording"
+msgstr "Videoaufzeichnung"
+
+msgid "Major contributors"
+msgstr "Wichtige Beitragende"
+
+msgid "Release date"
+msgstr "Datum der Freigabe"
+
+msgid "Act title"
+msgstr "Gesetzestitel"
+
+msgid "Title/code number"
+msgstr "Titel/Nummer"
+
+msgid "Publication date"
+msgstr "Veröffentlichungsdatum"
+
+msgid "Pages"
+msgstr "Seiten"
+
+msgid "Authors"
+msgstr "Autoren"
+
+msgid "State/country"
+msgstr "Staat/Land"
+
+msgid "Application number"
+msgstr "Bewerbungsnummer"
+
+msgid "Date issued"
+msgstr "Datum der Erteilung"
+
+msgid "Patent number"
+msgstr "Patentnummer"
+
+msgid "Editors"
+msgstr "Herausgeber"
+
+msgid "Chapter title"
+msgstr "Kapitelüberschrift"
+
+msgid "City"
+msgstr "Stadt"
+
+msgid "Book title"
+msgstr "Buchtitel"
+
+msgid "Chapter number"
+msgstr "Kapitelnummer"
+
+msgid "Conference title"
+msgstr "Konferenzname"
+
+msgid "Newspaper"
+msgstr "Zeitung"
+
+msgid "Reporters"
+msgstr "Reporter"
+
+msgid "End location"
+msgstr "Endposition"
+
+msgid "Start location"
+msgstr "Startposition"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Location"
+msgstr "Position"
+
+msgid "Last update"
+msgstr "Neuestes Update"
+
+msgid "Date sent"
+msgstr "Sendedatum"
+
+msgid "Institution"
+msgstr "Institution"
+
+msgid "Date of code"
+msgstr "Gesetzesdatum"
+
+msgid "Bill/resolution number"
+msgstr "Nummer des Gesetzesentwurfs/Resolution"
+
+msgid "Report number"
+msgstr "Berichtsnummer"
+
+msgid "Secondary authors"
+msgstr "Sekundäre Autoren"
+
+msgid "Primary title"
+msgstr "Primärtitel"
+
+msgid "Title, secondary"
+msgstr "Titel, sekundärer"
+
+msgid "Primary authors"
+msgstr "Primärautoren"
+
+msgid "Primary date"
+msgstr "Primärdatum"
+
+msgid "Sender"
+msgstr "Absender"
+
+msgid "Date of message"
+msgstr "Datum der Nachricht"
+
+msgid "Subject"
+msgstr "Betreff"
+
+msgid "Counsel"
+msgstr "Rat"
+
+msgid "Court"
+msgstr "Gericht"
+
+msgid "Case name"
+msgstr "Name des Verfahrens"
+
+msgid "Filed"
+msgstr "Eingereicht"
+
+msgid "Reporter number"
+msgstr "Nummer des Reporters"
+
+msgid "Catalog number"
+msgstr "Katalognummer"
+
+msgid "Composers"
+msgstr "Komponisten"
+
+msgid "Magazine"
+msgstr "Zeitschrift"
+
+msgid "Cartographers"
+msgstr "Kartographen"
+
+msgid "Map number"
+msgstr "Kartennummer"
+
+msgid "Studio"
+msgstr "Studio"
+
+msgid "Artists"
+msgstr "Künstler"
+
+msgid "Title/subject"
+msgstr "Titel/Thema"
+
+msgid "Act name"
+msgstr "Name des Gesetzes"
+
+msgid "Hearing date"
+msgstr "Anhörungsdatum"
+
+msgid "Commitee"
+msgstr "Kommitee"
+
+msgid "Bill number"
+msgstr "Nummer des Gesetzesentwurfs"
+
+#~ msgid "Publication"
+#~ msgstr "Publikation"
+
+#~ msgid "PDF"
+#~ msgstr "PDF"
+
+#~ msgid "(is private)"
+#~ msgstr "(ist privat)"
+
+#~ msgid "Personal information for this reference"
+#~ msgstr "Persönliche Informationen zu dieser Referenz"
+
+#~ msgid "View reference"
+#~ msgstr "Referenz betrachten"
+
+#~ msgid ""
+#~ "You didn't select a reference.\n"
+#~ "    Please go back and select one or more references."
+#~ msgstr ""
+#~ "Sie haben keine Referenz ausgewählt.\n"
+#~ "Bitte gehen sie zurück und wählen eine oder mehrere Referenzen aus."
+
+#~ msgid "Relative link."
+#~ msgstr "Relativer Link."
+
+#~ msgid "Either PPP or AAA-EEE."
+#~ msgstr "Entweder SSS oder AAA-EEE."
+
+#~ msgid "Global reprint locations"
+#~ msgstr "Globale Orte eines Ausdrucks"
