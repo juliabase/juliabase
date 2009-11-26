@@ -139,7 +139,7 @@ APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER or WITH_EPYDOC else os.stat("/var/run/apache2.pid")[9]
 POSTGRESQL_VERSION = _scan_version("postgresql")
 # FixMe: PostgreSQL version shouldn't be fixed
-POSTGRESQL_STARTUP_TIME = os.stat("/var/run/postgresql/8.3-main.pid")[9]
+POSTGRESQL_STARTUP_TIME = os.stat("/var/run/postgresql/8.4-main.pid")[9]
 PYTHON_VERSION = _scan_version("python")
 import matplotlib
 MATPLOTLIB_VERSION = matplotlib.__version__
