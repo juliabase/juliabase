@@ -61,6 +61,8 @@ def quantity(value, unit=None, autoescape=False):
 quantity.needs_autoescape = True
 
 
+# FixMe: This filter should be taken from chantal_common.
+
 @register.filter
 def fancy_bool(boolean):
     u"""Filter for coverting a bool into a translated “Yes” or “No”.
@@ -119,6 +121,8 @@ def verbose_name(parser, token):
     return VerboseNameNode(var)
 
 
+# FixMe: This filter should be taken from chantal_common.
+
 @register.simple_tag
 def markdown_hint():
     u"""Tag for inserting a short remark that Markdown syntax must be used
@@ -128,6 +132,8 @@ def markdown_hint():
         % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
            django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u")</span>"
 
+
+# FixMe: This filter should be taken from chantal_common.
 
 @register.filter
 @stringfilter
@@ -142,6 +148,8 @@ def urlquote(value):
 urlquote.is_safe = False
 
 
+# FixMe: This filter should be taken from chantal_common.
+
 @register.filter
 @stringfilter
 def urlquote_plus(value):
@@ -154,6 +162,9 @@ def urlquote_plus(value):
     return django.utils.http.urlquote_plus(value, safe="/")
 urlquote_plus.is_safe = False
 
+
+# FixMe: At least for ordinary users, this filter should use the filter with
+# the same name in ``chantal_common``.
 
 @register.filter
 def get_really_full_name(user, anchor_type="http", autoescape=False):
@@ -251,6 +262,9 @@ def timestamp(value):
     return mark_safe(samples.views.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
+# FixMe: This should be renamed to markdown_samples to avoid collision with the
+# filter in chantal_common of the same name.
+
 sample_name_pattern = \
     re.compile(ur"(\W|\A)(?P<name>[0-9][0-9](([BVHLCS]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?)|"
                ur"(-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})-[-A-Za-z_/0-9]+)))(\W|\Z)", re.UNICODE)
@@ -302,6 +316,8 @@ def markdown(value):
     return markup.markdown(result)
 
 
+# FixMe: This filter should be taken from chantal_common.
+
 @register.inclusion_tag("error_list.html")
 def error_list(form, form_error_title, outest_tag=u"<table>"):
     u"""Includes a comprehensive error list for one particular form into the
@@ -325,6 +341,8 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
     """
     return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
 
+
+# FixMe: This filter should be taken from chantal_common.
 
 @register.simple_tag
 def input_field(field):

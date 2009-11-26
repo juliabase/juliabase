@@ -21,6 +21,8 @@ u"""Middleware for setting the current language to what can be found in
 """
 
 
+# FixMe: ``LocaleMiddleware`` is part of ``chantal_common.middleware``.
+
 class LocaleMiddleware(object):
     u"""This is a very simple middleware that parses a request and decides what
     translation object to install in the current thread context depending on
@@ -61,6 +63,9 @@ class LocaleMiddleware(object):
         translation.deactivate()
         return response
 
+
+# FixMe: Should be taken from ``chantal_common.utils``.  Watch out also for
+# other occurences of this class.
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
     u"""The response sent back in case of a permission error.  This is another

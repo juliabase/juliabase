@@ -22,6 +22,9 @@ from samples import models, permissions
 from samples.views.shared_utils import *
 
 
+# FixMe: This class isn't needed anymore here as soon as successful_response is
+# called in chantal_common, see FixMe below.
+
 class HttpResponseSeeOther(HttpResponse):
     u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
     same wrong thing as most other web frameworks: it knows only one type of
@@ -66,6 +69,8 @@ def sample_name_format(name):
     elif provisional_sample_name_pattern.match(name):
         return "provisional"
 
+
+# FixMe: The help link decorator is provided by chantal_common.utils.
 
 class _AddHelpLink(object):
     u"""Internal helper class in order to realise the `help_link` function
@@ -508,6 +513,12 @@ def parse_query_string(request):
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
 
+
+# FixMe: This function should call chantal_common.utils.successful_response.
+# Note that the default value for ``view`` must be generated here, because
+# otherwise, the main menu of chantal_common is the default rather than the
+# main menu of Chantal-samples.  Also note that the remote client if clause
+# must stay here.
 
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
                         remote_client_response=True):

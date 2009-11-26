@@ -17,6 +17,8 @@ import cPickle as pickle
 import base64
 
 
+# FixMe: This function should be taken from chantal_common.utils.
+
 def get_really_full_name(user):
     u"""Unfortunately, Django's ``get_full_name`` method for users returns the
     empty string if the user has no first and surname set.  However, it'd be
@@ -127,6 +129,8 @@ def normalize_legacy_sample_name(sample_name):
     parts["letter"] = parts["letter"].upper()
     return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
 
+
+# FixMe: The following function should be taken from ``chantal_common.utils``
 
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):

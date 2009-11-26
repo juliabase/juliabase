@@ -824,6 +824,11 @@ class Initials(models.Model):
 admin.site.register(Initials)
 
 
+# FixMe: Part of ``UserDetails`` is now in ``chantal_common``.  This must be
+# removed here, and the rest of Chantal must be checked whether it must be
+# changed there, too.  (Maybe not because those places have been moved to
+# ``chantal_common``, too.)
+
 languages = (
     ("de", u"Deutsch"),
     ("en", u"English"),

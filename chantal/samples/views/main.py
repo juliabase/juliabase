@@ -188,6 +188,9 @@ def show_deposition(request, deposition_number):
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
 
 
+# FixMe: This view is provided by chantal_common.views.  Note that the
+# respective template and entry in urls.py must be removed, too.
+
 @login_required
 def switch_language(request):
     u"""This view parses the query string and extracts a language code from it,

@@ -567,6 +567,8 @@ def clean_deposition_number_field(value, letter):
     return value
 
 
+# FixMe: This function is provided by chantal_common.utils
+
 def append_error(form, error_message, fieldname="__all__"):
     u"""This function is called if a validation error is found in form data
     which cannot be found by the ``is_valid`` method itself.  The reason is
@@ -698,6 +700,8 @@ def normalize_prefixes(post_data):
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
 
+
+# FixMe: This function is provided by chantal_common.utils.
 
 dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r][-=]")
 def check_markdown(text):
