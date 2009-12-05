@@ -111,6 +111,8 @@ class FeedNewSamples(FeedEntry):
     auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
 
     class Meta:
+        # FixMe: The labels are gramatically unfortunate.  “feed entry for new
+        # samples” is better.
         verbose_name = _(u"new samples feed entry")
         verbose_name_plural = _(u"new samples feed entries")
 
