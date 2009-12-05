@@ -130,7 +130,7 @@ LOCALES_DICT = {"en": "en_US.utf8", "de": "de_DE.utf8"}
 UPLOADED_RESULT_IMAGES_ROOT = "/home/bronger/temp/chantal_images/" if IS_TESTSERVER else "/var/lib/chantal_images/"
 THUMBNAIL_WIDTH = 400
 
-import subprocess, re, time
+import subprocess, re, time, glob
 def _scan_version(package):
     dpgk = subprocess.Popen(["dpkg-query", "--show", package], stdout=subprocess.PIPE)
     match = re.match(re.escape(package)+r"\t(?P<version>.+?)-", dpgk.communicate()[0].strip())
@@ -138,8 +138,7 @@ def _scan_version(package):
 APACHE_VERSION = _scan_version("apache2")
 APACHE_STARTUP_TIME = time.time() if IS_TESTSERVER or WITH_EPYDOC else os.stat("/var/run/apache2.pid")[9]
 POSTGRESQL_VERSION = _scan_version("postgresql")
-# FixMe: PostgreSQL version shouldn't be fixed
-POSTGRESQL_STARTUP_TIME = os.stat("/var/run/postgresql/8.4-main.pid")[9]
+POSTGRESQL_STARTUP_TIME = os.stat(glob.glob("/var/run/postgresql/*-main.pid")[0])[9]
 PYTHON_VERSION = _scan_version("python")
 import matplotlib
 MATPLOTLIB_VERSION = matplotlib.__version__
