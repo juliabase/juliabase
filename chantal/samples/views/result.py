@@ -569,4 +569,5 @@ def export(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
+    # Translation hint: In a table
     return csv_export.export(request, result.get_data(), _(u"row"))

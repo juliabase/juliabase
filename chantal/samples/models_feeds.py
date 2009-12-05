@@ -106,6 +106,7 @@ class FeedNewSamples(FeedEntry):
     database.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
+    # Translation hint: Topic/project for samples and sample series
     group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"), related_name="new_samples_news")
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
@@ -214,6 +215,7 @@ class FeedResult(FeedEntry):
     this model doesn't care whether the result is connected with samples or
     sample series or both.  This is distinguished in the HTML template.
     """
+        # Translation hint: experimental result
     result = models.ForeignKey(Result, verbose_name=_(u"result"))
     description = models.TextField(_(u"description"), blank=True)
     is_new = models.BooleanField(_(u"result is new"))
@@ -300,7 +302,9 @@ class FeedSampleSplit(FeedEntry):
     sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False)
 
     class Meta:
+            # Translation hint: Feed entry for a split of a sample
         verbose_name = _(u"sample split feed entry")
+            # Translation hint: Feed entries for splits of samples
         verbose_name_plural = _(u"sample split feed entries")
 
     def get_metadata(self):
@@ -405,6 +409,7 @@ class FeedChangedGroup(FeedEntry):
     u"""Model for feed entries for sample series moved to a new group.
     """
     group = models.ForeignKey(django.contrib.auth.models.Group, verbose_name=_(u"group"))
+        # Translation hint: Action is either addition or removal
     action = models.CharField(_("action"), max_length=7, choices=changed_group_action_choices)
 
     class Meta:

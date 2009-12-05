@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load samples_extras %}
 
+{# FixMe: Avoid splitting of translatable strings. #}
 {% block title %}{% trans 'Sample “' %}{{ sample }}{% trans '”' %}{% endblock %}
 {% block content_title %}{% spaceless %}<h1>{% trans 'Sample “' %}{{ sample }}{% trans '”' %}<span class="aliases">
     {% for alias in sample.aliases.all %}

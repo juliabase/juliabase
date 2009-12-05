@@ -110,6 +110,7 @@ class PDSMeasurement(Process):
     number = models.IntegerField(_(u"PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_(u"raw data file"), max_length=200,
                                     help_text=_(u"only the relative path below \"pds/\""))
+        # Translation hint: PDS file.  Its filename starts with "a_".
     evaluated_datafile = models.CharField(_(u"evaluated data file"), max_length=200,
                                           help_text=_("only the relative path below \"pds/\""), blank=True)
 
