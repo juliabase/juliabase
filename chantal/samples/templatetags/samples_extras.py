@@ -233,8 +233,10 @@ def calculate_silane_concentration(value):
 
 timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
                      u"%Y-%m-%d %H:%M",
+                         # Translation hint: Only change the <sup>h</sup>!
                      _(u"%Y-%m-%d %H<sup>h</sup>"),
                      u"%Y-%m-%d",
+                         # Translation hint: Only change order and punctuation
                      _(u"%b %Y"),
                      u"%Y",
                      _(u"date unknown"))

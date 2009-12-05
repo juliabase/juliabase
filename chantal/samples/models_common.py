@@ -48,6 +48,7 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
+        # Translation hint: Group which is not open to senior members
     restricted = models.BooleanField(_(u"restricted"), default=False)
 
     class Meta:
@@ -67,6 +68,7 @@ admin.site.register(ExternalOperator)
 
 
 timestamp_inaccuracy_choices = (
+        # Translation hint: It's about timestamps
     (0, _(u"totally accurate")),
     (1, _(u"accurate to the minute")),
     (2, _(u"accurate to the hour")),
@@ -318,15 +320,19 @@ class Sample(models.Model):
     u"""The model for samples.
     """
     name = models.CharField(_(u"name"), max_length=30, unique=True, db_index=True)
+        # Translation hint: location of a sample
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
+        # Translation hint: keywords for samples
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
+                                     # Translation hint: ID of mother sample
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, related_name="samples",
+                              # Translation hint: Topic/project for samples and sample series
                               verbose_name=_(u"group"))
 
     class Meta:
@@ -443,6 +449,7 @@ class SampleSplit(Process):
     through `Sample.split_origin`.  This way one can walk through the path of
     relationship in both directions.
     """
+        # Translation hint: parent of a sample
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
     u"""This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
@@ -493,6 +500,7 @@ admin.site.register(SampleSplit)
 
 
 substrate_materials = (
+        # Translation hint: sample substrate type
     ("custom", _(u"custom")),
     ("asahi-u", _(u"ASAHI-U")),
     ("100-Si", _(u"silicon 100 wafer")),
@@ -540,17 +548,22 @@ class SampleDeath(Process):
     processes to a sample if it has a `SampleDeath` process, and its timestamp
     must be the last.
     """
+        # Translation hint: Of a sample
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
 
     class Meta:
+            # Translation hint: Of a sample
         verbose_name = _(u"cease of existence")
+            # Translation hint: Of a sample
         verbose_name_plural = _(u"ceases of existence")
 
     def __unicode__(self):
         _ = ugettext
         try:
+            # Translation hint: Of a sample
             return _(u"cease of existence of %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+            # Translation hint: Of a sample
             return _(u"cease of existence #%d") % self.pk
 
 admin.site.register(SampleDeath)
@@ -566,8 +579,10 @@ class Result(Process):
     u"""Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
+        # Translation hint: Of a result
     title = models.CharField(_(u"title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
+        # Translation hint: Physical quantities are meant
     quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in Python pickle format"))
     u"""This is a data structure, serialised in Python pickle format (protocol
     2 plus a base64 encoding, because this is UTF-8 safe; you never know what
@@ -581,17 +596,22 @@ class Result(Process):
     """
 
     class Meta:
+            # Translation hint: experimental result
         verbose_name = _(u"result")
+            # Translation hint: experimental results
         verbose_name_plural = _(u"results")
 
     def __unicode__(self):
         _ = ugettext
         try:
+            # Translation hint: experimental result
             return _(u"result for %s") % self.samples.get()
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             try:
+                # Translation hint: experimental result
                 return _(u"result for %s") % self.sample_series.get()
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
+                # Translation hint: experimental result
                 return _(u"result #%d") % self.pk
 
     @models.permalink
@@ -736,6 +756,7 @@ class Result(Process):
         quantities, value_lists = shared_utils.ascii_unpickle(self.quantities_and_values)
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
+                # Translation hint: In a table
                 child_node = CSVNode(_(u"row"), _(u"row #%d") % (i + 1))
                 child_node.items = [CSVItem(quantities[j], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
@@ -753,6 +774,7 @@ class SampleSeries(models.Model):
     after it has been created.
     """
     name = models.CharField(_(u"name"), max_length=50, primary_key=True,
+                            # Translation hint: The “Y” stands for “year”
                             help_text=_(u"must be of the form “originator-YY-name”"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
@@ -816,6 +838,7 @@ class Initials(models.Model):
 
     class Meta:
         verbose_name = _(u"initials")
+            # Translation hint: Plural of “initials”
         verbose_name_plural = _(u"initialses")
 
     def __unicode__(self):

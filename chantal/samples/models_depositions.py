@@ -66,6 +66,7 @@ class Deposition(Process):
 class SixChamberDeposition(Deposition):
     u"""6-chamber depositions.
     """
+        # Translation hint: Of a deposition system
     carrier = models.CharField(_(u"carrier"), max_length=10, blank=True)
 
     class Meta:
@@ -226,6 +227,7 @@ class SixChamberLayer(Layer):
     """
     deposition = models.ForeignKey(SixChamberDeposition, related_name="layers", verbose_name=_(u"deposition"))
     chamber = models.CharField(_(u"chamber"), max_length=5, choices=six_chamber_chamber_choices)
+        # Translation hint: Physical unit is meant
     pressure = models.CharField(_(u"deposition pressure"), max_length=15, help_text=_(u"with unit"), blank=True)
     time = models.CharField(_(u"deposition time"), max_length=9, help_text=_(u"format HH:MM:SS"), blank=True)
     substrate_electrode_distance = \
@@ -242,6 +244,7 @@ class SixChamberLayer(Layer):
     heating_temperature = models.IntegerField(_(u"heating temperature"), help_text=_(u"in ℃"), null=True, blank=True)
     transfer_out_of_chamber = models.CharField(_(u"transfer out of the chamber"), max_length=10, default="Ar", blank=True)
     plasma_start_power = models.DecimalField(_(u"plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                             # Translation hint: Watt
                                              help_text=_(u"in W"))
     plasma_start_with_carrier = models.BooleanField(_(u"plasma start with carrier"), default=False)
     deposition_frequency = models.DecimalField(_(u"deposition frequency"), max_digits=5, decimal_places=2,
@@ -600,8 +603,10 @@ class SmallClusterToolHotwireLayer(SmallClusterToolLayer, AllGases):
     filament_temperature = models.DecimalField(_(u"filament temperature"), max_digits=5, decimal_places=2,
                                                null=True, blank=True, help_text=_(u"in ℃"))
     current = models.DecimalField(_(u"wire current"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                  # Translation hint: Ampère
                                   help_text=_(u"in A"))
     voltage = models.DecimalField(_(u"wire voltage"), max_digits=6, decimal_places=2, null=True, blank=True,
+                                  # Translation hint: Volt
                                   help_text=_(u"in V"))
     wire_material = models.CharField(_(u"wire material"), max_length=20, choices=small_cluster_tool_wire_material_choices)
     base_pressure = models.FloatField(_(u"base pressure"), help_text=_(u"in Torr"), null=True, blank=True)

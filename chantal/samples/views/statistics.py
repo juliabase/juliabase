@@ -95,6 +95,7 @@ def breakup_time(seconds):
     elif len(current_timeunit_list) == 2:
         return current_timeunit_list[0] + _(u" and ") + current_timeunit_list[1]
     else:
+        # Translation hint: For enumerations.
         return _(u", ").join(current_timeunit_list[:-1]) + _(u", and ") + current_timeunit_list[-1]
 
 

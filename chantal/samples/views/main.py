@@ -71,6 +71,7 @@ class MySeries(object):
         return self.__is_complete
 
 
+# Translation hint: This is a page name in the Chantal wiki
 @help_link(_(u"MainMenu"))
 @login_required
 def main_menu(request):

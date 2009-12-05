@@ -28,6 +28,7 @@ class SandboxForm(forms.Form):
         return sandbox
 
 
+# Translation hint: This is a page name in the Chantal wiki
 @help_link(_(u"MarkdownMarkup"))
 def sandbox(request):
     u"""View so that the user can test Markdown syntax.  I deliberately decided
