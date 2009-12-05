@@ -74,7 +74,7 @@ class EditExternalOperatorForm(forms.ModelForm):
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_person = form_utils.UserField(label=_(u"Concact person"))
+    contact_person = form_utils.UserField(label=_(u"Contact person"))
 
     def __init__(self, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)

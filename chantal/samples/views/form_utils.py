@@ -148,6 +148,7 @@ class InitialsForm(forms.Form):
     change (or delete) them anymore.
     """
     _ = ugettext_lazy
+    # FixMe: Use lowercase form and .capitalize() to ease translating.
     initials = forms.CharField(label=_(u"Initials"), max_length=4, required=False)
 
     def __init__(self, person, initials_mandatory, *args, **kwargs):

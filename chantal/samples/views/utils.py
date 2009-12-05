@@ -844,7 +844,7 @@ def format_enumeration(items):
     :rtype: unicode
     """
     if len(items) > 2:
-        return _(u", ").join(items[:-1]) + _(u", and") + items[-1]
+        return _(u", ").join(items[:-1]) + _(u", and ") + items[-1]
     elif len(items) == 2:
         return _(u" and ").join(items)
     else:

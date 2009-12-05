@@ -53,6 +53,7 @@
 
   <h2>{% trans 'Add things' %}</h2>
 
+  {# FixMe: make translated strings lowercase and use |capfirst #}
   <ul style='list-style-image: url("/media/icons/add.png")'>
     <li style='list-style-image: url("/media/icons/ruby_add.png")'>
       <a href="{% url samples.views.sample.add %}">{% trans 'Samples' %}</a></li>

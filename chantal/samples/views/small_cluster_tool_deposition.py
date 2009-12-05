@@ -243,7 +243,7 @@ class ChangeLayerForm(forms.Form):
     duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
     move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
-                                        choices=(("", _(u"---------")), ("up", _(u"up")), ("down", _(u"down"))))
+                                        choices=(("", u"---------"), ("up", _(u"up")), ("down", _(u"down"))))
 
     def clean(self):
         _ = ugettext

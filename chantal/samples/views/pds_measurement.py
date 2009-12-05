@@ -116,6 +116,7 @@ class SampleForm(forms.Form):
     per PDS measurement (in contrast to depositions).
     """
     _ = ugettext_lazy
+    # FixMe: Should be lowercase and use .capitalize() to ease translating
     sample = form_utils.SampleField(label=_(u"Sample"))
 
     def __init__(self, user_details, pds_measurement, preset_sample, *args, **kwargs):
