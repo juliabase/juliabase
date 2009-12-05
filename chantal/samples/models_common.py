@@ -848,7 +848,7 @@ class UserDetails(models.Model):
         django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),
         help_text=_(u"new samples in these groups are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False)
-    feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed enties"), related_name="users", blank=True)
+    feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed entries"), related_name="users", blank=True)
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
     deposition2-layer2, ..."``, where “nickname” can be chosen freely except
