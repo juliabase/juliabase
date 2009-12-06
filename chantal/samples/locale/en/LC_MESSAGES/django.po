@@ -6,619 +6,1257 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-27 13:30+0100\n"
+"POT-Creation-Date: 2009-12-06 02:35+0100\n"
 "PO-Revision-Date: 2008-10-03 18:26+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Access denied"
-msgstr ""
-
-msgid "Ambiguous sample name"
-msgstr ""
-
+#: context_processors.py:59
 msgid "German"
 msgstr ""
 
+#: context_processors.py:60
 msgid "English"
 msgstr ""
 
+#: context_processors.py:61
 msgid "Chinese"
 msgstr ""
 
+#: context_processors.py:62
 msgid "Ukrainian"
 msgstr ""
 
+#: context_processors.py:63
 msgid "Russian"
 msgstr ""
 
+#: context_processors.py:64
 msgid "French"
 msgstr ""
 
+#: context_processors.py:65
 msgid "Dutch"
 msgstr ""
 
+#: models_common.py:44 models_common.py:322 models_common.py:433
+#: models_common.py:776 permissions.py:77 permissions.py:79
 msgid "name"
 msgstr ""
 
+#: models_common.py:45
 msgid "institution"
 msgstr ""
 
+#: models_common.py:46
 msgid "email"
 msgstr ""
 
+#: models_common.py:47
 msgid "alternative email"
 msgstr ""
 
+#: models_common.py:48
 msgid "phone"
 msgstr ""
 
+#: models_common.py:50
 msgid "contact person in the institute"
 msgstr ""
 
+#. Translation hint: Group which is not open to senior members
+#: models_common.py:52 models_common.py:907 views/group.py:48
+#: views/group.py:124
+msgid "restricted"
+msgstr ""
+
+#: models_common.py:55 models_common.py:98 models_common.py:836
 msgid "external operator"
 msgstr ""
 
+#: models_common.py:56
 msgid "external operators"
 msgstr ""
 
+#: models_common.py:58
 #, fuzzy
 msgid "Can add an external operator"
 msgstr "sample series"
 
+#. Translation hint: It's about timestamps
+#: models_common.py:72
 msgid "totally accurate"
 msgstr ""
 
+#: models_common.py:73
 msgid "accurate to the minute"
 msgstr ""
 
+#: models_common.py:74
 msgid "accurate to the hour"
 msgstr ""
 
+#: models_common.py:75
 msgid "accurate to the day"
 msgstr ""
 
+#: models_common.py:76
 msgid "accurate to the month"
 msgstr ""
 
+#: models_common.py:77
 msgid "accurate to the year"
 msgstr ""
 
+#: models_common.py:78
 msgid "not even accurate to the year"
 msgstr ""
 
+#: models_common.py:95 models_common.py:308 models_common.py:779
+#: models_feeds.py:32 views/sample.py:279
 msgid "timestamp"
 msgstr ""
 
+#: models_common.py:96
 msgid "timestamp inaccuracy"
 msgstr ""
 
+#: models_common.py:97 models_common.py:309
 msgid "operator"
 msgstr ""
 
+#: models_common.py:100 models_common.py:310 models_depositions.py:236
+#: models_depositions.py:286 models_depositions.py:593
+#: models_depositions.py:636 models_feeds.py:252
+#: templates/lab_notebook_large_area_deposition.html:30
 msgid "comments"
 msgstr ""
 
+#: models_common.py:104 models_feeds.py:165 models_feeds.py:190
+#: views/lab_notebook.py:195 views/sample.py:569
 msgid "process"
 msgstr ""
 
+#: models_common.py:105 models_common.py:333
 msgid "processes"
 msgstr ""
 
-msgid "deposition number"
-msgstr ""
-
-#, python-format
-msgid "deposition %s"
-msgstr ""
-
-msgid "deposition"
-msgstr ""
-
-msgid "depositions"
-msgstr ""
-
-msgid "carrier"
-msgstr ""
-
-msgid "Add 6-chamber deposition"
-msgstr ""
-
-msgid "6-chamber deposition"
-msgstr ""
-
-msgid "6-chamber depositions"
-msgstr ""
-
-msgid "Can create and edit 6-chamber depositions"
-msgstr ""
-
-msgid "6-chamber deposition lab"
-msgstr ""
-
-#, python-format
-msgid "hall measurement of %s"
-msgstr ""
-
-#, python-format
-msgid "hall measurement #%d"
-msgstr ""
-
-msgid "Add hall measurement"
-msgstr ""
-
-msgid "Hall measurement"
-msgstr ""
-
-msgid "Hall measurements"
-msgstr ""
-
-msgid "Can create and edit hall measurements"
-msgstr ""
-
-msgid "layer number"
-msgstr ""
-
-msgid "layer"
-msgstr ""
-
-msgid "layers"
-msgstr ""
-
-msgid "chamber"
-msgstr ""
-
-msgid "deposition pressure"
-msgstr ""
-
-msgid "with unit"
-msgstr ""
-
-msgid "deposition time"
-msgstr ""
-
-msgid "format HH:MM:SS"
-msgstr ""
-
-msgid "substrate–electrode distance"
-msgstr ""
-
-msgid "in mm"
-msgstr ""
-
-msgid "transfer in the chamber"
-msgstr ""
-
-msgid "pre-heat"
-msgstr ""
-
-msgid "gas of gas pre-heat"
-msgstr ""
-
-msgid "pressure of gas pre-heat"
-msgstr ""
-
-msgid "time of gas pre-heat"
-msgstr ""
-
-msgid "heating temperature"
-msgstr ""
-
-msgid "in ℃"
-msgstr ""
-
-msgid "transfer out of the chamber"
-msgstr ""
-
-msgid "plasma start power"
-msgstr ""
-
-msgid "in W"
-msgstr ""
-
-msgid "plasma start with carrier"
-msgstr ""
-
-msgid "deposition frequency"
-msgstr ""
-
-msgid "in MHz"
-msgstr ""
-
-msgid "deposition power"
-msgstr ""
-
-msgid "base pressure"
-msgstr ""
-
-msgid "in Torr"
-msgstr ""
-
-#, python-format
-msgid "layer %(number)d of %(deposition)s"
-msgstr ""
-
-msgid "6-chamber layer"
-msgstr ""
-
-msgid "6-chamber layers"
-msgstr ""
-
-msgid "PH₃ in 2% SiH₄"
-msgstr ""
-
-msgid "TMB in 1% He"
-msgstr ""
-
-msgid "B₂H₆ in 5ppm H₂"
-msgstr ""
-
-msgid "PH₃ in 10 ppm H₂"
-msgstr ""
-
-msgid "channel"
-msgstr ""
-
-msgid "gas and dilution"
-msgstr ""
-
-msgid "flow rate"
-msgstr ""
-
-msgid "in sccm"
-msgstr ""
-
-#, python-format
-msgid "channel %(number)d of %(layer)s"
-msgstr ""
-
-msgid "6-chamber channel"
-msgstr ""
-
-msgid "6-chamber channels"
-msgstr ""
-
-msgid "Add large-area deposition"
-msgstr ""
-
-msgid "large-area deposition"
-msgstr ""
-
-msgid "large-area depositions"
-msgstr ""
-
-msgid "Can create and edit large-area depositions"
-msgstr ""
-
-msgid "large-area deposition lab"
-msgstr ""
-
-msgid "13.56"
-msgstr ""
-
-msgid "27.12"
-msgstr ""
-
-msgid "40.68"
-msgstr ""
-
-msgid "NN large PC1"
-msgstr ""
-
-msgid "NN large PC2"
-msgstr ""
-
-msgid "NN large PC3"
-msgstr ""
-
-msgid "NN small 1"
-msgstr ""
-
-msgid "NN small 2"
-msgstr ""
-
-msgid "NN40 large PC1"
-msgstr ""
-
-msgid "NN40 large PC2"
-msgstr ""
-
-msgid "date"
-msgstr ""
-
-msgid "layer type"
-msgstr ""
-
-msgid "station"
-msgstr ""
-
-msgid "SiH₄ flow rate"
-msgstr ""
-
-msgid "H₂ flow rate"
-msgstr ""
-
-msgid "power"
-msgstr ""
-
-msgid "pressure"
-msgstr ""
-
-msgid "temperature"
-msgstr ""
-
-msgid "HF frequency"
-msgstr ""
-
-msgid "time"
-msgstr ""
-
-msgid "in sec"
-msgstr ""
-
-msgid "DC bias"
-msgstr ""
-
-msgid "in V"
-msgstr ""
-
-msgid "electrode"
-msgstr ""
-
-msgid "electrodes distance"
-msgstr ""
-
-msgid "large-area layer"
-msgstr ""
-
-msgid "large-area layers"
-msgstr ""
-
-msgid "pd number"
-msgstr ""
-
-msgid "raw data file"
-msgstr ""
-
-msgid "only the relative path below \"pds/\""
-msgstr ""
-
-msgid "evaluated data file"
-msgstr ""
-
-#, python-format
-msgid "PDS measurement of %s"
-msgstr ""
-
-#, python-format
-msgid "PDS measurement #%d"
-msgstr ""
-
-msgid "energy in eV"
-msgstr ""
-
-msgid "counts"
-msgstr ""
-
-msgid "Add PDS measurement"
-msgstr ""
-
-msgid "PDS measurement"
-msgstr ""
-
-msgid "PDS measurements"
-msgstr ""
-
-msgid "Can create and edit PDS measurements"
-msgstr ""
-
+#. Translation hint: location of a sample
+#: models_common.py:324
 msgid "current location"
 msgstr ""
 
+#: models_common.py:326 models_common.py:781
+#: templates/show_sample_series.html:36
 msgid "currently responsible person"
 msgstr ""
 
+#: models_common.py:327 models_feeds.py:111
 msgid "purpose"
 msgstr ""
 
+#. Translation hint: keywords for samples
+#: models_common.py:329
 msgid "tags"
 msgstr ""
 
+#: models_common.py:329 views/sample.py:284
 msgid "separated with commas, no whitespace"
 msgstr ""
 
+#. Translation hint: ID of mother sample
+#: models_common.py:332
 msgid "split origin"
 msgstr ""
 
+#. Translation hint: Topic/project for samples and sample series
+#: models_common.py:336 models_common.py:785 models_common.py:905
+#: models_feeds.py:110 models_feeds.py:138 models_feeds.py:350
+#: models_feeds.py:377 models_feeds.py:411
 msgid "group"
 msgstr ""
 
+#: models_common.py:339 models_common.py:434 views/sample_series.py:265
 msgid "sample"
 msgstr ""
 
+#: models_common.py:340 models_common.py:783 models_feeds.py:108
+#: models_feeds.py:137 models_feeds.py:251 models_feeds.py:276
 msgid "samples"
 msgstr ""
 
+#: models_common.py:343
 msgid "Can view all samples (senior user)"
 msgstr ""
 
+#: models_common.py:437
 msgid "name alias"
 msgstr ""
 
+#: models_common.py:438
 msgid "name aliases"
 msgstr ""
 
+#. Translation hint: parent of a sample
+#: models_common.py:453
 msgid "parent"
 msgstr ""
 
+#: models_common.py:459 models_feeds.py:301
+msgid "sample split"
+msgstr ""
+
+#: models_common.py:460
+msgid "sample splits"
+msgstr ""
+
+#: models_common.py:464
 #, python-format
 msgid "split of %s"
 msgstr ""
 
-msgid "sample split"
+#. Translation hint: sample substrate type
+#: models_common.py:504
+msgid "custom"
 msgstr ""
 
-msgid "sample splits"
-msgstr ""
-
+#: models_common.py:505
 msgid "ASAHI-U"
 msgstr ""
 
+#: models_common.py:506
 msgid "silicon 100 wafer"
 msgstr ""
 
+#: models_common.py:518
 msgid "substrate material"
 msgstr ""
 
+#: models_common.py:521
 msgid "substrate"
 msgstr ""
 
+#: models_common.py:522
 msgid "substrates"
 msgstr ""
 
+#: models_common.py:531
+msgid "material"
+msgstr ""
+
+#: models_common.py:538
 msgid "completely split"
 msgstr ""
 
+#: models_common.py:539
 msgid "lost and unfindable"
 msgstr ""
 
+#: models_common.py:540
 msgid "completely destroyed"
 msgstr ""
 
+#. Translation hint: Of a sample
+#: models_common.py:552
 msgid "cause of death"
 msgstr ""
 
+#. Translation hint: Of a sample
+#: models_common.py:556 views/sample.py:163
+msgid "cease of existence"
+msgstr ""
+
+#. Translation hint: Of a sample
+#: models_common.py:558
+msgid "ceases of existence"
+msgstr ""
+
+#. Translation hint: Of a sample
+#: models_common.py:564
 #, python-format
 msgid "cease of existence of %s"
 msgstr ""
 
+#. Translation hint: Of a sample
+#: models_common.py:567
 #, python-format
 msgid "cease of existence #%d"
 msgstr ""
 
-msgid "cease of existence"
+#: models_common.py:572 templates/groups_and_permissions.html:65
+#: templates/groups_and_permissions.html:78
+#: views/small_cluster_tool_deposition.py:43
+msgid "none"
 msgstr ""
 
-msgid "ceases of existence"
+#. Translation hint: Of a result
+#: models_common.py:583
+msgid "title"
 msgstr ""
 
+#: models_common.py:584
+msgid "image file type"
+msgstr ""
+
+#. Translation hint: Physical quantities are meant
+#: models_common.py:586
+msgid "quantities and values"
+msgstr ""
+
+#: models_common.py:586
+msgid "in Python pickle format"
+msgstr ""
+
+#. #-#-#-#-#  django.pot (PACKAGE VERSION)  #-#-#-#-#
+#. Translation hint: experimental result
+#. #-#-#-#-#  django.pot (PACKAGE VERSION)  #-#-#-#-#
+#. Translation hint: experimental result
+#: models_common.py:600 models_feeds.py:219 templates/markdown_sandbox.html:33
+msgid "result"
+msgstr ""
+
+#. Translation hint: experimental results
+#: models_common.py:602 models_common.py:784
+msgid "results"
+msgstr ""
+
+#. Translation hint: experimental result
+#: models_common.py:608 models_common.py:612
 #, fuzzy, python-format
 msgid "result for %s"
 msgstr "sample series"
 
+#. Translation hint: experimental result
+#: models_common.py:615
 #, python-format
 msgid "result #%d"
 msgstr ""
 
-msgid "result"
+#. Translation hint: In a table
+#: models_common.py:760 views/result.py:573
+msgid "row"
 msgstr ""
 
-msgid "results"
+#: models_common.py:760
+#, python-format
+msgid "row #%d"
 msgstr ""
 
-msgid "must be of the form “YY-originator-name”"
+#. Translation hint: The “Y” stands for “year”
+#: models_common.py:778
+msgid "must be of the form “originator-YY-name”"
 msgstr ""
 
+#: models_common.py:782 models_feeds.py:141 models_feeds.py:191
+#: models_feeds.py:220 models_feeds.py:277 models_feeds.py:327
+#: models_feeds.py:380
+msgid "description"
+msgstr ""
+
+#: models_common.py:788 models_feeds.py:326 models_feeds.py:349
+#: models_feeds.py:376
 msgid "sample series"
 msgstr ""
 
+#: models_common.py:789
 msgid "sample serieses"
 msgstr "sample series"
 
+#: models_common.py:833 models_common.py:840
 msgid "initials"
 msgstr ""
 
+#: models_common.py:834 models_common.py:867
 msgid "user"
 msgstr ""
 
+#. Translation hint: Plural of “initials”
+#: models_common.py:842
 msgid "initialses"
 msgstr "initials"
 
+#: models_common.py:868
 msgid "language"
 msgstr ""
 
+#: models_common.py:869
 msgid "my samples"
 msgstr ""
 
+#: models_common.py:871
 msgid "auto-addition groups"
 msgstr ""
 
+#: models_common.py:872
 msgid "new samples in these groups are automatically added to “My Samples”"
 msgstr ""
 
+#: models_common.py:873
 msgid "get only important news"
 msgstr ""
 
+#: models_common.py:874 models_feeds.py:40
+msgid "feed entries"
+msgstr ""
+
+#: models_common.py:875
 msgid "my layers"
 msgstr ""
 
+#: models_common.py:884 models_common.py:885
 msgid "user details"
 msgstr ""
 
-msgid "Can edit group memberships and add new groups"
+#: models_common.py:887
+msgid "Can edit groups, and can add new groups"
 msgstr ""
 
-msgid "link"
+#: models_common.py:910 models_common.py:911
+msgid "group details"
 msgstr ""
 
-msgid "without domain and the leading \"/\""
+#: models_depositions.py:43
+msgid "deposition number"
 msgstr ""
 
+#: models_depositions.py:46 models_depositions.py:228
+#: models_depositions.py:431 models_depositions.py:567
+msgid "deposition"
+msgstr ""
+
+#: models_depositions.py:47
+msgid "depositions"
+msgstr ""
+
+#: models_depositions.py:55
+#, python-format
+msgid "deposition %s"
+msgstr ""
+
+#: models_depositions.py:61 models_depositions.py:184
+#: templates/lab_notebook_large_area_deposition.html:15
+msgid "number"
+msgstr ""
+
+#. Translation hint: Of a deposition system
+#: models_depositions.py:70 models_depositions.py:492
+msgid "carrier"
+msgstr ""
+
+#: models_depositions.py:73
+msgid "6-chamber deposition"
+msgstr ""
+
+#: models_depositions.py:74
+msgid "6-chamber depositions"
+msgstr ""
+
+#: models_depositions.py:76
+msgid "Can create and edit 6-chamber depositions"
+msgstr ""
+
+#: models_depositions.py:134
+msgid "6-chamber deposition lab"
+msgstr ""
+
+#: models_depositions.py:164
+#: templates/edit_small_cluster_tool_deposition.html:57
+msgid "layer number"
+msgstr ""
+
+#: models_depositions.py:169 models_depositions.py:318
+msgid "layer"
+msgstr ""
+
+#: models_depositions.py:170
+msgid "layers"
+msgstr ""
+
+#: models_depositions.py:183
+#, python-format
+msgid "layer %d"
+msgstr ""
+
+#: models_depositions.py:193 models_depositions.py:194
+#: models_depositions.py:195 models_depositions.py:197
+#: models_depositions.py:199 models_depositions.py:201
+#: models_depositions.py:202 models_depositions.py:203
+#: models_depositions.py:204 models_depositions.py:205
+#: models_depositions.py:206 models_depositions.py:320
+#: models_depositions.py:435 models_depositions.py:436
+#: models_depositions.py:437 models_depositions.py:438
+#: models_depositions.py:439 models_depositions.py:440
+msgid "in sccm"
+msgstr ""
+
+#: models_depositions.py:195 models_depositions.py:302
+msgid "2% PH₃ in SiH₄"
+msgstr ""
+
+#: models_depositions.py:197 models_depositions.py:303
+msgid "1% TMB in He"
+msgstr ""
+
+#: models_depositions.py:199 models_depositions.py:304
+msgid "5ppm B₂H₆ in H₂"
+msgstr ""
+
+#: models_depositions.py:206 models_depositions.py:310
+msgid "10 ppm PH₃ in H₂"
+msgstr ""
+
+#: models_depositions.py:229 models_depositions.py:269
+#: models_depositions.py:630
+msgid "chamber"
+msgstr ""
+
+#. Translation hint: Physical unit is meant
+#: models_depositions.py:231 models_depositions.py:589
+#: models_depositions.py:631
+msgid "deposition pressure"
+msgstr ""
+
+#: models_depositions.py:231 models_depositions.py:241
+#: models_depositions.py:589 models_depositions.py:598
+#: models_depositions.py:631 models_depositions.py:641
+msgid "with unit"
+msgstr ""
+
+#: models_depositions.py:232 models_depositions.py:590
+#: models_depositions.py:632
+msgid "deposition time"
+msgstr ""
+
+#: models_depositions.py:232 models_depositions.py:238
+#: models_depositions.py:243 models_depositions.py:590
+#: models_depositions.py:595 models_depositions.py:600
+#: models_depositions.py:632 models_depositions.py:638
+#: models_depositions.py:643
+msgid "format HH:MM:SS"
+msgstr ""
+
+#: models_depositions.py:234 models_depositions.py:634
+msgid "substrate–electrode distance"
+msgstr ""
+
+#: models_depositions.py:235 models_depositions.py:450
+#: models_depositions.py:592 models_depositions.py:635
+msgid "in mm"
+msgstr ""
+
+#: models_depositions.py:237 models_depositions.py:273
+#: models_depositions.py:594 models_depositions.py:637
+msgid "transfer in the chamber"
+msgstr ""
+
+#: models_depositions.py:238 models_depositions.py:274
+#: models_depositions.py:595 models_depositions.py:638
+msgid "pre-heat"
+msgstr ""
+
+#: models_depositions.py:239 models_depositions.py:275
+#: models_depositions.py:596 models_depositions.py:639
+msgid "gas of gas pre-heat"
+msgstr ""
+
+#: models_depositions.py:240 models_depositions.py:276
+#: models_depositions.py:597 models_depositions.py:640
+msgid "pressure of gas pre-heat"
+msgstr ""
+
+#: models_depositions.py:242 models_depositions.py:277
+#: models_depositions.py:599 models_depositions.py:642
+msgid "time of gas pre-heat"
+msgstr ""
+
+#: models_depositions.py:244 models_depositions.py:601
+#: models_depositions.py:644
+msgid "heating temperature"
+msgstr ""
+
+#: models_depositions.py:244 models_depositions.py:443
+#: models_depositions.py:601 models_depositions.py:604
+#: models_depositions.py:644
+msgid "in ℃"
+msgstr ""
+
+#: models_depositions.py:245 models_depositions.py:279
+#: models_depositions.py:602 models_depositions.py:645
+msgid "transfer out of the chamber"
+msgstr ""
+
+#: models_depositions.py:246 models_depositions.py:646
+msgid "plasma start power"
+msgstr ""
+
+#. Translation hint: Watt
+#: models_depositions.py:248 models_depositions.py:253
+#: models_depositions.py:441 models_depositions.py:647
+#: models_depositions.py:652
+msgid "in W"
+msgstr ""
+
+#: models_depositions.py:249 models_depositions.py:281
+#: models_depositions.py:648
+msgid "plasma start with carrier"
+msgstr ""
+
+#: models_depositions.py:250 models_depositions.py:649
+msgid "deposition frequency"
+msgstr ""
+
+#: models_depositions.py:251 models_depositions.py:445
+#: models_depositions.py:650
+msgid "in MHz"
+msgstr ""
+
+#: models_depositions.py:252 models_depositions.py:651
+msgid "deposition power"
+msgstr ""
+
+#: models_depositions.py:254 models_depositions.py:612
+#: models_depositions.py:653
+msgid "base pressure"
+msgstr ""
+
+#: models_depositions.py:254 models_depositions.py:442
+#: models_depositions.py:612 models_depositions.py:653
+msgid "in Torr"
+msgstr ""
+
+#: models_depositions.py:258
+msgid "6-chamber layer"
+msgstr ""
+
+#: models_depositions.py:259
+msgid "6-chamber layers"
+msgstr ""
+
+#: models_depositions.py:263 models_depositions.py:458
+#: models_depositions.py:576
+#, python-format
+msgid "layer %(number)d of %(deposition)s"
+msgstr ""
+
+#: models_depositions.py:271 models_depositions.py:446
+msgid "time"
+msgstr ""
+
+#: models_depositions.py:272
+msgid "electr. dist./mm"
+msgstr ""
+
+#: models_depositions.py:280
+msgid "P_start/W"
+msgstr ""
+
+#: models_depositions.py:282
+msgid "yes"
+msgstr ""
+
+#: models_depositions.py:282
+msgid "no"
+msgstr ""
+
+#: models_depositions.py:285
+msgid "p_base/Torr"
+msgstr ""
+
+#: models_depositions.py:292
+msgid "(in sccm)"
+msgstr ""
+
+#: models_depositions.py:317
+msgid "channel"
+msgstr ""
+
+#: models_depositions.py:319
+msgid "gas and dilution"
+msgstr ""
+
+#: models_depositions.py:320
+msgid "flow rate"
+msgstr ""
+
+#: models_depositions.py:323
+msgid "6-chamber channel"
+msgstr ""
+
+#: models_depositions.py:324
+msgid "6-chamber channels"
+msgstr ""
+
+#: models_depositions.py:330
+#, python-format
+msgid "channel %(number)d of %(layer)s"
+msgstr ""
+
+#: models_depositions.py:340
+msgid "large-area deposition"
+msgstr ""
+
+#: models_depositions.py:341
+msgid "large-area depositions"
+msgstr ""
+
+#: models_depositions.py:343
+msgid "Can create and edit large-area depositions"
+msgstr ""
+
+#: models_depositions.py:387
+#, python-format
+msgid "lab notebook for %s"
+msgstr ""
+
+#: models_depositions.py:394 models_depositions.py:555
+msgid "large-area deposition lab"
+msgstr ""
+
+#: models_depositions.py:415
+msgid "NN large PC1"
+msgstr ""
+
+#: models_depositions.py:416
+msgid "NN large PC2"
+msgstr ""
+
+#: models_depositions.py:417
+msgid "NN large PC3"
+msgstr ""
+
+#: models_depositions.py:418
+msgid "NN small 1"
+msgstr ""
+
+#: models_depositions.py:419
+msgid "NN small 2"
+msgstr ""
+
+#: models_depositions.py:420
+msgid "NN40 large PC1"
+msgstr ""
+
+#: models_depositions.py:421
+msgid "NN40 large PC2"
+msgstr ""
+
+#: models_depositions.py:432 models_depositions.py:466
+msgid "date"
+msgstr ""
+
+#: models_depositions.py:433 models_depositions.py:467
+msgid "layer type"
+msgstr ""
+
+#: models_depositions.py:434 models_depositions.py:468
+msgid "station"
+msgstr ""
+
+#: models_depositions.py:435
+msgid "SiH₄"
+msgstr ""
+
+#: models_depositions.py:436
+msgid "H₂"
+msgstr ""
+
+#: models_depositions.py:441
+msgid "power"
+msgstr ""
+
+#: models_depositions.py:442
+msgid "pressure"
+msgstr ""
+
+#: models_depositions.py:443
+msgid "temperature"
+msgstr ""
+
+#: models_depositions.py:444
+msgid "HF frequency"
+msgstr ""
+
+#: models_depositions.py:446
+msgid "in sec"
+msgstr ""
+
+#: models_depositions.py:447
+msgid "DC bias"
+msgstr ""
+
+#. Translation hint: Volt
+#: models_depositions.py:447 models_depositions.py:610
+msgid "in V"
+msgstr ""
+
+#: models_depositions.py:448 models_depositions.py:482
+msgid "electrode"
+msgstr ""
+
+#: models_depositions.py:449
+msgid "electrodes distance"
+msgstr ""
+
+#: models_depositions.py:453
+msgid "large-area layer"
+msgstr ""
+
+#: models_depositions.py:454
+msgid "large-area layers"
+msgstr ""
+
+#: models_depositions.py:480
+msgid "time/s"
+msgstr ""
+
+#: models_depositions.py:481
+msgid "DC bias/V"
+msgstr ""
+
+#: models_depositions.py:483
+msgid "elec. dist./mm"
+msgstr ""
+
+#: models_depositions.py:495
+msgid "small cluster tool deposition"
+msgstr ""
+
+#: models_depositions.py:496
+msgid "small cluster tool depositions"
+msgstr ""
+
+#: models_depositions.py:498
+msgid "Can create and edit small cluster tool depositions"
+msgstr ""
+
+#: models_depositions.py:571
+msgid "small cluster tool layer"
+msgstr ""
+
+#: models_depositions.py:572
+msgid "small cluster tool layers"
+msgstr ""
+
+#: models_depositions.py:580
+msgid "rhenium"
+msgstr ""
+
+#: models_depositions.py:581
+msgid "tantalum"
+msgstr ""
+
+#: models_depositions.py:582
+msgid "tungsten"
+msgstr ""
+
+#: models_depositions.py:591
+msgid "substrate–wire distance"
+msgstr ""
+
+#: models_depositions.py:603
+msgid "filament temperature"
+msgstr ""
+
+#: models_depositions.py:605
+msgid "wire current"
+msgstr ""
+
+#. Translation hint: Ampère
+#: models_depositions.py:607
+msgid "in A"
+msgstr ""
+
+#: models_depositions.py:608
+msgid "wire voltage"
+msgstr ""
+
+#: models_depositions.py:611
+msgid "wire material"
+msgstr ""
+
+#: models_depositions.py:615
+msgid "small cluster tool hotwire layer"
+msgstr ""
+
+#: models_depositions.py:616
+msgid "small cluster tool hotwire layers"
+msgstr ""
+
+#: models_depositions.py:656
+msgid "small cluster tool PECVD layer"
+msgstr ""
+
+#: models_depositions.py:657
+msgid "small cluster tool PECVD layers"
+msgstr ""
+
+#: models_feeds.py:31
+msgid "originator"
+msgstr ""
+
+#: models_feeds.py:33
+msgid "is important"
+msgstr ""
+
+#: models_feeds.py:34
 msgid "SHA1 hex digest"
 msgstr ""
 
+#: models_feeds.py:39
+msgid "feed entry"
+msgstr ""
+
+#: models_feeds.py:45
 #, python-format
 msgid "feed entry #%d"
 msgstr ""
 
-msgid "feed entry"
+#: models_feeds.py:112 models_feeds.py:140
+msgid "auto adders"
 msgstr ""
 
-msgid "feed entries"
-msgstr ""
-
-msgid "originator"
-msgstr ""
-
-#, python-format
-msgid "%(originator)s has added new samples in group %(group)s"
-msgstr ""
-
-#, python-format
-msgid "%s has added new samples"
-msgstr ""
-
+#: models_feeds.py:117
 msgid "new samples feed entry"
 msgstr ""
 
+#: models_feeds.py:118
 #, fuzzy
 msgid "new samples feed entries"
 msgstr "sample series"
 
+#: models_feeds.py:123
+#, fuzzy, python-format
+msgid "New sample in “%s”"
+msgid_plural "New samples in “%s”"
+msgstr[0] "sample series"
+msgstr[1] "sample series"
+
+#: models_feeds.py:139 models_feeds.py:378
+msgid "old group"
+msgstr ""
+
+#: models_feeds.py:144
+#, fuzzy
+msgid "moved samples feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:145
+#, fuzzy
+msgid "moved samples feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:150
+#, fuzzy, python-format
+msgid "New sample moved to “%s”"
+msgid_plural "New samples moved to “%s”"
+msgstr[0] "sample series"
+msgstr[1] "sample series"
+
+#: models_feeds.py:168
+#, fuzzy
+msgid "new physical process feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:169
+#, fuzzy
+msgid "new physical process feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:175
+#, python-format
+msgid "New %s"
+msgstr ""
+
+#: models_feeds.py:194
+msgid "edited physical process feed entry"
+msgstr ""
+
+#: models_feeds.py:195
+#, fuzzy
+msgid "edited physical process feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:201
+#, fuzzy, python-format
+msgid "Edited %s"
+msgstr "sample series"
+
+#: models_feeds.py:221
+#, fuzzy
+msgid "result is new"
+msgstr "sample series"
+
+#: models_feeds.py:224
+#, fuzzy
+msgid "result feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:225
+#, fuzzy
+msgid "result feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:231
+#, python-format
+msgid "New: %s"
+msgstr ""
+
+#: models_feeds.py:235
+#, python-format
+msgid "Edited: %s"
+msgstr ""
+
+#: models_feeds.py:255
+#, fuzzy
+msgid "copied My Samples feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:256
+#, fuzzy
+msgid "copied My Samples feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:261
+#, python-format
+msgid "%s copied samples to you"
+msgstr ""
+
+#: models_feeds.py:278 models_feeds.py:328
+msgid "has responsible person changed"
+msgstr ""
+
+#: models_feeds.py:281
+#, fuzzy
+msgid "edited samples feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:282
+#, fuzzy
+msgid "edited samples feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:288
+#, python-format
+msgid "Sample %s was edited"
+msgstr ""
+
+#: models_feeds.py:290
+#, fuzzy
+msgid "Samples were edited"
+msgstr "sample series"
+
+#: models_feeds.py:302
+msgid "sample was completely split"
+msgstr ""
+
+#. Translation hint: Feed entry for a split of a sample
+#: models_feeds.py:306
+#, fuzzy
+msgid "sample split feed entry"
+msgstr "sample series"
+
+#. Translation hint: Feed entries for splits of samples
+#: models_feeds.py:308
+#, fuzzy
+msgid "sample split feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:313
+#, fuzzy, python-format
+msgid "Sample “%s” was split"
+msgstr "sample series"
+
+#: models_feeds.py:331
+#, fuzzy
+msgid "edited sample series feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:332
+#, fuzzy
+msgid "edited sample series feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:337
+#, fuzzy, python-format
+msgid "Sample series %s was edited"
+msgstr "sample series"
+
+#: models_feeds.py:351 models_feeds.py:381
+msgid "subscribers"
+msgstr ""
+
+#: models_feeds.py:354
+#, fuzzy
+msgid "new sample series feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:355
+#, fuzzy
+msgid "new sample series feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:360
+#, python-format
+msgid "New sample series “%(sample_series)s” in group “%(group)s”"
+msgstr ""
+
+#: models_feeds.py:384
+#, fuzzy
+msgid "moved sample series feed entry"
+msgstr "sample series"
+
+#: models_feeds.py:385
+#, fuzzy
+msgid "moved sample series feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:390
+#, python-format
+msgid "Sample series %(sample_series)s was moved to group “%(group)s”"
+msgstr ""
+
+#: models_feeds.py:404
+msgid "added"
+msgstr ""
+
+#: models_feeds.py:405
+msgid "removed"
+msgstr ""
+
+#. Translation hint: Action is either addition or removal
+#: models_feeds.py:413
+msgid "action"
+msgstr ""
+
+#: models_feeds.py:416
+msgid "changed group feed entry"
+msgstr ""
+
+#: models_feeds.py:417
+#, fuzzy
+msgid "changed group feed entries"
+msgstr "sample series"
+
+#: models_feeds.py:423
+#, python-format
+msgid "Now in group “%s”"
+msgstr ""
+
+#: models_feeds.py:425
+#, python-format
+msgid "Not anymore in group “%s”"
+msgstr ""
+
+#: models_physical_processes.py:76
+msgid "Hall measurement"
+msgstr ""
+
+#: models_physical_processes.py:77
+msgid "Hall measurements"
+msgstr ""
+
+#: models_physical_processes.py:79
+msgid "Can create and edit hall measurements"
+msgstr ""
+
+#: models_physical_processes.py:84
+#, python-format
+msgid "hall measurement of %s"
+msgstr ""
+
+#: models_physical_processes.py:86
+#, python-format
+msgid "hall measurement #%d"
+msgstr ""
+
+#: models_physical_processes.py:110
+msgid "PDS number"
+msgstr ""
+
+#: models_physical_processes.py:111
+msgid "raw data file"
+msgstr ""
+
+#: models_physical_processes.py:112 models_physical_processes.py:115
+msgid "only the relative path below \"pds/\""
+msgstr ""
+
+#. Translation hint: PDS file.  Its filename starts with "a_".
+#: models_physical_processes.py:114
+msgid "evaluated data file"
+msgstr ""
+
+#: models_physical_processes.py:118
+msgid "PDS measurement"
+msgstr ""
+
+#: models_physical_processes.py:119
+msgid "PDS measurements"
+msgstr ""
+
+#: models_physical_processes.py:121
+msgid "Can create and edit PDS measurements"
+msgstr ""
+
+#: models_physical_processes.py:126
+#, python-format
+msgid "PDS measurement of %s"
+msgstr ""
+
+#: models_physical_processes.py:128
+#, python-format
+msgid "PDS measurement #%d"
+msgstr ""
+
+#: models_physical_processes.py:134
+msgid "energy in eV"
+msgstr ""
+
+#: models_physical_processes.py:135
+msgid "α in cm⁻¹"
+msgstr ""
+
+#: permissions.py:211
 msgid "Permission denied: "
 msgstr ""
 
-#, python-format
+#: permissions.py:231
 msgid ""
-"You are not allowed to view sample %s since you are not in the sample's "
+"You are not allowed to view the sample since you are not in the sample's "
+"group, nor are you its currently responsible person."
+msgstr ""
+
+#: permissions.py:235
+msgid ""
+"You are not allowed to view the sample since you are not in the sample's "
 "group, nor are you its currently responsible person, nor are you a senior "
 "user."
 msgstr ""
 
+#: permissions.py:267
 #, python-format
 msgid ""
 "You are not allowed to edit the process “%(process)s” because you don't have "
 "the permission “%(permission)s”."
 msgstr ""
 
+#: permissions.py:270
 #, python-format
 msgid ""
 "You are not allowed to add %(process_plural_name)s because you don't have "
 "the permission “%(permission)s”."
 msgstr ""
 
+#: permissions.py:294
+#, python-format
+msgid ""
+"You are not allowed to view lab notebooks for %(process_plural_name)s "
+"because you don't have the permission “%(permission)s”."
+msgstr ""
+
+#: permissions.py:321
 #, python-format
 msgid ""
 "You are not allowed to view the process “%(process)s” because neither you "
@@ -626,12 +1264,22 @@ msgid ""
 "processed samples."
 msgstr ""
 
+#: permissions.py:342
 #, python-format
 msgid ""
 "You are not allowed to edit the result “%s” because you didn't create this "
 "result."
 msgstr ""
 
+#: permissions.py:365
+#, python-format
+msgid ""
+"You are not allowed to view the result “%s” because neither did you create "
+"this result, nor are you allowed to view its connected samples or sample "
+"series."
+msgstr ""
+
+#: permissions.py:387
 #, python-format
 msgid ""
 "You are not allowed to add the result to %s because neither are you the "
@@ -639,6 +1287,7 @@ msgid ""
 "group."
 msgstr ""
 
+#: permissions.py:390
 #, python-format
 msgid ""
 "You are not allowed to add the result to %s because neither are you the "
@@ -646,17 +1295,20 @@ msgid ""
 "its group."
 msgstr ""
 
+#: permissions.py:422
 #, python-format
 msgid ""
 "You are not allowed to edit the substrate #%d because you are not allowed to "
 "edit all affected samples."
 msgstr ""
 
+#: permissions.py:425
 msgid ""
 "You are not allowed to add a substrate because you are not allowed to edit "
 "all affected samples."
 msgstr ""
 
+#: permissions.py:444
 #, python-format
 msgid ""
 "You are not allowed to edit the sample “%s” (including splitting and "
@@ -664,709 +1316,84 @@ msgid ""
 "this sample."
 msgstr ""
 
+#: permissions.py:465
 #, python-format
 msgid ""
 "You are not allowed to edit the sample series “%s” because you are not the "
 "currently responsible person for this sample series."
 msgstr ""
 
+#: permissions.py:485
 #, python-format
 msgid ""
 "You are not allowed to view the sample series “%s” because neither areyou "
 "the currently responsible person for it, nor are you in its group."
 msgstr ""
 
+#: permissions.py:503
 #, python-format
 msgid ""
 "You are not allowed to add an external operator because you don't have the "
 "permission “%s”."
 msgstr ""
 
+#: permissions.py:523
 msgid ""
 "You are not allowed to edit this external operator because you aren't their "
 "current contact person."
 msgstr ""
 
+#: permissions.py:544
+msgid ""
+"You are not allowed to view this external operator because you are not their "
+"current contact person."
+msgstr ""
+
+#: permissions.py:548
 msgid ""
 "You are not allowed to view this external operator because neither are you "
 "their current contact person, nor are you a senior user."
 msgstr ""
 
+#: permissions.py:571
 #, python-format
 msgid ""
-"You are not allowed to change group memberships because you don't have the "
+"You are not allowed to change this group because you don't have the "
 "permission “%s”."
 msgstr ""
 
+#: permissions.py:575
+msgid ""
+"You are not allowed to change this group because you are not in this group."
+msgstr ""
+
+#: permissions.py:602
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
 msgstr ""
 
-msgid "Yes"
+#: permissions.py:606
+msgid "You can't access the feed of an inactive user."
 msgstr ""
 
-msgid "No"
+#: middleware/chantal.py:95
+msgid "Access denied"
 msgstr ""
 
-msgid "%Y-%m-%d %H<sup>h</sup>"
+#: middleware/chantal.py:99
+msgid "Ambiguous sample name"
 msgstr ""
 
-msgid "%b %Y"
-msgstr ""
-
-msgid "date unknown"
-msgstr ""
-
-#, python-format
-msgid "The external operator “%s” was successfully added."
-msgstr ""
-
-msgid "Add external operator"
-msgstr ""
-
-msgid "Concact person"
-msgstr ""
-
-#, python-format
-msgid "The external operator “%s” was successfully changed."
-msgstr ""
-
-#, fuzzy, python-format
-msgid "Edit external operator “%s”"
-msgstr "sample series"
-
-#, fuzzy, python-format
-msgid "External operator “%(name)s”"
-msgstr "sample series"
-
-msgid "You must add a \"hash\" parameter to the query string."
-msgstr ""
-
-#, python-format
-msgid "Chantal news for %s"
-msgstr ""
-
-msgid "Name of new group"
-msgstr ""
-
-msgid "This group name is already used."
-msgstr ""
-
-#, python-format
-msgid "Group %s was successfully created."
-msgstr ""
-
-msgid "Add new group"
-msgstr ""
-
-msgid "List of all groups"
-msgstr ""
-
-msgid "Members"
-msgstr ""
-
-#, python-format
-msgid "Members of group “%s” were successfully updated."
-msgstr ""
-
-#, python-format
-msgid "Change group memberships of “%s”"
-msgstr ""
-
-msgid "Samples"
-msgstr ""
-
-msgid "Operator"
-msgstr ""
-
-msgid "Remove deposited samples from My Samples"
-msgstr ""
-
-msgid "duplicate this layer"
-msgstr ""
-
-msgid "remove this layer"
-msgstr ""
-
-msgid "move this layer"
-msgstr ""
-
-msgid "---------"
-msgstr ""
-
-msgid "up"
-msgstr ""
-
-msgid "down"
-msgstr ""
-
-msgid "You can't duplicate, move, or remove a layer at the same time."
-msgstr ""
-
-msgid "No layers given."
-msgstr ""
-
-msgid "You can't change the number of the first layer."
-msgstr ""
-
-msgid "New layers collide with following deposition."
-msgstr ""
-
-msgid "Overlap with previous deposition numbers."
-msgstr ""
-
-msgid "Layer number is not consecutive."
-msgstr ""
-
-#, python-format
-msgid "Deposition %s was successfully changed in the database."
-msgstr ""
-
-#, python-format
-msgid "Deposition %s was successfully added to the database."
-msgstr ""
-
-#, python-format
-msgid "Large-area deposition “%s”"
-msgstr ""
-
-msgid "MainMenu"
-msgstr ""
-
-msgid "Main menu"
-msgstr ""
-
-#, python-format
-msgid "%(count)d year"
-msgid_plural "%(count)d years"
-msgstr[0] ""
-msgstr[1] ""
-
-#, python-format
-msgid "%(count)d month"
-msgid_plural "%(count)d months"
-msgstr[0] ""
-msgstr[1] ""
-
-#, python-format
-msgid "%(count)d week"
-msgid_plural "%(count)d weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#, python-format
-msgid "%(count)d day"
-msgid_plural "%(count)d days"
-msgstr[0] ""
-msgstr[1] ""
-
-#, python-format
-msgid "%(count)d hour"
-msgid_plural "%(count)d hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#, python-format
-msgid "%(count)d minute"
-msgid_plural "%(count)d minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#, python-format
-msgid "%(count)d second"
-msgid_plural "%(count)d seconds"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid " and "
-msgstr ""
-
-msgid ", "
-msgstr ""
-
-msgid ", and "
-msgstr ""
-
-#, python-format
-msgid "Chantal revision %s"
-msgstr ""
-
-msgid "Chantal is presented to you by …"
-msgstr ""
-
-msgid "today, %H:%M"
-msgstr ""
-
-msgid "yesterday, %H:%M"
-msgstr ""
-
-msgid "%A, %b %d, %Y, %H:%M"
-msgstr ""
-
-msgid "%b %d, %Y, %H:%M"
-msgstr ""
-
-msgid "100.0 %"
-msgstr ""
-
-msgid "%H:%M"
-msgstr ""
-
-#, python-format
-msgid "%(from)s until %(to)s (%(minutes)d minute)"
-msgid_plural "%(from)s until %(to)s (%(minutes)d minutes)"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "%H:%M today"
-msgstr ""
-
-msgid "%H:%M yesterday"
-msgstr ""
-
-#, python-format
-msgid "successful, %s"
-msgstr ""
-
-#, python-format
-msgid "failed, %s"
-msgstr ""
-
-msgid "no log data found"
-msgstr ""
-
-#, python-format
-msgid "for %(time)s"
-msgstr ""
-
-msgid "Chantal server statistics"
-msgstr ""
-
-msgid "Deposition number pattern"
-msgstr ""
-
-msgid "Search for deposition"
-msgstr ""
-
-msgid "Sandbox"
-msgstr ""
-
-msgid "MarkdownMarkup"
-msgstr ""
-
-msgid "Markdown sandbox"
-msgstr ""
-
-msgid "Nickname"
-msgstr ""
-
-msgid "Layer identifier"
-msgstr ""
-
-msgid "in the form \"deposition number\"-\"layer number\""
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Deposition and layer number must be separated by \"-\"."
-msgstr ""
-
-msgid "Deposition number doesn't exist."
-msgstr ""
-
-msgid "Layer number isn't a number."
-msgstr ""
-
-msgid "This layer does not exist in this deposition."
-msgstr ""
-
-msgid "Nickname is already given."
-msgstr ""
-
-msgid "You can't access the “My Layers” section of another user."
-msgstr ""
-
-msgid "My Layers"
-msgstr ""
-
-msgid "My Samples"
-msgstr ""
-
-msgid "New currently responsible person"
-msgstr ""
-
-msgid "New Group"
-msgstr ""
-
-msgid "New current location"
-msgstr ""
-
-msgid "Copy to user"
-msgstr ""
-
-msgid "Comment for recipient"
-msgstr ""
-
-msgid "Remove from “My Samples”"
-msgstr ""
-
-msgid ""
-"If you move samples over to another person, you must enter a short comment."
-msgstr ""
-
-msgid ""
-"You must be the currently responsible person for samples you'd like to "
-"change."
-msgstr ""
-
-msgid "You can't access the “My Samples” section of another user."
-msgstr ""
-
-msgid "Successfully processed “My Samples”."
-msgstr ""
-
-#, python-format
-msgid "Edit “My Samples” of %s"
-msgstr ""
-
-#, fuzzy
-msgid "Sample"
-msgstr "sample series"
-
-msgid "Couldn't open datafile."
-msgstr ""
-
-msgid "Overwrite with file data"
-msgstr ""
-
-msgid "Remove measured sample from My Samples"
-msgstr ""
-
-msgid "This PD number is already in use."
-msgstr ""
-
-#, python-format
-msgid "%s was successfully changed in the database."
-msgstr ""
-
-#, python-format
-msgid "%s was successfully added to the database."
-msgstr ""
-
-#, python-format
-msgid "PDS measurement %s"
-msgstr ""
-
-msgid "Comments"
-msgstr ""
-
-msgid "Edit result"
-msgstr ""
-
-msgid "Sample series"
-msgstr ""
-
-msgid ""
-"You don't have the permission to add the result to all selected samples/"
-"series."
-msgstr ""
-
-msgid "You must select at least one samples/series."
-msgstr ""
-
-msgid "New result"
-msgstr ""
-
-msgid "is amongst My Samples"
-msgstr ""
-
-msgid "Currently responsible person"
-msgstr ""
-
-#, python-format
-msgid "Sample %s was successfully changed in the database."
-msgstr ""
-
-#, fuzzy, python-format
-msgid "Edit sample “%s”"
-msgstr "sample series"
-
-msgid "split"
-msgstr ""
-
-#, python-format
-msgid ""
-"You are not allowed to add any processes to the sample %s because neither "
-"are you its currently responsible person, nor in its group, nor do you have "
-"special permissions for a physical process."
-msgstr ""
-
-#, python-format
-msgid "Sample %s was added to Your Samples."
-msgstr ""
-
-#, python-format
-msgid "Sample %s was removed from Your Samples."
-msgstr ""
-
-msgid "Number of samples"
-msgstr ""
-
-msgid "Substrate"
-msgstr ""
-
-msgid "Current location"
-msgstr ""
-
-msgid "Purpose"
-msgstr ""
-
-msgid "Tags"
-msgstr ""
-
-msgid "Group"
-msgstr ""
-
-#, python-format
-msgid ""
-"Your samples have the provisional names from %(first_name)s to %(last_name)"
-"s.  They were added to “My Samples”."
-msgstr ""
-
-#, python-format
-msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
-msgstr ""
-
-msgid "Add samples"
-msgstr ""
-
-#, fuzzy, python-format
-msgid "Add process to sample “%s”"
-msgstr "sample series"
-
-msgid "Name pattern"
-msgstr ""
-
-msgid "Search for sample"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-#, fuzzy, python-format
-msgid "Sample series “%s”"
-msgstr "sample series"
-
-#, python-format
-msgid "Sample series %s was successfully updated in the database."
-msgstr ""
-
-#, fuzzy, python-format
-msgid "Edit sample series “%s”"
-msgstr "sample series"
-
-msgid "This sample series name is already given."
-msgstr ""
-
-#, python-format
-msgid "Sample series %s was successfully added to the database."
-msgstr ""
-
-#, fuzzy
-msgid "Create new sample series"
-msgstr "sample series"
-
-msgid "Nickname of My Layer to be added"
-msgstr ""
-
-msgid "Name is unknown."
-msgstr ""
-
-msgid "Gas type is unknown."
-msgstr ""
-
-msgid "This deposition number exists already."
-msgstr ""
-
-msgid "Number is a duplicate."
-msgstr ""
-
-#, python-format
-msgid "6-chamber deposition “%s”"
-msgstr ""
-
-msgid "New 6-chamber deposition"
-msgstr ""
-
-msgid "Old sample name"
-msgstr ""
-
-msgid "New name"
-msgstr ""
-
-msgid "Pieces"
-msgstr ""
-
-msgid "No sample with this name found."
-msgstr ""
-
-msgid "Alias is not unique."
-msgstr ""
-
-msgid "No sample with this ID found."
-msgstr ""
-
-msgid "Invalid ID format."
-msgstr ""
-
-msgid "New name of original sample must begin with deposition number."
-msgstr ""
-
-msgid "Must be at least 1."
-msgstr ""
-
-msgid "New sample name"
-msgstr ""
-
-msgid "New responsible person"
-msgstr ""
-
-msgid "(for all samples; overrides individual settings above)"
-msgstr ""
-
-msgid "(no global change)"
-msgstr ""
-
-msgid "(for all samples; leave empty for no change)"
-msgstr ""
-
-msgid "This sample name has been used already on this page."
-msgstr ""
-
-msgid "This sample name exists already."
-msgstr ""
-
-#, python-format
-msgid "Sample name %s doesn't belong to this deposition."
-msgstr ""
-
-msgid ""
-"Since there is more than one piece, the new name must not be exactly the "
-"deposition's name."
-msgstr ""
-
-msgid "The new sample name must start with the new name of the parent sample."
-msgstr ""
-
-msgid "Samples were successfully split and/or renamed."
-msgstr ""
-
-#, python-format
-msgid "Bulk sample rename for %s"
-msgstr ""
-
-#, fuzzy
-msgid "New sample purpose"
-msgstr "sample series"
-
-msgid "Name does already exist in database."
-msgstr ""
-
-msgid "You must not give a provisional name, i.e., it must not start with “*”."
-msgstr ""
-
-msgid "The new sample name must start with the parent sample's name."
-msgstr ""
-
-msgid "All pieces completely entered"
-msgstr ""
-
-msgid "Sample was completely split"
-msgstr ""
-
-msgid "You must split into at least one piece."
-msgstr ""
-
-msgid "Name is already given."
-msgstr ""
-
-msgid "This split is not the last one in the sample's process list."
-msgstr ""
-
-#, python-format
-msgid "Split sample “%s”"
-msgstr ""
-
-msgid "You can't access the preferences of another user."
-msgstr ""
-
-msgid "The preferences were successfully updated."
-msgstr ""
-
-#, python-format
-msgid "Change preferences for %s"
-msgstr ""
-
-msgid "You can't access the list of groups and permissions of another user."
-msgstr ""
-
-#, python-format
-msgid "Groups and permissions for %s"
-msgstr ""
-
-msgid "Number of layers to be added"
-msgstr ""
-
-#, fuzzy
-msgid "Initials"
-msgstr "initials"
-
-msgid ""
-"The initials must start with two uppercase letters.  They must contain "
-"uppercase letters and digits only.  Digits must be at the end."
-msgstr ""
-
-msgid "These initials are already used."
-msgstr ""
-
-msgid "Time must be given in the form HH:MM:SS."
-msgstr ""
-
-msgid "Minutes and seconds must be smaller than 60."
-msgstr ""
-
-msgid "Must be a physical quantity with number and unit."
-msgstr ""
-
-#, python-format
-msgid "The unit is invalid.  Valid units are: %s"
-msgstr ""
-
-msgid "Invalid deposition number.  It must be of the form YYL-NNN."
-msgstr ""
-
-#, python-format
-msgid "The deposition letter must be an uppercase “%s”."
-msgstr ""
-
-msgid "The first two digits must match the year of the deposition."
-msgstr ""
-
-#, python-format
-msgid "Sample %s could not be found (neither as an alias)."
-msgstr ""
-
-msgid "You mustn't use image and headings syntax in Markdown markup."
-msgstr ""
-
+#: templates/404.html:12
 msgid "woman with binoculars"
 msgstr ""
 
+#: templates/404.html:15 templates/404.html.py:16
 msgid "Resource not found"
 msgstr ""
 
+#: templates/404.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1377,15 +1404,19 @@ msgid ""
 "database.\n"
 msgstr ""
 
+#: templates/500.html:6
 msgid "ancient human dispatcher"
 msgstr ""
 
+#: templates/500.html:9
 msgid "Internal Chantal error"
 msgstr ""
 
+#: templates/500.html:10
 msgid "Internal server error"
 msgstr ""
 
+#: templates/500.html:13
 msgid ""
 "\n"
 "You experienced an internal error in the Chantal server software.  The\n"
@@ -1395,54 +1426,71 @@ msgid ""
 "is tackled.\n"
 msgstr ""
 
+#: templates/about.html:6
 msgid "stewardess"
 msgstr ""
 
+#: templates/about.html:20
 msgid "Operating system"
 msgstr ""
 
+#: templates/about.html:22
 msgid "Ubuntu logo"
 msgstr ""
 
+#: templates/about.html:27
 msgid "Web server"
 msgstr ""
 
+#: templates/about.html:29
 msgid "Django testserver"
 msgstr ""
 
+#: templates/about.html:31 templates/about.html.py:33
 msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
 msgstr ""
 
+#: templates/about.html:32
 msgid "Apache logo"
 msgstr ""
 
+#: templates/about.html:38
 msgid "Database"
 msgstr ""
 
-msgid "http://en.wikipedia.org/wiki/MySQL"
+#: templates/about.html:40 templates/about.html.py:42
+msgid "http://en.wikipedia.org/wiki/PostgreSQL"
 msgstr ""
 
-msgid "MySQL logo"
+#: templates/about.html:41
+msgid "PostgreSQL logo"
 msgstr ""
 
-msgid "Programming runtime"
-msgstr ""
-
-msgid "http://en.wikipedia.org/wiki/Python_(programming_language)"
-msgstr ""
-
-msgid "Python logo"
-msgstr ""
-
+#: templates/about.html:46
 msgid "Programming framework"
 msgstr ""
 
+#: templates/about.html:48 templates/about.html.py:50
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr ""
 
+#: templates/about.html:49
 msgid "Django logo"
 msgstr ""
 
+#: templates/about.html:54
+msgid "Plotting system"
+msgstr ""
+
+#: templates/about.html:56 templates/about.html.py:58
+msgid "http://en.wikipedia.org/wiki/Matplotlib"
+msgstr ""
+
+#: templates/about.html:57
+msgid "Matplotlib logo"
+msgstr ""
+
+#: templates/about.html:65
 msgid ""
 "\n"
 "    “<strong>Chantal</strong>” stands\n"
@@ -1453,57 +1501,134 @@ msgid ""
 "  "
 msgstr ""
 
+#: templates/add_group.html:8
+msgid "New group"
+msgstr ""
+
+#: templates/add_samples.html:8 templates/edit_description.html:5
+#: templates/edit_my_samples.html:8 templates/edit_result.html:9
+#: templates/edit_sample_death.html:8 templates/split_and_rename.html:8
+msgid "General error"
+msgstr ""
+
+#: templates/base.html:25
 #, python-format
 msgid "switch to %(language)s"
 msgstr ""
 
+#: templates/base.html:29
 msgid "DB access time:"
 msgstr ""
 
+#: templates/base.html:37
 msgid "Welcome,"
 msgstr ""
 
+#: templates/base.html:39 views/main.py:105
+msgid "Main menu"
+msgstr ""
+
+#: templates/base.html:41
 msgid "Report feature wish or bug"
 msgstr ""
 
+#: templates/base.html:43 templates/base.html.py:48
 msgid "Help"
 msgstr ""
 
+#: templates/base.html:45
 msgid "Log out"
 msgstr ""
 
+#: templates/base.html:50
 msgid "Log in"
 msgstr ""
 
+#: templates/base.html:63
 msgid "Jülich Forschungszentrum logo"
 msgstr ""
 
+#: templates/base.html:65
 msgid "IEF-5 logo"
 msgstr ""
 
+#: templates/base.html:67
 msgid "The samples database"
 msgstr ""
 
+#: templates/bulk_rename.html:22 templates/edit_external_operator.html:24
+#: templates/edit_preferences.html:9
+msgid "Error in initials"
+msgstr ""
+
+#: templates/bulk_rename.html:35 templates/split_and_rename.html:27
+msgid "Error in new name"
+msgstr ""
+
+#: templates/change_password.html:4 templates/change_password.html.py:5
 msgid "Password change"
 msgstr ""
 
+#: templates/change_password.html:9
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
 msgstr ""
 
+#: templates/change_password.html:14
 msgid "Old password:"
 msgstr ""
 
+#: templates/change_password.html:16
 msgid "New password:"
 msgstr ""
 
+#: templates/change_password.html:18
 msgid "Confirm password:"
 msgstr ""
 
+#: templates/change_password.html:20
 msgid "Change my password"
 msgstr ""
 
+#: templates/csv_export.html:14
+msgid "Error in column groups"
+msgstr ""
+
+#: templates/csv_export.html:26
+msgid "Error in columns"
+msgstr ""
+
+#: templates/csv_export.html:35
+msgid ""
+"\n"
+"            <p>Below, you see a preview of the table.  If you export it by\n"
+"              clicking on the button, you get the table in CSV format.  "
+"This\n"
+"              should be importable by any table-processing program.  It has "
+"the\n"
+"              following properties, which you may have to specify when\n"
+"              importing the data:</p>\n"
+"\n"
+"            <ol>\n"
+"              <li>The columns are <em>tabulator</em>-separated (“TAB”).</"
+"li>\n"
+"              <li>The file is encoded in <em>UTF-8</em>.</li>\n"
+"            </ol>\n"
+"\n"
+"            <p>Note that depending on the MS Excel version number, it may "
+"be\n"
+"              easier to import the table into Excel by saving the file with "
+"the\n"
+"              extension <tt>\".txt\"</tt> before importing it.</p>\n"
+"          "
+msgstr ""
+
+#: templates/csv_export.html:85
+msgid "Go back"
+msgstr ""
+
+#: templates/disambiguation.html:8
 #, python-format
 msgid ""
 "\n"
@@ -1511,75 +1636,448 @@ msgid ""
 "    "
 msgstr ""
 
-msgid "Deposition error"
-msgstr ""
-
+#: templates/edit_external_operator.html:8
 #, fuzzy
-msgid "Samples error"
+msgid "Error in external operator"
 msgstr "sample series"
 
-msgid "Layer error"
+#: templates/edit_group.html:8
+msgid "Error in group data"
 msgstr ""
 
+#: templates/edit_large_area_deposition.html:8
+#: templates/edit_six_chamber_deposition.html:15
+#: templates/edit_small_cluster_tool_deposition.html:15
+msgid "Error in deposition"
+msgstr ""
+
+#: templates/edit_large_area_deposition.html:9
+#: templates/edit_six_chamber_deposition.html:16
+#: templates/edit_small_cluster_tool_deposition.html:16
+msgid "Error in sample list"
+msgstr ""
+
+#: templates/edit_large_area_deposition.html:39
+#: templates/edit_large_area_deposition.html:40
+#: templates/edit_six_chamber_deposition.html:49
+#: templates/edit_small_cluster_tool_deposition.html:47
+msgid "Error in layer"
+msgstr ""
+
+#: templates/edit_large_area_deposition.html:91
 msgid "Error with adding layers"
 msgstr ""
 
+#: templates/edit_large_area_deposition.html:92
 msgid "Error with removing from My Samples"
 msgstr ""
 
-msgid "My Layer error"
+#: templates/edit_my_layers.html:15
+msgid "Error in My Layer"
 msgstr ""
 
-msgid "PDS data error"
-msgstr ""
-
+#: templates/edit_my_samples.html:9
 #, fuzzy
-msgid "Sample error"
+msgid "Error in “My Samples”"
 msgstr "sample series"
 
+#: templates/edit_pds_measurement.html:8
+msgid "Error in PDS data"
+msgstr ""
+
+#: templates/edit_pds_measurement.html:9 templates/edit_sample.html:8
+msgid "Error in sample"
+msgstr ""
+
+#: templates/edit_pds_measurement.html:10
 msgid "Extract from datafile error"
 msgstr ""
 
-#, fuzzy
-msgid "Preferences error"
-msgstr "sample series"
-
-#, fuzzy
-msgid "Initials error"
-msgstr "initials"
-
-msgid ""
-"(This list shows\n"
-"          all groups you are a member of.  You can mark those groups that "
-"you want all new samples of which to be\n"
-"          implicitly added to “My Samples”.)"
+#: templates/edit_pds_measurement.html:11
+msgid "Error with removal from “My Samples”"
 msgstr ""
 
+#: templates/edit_preferences.html:8
+#, fuzzy
+msgid "Error in preferences"
+msgstr "sample series"
+
+#: templates/edit_preferences.html:20
+msgid ""
+"(This list shows\n"
+"            all groups you are a member of.  You can mark those groups that "
+"you want all new samples of which to be\n"
+"            implicitly added to “My Samples”.)"
+msgstr ""
+
+#: templates/edit_preferences.html:31
 msgid "(Once set, you can't change this anymore.)"
 msgstr ""
 
+#: templates/edit_result.html:8
+msgid "Error in result"
+msgstr ""
+
+#: templates/edit_result.html:30
+msgid "Error in dimensions"
+msgstr ""
+
+#: templates/edit_result.html:33
+msgid "Number of quantities × values"
+msgstr ""
+
+#: templates/edit_result.html:48
+msgid "Error in quantity"
+msgstr ""
+
+#: templates/edit_result.html:59
+msgid "Error in value"
+msgstr ""
+
+#: templates/edit_sample_series.html:9
 #, fuzzy
-msgid "Sample series error"
+msgid "Error in sample series"
 msgstr "sample series"
 
+#: templates/edit_six_chamber_deposition.html:71
+#: views/large_area_deposition.py:114
+#: views/small_cluster_tool_deposition.py:243
+msgid "duplicate this layer"
+msgstr ""
+
+#: templates/edit_six_chamber_deposition.html:76
 msgid "delete this layer"
 msgstr ""
 
+#: templates/edit_six_chamber_deposition.html:131
 msgid "delete"
 msgstr ""
 
-msgid "Channel error"
+#: templates/edit_six_chamber_deposition.html:134
+msgid "Error in channel"
 msgstr ""
 
+#: templates/edit_six_chamber_deposition.html:146
 msgid "Number of channels to be added:"
 msgstr ""
 
+#: templates/edit_six_chamber_deposition.html:164
 msgid "Number of layers to be added:"
 msgstr ""
 
+#: templates/edit_small_cluster_tool_deposition.html:152
+msgid "Gas flows in sccm"
+msgstr ""
+
+#: templates/feed_changed_group.html:5
+#, python-format
+msgid ""
+"\n"
+"      You were added to group “%(group)s”.\n"
+"    "
+msgstr ""
+
+#: templates/feed_changed_group.html:9
+#, python-format
+msgid ""
+"\n"
+"      You are no longer a member of group “%(group)s”.\n"
+"    "
+msgstr ""
+
+#: templates/feed_copied_my_samples.html:6
+#, python-format
+msgid ""
+"\n"
+"      %(originator)s has copied the following sample to your “My Samples” "
+"list:\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(originator)s has copied the following samples to your “My Samples” "
+"list:\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_copied_my_samples.html:21
+#, python-format
+msgid ""
+"\n"
+"    Further information given by %(originator)s:\n"
+"  "
+msgstr ""
+
+#: templates/feed_edited_physical_process.html:5
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s changed <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+msgstr ""
+
+#: templates/feed_edited_physical_process.html:8
+#: templates/feed_new_physical_process.html:8
+msgid ""
+"\n"
+"    This affected the following sample:\n"
+"  "
+msgid_plural ""
+"\n"
+"    This affected the following samples:\n"
+"  "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_edited_physical_process.html:23
+#: templates/feed_edited_sample_series.html:21
+#: templates/feed_edited_samples.html:32 templates/feed_result.html:36
+msgid "The change was significant."
+msgstr ""
+
+#: templates/feed_edited_physical_process.html:25
+#: templates/feed_edited_sample_series.html:23
+#: templates/feed_edited_samples.html:34 templates/feed_result.html:38
+msgid "The change was minor."
+msgstr ""
+
+#: templates/feed_edited_physical_process.html:27
+#: templates/feed_edited_sample_series.html:26
+#: templates/feed_edited_samples.html:37 templates/feed_result.html:40
+msgid "Description of the change:"
+msgstr ""
+
+#: templates/feed_edited_sample_series.html:5
+#, python-format
+msgid ""
+"\n"
+"      %(originator)s has edited the sample series “<a href=\"%(url)s\">%"
+"(sample_series)s</a>”.\n"
+"    "
+msgstr ""
+
+#: templates/feed_edited_sample_series.html:13
+#: templates/feed_edited_samples.html:24
+msgid ""
+"\n"
+"\t  You are now the new responsible person for this sample.\n"
+"\t"
+msgid_plural ""
+"\n"
+"\t  You are now the new responsible person for these samples.\n"
+"\t"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_edited_samples.html:6
+#, python-format
+msgid ""
+"\n"
+"      %(originator)s has edited the sample <a href=\"%(first_url)s\">%"
+"(first_sample)s</a>.\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(originator)s has edited the following samples:  <!-- %(first_url)s %"
+"(first_sample)s (to appease gettext) -->\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_moved_sample_series.html:5
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s has moved the sample series “<a href=\"%(url)s\">%"
+"(sample_series)s</a>” from group \n"
+"    “%(old_group)s” to the group “%(group)s”.\n"
+"  "
+msgstr ""
+
+#: templates/feed_moved_sample_series.html:10
+#: templates/feed_new_sample_series.html:12
+msgid ""
+"You are subscribed to this sample series because you have at least one of "
+"its samples amongst “My Samples”."
+msgstr ""
+
+#: templates/feed_moved_sample_series.html:12
+#: templates/feed_new_sample_series.html:14
+msgid ""
+"You are not subscribed to this sample series because you have none of its "
+"samples amongst “My Samples”."
+msgstr ""
+
+#: templates/feed_moved_sample_series.html:14
+#: templates/feed_moved_samples.html:46
+msgid "Full description of the change:"
+msgstr ""
+
+#: templates/feed_moved_samples.html:7
+#, python-format
+msgid ""
+"\n"
+"\t%(originator)s has moved the following sample from group “%(old_group)s” "
+"to the group “%(group)s”:\n"
+"      "
+msgid_plural ""
+"\n"
+"\t%(originator)s has added the following samples from group “%(old_group)s” "
+"to the group “%(group)s”:\n"
+"      "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_moved_samples.html:13
+#, python-format
+msgid ""
+"\n"
+"\t%(originator)s has moved the following formerly group-less sample to the "
+"group “%(group)s”:\n"
+"      "
+msgid_plural ""
+"\n"
+"\t%(originator)s has added the following formerly group-less samples to the "
+"group “%(group)s”:\n"
+"      "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_moved_samples.html:29 templates/feed_new_samples.html:24
+msgid ""
+"\n"
+"        The sample is amongst “My Samples”.\n"
+"      "
+msgid_plural ""
+"\n"
+"        The samples are amongst “My Samples”.\n"
+"      "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_moved_samples.html:35 templates/feed_new_samples.html:30
+msgid ""
+"\n"
+"        The sample was not (at least not <em>automatically</em>) added to "
+"“My Samples”.\n"
+"      "
+msgid_plural ""
+"\n"
+"\tThe samples were not (at least not <em>automatically</em>) added to “My "
+"Samples”.\n"
+"      "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_new_physical_process.html:5
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s finished <a href=\"%(url)s\">%(process)s</a>.\n"
+"  "
+msgstr ""
+
+#: templates/feed_new_sample_series.html:5
+#, python-format
+msgid ""
+"\n"
+"    %(originator)s has added the sample series “<a href=\"%(url)s\">%"
+"(sample_series)s</a>” to the group \n"
+"    “%(group)s”.\n"
+"  "
+msgstr ""
+
+#: templates/feed_new_sample_series.html:9
+msgid "Description"
+msgstr ""
+
+#: templates/feed_new_samples.html:6
+#, python-format
+msgid ""
+"\n"
+"      %(originator)s has added the following sample in the group “%(group)s” "
+"to the database:\n"
+"    "
+msgid_plural ""
+"\n"
+"      %(originator)s has added the following samples in the group “%(group)"
+"s” to the database:\n"
+"    "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_new_samples.html:21
+#, python-format
+msgid "The given purpose is “%(purpose)s”."
+msgstr ""
+
+#: templates/feed_result.html:6
+#, python-format
+msgid ""
+"\n"
+"      %(originator)s added the result “<a href=\"%(url)s\">%(title)s</a>”.\n"
+"    "
+msgstr ""
+
+#: templates/feed_result.html:10
+#, python-format
+msgid ""
+"\n"
+"      %(originator)s edited the result “<a href=\"%(url)s\">%(title)s</a>”.\n"
+"    "
+msgstr ""
+
+#: templates/feed_result.html:14
+msgid "This affected the following samples and/or sample series:"
+msgstr ""
+
+#: templates/feed_result.html:25
+#, fuzzy
+msgid "Series:"
+msgstr "sample series"
+
+#: templates/feed_sample_split.html:5
+#, python-format
+msgid ""
+"\n"
+"    From the sample <a href=\"%(url)s\">%(parent)s</a>, the following piece "
+"was split:\n"
+"  "
+msgid_plural ""
+"\n"
+"    The sample <a href=\"%(url)s\">%(parent)s</a> was split in the following "
+"pieces:\n"
+"  "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_sample_split.html:16
+msgid "purpose:"
+msgstr ""
+
+#: templates/feed_sample_split.html:23
+msgid ""
+"\n"
+"    The piece was added to “My Samples”.\n"
+"  "
+msgid_plural ""
+"\n"
+"    All pieces were added to “My Samples”.\n"
+"  "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/feed_sample_split.html:29
+msgid ""
+"The sample was completely split, i.e. no piece of the parent is left.  "
+"Therefore, the parent was removed from “My Samples”."
+msgstr ""
+
+#: templates/groups_and_permissions.html:7
 msgid "Groups"
 msgstr ""
 
+#: templates/groups_and_permissions.html:10
 #, python-format
 msgid ""
 "\n"
@@ -1592,6 +2090,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#: templates/groups_and_permissions.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1599,134 +2098,228 @@ msgid ""
 "    "
 msgstr ""
 
+#: templates/groups_and_permissions.html:25
 msgid ""
 "The head of your institute group is allowed to add you to further Chantal "
 "groups."
 msgstr ""
 
+#: templates/groups_and_permissions.html:28
 msgid "Permissions"
 msgstr ""
 
+#: templates/groups_and_permissions.html:30
 msgid "General permissions"
 msgstr ""
 
+#: templates/groups_and_permissions.html:32
 msgid "(This is only a rough summary.)"
 msgstr ""
 
+#: templates/groups_and_permissions.html:35
 msgid "You can add new samples and sample series"
 msgstr ""
 
+#: templates/groups_and_permissions.html:36
 msgid ""
 "You can edit all samples and sample series that you are the currently "
 "responsible person for"
 msgstr ""
 
+#: templates/groups_and_permissions.html:37
 msgid "You can view all samples of your groups"
 msgstr ""
 
+#: templates/groups_and_permissions.html:38
 msgid "You can add results to all samples of your groups"
 msgstr ""
 
+#: templates/groups_and_permissions.html:39
 msgid "You can edit results that you added"
 msgstr ""
 
+#: templates/groups_and_permissions.html:43
 msgid "Special permissions"
 msgstr ""
 
+#: templates/groups_and_permissions.html:45
 msgid "Only the administrators can change the special permissions."
 msgstr ""
 
+#: templates/groups_and_permissions.html:50
 msgid "special permissions that you have"
 msgstr ""
 
+#: templates/groups_and_permissions.html:51
 msgid "special permissions that you don't have"
 msgstr ""
 
-msgid "none"
+#: templates/lab_notebook.html:18 templates/show_sample.html:24
+#: templates/show_sample.html.py:94 templates/show_sample_series.html:16
+msgid "export as table"
 msgstr ""
 
+#: templates/lab_notebook.html:22
+msgid "Error in date"
+msgstr ""
+
+#: templates/lab_notebook.html:29
+msgid "previous month"
+msgstr ""
+
+#: templates/lab_notebook.html:33
+msgid "next month"
+msgstr ""
+
+#: templates/lab_notebook_large_area_deposition.html:17
+msgid "type"
+msgstr ""
+
+#: templates/lab_notebook_large_area_deposition.html:81
+msgid "No data found for this time range."
+msgstr ""
+
+#: templates/list_groups.html:17
 msgid "No groups available."
 msgstr ""
 
+#: templates/login.html:5 templates/login.html.py:6
 msgid "Chantal login"
 msgstr ""
 
+#: templates/login.html:10
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 
+#: templates/login.html:15
 msgid "Username"
 msgstr ""
 
+#: templates/login.html:16
 msgid "Password"
 msgstr ""
 
+#: templates/login.html:20
 msgid "login"
 msgstr ""
 
+#: templates/logout.html:6
 msgid "Thanks for spending some quality time with the Web site today."
 msgstr ""
 
+#: templates/logout.html:8
 msgid "Log in again"
 msgstr ""
 
-msgid "Add things"
+#: templates/main_menu.html:9 views/my_samples.py:25
+msgid "My Samples"
 msgstr ""
 
-msgid "Result"
-msgstr ""
-
-#, fuzzy
-msgid "External operator"
-msgstr "sample series"
-
-msgid "Search for things"
-msgstr ""
-
-msgid "Depositions"
-msgstr ""
-
+#: templates/main_menu.html:11 templates/show_external_operator.html:10
+#: templates/show_sample.html:12 templates/show_sample.html.py:91
+#: templates/show_sample_series.html:8 templates/show_sample_series.html:47
 msgid "edit"
 msgstr ""
 
+#: templates/main_menu.html:40
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
 msgstr ""
 
+#: templates/main_menu.html:54
+msgid "Add things"
+msgstr ""
+
+#: templates/main_menu.html:59 templates/main_menu.html.py:71
+#: views/form_utils.py:438 views/result.py:91 views/sample_series.py:35
+msgid "Samples"
+msgstr ""
+
+#: templates/main_menu.html:61 views/split_and_rename.py:54
+msgid "Sample series"
+msgstr ""
+
+#: templates/main_menu.html:63
+msgid "Result"
+msgstr ""
+
+#: templates/main_menu.html:69
+msgid "Search for things"
+msgstr ""
+
+#: templates/main_menu.html:72
+msgid "Depositions"
+msgstr ""
+
+#: templates/main_menu.html:76
+msgid "Lab notebooks"
+msgstr ""
+
+#: templates/main_menu.html:86
 msgid "Edit groups"
 msgstr ""
 
+#: templates/main_menu.html:90 views/group.py:88
+msgid "Add new group"
+msgstr ""
+
+#: templates/main_menu.html:92
 msgid "Change group memberships"
 msgstr ""
 
+#: templates/main_menu.html:97
+#, fuzzy
+msgid "External operators"
+msgstr "sample series"
+
+#: templates/main_menu.html:101 views/external_operator.py:67
+msgid "Add external operator"
+msgstr ""
+
+#: templates/main_menu.html:104
+#, fuzzy
+msgid "Edit external operator"
+msgstr "sample series"
+
+#: templates/main_menu.html:109
 msgid "Miscellaneous"
 msgstr ""
 
+#: templates/main_menu.html:112
 msgid "Administration"
 msgstr ""
 
+#: templates/main_menu.html:116
 #, fuzzy
 msgid "Edit preferences"
 msgstr "sample series"
 
+#: templates/main_menu.html:119
 msgid "My groups and permissions"
 msgstr ""
 
+#: templates/main_menu.html:121
 #, fuzzy
 msgid "Edit “My Layers”"
 msgstr "sample series"
 
+#: templates/main_menu.html:122
 msgid "Change password"
 msgstr ""
 
+#: templates/main_menu.html:124
 msgid "Newsfeed"
 msgstr ""
 
+#: templates/main_menu.html:126
 msgid "About Chantal"
 msgstr ""
 
+#: templates/main_menu.html:128
 msgid "Server statistics"
 msgstr ""
 
+#: templates/markdown_sandbox.html:15
 msgid ""
 "\n"
 "  <p>Chantal uses the lightweight markup language “Markdown” for comments.  "
@@ -1741,25 +2334,31 @@ msgid ""
 "  saved.</p>\n"
 msgstr ""
 
-#, fuzzy
-msgid "Sandbox error"
-msgstr "sample series"
+#: templates/markdown_sandbox.html:26
+msgid "Error in markup"
+msgstr ""
 
+#: templates/markdown_sandbox.html:31
 msgid "input"
 msgstr ""
 
+#: templates/markdown_sandbox.html:52
 msgid "Generate result"
 msgstr ""
 
+#: templates/password_changed.html:4
 msgid "Password change successful"
 msgstr ""
 
+#: templates/password_changed.html:10
 msgid "Your password was changed."
 msgstr ""
 
+#: templates/permission_error.html:6
 msgid "woman with lock"
 msgstr ""
 
+#: templates/permission_error.html:11
 #, python-format
 msgid ""
 "\n"
@@ -1769,6 +2368,7 @@ msgid ""
 "    "
 msgstr ""
 
+#: templates/permission_error.html:16
 msgid ""
 "\n"
 "        Also note that the head of your institute group may add you to the\n"
@@ -1776,9 +2376,11 @@ msgid ""
 "      "
 msgstr ""
 
+#: templates/permission_error.html:23
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 
+#: templates/search_depositions.html:15
 #, python-format
 msgid ""
 "\n"
@@ -1786,83 +2388,213 @@ msgid ""
 "    "
 msgstr ""
 
-msgid "Silane conc."
-msgstr ""
-
+#: templates/search_samples.html:14
 #, python-format
 msgid ""
 "\n"
-"          This process was applied to the sample <a href=\"%(link)s\">%(name)"
-"s</a>.\n"
-"        "
+"        Too many matches were found.  I show only %(max_results)s of them.\n"
+"      "
+msgstr ""
+
+#: templates/search_samples.html:31
+msgid "Mark samples to add them to “My Samples”."
+msgstr ""
+
+#: templates/search_samples.html:33
+msgid "Nothing found."
+msgstr ""
+
+#: templates/show_external_operator.html:7 views/external_operator.py:152
+#, fuzzy, python-format
+msgid "External operator “%(name)s”"
+msgstr "sample series"
+
+#: templates/show_external_operator.html:50
+msgid ""
+"\n"
+"  This external contact is <em>restricted</em>, which means that only the "
+"current contact person can\n"
+"  view its data.\n"
+msgstr ""
+
+#: templates/show_large_area_deposition.html:36
+msgid "Silane conc."
+msgstr ""
+
+#: templates/show_process.html:14
+#, python-format
+msgid ""
+"\n"
+"            This process was applied to the sample <a href=\"%(link)s\">%"
+"(name)s</a>.\n"
+"          "
 msgid_plural ""
 "\n"
-"          This process was applied to the following samples:  <!-- To please "
-"compilemessages: %(link)s %(name)s -->\n"
-"        "
+"            This process was applied to the following samples:  <!-- To "
+"please compilemessages: %(link)s %(name)s -->\n"
+"          "
 msgstr[0] ""
 msgstr[1] ""
 
+#: templates/show_process.html:28
+#, python-format
+msgid ""
+"\n"
+"            This process was applied to the sample series <a href=\"%(link)s"
+"\">%(name)s</a>.\n"
+"          "
+msgid_plural ""
+"\n"
+"            This process was applied to the following sample_series:  \n"
+"            <!-- To please compilemessages: %(link)s %(name)s -->\n"
+"          "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/show_process.html:47
 msgid "Edit this process"
 msgstr ""
 
+#: templates/show_process.html:49
+msgid "Export this process"
+msgstr ""
+
+#: templates/show_process.html:51
 msgid "Duplicate this process"
 msgstr ""
 
-msgid "History of sample “"
-msgstr ""
+#: templates/show_sample.html:7 templates/show_sample.html.py:8
+#, fuzzy
+msgid "Sample “"
+msgstr "sample series"
 
+#: templates/show_sample.html:7 templates/show_sample.html.py:8
 msgid "”"
 msgstr ""
 
+#: templates/show_sample.html:15
+msgid "give name"
+msgstr ""
+
+#: templates/show_sample.html:20
 msgid "add process"
 msgstr ""
 
+#: templates/show_sample.html:43
+msgid "Attention: Groupless samples may be viewed and edited by anyone."
+msgstr ""
+
+#: templates/show_sample.html:65
+#, python-format
+msgid ""
+"\n"
+"            This sample is part of the sample series “<a href=\"%(first_url)s"
+"\">%(first_series)s”</a>.\n"
+"          "
+msgid_plural ""
+"\n"
+"            This sample is part of the following sample series:  <!-- %"
+"(first_url)s  %(first_series)s -->\n"
+"          "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/show_sample.html:97
+msgid "resplit"
+msgstr ""
+
+#: templates/show_sample_death.html:6
 msgid "The sample ceased their existence.  Reason:"
 msgstr ""
 
+#: templates/show_sample_series.html:12
 msgid "add result"
 msgstr ""
 
+#: templates/show_sample_series.html:24
 msgid "This sample series contains the following samples:"
 msgstr ""
 
+#: templates/show_sample_series.html:32
 msgid "This sample series doesn't contain samples yet."
 msgstr ""
 
+#: templates/show_sample_series.html:35 views/sample.py:40 views/sample.py:285
+#: views/sample_series.py:34
+msgid "Group"
+msgstr ""
+
+#: templates/show_sample_split.html:7
 msgid "The parental sample"
 msgstr ""
 
+#: templates/show_sample_split.html:9
 msgid "was split into the following pieces:"
 msgstr ""
 
+#: templates/show_sample_split.html:11
 msgid ""
 "\n"
 "      The sample was split into the following pieces:\n"
 "    "
 msgstr ""
 
+#: templates/show_sample_split.html:23
 msgid "(the ancestor of this one)"
 msgstr ""
 
+#: templates/show_sample_split.html:27
 msgid "(this one)"
 msgstr ""
 
+#: templates/show_single_result.html:14
+#, python-format
+msgid ""
+"\n"
+"            This result belongs to the sample <a href=\"%(link)s\">%(name)s</"
+"a>.\n"
+"          "
+msgid_plural ""
+"\n"
+"            This result belongs to the following samples:  <!-- To please "
+"compilemessages: %(link)s %(name)s -->\n"
+"          "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/show_single_result.html:28
+#, python-format
+msgid ""
+"\n"
+"            This result belongs to the sample series <a href=\"%(link)s\">%"
+"(name)s</a>.\n"
+"          "
+msgid_plural ""
+"\n"
+"            This result belongs to the following sample_series:  \n"
+"            <!-- To please compilemessages: %(link)s %(name)s -->\n"
+"          "
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/show_single_result.html:47
+msgid "Edit this result"
+msgstr ""
+
+#: templates/show_substrate.html:6
 msgid "Material"
 msgstr ""
 
-msgid "Sample name error"
+#: templates/split_after_deposition.html:16
+#: templates/split_after_deposition.html:33
+msgid "Error in sample name"
 msgstr ""
 
-msgid "General error"
-msgstr ""
-
+#: templates/split_and_rename.html:11
 msgid "Piece number"
 msgstr ""
 
-msgid "New name error"
-msgstr ""
-
+#: templates/split_and_rename.html:32
 msgid ""
 "\n"
 "                (you must change this last name in order to create an\n"
@@ -1870,45 +2602,62 @@ msgid ""
 "              "
 msgstr ""
 
+#: templates/statistics.html:10
 msgid "secretary"
 msgstr ""
 
+#: templates/statistics.html:22
 msgid "Availability"
 msgstr ""
 
+#: templates/statistics.html:25
 msgid "No data available."
 msgstr ""
 
+#: templates/statistics.html:27
 #, python-format
 msgid ""
 "%(availability)s \n"
 "         availability since %(start_date)s."
 msgstr ""
 
+#: templates/statistics.html:31
 msgid "Latest 10 downtimes:"
 msgstr ""
 
+#: templates/statistics.html:41
 msgid "Component uptimes"
 msgstr ""
 
+#: templates/statistics.html:45
 msgid "Component"
 msgstr ""
 
+#: templates/statistics.html:46 views/sample_series.py:32
+msgid "Name"
+msgstr ""
+
+#: templates/statistics.html:47
 msgid "up and running …"
 msgstr ""
 
+#: templates/statistics.html:50
 msgid "OS"
 msgstr ""
 
+#: templates/statistics.html:55
 msgid "web server"
 msgstr ""
 
+#: templates/statistics.html:60
 msgid "database server"
 msgstr ""
 
+#: templates/statistics.html:67
 msgid "Work load"
 msgstr ""
 
+#: templates/statistics.html:69
 msgid ""
 "\n"
 "  <p>These plots are re-calculated every 10 minutes, the underlying "
@@ -1926,41 +2675,1129 @@ msgid ""
 "\n"
 msgstr ""
 
+#: templates/statistics.html:81
 msgid "server load statistics plots"
 msgstr ""
 
+#: templates/statistics.html:84
 msgid "Backups"
 msgstr ""
 
+#: templates/statistics.html:86
 msgid "Hourly backups of the database tables"
 msgstr ""
 
+#: templates/statistics.html:91
 msgid "Last backup:"
 msgstr ""
 
+#: templates/statistics.html:95
 msgid "Last copy of all backups to sonne:"
 msgstr ""
 
+#: templates/statistics.html:100
 msgid "No log data found."
 msgstr ""
 
+#: templates/statistics.html:103
 msgid "Tivoli storage manager"
 msgstr ""
 
+#: templates/statistics.html:106
 msgid "Log file could not be accessed."
 msgstr ""
 
+#: templates/statistics.html:109
 msgid "last backup"
 msgstr ""
 
+#: templates/statistics.html:112
 msgid "Time"
 msgstr ""
 
+#: templates/statistics.html:116
 msgid "Objects inspected"
 msgstr ""
 
+#: templates/statistics.html:120
 msgid "Objects failed"
 msgstr ""
+
+#: templatetags/samples_extras.py:71
+msgid "Yes"
+msgstr ""
+
+#: templatetags/samples_extras.py:71
+msgid "No"
+msgstr ""
+
+#: templatetags/samples_extras.py:131 views/sample.py:293
+#, python-format
+msgid "with %(markdown_link)s syntax"
+msgstr ""
+
+#. Translation hint: Only change the <sup>h</sup>!
+#: templatetags/samples_extras.py:237
+msgid "%Y-%m-%d %H<sup>h</sup>"
+msgstr ""
+
+#. Translation hint: Only change order and punctuation
+#: templatetags/samples_extras.py:240
+msgid "%b %Y"
+msgstr ""
+
+#: templatetags/samples_extras.py:242
+msgid "date unknown"
+msgstr ""
+
+#: views/bulk_rename.py:30 views/form_utils.py:152
+#, fuzzy
+msgid "Initials"
+msgstr "initials"
+
+#: views/bulk_rename.py:41 views/split_after_deposition.py:33
+msgid "New name"
+msgstr ""
+
+#: views/bulk_rename.py:62
+msgid "New name must be a valid “new-style” name."
+msgstr ""
+
+#: views/bulk_rename.py:64 views/split_after_deposition.py:51
+#: views/split_after_deposition.py:324
+msgid "This sample name exists already."
+msgstr ""
+
+#: views/bulk_rename.py:89 views/split_after_deposition.py:290
+#: views/split_after_deposition.py:315
+msgid "This sample name has been used already on this page."
+msgstr ""
+
+#: views/bulk_rename.py:120
+msgid ""
+"Please give the list of provisional samples names (without the asterisk, but "
+"with leading zeros) as a comma-separated list without whitespace in the "
+"“numbers” query string parameter."
+msgstr ""
+
+#: views/bulk_rename.py:134
+msgid "You may change the sample names, but you must choose initials first."
+msgstr ""
+
+#: views/bulk_rename.py:150
+msgid "Successfully renamed the samples."
+msgstr ""
+
+#: views/bulk_rename.py:155
+msgid "Giving new-style names"
+msgstr ""
+
+#: views/csv_export.py:505
+msgid "Column groups"
+msgstr ""
+
+#: views/csv_export.py:519
+msgid "Columns"
+msgstr ""
+
+#: views/csv_export.py:648
+#, fuzzy, python-format
+msgid "Table export for “%s”"
+msgstr "sample series"
+
+#: views/external_operator.py:63
+#, python-format
+msgid "The external operator “%s” was successfully added."
+msgstr ""
+
+#: views/external_operator.py:77
+msgid "Contact person"
+msgstr ""
+
+#: views/external_operator.py:115
+#, python-format
+msgid "The external operator “%s” was successfully changed."
+msgstr ""
+
+#: views/external_operator.py:121
+#, fuzzy, python-format
+msgid "Edit external operator “%s”"
+msgstr "sample series"
+
+#: views/external_operator.py:176
+msgid "You have no external contacts."
+msgstr ""
+
+#: views/external_operator.py:178
+msgid "All you external contacts"
+msgstr ""
+
+#: views/feed.py:144
+msgid "You must add a \"hash\" parameter to the query string."
+msgstr ""
+
+#: views/feed.py:150
+#, python-format
+msgid "Chantal news for %s"
+msgstr ""
+
+#: views/form_utils.py:39 views/sample.py:308
+msgid "The timestamp must not be in the future."
+msgstr ""
+
+#: views/form_utils.py:117
+msgid "Number of layers to be added"
+msgstr ""
+
+#: views/form_utils.py:118 views/six_chamber_deposition.py:48
+#: views/small_cluster_tool_deposition.py:56
+msgid "Nickname of My Layer to be added"
+msgstr ""
+
+#: views/form_utils.py:175
+msgid ""
+"The initials must start with two uppercase letters.  They must contain "
+"uppercase letters and digits only.  Digits must be at the end."
+msgstr ""
+
+#: views/form_utils.py:178
+msgid "These initials are already used."
+msgstr ""
+
+#: views/form_utils.py:199
+msgid "Description of edit"
+msgstr ""
+
+#: views/form_utils.py:200
+msgid "Important edit"
+msgstr ""
+
+#: views/form_utils.py:492
+msgid "Time must be given in the form HH:MM:SS."
+msgstr ""
+
+#: views/form_utils.py:496
+msgid "Minutes and seconds must be smaller than 60."
+msgstr ""
+
+#: views/form_utils.py:531
+msgid "Must be a physical quantity with number and unit."
+msgstr ""
+
+#: views/form_utils.py:537
+#, python-format
+msgid "The unit is invalid.  Valid units are: %s"
+msgstr ""
+
+#. Translation hint: “YY” is year, “L” is letter, and “NNN” is number
+#: views/form_utils.py:566
+msgid "Invalid deposition number.  It must be of the form YYL-NNN."
+msgstr ""
+
+#: views/form_utils.py:568
+#, python-format
+msgid "The deposition letter must be an uppercase “%s”."
+msgstr ""
+
+#: views/form_utils.py:721
+msgid "You mustn't use image and headings syntax in Markdown markup."
+msgstr ""
+
+#: views/group.py:46
+msgid "Name of new group"
+msgstr ""
+
+#: views/group.py:56
+msgid "This group name is already used."
+msgstr ""
+
+#: views/group.py:84
+#, python-format
+msgid "Group %s was successfully created."
+msgstr ""
+
+#: views/group.py:114
+msgid "List of all groups"
+msgstr ""
+
+#: views/group.py:123
+msgid "Members"
+msgstr ""
+
+#: views/group.py:138
+msgid ""
+"In restricted groups, at least one member must have permission to change "
+"groups."
+msgstr ""
+
+#: views/group.py:182
+#, python-format
+msgid "Members of group “%s” were successfully updated."
+msgstr ""
+
+#: views/group.py:187
+#, python-format
+msgid "Change group memberships of “%s”"
+msgstr ""
+
+#: views/lab_notebook.py:35
+msgid "year"
+msgstr ""
+
+#: views/lab_notebook.py:36
+msgid "month"
+msgstr ""
+
+#: views/lab_notebook.py:161
+#, python-format
+msgid "Lab notebook for %s"
+msgstr ""
+
+#: views/large_area_deposition.py:39 views/pds_measurement.py:153
+#: views/six_chamber_deposition.py:59
+#: views/small_cluster_tool_deposition.py:86
+msgid "Operator"
+msgstr ""
+
+#: views/large_area_deposition.py:65 views/six_chamber_deposition.py:77
+#: views/small_cluster_tool_deposition.py:104
+msgid "The first two digits must match the year of the deposition."
+msgstr ""
+
+#: views/large_area_deposition.py:105 views/six_chamber_deposition.py:39
+#: views/small_cluster_tool_deposition.py:30
+msgid "Remove deposited samples from My Samples"
+msgstr ""
+
+#: views/large_area_deposition.py:115
+#: views/small_cluster_tool_deposition.py:244
+msgid "remove this layer"
+msgstr ""
+
+#: views/large_area_deposition.py:116
+#: views/small_cluster_tool_deposition.py:245
+msgid "move this layer"
+msgstr ""
+
+#: views/large_area_deposition.py:117
+#: views/small_cluster_tool_deposition.py:246
+msgid "up"
+msgstr ""
+
+#: views/large_area_deposition.py:117
+#: views/small_cluster_tool_deposition.py:246
+msgid "down"
+msgstr ""
+
+#: views/large_area_deposition.py:129
+#: views/small_cluster_tool_deposition.py:258
+msgid "You can't duplicate, move, or remove a layer at the same time."
+msgstr ""
+
+#: views/large_area_deposition.py:426 views/six_chamber_deposition.py:411
+#: views/small_cluster_tool_deposition.py:564
+msgid "No layers given."
+msgstr ""
+
+#: views/large_area_deposition.py:439
+msgid "You can't change the number of the first layer."
+msgstr ""
+
+#: views/large_area_deposition.py:448
+msgid "New layers collide with following deposition."
+msgstr ""
+
+#: views/large_area_deposition.py:453
+msgid "Overlap with previous deposition numbers."
+msgstr ""
+
+#: views/large_area_deposition.py:459 views/six_chamber_deposition.py:405
+#: views/small_cluster_tool_deposition.py:558
+#, python-format
+msgid "The sample %s is already dead at this time."
+msgid_plural "The samples %s are already dead at this time."
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/large_area_deposition.py:467
+msgid "Layer number is not consecutive."
+msgstr ""
+
+#: views/large_area_deposition.py:544 views/six_chamber_deposition.py:509
+#: views/small_cluster_tool_deposition.py:643
+#, python-format
+msgid "Deposition %s was successfully changed in the database."
+msgstr ""
+
+#: views/large_area_deposition.py:551 views/six_chamber_deposition.py:512
+#: views/small_cluster_tool_deposition.py:646
+#, python-format
+msgid "Deposition %s was successfully added to the database."
+msgstr ""
+
+#: views/large_area_deposition.py:557 views/large_area_deposition.py:584
+#, python-format
+msgid "Large-area deposition “%s”"
+msgstr ""
+
+#: views/large_area_deposition.py:557
+msgid "Add large-area deposition"
+msgstr ""
+
+#. Translation hint: This is a page name in the Chantal wiki
+#: views/main.py:75
+msgid "MainMenu"
+msgstr ""
+
+#: views/main.py:123
+msgid "Deposition number pattern"
+msgstr ""
+
+#: views/main.py:160
+msgid "Search for deposition"
+msgstr ""
+
+#: views/markdown.py:21
+msgid "Sandbox"
+msgstr ""
+
+#. Translation hint: This is a page name in the Chantal wiki
+#: views/markdown.py:32
+msgid "MarkdownMarkup"
+msgstr ""
+
+#: views/markdown.py:55
+msgid "Markdown sandbox"
+msgstr ""
+
+#: views/my_layers.py:26
+msgid "Nickname"
+msgstr ""
+
+#: views/my_layers.py:27
+msgid "Layer identifier"
+msgstr ""
+
+#: views/my_layers.py:28
+msgid "in the form \"deposition number\"-\"layer number\""
+msgstr ""
+
+#: views/my_layers.py:29 views/split_and_rename.py:28
+msgid "Delete"
+msgstr ""
+
+#: views/my_layers.py:37
+msgid "Deposition and layer number must be separated by \"-\"."
+msgstr ""
+
+#: views/my_layers.py:42
+msgid "Deposition number doesn't exist."
+msgstr ""
+
+#: views/my_layers.py:46
+msgid "Layer number isn't a number."
+msgstr ""
+
+#: views/my_layers.py:49
+msgid "This layer does not exist in this deposition."
+msgstr ""
+
+#: views/my_layers.py:132
+msgid "Nickname is already given."
+msgstr ""
+
+#: views/my_layers.py:168
+msgid "You can't access the “My Layers” section of another user."
+msgstr ""
+
+#: views/my_layers.py:179
+msgid "My Layers"
+msgstr ""
+
+#: views/my_samples.py:36
+msgid "New currently responsible person"
+msgstr ""
+
+#: views/my_samples.py:37
+msgid "New Group"
+msgstr ""
+
+#: views/my_samples.py:38 views/split_after_deposition.py:113
+msgid "New current location"
+msgstr ""
+
+#: views/my_samples.py:39
+msgid "Copy to user"
+msgstr ""
+
+#: views/my_samples.py:40
+msgid "Comment for recipient"
+msgstr ""
+
+#: views/my_samples.py:41
+msgid "Remove from “My Samples”"
+msgstr ""
+
+#: views/my_samples.py:66
+msgid ""
+"If you copy samples over to another person, you must enter a short comment."
+msgstr ""
+
+#: views/my_samples.py:69
+msgid "If you edit samples, you must enter a short comment."
+msgstr ""
+
+#: views/my_samples.py:103
+msgid ""
+"You must be the currently responsible person for samples you'd like to "
+"change."
+msgstr ""
+
+#: views/my_samples.py:197
+msgid "You can't access the “My Samples” section of another user."
+msgstr ""
+
+#: views/my_samples.py:204
+msgid "Successfully processed “My Samples”."
+msgstr ""
+
+#: views/my_samples.py:209
+#, python-format
+msgid "Edit “My Samples” of %s"
+msgstr ""
+
+#: views/pds_measurement.py:120
+#, fuzzy
+msgid "Sample"
+msgstr "sample series"
+
+#: views/pds_measurement.py:184
+msgid "Couldn't open datafile."
+msgstr ""
+
+#: views/pds_measurement.py:220
+msgid "Overwrite with file data"
+msgstr ""
+
+#: views/pds_measurement.py:228
+msgid "Remove measured sample from My Samples"
+msgstr ""
+
+#: views/pds_measurement.py:291
+msgid "This PDS number is already in use."
+msgstr ""
+
+#: views/pds_measurement.py:295
+msgid "Sample is already dead at this time."
+msgstr ""
+
+#: views/pds_measurement.py:356
+#, python-format
+msgid "%s was successfully changed in the database."
+msgstr ""
+
+#: views/pds_measurement.py:357
+#, python-format
+msgid "%s was successfully added to the database."
+msgstr ""
+
+#: views/pds_measurement.py:375
+#, python-format
+msgid "PDS measurement %s"
+msgstr ""
+
+#: views/pds_measurement.py:375
+msgid "Add PDS measurement"
+msgstr ""
+
+#: views/result.py:51
+msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
+msgstr ""
+
+#: views/result.py:92
+#, fuzzy
+msgid "Sample serieses"
+msgstr "sample series"
+
+#: views/result.py:93
+msgid "Image file"
+msgstr ""
+
+#: views/result.py:146
+msgid ""
+"You don't have the permission to add the result to all selected samples/"
+"series."
+msgstr ""
+
+#: views/result.py:148
+msgid "You must select at least one samples/series."
+msgstr ""
+
+#: views/result.py:165
+msgid "Number of quantities"
+msgstr ""
+
+#: views/result.py:166
+msgid "Number of values"
+msgstr ""
+
+#: views/result.py:191
+msgid "Quantity name"
+msgstr ""
+
+#: views/result.py:209
+msgid "Value"
+msgstr ""
+
+#: views/result.py:379
+msgid "Adding samples or sample series must be marked as important."
+msgstr ""
+
+#: views/result.py:387
+msgid "This quantity is already used in this table."
+msgstr ""
+
+#: views/result.py:521
+msgid "Edit result"
+msgstr ""
+
+#: views/result.py:521
+msgid "New result"
+msgstr ""
+
+#: views/result.py:547
+#, fuzzy, python-format
+msgid "Result “%s”"
+msgstr "sample series"
+
+#: views/sample.py:30
+msgid "is amongst My Samples"
+msgstr ""
+
+#: views/sample.py:39 views/sample_series.py:33
+msgid "Currently responsible person"
+msgstr ""
+
+#: views/sample.py:79 views/sample_series.py:138
+msgid ""
+"Changing the group or the responsible person must be marked as important."
+msgstr ""
+
+#: views/sample.py:119
+#, python-format
+msgid "Sample %s was successfully changed in the database."
+msgstr ""
+
+#: views/sample.py:124
+#, fuzzy, python-format
+msgid "Edit sample “%s”"
+msgstr "sample series"
+
+#: views/sample.py:161
+msgid "split"
+msgstr ""
+
+#: views/sample.py:171
+#, python-format
+msgid ""
+"You are not allowed to add any processes to the sample %s because neither "
+"are you its currently responsible person, nor in its group, nor do you have "
+"special permissions for a physical process."
+msgstr ""
+
+#: views/sample.py:206
+#, python-format
+msgid "Sample %s was added to Your Samples."
+msgstr ""
+
+#: views/sample.py:212
+#, python-format
+msgid "Sample %s was removed from Your Samples."
+msgstr ""
+
+#: views/sample.py:275
+msgid "Number of samples"
+msgstr ""
+
+#: views/sample.py:276
+msgid "Substrate"
+msgstr ""
+
+#: views/sample.py:277
+msgid "Substrate comments"
+msgstr ""
+
+#: views/sample.py:278
+msgid "Substrate originator"
+msgstr ""
+
+#: views/sample.py:281
+msgid "Current location"
+msgstr ""
+
+#: views/sample.py:282
+msgid "Purpose"
+msgstr ""
+
+#: views/sample.py:283
+msgid "Tags"
+msgstr ""
+
+#: views/sample.py:286
+msgid "Give names"
+msgstr ""
+
+#: views/sample.py:330
+msgid "For a custom substrate, you must give substrate comments."
+msgstr ""
+
+#: views/sample.py:333
+msgid "You selected “no substrate”, so your substrate comments would be lost."
+msgstr ""
+
+#: views/sample.py:337
+msgid "You selected “no substrate”, so the external originator would be lost."
+msgstr ""
+
+#: views/sample.py:434
+#, python-format
+msgid ""
+"Your samples have the provisional names from %(first_name)s to %(last_name)"
+"s.  They were added to “My Samples”."
+msgstr ""
+
+#: views/sample.py:438
+#, python-format
+msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
+msgstr ""
+
+#: views/sample.py:448
+msgid "Add samples"
+msgstr ""
+
+#: views/sample.py:475
+#, fuzzy, python-format
+msgid "Add process to sample “%s”"
+msgstr "sample series"
+
+#: views/sample.py:485
+msgid "Name pattern"
+msgstr ""
+
+#: views/sample.py:543
+msgid "Search for sample"
+msgstr ""
+
+#: views/sample_death.py:43
+msgid "Last process wasn't a split."
+msgstr ""
+
+#: views/sample_death.py:81
+#, fuzzy, python-format
+msgid "Sample “%s” was killed."
+msgstr "sample series"
+
+#: views/sample_death.py:85
+#, fuzzy, python-format
+msgid "Kill sample “%s”"
+msgstr "sample series"
+
+#: views/sample_series.py:104
+#, fuzzy, python-format
+msgid "Sample series “%s”"
+msgstr "sample series"
+
+#: views/sample_series.py:179
+#, python-format
+msgid "Sample series %s was successfully updated in the database."
+msgstr ""
+
+#: views/sample_series.py:189
+#, fuzzy, python-format
+msgid "Edit sample series “%s”"
+msgstr "sample series"
+
+#: views/sample_series.py:218
+msgid "This sample series name is already given."
+msgstr ""
+
+#: views/sample_series.py:221
+#, python-format
+msgid "The name is %d letter too long."
+msgid_plural "The name is %d letters too long."
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/sample_series.py:232
+#, python-format
+msgid "Sample series %s was successfully added to the database."
+msgstr ""
+
+#: views/sample_series.py:236
+#, fuzzy
+msgid "Create new sample series"
+msgstr "sample series"
+
+#: views/six_chamber_deposition.py:399
+#: views/small_cluster_tool_deposition.py:552
+msgid "This deposition number exists already."
+msgstr ""
+
+#: views/six_chamber_deposition.py:417 views/six_chamber_deposition.py:425
+msgid "Number is a duplicate."
+msgstr ""
+
+#: views/six_chamber_deposition.py:518 views/six_chamber_deposition.py:545
+#, python-format
+msgid "6-chamber deposition “%s”"
+msgstr ""
+
+#: views/six_chamber_deposition.py:518
+msgid "New 6-chamber deposition"
+msgstr ""
+
+#: views/small_cluster_tool_deposition.py:41
+msgid "hotwire"
+msgstr ""
+
+#: views/small_cluster_tool_deposition.py:42
+msgid "PECVD"
+msgstr ""
+
+#: views/small_cluster_tool_deposition.py:53
+msgid "Layer to be added"
+msgstr ""
+
+#: views/small_cluster_tool_deposition.py:652
+#: views/small_cluster_tool_deposition.py:681
+#, fuzzy, python-format
+msgid "Small cluster tool deposition “%s”"
+msgstr "sample series"
+
+#: views/small_cluster_tool_deposition.py:653
+msgid "New small cluster tool deposition"
+msgstr ""
+
+#: views/split_after_deposition.py:31
+msgid "Old sample name"
+msgstr ""
+
+#: views/split_after_deposition.py:34
+msgid "Pieces"
+msgstr ""
+
+#: views/split_after_deposition.py:53
+msgid "You must get rid of the provisional sample name."
+msgstr ""
+
+#: views/split_after_deposition.py:60
+msgid "No sample with this name found."
+msgstr ""
+
+#: views/split_after_deposition.py:62
+msgid "Alias is not unique."
+msgstr ""
+
+#: views/split_after_deposition.py:67
+msgid "No sample with this ID found."
+msgstr ""
+
+#: views/split_after_deposition.py:69
+msgid "Invalid ID format."
+msgstr ""
+
+#: views/split_after_deposition.py:74
+msgid "Must be at least 1."
+msgstr ""
+
+#: views/split_after_deposition.py:84
+msgid "If you choose a new-style name, it must not change."
+msgstr ""
+
+#: views/split_after_deposition.py:89
+msgid ""
+"If you choose a deposition-style name, it must begin with the deposition "
+"number."
+msgstr ""
+
+#: views/split_after_deposition.py:99 views/split_and_rename.py:26
+msgid "New sample name"
+msgstr ""
+
+#: views/split_after_deposition.py:114
+msgid "(for all samples; leave empty for no change)"
+msgstr ""
+
+#: views/split_after_deposition.py:276
+#, python-format
+msgid "Sample %s occurs multiple times."
+msgstr ""
+
+#: views/split_after_deposition.py:281
+#, python-format
+msgid "Sample %s doesn't belong to this deposition."
+msgstr ""
+
+#: views/split_after_deposition.py:294
+msgid ""
+"Since there is more than one piece, the new name must not be exactly the "
+"deposition's name."
+msgstr ""
+
+#: views/split_after_deposition.py:300
+msgid "At least one sample of the original deposition is missing."
+msgstr ""
+
+#: views/split_after_deposition.py:310
+msgid "If you don't split, you can't rename the single piece."
+msgstr ""
+
+#: views/split_after_deposition.py:320
+msgid ""
+"If you choose a deposition-style name, it must begin with the parent's new "
+"name."
+msgstr ""
+
+#: views/split_after_deposition.py:436
+msgid "Samples were successfully split and/or renamed."
+msgstr ""
+
+#: views/split_after_deposition.py:443
+#, python-format
+msgid "Bulk sample rename for %s"
+msgstr ""
+
+#: views/split_and_rename.py:27
+#, fuzzy
+msgid "New sample purpose"
+msgstr "sample series"
+
+#: views/split_and_rename.py:38
+msgid "The sample name has an invalid format."
+msgstr ""
+
+#: views/split_and_rename.py:41
+msgid "The new sample name must start with the parent sample's name."
+msgstr ""
+
+#: views/split_and_rename.py:43
+msgid "Name does already exist in database."
+msgstr ""
+
+#: views/split_and_rename.py:52
+msgid "All pieces completely entered"
+msgstr ""
+
+#: views/split_and_rename.py:53
+msgid "Sample was completely split"
+msgstr ""
+
+#: views/split_and_rename.py:176
+msgid "You must split into at least one piece."
+msgstr ""
+
+#: views/split_and_rename.py:180
+msgid "You must split into at least two pieces if the split is complete."
+msgstr ""
+
+#: views/split_and_rename.py:187
+msgid "Name is already given."
+msgstr ""
+
+#: views/split_and_rename.py:282
+msgid "This split is not the last one in the sample's process list."
+msgstr ""
+
+#: views/split_and_rename.py:294
+#, python-format
+msgid "Sample “%s” was successfully split."
+msgstr ""
+
+#: views/split_and_rename.py:300
+#, python-format
+msgid "Split sample “%s”"
+msgstr ""
+
+#: views/statistics.py:80
+#, python-format
+msgid "%(count)d year"
+msgid_plural "%(count)d years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:81
+#, python-format
+msgid "%(count)d month"
+msgid_plural "%(count)d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:82
+#, python-format
+msgid "%(count)d week"
+msgid_plural "%(count)d weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:83
+#, python-format
+msgid "%(count)d day"
+msgid_plural "%(count)d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:84
+#, python-format
+msgid "%(count)d hour"
+msgid_plural "%(count)d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:85
+#, python-format
+msgid "%(count)d minute"
+msgid_plural "%(count)d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:86 views/statistics.py:92
+#, python-format
+msgid "%(count)d second"
+msgid_plural "%(count)d seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:96 views/utils.py:849
+msgid " and "
+msgstr ""
+
+#. #-#-#-#-#  django.pot (PACKAGE VERSION)  #-#-#-#-#
+#. Translation hint: For enumerations.
+#: views/statistics.py:99 views/utils.py:847
+msgid ", "
+msgstr ""
+
+#: views/statistics.py:99 views/utils.py:847
+msgid ", and "
+msgstr ""
+
+#: views/statistics.py:125
+msgid "today, %H:%M"
+msgstr ""
+
+#: views/statistics.py:127
+msgid "yesterday, %H:%M"
+msgstr ""
+
+#: views/statistics.py:129 views/statistics.py:207
+msgid "%A, %b %d, %Y, %H:%M"
+msgstr ""
+
+#: views/statistics.py:165 views/statistics.py:176 views/statistics.py:180
+msgid "%b %d, %Y, %H:%M"
+msgstr ""
+
+#: views/statistics.py:170
+msgid "100.0 %"
+msgstr ""
+
+#: views/statistics.py:178
+msgid "%H:%M"
+msgstr ""
+
+#: views/statistics.py:181
+#, python-format
+msgid "%(from)s until %(to)s (%(minutes)d minute)"
+msgid_plural "%(from)s until %(to)s (%(minutes)d minutes)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: views/statistics.py:203
+msgid "%H:%M today"
+msgstr ""
+
+#: views/statistics.py:205
+msgid "%H:%M yesterday"
+msgstr ""
+
+#: views/statistics.py:222 views/statistics.py:224
+#, python-format
+msgid "successful, %s"
+msgstr ""
+
+#: views/statistics.py:226 views/statistics.py:228
+#, python-format
+msgid "failed, %s"
+msgstr ""
+
+#: views/statistics.py:230 views/statistics.py:232
+msgid "no log data found"
+msgstr ""
+
+#: views/statistics.py:251 views/statistics.py:252 views/statistics.py:254
+#, python-format
+msgid "for %(time)s"
+msgstr ""
+
+#: views/statistics.py:255
+msgid "Chantal server statistics"
+msgstr ""
+
+#: views/statistics.py:282
+#, python-format
+msgid "Chantal revision %s"
+msgstr ""
+
+#: views/statistics.py:283
+msgid "Chantal is presented to you by …"
+msgstr ""
+
+#: views/user_details.py:90
+msgid "You can't access the preferences of another user."
+msgstr ""
+
+#: views/user_details.py:99
+msgid "The preferences were successfully updated."
+msgstr ""
+
+#: views/user_details.py:104
+#, python-format
+msgid "Change preferences for %s"
+msgstr ""
+
+#: views/user_details.py:115
+msgid "You can't access the list of groups and permissions of another user."
+msgstr ""
+
+#: views/user_details.py:117
+#, python-format
+msgid "Groups and permissions for %s"
+msgstr ""
+
+#: views/utils.py:451
+#, python-format
+msgid "Sample %s could not be found (neither as an alias)."
+msgstr ""
+
+#, fuzzy
+#~ msgid "Samples error"
+#~ msgstr "sample series"
+
+#, fuzzy
+#~ msgid "Sample error"
+#~ msgstr "sample series"
+
+#, fuzzy
+#~ msgid "Preferences error"
+#~ msgstr "sample series"
+
+#, fuzzy
+#~ msgid "Initials error"
+#~ msgstr "initials"
+
+#, fuzzy
+#~ msgid "Sandbox error"
+#~ msgstr "sample series"
 
 #, fuzzy
 #~ msgid "Add sample series"
@@ -1975,15 +3812,7 @@ msgstr ""
 #~ msgstr "sample series"
 
 #, fuzzy
-#~ msgid "edit sample %s"
-#~ msgstr "sample series"
-
-#, fuzzy
 #~ msgid ""
 #~ "External\n"
 #~ "  operator “%(name)s”"
-#~ msgstr "sample series"
-
-#, fuzzy
-#~ msgid "my series"
 #~ msgstr "sample series"
