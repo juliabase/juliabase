@@ -256,6 +256,7 @@ def by_id(request, sample_id, path_suffix):
     if utils.is_remote_client(request):
         # No redirect for the remote client
         return show(request, sample.name)
+    # Necessary so that the sample's name isn't exposed through the URL
     permissions.assert_can_view_sample(request.user, sample)
     query_string = request.META["QUERY_STRING"] or u""
     return utils.HttpResponseSeeOther(
@@ -267,7 +268,7 @@ class AddSamplesForm(forms.Form):
     u"""Form for adding new samples.
 
     FixMe: Although this form can never represent *one* sample but allows the
-    user to add abritrary samples with the same properties (except for the name
+    user to add arbitrary samples with the same properties (except for the name
     of course), this should be converted to a *model* form in order to satisfy
     the dont-repeat-yourself principle.
     """
@@ -333,8 +334,7 @@ class AddSamplesForm(forms.Form):
                     self, _(u"You selected “no substrate”, so your substrate comments would be lost."), "substrate_comments")
         if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
-                form_utils.append_error(self,
-                                        _(u"You selected “no substrate”, so the external originator would be lost."),
+                form_utils.append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
                                         "substrate_originator")
         return cleaned_data
 
@@ -421,12 +421,11 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user, request.POST)
         if add_samples_form.is_valid():
-            cleaned_data = add_samples_form.cleaned_data
             new_names, samples = add_samples_to_database(add_samples_form, user)
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(user).report_new_samples(samples)
-            if cleaned_data["group"]:
-                for watcher in cleaned_data["group"].auto_adders.all():
+            if add_samples_form.cleaned_data["group"]:
+                for watcher in add_samples_form.cleaned_data["group"].auto_adders.all():
                     for sample in samples:
                         watcher.my_samples.add(sample)
             if len(new_names) > 1:
@@ -436,7 +435,7 @@ def add(request):
                       {"first_name": new_names[0], "last_name": new_names[-1]}
             else:
                 success_report = _(u"Your sample has the provisional name %s.  It was added to “My Samples”.") % new_names[0]
-            if cleaned_data["bulk_rename"]:
+            if add_samples_form.cleaned_data["bulk_rename"]:
                 return utils.successful_response(request, success_report, "samples.views.bulk_rename.bulk_rename",
                                                  query_string="numbers=" + ",".join(new_name[1:] for new_name in new_names),
                                                  forced=True, remote_client_response=ids)
