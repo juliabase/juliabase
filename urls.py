@@ -40,7 +40,15 @@ from __future__ import absolute_import
 from django.conf.urls.defaults import *
 from django.conf import settings
 
-urlpatterns = patterns("chantal_common.views",
-                       (r"^markdown$", "markdown_sandbox"),
-                       (r"^switch_language$", "switch_language"),
+urlpatterns = patterns("django.contrib.auth.views",
+                       (r"^change_password$", "password_change", {"template_name": "chantal_common/change_password.html"}),
+                       (r"^change_password/done/$", "password_change_done",
+                        {"template_name": "chantal_common/password_changed.html"}),
+                       (r"^login$", "login", {"template_name": "chantal_common/login.html"}),
+                       (r"^logout$", "logout", {"template_name": "chantal_common/logout.html"}),
                        )
+
+urlpatterns += patterns("chantal_common.views",
+                        (r"^markdown$", "markdown_sandbox"),
+                        (r"^switch_language$", "switch_language"),
+                        )
