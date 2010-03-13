@@ -343,7 +343,7 @@ def is_referentially_valid(export_form, add_to_shelf_form, add_to_list_form, rem
     :Return:
       whether all forms are consistent and obey to the constraints
 
-    :rtype: bool
+    :rtype: bool, str
     """
     referentially_valid = True
     action = None
@@ -613,7 +613,7 @@ def bulk(request, database):
     if request.method == "POST":
         connection = refdb.get_connection(request.user, database)
         export_form = ExportForm(request.POST)
-        add_to_shelf_form = AddToShelfForm(request.POST, connection)
+        add_to_shelf_form = AddToShelfForm(connection, request.POST)
         add_to_list_form = AddToListForm(request.user, connection, request.POST)
         remove_from_list_form = RemoveFromListForm(request.POST, verbose_listname=verbose_listname, prefix="remove") \
             if references_list else None
