@@ -20,8 +20,7 @@ import django.core.urlresolvers
 from samples.views import utils
 
 
-from chantal.settings import WITH_EPYDOC
-if WITH_EPYDOC:
+if settings.WITH_EPYDOC:
     cache_page = lambda x: lambda y: y
 
 
