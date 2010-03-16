@@ -16,6 +16,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
+import chantal_common.utils
 from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
@@ -58,7 +59,7 @@ class ActionForm(forms.Form):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comment = self.cleaned_data["comment"]
-        form_utils.check_markdown(comment)
+        chantal_common.utils.check_markdown(comment)
         return comment
 
     def clean(self):

@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
+import chantal_common.utils
 from chantal_common.utils import append_error
 from samples.views import utils, form_utils, feed_utils, csv_export
 
@@ -60,7 +61,7 @@ class SampleSeriesForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
-        form_utils.check_markdown(description)
+        chantal_common.utils.check_markdown(description)
         return description
 
     def validate_unique(self):

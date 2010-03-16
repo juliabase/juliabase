@@ -17,6 +17,7 @@ from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.contrib.auth.decorators import login_required
+import chantal_common.utils
 from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
@@ -153,7 +154,7 @@ class HotwireLayerForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
+        chantal_common.utils.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -218,7 +219,7 @@ class PECVDLayerForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
+        chantal_common.utils.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):

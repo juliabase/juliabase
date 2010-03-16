@@ -676,24 +676,6 @@ def normalize_prefixes(post_data):
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
 
 
-# FixMe: This function is provided by chantal_common.utils.
-
-dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r][-=]")
-def check_markdown(text):
-    u"""Checks whether the Markdown input by the user contains only permitted
-    syntax elements.  I forbid images and headings so far.
-
-    :Parameters:
-      - `text`: the Markdown input to be checked
-
-    :Exceptions:
-      - `ValidationError`: if the ``text`` contained forbidden syntax
-        elements.
-    """
-    if dangerous_markup_pattern.search(text):
-        raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
-
-
 def dead_samples(samples, timestamp):
     u"""Determine all samples from ``samples`` which are already dead at the
     given ``timestamp``.

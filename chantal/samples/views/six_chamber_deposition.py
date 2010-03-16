@@ -22,6 +22,7 @@ from django.forms.util import ValidationError
 from django import forms
 import django.core.urlresolvers
 from django.contrib.auth.decorators import login_required
+import chantal_common.utils
 from chantal_common.utils import append_error
 from samples.models import SixChamberDeposition, SixChamberLayer, SixChamberChannel
 from samples import models, permissions
@@ -122,7 +123,7 @@ class LayerForm(DataModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        form_utils.check_markdown(comments)
+        chantal_common.utils.check_markdown(comments)
         return comments
 
     class Meta:
