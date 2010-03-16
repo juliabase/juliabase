@@ -1,0 +1,12 @@
+{# -*- indent-tabs-mode: nil -*- #}
+
+{% extends "base_chantal.html" %}
+
+{% load i18n %}
+
+{% block extrahead %}
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}samples/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}samples/css/print.css"/>
+{% endblock %}
+
+{% block app_title %}Samples{% endblock %}

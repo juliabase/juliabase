@@ -1,9 +1,9 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "base.html" %}
+{% extends "samples/base.html" %}
 {% load i18n %}
 {% load samples_extras %}
 
-{% block content %}
+{% block frame_content %}
   {% if groupless_samples or my_groups %}
     <div class="my-samples">
       <h2>{% trans 'My Samples' %}<a class="edit-icon" 
