@@ -17,7 +17,7 @@ from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 import chantal_common.utils
-from chantal_common.utils import append_error
+from chantal_common.utils import append_error, get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 
@@ -208,6 +208,6 @@ def edit(request, username):
         my_samples_form = MySamplesForm(user_details)
         action_form = ActionForm(user)
     return render_to_response("samples/edit_my_samples.html",
-                              {"title": _(u"Edit “My Samples” of %s") % utils.get_really_full_name(user),
+                              {"title": _(u"Edit “My Samples” of %s") % get_really_full_name(user),
                                "my_samples": my_samples_form, "action": action_form},
                               context_instance=RequestContext(request))

@@ -15,6 +15,7 @@ import django.core.urlresolvers
 import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
+import chantal_common.utils
 import samples.views.utils
 
 register = template.Library()
@@ -188,7 +189,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
 
     """
     if isinstance(user, django.contrib.auth.models.User):
-        full_name = samples.views.utils.get_really_full_name(user)
+        full_name = chantal_common.utils.get_really_full_name(user)
         if autoescape:
             full_name = conditional_escape(full_name)
         if anchor_type == "http":
@@ -285,7 +286,7 @@ def markdown(value):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    value = escape(samples.views.utils.substitute_html_entities(unicode(value)))
+    value = escape(chantal_common.utils.substitute_html_entities(unicode(value)))
     position = 0
     result = u""
     while position < len(value):

@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal_common.utils import append_error
+from chantal_common.utils import append_error, get_really_full_name
 from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 
@@ -295,7 +295,7 @@ class AddSamplesForm(forms.Form):
             u"""<span class="markdown-hint">""" + _(u"""with %(markdown_link)s syntax""") \
             % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
                django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
-        self.fields["substrate_originator"].choices = [(u"<>", utils.get_really_full_name(user))]
+        self.fields["substrate_originator"].choices = [(u"<>", get_really_full_name(user))]
         if user.external_contacts.count() > 0:
             for external_operator in user.external_contacts.all():
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))

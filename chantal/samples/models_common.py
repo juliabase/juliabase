@@ -20,6 +20,7 @@ from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
+from chantal_common.utils import get_really_full_name
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
@@ -306,7 +307,7 @@ class Process(models.Model):
         """
         csv_node = CSVNode(self)
         csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
-                          CSVItem(_(u"operator"), shared_utils.get_really_full_name(self.operator), "process"),
+                          CSVItem(_(u"operator"), get_really_full_name(self.operator), "process"),
                           CSVItem(_(u"comments"), self.comments, "process")]
         return csv_node
 

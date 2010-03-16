@@ -14,6 +14,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
+from chantal_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils
 
@@ -297,7 +298,7 @@ class UserField(forms.ChoiceField):
         if additional_user:
             users.add(additional_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
-        self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+        self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
     def set_users_without(self, excluded_user):
         u"""Set the user list shown in the widget.  You *must* call this method
@@ -315,7 +316,7 @@ class UserField(forms.ChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
         users.remove(excluded_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
-        self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+        self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -344,7 +345,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
         users |= set(additional_users)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
-        self.choices = [(user.pk, utils.get_really_full_name(user)) for user in users]
+        self.choices = [(user.pk, get_really_full_name(user)) for user in users]
         if not self.choices:
             self.choices = ((u"", 9*u"-"),)
 

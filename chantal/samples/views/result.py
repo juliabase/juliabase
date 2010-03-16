@@ -14,6 +14,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
+import chantal_common.utils
 from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils, csv_export
@@ -196,7 +197,7 @@ class QuantityForm(forms.Form):
 
     def clean_quantity(self):
         quantity = u" ".join(self.cleaned_data["quantity"].split())
-        return utils.substitute_html_entities(quantity)
+        return chantal_common.utils.substitute_html_entities(quantity)
 
 
 class ValueForm(forms.Form):
