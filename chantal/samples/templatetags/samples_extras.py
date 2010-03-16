@@ -199,16 +199,13 @@ def timestamp(value):
     return mark_safe(samples.views.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
-# FixMe: This should be renamed to markdown_samples to avoid collision with the
-# filter in chantal_common of the same name.
-
 sample_name_pattern = \
     re.compile(ur"(\W|\A)(?P<name>[0-9][0-9](([BVHLCS]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?)|"
                ur"(-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})-[-A-Za-z_/0-9]+)))(\W|\Z)", re.UNICODE)
 sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A-Za-zÄÖÜäöüß_/0-9]+)(\W|\Z)", re.UNICODE)
 @register.filter
 @stringfilter
-def markdown(value):
+def markdown_samples(value):
     u"""Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
     clickable links.  Embedded HTML tags are always escaped.  Warning: You need

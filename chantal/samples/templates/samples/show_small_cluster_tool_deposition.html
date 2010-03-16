@@ -9,7 +9,7 @@
 </p>
 
 {% if process.comments %}
-  <blockquote>{{ process.comments|markdown }}</blockquote>
+  <blockquote>{{ process.comments|markdown_samples }}</blockquote>
 {% endif %}
 
 <table width="100%">
@@ -99,7 +99,7 @@
               <tr>
                 {% if layer.comments %}
                 <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
-                    {{ layer.comments|markdown }}
+                    {{ layer.comments|markdown_samples }}
                 </td>
                 {% else %}
                 <td> </td>

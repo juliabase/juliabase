@@ -70,7 +70,7 @@
               <td rowspan="{{ deposition.layers.count }}"{% if forloop.first %} class="top"{% endif %}{% if forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
                 <div style="float: right; marging-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
                             border-bottom: 1px solid" class="timestamp">
-                  {{ deposition|timestamp }}</div>{{ deposition.comments|markdown }}</td>
+                  {{ deposition|timestamp }}</div>{{ deposition.comments|markdown_samples }}</td>
             {% endif %}
           </tr>
         {% endfor %}

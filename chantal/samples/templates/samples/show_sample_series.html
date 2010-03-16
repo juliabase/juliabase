@@ -19,7 +19,7 @@
 
 {% block frame_content %}
 
-{{ sample_series.description|markdown }}
+{{ sample_series.description|markdown_samples }}
 
 {% if sample_series.samples.count %}
   <p>{% trans 'This sample series contains the following samples:' %}</p>

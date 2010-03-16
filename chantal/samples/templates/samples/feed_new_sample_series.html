@@ -7,7 +7,7 @@
     “{{ group }}”.
   {% endblocktrans %}
   <p>{% trans 'Description' %}:</p>
-  <blockquote>{{ entry.sample_series.description|markdown }}</blockquote>
+  <blockquote>{{ entry.sample_series.description|markdown_samples }}</blockquote>
   {% if subscribed %}
     {% trans 'You are subscribed to this sample series because you have at least one of its samples amongst “My Samples”.' %}
   {% else %}
