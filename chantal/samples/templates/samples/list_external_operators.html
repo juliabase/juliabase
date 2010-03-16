@@ -1,7 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "samples/base.html" %}
 
-{% block content %}
+{% block frame_content %}
   <ul>
     {% for external_operator in external_operators %}
       <li><a href="{% url samples.views.external_operator.edit external_operator_id=external_operator.pk %}"

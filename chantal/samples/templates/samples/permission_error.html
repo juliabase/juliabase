@@ -2,11 +2,7 @@
 {% extends "samples/base.html" %}
 {% load i18n %}
 
-{% block float_image %}
-<img style="float: right; margin-left: 2em" src="/media/lock_woman.jpg" alt="{% trans 'woman with lock' %}"/>
-{% endblock %}
-
-{% block content %}
+{% block frame_content %}
   <p>
     {% blocktrans with exception.description as description %}
       Sorry, you can't access this resource.  {{ description }}

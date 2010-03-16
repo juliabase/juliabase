@@ -3,12 +3,12 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block content %}
+{% block frame_content %}
 {% if groups %}
   <ul>
     {% for group in groups %}
       {% with group.name|urlquote as normalized_groupname %}
-        <li style='list-style-image: url("/media/icons/group.png")'
+        <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group.png")'
             ><a href="{% url samples.views.group.edit name=normalized_groupname %}">{{ group.name }}</a></li>
       {% endwith %}
     {% endfor %}

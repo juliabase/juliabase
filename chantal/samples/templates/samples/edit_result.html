@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load samples_extras %}
 
-{% block content %}
+{% block frame_content %}
 <form enctype="multipart/form-data" method="post" action="">
   {% error_list result _("Error in result") %}
   {% error_list related_data _("General error") %}
