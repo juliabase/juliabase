@@ -16,6 +16,7 @@ import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
 import chantal_common.utils
+import chantal_common.templatetags.chantal
 import samples.views.utils
 
 register = template.Library()
@@ -60,17 +61,6 @@ def quantity(value, unit=None, autoescape=False):
         result += "&nbsp;" + unit
     return mark_safe(result)
 quantity.needs_autoescape = True
-
-
-# FixMe: This filter should be taken from chantal_common.
-
-@register.filter
-def fancy_bool(boolean):
-    u"""Filter for coverting a bool into a translated “Yes” or “No”.
-    """
-    _ = ugettext
-    result = _(u"Yes") if boolean else _(u"No")
-    return mark_safe(result)
 
 
 @register.filter
@@ -122,51 +112,6 @@ def verbose_name(parser, token):
     return VerboseNameNode(var)
 
 
-# FixMe: This filter should be taken from chantal_common.
-
-@register.simple_tag
-def markdown_hint():
-    u"""Tag for inserting a short remark that Markdown syntax must be used
-    here, with a link to further information.
-    """
-    return u"""<span class="markdown-hint">(""" + _(u"""with %(markdown_link)s syntax""") \
-        % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-           django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u")</span>"
-
-
-# FixMe: This filter should be taken from chantal_common.
-
-@register.filter
-@stringfilter
-def urlquote(value):
-    u"""Filter for quoting strings so that they can be used as parts of URLs.
-    Note that also slashs »/« are escaped.
-
-    Also note that this filter is “not safe” because for example ampersands
-    need to be further escaped.
-    """
-    return django.utils.http.urlquote(value, safe="")
-urlquote.is_safe = False
-
-
-# FixMe: This filter should be taken from chantal_common.
-
-@register.filter
-@stringfilter
-def urlquote_plus(value):
-    u"""Filter for quoting URLs so that they can be used within other URLs.
-    This is useful for added “next” URLs in query strings, for example::
-
-        <a href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-               >{% trans 'edit' %}</a>
-    """
-    return django.utils.http.urlquote_plus(value, safe="/")
-urlquote_plus.is_safe = False
-
-
-# FixMe: At least for ordinary users, this filter should use the filter with
-# the same name in ``chantal_common``.
-
 @register.filter
 def get_really_full_name(user, anchor_type="http", autoescape=False):
     u"""Unfortunately, Django's get_full_name method for users returns the
@@ -189,18 +134,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
 
     """
     if isinstance(user, django.contrib.auth.models.User):
-        full_name = chantal_common.utils.get_really_full_name(user)
-        if autoescape:
-            full_name = conditional_escape(full_name)
-        if anchor_type == "http":
-            return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse(
-                        "samples.views.user_details.show_user", kwargs={"login_name": user.username}), full_name))
-        elif anchor_type == "mailto":
-            return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
-        elif anchor_type == "plain":
-            return mark_safe(full_name)
-        else:
-            return u""
+        return chantal_common.templatetags.chantal.get_really_full_name(user, anchor_type, autoescape)
     elif isinstance(user, samples.models.ExternalOperator):
         full_name = user.name
         if autoescape:
@@ -319,50 +253,6 @@ def markdown(value):
     return markup.markdown(result)
 
 
-# FixMe: This filter should be taken from chantal_common.
-
-@register.inclusion_tag("error_list.html")
-def error_list(form, form_error_title, outest_tag=u"<table>"):
-    u"""Includes a comprehensive error list for one particular form into the
-    page.  It is an HTML table, so take care that the tags are nested
-    properly.  Its template can be found in the file ``"error_list.html"``.
-
-    :Parameters:
-      - `form`: the bound form whose errors should be displayed; if ``None``,
-        nothing is generated
-      - `form_error_title`: The title used for general error messages.  These
-        are not connected to one particular field but the form as a
-        whole. Typically, they are generated in the ``is_referentially_valid``
-        functions.
-      - `outest_tag`: May be ``"<table>"`` or ``"<tr>"``, with ``"<table>"`` as
-        the default.  It is the outmost HTML tag which is generated for the
-        error list.
-
-    :type form: ``forms.Form``
-    :type form_error_title: unicode
-    :type outest_tag: unicode
-    """
-    return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
-
-
-# FixMe: This filter should be taken from chantal_common.
-
-@register.simple_tag
-def input_field(field):
-    u"""Tag for inserting a field value into an HTML table as an editable
-    field.  It consists of two ``<td>`` elements, one for the label and one for
-    the value, so it spans two columns.  This tag is primarily used in
-    tamplates of edit views.  Example::
-
-        {% input_field deposition.number %}
-    """
-    result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
-        {"html_name": field.html_name, "label": field.label}
-    help_text = u""" <span class="help">(%s)</span>""" % field.help_text if field.help_text else u""
-    result += u"""<td class="input">%(field)s%(help_text)s</td>""" % {"field": field, "help_text": help_text}
-    return result
-
-
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
     """
@@ -386,7 +276,7 @@ class ValueFieldNode(template.Node):
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = verbose_name[0].upper() + verbose_name[1:]
         if self.unit == "yes/no":
-            field = fancy_bool(field)
+            field = chantal_common.templatetags.chantal.fancy_bool(field)
             unit = None
         elif self.unit == "user":
             field = get_really_full_name(field)
