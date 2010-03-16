@@ -848,25 +848,12 @@ class Initials(models.Model):
 admin.site.register(Initials)
 
 
-# FixMe: Part of ``UserDetails`` is now in ``chantal_common``.  This must be
-# removed here, and the rest of Chantal must be checked whether it must be
-# changed there, too.  (Maybe not because those places have been moved to
-# ``chantal_common``, too.)
-
-languages = (
-    ("de", u"Deutsch"),
-    ("en", u"English"),
-    )
-u"""Contains all possible choices for `UserDetails.language`.
-"""
-
 class UserDetails(models.Model):
     u"""Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
-    language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     auto_addition_groups = models.ManyToManyField(
         django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),
