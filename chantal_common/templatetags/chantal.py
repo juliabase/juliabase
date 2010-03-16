@@ -1,24 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+# Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
 #
-# This file is part of Django-RefDB.
+# This file is part of Chantal.
 #
-#     Django-RefDB is free software: you can redistribute it and/or
+#     Chantal is free software: you can redistribute it and/or
 #     modify it under the terms of the GNU Affero General Public
 #     License as published by the Free Software Foundation, either
 #     version 3 of the License, or (at your option) any later
 #     version.
 #
-#     Django-RefDB is distributed in the hope that it will be
-#     useful, but WITHOUT ANY WARRANTY; without even the implied
-#     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-#     PURPOSE.  See the GNU Affero General Public License for more
-#     details.
+#     Chantal is distributed in the hope that it will be useful, but
+#     WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU Affero General Public License for more details.
 #
 #     You should have received a copy of the GNU Affero General
-#     Public License along with Django-RefDB.  If not, see
+#     Public License along with Chantal.  If not, see
 #     <http://www.gnu.org/licenses/>.
 
 
@@ -66,6 +65,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     if autoescape:
         full_name = conditional_escape(full_name)
     if anchor_type == "http":
+        # FixMe: The view should be one of chantal_common.
         return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse(
                     "samples.views.user_details.show_user", kwargs={"login_name": user.username}), full_name))
     elif anchor_type == "mailto":
@@ -101,7 +101,7 @@ def markdown_hint():
     """
     return u"""<span class="markdown-hint">(""" + _(u"""with %(markdown_link)s syntax""") \
         % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-           django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u")</span>"
+           django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u")</span>"
 
 
 @register.filter
