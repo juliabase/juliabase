@@ -1,0 +1,42 @@
+{# -*- indent-tabs-mode: nil -*- #}
+
+{# Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>   #}
+{#                                                                    #}
+{# This file is part of Chantal.                                      #}
+{#                                                                    #}
+{#     Chantal is free software: you can redistribute it and/or       #}
+{#     modify it under the terms of the GNU Affero General Public     #}
+{#     License as published by the Free Software Foundation, either   #}
+{#     version 3 of the License, or (at your option) any later        #}
+{#     version.                                                       #}
+{#                                                                    #}
+{#     Chantal is distributed in the hope that it will be useful,     #}
+{#     but WITHOUT ANY WARRANTY; without even the implied warranty    #}
+{#     of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See   #}
+{#     the GNU Affero General Public License for more details.        #}
+{#                                                                    #}
+{#     You should have received a copy of the GNU Affero General      #}
+{#     Public License along with Chantal.  If not, see                #}
+{#     <http://www.gnu.org/licenses/>.                                #}
+
+{% extends "base_chantal.html" %}
+{% load i18n %}
+
+{% block css %}
+<style type="text/css">
+  em { color: maroon }
+</style>
+{% endblock %}
+
+{% block title %}{% trans 'Resource not found' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'Resource not found' %}</h1>{% endblock %}
+
+{% block frame_content %}
+<p>{% blocktrans %}
+The resource » <em>{{ request_path }}</em> « could not be found.  Please check that the URL
+is correct, and/or check that the denoted sample, process, reference etc is already in the
+database.
+{% endblocktrans %}</p>
+<p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+<div style="clear: both"/>
+{% endblock %}

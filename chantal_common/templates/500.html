@@ -1,0 +1,64 @@
+{# -*- indent-tabs-mode: nil -*- #}
+
+{# Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>   #}
+{#                                                                    #}
+{# This file is part of Chantal.                                      #}
+{#                                                                    #}
+{#     Chantal is free software: you can redistribute it and/or       #}
+{#     modify it under the terms of the GNU Affero General Public     #}
+{#     License as published by the Free Software Foundation, either   #}
+{#     version 3 of the License, or (at your option) any later        #}
+{#     version.                                                       #}
+{#                                                                    #}
+{#     Chantal is distributed in the hope that it will be useful,     #}
+{#     but WITHOUT ANY WARRANTY; without even the implied warranty    #}
+{#     of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See   #}
+{#     the GNU Affero General Public License for more details.        #}
+{#                                                                    #}
+{#     You should have received a copy of the GNU Affero General      #}
+{#     Public License along with Chantal.  If not, see                #}
+{#     <http://www.gnu.org/licenses/>.                                #}
+
+{% extends "base_chantal.html" %}
+{% load i18n %}
+{% load chantal %}
+
+{% block extrahead %}
+  <link rel="stylesheet" type="text/css" media="screen" href="/media/chantal/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="/media/chantal/css/print.css"/>
+{% endblock %}
+
+{% block title %}{% trans 'Internal Chantal error' %}{% endblock %}
+
+{% block content %}
+  <table class="headbar" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td class="info">
+      </td>
+      <td class="login-data">
+        <a href="{% if database %}{% url refdb.views.main.main_menu database=database %}{% else %}{% url refdb.views.main.main_menu %}{% endif %}"><img src="/media/chantal/icons/house.png" alt="log-in icon" title="{% trans 'Log in' %}"/></a>
+      </td>
+    </tr>
+  </table>
+
+  <div class="main">
+    <div class="screen-only">
+      <p class="logo-text">{% block app_title %}{% endblock %}</p>
+    </div>
+
+    <div class="outer-frame">
+      <div class="inner-frame">
+	<h1>{% trans 'Internal server error' %}</h1>
+	<p>{% blocktrans %}
+You experienced an internal error in the Chantal server software.  The
+administrators have been contacted already and will do their best in
+eliminating the bug.  Typically, they will contact you as soon as the problem
+is tackled.
+{% endblocktrans %}</p>
+<p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+<div style="clear: both"/>
+        <div style="clear: both"/>
+      </div>
+    </div>
+  </div>
+{% endblock %}
