@@ -135,14 +135,3 @@ urlpatterns = patterns("samples.views",
                        (r"^maintenance/%s$" % settings.CREDENTIALS["maintenance_hash"],
                         "maintenance.maintenance"),
                        )
-
-
-# FixMe: Those views are provided by chantal_common.  Note that also the
-# templates will be taken from there and must be deleted in Chantal-samples.
-
-urlpatterns += patterns("django.contrib.auth.views",
-                        (r"^change_password$", "password_change", {"template_name": "change_password.html"}),
-                        (r"^change_password/done/$", "password_change_done", {"template_name": "password_changed.html"}),
-                        (r"^login$", "login", {"template_name": "login.html"}),
-                        (r"^logout$", "logout", {"template_name": "logout.html"}),
-                        )
