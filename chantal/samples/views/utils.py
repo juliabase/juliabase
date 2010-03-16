@@ -559,6 +559,9 @@ def remove_samples_from_my_samples(samples, user_details):
         user_details.my_samples.remove(sample)
 
 
+# FixMe: Assure that every user has a UserDetails by using signals.  Then,
+# remove this function and access the user details directly.
+
 def get_profile(user):
     u"""Retrieve the user details for the given user.  If this user hasn't yet
     any record in the ``UserDetails`` table, create one with sane defaults and
@@ -575,7 +578,7 @@ def get_profile(user):
     :rtype: `models.UserDetails`
     """
     try:
-        return user.get_profile()
+        return user.samples_user_details
     except models.UserDetails.DoesNotExist:
         # FixMe: Should be fleshed out with e.g. FZJ homepage data
         user_details = models.UserDetails(user=user)
