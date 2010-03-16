@@ -187,32 +187,3 @@ def show_deposition(request, deposition_number):
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
-
-
-# FixMe: This view is provided by chantal_common.views.  Note that the
-# respective template and entry in urls.py must be removed, too.
-
-@login_required
-def switch_language(request):
-    u"""This view parses the query string and extracts a language code from it,
-    then switches the current user's prefered language to that language, and
-    then goes back to the last URL.  This is used for realising the language
-    switching by the flags on the top left.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-
-    :type request: ``HttpRequest``
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    query_dict = utils.parse_query_string(request)
-    language = query_dict.get("lang")
-    if language in dict(models.languages):
-        user_details = utils.get_profile(request.user)
-        user_details.language = language
-        user_details.save()
-    return utils.successful_response(request)
