@@ -100,7 +100,7 @@ def show(request, name):
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
-    return render_to_response("show_sample_series.html",
+    return render_to_response("samples/show_sample_series.html",
                               {"title": _(u"Sample series “%s”") % sample_series.name,
                                "can_edit": can_edit, "can_add_result": can_add_result,
                                "sample_series": sample_series,
@@ -185,7 +185,7 @@ def edit(request, name):
                                       "group": sample_series.group.pk,
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("edit_sample_series.html",
+    return render_to_response("samples/edit_sample_series.html",
                               {"title": _(u"Edit sample series “%s”") % sample_series.name,
                                "sample_series": sample_series_form,
                                "is_new": False, "edit_description": edit_description_form},
@@ -232,7 +232,7 @@ def new(request):
                                                  _(u"Sample series %s was successfully added to the database.") % full_name)
     else:
         sample_series_form = SampleSeriesForm(user_details)
-    return render_to_response("edit_sample_series.html",
+    return render_to_response("samples/edit_sample_series.html",
                               {"title": _(u"Create new sample series"),
                                "sample_series": sample_series_form,
                                "is_new": True,

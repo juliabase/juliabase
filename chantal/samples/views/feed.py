@@ -185,7 +185,7 @@ def show(request, username):
                 ElementTree.SubElement(
                     entry_element, "link", rel="alternate",
                     href=django.core.urlresolvers.reverse("samples.views.main.main_menu"))
-        template = loader.get_template(utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
+        template = loader.get_template("samples/" + utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
         context_dict.update(entry.get_additional_template_context(user_details))

@@ -176,6 +176,6 @@ def edit(request, login_name):
     else:
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
-    return render_to_response("edit_my_layers.html", {"title": _(u"My Layers"), "my_layers": my_layer_forms},
+    return render_to_response("samples/edit_my_layers.html", {"title": _(u"My Layers"), "my_layers": my_layer_forms},
                               context_instance=RequestContext(request))
 

@@ -297,12 +297,13 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
-    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent,
-                                                        "new_names": zip(range(number_of_old_pieces+1,
-                                                                               number_of_old_pieces+1+len(new_name_forms)),
-                                                                         new_name_forms),
-                                                        "global_data": global_data_form,
-                                                        "old_split": old_split},
+    return render_to_response("samples/split_and_rename.html",
+                              {"title": _(u"Split sample “%s”") % parent,
+                               "new_names": zip(range(number_of_old_pieces+1,
+                                                      number_of_old_pieces+1+len(new_name_forms)),
+                                                new_name_forms),
+                               "global_data": global_data_form,
+                               "old_split": old_split},
                               context_instance=RequestContext(request))
 
 

@@ -85,7 +85,7 @@ def add(request):
                 kwargs={"name": django.utils.http.urlquote(new_group.name, safe="")})
     else:
         new_group_form = NewGroupForm()
-    return render_to_response("add_group.html", {"title": _(u"Add new group"), "new_group": new_group_form},
+    return render_to_response("samples/add_group.html", {"title": _(u"Add new group"), "new_group": new_group_form},
                               context_instance=RequestContext(request))
 
 
@@ -110,7 +110,7 @@ def list_(request):
     all_groups = django.contrib.auth.models.Group.objects.all()
     user_groups = request.user.groups.all()
     groups = set(group for group in all_groups if not permissions.is_restricted(group) or group in user_groups)
-    return render_to_response("list_groups.html",
+    return render_to_response("samples/list_groups.html",
                               {"title": _(u"List of all groups"), "groups": groups},
                               context_instance=RequestContext(request))
 
@@ -183,7 +183,7 @@ def edit(request, name):
     else:
         edit_group_form = \
             EditGroupForm(request.user, group, initial={"members": group.user_set.values_list("pk", flat=True)})
-    return render_to_response("edit_group.html",
+    return render_to_response("samples/edit_group.html",
                               {"title": _(u"Change group memberships of “%s”") % name,
                                "edit_group": edit_group_form},
                               context_instance=RequestContext(request))

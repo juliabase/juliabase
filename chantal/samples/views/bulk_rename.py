@@ -151,7 +151,7 @@ def bulk_rename(request):
     else:
         initials_form = InitialsForm(available_initials, initial={"initials": available_initials[0][0]})
         new_name_forms = [NewNameForm(year, u"", prefix=str(sample.pk)) for sample in samples]
-    return render_to_response("bulk_rename.html",
+    return render_to_response("samples/bulk_rename.html",
                               {"title": _(u"Giving new-style names"),
                                "initials": initials_form, "single_initials": single_initials,
                                "samples": zip(samples, new_name_forms), "year": year},

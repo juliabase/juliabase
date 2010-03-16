@@ -101,7 +101,7 @@ def main_menu(request):
         else:
             lab_notebooks.append({"label": process["label_plural"], "url": url})
     return render_to_response(
-        "main_menu.html",
+        "samples/main_menu.html",
         {"title": _(u"Main menu"),
          "my_groups": my_groups,
          "groupless_samples": groupless_samples,
@@ -157,11 +157,11 @@ def deposition_search(request):
             found_depositions = [deposition.find_actual_instance() for deposition in found_depositions]
     else:
         search_depositions_form = SearchDepositionsForm()
-    return render_to_response("search_depositions.html", {"title": _(u"Search for deposition"),
-                                                          "search_depositions": search_depositions_form,
-                                                          "found_depositions": found_depositions,
-                                                          "too_many_results": too_many_results,
-                                                          "max_results": max_results},
+    return render_to_response("samples/search_depositions.html", {"title": _(u"Search for deposition"),
+                                                                  "search_depositions": search_depositions_form,
+                                                                  "found_depositions": found_depositions,
+                                                                  "too_many_results": too_many_results,
+                                                                  "max_results": max_results},
                               context_instance=RequestContext(request))
 
 

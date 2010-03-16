@@ -373,10 +373,10 @@ def edit(request, pds_number):
         overwrite_form = OverwriteForm()
         edit_description_form = form_utils.EditDescriptionForm() if pds_measurement else None
     title = _(u"PDS measurement %s") % pds_number if pds_number else _(u"Add PDS measurement")
-    return render_to_response("edit_pds_measurement.html", {"title": title,
-                                                            "pds_measurement": pds_measurement_form,
-                                                            "overwrite": overwrite_form,
-                                                            "sample": sample_form,
-                                                            "remove_from_my_samples": remove_from_my_samples_form,
-                                                            "edit_description": edit_description_form},
+    return render_to_response("samples/edit_pds_measurement.html", {"title": title,
+                                                                    "pds_measurement": pds_measurement_form,
+                                                                    "overwrite": overwrite_form,
+                                                                    "sample": sample_form,
+                                                                    "remove_from_my_samples": remove_from_my_samples_form,
+                                                                    "edit_description": edit_description_form},
                               context_instance=RequestContext(request))

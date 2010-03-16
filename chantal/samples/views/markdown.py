@@ -52,6 +52,6 @@ def sandbox(request):
             extracted_content = sandbox_form.cleaned_data["sandbox"]
     else:
         sandbox_form = SandboxForm()
-    return render_to_response("markdown_sandbox.html", {"title": _(u"Markdown sandbox"), "sandbox": sandbox_form,
-                                                        "extracted_content": extracted_content},
+    return render_to_response("samples/markdown_sandbox.html", {"title": _(u"Markdown sandbox"), "sandbox": sandbox_form,
+                                                                "extracted_content": extracted_content},
                               context_instance=RequestContext(request))

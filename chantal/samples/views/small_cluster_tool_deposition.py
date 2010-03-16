@@ -653,7 +653,7 @@ def edit(request, deposition_number):
         else _(u"New small cluster tool deposition")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
-    return render_to_response("edit_small_cluster_tool_deposition.html", context_dict,
+    return render_to_response("samples/edit_small_cluster_tool_deposition.html", context_dict,
                               context_instance=RequestContext(request))
 
 
@@ -681,4 +681,4 @@ def show(request, deposition_number):
     template_context = {"title": _(u"Small cluster tool deposition “%s”") % deposition.number, "samples": samples.all(),
                         "process": deposition}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
-    return render_to_response("show_process.html", template_context, context_instance=RequestContext(request))
+    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))

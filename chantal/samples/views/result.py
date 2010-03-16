@@ -521,7 +521,7 @@ def edit(request, process_id):
     title = _(u"Edit result") if form_set.result else _(u"New result")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
-    return render_to_response("edit_result.html", context_dict, context_instance=RequestContext(request))
+    return render_to_response("samples/edit_result.html", context_dict, context_instance=RequestContext(request))
 
 
 @login_required
@@ -547,7 +547,7 @@ def show(request, process_id):
     template_context = {"title": _(u"Result “%s”") % result.title, "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.ResultContext(request.user, sample_series=None).digest_process(result))
-    return render_to_response("show_single_result.html", template_context, context_instance=RequestContext(request))
+    return render_to_response("samples/show_single_result.html", template_context, context_instance=RequestContext(request))
 
 
 @login_required

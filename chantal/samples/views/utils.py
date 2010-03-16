@@ -256,7 +256,7 @@ class ResultContext(object):
         """
         process = process.find_actual_instance()
         # FixMe: This can be made clearer with "render_to_string()"
-        template = loader.get_template("show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
+        template = loader.get_template("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
         name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
         template_context = self.get_template_context(process)
         context_dict = {"name": name[:1].upper()+name[1:], "operator": process.external_operator or process.operator,

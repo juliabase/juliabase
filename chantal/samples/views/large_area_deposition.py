@@ -557,7 +557,8 @@ def edit(request, deposition_number):
     title = _(u"Large-area deposition “%s”") % deposition_number if deposition_number else _(u"Add large-area deposition")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
-    return render_to_response("edit_large_area_deposition.html", context_dict, context_instance=RequestContext(request))
+    return render_to_response("samples/edit_large_area_deposition.html",
+                              context_dict, context_instance=RequestContext(request))
 
 
 @login_required
@@ -584,4 +585,4 @@ def show(request, deposition_number):
     template_context = {"title": _(u"Large-area deposition “%s”") % deposition.number, "samples": samples.all(),
                         "process": deposition}
     template_context.update(utils.ProcessContext(request.user).digest_process(deposition))
-    return render_to_response("show_process.html", template_context, context_instance=RequestContext(request))
+    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
