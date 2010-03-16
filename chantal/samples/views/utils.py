@@ -18,29 +18,9 @@ from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
 from django.db.models import Q
+import chantal_common.utils
 from samples import models, permissions
 from samples.views.shared_utils import *
-
-
-# FixMe: This class isn't needed anymore here as soon as successful_response is
-# called in chantal_common, see FixMe below.
-
-class HttpResponseSeeOther(HttpResponse):
-    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
-    same wrong thing as most other web frameworks: it knows only one type of
-    redirect, with the HTTP status code 302.  However, this is very often not
-    desirable.  In Chantal, we've frequently the use case where an HTTP POST
-    request was successful, and we want to redirect the user back to the main
-    page, for example.
-
-    This must be done with status code 303, and therefore, this class exists.
-    It can simply be used as a drop-in replacement of HttpResponseRedirect.
-    """
-    status_code = 303
-
-    def __init__(self, redirect_to):
-        super(HttpResponseSeeOther, self).__init__()
-        self["Location"] = iri_to_uri(redirect_to)
 
 
 old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?$")
@@ -68,45 +48,6 @@ def sample_name_format(name):
         return "new"
     elif provisional_sample_name_pattern.match(name):
         return "provisional"
-
-
-# FixMe: The help link decorator is provided by chantal_common.utils.
-
-class _AddHelpLink(object):
-    u"""Internal helper class in order to realise the `help_link` function
-    decorator.
-    """
-
-    def __init__(self, original_view_function, help_link):
-        self.original_view_function = original_view_function
-        self.help_link = help_link
-        update_wrapper(self, original_view_function)
-
-    def __call__(self, request, *args, **kwargs):
-        request.chantal_help_link = self.help_link
-        return self.original_view_function(request, *args, **kwargs)
-
-
-def help_link(link):
-    u"""Function decorator for views functions to set a help link for the view.
-    The help link is embedded into the top line in the layout, see the template
-    ``base.html``.  Currently, it is prepended with ``"/trac/chantal/wiki/"``.
-
-    :Parameters:
-      - `link`: the relative URL to the help page.
-
-    :type link: str
-    """
-
-    def decorate(original_view_function):
-        return _AddHelpLink(original_view_function, link)
-
-    return decorate
-
-
-from settings import WITH_EPYDOC
-if WITH_EPYDOC:
-    help_link = lambda x: lambda y: y
 
 
 def get_sample(sample_name):
@@ -514,12 +455,6 @@ def parse_query_string(request):
     return dict(result)
 
 
-# FixMe: This function should call chantal_common.utils.successful_response.
-# Note that the default value for ``view`` must be generated here, because
-# otherwise, the main menu of chantal_common is the default rather than the
-# main menu of Chantal-samples.  Also note that the remote client if clause
-# must stay here.
-
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
                         remote_client_response=True):
     u"""After a POST request was successfully processed, there is typically a
@@ -567,26 +502,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     """
     if is_remote_client(request):
         return respond_to_remote_client(remote_client_response)
-    if success_report:
-        request.session["success_report"] = success_report
-    next_url = parse_query_string(request).get("next")
-    if next_url is not None:
-        if forced:
-            # FixMe: Pass "next" to the next URL somehow in order to allow for
-            # really nested forwarding.  So far, the “deeper” views must know
-            # by themselves how to get back to the first one (which is the case
-            # for all current Chantal views).
-            pass
-        else:
-            # FixMe: So far, the outmost next-URL is used for the See-Other.
-            # However, this is wrong behaviour.  Instead, the
-            # most-deeply-nested next-URL must be used.  This could be achieved
-            # by iterated unpacking.
-            return HttpResponseSeeOther(next_url)
-    if query_string:
-        query_string = "?" + query_string
-    return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or "samples.views.main.main_menu", kwargs=kwargs)
-                                + query_string)
+    return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
+                                                    query_string, forced)
 
 
 def is_remote_client(request):

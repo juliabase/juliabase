@@ -17,7 +17,7 @@ import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from samples.views import utils
-from samples.views.utils import help_link
+from chantal_common.utils import help_link
 
 
 class MySeries(object):
