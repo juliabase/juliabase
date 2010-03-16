@@ -14,6 +14,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
+from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils, csv_export
 
@@ -48,8 +49,8 @@ def save_image_file(image_data, result, related_data_form):
             elif chunk.startswith("%PDF"):
                 new_image_type = "pdf"
             else:
-                form_utils.append_error(related_data_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
-                                        "image_file")
+                append_error(related_data_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
+                             "image_file")
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
                 os.remove(result.get_image_locations()["original"])
@@ -142,10 +143,9 @@ class RelatedDataForm(forms.Form):
         if samples is not None and sample_series is not None:
             for sample_or_series in set(samples + sample_series) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
-                    form_utils.append_error(
-                        self, _(u"You don't have the permission to add the result to all selected samples/series."))
+                    append_error(self, _(u"You don't have the permission to add the result to all selected samples/series."))
             if not samples and not sample_series:
-                form_utils.append_error(self, _(u"You must select at least one samples/series."))
+                append_error(self, _(u"You must select at least one samples/series."))
         return self.cleaned_data
 
 
@@ -375,16 +375,15 @@ class FormSet(object):
             new_related_objects = set(self.related_data_form.cleaned_data["samples"] +
                                       self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
-                form_utils.append_error(
-                    self.edit_description_form, _(u"Adding samples or sample series must be marked as important."),
-                    "important")
+                append_error(self.edit_description_form, _(u"Adding samples or sample series must be marked as important."),
+                             "important")
                 referentially_valid = False
         quantities = set()
         for quantity_form in self.quantity_forms:
             if quantity_form.is_valid():
                 quantity = quantity_form.cleaned_data["quantity"]
                 if quantity in quantities:
-                    form_utils.append_error(quantity_form, _(u"This quantity is already used in this table."), "quantity")
+                    append_error(quantity_form, _(u"This quantity is already used in this table."), "quantity")
                 else:
                     quantities.add(quantity)
         return referentially_valid

@@ -28,6 +28,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
 import django.core.urlresolvers
 import django.contrib.auth.models
+from chantal_common.utils import append_error
 from samples.views import utils, form_utils
 
 
@@ -62,7 +63,7 @@ class DepositionForm(form_utils.ProcessForm):
     def clean(self):
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
-                form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
+                append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
 
@@ -423,7 +424,7 @@ class FormSet(object):
         """
         referentially_valid = True
         if not self.layer_forms:
-            form_utils.append_error(self.deposition_form, _(u"No layers given."))
+            append_error(self.deposition_form, _(u"No layers given."))
             referentially_valid = False
         if self.deposition_form.is_valid():
             match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
@@ -436,7 +437,7 @@ class FormSet(object):
             if self.deposition:
                 if self.layer_forms and self.layer_forms[0].is_valid() and \
                         self.layer_forms[0].cleaned_data["number"] != self.deposition.layers.all()[0].number:
-                    form_utils.append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
+                    append_error(self.deposition_form, _(u"You can't change the number of the first layer."))
                     referentially_valid = False
                 old_number_only = int(self.deposition_number_pattern.match(self.deposition.number).group("number"))
                 higher_deposition_numbers = [number for number in deposition_numbers if number > old_number_only]
@@ -445,12 +446,12 @@ class FormSet(object):
                     number_of_next_layers = models.LargeAreaDeposition.objects.get(
                         number=deposition_prefix+utils.three_digits(next_number)).layers.count()
                     if number_only + number_of_next_layers > next_number:
-                        form_utils.append_error(self.deposition_form, _(u"New layers collide with following deposition."))
+                        append_error(self.deposition_form, _(u"New layers collide with following deposition."))
                         referentially_valid = False
             else:
                 if self.layer_forms and self.layer_forms[0].is_valid() and \
                         self.layer_forms[0].cleaned_data["number"] <= max_deposition_number:
-                    form_utils.append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
+                    append_error(self.deposition_form, _(u"Overlap with previous deposition numbers."))
                     referentially_valid = False
             if self.samples_form.is_valid():
                 dead_samples = form_utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
@@ -459,12 +460,12 @@ class FormSet(object):
                     error_message = ungettext(u"The sample %s is already dead at this time.",
                                               u"The samples %s are already dead at this time.", len(dead_samples))
                     error_message %= utils.format_enumeration([sample.name for sample in dead_samples])
-                    form_utils.append_error(self.deposition_form, error_message, "timestamp")
+                    append_error(self.deposition_form, error_message, "timestamp")
                     referentially_valid = False
             for i, layer_form in enumerate(self.layer_forms):
                 if layer_form.is_valid() and \
                         layer_form.cleaned_data["number"] - i + len(self.layer_forms) - 1 != number_only:
-                    form_utils.append_error(layer_form, _(u"Layer number is not consecutive."))
+                    append_error(layer_form, _(u"Layer number is not consecutive."))
                     referentially_valid = False
         return referentially_valid
 

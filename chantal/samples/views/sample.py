@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
+from chantal_common.utils import append_error
 from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 
@@ -75,8 +76,8 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
              sample_form.cleaned_data["currently_responsible_person"] != sample.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        form_utils.append_error(edit_description_form,
-                                _(u"Changing the group or the responsible person must be marked as important."), "important")
+        append_error(edit_description_form,
+                     _(u"Changing the group or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
@@ -327,15 +328,14 @@ class AddSamplesForm(forms.Form):
         cleaned_data = self.cleaned_data
         if "substrate" in cleaned_data and "substrate_comments" in cleaned_data:
             if cleaned_data["substrate"] == "custom" and not cleaned_data["substrate_comments"]:
-                form_utils.append_error(
-                    self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
+                append_error(self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_comments"]:
-                form_utils.append_error(
-                    self, _(u"You selected “no substrate”, so your substrate comments would be lost."), "substrate_comments")
+                append_error(self, _(u"You selected “no substrate”, so your substrate comments would be lost."),
+                             "substrate_comments")
         if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
-                form_utils.append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
-                                        "substrate_originator")
+                append_error(self,_(u"You selected “no substrate”, so the external originator would be lost."),
+                             "substrate_originator")
         return cleaned_data
 
 

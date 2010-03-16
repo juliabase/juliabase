@@ -569,33 +569,6 @@ def clean_deposition_number_field(value, letter):
     return value
 
 
-# FixMe: This function is provided by chantal_common.utils
-
-def append_error(form, error_message, fieldname="__all__"):
-    u"""This function is called if a validation error is found in form data
-    which cannot be found by the ``is_valid`` method itself.  The reason is
-    very simple: For many types of invalid data, you must take other forms in
-    the same view into account.
-
-    See, for example, `split_after_deposition.is_referentially_valid`.
-
-    :Parameters:
-      - `form`: the form to which the erroneous field belongs
-      - `error_message`: the message to be presented to the user
-      - `fieldname`: the name of the field that triggered the validation
-        error.  It is optional, and if not given, the error is considered an
-        error of the form as a whole.
-
-    :type form: ``forms.Form`` or ``forms.ModelForm``.
-    :type fieldname: str
-    :type error_message: unicode
-    """
-    # FixMe: Is it really a good idea to call ``is_valid`` here?
-    # ``append_error`` is also called in ``clean`` methods after all.
-    form.is_valid()
-    form._errors.setdefault(fieldname, ErrorList()).append(error_message)
-
-
 def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     u"""Find all indices of subforms of a certain type (e.g. layers) and return
     them so that the objects (e.g. layers) have a sensible order (e.g. sorted

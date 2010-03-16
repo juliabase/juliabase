@@ -22,6 +22,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
+from chantal_common.utils import append_error
 from samples.views import utils, form_utils, feed_utils, csv_export
 
 
@@ -134,8 +135,8 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
              sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        form_utils.append_error(edit_description_form,
-                                _(u"Changing the group or the responsible person must be marked as important."), "important")
+        append_error(edit_description_form,
+                     _(u"Changing the group or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
@@ -215,12 +216,12 @@ def new(request):
             full_name = \
                 u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).count():
-                form_utils.append_error(sample_series_form, _("This sample series name is already given."), "short_name")
+                append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
                 error_message = ungettext("The name is %d letter too long.", "The name is %d letters too long.",
                                           overfull_letters) % overfull_letters
-                form_utils.append_error(sample_series_form, error_message, "short_name")
+                append_error(sample_series_form, error_message, "short_name")
             else:
                 sample_series = sample_series_form.save(commit=False)
                 sample_series.name = full_name

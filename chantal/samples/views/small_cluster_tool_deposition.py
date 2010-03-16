@@ -17,6 +17,7 @@ from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.contrib.auth.decorators import login_required
+from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
@@ -101,7 +102,7 @@ class DepositionForm(form_utils.ProcessForm):
         _ = ugettext
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
-                form_utils.append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
+                append_error(self, _(u"The first two digits must match the year of the deposition."), "number")
                 del self.cleaned_data["number"]
         return self.cleaned_data
 
@@ -549,7 +550,7 @@ class FormSet(object):
             # (Or does overriding "clean_deposition_number" spoil it?)
             if (not self.deposition or self.deposition.number != self.deposition_form.cleaned_data["number"]) and \
                     models.Deposition.objects.filter(number=self.deposition_form.cleaned_data["number"]).count():
-                form_utils.append_error(self.deposition_form, _(u"This deposition number exists already."))
+                append_error(self.deposition_form, _(u"This deposition number exists already."))
                 referentially_valid = False
             if self.samples_form.is_valid():
                 dead_samples = form_utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
@@ -558,10 +559,10 @@ class FormSet(object):
                     error_message = ungettext(u"The sample %s is already dead at this time.",
                                               u"The samples %s are already dead at this time.", len(dead_samples))
                     error_message %= utils.format_enumeration([sample.name for sample in dead_samples])
-                    form_utils.append_error(self.deposition_form, error_message, "timestamp")
+                    append_error(self.deposition_form, error_message, "timestamp")
                     referentially_valid = False
         if not self.layer_forms:
-            form_utils.append_error(self.deposition_form, _(u"No layers given."))
+            append_error(self.deposition_form, _(u"No layers given."))
             referentially_valid = False
         return referentially_valid
 

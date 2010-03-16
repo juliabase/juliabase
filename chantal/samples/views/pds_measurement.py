@@ -18,6 +18,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 import django.contrib.auth.models
+from chantal_common.utils import append_error
 from samples.views import utils, form_utils, feed_utils
 from samples import models, permissions
 
@@ -288,11 +289,11 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     if pds_measurement_form.is_valid():
         number = pds_measurement_form.cleaned_data["number"]
         if unicode(number) != pds_number and models.PDSMeasurement.objects.filter(number=number).count():
-            form_utils.append_error(pds_measurement_form, _(u"This PDS number is already in use."))
+            append_error(pds_measurement_form, _(u"This PDS number is already in use."))
             referentially_valid = False
         if sample_form.is_valid() and form_utils.dead_samples([sample_form.cleaned_data["sample"]],
                                                               pds_measurement_form.cleaned_data["timestamp"]):
-            form_utils.append_error(pds_measurement_form, _(u"Sample is already dead at this time."), "timestamp")
+            append_error(pds_measurement_form, _(u"Sample is already dead at this time."), "timestamp")
             referentially_valid = False
     return referentially_valid
 

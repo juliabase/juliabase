@@ -16,6 +16,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
+from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 
@@ -99,8 +100,8 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 for sample in my_samples_form.cleaned_data["samples"]:
                     permissions.assert_can_edit_sample(current_user, sample)
             except permissions.PermissionError:
-                form_utils.append_error(
-                    action_form, _(u"You must be the currently responsible person for samples you'd like to change."))
+                append_error(action_form,
+                             _(u"You must be the currently responsible person for samples you'd like to change."))
                 referentially_valid = False
     return referentially_valid
 

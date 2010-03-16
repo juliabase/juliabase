@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
+from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 
@@ -134,8 +135,8 @@ class EditGroupForm(forms.Form):
         if "members" in cleaned_data and "restricted" in cleaned_data:
             if cleaned_data["restricted"] and \
                     not any(permissions.has_permission_to_edit_group(user) for user in cleaned_data["members"]):
-                form_utils.append_error(
-                    self, _(u"In restricted groups, at least one member must have permission to change groups."), "members")
+                append_error(self, _(u"In restricted groups, at least one member must have permission to change groups."),
+                             "members")
         return cleaned_data
 
 
