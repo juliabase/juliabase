@@ -68,12 +68,6 @@ urlpatterns = patterns("samples.views",
                        url(r"^samples/(?P<sample_name>.+)", "sample.show", name="show_sample_by_name"),
                        (r"^bulk_rename$", "bulk_rename.bulk_rename"),
 
-                       url(r"^6-chamber_depositions/add/$", "six_chamber_deposition.edit",
-                           {"deposition_number": None}, "add_6-chamber_deposition"),
-                       url(r"^6-chamber_depositions/(?P<deposition_number>.+)/edit/$",
-                           "six_chamber_deposition.edit", name="edit_6-chamber_deposition"),
-                       (r"^6-chamber_depositions/(?P<deposition_number>.+)", "six_chamber_deposition.show"),
-
                        url(r"^large-area_depositions/add/$", "large_area_deposition.edit",
                            {"deposition_number": None}, "add_large-area_deposition"),
                        url(r"^large-area_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
