@@ -294,7 +294,7 @@ class AddSamplesForm(forms.Form):
         self.fields["substrate_comments"].help_text = \
             u"""<span class="markdown-hint">""" + _(u"""with %(markdown_link)s syntax""") \
             % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-               django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
+               django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u"</span>"
         self.fields["substrate_originator"].choices = [(u"<>", get_really_full_name(user))]
         if user.external_contacts.count() > 0:
             for external_operator in user.external_contacts.all():
