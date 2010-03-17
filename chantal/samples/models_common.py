@@ -30,13 +30,6 @@ matplotlib.use("Agg")
 import pylab
 
 
-class PlotError(Exception):
-    u"""Raised if an error occurs while generating a plot.  Usually, it is
-    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
-    """
-    pass
-
-
 class ExternalOperator(models.Model):
     u"""Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
@@ -214,7 +207,7 @@ class Process(models.Model):
                     self.pylab_commands(number, datafile_name, for_thumbnail=False)
                     pylab.title(unicode(self))
                     pylab.savefig(open(figure_filename, "wb"), format="pdf")
-            except (IOError, PlotError):
+            except (IOError, shared_utils.PlotError):
                 pylab.close("all")
                 return None, None
             finally:

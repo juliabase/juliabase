@@ -176,3 +176,57 @@ def unicode_strftime(timestamp, format_string):
     :rtype: unicode
     """
     return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+
+
+class PlotError(Exception):
+    u"""Raised if an error occurs while generating a plot.  Usually, it is
+    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
+    """
+    pass
+
+
+def read_techplot_file(filename, columns=(0, 1)):
+    u"""Read a datafile in TechPlot format and return the content of selected
+    columns.
+
+    :Parameters:
+      - `filename`: full path to the Techplot data file
+      - `columns`: the columns that should be read.  Defaults to the first two,
+        i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
+
+    :type filename: str
+    :type columns: list of int
+
+    :Return:
+      List of all columns.  Every column is represented as a list of floating
+      point values.
+
+    :rtype: list of list of float
+
+    :Exceptions:
+      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+        unparseble data)
+    """
+    start_values = False
+    try:
+        datafile = codecs.open(filename, encoding="cp1252")
+    except IOError:
+        raise PlotError("datafile could not be opened")
+    result = [[] for i in range(len(columns))]
+    for line in datafile:
+        if start_values:
+            if line.startswith("END"):
+                break
+            cells = line.split()
+            for column, result_array in zip(columns, result):
+                try:
+                    value = float(cells[column])
+                except IndexError:
+                    raise PlotError("datafile contained too few columns")
+                except ValueError:
+                    value = float("nan")
+                result_array.append(value)
+        elif line.startswith("BEGIN"):
+            start_values = True
+    datafile.close()
+    return result

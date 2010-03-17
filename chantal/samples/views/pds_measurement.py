@@ -21,6 +21,7 @@ import django.contrib.auth.models
 from chantal_common.utils import append_error
 from samples.views import utils, form_utils, feed_utils
 from samples import models, permissions
+import chantal_ipv.models as ipv_models
 
 
 root_dir = "/home/bronger/temp/pds/" if settings.IS_TESTSERVER else "/windows/T_www-data/daten/pds/"
@@ -133,7 +134,7 @@ class SampleForm(forms.Form):
             `utils.extract_preset_sample`
 
         :type user_details: `models.UserDetails`
-        :type pds_measurement: `models.PDSMeasurement`
+        :type pds_measurement: `ipv_models.PDSMeasurement`
         :type preset_sample: `models.Sample`
         """
         super(SampleForm, self).__init__(*args, **kwargs)
@@ -209,7 +210,7 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         pass
 
     class Meta:
-        model = models.PDSMeasurement
+        model = ipv_models.PDSMeasurement
         exclude = ("external_operator",)
 
 
@@ -288,7 +289,7 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     referentially_valid = True
     if pds_measurement_form.is_valid():
         number = pds_measurement_form.cleaned_data["number"]
-        if unicode(number) != pds_number and models.PDSMeasurement.objects.filter(number=number).count():
+        if unicode(number) != pds_number and ipv_models.PDSMeasurement.objects.filter(number=number).count():
             append_error(pds_measurement_form, _(u"This PDS number is already in use."))
             referentially_valid = False
         if sample_form.is_valid() and form_utils.dead_samples([sample_form.cleaned_data["sample"]],
@@ -315,9 +316,9 @@ def edit(request, pds_number):
 
     :rtype: ``HttpResponse``
     """
-    pds_measurement = get_object_or_404(models.PDSMeasurement, number=utils.convert_id_to_int(pds_number)) \
+    pds_measurement = get_object_or_404(ipv_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number)) \
         if pds_number is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, models.PDSMeasurement)
+    permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, ipv_models.PDSMeasurement)
     user_details = utils.get_profile(request.user)
     preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
     if request.method == "POST":
@@ -361,7 +362,7 @@ def edit(request, pds_number):
         initial = {}
         if pds_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
-            numbers = models.PDSMeasurement.objects.values_list("number", flat=True)
+            numbers = ipv_models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
         pds_measurement_form = PDSMeasurementForm(request.user, instance=pds_measurement, initial=initial)
         initial = {}

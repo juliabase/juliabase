@@ -22,6 +22,7 @@ from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
+import chantal_ipv.models as ipv_models
 
 
 class RemoveFromMySamplesForm(forms.Form):
@@ -108,7 +109,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = models.SmallClusterToolDeposition
+        model = ipv_models.SmallClusterToolDeposition
 
 
 class HotwireLayerForm(forms.ModelForm):
@@ -168,7 +169,7 @@ class HotwireLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = models.SmallClusterToolHotwireLayer
+        model = ipv_models.SmallClusterToolHotwireLayer
         exclude = ("deposition", "number")
 
 
@@ -233,7 +234,7 @@ class PECVDLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = models.SmallClusterToolPECVDLayer
+        model = ipv_models.SmallClusterToolPECVDLayer
         exclude = ("deposition", "number")
 
 
@@ -269,7 +270,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `models.SmallClusterToolDeposition` or ``NoneType``
+    :type deposition: `ipv_models.SmallClusterToolDeposition` or ``NoneType``
     """
 
     class LayerForm(forms.Form):
@@ -292,7 +293,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = utils.get_profile(self.user)
         self.deposition = \
-            get_object_or_404(models.SmallClusterToolDeposition, number=deposition_number) if deposition_number else None
+            get_object_or_404(ipv_models.SmallClusterToolDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = None
         self.layer_forms = []
         self.remove_from_my_samples_form = None
@@ -321,7 +322,7 @@ class FormSet(object):
 
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = AddLayersForm(self.user_details, models.SmallClusterToolDeposition, self.post_data)
+        self.add_layers_form = AddLayersForm(self.user_details, ipv_models.SmallClusterToolDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -354,7 +355,7 @@ class FormSet(object):
               - `deposition`: the small cluster tool deposition for which the
                 layer and channel forms should be generated
 
-            :type deposition: `models.SmallClusterToolDeposition`
+            :type deposition: `ipv_models.SmallClusterToolDeposition`
             """
             self.layer_forms = []
             for index, layer in enumerate(deposition.layers.all()):
@@ -366,7 +367,7 @@ class FormSet(object):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            source_deposition_query = models.SmallClusterToolDeposition.objects.filter(number=copy_from)
+            source_deposition_query = ipv_models.SmallClusterToolDeposition.objects.filter(number=copy_from)
             if source_deposition_query.count() == 1:
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -386,7 +387,7 @@ class FormSet(object):
                                         "number": utils.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user_details, self.preset_sample, self.deposition)
-        self.add_layers_form = AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
+        self.add_layers_form = AddLayersForm(self.user_details, ipv_models.SmallClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
             self.remove_from_my_samples_form = RemoveFromMySamplesForm()
@@ -467,7 +468,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = AddLayersForm(self.user_details, models.SmallClusterToolDeposition)
+            self.add_layers_form = AddLayersForm(self.user_details, ipv_models.SmallClusterToolDeposition)
 
         # Delete layers
         for i in range(len(new_layers)-1, -1, -1):
@@ -578,7 +579,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `models.SmallClusterToolDeposition` or ``NoneType``
+        :rtype: `ipv_models.SmallClusterToolDeposition` or ``NoneType``
         """
         database_ready = not self._change_structure() if not self.remote_client else True
         database_ready = self._is_all_valid() and database_ready
@@ -635,7 +636,8 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     form_set = FormSet(request, deposition_number)
-    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, models.SmallClusterToolDeposition)
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition,
+                                                     ipv_models.SmallClusterToolDeposition)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
@@ -677,7 +679,7 @@ def show(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    deposition = get_object_or_404(models.SmallClusterToolDeposition, number=deposition_number)
+    deposition = get_object_or_404(ipv_models.SmallClusterToolDeposition, number=deposition_number)
     permissions.assert_can_view_physical_process(request.user, deposition)
     samples = deposition.samples
     template_context = {"title": _(u"Small cluster tool deposition “%s”") % deposition.number, "samples": samples.all(),

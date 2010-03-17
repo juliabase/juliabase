@@ -40,7 +40,6 @@ from __future__ import absolute_import
 import copy, inspect
 from django.db import models
 from samples.models_common import *
-from samples.models_physical_processes import *
 from samples.models_depositions import *
 from samples.models_feeds import *
 
