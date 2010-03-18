@@ -15,6 +15,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
+from chantal_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils
 
@@ -39,8 +40,8 @@ def show_user(request, login_name):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     userdetails = utils.get_profile(user)
-    username = utils.get_really_full_name(user)
-    return render_to_response("show_user.html", {"title": username, "user": user, "userdetails": userdetails},
+    username = get_really_full_name(user)
+    return render_to_response("samples/show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
 
 
@@ -100,8 +101,8 @@ def edit_preferences(request, login_name):
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
         initials_form = form_utils.InitialsForm(user, initials_mandatory)
-    return render_to_response("edit_preferences.html",
-                              {"title": _(u"Change preferences for %s") % utils.get_really_full_name(request.user),
+    return render_to_response("samples/edit_preferences.html",
+                              {"title": _(u"Change preferences for %s") % get_really_full_name(request.user),
                                "user_details": user_details_form, "initials": initials_form,
                                "has_groups": bool(user.groups.count())},
                               context_instance=RequestContext(request))
@@ -113,8 +114,8 @@ def groups_and_permissions(request, login_name):
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(
             request.user, _(u"You can't access the list of groups and permissions of another user."))
-    return render_to_response("groups_and_permissions.html",
-                              {"title": _(u"Groups and permissions for %s") % utils.get_really_full_name(request.user),
+    return render_to_response("samples/groups_and_permissions.html",
+                              {"title": _(u"Groups and permissions for %s") % get_really_full_name(request.user),
                                "groups": user.groups.all(), "permissions": permissions.get_user_permissions(user),
-                               "full_user_name": utils.get_really_full_name(request.user)},
+                               "full_user_name": get_really_full_name(request.user)},
                               context_instance=RequestContext(request))

@@ -1,0 +1,20 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+{% if groups %}
+  <ul>
+    {% for group in groups %}
+      {% with group.name|urlquote as normalized_groupname %}
+        <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group.png")'
+            ><a href="{% url samples.views.group.edit name=normalized_groupname %}">{{ group.name }}</a></li>
+      {% endwith %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>{% trans 'No groups available.' %}</p>
+{% endif %}
+{% endblock %}

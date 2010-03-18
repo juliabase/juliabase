@@ -17,8 +17,9 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
+from chantal_common.utils import append_error
 from samples import models, permissions
-from samples.views import utils, form_utils
+from samples.views import utils
 
 
 class InitialsForm(forms.Form):
@@ -86,7 +87,7 @@ def is_referentially_valid(new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
             if new_name in new_names:
-                form_utils.append_error(new_name_form, _(u"This sample name has been used already on this page."), "name")
+                append_error(new_name_form, _(u"This sample name has been used already on this page."), "name")
                 referentially_valid = False
             else:
                 new_names.add(new_name)
@@ -151,7 +152,7 @@ def bulk_rename(request):
     else:
         initials_form = InitialsForm(available_initials, initial={"initials": available_initials[0][0]})
         new_name_forms = [NewNameForm(year, u"", prefix=str(sample.pk)) for sample in samples]
-    return render_to_response("bulk_rename.html",
+    return render_to_response("samples/bulk_rename.html",
                               {"title": _(u"Giving new-style names"),
                                "initials": initials_form, "single_initials": single_initials,
                                "samples": zip(samples, new_name_forms), "year": year},

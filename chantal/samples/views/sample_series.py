@@ -22,6 +22,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
+import chantal_common.utils
+from chantal_common.utils import append_error
 from samples.views import utils, form_utils, feed_utils, csv_export
 
 
@@ -59,7 +61,7 @@ class SampleSeriesForm(forms.ModelForm):
         u"""Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
-        form_utils.check_markdown(description)
+        chantal_common.utils.check_markdown(description)
         return description
 
     def validate_unique(self):
@@ -100,7 +102,7 @@ def show(request, name):
     result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
-    return render_to_response("show_sample_series.html",
+    return render_to_response("samples/show_sample_series.html",
                               {"title": _(u"Sample series “%s”") % sample_series.name,
                                "can_edit": can_edit, "can_add_result": can_add_result,
                                "sample_series": sample_series,
@@ -134,8 +136,8 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
              sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        form_utils.append_error(edit_description_form,
-                                _(u"Changing the group or the responsible person must be marked as important."), "important")
+        append_error(edit_description_form,
+                     _(u"Changing the group or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
@@ -185,7 +187,7 @@ def edit(request, name):
                                       "group": sample_series.group.pk,
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("edit_sample_series.html",
+    return render_to_response("samples/edit_sample_series.html",
                               {"title": _(u"Edit sample series “%s”") % sample_series.name,
                                "sample_series": sample_series_form,
                                "is_new": False, "edit_description": edit_description_form},
@@ -215,12 +217,12 @@ def new(request):
             full_name = \
                 u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).count():
-                form_utils.append_error(sample_series_form, _("This sample series name is already given."), "short_name")
+                append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
                 error_message = ungettext("The name is %d letter too long.", "The name is %d letters too long.",
                                           overfull_letters) % overfull_letters
-                form_utils.append_error(sample_series_form, error_message, "short_name")
+                append_error(sample_series_form, error_message, "short_name")
             else:
                 sample_series = sample_series_form.save(commit=False)
                 sample_series.name = full_name
@@ -232,7 +234,7 @@ def new(request):
                                                  _(u"Sample series %s was successfully added to the database.") % full_name)
     else:
         sample_series_form = SampleSeriesForm(user_details)
-    return render_to_response("edit_sample_series.html",
+    return render_to_response("samples/edit_sample_series.html",
                               {"title": _(u"Create new sample series"),
                                "sample_series": sample_series_form,
                                "is_new": True,

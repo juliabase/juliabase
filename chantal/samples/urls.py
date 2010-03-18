@@ -68,30 +68,6 @@ urlpatterns = patterns("samples.views",
                        url(r"^samples/(?P<sample_name>.+)", "sample.show", name="show_sample_by_name"),
                        (r"^bulk_rename$", "bulk_rename.bulk_rename"),
 
-                       url(r"^6-chamber_depositions/add/$", "six_chamber_deposition.edit",
-                           {"deposition_number": None}, "add_6-chamber_deposition"),
-                       url(r"^6-chamber_depositions/(?P<deposition_number>.+)/edit/$",
-                           "six_chamber_deposition.edit", name="edit_6-chamber_deposition"),
-                       (r"^6-chamber_depositions/(?P<deposition_number>.+)", "six_chamber_deposition.show"),
-
-                       url(r"^large-area_depositions/add/$", "large_area_deposition.edit",
-                           {"deposition_number": None}, "add_large-area_deposition"),
-                       url(r"^large-area_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
-                           "lab_notebook.export", {"process_name": "LargeAreaDeposition"},
-                           "export_lab_notebook_LargeAreaDeposition"),
-                       url(r"^large-area_depositions/lab_notebook/(?P<year_and_month>.*)",
-                           "lab_notebook.show", {"process_name": "LargeAreaDeposition"}, "lab_notebook_LargeAreaDeposition"),
-                       url(r"^large-area_depositions/(?P<deposition_number>.+)/edit/$",
-                           "large_area_deposition.edit", name="edit_large-area_deposition"),
-                       url(r"^large-area_depositions/(?P<deposition_number>.+)", "large_area_deposition.show"),
-
-                       url(r"^small_cluster_tool_depositions/add/$", "small_cluster_tool_deposition.edit",
-                           {"deposition_number": None}, "add_small_cluster_tool_deposition"),
-                       url(r"^small_cluster_tool_depositions/(?P<deposition_number>.+)/edit/$",
-                           "small_cluster_tool_deposition.edit", name="edit_small_cluster_tool_deposition"),
-                       (r"^small_cluster_tool_depositions/(?P<deposition_number>.+)",
-                        "small_cluster_tool_deposition.show"),
-
                        (r"^resplit/(?P<old_split_id>.+)", "split_and_rename.split_and_rename"),
 
                        (r"^sample_series/add/$", "sample_series.new"),
@@ -104,19 +80,13 @@ urlpatterns = patterns("samples.views",
                        (r"^results/(?P<process_id>.+)/export/$", "result.export"),
                        (r"^results/(?P<process_id>.+)", "result.show"),
 
-                       url(r"^pds_measurements/add/$", "pds_measurement.edit", {"pds_number": None}, "add_pds_measurement"),
-                       url(r"^pds_measurements/(?P<pds_number>\d+)/edit/$", "pds_measurement.edit",
-                           name="edit_pds_measurement"),
-
                        (r"^external_operators/add/$", "external_operator.new"),
                        (r"^external_operators/(?P<external_operator_id>.+)/edit/$", "external_operator.edit"),
                        (r"^external_operators/(?P<external_operator_id>.+)", "external_operator.show"),
                        (r"^external_operators/$", "external_operator.list_"),
 
-                       (r"^markdown$", "markdown.sandbox"),
                        (r"^about$", "statistics.about"),
                        (r"^statistics$", "statistics.statistics"),
-                       (r"^switch_language$", "main.switch_language"),
                        (r"^users/(?P<login_name>.+)", "user_details.show_user"),
                        (r"^preferences/(?P<login_name>.+)", "user_details.edit_preferences"),
                        (r"^groups_and_permissions/(?P<login_name>.+)", "user_details.groups_and_permissions"),
@@ -135,14 +105,3 @@ urlpatterns = patterns("samples.views",
                        (r"^maintenance/%s$" % settings.CREDENTIALS["maintenance_hash"],
                         "maintenance.maintenance"),
                        )
-
-
-# FixMe: Those views are provided by chantal_common.  Note that also the
-# templates will be taken from there and must be deleted in Chantal-samples.
-
-urlpatterns += patterns("django.contrib.auth.views",
-                        (r"^change_password$", "password_change", {"template_name": "change_password.html"}),
-                        (r"^change_password/done/$", "password_change_done", {"template_name": "password_changed.html"}),
-                        (r"^login$", "login", {"template_name": "login.html"}),
-                        (r"^logout$", "logout", {"template_name": "logout.html"}),
-                        )

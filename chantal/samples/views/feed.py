@@ -14,14 +14,14 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
+from chantal_common.utils import get_really_full_name
 from samples import permissions
 from django.conf import settings
 import django.core.urlresolvers
 from samples.views import utils
 
 
-from chantal.settings import WITH_EPYDOC
-if WITH_EPYDOC:
+if settings.WITH_EPYDOC:
     cache_page = lambda x: lambda y: y
 
 
@@ -147,7 +147,7 @@ def show(request, username):
     feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show, kwargs={"username": username})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
-    ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % utils.get_really_full_name(user)
+    ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % get_really_full_name(user)
     user_details = utils.get_profile(user)
     entries = [entry.find_actual_instance() for entry in user_details.feed_entries.all()]
     if entries:
@@ -172,7 +172,7 @@ def show(request, username):
         ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
         author = ElementTree.SubElement(entry_element, "author")
-        ElementTree.SubElement(author, "name").text = utils.get_really_full_name(entry.originator)
+        ElementTree.SubElement(author, "name").text = get_really_full_name(entry.originator)
         ElementTree.SubElement(author, "email").text = entry.originator.email
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
@@ -186,7 +186,7 @@ def show(request, username):
                 ElementTree.SubElement(
                     entry_element, "link", rel="alternate",
                     href=django.core.urlresolvers.reverse("samples.views.main.main_menu"))
-        template = loader.get_template(utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
+        template = loader.get_template("samples/" + utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
         context_dict.update(entry.get_additional_template_context(user_details))

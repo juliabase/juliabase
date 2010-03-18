@@ -17,7 +17,7 @@ import django.forms as forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from samples.views import utils
-from samples.views.utils import help_link
+from chantal_common.utils import help_link
 
 
 class MySeries(object):
@@ -101,7 +101,7 @@ def main_menu(request):
         else:
             lab_notebooks.append({"label": process["label_plural"], "url": url})
     return render_to_response(
-        "main_menu.html",
+        "samples/main_menu.html",
         {"title": _(u"Main menu"),
          "my_groups": my_groups,
          "groupless_samples": groupless_samples,
@@ -157,11 +157,11 @@ def deposition_search(request):
             found_depositions = [deposition.find_actual_instance() for deposition in found_depositions]
     else:
         search_depositions_form = SearchDepositionsForm()
-    return render_to_response("search_depositions.html", {"title": _(u"Search for deposition"),
-                                                          "search_depositions": search_depositions_form,
-                                                          "found_depositions": found_depositions,
-                                                          "too_many_results": too_many_results,
-                                                          "max_results": max_results},
+    return render_to_response("samples/search_depositions.html", {"title": _(u"Search for deposition"),
+                                                                  "search_depositions": search_depositions_form,
+                                                                  "found_depositions": found_depositions,
+                                                                  "too_many_results": too_many_results,
+                                                                  "max_results": max_results},
                               context_instance=RequestContext(request))
 
 
@@ -187,32 +187,3 @@ def show_deposition(request, deposition_number):
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
-
-
-# FixMe: This view is provided by chantal_common.views.  Note that the
-# respective template and entry in urls.py must be removed, too.
-
-@login_required
-def switch_language(request):
-    u"""This view parses the query string and extracts a language code from it,
-    then switches the current user's prefered language to that language, and
-    then goes back to the last URL.  This is used for realising the language
-    switching by the flags on the top left.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-
-    :type request: ``HttpRequest``
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    query_dict = utils.parse_query_string(request)
-    language = query_dict.get("lang")
-    if language in dict(models.languages):
-        user_details = utils.get_profile(request.user)
-        user_details.language = language
-        user_details.save()
-    return utils.successful_response(request)

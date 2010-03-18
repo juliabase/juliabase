@@ -1,0 +1,24 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load samples_extras %}
+
+{% block frame_content %}
+  <ul style='list-style-image: url("{{ MEDIA_URL}}samples/icons/add.png")'>
+    {% for process in processes %}
+      <li
+         {% ifequal process.type "split" %}
+           style='list-style-image: url("{{ MEDIA_URL}}samples/icons/arrow_branch.png")'
+         {% else %}
+           {% ifequal process.type "death" %}
+             style='list-style-image: url("{{ MEDIA_URL}}samples/icons/bomb.png")'
+           {% else %}
+             {% ifequal process.type "result" %}
+               style='list-style-image: url("{{ MEDIA_URL}}samples/icons/lightbulb_add.png")'
+             {% endifequal %}
+           {% endifequal %}
+         {% endifequal %}
+         ><a href="{{ process.url }}">{{ process.label|capfirst }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

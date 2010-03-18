@@ -1,0 +1,68 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list global_data _("General error") %}
+  <table style="margin-left: auto; margin-right: auto; margin-bottom: 2ex" cellpadding="10" border="1">
+    <tr>
+      <th>{% trans 'Piece number' %}</th>
+      <th>{{ new_names.0.1.new_name.label }}</th>
+      <th>{{ new_names.0.1.new_purpose.label }}</th>
+      <th>{{ new_names.0.1.delete.label }}</th>
+    </tr>
+    {% if old_split %}
+      {% for piece in old_split.pieces.all %}
+        <tr>
+          <td style="text-align: center">{{ forloop.counter }}.</td>
+          <td><input type="text" readonly="readonly" value="{{ piece.name }}"/></td>
+          <td><input type="text" readonly="readonly" value="{{ piece.purpose }}"/></td>
+          <td> </td>
+        </tr>
+      {% endfor %}
+    {% endif %}
+    {% for number, new_name in new_names %}
+      {% error_list new_name _("Error in new name") "<tr>" %}
+      <tr {% if forloop.last %}style="background-color: darkgray"{% endif %}>
+        <td style="text-align: center">
+          {% if forloop.last %}
+            <div style="width: 15em; font-size: x-small">
+              {% blocktrans %}
+                (you must change this last name in order to create an
+                additional piece)
+              {% endblocktrans %}
+            </div>
+          {% else %}
+            {{ number }}.
+          {% endif %}
+        </td>
+        <td style="text-align: center">
+          {{ new_name.new_name }}
+        </td>
+        <td style="text-align: center">
+          {{ new_name.new_purpose }}
+        </td>
+        <td style="text-align: center">{{ new_name.delete }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <p>
+    <label for="id_{{ global_data.sample_completely_split.html_name }}"
+           >{{ global_data.sample_completely_split.label }}:</label>
+    {{ global_data.sample_completely_split }}
+  </p>
+  <p style="margin-bottom: 0pt">
+    <label for="id_{{ global_data.sample_series.html_name }}">{{ global_data.sample_series.label }}:</label>
+    {{ global_data.sample_series }}
+  </p>
+  <p class="submit-button" style="margin-top: 0pt">
+    <label for="id_{{ global_data.finished.html_name }}">{{ global_data.finished.label }}:</label>
+    {{ global_data.finished }}
+  </p>
+  <p class="submit-button"><input type="submit"/></p>
+</form>
+{% endblock %}

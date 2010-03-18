@@ -252,13 +252,13 @@ def statistics(request):
     db_uptime = _(u"for %(time)s") % {"time": breakup_time(time.time()-settings.POSTGRESQL_STARTUP_TIME)}
     os_uptime = float(open("/proc/uptime").read().split()[0])
     os_uptime = _(u"for %(time)s") % {"time": breakup_time(os_uptime)}
-    return render_to_response("statistics.html", {"title": _(u"Chantal server statistics"),
-                                                  "os_uptime": os_uptime,
-                                                  "web_server_uptime": web_server_uptime,
-                                                  "db_uptime": db_uptime,
-                                                  "adsm_results": get_adsm_results(),
-                                                  "availability": get_availability_data(),
-                                                  "last_db_backup": analyze_last_database_backup()},
+    return render_to_response("samples/statistics.html", {"title": _(u"Chantal server statistics"),
+                                                          "os_uptime": os_uptime,
+                                                          "web_server_uptime": web_server_uptime,
+                                                          "db_uptime": db_uptime,
+                                                          "adsm_results": get_adsm_results(),
+                                                          "availability": get_availability_data(),
+                                                          "last_db_backup": analyze_last_database_backup()},
                               context_instance=RequestContext(request))
 
 
@@ -280,14 +280,14 @@ def about(request):
     :rtype: ``HttpResponse``
     """
     short_messages = [_(u"Chantal revision %s") % settings.CHANTAL_REVNO]
-    return render_to_response("about.html", {"title": _(u"Chantal is presented to you by …"),
-                                             "web_server_version": settings.APACHE_VERSION,
-                                             "is_testserver": settings.IS_TESTSERVER,
-                                             "db_version": settings.POSTGRESQL_VERSION,
-                                             "language_version": settings.PYTHON_VERSION,
-                                             "matplotlib_version": settings.MATPLOTLIB_VERSION,
-                                             "framework_version": django.get_version().replace("-SVN-unknown", ""),
-                                             "short_messages": short_messages
-                                             },
+    return render_to_response("samples/about.html", {"title": _(u"Chantal is presented to you by …"),
+                                                     "web_server_version": settings.APACHE_VERSION,
+                                                     "is_testserver": settings.IS_TESTSERVER,
+                                                     "db_version": settings.POSTGRESQL_VERSION,
+                                                     "language_version": settings.PYTHON_VERSION,
+                                                     "matplotlib_version": settings.MATPLOTLIB_VERSION,
+                                                     "framework_version": django.get_version().replace("-SVN-unknown", ""),
+                                                     "short_messages": short_messages
+                                                     },
                               context_instance=RequestContext(request))
 

@@ -1,0 +1,38 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list action _("General error") %}
+  {% error_list my_samples _("Error in “My Samples”") %}
+  <table style="float: right">
+    <tr>
+      {% input_field action.new_currently_responsible_person %}
+    </tr><tr>
+      {% input_field action.new_group %}
+    </tr><tr>
+      {% input_field action.new_current_location %}
+    </tr><tr>
+      {% input_field action.copy_to_user %}
+    </tr><tr>
+      <td class="label"><label for="id_{{ action.comment.html_name }}"
+           >{{ action.comment.label }}:</label><br/>{% markdown_hint %}</td>
+      <td class="input">{{ action.comment }}</td>
+    </tr><tr>
+      {% input_field action.remove_from_my_samples %}
+    </tr>
+  </table>
+  <table cellspacing="10">
+    <tr>
+      {% input_field my_samples.samples %}
+    </tr>
+  </table>
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

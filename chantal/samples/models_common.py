@@ -20,6 +20,7 @@ from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
+from chantal_common.utils import get_really_full_name
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
@@ -27,13 +28,6 @@ from samples.csv_common import CSVNode, CSVItem
 import matplotlib
 matplotlib.use("Agg")
 import pylab
-
-
-class PlotError(Exception):
-    u"""Raised if an error occurs while generating a plot.  Usually, it is
-    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
-    """
-    pass
 
 
 class ExternalOperator(models.Model):
@@ -190,9 +184,9 @@ class Process(models.Model):
         :rtype: str, str; or ``NoneType``, ``NoneType``
         """
         datafile_name = self.get_datafile_name(number)
-        output_filename, output_url = self.calculate_image_filename_and_url(number)
-        if not os.path.exists(datafile_name):
+        if not datafile_name or not os.path.exists(datafile_name):
             return None, None
+        output_filename, output_url = self.calculate_image_filename_and_url(number)
         thumbnail_filename = output_filename + ".png"
         thumbnail_necessary = \
             not os.path.exists(thumbnail_filename) or os.stat(thumbnail_filename).st_mtime < os.stat(datafile_name).st_mtime
@@ -213,7 +207,7 @@ class Process(models.Model):
                     self.pylab_commands(number, datafile_name, for_thumbnail=False)
                     pylab.title(unicode(self))
                     pylab.savefig(open(figure_filename, "wb"), format="pdf")
-            except (IOError, PlotError):
+            except (IOError, shared_utils.PlotError):
                 pylab.close("all")
                 return None, None
             finally:
@@ -261,10 +255,11 @@ class Process(models.Model):
         :type number: int
 
         :Return:
-          the absolute path of the file with the original data for this plot in
-          the local filesystem.
+          The absolute path of the file with the original data for this plot in
+          the local filesystem.  ``None`` if there is no plottable datafile for
+          this process.
 
-        :rtype: str
+        :rtype: str or ``NoneType``
         """
         raise NotImplementedError
 
@@ -306,7 +301,7 @@ class Process(models.Model):
         """
         csv_node = CSVNode(self)
         csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
-                          CSVItem(_(u"operator"), shared_utils.get_really_full_name(self.operator), "process"),
+                          CSVItem(_(u"operator"), get_really_full_name(self.operator), "process"),
                           CSVItem(_(u"comments"), self.comments, "process")]
         return csv_node
 
@@ -847,25 +842,13 @@ class Initials(models.Model):
 admin.site.register(Initials)
 
 
-# FixMe: Part of ``UserDetails`` is now in ``chantal_common``.  This must be
-# removed here, and the rest of Chantal must be checked whether it must be
-# changed there, too.  (Maybe not because those places have been moved to
-# ``chantal_common``, too.)
-
-languages = (
-    ("de", u"Deutsch"),
-    ("en", u"English"),
-    )
-u"""Contains all possible choices for `UserDetails.language`.
-"""
-
 class UserDetails(models.Model):
     u"""Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"))
-    language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
+                                related_name="samples_user_details")
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     auto_addition_groups = models.ManyToManyField(
         django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),

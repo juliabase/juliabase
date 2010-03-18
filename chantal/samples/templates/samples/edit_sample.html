@@ -1,0 +1,30 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list sample _("Error in sample") %}
+  <table>
+    <tr>
+      {% input_field sample.current_location %}
+    </tr><tr>
+      {% input_field sample.currently_responsible_person %}
+    </tr><tr>
+      {% input_field sample.purpose %}
+    </tr><tr>
+      {% input_field sample.tags %}
+    </tr><tr>
+      {% input_field sample.group %}
+    </tr>
+  </table>
+
+  {% include "samples/edit_description.html" %}
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

@@ -17,25 +17,6 @@ import cPickle as pickle
 import base64
 
 
-# FixMe: This function should be taken from chantal_common.utils.
-
-def get_really_full_name(user):
-    u"""Unfortunately, Django's ``get_full_name`` method for users returns the
-    empty string if the user has no first and surname set.  However, it'd be
-    sensible to use the login name as a fallback then.  This is realised here.
-
-    :Parameters:
-      - `user`: the user instance
-    :type user: ``django.contrib.auth.models.User``
-
-    :Return:
-      The full, human-friendly name of the user
-
-    :rtype: unicode
-    """
-    return user.get_full_name() or unicode(user)
-
-
 def int_or_zero(number):
     u"""
     :Parameters:
@@ -130,44 +111,6 @@ def normalize_legacy_sample_name(sample_name):
     return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
 
 
-# FixMe: The following function should be taken from ``chantal_common.utils``
-
-entities = {}
-for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
-    entities[line[:12].rstrip()] = line[12]
-entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
-def substitute_html_entities(text):
-    u"""Searches for all ``&entity;`` named entities in the input and replaces
-    them by their unicode counterparts.  For example, ``&alpha;``
-    becomes ``α``.  Escaping is not possible unless you spoil the pattern with
-    a character that is later removed.  But this routine doesn't have an
-    escaping mechanism.
-
-    :Parameters:
-      - `text`: the user's input to be processed
-
-    :type text: unicode
-
-    :Return:
-      ``text`` with all named entities replaced by single unicode characters
-
-    :rtype: unicode
-    """
-    result = u""
-    position = 0
-    while position < len(text):
-        match = entity_pattern.search(text, position)
-        if match:
-            start, end = match.span()
-            character = entities.get(text[start+1:end-1])
-            result += text[position:start] + character if character else text[position:end]
-            position = end
-        else:
-            result += text[position:]
-            break
-    return result
-
-
 def ascii_pickle(python_object):
     u"""Converts an arbitrary Python object to an ASCII-only string to be
     written to the database.  Unfortunately, even protocol 0 of Python's
@@ -233,3 +176,57 @@ def unicode_strftime(timestamp, format_string):
     :rtype: unicode
     """
     return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+
+
+class PlotError(Exception):
+    u"""Raised if an error occurs while generating a plot.  Usually, it is
+    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
+    """
+    pass
+
+
+def read_techplot_file(filename, columns=(0, 1)):
+    u"""Read a datafile in TechPlot format and return the content of selected
+    columns.
+
+    :Parameters:
+      - `filename`: full path to the Techplot data file
+      - `columns`: the columns that should be read.  Defaults to the first two,
+        i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
+
+    :type filename: str
+    :type columns: list of int
+
+    :Return:
+      List of all columns.  Every column is represented as a list of floating
+      point values.
+
+    :rtype: list of list of float
+
+    :Exceptions:
+      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+        unparseble data)
+    """
+    start_values = False
+    try:
+        datafile = codecs.open(filename, encoding="cp1252")
+    except IOError:
+        raise PlotError("datafile could not be opened")
+    result = [[] for i in range(len(columns))]
+    for line in datafile:
+        if start_values:
+            if line.startswith("END"):
+                break
+            cells = line.split()
+            for column, result_array in zip(columns, result):
+                try:
+                    value = float(cells[column])
+                except IndexError:
+                    raise PlotError("datafile contained too few columns")
+                except ValueError:
+                    value = float("nan")
+                result_array.append(value)
+        elif line.startswith("BEGIN"):
+            start_values = True
+    datafile.close()
+    return result

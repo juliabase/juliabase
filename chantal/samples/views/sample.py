@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
+from chantal_common.utils import append_error, get_really_full_name
 from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 
@@ -75,8 +76,8 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
              sample_form.cleaned_data["currently_responsible_person"] != sample.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        form_utils.append_error(edit_description_form,
-                                _(u"Changing the group or the responsible person must be marked as important."), "important")
+        append_error(edit_description_form,
+                     _(u"Changing the group or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
@@ -121,9 +122,9 @@ def edit(request, sample_name):
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("edit_sample.html", {"title": _(u"Edit sample “%s”") % sample,
-                                                   "sample": sample_form,
-                                                   "edit_description": edit_description_form},
+    return render_to_response("samples/edit_sample.html", {"title": _(u"Edit sample “%s”") % sample,
+                                                           "sample": sample_form,
+                                                           "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
 
@@ -223,11 +224,11 @@ def show(request, sample_name):
         can_add_process = False
     can_edit = permissions.has_permission_to_edit_sample(request.user, sample)
     number_for_rename = sample.name[1:] if sample.name.startswith("*") and can_edit else None
-    return render_to_response("show_sample.html", {"processes": processes, "sample": sample,
-                                                   "can_edit": can_edit,
-                                                   "number_for_rename": number_for_rename,
-                                                   "can_add_process": can_add_process,
-                                                   "is_my_sample_form": is_my_sample_form},
+    return render_to_response("samples/show_sample.html", {"processes": processes, "sample": sample,
+                                                           "can_edit": can_edit,
+                                                           "number_for_rename": number_for_rename,
+                                                           "can_add_process": can_add_process,
+                                                           "is_my_sample_form": is_my_sample_form},
                               context_instance=RequestContext(request))
 
 
@@ -293,8 +294,8 @@ class AddSamplesForm(forms.Form):
         self.fields["substrate_comments"].help_text = \
             u"""<span class="markdown-hint">""" + _(u"""with %(markdown_link)s syntax""") \
             % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-               django.core.urlresolvers.reverse("samples.views.markdown.sandbox")} + u"</span>"
-        self.fields["substrate_originator"].choices = [(u"<>", utils.get_really_full_name(user))]
+               django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u"</span>"
+        self.fields["substrate_originator"].choices = [(u"<>", get_really_full_name(user))]
         if user.external_contacts.count() > 0:
             for external_operator in user.external_contacts.all():
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
@@ -327,15 +328,14 @@ class AddSamplesForm(forms.Form):
         cleaned_data = self.cleaned_data
         if "substrate" in cleaned_data and "substrate_comments" in cleaned_data:
             if cleaned_data["substrate"] == "custom" and not cleaned_data["substrate_comments"]:
-                form_utils.append_error(
-                    self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
+                append_error(self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_comments"]:
-                form_utils.append_error(
-                    self, _(u"You selected “no substrate”, so your substrate comments would be lost."), "substrate_comments")
+                append_error(self, _(u"You selected “no substrate”, so your substrate comments would be lost."),
+                             "substrate_comments")
         if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
-                form_utils.append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
-                                        "substrate_originator")
+                append_error(self,_(u"You selected “no substrate”, so the external originator would be lost."),
+                             "substrate_originator")
         return cleaned_data
 
 
@@ -443,7 +443,7 @@ def add(request):
                 return utils.successful_response(request, success_report, remote_client_response=ids)
     else:
         add_samples_form = AddSamplesForm(user)
-    return render_to_response("add_samples.html",
+    return render_to_response("samples/add_samples.html",
                               {"title": _(u"Add samples"),
                                "add_samples": add_samples_form,
                                "external_operators_available": user.external_contacts.count() > 0},
@@ -470,7 +470,7 @@ def add_process(request, sample_name):
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
         process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())
-    return render_to_response("add_process.html",
+    return render_to_response("samples/add_process.html",
                               {"title": _(u"Add process to sample “%s”") % sample,
                                "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
@@ -539,11 +539,11 @@ def search(request):
         search_samples_form = SearchSamplesForm()
         add_to_my_samples_forms = [AddToMySamplesForm(sample, prefix=str(sample.pk)) if sample not in my_samples else None
                                    for sample in found_samples]
-    return render_to_response("search_samples.html", {"title": _(u"Search for sample"),
-                                                      "search_samples": search_samples_form,
-                                                      "found_samples": zip(found_samples, add_to_my_samples_forms),
-                                                      "too_many_results": too_many_results,
-                                                      "max_results": max_results},
+    return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
+                                                              "search_samples": search_samples_form,
+                                                              "found_samples": zip(found_samples, add_to_my_samples_forms),
+                                                              "too_many_results": too_many_results,
+                                                              "max_results": max_results},
                               context_instance=RequestContext(request))
 
 

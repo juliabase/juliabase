@@ -40,14 +40,18 @@ from __future__ import absolute_import
 import copy, inspect
 from django.db import models
 from samples.models_common import *
-from samples.models_physical_processes import *
 from samples.models_depositions import *
 from samples.models_feeds import *
 
 
+# FixMe: In Python 3, this could be achieved with class decorators, I think.
+physical_process_models = {}
+def register_physical_process(cls):
+    physical_process_models[cls.__name__] = cls
+
+
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]
-physical_process_models = dict([(cls.__name__, cls) for cls in all_models if hasattr(cls, "get_add_link")])
 class_hierarchy = inspect.getclasstree(all_models)
 u"""Rather complicated list structure that represents the class hierarchy of
 models in this module.  Nobody needs to understand it as long as the internal

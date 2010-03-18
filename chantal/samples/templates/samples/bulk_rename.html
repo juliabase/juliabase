@@ -1,0 +1,48 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block css %}
+<style type="text/css">
+  td.row, td.last { border-top: solid 1px black }
+  td.last { border-bottom: solid 1px black }
+</style>
+{% endblock %}
+
+{% block frame_content %}
+<form method="post" action="">
+  <table cellspacing="0" cellpadding="3">
+    <tr>
+      <td> </td>
+      <td>
+        {% if single_initials %}
+          {{ year }}-{{ single_initials }}-…
+        {% else %}
+          {% error_list initials _("Error in initials") %}
+          <div>
+            {{ year }}-{{ initials.initials }}-…
+          </div>
+        {% endif %}
+      </td>
+      <td> </td>
+    </tr>
+    {% for sample, new_name in samples %}
+      <tr>
+        <td class="{% if forloop.last %}last{% else %}row{% endif %}">{{ sample }}</td>
+        <td class="{% if forloop.last %}last{% else %}row{% endif %}" style="text-align: center">→</td>
+        <td class="{% if forloop.last %}last{% else %}row{% endif %}">
+          {% error_list new_name _("Error in new name") %}
+          <div>
+            …{{ new_name.name }}
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans 'Chantal login' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'Chantal login' %}</h1>{% endblock %}
+{% block frame_content %}
+
+{% if form.errors %}
+<p>{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
+
+<form method="post" action="">
+  <table>
+    <tr><td><label for="id_username">{% trans 'Username' %}:</label></td><td>{{ form.username }}</td></tr>
+    <tr><td><label for="id_password">{% trans 'Password' %}:</label></td><td>{{ form.password }}</td></tr>
+  </table>
+
+  <p>
+    <input type="submit" value="{% trans 'login' %}"/>
+    <input type="hidden" name="next" value="{{ next }}"/>
+  </p>
+</form>
+
+{% endblock %}

@@ -64,8 +64,8 @@ def new(request):
                                                         external_operator.name))
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
-    return render_to_response("edit_external_operator.html", {"title": _(u"Add external operator"),
-                                                              "external_operator": external_operator_form},
+    return render_to_response("samples/edit_external_operator.html", {"title": _(u"Add external operator"),
+                                                                      "external_operator": external_operator_form},
                               context_instance=RequestContext(request))
 
 
@@ -117,7 +117,7 @@ def edit(request, external_operator_id):
     else:
         external_operator_form = EditExternalOperatorForm(instance=external_operator)
         initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=False)
-    return render_to_response("edit_external_operator.html",
+    return render_to_response("samples/edit_external_operator.html",
                               {"title": _(u"Edit external operator “%s”") % external_operator.name,
                                "external_operator": external_operator_form,
                                "initials": initials_form},
@@ -148,7 +148,7 @@ def show(request, external_operator_id):
         initials = external_operator.initials
     except models.Initials.DoesNotExist:
         initials = None
-    return render_to_response("show_external_operator.html",
+    return render_to_response("samples/show_external_operator.html",
                               {"title": _(u"External operator “%(name)s”") % {"name": external_operator.name},
                                "external_operator": external_operator, "initials": initials,
                                "can_edit": request.user == external_operator.contact_person},
@@ -174,6 +174,6 @@ def list_(request):
     external_operators = list(request.user.external_contacts.all())
     if not external_operators:
         raise Http404(_("You have no external contacts."))
-    return render_to_response("list_external_operators.html",
+    return render_to_response("samples/list_external_operators.html",
                               {"title": _(u"All you external contacts"), "external_operators": external_operators},
                               context_instance=RequestContext(request))

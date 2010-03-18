@@ -1,0 +1,20 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list new_group _("New group") %}
+  <table>
+    <tr>
+      {% input_field new_group.new_group_name %}
+    </tr>
+    <tr>
+      {% input_field new_group.restricted %}
+    </tr>
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+{% endblock %}

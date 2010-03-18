@@ -1,0 +1,18 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list sample_death _("General error") %}
+  <table>
+    <tr>
+      {% input_field sample_death.reason %}
+    </tr>
+  </table>
+
+  <p class="submit-button"><input type="submit"/></p>
+</form>
+{% endblock %}

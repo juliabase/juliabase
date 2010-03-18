@@ -147,7 +147,7 @@ def show(request, process_name, year_and_month):
                     kwargs={"year_and_month": "%(year)d/%(month)d" % year_month_form.cleaned_data}))
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
-    template = loader.get_template("lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
+    template = loader.get_template("samples/lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
     template_context = process_class.get_lab_notebook_context(year, month)
     html_body = template.render(Context(template_context))
     previous_url, next_url = get_previous_next_urls(process_name, year, month)
@@ -158,10 +158,10 @@ def show(request, process_name, year_and_month):
     except django.core.urlresolvers.NoReverseMatch:
         export_url = None
     return render_to_response(
-        "lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name_plural,
-                              "year": year, "month": month, "year_month": year_month_form,
-                              "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
-                              "export_url": export_url},
+        "samples/lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name_plural,
+                                      "year": year, "month": month, "year_month": year_month_form,
+                                      "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
+                                      "export_url": export_url},
         context_instance=RequestContext(request))
 
 

@@ -16,7 +16,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from samples import models, permissions
 import django.core.urlresolvers
-from samples.views import utils, form_utils, feed_utils
+from chantal_common.utils import append_error
+from samples.views import utils, feed_utils
 
 
 class NewNameForm(forms.Form):
@@ -173,18 +174,18 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     """
     referentially_valid = global_data_form.cleaned_data["finished"]
     if not new_name_forms:
-        form_utils.append_error(global_data_form, _(u"You must split into at least one piece."))
+        append_error(global_data_form, _(u"You must split into at least one piece."))
         referentially_valid = False
     if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and \
             number_of_old_pieces + len(new_name_forms) < 2:
-        form_utils.append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
+        append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
         referentially_valid = False
     new_names = set()
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
             if new_name in new_names or utils.does_sample_exist(new_name):
-                form_utils.append_error(new_name_form, _(u"Name is already given."))
+                append_error(new_name_form, _(u"Name is already given."))
                 referentially_valid = False
             new_names.add(new_name)
     return referentially_valid
@@ -297,12 +298,13 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
-    return render_to_response("split_and_rename.html", {"title": _(u"Split sample “%s”") % parent,
-                                                        "new_names": zip(range(number_of_old_pieces+1,
-                                                                               number_of_old_pieces+1+len(new_name_forms)),
-                                                                         new_name_forms),
-                                                        "global_data": global_data_form,
-                                                        "old_split": old_split},
+    return render_to_response("samples/split_and_rename.html",
+                              {"title": _(u"Split sample “%s”") % parent,
+                               "new_names": zip(range(number_of_old_pieces+1,
+                                                      number_of_old_pieces+1+len(new_name_forms)),
+                                                new_name_forms),
+                               "global_data": global_data_form,
+                               "old_split": old_split},
                               context_instance=RequestContext(request))
 
 

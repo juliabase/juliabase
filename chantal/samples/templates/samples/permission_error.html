@@ -1,0 +1,22 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+
+{% block frame_content %}
+  <p>
+    {% blocktrans with exception.description as description %}
+      Sorry, you can't access this resource.  {{ description }}
+      Please contact the administrator if you think you ought to have the permission.
+    {% endblocktrans %}
+    {% if exception.new_group_would_help %}
+      {% blocktrans %}
+        Also note that the head of your institute group may add you to the
+        Chantal group you need to access this resource.
+      {% endblocktrans %}
+    {% endif %}
+  </p>
+
+  <p>{% trans "This occurence isn't reported to anyone, and it is not logged." %}</p>
+  <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+  <div style="clear: both"/>
+{% endblock %}

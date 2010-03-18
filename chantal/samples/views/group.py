@@ -16,6 +16,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 import django.contrib.auth.models
+from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 
@@ -85,7 +86,7 @@ def add(request):
                 kwargs={"name": django.utils.http.urlquote(new_group.name, safe="")})
     else:
         new_group_form = NewGroupForm()
-    return render_to_response("add_group.html", {"title": _(u"Add new group"), "new_group": new_group_form},
+    return render_to_response("samples/add_group.html", {"title": _(u"Add new group"), "new_group": new_group_form},
                               context_instance=RequestContext(request))
 
 
@@ -110,7 +111,7 @@ def list_(request):
     all_groups = django.contrib.auth.models.Group.objects.all()
     user_groups = request.user.groups.all()
     groups = set(group for group in all_groups if not permissions.is_restricted(group) or group in user_groups)
-    return render_to_response("list_groups.html",
+    return render_to_response("samples/list_groups.html",
                               {"title": _(u"List of all groups"), "groups": groups},
                               context_instance=RequestContext(request))
 
@@ -134,8 +135,8 @@ class EditGroupForm(forms.Form):
         if "members" in cleaned_data and "restricted" in cleaned_data:
             if cleaned_data["restricted"] and \
                     not any(permissions.has_permission_to_edit_group(user) for user in cleaned_data["members"]):
-                form_utils.append_error(
-                    self, _(u"In restricted groups, at least one member must have permission to change groups."), "members")
+                append_error(self, _(u"In restricted groups, at least one member must have permission to change groups."),
+                             "members")
         return cleaned_data
 
 
@@ -183,7 +184,7 @@ def edit(request, name):
     else:
         edit_group_form = \
             EditGroupForm(request.user, group, initial={"members": group.user_set.values_list("pk", flat=True)})
-    return render_to_response("edit_group.html",
+    return render_to_response("samples/edit_group.html",
                               {"title": _(u"Change group memberships of “%s”") % name,
                                "edit_group": edit_group_form},
                               context_instance=RequestContext(request))

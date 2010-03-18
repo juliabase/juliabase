@@ -14,6 +14,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
+from chantal_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils
 
@@ -297,7 +298,7 @@ class UserField(forms.ChoiceField):
         if additional_user:
             users.add(additional_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
-        self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+        self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
     def set_users_without(self, excluded_user):
         u"""Set the user list shown in the widget.  You *must* call this method
@@ -315,7 +316,7 @@ class UserField(forms.ChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
         users.remove(excluded_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
-        self.choices.extend((user.pk, utils.get_really_full_name(user)) for user in users)
+        self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -344,7 +345,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
         users |= set(additional_users)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
-        self.choices = [(user.pk, utils.get_really_full_name(user)) for user in users]
+        self.choices = [(user.pk, get_really_full_name(user)) for user in users]
         if not self.choices:
             self.choices = ((u"", 9*u"-"),)
 
@@ -569,33 +570,6 @@ def clean_deposition_number_field(value, letter):
     return value
 
 
-# FixMe: This function is provided by chantal_common.utils
-
-def append_error(form, error_message, fieldname="__all__"):
-    u"""This function is called if a validation error is found in form data
-    which cannot be found by the ``is_valid`` method itself.  The reason is
-    very simple: For many types of invalid data, you must take other forms in
-    the same view into account.
-
-    See, for example, `split_after_deposition.is_referentially_valid`.
-
-    :Parameters:
-      - `form`: the form to which the erroneous field belongs
-      - `error_message`: the message to be presented to the user
-      - `fieldname`: the name of the field that triggered the validation
-        error.  It is optional, and if not given, the error is considered an
-        error of the form as a whole.
-
-    :type form: ``forms.Form`` or ``forms.ModelForm``.
-    :type fieldname: str
-    :type error_message: unicode
-    """
-    # FixMe: Is it really a good idea to call ``is_valid`` here?
-    # ``append_error`` is also called in ``clean`` methods after all.
-    form.is_valid()
-    form._errors.setdefault(fieldname, ErrorList()).append(error_message)
-
-
 def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     u"""Find all indices of subforms of a certain type (e.g. layers) and return
     them so that the objects (e.g. layers) have a sensible order (e.g. sorted
@@ -701,24 +675,6 @@ def normalize_prefixes(post_data):
     else:
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
-
-
-# FixMe: This function is provided by chantal_common.utils.
-
-dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r][-=]")
-def check_markdown(text):
-    u"""Checks whether the Markdown input by the user contains only permitted
-    syntax elements.  I forbid images and headings so far.
-
-    :Parameters:
-      - `text`: the Markdown input to be checked
-
-    :Exceptions:
-      - `ValidationError`: if the ``text`` contained forbidden syntax
-        elements.
-    """
-    if dangerous_markup_pattern.search(text):
-        raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
 
 
 def dead_samples(samples, timestamp):
