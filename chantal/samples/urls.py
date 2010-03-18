@@ -80,10 +80,6 @@ urlpatterns = patterns("samples.views",
                        (r"^results/(?P<process_id>.+)/export/$", "result.export"),
                        (r"^results/(?P<process_id>.+)", "result.show"),
 
-                       url(r"^pds_measurements/add/$", "pds_measurement.edit", {"pds_number": None}, "add_pds_measurement"),
-                       url(r"^pds_measurements/(?P<pds_number>\d+)/edit/$", "pds_measurement.edit",
-                           name="edit_pds_measurement"),
-
                        (r"^external_operators/add/$", "external_operator.new"),
                        (r"^external_operators/(?P<external_operator_id>.+)/edit/$", "external_operator.edit"),
                        (r"^external_operators/(?P<external_operator_id>.+)", "external_operator.show"),
