@@ -196,7 +196,7 @@ def timestamp(value):
     else:
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
-    return mark_safe(samples.views.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
+    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
 sample_name_pattern = \

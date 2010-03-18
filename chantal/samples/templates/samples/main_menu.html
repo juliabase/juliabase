@@ -123,8 +123,9 @@
     <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/feed.png")'>
       <a href="{% url samples.views.feed.show username=user.username %}?hash={{ user_hash }}">{% trans 'Newsfeed' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/server_lightning.png")'>
-      <a href="{% url samples.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
+    <!-- FixMe: The about and statistics pages must not be links from here but from another menue page. -->
+      <a href="{% url chantal_ipv.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/server_chart.png")'>
-      <a href="{% url samples.views.statistics.statistics %}">{% trans 'Server statistics' %}</a></li>
+      <a href="{% url chantal_ipv.views.statistics.statistics %}">{% trans 'Server statistics' %}</a></li>
   </ul>
 {% endblock %}

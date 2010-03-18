@@ -85,8 +85,6 @@ urlpatterns = patterns("samples.views",
                        (r"^external_operators/(?P<external_operator_id>.+)", "external_operator.show"),
                        (r"^external_operators/$", "external_operator.list_"),
 
-                       (r"^about$", "statistics.about"),
-                       (r"^statistics$", "statistics.statistics"),
                        (r"^users/(?P<login_name>.+)", "user_details.show_user"),
                        (r"^preferences/(?P<login_name>.+)", "user_details.edit_preferences"),
                        (r"^groups_and_permissions/(?P<login_name>.+)", "user_details.groups_and_permissions"),
