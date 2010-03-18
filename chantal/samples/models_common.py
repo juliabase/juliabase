@@ -184,9 +184,9 @@ class Process(models.Model):
         :rtype: str, str; or ``NoneType``, ``NoneType``
         """
         datafile_name = self.get_datafile_name(number)
-        output_filename, output_url = self.calculate_image_filename_and_url(number)
-        if not os.path.exists(datafile_name):
+        if not datafile_name or not os.path.exists(datafile_name):
             return None, None
+        output_filename, output_url = self.calculate_image_filename_and_url(number)
         thumbnail_filename = output_filename + ".png"
         thumbnail_necessary = \
             not os.path.exists(thumbnail_filename) or os.stat(thumbnail_filename).st_mtime < os.stat(datafile_name).st_mtime
@@ -255,10 +255,11 @@ class Process(models.Model):
         :type number: int
 
         :Return:
-          the absolute path of the file with the original data for this plot in
-          the local filesystem.
+          The absolute path of the file with the original data for this plot in
+          the local filesystem.  ``None`` if there is no plottable datafile for
+          this process.
 
-        :rtype: str
+        :rtype: str or ``NoneType``
         """
         raise NotImplementedError
 
