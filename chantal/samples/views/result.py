@@ -449,6 +449,8 @@ class FormSet(object):
         referentially_valid = self._is_referentially_valid()
         structure_changed = self._is_structure_changed()
         if all_valid and referentially_valid and not structure_changed:
+            # FixMe: Maybe upload file first, and make a successful upload the
+            # forth precondition for this branch?
             if self.result:
                 result = self.result_form.save()
             else:

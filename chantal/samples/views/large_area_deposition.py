@@ -150,8 +150,8 @@ class FormSet(object):
 
         :Parameters:
           - `request`: the current HTTP Request object
-          - `deposition_number`: number of the deposition to be edited/created.
-            If this number already exists, *edit* it, if not, *create* it.
+          - `deposition_number`: number of the deposition to be edited.  If
+            this is ``None``, create a new one.
 
         :type request: ``HttpRequest``
         :type deposition_number: unicode
@@ -521,8 +521,8 @@ def edit(request, deposition_number):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `deposition_number`: number of the deposition to be edited/created.  If
-        this number already exists, *edit* it, if not, *create* it.
+      - `deposition_number`: number of the deposition to be edited.  If this is
+        ``None``, create a new one.
 
     :type request: ``HttpRequest``
     :type deposition_number: unicode
