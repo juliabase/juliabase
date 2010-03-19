@@ -50,8 +50,6 @@ def translate_permission(permission_codename):
 
     :rtype: unicode
     """
-    # FixMe: I had to add a unicode() here, however, I don't really know which
-    # behaviour we expect here.
     return ugettext(unicode(django.contrib.auth.models.Permission.objects.get(codename=permission_codename)))
 
 
