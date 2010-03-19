@@ -3,22 +3,21 @@
 #
 # Copyright © 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
 #
-# This file is part of Django-RefDB.
+# This file is part of Chantal.
 #
-#     Django-RefDB is free software: you can redistribute it and/or
+#     Chantal is free software: you can redistribute it and/or
 #     modify it under the terms of the GNU Affero General Public
 #     License as published by the Free Software Foundation, either
 #     version 3 of the License, or (at your option) any later
 #     version.
 #
-#     Django-RefDB is distributed in the hope that it will be
-#     useful, but WITHOUT ANY WARRANTY; without even the implied
-#     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-#     PURPOSE.  See the GNU Affero General Public License for more
-#     details.
+#     Chantal is distributed in the hope that it will be useful, but
+#     WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU Affero General Public License for more details.
 #
 #     You should have received a copy of the GNU Affero General
-#     Public License along with Django-RefDB.  If not, see
+#     Public License along with Chantal.  If not, see
 #     <http://www.gnu.org/licenses/>.
 
 
@@ -34,7 +33,6 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
 from django.shortcuts import render_to_response
-from ..views import utils
 
 u"""Middleware for setting the current language to what can be found in
 `models.UserDetails`.
