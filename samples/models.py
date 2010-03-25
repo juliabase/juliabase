@@ -107,7 +107,7 @@ def inject_direct_subclasses(parent, hierarchy):
     i = 0
     while i < len(hierarchy):
         # May have already been initialised by another app
-        if not hasattr(hierarchy[i][0], "direct_subclasses"):
+        if "direct_subclasses" not in hierarchy[i][0].__dict__:
             hierarchy[i][0].direct_subclasses = set()
         if parent:
             parent.direct_subclasses.add(hierarchy[i][0])
