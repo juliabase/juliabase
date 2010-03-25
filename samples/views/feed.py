@@ -159,8 +159,8 @@ def show(request, username):
     ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
     ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url+"?hash="+user_hash)
     ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
-    ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/sonne.png"
-    ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/juelich.png"
+    ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/ipv/sonne.png"
+    ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/ipv/juelich.png"
     only_important = user_details.only_important_news
     for entry in entries:
         if only_important and not entry.important:
