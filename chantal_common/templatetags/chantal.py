@@ -29,6 +29,7 @@ from __future__ import absolute_import
 import re, codecs, os.path, unicodedata
 from django.template.defaultfilters import stringfilter
 from django import template
+from django.utils.safestring import mark_safe
 from django.utils.html import escape
 import django.utils.http
 from django.contrib.markup.templatetags import markup
