@@ -7,7 +7,7 @@ Directory to see whether the login/password combination can bind to it.  If it
 can but the user is not in Chantal's database, it is created and filled with
 the data from the AD.  Of course, groups and permissions have yet to be set.
 
-Every night the maintenance routine chacks which active users cannot be found
+Every night the maintenance routine checks which active users cannot be found
 anymore in the AD, sets them to inactive and removes all their groups and
 permissions.  See the `samples.views.maintenance.mark_inactive_users` function.
 
@@ -50,17 +50,14 @@ class ActiveDirectoryBackend:
             binddn = "%s@%s" % (username, settings.AD_NT4_DOMAIN)
             l = ldap.initialize(settings.AD_LDAP_URL)
             l.set_option(ldap.OPT_REFERRALS, 0)
-            l.simple_bind_s(binddn, password)
             result = l.search_ext_s(
-                settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "sAMAccountName=%s" % username, settings.AD_SEARCH_FIELDS)[0][1]
-            l.unbind_s()
+                settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "(sAMAccountName=%s)" % username, settings.AD_SEARCH_FIELDS)[0][1]
             user = User(username=username)
-            if result.has_key("givenName"):
+            if "givenName" in result:
                 user.first_name = result["givenName"][0]
-            if result.has_key("sn"):
+            if "sn" in result:
                 user.last_name = result["sn"][0]
-            if result.has_key("mail"):
-                user.email = result["mail"][0]
+            user.email = result["mail"][0]
             user.set_password(password)
             user.save()
         if not user.is_active:
@@ -87,7 +84,6 @@ login name.
         binddn = "%s@%s" % (username, settings.AD_NT4_DOMAIN)
         try:
             l = ldap.initialize(settings.AD_LDAP_URL)
-            l.set_option(ldap.OPT_REFERRALS, 0)
             l.simple_bind_s(binddn, password)
             l.unbind_s()
             return True
