@@ -52,12 +52,15 @@ class ActiveDirectoryBackend:
             l.set_option(ldap.OPT_REFERRALS, 0)
             result = l.search_ext_s(
                 settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "(sAMAccountName=%s)" % username, settings.AD_SEARCH_FIELDS)[0][1]
+            if result.get("department", [""])[0] != "IEF-5":
+                return None
             user = User(username=username)
             if "givenName" in result:
                 user.first_name = result["givenName"][0]
             if "sn" in result:
                 user.last_name = result["sn"][0]
             user.email = result["mail"][0]
+            # Actually, the password isn't used anyway.
             user.set_password(password)
             user.save()
         if not user.is_active:
