@@ -41,17 +41,15 @@ def mark_inactive_users():
     """
     try:
         l = ldap.initialize(settings.AD_LDAP_URL)
-        l.simple_bind_s(settings.CREDENTIALS["ldap_login"], settings.CREDENTIALS["ldap_password"])
+        l.set_option(ldap.OPT_REFERRALS, 0)
         for user in django.contrib.auth.models.User.objects.filter(is_active=True):
-            try:
-                l.search_ext_s(settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "sAMAccountName=%s" % user.username,
-                               settings.AD_SEARCH_FIELDS)
-            except ldap.NO_SUCH_OBJECT:
+            found = l.search_ext_s(settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "(sAMAccountName=%s)" % user.username,
+                                   settings.AD_SEARCH_FIELDS)[0][0]
+            if not found:
                 user.is_active = user.is_staff = user.is_superuser = False
                 user.save()
                 user.groups.clear()
                 user.user_permissions.clear()
-        l.unbind_s()
     except ldap.LDAPError, e:
         mail_admins("Chantal LDAP error", message=e.message["desc"])
 
