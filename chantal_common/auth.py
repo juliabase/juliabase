@@ -47,8 +47,10 @@ class ActiveDirectoryBackend:
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
+            binddn = "%s@%s" % (username, settings.AD_NT4_DOMAIN)
             l = ldap.initialize(settings.AD_LDAP_URL)
-            l.simple_bind_s(username, password)
+            l.set_option(ldap.OPT_REFERRALS, 0)
+            l.simple_bind_s(binddn, password)
             result = l.search_ext_s(
                 settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "sAMAccountName=%s" % username, settings.AD_SEARCH_FIELDS)[0][1]
             l.unbind_s()
@@ -85,6 +87,7 @@ login name.
         binddn = "%s@%s" % (username, settings.AD_NT4_DOMAIN)
         try:
             l = ldap.initialize(settings.AD_LDAP_URL)
+            l.set_option(ldap.OPT_REFERRALS, 0)
             l.simple_bind_s(binddn, password)
             l.unbind_s()
             return True
