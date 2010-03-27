@@ -43,9 +43,9 @@ def mark_inactive_users():
         l = ldap.initialize(settings.AD_LDAP_URL)
         l.set_option(ldap.OPT_REFERRALS, 0)
         for user in django.contrib.auth.models.User.objects.filter(is_active=True):
-            found = l.search_ext_s(settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "(sAMAccountName=%s)" % user.username,
-                                   settings.AD_SEARCH_FIELDS)[0][0]
-            if not found:
+            found, result = l.search_ext_s(settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE, "(sAMAccountName=%s)" % user.username,
+                                           settings.AD_SEARCH_FIELDS)[0][:2]
+            if not found or result.get("department", [""])[0] != "IEF-5":
                 user.is_active = user.is_staff = user.is_superuser = False
                 user.save()
                 user.groups.clear()
