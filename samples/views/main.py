@@ -110,7 +110,8 @@ def main_menu(request):
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
          "has_external_contacts": request.user.external_contacts.count() > 0,
          "physical_processes": allowed_physical_processes,
-         "lab_notebooks": lab_notebooks},
+         "lab_notebooks": lab_notebooks,
+         "is_external": request.user.chantal_user_details.external},
         context_instance=RequestContext(request))
 
 
