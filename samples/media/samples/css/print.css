@@ -1,17 +1,4 @@
 @import url('main.css');
 
-table.headbar { display: none }
-
-.screen-only { display: none }
-
-div.main { margin: 0pt }
-div.outer-frame, div.inner-frame { border: none}
-
-a.edit-icon, a.edit-button, a.duplicate-button { display: none }
-a { color: black; text-decoration: none }
-
-/* FixMe: The following definitions must be saved in a Chantal-samples-local
-   CSS file because they are not part of Chantal-common. */
-
 ul.sample-series-list { list-style-image: none }
 ul.sample-list { list-style-image: none }
