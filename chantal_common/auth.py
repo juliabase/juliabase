@@ -38,16 +38,19 @@ class ActiveDirectoryBackend:
 
     def authenticate(self, username=None, password=None):
         try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+        if user and user.chantal_user_details.external:
+            return user if user.check_password(password) else None
+        try:
             is_valid = self.is_valid(username, password)
         except ldap.LDAPError, e:
             mail_admins("Chantal LDAP error", message=e.message["desc"])
             return None
         if not is_valid:
             return None
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            binddn = "%s@%s" % (username, settings.AD_NT4_DOMAIN)
+        if not user:
             l = ldap.initialize(settings.AD_LDAP_URL)
             l.set_option(ldap.OPT_REFERRALS, 0)
             result = l.search_ext_s(
@@ -72,7 +75,6 @@ him/her to “active” and restore his/her permissions.  Or, they just
 happen to have the same login, then change the former collegue's
 login name.
 """ % user.username).encode("utf-8"))
-            return None
         return user
 
     def get_user(self, user_id):
