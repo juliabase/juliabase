@@ -27,10 +27,12 @@
 {% load chantal %}
 
 {% block extrahead %}
+  {% block css_inclusions %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}chantal/css/main.css"/>
+    <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}chantal/css/print.css"/>
+  {% endblock %}
   <!-- FixMe: We have no favicon yet. -->
   <link rel="shortcut icon" href="{{ MEDIA_URL }}chantal/favicon.ico" type="image/x-icon"/>
-  <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}chantal/css/main.css"/>
-  <link rel="stylesheet" type="text/css" media="print" href="{{ MEDIA_URL }}chantal/css/print.css"/>
 {% endblock %}
 
 {% block content %}
