@@ -1,4 +1,4 @@
-@import url('main_base.css');
+@import url('../../chantal/css/main.css');
 
 table.edit-description { border: inset 2px black; padding: 0.5ex 1ex; background-color: #f0eee1; float: right;
 			 margin: 1em 0px 1em 1em; clear: left }
