@@ -5,7 +5,7 @@ u"""Collection of tags and filters that I found useful for Chantal.
 """
 
 from __future__ import division
-import string, re
+import string, re, sys
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.html import conditional_escape, escape
@@ -15,6 +15,7 @@ import django.core.urlresolvers
 import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.markup.templatetags import markup
+from django.conf import settings
 import chantal_common.utils
 import chantal_common.templatetags.chantal
 import samples.views.utils
@@ -80,15 +81,16 @@ class VerboseNameNode(template.Node):
         self.var = var
 
     def render(self, context):
-        if "." not in self.var:
-            verbose_name = unicode(context[self.var]._meta.verbose_name)
+        model, field = self.var.rsplit(".", 1)
+        for app_name in settings.INSTALLED_APPS:
+            try:
+                model = sys.modules[app_name + ".models"].__dict__[model]
+            except KeyError:
+                continue
+            break
         else:
-            model, field = self.var.rsplit(".", 1)
-            if model == "django.contrib.auth.models.User":
-                model = django.contrib.auth.models.User
-            else:
-                model = samples.models.__dict__[model]
-            verbose_name = unicode(model._meta.get_field(field).verbose_name)
+            return u""
+        verbose_name = unicode(model._meta.get_field(field).verbose_name)
         if verbose_name:
             verbose_name = verbose_name[0].upper() + verbose_name[1:]
         return verbose_name
@@ -103,10 +105,6 @@ def verbose_name(parser, token):
 
     will print “pressure”.  Note that it will be translated for a non-English
     user.  It is useful for creating labels.
-
-    Currently, this tag supports all Chantal models as well as
-    ``django.contrib.auth.models.User``.  Other models could be added
-    manually.
     """
     tag_name, var = token.split_contents()
     return VerboseNameNode(var)
@@ -265,11 +263,7 @@ class ValueFieldNode(template.Node):
             verbose_name = unicode(context[self.field_name]._meta.verbose_name)
         else:
             instance, field_name = self.field_name.rsplit(".", 1)
-            model = context[instance].__class__.__name__
-            if model == "User":
-                model = django.contrib.auth.models.User
-            else:
-                model = samples.models.__dict__[model]
+            model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = verbose_name[0].upper() + verbose_name[1:]
         if self.unit == "yes/no":
