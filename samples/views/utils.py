@@ -8,8 +8,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import
 
-import re, string, copy, datetime
-from django.core import serializers
+import re, string, copy, datetime, json
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
@@ -541,7 +540,7 @@ def respond_to_remote_client(value):
 
     :rtype: ``HttpResponse``
     """
-    return HttpResponse(serializers.serialize("json", value), content_type="application/json; charset=ascii")
+    return HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
 
 
 def remove_samples_from_my_samples(samples, user_details):
