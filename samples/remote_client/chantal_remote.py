@@ -29,12 +29,13 @@ class ChantalConnection(object):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
     opener.addheaders = [("User-agent", "Chantal-Remote/0.1")]
 
-    def __init__(self, chantal_url="http://bob.ipv.kfa-juelich.de/chantal/"):
+    def __init__(self, chantal_url="http://chantal.ipv.kfa-juelich.de/"):
         self.root_url = chantal_url
         self.username = None
         self.primary_keys = None
 
-    def open(self, relative_url, data=None):
+    def open(self, relative_url, data=None, https=False):
+        root_url = self.root_url if not https else "https" + self.root_url[5:]
         if data is not None:
             cleaned_data = {}
             for key, value in data.iteritems():
@@ -49,7 +50,7 @@ class ChantalConnection(object):
                         if cleaned_list:
                             cleaned_data[key] = cleaned_list
             try:
-                response = self.opener.open(self.root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
+                response = self.opener.open(root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
             except urllib2.HTTPError, e:
                 text = e.read()
                 logfile = open("chantal_remote.html", "wb")
@@ -57,7 +58,7 @@ class ChantalConnection(object):
                 logfile.close()
                 raise
         else:
-            response = self.opener.open(self.root_url+relative_url)
+            response = self.opener.open(root_url+relative_url)
         is_pickled = response.info()["Content-Type"].startswith("application/json")
         if is_pickled:
             return jsonpickle.decode(response.read())
@@ -71,7 +72,7 @@ class ChantalConnection(object):
 
     def login(self, username, password):
         self.username = username
-        if not self.open("login_remote_client", {"username": username, "password": password}):
+        if not self.open("login_remote_client", {"username": username, "password": password}, https=True):
             logging.error("Login failed.")
             raise ResponseError("Login failed")
         # FixMe: Test whether login was successful
@@ -83,7 +84,7 @@ class ChantalConnection(object):
             raise ResponseError("Logout failed")
 
 
-connection = ChantalConnection("http://127.0.0.1:8000/")
+connection = ChantalConnection()
 
 
 def login(username, password):
