@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib, urllib2, cookielib, jsonpickle, logging
+import urllib, urllib2, cookielib, json, logging
 import datetime, re
 
 logging.basicConfig(level=logging.DEBUG,
@@ -35,7 +35,7 @@ class ChantalConnection(object):
         self.primary_keys = None
 
     def open(self, relative_url, data=None, https=False):
-        root_url = self.root_url if not https else "https" + self.root_url[5:]
+        root_url = self.root_url if not https else "https" + self.root_url[4:]
         if data is not None:
             cleaned_data = {}
             for key, value in data.iteritems():
@@ -61,7 +61,7 @@ class ChantalConnection(object):
             response = self.opener.open(root_url+relative_url)
         is_pickled = response.info()["Content-Type"].startswith("application/json")
         if is_pickled:
-            return jsonpickle.decode(response.read())
+            return json.loads(response.read())
         else:
             logging.error("Resonse was not in JSON format.  Probably failed validation.")
             text = response.read()
@@ -130,7 +130,7 @@ class SixChamberDeposition(object):
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
-            self.number = jsonpickle.decode(self.opener.open(self.root_url+"next_deposition_number/B").read())
+            self.number = json.loads(self.opener.open(self.root_url+"next_deposition_number/B").read())
         data = {"number": self.number,
                 "carrier": self.carrier,
                 "operator": connection.primary_keys["users"][self.operator],
