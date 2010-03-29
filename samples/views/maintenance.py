@@ -34,6 +34,8 @@ def expire_feed_entries():
         entry.delete()
 
 
+# FixMe: This routine must go to "chantal_ipv".
+
 def mark_inactive_users():
     u"""Sets all users which can't be found anymore in the central Active
     Directory to “inactive”.  It also removes all special rights from them, and
