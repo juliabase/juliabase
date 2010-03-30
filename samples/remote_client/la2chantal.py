@@ -145,9 +145,9 @@ for i, outfile in enumerate(outfiles):
 
 from chantal_remote import *
 
-login("%(login)s%(number)s", "%(password)s")
+login("%(login)s", "%(password)s")
 
-""" % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
+""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
