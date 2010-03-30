@@ -193,7 +193,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$c1041$229f1571e272f0767fa7da8b56b3b48afb2cfe7e
         user_permissions: []
         username: bronger1
     model: auth.user
@@ -206,7 +206,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$17aa1$a0e25f5bdb8d04237125abe6471cfb441199ef07
         user_permissions: []
         username: bronger2
     model: auth.user
@@ -219,7 +219,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$9ad6e$0b155cb70d6e90cc72618b3161d13e5a858a565d
         user_permissions: []
         username: bronger3
     model: auth.user
@@ -232,7 +232,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$3d776$9c44930acaa86fd7033b6bf2fe723956913c1856
         user_permissions: []
         username: bronger4
     model: auth.user
@@ -245,7 +245,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$93e02$6ed8d5e68c0756dccc5e9c6bca5a717a65047554
         user_permissions: []
         username: bronger5
     model: auth.user
@@ -258,7 +258,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$9f20e$a8c42d14fc2c8e0f78c5d8716e8f6fa3417f1983
         user_permissions: []
         username: bronger6
     model: auth.user
@@ -271,7 +271,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$17c7e$6c5a0d7ed679606ec9c18d3c928e484ed63b76ff
         user_permissions: []
         username: bronger7
     model: auth.user
@@ -284,7 +284,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$ef073$b0219d9142791bfec1b370e5ed382be45896d04d
         user_permissions: []
         username: bronger8
     model: auth.user
@@ -297,7 +297,7 @@
         is_staff: 1
         is_superuser: 1
         last_name: "Bronger"
-        password: ***************************************************
+        password: sha1$c93d1$9c907dbc93b122dc2ff033ece65817178e0b2a3c
         user_permissions: []
         username: bronger9
     model: auth.user
