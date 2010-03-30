@@ -9,7 +9,7 @@
     {% value_field user.username %}
   </tr>
   <tr>
-    <td class="label">{% verbose_name django.contrib.auth.models.User.email %}:</td>
+    <td class="label">{% verbose_name User.email %}:</td>
     <td class="value" style="font-weight: normal"><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
   </tr>
   {% if userdetails %}

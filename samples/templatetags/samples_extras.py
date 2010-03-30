@@ -104,7 +104,9 @@ def verbose_name(parser, token):
         {% verbose_name Deposition.pressure %}
 
     will print “pressure”.  Note that it will be translated for a non-English
-    user.  It is useful for creating labels.
+    user.  It is useful for creating labels.  The model name may be of any
+    model in any installed app.  If two model names collide, the one of the
+    firstly installed app is taken.
     """
     tag_name, var = token.split_contents()
     return VerboseNameNode(var)
