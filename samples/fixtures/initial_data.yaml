@@ -185,3 +185,120 @@
         username: m_krause
     model: auth.user
     pk: 31
+-   fields:
+        email: bronger1@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger1
+    model: auth.user
+    pk: 32
+-   fields:
+        email: bronger2@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger2
+    model: auth.user
+    pk: 33
+-   fields:
+        email: bronger3@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger3
+    model: auth.user
+    pk: 34
+-   fields:
+        email: bronger4@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger4
+    model: auth.user
+    pk: 35
+-   fields:
+        email: bronger5@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger5
+    model: auth.user
+    pk: 36
+-   fields:
+        email: bronger6@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger6
+    model: auth.user
+    pk: 37
+-   fields:
+        email: bronger7@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger7
+    model: auth.user
+    pk: 38
+-   fields:
+        email: bronger8@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger8
+    model: auth.user
+    pk: 39
+-   fields:
+        email: bronger9@physik.rwth-aachen.de
+        first_name: "Torsten"
+        groups: []
+        is_active: 1
+        is_staff: 1
+        is_superuser: 1
+        last_name: "Bronger"
+        password: ***************************************************
+        user_permissions: []
+        username: bronger9
+    model: auth.user
+    pk: 40
