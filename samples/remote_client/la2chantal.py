@@ -138,15 +138,16 @@ def datum2date(datum):
 number_of_outfiles = 10
 outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for i in range(number_of_outfiles)]
 
-for outfile in outfiles:
+for i, outfile in enumerate(outfiles):
+    number = str(i) if i != 0 else ""
     print>>outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from chantal_remote import *
 
-login("%(login)s", "%(password)s")
+login("%(login)s%(number)s", "%(password)s")
 
-""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
+""" % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
