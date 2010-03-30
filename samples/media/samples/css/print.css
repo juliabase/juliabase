@@ -1,4 +1,4 @@
-@import url('main.css');
+@import url('../../chantal/css/print.css');
 
 ul.sample-series-list { list-style-image: none }
 ul.sample-list { list-style-image: none }
