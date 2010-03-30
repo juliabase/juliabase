@@ -139,6 +139,9 @@ number_of_outfiles = 20
 outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for i in range(number_of_outfiles)]
 
 for i, outfile in enumerate(outfiles):
+    number_of_samples = len(depositions) // number_of_outfiles
+    if i < len(depositions) % number_of_outfiles:
+        number_of_samples += 1
     print>>outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -146,11 +149,16 @@ from chantal_remote import *
 
 login("%(login)s", "%(password)s")
 
-""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
+samples = new_samples(%(number_of_samples)i, u"Großflächige-Labor", timestamp="%s 12:00:00", timestamp_inaccuracy=3)
+
+""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"],
+       "number_of_samples": number_of_samples}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
+i = dict([(outfile, -1) for outfile in outfiles])
 for deposition, outfile in itertools.izip(depositions, itertools.cycle(outfiles)):
+    i[outfile] += 1
     deposition_number = deposition[-1].fields["number"]
     if not deposition_number:
         continue
@@ -169,13 +177,11 @@ for deposition, outfile in itertools.izip(depositions, itertools.cycle(outfiles)
         hour += 1
     assert hour < 24
     last_date = date
-    print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00", timestamp_inaccuracy=3)
-
-deposition = LargeAreaDeposition(sample)
+    print>>outfile, u"""deposition = LargeAreaDeposition(sample[%(i)i])
 deposition.number = u"%s"
 deposition.comments = u"%s"
 deposition.timestamp_inaccuracy = 3
-deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments, date, hour)
+deposition.timestamp = u'%s %02d:00:00'""" % (i[outfile], date, deposition_number, comments, date, hour)
     for layer in deposition:
         print>>outfile, "\nlayer = LargeAreaLayer(deposition)"
         for key, value in layer.fields.iteritems():
@@ -206,8 +212,8 @@ deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments,
     print>>outfile, u"""
 deposition_number = deposition.submit()
 
-rename_after_deposition(deposition_number, {sample[0]: deposition_number})
+rename_after_deposition(deposition_number, {sample[%(i)i]: deposition_number})
 
-"""
+""" % i[outfile]
 
 print>>outfile, "\n\nlogout()\n"
