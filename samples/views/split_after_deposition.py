@@ -20,7 +20,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from chantal_common.utils import append_error
+from chantal_common.utils import append_error, HttpResponseSeeOther
 from samples.views import utils, form_utils, feed_utils
 
 
@@ -433,7 +433,7 @@ def split_and_rename_after_deposition(request, deposition_number):
                 feed_utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
             if not remote_client:
                 request.session["success_report"] = _(u"Samples were successfully split and/or renamed.")
-                return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+                return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
             else:
                 return utils.respond_to_remote_client(True)
     else:
