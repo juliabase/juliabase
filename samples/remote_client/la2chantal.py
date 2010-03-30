@@ -139,7 +139,6 @@ number_of_outfiles = 20
 outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for i in range(number_of_outfiles)]
 
 for i, outfile in enumerate(outfiles):
-    number = str(i) if i != 0 else ""
     print>>outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
