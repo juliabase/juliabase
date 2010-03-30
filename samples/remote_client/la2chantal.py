@@ -135,7 +135,7 @@ def datum2date(datum):
     return datum[6:10] + "-" + datum[3:5] + "-" + datum[0:2]
 
 
-number_of_outfiles = 20
+number_of_outfiles = 6
 outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for i in range(number_of_outfiles)]
 
 for i, outfile in enumerate(outfiles):
