@@ -149,7 +149,7 @@ from chantal_remote import *
 
 login("%(login)s", "%(password)s")
 
-samples = new_samples(%(number_of_samples)i, u"Großflächige-Labor", timestamp="%s 12:00:00", timestamp_inaccuracy=3)
+samples = new_samples(%(number_of_samples)i, u"Großflächige-Labor", timestamp="1980-01-01 12:00:00", timestamp_inaccuracy=3)
 
 """ % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"],
        "number_of_samples": number_of_samples}
@@ -181,7 +181,7 @@ for deposition, outfile in itertools.izip(depositions, itertools.cycle(outfiles)
 deposition.number = u"%s"
 deposition.comments = u"%s"
 deposition.timestamp_inaccuracy = 3
-deposition.timestamp = u'%s %02d:00:00'""" % (i[outfile], date, deposition_number, comments, date, hour)
+deposition.timestamp = u'%s %02d:00:00'""" % (i[outfile], deposition_number, comments, date, hour)
     for layer in deposition:
         print>>outfile, "\nlayer = LargeAreaLayer(deposition)"
         for key, value in layer.fields.iteritems():
