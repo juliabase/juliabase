@@ -140,14 +140,18 @@ outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for
 
 for i, outfile in enumerate(outfiles):
     number = str(i) if i != 0 else ""
+    waiting_time = 2 * i
     print>>outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 from chantal_remote import *
 
+time.sleep(%(waiting_time)i)
 login("%(login)s%(number)s", "%(password)s")
 
-""" % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
+""" % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"],
+       "waiting_time": waiting_time}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
