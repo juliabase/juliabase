@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import urllib, urllib2, cookielib, json, logging
-import datetime, re
+import datetime, re, time, random
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -49,14 +49,21 @@ class ChantalConnection(object):
                         cleaned_list = [quote_header(item) for item in value if value is not None]
                         if cleaned_list:
                             cleaned_data[key] = cleaned_list
-            try:
-                response = self.opener.open(root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
-            except urllib2.HTTPError, e:
-                text = e.read()
-                logfile = open("chantal_remote.html", "wb")
-                print>>logfile, text
-                logfile.close()
-                raise
+            max_cycles = 10
+            while max_cycles > 0:
+                max_cyles -= 1
+                try:
+                    response = self.opener.open(root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
+                except urllib2.HTTPError, e:
+                    if max_cycles == 0:
+                        text = e.read()
+                        logfile = open("chantal_remote.html", "wb")
+                        print>>logfile, text
+                        logfile.close()
+                        raise
+                    time.sleep(3 * random.random())
+                else:
+                    break
         else:
             response = self.opener.open(root_url+relative_url)
         is_pickled = response.info()["Content-Type"].startswith("application/json")
