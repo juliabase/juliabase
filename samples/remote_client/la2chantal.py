@@ -135,7 +135,7 @@ def datum2date(datum):
     return datum[6:10] + "-" + datum[3:5] + "-" + datum[0:2]
 
 
-number_of_outfiles = 10
+number_of_outfiles = 20
 outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for i in range(number_of_outfiles)]
 
 for i, outfile in enumerate(outfiles):
@@ -143,16 +143,9 @@ for i, outfile in enumerate(outfiles):
     print>>outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import time
 from chantal_remote import *
 
-while True:
-    try:
-        login("%(login)s%(number)s", "%(password)s")
-    except:
-        pass
-    else:
-        break
+login("%(login)s%(number)s", "%(password)s")
 
 """ % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 
