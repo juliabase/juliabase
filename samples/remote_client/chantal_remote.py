@@ -51,7 +51,7 @@ class ChantalConnection(object):
                             cleaned_data[key] = cleaned_list
             max_cycles = 10
             while max_cycles > 0:
-                max_cyles -= 1
+                max_cycles -= 1
                 try:
                     response = self.opener.open(root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
                 except urllib2.HTTPError, e:
