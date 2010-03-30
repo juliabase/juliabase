@@ -154,8 +154,7 @@ while True:
     else:
         break
 
-""" % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"],
-       "waiting_time": waiting_time}
+""" % {"number": number, "login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
