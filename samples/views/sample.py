@@ -8,7 +8,7 @@ u"""All views and helper routines directly connected with samples themselves
 from __future__ import absolute_import
 
 import time, datetime
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
