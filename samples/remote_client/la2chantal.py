@@ -3,7 +3,7 @@
 
 import xml.etree.cElementTree as ElementTree
 import cPickle as pickle
-import codecs, re, os.path
+import codecs, re, os.path, itertools
 
 import ConfigParser
 credentials = ConfigParser.SafeConfigParser()
