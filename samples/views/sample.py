@@ -8,6 +8,7 @@ u"""All views and helper routines directly connected with samples themselves
 from __future__ import absolute_import
 
 import time, datetime
+from django.db import transaction
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
@@ -421,7 +422,20 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user, request.POST)
         if add_samples_form.is_valid():
-            new_names, samples = add_samples_to_database(add_samples_form, user)
+            # FixMe: Find more reliable way to find stared sample names
+            max_cycles = 10
+            while max_cycles > 0:
+                max_cycles -= 1
+                try:
+                    savepoint_without_samples = transaction.savepoint()
+                    new_names, samples = add_samples_to_database(add_samples_form, user)
+                except IntegrityError:
+                    if max_cycles > 0:
+                        transaction.savepoint_rollback(savepoint_without_samples)
+                    else:
+                        raise
+                else:
+                    break
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(user).report_new_samples(samples)
             if add_samples_form.cleaned_data["group"]:
