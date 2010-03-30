@@ -8,6 +8,7 @@ u"""All views and helper routines directly connected with samples themselves
 from __future__ import absolute_import
 
 import time, datetime
+from django.db import transaction, IntegrityError
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404, HttpResponse
@@ -18,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal_common.utils import append_error, get_really_full_name
+from chantal_common.utils import append_error, get_really_full_name, HttpResponseSeeOther
 from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 
@@ -260,7 +261,7 @@ def by_id(request, sample_id, path_suffix):
     # Necessary so that the sample's name isn't exposed through the URL
     permissions.assert_can_view_sample(request.user, sample)
     query_string = request.META["QUERY_STRING"] or u""
-    return utils.HttpResponseSeeOther(
+    return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else u""))
 
@@ -421,7 +422,20 @@ def add(request):
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user, request.POST)
         if add_samples_form.is_valid():
-            new_names, samples = add_samples_to_database(add_samples_form, user)
+            # FixMe: Find more reliable way to find stared sample names
+            max_cycles = 10
+            while max_cycles > 0:
+                max_cycles -= 1
+                try:
+                    savepoint_without_samples = transaction.savepoint()
+                    new_names, samples = add_samples_to_database(add_samples_form, user)
+                except IntegrityError:
+                    if max_cycles > 0:
+                        transaction.savepoint_rollback(savepoint_without_samples)
+                    else:
+                        raise
+                else:
+                    break
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(user).report_new_samples(samples)
             if add_samples_form.cleaned_data["group"]:

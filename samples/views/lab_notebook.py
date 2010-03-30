@@ -25,6 +25,7 @@ from django.utils.http import urlquote_plus
 from samples import models, permissions
 from samples.views import utils, csv_export
 from samples.csv_common import CSVNode
+from chantal_common.utils import HttpResponseSeeOther
 
 
 class YearMonthForm(forms.Form):
@@ -142,7 +143,7 @@ def show(request, process_name, year_and_month):
     if request.method == "POST":
         year_month_form = YearMonthForm(request.POST)
         if year_month_form.is_valid():
-            return utils.HttpResponseSeeOther(django.core.urlresolvers.reverse(
+            return HttpResponseSeeOther(django.core.urlresolvers.reverse(
                     "lab_notebook_"+process_name,
                     kwargs={"year_and_month": "%(year)d/%(month)d" % year_month_form.cleaned_data}))
     else:
