@@ -140,13 +140,13 @@ outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for
 
 for outfile in outfiles:
     print>>outfile, """#!/usr/bin/env python
-    # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-    from chantal_remote import *
+from chantal_remote import *
 
-    login("%(login)s", "%(password)s")
+login("%(login)s", "%(password)s")
 
-    """ % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
+""" % {"login": credentials["crawlers_login"], "password": credentials["crawlers_password"]}
 
 last_date = None
 legacy_deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
