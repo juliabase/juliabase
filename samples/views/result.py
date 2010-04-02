@@ -583,7 +583,7 @@ def show_image(request, process_id, image_filename):
     response = HttpResponse()
     response["X-Sendfile"] = image_locations["image_file"]
     response["Content-Type"] = \
-        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}[os.path.splitext(image_filename)]
+        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}[os.path.splitext(image_filename)[1]]
     response["Content-Length"] = os.stat(image_locations["image_file"]).st_size
     response["Content-Disposition"] = 'attachment; filename="{0}"'.format(image_filename)
     return response
