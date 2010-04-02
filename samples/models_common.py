@@ -723,10 +723,10 @@ class Result(Process):
         the glory details.
 
         However, I should point out the peculiarities of result processes in
-        this respect.  Result comments are not exported, just the table.  If
-        the table contains only one row (which should be the case almost
-        always), one one CSV tree node is returned, with this row as the
-        key–value list.
+        this respect.  Result comments are exported by the parent class, here
+        just the table is exported.  If the table contains only one row (which
+        should be the case almost always), only one CSV tree node is returned,
+        with this row as the key–value list.
 
         If the result table has more than one row, for each row, a sub-node is
         generated, which contains the row columns in its key–value list.
@@ -746,7 +746,7 @@ class Result(Process):
                 child_node = CSVNode(_(u"row"), _(u"row #%d") % (i + 1))
                 child_node.items = [CSVItem(quantities[j], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
-        else:
+        elif len(value_lists) == 1:
             csv_node.items.extend([CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
         return csv_node
 
