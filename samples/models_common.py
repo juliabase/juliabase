@@ -650,7 +650,7 @@ class Result(Process):
         hash_.update(settings.SECRET_KEY)
         hash_.update(repr(self.pk))
         hashname = str(self.pk) + "-" + hash_.hexdigest()
-        sluggified_filename = defaultfilters.slugify(unicode(self))
+        sluggified_filename = defaultfilters.slugify(self.title)
         original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
         relative_thumbnail_path = os.path.join("results", hashname + thumbnail_extension)
