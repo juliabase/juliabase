@@ -78,6 +78,7 @@ urlpatterns = patterns("samples.views",
                        url(r"^results/add/$", "result.edit", {"process_id": None}, "add_result"),
                        url(r"^results/(?P<process_id>.+)/edit/$", "result.edit", name="edit_result"),
                        (r"^results/(?P<process_id>.+)/export/$", "result.export"),
+                       (r"^results/(?P<process_id>.+)/(?P<image_filename>.+)", "result.show_image"),
                        (r"^results/(?P<process_id>.+)", "result.show"),
 
                        (r"^external_operators/add/$", "external_operator.new"),
