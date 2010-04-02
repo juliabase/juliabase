@@ -220,7 +220,7 @@ class Process(models.Model):
                 return None, None
             finally:
                 pylab.close("all")
-        return plot_locations["thumbname_url"], plot_locations["plot_url"]
+        return plot_locations["thumbnail_url"], plot_locations["plot_url"]
 
     def pylab_commands(self, number, filename, for_thumbnail):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
