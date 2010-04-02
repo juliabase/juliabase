@@ -57,10 +57,7 @@ def save_image_file(image_data, result, related_data_form):
                 os.remove(result.get_image_locations()["image_file"])
             result.image_type = new_image_type
             image_path = result.get_image_locations()["image_file"]
-            try:
-                os.makedirs(os.path.dirname(image_path))
-            except OSError:
-                pass
+            utils.mkdirs(image_path)
             destination = open(image_path, "wb+")
         destination.write(chunk)
     destination.close()

@@ -121,17 +121,15 @@ class Process(models.Model):
         return ("samples.views.main.main_menu", (), {})
 #        return ("samples.views.main.show_process", [str(self.pk)])
 
-    def calculate_image_filename_and_url(self, number):
-        u"""Get the location of a (plot) image in the local filesystem as well
-        as on the webpage.  The results are without file extension so that you
-        can append ``".jpeg"`` or ``".png"`` (for the thumbnails) or ``".pdf"``
-        (for the high-quality figure) yourself.
+    def calculate_plot_locations(self, number):
+        u"""Get the location of a plot in the local filesystem as well as on
+        the webpage.
 
-        Every plot or image resides in a directory with a peculiar name in
-        order to be un-guessable.  This is not security by obscurity because we
-        really use cryptographic hashes.  While it still is not the highest
-        level of security, it is a sensible compromise between security and
-        performance.  Besides, this method excludes name collisions.
+        Every plot resides in a directory with a peculiar name in order to be
+        un-guessable.  This is not security by obscurity because we really use
+        cryptographic hashes.  While it still is not the highest level of
+        security, it is a sensible compromise between security and performance.
+        Besides, this method excludes name collisions.
 
         :Parameters:
           - `number`: the number of the image.  This is mostly ``0`` because
@@ -140,26 +138,31 @@ class Process(models.Model):
         :type number: int
 
         :Return:
-          the full path to the image file in the local filesystem, and the full
-          relative URL to the image on the website (i.e., only the domain is
-          missing).  Note that both is without file extension to remain flexible
-          (even without the dot).
+          a dictionary containing the following keys:
 
-        :rtype: str, str
+          =========================  =========================================
+                 key                           meaning
+          =========================  =========================================
+          ``"image_file"``           full path to the original image file
+          ``"image_url"``            full relative URL to the image
+          ``"thumbnail_file"``       full path to the thumbnail file
+          ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
+                                     without domain)
+          =========================  =========================================
+
+        :rtype: dict mapping str to str
         """
         hash_ = hashlib.sha1()
         hash_.update(settings.SECRET_KEY)
         hash_.update(translation.get_language())
         hash_.update(repr(self.pk))
         hash_.update(repr(number))
-        dirname = os.path.join("results", str(self.pk) + "-" + hash_.hexdigest())
-        try:
-            os.makedirs(os.path.join(settings.MEDIA_ROOT, dirname))
-        except OSError:
-            pass
-        filename = self.get_imagefile_basename(number)
-        relative_path = os.path.join(dirname, filename)
-        return os.path.join(settings.MEDIA_ROOT, relative_path), os.path.join(settings.MEDIA_URL, relative_path)
+        hashname = str(self.pk) + "-" + hash_.hexdigest()
+        return {"image_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
+                "image_url": django.core.urlresolvers.reverse("samples.views.plots.show_plot",
+                                                              kwargs={"process_id": str(self.pk), "number": str(number)}),
+                "thumbnail_file": os.path.join(settings.MEDIA_ROOT, "plots", hashname + ".png"),
+                "thumbnail_url": os.path.join(settings.MEDIA_URL, "plots", hashname + ".png")}
 
     def generate_plot(self, number=0):
         u"""The central plot-generating method which shouldn't be overridden by
@@ -186,13 +189,11 @@ class Process(models.Model):
         datafile_name = self.get_datafile_name(number)
         if not datafile_name or not os.path.exists(datafile_name):
             return None, None
-        output_filename, output_url = self.calculate_image_filename_and_url(number)
-        thumbnail_filename = output_filename + ".png"
-        thumbnail_necessary = \
-            not os.path.exists(thumbnail_filename) or os.stat(thumbnail_filename).st_mtime < os.stat(datafile_name).st_mtime
-        figure_filename = output_filename + ".pdf"
-        figure_necessary = \
-            not os.path.exists(figure_filename) or os.stat(figure_filename).st_mtime < os.stat(datafile_name).st_mtime
+        plot_locations = self.calculate_plot_locations(number)
+        thumbnail_necessary = not os.path.exists(plot_locations["thumbnail_file"]) or \
+            os.stat(plot_locations["thumbnail_file"]).st_mtime < os.stat(datafile_name).st_mtime
+        figure_necessary = not os.path.exists(plot_locations["image_file"]) or \
+            os.stat(plot_locations["image_file"]).st_mtime < os.stat(datafile_name).st_mtime
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
@@ -200,19 +201,21 @@ class Process(models.Model):
                     pylab.gcf().add_axes([0.15, 0.15, 0.8, 0.8])
                     pylab.gca().grid(True)
                     self.pylab_commands(number, datafile_name, for_thumbnail=True)
-                    pylab.savefig(open(thumbnail_filename, "wb"))
+                    shared_utils.mkdirs(plot_locations["thumbnail_file"])
+                    pylab.savefig(open(plot_locations["thumbnail_file"], "wb"))
                 if figure_necessary:
                     pylab.figure()
                     pylab.gca().grid(True)
                     self.pylab_commands(number, datafile_name, for_thumbnail=False)
                     pylab.title(unicode(self))
-                    pylab.savefig(open(figure_filename, "wb"), format="pdf")
+                    shared_utils.mkdirs(plot_locations["image_file"])
+                    pylab.savefig(open(plot_locations["image_file"], "wb"), format="pdf")
             except (IOError, shared_utils.PlotError):
                 pylab.close("all")
                 return None, None
             finally:
                 pylab.close("all")
-        return output_url+".png", output_url+".pdf"
+        return plot_locations["thumbname_url"], plot_locations["image_url"]
 
     def pylab_commands(self, number, filename, for_thumbnail):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
@@ -679,10 +682,7 @@ class Result(Process):
             return {"thumbnail_url": None, "image_url": None}
         image_locations = self.get_image_locations()
         if not os.path.exists(image_locations["thumbnail_file"]):
-            try:
-                os.makedirs(os.path.dirname(image_locations["thumbnail_file"]))
-            except OSError:
-                pass
+            shared_utils.mkdirs(image_locations["thumbnail_file"])
             if not os.path.exists(image_locations["thumbnail_file"]):
                 subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
                                  "-resize", "%(width)dx%(width)d" % {"width": settings.THUMBNAIL_WIDTH},

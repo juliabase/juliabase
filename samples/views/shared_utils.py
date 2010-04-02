@@ -12,7 +12,7 @@ is really only interesting for the Remote Client.
 
 from __future__ import absolute_import
 
-import re, string, codecs, os.path
+import re, string, codecs, os, os.path
 import cPickle as pickle
 import base64
 
@@ -206,3 +206,20 @@ def read_techplot_file(filename, columns=(0, 1)):
             start_values = True
     datafile.close()
     return result
+
+
+def mkdirs(path):
+    u"""Creates a directory and all of its parents if necessary.  If the given
+    path doesn't end with a slash, it's interpreted as a filename and removed.
+    If the directory already exists, nothing is done.  (In particular, no
+    exception is raised.)
+
+    :Parameters:
+      - `path`: absolute path which should be created
+
+    :type path: str
+    """
+    try:
+        os.makedirs(os.path.dirname(path))
+    except OSError:
+        pass
