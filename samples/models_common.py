@@ -143,8 +143,8 @@ class Process(models.Model):
           =========================  =========================================
                  key                           meaning
           =========================  =========================================
-          ``"image_file"``           full path to the original image file
-          ``"image_url"``            full relative URL to the image
+          ``"plot_file"``            full path to the original plot file
+          ``"plot_url"``             full relative URL to the plot
           ``"thumbnail_file"``       full path to the thumbnail file
           ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
                                      without domain)
@@ -158,9 +158,14 @@ class Process(models.Model):
         hash_.update(repr(self.pk))
         hash_.update(repr(number))
         hashname = str(self.pk) + "-" + hash_.hexdigest()
-        return {"image_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
-                "image_url": django.core.urlresolvers.reverse("samples.views.plots.show_plot",
-                                                              kwargs={"process_id": str(self.pk), "number": str(number)}),
+        if number == 0:
+            # We give this a nicer URL because this case is so common
+            plot_url = django.core.urlresolvers.reverse("default_plot", kwargs={"process_id": str(self.pk)})
+        else:
+            plot_url = django.core.urlresolvers.reverse("samples.views.plots.show_plot",
+                                                        kwargs={"process_id": str(self.pk), "number": str(number)})
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
+                "plot_url": plot_url,
                 "thumbnail_file": os.path.join(settings.MEDIA_ROOT, "plots", hashname + ".png"),
                 "thumbnail_url": os.path.join(settings.MEDIA_URL, "plots", hashname + ".png")}
 
@@ -192,8 +197,8 @@ class Process(models.Model):
         plot_locations = self.calculate_plot_locations(number)
         thumbnail_necessary = not os.path.exists(plot_locations["thumbnail_file"]) or \
             os.stat(plot_locations["thumbnail_file"]).st_mtime < os.stat(datafile_name).st_mtime
-        figure_necessary = not os.path.exists(plot_locations["image_file"]) or \
-            os.stat(plot_locations["image_file"]).st_mtime < os.stat(datafile_name).st_mtime
+        figure_necessary = not os.path.exists(plot_locations["plot_file"]) or \
+            os.stat(plot_locations["plot_file"]).st_mtime < os.stat(datafile_name).st_mtime
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
@@ -208,14 +213,14 @@ class Process(models.Model):
                     pylab.gca().grid(True)
                     self.pylab_commands(number, datafile_name, for_thumbnail=False)
                     pylab.title(unicode(self))
-                    shared_utils.mkdirs(plot_locations["image_file"])
-                    pylab.savefig(open(plot_locations["image_file"], "wb"), format="pdf")
+                    shared_utils.mkdirs(plot_locations["plot_file"])
+                    pylab.savefig(open(plot_locations["plot_file"], "wb"), format="pdf")
             except (IOError, shared_utils.PlotError):
                 pylab.close("all")
                 return None, None
             finally:
                 pylab.close("all")
-        return plot_locations["thumbname_url"], plot_locations["image_url"]
+        return plot_locations["thumbname_url"], plot_locations["plot_url"]
 
     def pylab_commands(self, number, filename, for_thumbnail):
         u"""Generate a plot using Pylab commands.  You may do whatever you want
@@ -266,7 +271,7 @@ class Process(models.Model):
         """
         raise NotImplementedError
 
-    def get_imagefile_basename(self, number):
+    def get_plotfile_basename(self, number):
         u"""Get the name of the plot files with the given ``number``.  For
         example, for the PDS measurement for the sample 01B410, this may be
         ``"pds_01B410"``.  It should be human-friendly and reasonable

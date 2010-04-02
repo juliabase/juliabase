@@ -42,11 +42,11 @@ def show_plot(request, process_id, number):
     """
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, process)
-
-    image_locations = process.get_image_locations()
+    number = int(number)
+    plot_locations = calculate_plot_locations(number)
     response = HttpResponse()
-    response["X-Sendfile"] = image_locations["image_file"]
+    response["X-Sendfile"] = plot_locations["plot_file"]
     response["Content-Type"] = "application/pdf"
-    response["Content-Length"] = os.path.getsize(image_locations["image_file"])
-    response["Content-Disposition"] = 'attachment; filename="{0}"'.format(image_filename)
+    response["Content-Length"] = os.path.getsize(plot_locations["plot_file"])
+    response["Content-Disposition"] = 'attachment; filename="{0}"'.format(process.get_plotfile_basename(number))
     return response
