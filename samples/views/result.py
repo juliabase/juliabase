@@ -6,9 +6,9 @@ u"""Views for editing and creating results (aka result processes).
 
 from __future__ import absolute_import
 
-import datetime, os, shutil, re
+import datetime, os, os.path, re
 from django.template import RequestContext
-from django.http import Http404
+from django.http import Http404, HttpResponse
 import django.forms as forms
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -22,8 +22,8 @@ from samples.views import utils, form_utils, feed_utils, csv_export
 
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
-    `settings.UPLOADED_RESULT_IMAGES_ROOT`.  If the given result has already an
-    image connected with it, it is removed first.
+    `settings.UPLOADS_ROOT`.  If the given result has already an image
+    connected with it, it is removed first.
 
     :Parameters:
       - `image_data`: the file-like object which contains the uploaded data
@@ -54,11 +54,14 @@ def save_image_file(image_data, result, related_data_form):
                              "image_file")
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
-                os.remove(result.get_image_locations()["original"])
+                os.remove(result.get_image_locations()["image_file"])
             result.image_type = new_image_type
-            image_locations = result.get_image_locations()
-            shutil.rmtree(image_locations["image_directory"], ignore_errors=True)
-            destination = open(image_locations["original"], "wb+")
+            image_path = result.get_image_locations()["image_file"]
+            try:
+                os.makedirs(os.path.dirname(image_path))
+            except OSError:
+                pass
+            destination = open(image_path, "wb+")
         destination.write(chunk)
     destination.close()
     result.save()
@@ -550,6 +553,40 @@ def show(request, process_id):
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.ResultContext(request.user, sample_series=None).digest_process(result))
     return render_to_response("samples/show_single_result.html", template_context, context_instance=RequestContext(request))
+
+
+@login_required
+def show_image(request, process_id, image_filename):
+    u"""Shows a particular result image.  Although its response is a bitmap
+    rather than an HTML file, it is served by Django in order to enforce user
+    permissions.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the database ID of the result to show
+      - `image_filename`: the full filename of the image including extension.
+        So far, this is redundant since there is at most one image per result
+        but this may change in future Python versions.
+
+    :type request: ``HttpRequest``
+    :type process_id: unicode
+    :type image_filename: unicode
+
+    :Returns:
+      the HTTP response object with the image
+
+    :rtype: ``HttpResponse``
+    """
+    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
+    permissions.assert_can_view_result_process(request.user, result)
+    image_locations = result.get_image_locations()
+    response = HttpResponse()
+    response["X-Sendfile"] = image_locations["image_file"]
+    response["Content-Type"] = \
+        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}[os.path.splitext(image_filename)[1]]
+    response["Content-Length"] = os.stat(image_locations["image_file"]).st_size
+    response["Content-Disposition"] = 'attachment; filename="{0}"'.format(image_filename)
+    return response
 
 
 @login_required
