@@ -34,7 +34,7 @@ def save_image_file(image_data, result, related_data_form):
         is the primary key, which I need for the hash digest for generating the
         file names.
       - `related_data_form`: A bound form with the image filename that was
-        uploaded.  This is only needed to dumping error messages into it if
+        uploaded.  This is only needed for dumping error messages into it if
         something went wrong.
 
     :type image_data: ``django.core.files.uploadedfile.UploadedFile``
@@ -584,7 +584,7 @@ def show_image(request, process_id, image_filename):
     response["X-Sendfile"] = image_locations["image_file"]
     response["Content-Type"] = \
         {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}[os.path.splitext(image_filename)[1]]
-    response["Content-Length"] = os.stat(image_locations["image_file"]).st_size
+    response["Content-Length"] = os.path.getsize(image_locations["image_file"])
     response["Content-Disposition"] = 'attachment; filename="{0}"'.format(image_filename)
     return response
 
