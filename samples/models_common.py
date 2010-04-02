@@ -615,9 +615,7 @@ class Result(Process):
 
     def get_image_locations(self):
         u"""Get the location of the image in the local filesystem as well
-        as on the webpage.  The results are without file extension so that you
-        can append ``".jpeg"`` or ``".png"`` (for the thumbnails) or ``".pdf"``
-        (for the high-quality figure) yourself.
+        as on the webpage.
 
         Every image exist three times on the local filesystem.  First, it is in
         ``settings.UPLOADED_RESULT_IMAGES_ROOT``.  (Typically, this is
