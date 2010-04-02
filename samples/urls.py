@@ -81,8 +81,8 @@ urlpatterns = patterns("samples.views",
                        (r"^results/(?P<process_id>.+)/(?P<image_filename>.+)", "result.show_image"),
                        (r"^results/(?P<process_id>.+)", "result.show"),
 
-                       (r"^plots/(?P<process_id>.+)/(?P<number>[0-9]+)", "plots.show_plots"),
-                       url(r"^plots/(?P<process_id>.+)", "plots.show_plots", {"number": 0}, "default_plot"),
+                       (r"^plots/(?P<process_id>.+)/(?P<number>[0-9]+)", "plots.show_plot"),
+                       url(r"^plots/(?P<process_id>.+)", "plots.show_plot", {"number": 0}, "default_plot"),
 
                        (r"^external_operators/add/$", "external_operator.new"),
                        (r"^external_operators/(?P<external_operator_id>.+)/edit/$", "external_operator.edit"),
