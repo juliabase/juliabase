@@ -620,32 +620,37 @@ class Result(Process):
         (for the high-quality figure) yourself.
 
         Every image exist three times on the local filesystem.  First, it is in
-        ``/var/lib/chantal_images``.  This is the original file, uploaded by
-        the user.  Its filename is the hash plus the respective file extension
-        (jpeg, png, or pdf).
+        ``settings.UPLOADED_RESULT_IMAGES_ROOT``.  (Typically, this is
+        ``/var/www/chantal/uploads`` and should be backuped.)  This is the
+        original file, uploaded by the user.  Its filename is ``"0"`` plus the
+        respective file extension (jpeg, png, or pdf).  The sub-directory is
+        the primary key of the result.  (This allows for more than one image
+        per result in upcoming Chantal versions.)
 
-        Secondly, there are the *processed* images in the ``MEDIA_ROOT``.  This
-        is very similar to plots, see
+        Secondly, there are the *processed* images in the
+        ``settings.IMAGE_CACHE_PATH``.  (This may be ``/var/cache/chantal`` and
+        should not be backuped.)  This is very similar to plots, see
         `Process.calculate_image_filename_and_url`.  There are two of them, the
         thumbnail and the full version.  The full version is always a PDF (not
         necessarily A4), whereas the thumbnail is either a JPEG or a PNG,
-        depending on the original file type.
+        depending on the original file type, and stored in
+        ``settings.MEDIA_ROOT``.
 
         :Return:
           a dictionary containing the following keys:
 
-          =====================  =========================================
+          =========================  =========================================
                  key                           meaning
-          =====================  =========================================
-          ``"original"``         full path to the original image file
-          ``"image_directory"``  full path to the directory containing the
-                                 processed images
-          ``"thumbnail_file"``   full path to the thumbnail file
-          ``"image_file"``       full path to the image (always a PDF)
-          ``"thumbnail_url"``    full relative URL to the thumbnail (i.e.,
-                                 without domain)
-          ``"image_url"``        full relative URL to the image
-          =====================  =========================================
+          =========================  =========================================
+          ``"original"``             full path to the original image file
+          ``"thumbnail_directory"``  full path to the directory containing the
+                                     thumbnail
+          ``"thumbnail_file"``       full path to the thumbnail file
+          ``"image_file"``           full path to the image (always a PDF)
+          ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
+                                     without domain)
+          ``"image_url"``            full relative URL to the image
+          =========================  =========================================
 
         :rtype: dict mapping str to str
         """
@@ -662,9 +667,13 @@ class Result(Process):
         original_extension = "." + self.image_type
         thumbnail_extension = "_thumbnail.jpeg" if self.image_type == "jpeg" else "_thumbnail.png"
         return {"original": os.path.join(settings.UPLOADED_RESULT_IMAGES_ROOT, basename + original_extension),
-                "image_directory": os.path.join(settings.MEDIA_ROOT, dirname),
-                "thumbnail_file": file_path + thumbnail_extension, "image_file": file_path + original_extension,
-                "thumbnail_url": url_path + thumbnail_extension, "image_url": url_path + original_extension}
+                "thumbnail_directory": os.path.join(settings.MEDIA_ROOT, dirname),
+                "thumbnail_file": file_path + thumbnail_extension,
+                "image_file": os.path.join(settings.IMAGE_CACHE_PATH, basename + original_extension),
+                "thumbnail_url": url_path + thumbnail_extension,
+                "image_url": django.core.urlresolvers.reverse(
+                "samples.views.result.show_image", kwargs={"process_id": str(self.pk),
+                                                           "image_filename": filename + original_extension})}
 
     def get_image(self):
         u"""Assures that the images of this result process are generated and
@@ -687,7 +696,7 @@ class Result(Process):
             if not os.path.exists(image_locations["original"]):
                 return {"thumbnail_url": None, "image_url": None}
             try:
-                os.makedirs(image_locations["image_directory"])
+                os.makedirs(image_locations["thumbnail_directory"])
             except OSError:
                 pass
             if not os.path.exists(image_locations["thumbnail_file"]):
