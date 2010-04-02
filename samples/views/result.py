@@ -56,7 +56,12 @@ def save_image_file(image_data, result, related_data_form):
             if result.image_type != "none" and new_image_type != result.image_type:
                 os.remove(result.get_image_locations()["image_file"])
             result.image_type = new_image_type
-            destination = open(result.get_image_locations()["image_file"], "wb+")
+            image_path = result.get_image_locations()["image_file"]
+            try:
+                os.makedirs(os.path.dirname(image_path))
+            except OSError:
+                pass
+            destination = open(image_path, "wb+")
         destination.write(chunk)
     destination.close()
     result.save()
