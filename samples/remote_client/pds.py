@@ -100,19 +100,24 @@ for line in open(database_path):
     except ValueError:
         pass
 
+already_available_pds_numbers = connection.open("available_items/PDSMeasurement")
+
 for legacy_pds_measurement in pds_measurements.itervalues():
     if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].upper() not in ["L", "B"]:
         continue
-    sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
-    if sample_id is not None:
-        pds_measurement = PDSMeasurement(sample_id)
-        pds_measurement.number = legacy_pds_measurement.number
-        pds_measurement.timestamp = legacy_pds_measurement.date
-        pds_measurement.timestamp_inaccuracy = 3
-        pds_measurement.raw_datafile = legacy_pds_measurement.path[len(root_dir):]
-        if legacy_pds_measurement.evaluated_path:
-            pds_measurement.evaluated_datafile = legacy_pds_measurement.evaluated_path[len(root_dir):]
-        pds_measurement.comments = legacy_pds_measurement.comments
-        pds_measurement.submit()
+    if legacy_pds_measurement.numer not in already_available_pds_numbers:
+        sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
+        if sample_id is not None:
+            pds_measurement = PDSMeasurement(sample_id)
+            pds_measurement.number = legacy_pds_measurement.number
+            pds_measurement.timestamp = legacy_pds_measurement.date
+            pds_measurement.timestamp_inaccuracy = 3
+            pds_measurement.raw_datafile = legacy_pds_measurement.path[len(root_dir):]
+            if legacy_pds_measurement.evaluated_path:
+                pds_measurement.evaluated_datafile = legacy_pds_measurement.evaluated_path[len(root_dir):]
+            pds_measurement.comments = legacy_pds_measurement.comments
+            pds_measurement.submit()
+    else:
+        print legacy_pds_measurement.number, "war schon drin!"
 
 logout()
