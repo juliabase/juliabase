@@ -84,7 +84,28 @@ def primary_keys(request):
     return utils.respond_to_remote_client(result_dict)
 
 
+@login_required
+@never_cache
 def available_items(request, model_name):
+    u"""Returns the unique ids of all items that are already in the database
+    for this model.  The point is that it will almost never return primary
+    keys.  Instead, it returns the “official” id of the respective model.  This
+    may be the number of a deposition, or the sample for a measurement process,
+    etc.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `model_name`: the name of the database model
+
+    :type request: ``HttpRequest``
+    :type model_name: unicode
+
+    :Returns:
+      The HTTP response object.  It is a JSON list object with all the ids of
+      the objects in the database for the model.
+
+    :rtype: ``HttpResponse``
+    """
     if not request.user.is_superuser:
         raise permissions.PermissionError(request.user, _(u"Only the administrator can access this resource."))
     for app_name in settings.INSTALLED_APPS:
@@ -95,8 +116,8 @@ def available_items(request, model_name):
         break
     else:
         raise Http404(_("Model name not found."))
-    id_field = {}.get(model_name, "id")
-    return utils.respond_to_remote_client(model.objects.values_list(id_field, flat=True))
+    id_field = {"PDSMeasurement": "number"}.get(model_name, "id")
+    return utils.respond_to_remote_client(list(model.objects.values_list(id_field, flat=True)))
 
 
 def login_remote_client(request):
