@@ -9,6 +9,7 @@ in JSON format.
 
 from __future__ import absolute_import
 
+import sys
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _
