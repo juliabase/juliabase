@@ -8,7 +8,7 @@ here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import hashlib, os.path, shutil, subprocess, datetime
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -200,9 +200,10 @@ class Process(models.Model):
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
-                    figure = Figure(frameon=False, figsize=(4, 3), dpi=100)
+                    figure = Figure(frameon=False, figsize=(4, 3), dpi=settings.THUMBNAIL_WIDTH / 4)
                     canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
+                    axes.set_position((0.15, 0.15, 0.8, 0.8))
                     axes.grid(True)
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
