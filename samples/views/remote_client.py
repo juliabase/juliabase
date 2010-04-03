@@ -116,6 +116,7 @@ def available_items(request, model_name):
         break
     else:
         raise Http404(_("Model name not found."))
+    # FixMe: Add all interesing models here.
     id_field = {"PDSMeasurement": "number"}.get(model_name, "id")
     return utils.respond_to_remote_client(list(model.objects.values_list(id_field, flat=True)))
 
