@@ -9,6 +9,9 @@ in JSON format.
 
 from __future__ import absolute_import
 
+from django.conf import settings
+from django.http import Http404
+from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
@@ -78,6 +81,21 @@ def primary_keys(request):
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.filter(username__in=user_names).
                                         values_list("username", "id"))
     return utils.respond_to_remote_client(result_dict)
+
+
+def available_items(request, model_name):
+    if not request.user.is_superuser:
+        raise permissions.PermissionError(request.user, _(u"Only the administrator can access this resource."))
+    for app_name in settings.INSTALLED_APPS:
+        try:
+            model = sys.modules[app_name + ".models"].__dict__[model_name]
+        except KeyError:
+            continue
+        break
+    else:
+        raise Http404(_("Model name not found."))
+    id_field = {}.get(model_name, "id")
+    return utils.respond_to_remote_client(model.objects.values_list(id_field, flat=True))
 
 
 def login_remote_client(request):

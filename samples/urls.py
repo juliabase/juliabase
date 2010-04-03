@@ -99,6 +99,7 @@ urlpatterns = patterns("samples.views",
                        (r"^groups/(?P<name>.+)", "group.edit"),
 
                        (r"^primary_keys$", "remote_client.primary_keys"),
+                       (r"^available_items/(?P<model_name>[A-Za-z_][A-Za-z_0-9]*)", "remote_client.available_items"),
                        (r"^next_deposition_number/(?P<letter>.+)", "remote_client.next_deposition_number"),
                        (r"^latest_split/(?P<sample_name>.+)", "split_and_rename.latest_split"),
                        (r"^login_remote_client$", "remote_client.login_remote_client"),

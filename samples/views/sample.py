@@ -11,7 +11,6 @@ import time, datetime
 from django.db import transaction, IntegrityError
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import Http404, HttpResponse
 import django.forms as forms
 from samples.models import Sample
 from samples import models, permissions
