@@ -3,7 +3,7 @@
 
 u"""The most basic models like ``Sample``, ``SampleSeries``, ``UserDetails``
 etc.  It is important to see that this module is imported by almost all other
-models modules.  Therefore, you *must* *not* import any Chantal modles module
+models modules.  Therefore, you *must* *not* import any Chantal models module
 here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
@@ -11,6 +11,8 @@ irresolvable cyclic imports.
 from __future__ import absolute_import
 
 import hashlib, os.path, shutil, subprocess, datetime
+from matplotlib import pyplot
+import matplotlib
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -25,9 +27,8 @@ from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
 
-import matplotlib
+
 matplotlib.use("Agg")
-import pylab
 
 
 class ExternalOperator(models.Model):
@@ -169,7 +170,7 @@ class Process(models.Model):
                 "thumbnail_file": os.path.join(settings.MEDIA_ROOT, "plots", hashname + ".png"),
                 "thumbnail_url": os.path.join(settings.MEDIA_URL, "plots", hashname + ".png")}
 
-    def generate_plot(self, number=0):
+    def generate_plot_files(self, number=0):
         u"""The central plot-generating method which shouldn't be overridden by
         a derived class.  This method tests whether it is necessary to generate
         new plots from the original datafile (by checking existence and file
@@ -202,45 +203,50 @@ class Process(models.Model):
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
-                    pylab.figure(frameon=False, figsize=(4, 3), dpi=100)
-                    pylab.gcf().add_axes([0.15, 0.15, 0.8, 0.8])
-                    pylab.gca().grid(True)
-                    self.pylab_commands(number, datafile_name, for_thumbnail=True)
+                    figure = pyplot.figure(frameon=False, figsize=(4, 3), dpi=100)
+                    axes = figure.add_subplot(111)
+                    axes.grid(True)
+                    self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
-                    pylab.savefig(open(plot_locations["thumbnail_file"], "wb"))
+                    figure.savefig(open(plot_locations["thumbnail_file"], "wb"))
+                    figure.clf()
                 if figure_necessary:
-                    pylab.figure()
-                    pylab.gca().grid(True)
-                    self.pylab_commands(number, datafile_name, for_thumbnail=False)
-                    pylab.title(unicode(self))
+                    figure = pyplot.figure()
+                    axes = figure.add_subplot(111)
+                    axes.grid(True)
+                    self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
+                    axes.set_title(unicode(self))
                     shared_utils.mkdirs(plot_locations["plot_file"])
-                    pylab.savefig(open(plot_locations["plot_file"], "wb"), format="pdf")
+                    figure.savefig(open(plot_locations["plot_file"], "wb"), format="pdf")
+                    figure.clf()
             except (IOError, shared_utils.PlotError):
-                pylab.close("all")
                 return None, None
-            finally:
-                pylab.close("all")
         return plot_locations["thumbnail_url"], plot_locations["plot_url"]
 
-    def pylab_commands(self, number, filename, for_thumbnail):
-        u"""Generate a plot using Pylab commands.  You may do whatever you want
-        here – but eventually, there must be a savable Matplotlib plot.  You
-        should't use ``pylab.figure``.  The ``filename`` parameter ist not
-        really necessary but it makes things a little bit faster and easier.
+    def draw_plot(self, axes, number, filename, for_thumbnail):
+        u"""Generate a plot using Matplotlib commands.  You may do whatever you
+        want here – but eventually, there must be a savable Matplotlib plot in
+        the `axes`.  The ``filename`` parameter ist not really necessary but it
+        makes things a little bit faster and easier.
 
         This method must be overridden in derived classes that wish to offer
         plots.
 
         :Parameters:
-          - `number`: the number of the plot.  For most models offering plots,
+          - `axes`: The Matplotlib axes to which the plot must be drawn.  You
+            call methods of this parameter to draw the plot,
+            e.g. ``axes.plot(x_values, y_values)``.
+          - `number`: The number of the plot.  For most models offering plots,
             this can only be zero and as such is not used it all in this
             method.
           - `filename`: the filename of the original data file
           - `for_thumbnail`: whether we do a plot for the thumbnail bitmap; for
             simple plots, this can be ignored
 
+        :type axes: ``matplotlib.axes.Axes``
         :type number: int
         :type filename: str
+        :type for_thumbnail: bool
 
         :Exceptions:
           - `PlotError`: if anything went wrong during the generation of the
