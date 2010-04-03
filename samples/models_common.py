@@ -11,8 +11,8 @@ irresolvable cyclic imports.
 from __future__ import absolute_import
 
 import hashlib, os.path, shutil, subprocess, datetime
-from matplotlib import pyplot
-import matplotlib
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.figure import Figure
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -26,9 +26,6 @@ from chantal_common.utils import get_really_full_name
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
-
-
-matplotlib.use("Agg")
 
 
 class ExternalOperator(models.Model):
@@ -203,22 +200,22 @@ class Process(models.Model):
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
-                    figure = pyplot.figure(frameon=False, figsize=(4, 3), dpi=100)
+                    figure = Figure(frameon=False, figsize=(4, 3), dpi=100)
+                    canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
                     axes.grid(True)
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
-                    figure.savefig(open(plot_locations["thumbnail_file"], "wb"))
-                    figure.clf()
+                    canvas.print_figure(plot_locations["thumbnail_file"])
                 if figure_necessary:
-                    figure = pyplot.figure()
+                    figure = Figure()
+                    canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
                     axes.grid(True)
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                     axes.set_title(unicode(self))
                     shared_utils.mkdirs(plot_locations["plot_file"])
-                    figure.savefig(open(plot_locations["plot_file"], "wb"), format="pdf")
-                    figure.clf()
+                    canvas.print_figure(plot_locations["plot_file"], format="pdf")
             except (IOError, shared_utils.PlotError):
                 return None, None
         return plot_locations["thumbnail_url"], plot_locations["plot_url"]
