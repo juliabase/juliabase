@@ -190,13 +190,17 @@ class Process(models.Model):
         :rtype: str, str; or ``NoneType``, ``NoneType``
         """
         datafile_name = self.get_datafile_name(number)
-        if not datafile_name or not os.path.exists(datafile_name):
+        if not datafile_name:
+            return None, None
+        datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
+        if not all(os.path.exists(filename) for filename in datafile_names):
             return None, None
         plot_locations = self.calculate_plot_locations(number)
         thumbnail_necessary = not os.path.exists(plot_locations["thumbnail_file"]) or \
-            os.stat(plot_locations["thumbnail_file"]).st_mtime < os.stat(datafile_name).st_mtime
+            any(os.stat(plot_locations["thumbnail_file"]).st_mtime < os.stat(filename).st_mtime
+                for filename in datafile_names)
         figure_necessary = not os.path.exists(plot_locations["plot_file"]) or \
-            os.stat(plot_locations["plot_file"]).st_mtime < os.stat(datafile_name).st_mtime
+            any(os.stat(plot_locations["plot_file"]).st_mtime < os.stat(filename).st_mtime for filename in datafile_names)
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
@@ -237,13 +241,14 @@ class Process(models.Model):
           - `number`: The number of the plot.  For most models offering plots,
             this can only be zero and as such is not used it all in this
             method.
-          - `filename`: the filename of the original data file
+          - `filename`: the filename of the original data file; it may also be
+            a list of filenames if more than one file lead to the plot
           - `for_thumbnail`: whether we do a plot for the thumbnail bitmap; for
             simple plots, this can be ignored
 
         :type axes: ``matplotlib.axes.Axes``
         :type number: int
-        :type filename: str
+        :type filename: str or list of str
         :type for_thumbnail: bool
 
         :Exceptions:
@@ -254,7 +259,8 @@ class Process(models.Model):
 
     def get_datafile_name(self, number):
         u"""Get the name of the file with the original data for the plot with
-        the given ``number``.
+        the given ``number``.  It may also be a list of filenames if more than
+        one file lead to the plot.
 
         This method must be overridden in derived classes that wish to offer
         plots.
@@ -267,11 +273,11 @@ class Process(models.Model):
         :type number: int
 
         :Return:
-          The absolute path of the file with the original data for this plot in
-          the local filesystem.  ``None`` if there is no plottable datafile for
-          this process.
+          The absolute path of the file(s) with the original data for this plot
+          in the local filesystem.  It's ``None`` if there is no plottable
+          datafile for this process.
 
-        :rtype: str or ``NoneType``
+        :rtype: list of str, str, or ``NoneType``
         """
         raise NotImplementedError
 
