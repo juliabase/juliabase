@@ -109,7 +109,6 @@ def markdown_hint():
 def fancy_bool(boolean):
     u"""Filter for coverting a bool into a translated “Yes” or “No”.
     """
-    _ = ugettext
     result = _(u"Yes") if boolean else _(u"No")
     return mark_safe(result)
 
