@@ -41,7 +41,7 @@ def show_plot(request, process_id, number):
     :rtype: ``HttpResponse``
     """
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
-    permissions.assert_can_view_result_process(request.user, process)
+    permissions.assert_can_view_physical_process(request.user, process)
     number = int(number)
     process = process.find_actual_instance()
     plot_locations = process.calculate_plot_locations(number)
