@@ -173,6 +173,9 @@ class Process(models.Model):
         new plots from the original datafile (by checking existence and file
         timestamps), and does it if necessary.
 
+        Note that plots can only be generated for *physical* processes,
+        i.e. depositions, measurements, etc.
+
         The thumbnail image is a PNG, the figure image is a PDF.
 
         :Parameters:
