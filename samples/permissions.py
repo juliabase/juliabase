@@ -314,7 +314,7 @@ def assert_can_view_physical_process(user, process):
     """
     permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process.__class__.__name__))
     if not user.has_perm(permission):
-        for sample in process.samples:
+        for sample in process.samples.all():
             if has_permission_to_view_sample(user, sample):
                 break
         else:
@@ -413,9 +413,9 @@ def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
       - `PermissionError`: raised if the user is not allowed to add or edit the
         substrate process for those samples
     """
-    assert (substrate and affected_names is None) or (substrate is None and affected_names is not None)
+    assert (substrate and affected_samples is None) or (substrate is None and affected_samples is not None)
     if substrate:
-        affected_names = substrate.samples
+        affected_samples = substrate.samples.all()
     for sample in affected_samples:
         if sample.currently_responsible_person != user:
             if substrate:
