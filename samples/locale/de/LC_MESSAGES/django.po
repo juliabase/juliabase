@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 11:32+0100\n"
-"PO-Revision-Date: 2010-03-23 11:37+0100\n"
+"POT-Creation-Date: 2010-04-04 19:08+0200\n"
+"PO-Revision-Date: 2010-04-04 19:10+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,369 +41,369 @@ msgstr "Französisch"
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models_common.py:38 models_common.py:317 models_common.py:428
-#: models_common.py:771 permissions.py:77 permissions.py:79
+#: models_common.py:36 models_common.py:338 models_common.py:449
+#: models_common.py:780 permissions.py:77 permissions.py:79
 msgid "name"
 msgstr "Name"
 
-#: models_common.py:39
+#: models_common.py:37
 msgid "institution"
 msgstr "Institution"
 
-#: models_common.py:40
+#: models_common.py:38
 msgid "email"
 msgstr "Email"
 
-#: models_common.py:41
+#: models_common.py:39
 msgid "alternative email"
 msgstr "alternative Email"
 
-#: models_common.py:42
+#: models_common.py:40
 msgid "phone"
 msgstr "Telefon"
 
-#: models_common.py:44
+#: models_common.py:42
 msgid "contact person in the institute"
 msgstr "Kontaktperson im Institut"
 
 #. Translation hint: Group which is not open to senior members
-#: models_common.py:46 models_common.py:890 views/group.py:49
+#: models_common.py:44 models_common.py:899 views/group.py:49
 #: views/group.py:125
 msgid "restricted"
 msgstr "beschränkt"
 
-#: models_common.py:49 models_common.py:92 models_common.py:831
+#: models_common.py:47 models_common.py:90 models_common.py:840
 msgid "external operator"
 msgstr "externer Operateur"
 
-#: models_common.py:50
+#: models_common.py:48
 msgid "external operators"
 msgstr "externe Operateure"
 
-#: models_common.py:52
+#: models_common.py:50
 msgid "Can add an external operator"
 msgstr "Darf externen Operateur anlegen"
 
 #. Translation hint: It's about timestamps
-#: models_common.py:66
+#: models_common.py:64
 msgid "totally accurate"
 msgstr "vollständig genau"
 
-#: models_common.py:67
+#: models_common.py:65
 msgid "accurate to the minute"
 msgstr "auf die Minute genau"
 
-#: models_common.py:68
+#: models_common.py:66
 msgid "accurate to the hour"
 msgstr "auf die Stunde genau"
 
-#: models_common.py:69
+#: models_common.py:67
 msgid "accurate to the day"
 msgstr "auf den Tag genau"
 
-#: models_common.py:70
+#: models_common.py:68
 msgid "accurate to the month"
 msgstr "auf den Monat genau"
 
-#: models_common.py:71
+#: models_common.py:69
 msgid "accurate to the year"
 msgstr "auf das Jahr genau"
 
-#: models_common.py:72
+#: models_common.py:70
 msgid "not even accurate to the year"
 msgstr "nicht einmal auf das Jahr genau"
 
-#: models_common.py:89 models_common.py:303 models_common.py:774
+#: models_common.py:87 models_common.py:324 models_common.py:783
 #: models_feeds.py:32 views/sample.py:281
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: models_common.py:90
+#: models_common.py:88
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: models_common.py:91 models_common.py:304
+#: models_common.py:89 models_common.py:325
 msgid "operator"
 msgstr "Operateur"
 
-#: models_common.py:94 models_common.py:305 models_feeds.py:252
+#: models_common.py:92 models_common.py:326 models_feeds.py:252
 msgid "comments"
 msgstr "Kommentare"
 
-#: models_common.py:98 models_feeds.py:165 models_feeds.py:190
-#: views/lab_notebook.py:195 views/sample.py:568
+#: models_common.py:96 models_feeds.py:165 models_feeds.py:190
+#: views/lab_notebook.py:196 views/sample.py:581
 msgid "process"
 msgstr "Prozess"
 
-#: models_common.py:99 models_common.py:328
+#: models_common.py:97 models_common.py:349
 msgid "processes"
 msgstr "Prozesse"
 
 #. Translation hint: location of a sample
-#: models_common.py:319
+#: models_common.py:340
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: models_common.py:321 models_common.py:776
+#: models_common.py:342 models_common.py:785
 #: templates/samples/show_sample_series.html:37
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
-#: models_common.py:322 models_feeds.py:111
+#: models_common.py:343 models_feeds.py:111
 msgid "purpose"
 msgstr "Zweck"
 
 #. Translation hint: keywords for samples
-#: models_common.py:324
+#: models_common.py:345
 msgid "tags"
 msgstr "Tags"
 
-#: models_common.py:324 views/sample.py:286
+#: models_common.py:345 views/sample.py:286
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
 #. Translation hint: ID of mother sample
-#: models_common.py:327
+#: models_common.py:348
 msgid "split origin"
 msgstr "Split-Ursprung"
 
 #. Translation hint: Topic/project for samples and sample series
-#: models_common.py:331 models_common.py:780 models_common.py:888
+#: models_common.py:352 models_common.py:789 models_common.py:897
 #: models_feeds.py:110 models_feeds.py:138 models_feeds.py:350
 #: models_feeds.py:377 models_feeds.py:411
 msgid "group"
 msgstr "Gruppe"
 
-#: models_common.py:334 models_common.py:429 views/sample_series.py:267
+#: models_common.py:355 models_common.py:450 views/sample_series.py:267
 msgid "sample"
 msgstr "Probe"
 
-#: models_common.py:335 models_common.py:778 models_feeds.py:108
+#: models_common.py:356 models_common.py:787 models_feeds.py:108
 #: models_feeds.py:137 models_feeds.py:251 models_feeds.py:276
 msgid "samples"
 msgstr "Proben"
 
-#: models_common.py:338
+#: models_common.py:359
 msgid "Can view all samples (senior user)"
 msgstr "Darf alle Proben sehen (Seniornutzer)"
 
-#: models_common.py:432
+#: models_common.py:453
 msgid "name alias"
 msgstr "Alternativname"
 
-#: models_common.py:433
+#: models_common.py:454
 msgid "name aliases"
 msgstr "Alternativnamen"
 
 #. Translation hint: parent of a sample
-#: models_common.py:448
+#: models_common.py:469
 msgid "parent"
 msgstr "Elter"
 
-#: models_common.py:454 models_feeds.py:301
+#: models_common.py:475 models_feeds.py:301
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: models_common.py:455
+#: models_common.py:476
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: models_common.py:459
+#: models_common.py:480
 #, python-format
 msgid "split of %s"
 msgstr "Spaltung von %s"
 
 #. Translation hint: sample substrate type
-#: models_common.py:499
+#: models_common.py:520
 msgid "custom"
 msgstr "speziell"
 
-#: models_common.py:500
+#: models_common.py:521
 msgid "ASAHI-U"
 msgstr "ASAHI-U"
 
-#: models_common.py:501
+#: models_common.py:522
 msgid "silicon 100 wafer"
 msgstr "Silizium-100-Wafer"
 
-#: models_common.py:513
+#: models_common.py:534
 msgid "substrate material"
 msgstr "Substrat-Material"
 
-#: models_common.py:516
+#: models_common.py:537
 msgid "substrate"
 msgstr "Substrat"
 
-#: models_common.py:517
+#: models_common.py:538
 msgid "substrates"
 msgstr "Substrate"
 
-#: models_common.py:526
+#: models_common.py:547
 msgid "material"
 msgstr "Material"
 
-#: models_common.py:533
+#: models_common.py:554
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: models_common.py:534
+#: models_common.py:555
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: models_common.py:535
+#: models_common.py:556
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
 #. Translation hint: Of a sample
-#: models_common.py:547
+#: models_common.py:568
 msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translation hint: Of a sample
-#: models_common.py:551 views/sample.py:164
+#: models_common.py:572 views/sample.py:164
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:553
+#: models_common.py:574
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:559
+#: models_common.py:580
 #, python-format
 msgid "cease of existence of %s"
 msgstr "Beendigung der Existenz von %s"
 
 #. Translation hint: Of a sample
-#: models_common.py:562
+#: models_common.py:583
 #, python-format
 msgid "cease of existence #%d"
 msgstr "Beendigung der Existenz #%d"
 
-#: models_common.py:567 templates/samples/groups_and_permissions.html:65
+#: models_common.py:588 templates/samples/groups_and_permissions.html:65
 #: templates/samples/groups_and_permissions.html:78
 msgid "none"
 msgstr "keine"
 
 #. Translation hint: Of a result
-#: models_common.py:578
+#: models_common.py:599
 msgid "title"
 msgstr "Überschrift"
 
-#: models_common.py:579
+#: models_common.py:600
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
 #. Translation hint: Physical quantities are meant
-#: models_common.py:581
+#: models_common.py:602
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
 
-#: models_common.py:581
+#: models_common.py:602
 msgid "in Python pickle format"
 msgstr "im Python-Pickle-Format"
 
 #. Translation hint: experimental result
-#: models_common.py:595 models_feeds.py:219
+#: models_common.py:616 models_feeds.py:219
 msgid "result"
 msgstr "Ergebnis"
 
 #. Translation hint: experimental results
-#: models_common.py:597 models_common.py:779
+#: models_common.py:618 models_common.py:788
 msgid "results"
 msgstr "Ergebnisse"
 
 #. Translation hint: experimental result
-#: models_common.py:603 models_common.py:607
+#: models_common.py:624 models_common.py:628
 #, python-format
 msgid "result for %s"
 msgstr "Ergebnis für %s"
 
 #. Translation hint: experimental result
-#: models_common.py:610
+#: models_common.py:631
 #, python-format
 msgid "result #%d"
 msgstr "Ergebnis #%d"
 
 #. Translation hint: In a table
-#: models_common.py:755 views/result.py:575
+#: models_common.py:764 views/result.py:609
 msgid "row"
 msgstr "Zeile"
 
-#: models_common.py:755
+#: models_common.py:764
 #, python-format
 msgid "row #%d"
 msgstr "Zeile %d"
 
 #. Translation hint: The “Y” stands for “year”
-#: models_common.py:773
+#: models_common.py:782
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
-#: models_common.py:777 models_feeds.py:141 models_feeds.py:191
+#: models_common.py:786 models_feeds.py:141 models_feeds.py:191
 #: models_feeds.py:220 models_feeds.py:277 models_feeds.py:327
 #: models_feeds.py:380
 msgid "description"
 msgstr "Beschreibung"
 
-#: models_common.py:783 models_feeds.py:326 models_feeds.py:349
+#: models_common.py:792 models_feeds.py:326 models_feeds.py:349
 #: models_feeds.py:376
 msgid "sample series"
 msgstr "Probenserie"
 
-#: models_common.py:784
+#: models_common.py:793
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: models_common.py:828 models_common.py:835
+#: models_common.py:837 models_common.py:844
 msgid "initials"
 msgstr "Kürzel"
 
-#: models_common.py:829 models_common.py:850
+#: models_common.py:838 models_common.py:859
 msgid "user"
 msgstr "Benutzer"
 
 #. Translation hint: Plural of “initials”
-#: models_common.py:837
+#: models_common.py:846
 msgid "initialses"
 msgstr "Kürzel"
 
-#: models_common.py:852
+#: models_common.py:861
 msgid "my samples"
 msgstr "meine Proben"
 
-#: models_common.py:854
+#: models_common.py:863
 msgid "auto-addition groups"
 msgstr "Gruppen mit Auto-Hinzufügen"
 
-#: models_common.py:855
+#: models_common.py:864
 msgid "new samples in these groups are automatically added to “My Samples”"
 msgstr ""
 "neue Proben in diesen Gruppen werden automatisch zu „Meine Proben“ "
 "hinzugefügt"
 
-#: models_common.py:856
+#: models_common.py:865
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: models_common.py:857 models_feeds.py:40
+#: models_common.py:866 models_feeds.py:40
 msgid "feed entries"
 msgstr "Feed-Einträge"
 
-#: models_common.py:858
+#: models_common.py:867
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: models_common.py:867 models_common.py:868
+#: models_common.py:876 models_common.py:877
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models_common.py:870
+#: models_common.py:879
 msgid "Can edit groups, and can add new groups"
 msgstr "Darf Gruppen ändern und neue Gruppen hinzufügen"
 
-#: models_common.py:893 models_common.py:894
+#: models_common.py:902 models_common.py:903
 msgid "group details"
 msgstr "Gruppendetails"
 
@@ -884,11 +884,11 @@ msgstr ""
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
-#: middleware/chantal.py:51
+#: middleware/chantal.py:52
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: middleware/chantal.py:55
+#: middleware/chantal.py:56
 msgid "Ambiguous sample name"
 msgstr "Mehrdeutiger Probenname"
 
@@ -1707,19 +1707,19 @@ msgstr "Meine Gruppen und Berechtigungen"
 msgid "Edit “My Layers”"
 msgstr "„Meine Schichten“ ändern"
 
-#: templates/samples/main_menu.html:122
+#: templates/samples/main_menu.html:123
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/samples/main_menu.html:124
+#: templates/samples/main_menu.html:126
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:127
+#: templates/samples/main_menu.html:129
 msgid "About Chantal"
 msgstr "Über Chantal"
 
-#: templates/samples/main_menu.html:129
+#: templates/samples/main_menu.html:131
 msgid "Server statistics"
 msgstr "Server-Statistik"
 
@@ -2228,15 +2228,15 @@ msgstr ""
 msgid "Change group memberships of “%s”"
 msgstr "Mitglieder der Gruppe “%s” ändern"
 
-#: views/lab_notebook.py:35
+#: views/lab_notebook.py:36
 msgid "year"
 msgstr "Jahr"
 
-#: views/lab_notebook.py:36
+#: views/lab_notebook.py:37
 msgid "month"
 msgstr "Monat"
 
-#: views/lab_notebook.py:161
+#: views/lab_notebook.py:162
 #, python-format
 msgid "Lab notebook for %s"
 msgstr "Laborbuch für %s"
@@ -2250,11 +2250,11 @@ msgstr "MainMenu"
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: views/main.py:123
+#: views/main.py:124
 msgid "Deposition number pattern"
 msgstr "Muster für Depositionsnummer"
 
-#: views/main.py:160
+#: views/main.py:161
 msgid "Search for deposition"
 msgstr "Nach Deposition suchen"
 
@@ -2358,6 +2358,14 @@ msgstr "Erfolgreich „Meine Proben“ verarbeitet."
 #, python-format
 msgid "Edit “My Samples” of %s"
 msgstr "„Meine Proben“ von %s ändern"
+
+#: views/remote_client.py:110
+msgid "Only the administrator can access this resource."
+msgstr "Nur die Administratoren dürfen auf diese Ressource zugreifen."
+
+#: views/remote_client.py:118
+msgid "Model name not found."
+msgstr "Modellname nicht gefunden."
 
 #: views/result.py:53
 msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
@@ -2527,7 +2535,7 @@ msgstr ""
 "Sie haben „kein Substrat“ gewählt, also würde der externe Operateur verloren "
 "gehen."
 
-#: views/sample.py:433
+#: views/sample.py:446
 #, python-format
 msgid ""
 "Your samples have the provisional names from %(first_name)s to %(last_name)"
@@ -2536,27 +2544,27 @@ msgstr ""
 "Ihre Proben haben die provisorischen Namen von %(first_name)s bis %"
 "(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
 
-#: views/sample.py:437
+#: views/sample.py:450
 #, python-format
 msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ "
 "hinzugefügt."
 
-#: views/sample.py:447
+#: views/sample.py:460
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: views/sample.py:474
+#: views/sample.py:487
 #, python-format
 msgid "Add process to sample “%s”"
 msgstr "Prozess zu Probe „%s“ hinzufügen"
 
-#: views/sample.py:484
+#: views/sample.py:497
 msgid "Name pattern"
 msgstr "Namensmuster"
 
-#: views/sample.py:542
+#: views/sample.py:555
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
@@ -2788,20 +2796,19 @@ msgstr ""
 msgid "Groups and permissions for %s"
 msgstr "Gruppen und Berechtigungen von %s"
 
-#: views/utils.py:392
+#: views/utils.py:391
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: views/utils.py:767
+#: views/utils.py:766
 msgid ", "
 msgstr ", "
 
-#: views/utils.py:767
+#: views/utils.py:766
 msgid ", and "
 msgstr " und "
 
-#: views/utils.py:769
+#: views/utils.py:768
 msgid " and "
 msgstr " und "
-
