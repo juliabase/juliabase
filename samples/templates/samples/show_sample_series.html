@@ -43,9 +43,10 @@
     <p class="operator_and_timestamp">
       {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
     </p>
-    <h2>{{ process.name }}{% if process.edit_url %}
-          <a class="edit-button" href="{{ process.edit_url }}?next={{ sample_series.get_absolute_url|urlquote_plus }}"
-             >{% trans 'edit' %}</a>{% endif %}</h2>
+    <h2>{{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
+                                           href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+             ><img src="{{ MEDIA_URL}}samples/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a
+        >{% endif %}</h2>
     {{ process.html_body }}
   </div>
 {% endfor %}
