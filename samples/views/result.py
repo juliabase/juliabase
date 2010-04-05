@@ -99,7 +99,7 @@ class RelatedDataForm(forms.Form):
         a non-trivial way.
 
         The most complicated thing is to find all sample series electable for
-        the result.  Note that the current query will probably find to many
+        the result.  Note that the current query will probably find too many
         electable sample series, but unallowed series will be rejected by
         `clean` anyway.
         """
@@ -142,7 +142,7 @@ class RelatedDataForm(forms.Form):
         samples = self.cleaned_data.get("samples")
         sample_series = self.cleaned_data.get("sample_series")
         if samples is not None and sample_series is not None:
-            for sample_or_series in set(samples + sample_series) - self.old_relationships:
+            for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
                     append_error(self, _(u"You don't have the permission to add the result to all selected samples/series."))
             if not samples and not sample_series:

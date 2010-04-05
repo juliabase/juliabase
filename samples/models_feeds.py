@@ -16,7 +16,6 @@ from __future__ import absolute_import
 import hashlib
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from django.contrib import admin
 from django.db import models
 import django.core.urlresolvers
 from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
@@ -128,8 +127,6 @@ class FeedNewSamples(FeedEntry):
     def get_additional_template_context(self, user_details):
         return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
 
-admin.site.register(FeedNewSamples)
-
 
 class FeedMovedSamples(FeedEntry):
     u"""Model for feed entries about samples moved to a new group.
@@ -156,8 +153,6 @@ class FeedMovedSamples(FeedEntry):
     def get_additional_template_context(self, user_details):
         return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
 
-admin.site.register(FeedMovedSamples)
-
 
 class FeedNewPhysicalProcess(FeedEntry):
     u"""Model for feed entries about new physical processes.
@@ -180,8 +175,6 @@ class FeedNewPhysicalProcess(FeedEntry):
 
     def get_additional_template_context(self, user_details):
         return {"process": self.process.find_actual_instance()}
-
-admin.site.register(FeedNewPhysicalProcess)
 
 
 class FeedEditedPhysicalProcess(FeedEntry):
@@ -206,8 +199,6 @@ class FeedEditedPhysicalProcess(FeedEntry):
 
     def get_additional_template_context(self, user_details):
         return {"process": self.process.find_actual_instance()}
-
-admin.site.register(FeedEditedPhysicalProcess)
 
 
 class FeedResult(FeedEntry):
@@ -241,8 +232,6 @@ class FeedResult(FeedEntry):
     def get_additional_template_context(self, user_details):
         return self.result.get_image()
 
-admin.site.register(FeedResult)
-
 
 class FeedCopiedMySamples(FeedEntry):
     u"""Model for feed entries about samples copied from one user to the “My
@@ -262,8 +251,6 @@ class FeedCopiedMySamples(FeedEntry):
         metadata["category term"] = "copied samples"
         metadata["category label"] = "copied My Samples"
         return metadata
-
-admin.site.register(FeedCopiedMySamples)
 
 
 class FeedEditedSamples(FeedEntry):
@@ -292,8 +279,6 @@ class FeedEditedSamples(FeedEntry):
         metadata["category label"] = "edited samples"
         return metadata
 
-admin.site.register(FeedEditedSamples)
-
 
 class FeedSampleSplit(FeedEntry):
     u"""Model for feed entries for sample splits.
@@ -314,8 +299,6 @@ class FeedSampleSplit(FeedEntry):
         metadata["category term"] = "split sample"
         metadata["category label"] = "split sample"
         return metadata
-
-admin.site.register(FeedSampleSplit)
 
 
 class FeedEditedSampleSeries(FeedEntry):
@@ -339,8 +322,6 @@ class FeedEditedSampleSeries(FeedEntry):
         metadata["category label"] = "edited sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
-
-admin.site.register(FeedEditedSampleSeries)
 
 
 class FeedNewSampleSeries(FeedEntry):
@@ -366,8 +347,6 @@ class FeedNewSampleSeries(FeedEntry):
 
     def get_additional_template_context(self, user_details):
         return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
-
-admin.site.register(FeedNewSampleSeries)
 
 
 class FeedMovedSampleSeries(FeedEntry):
@@ -397,8 +376,6 @@ class FeedMovedSampleSeries(FeedEntry):
     def get_additional_template_context(self, user_details):
         return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
 
-admin.site.register(FeedMovedSampleSeries)
-
 
 changed_group_action_choices = (
     ("added", _(u"added")),
@@ -426,5 +403,3 @@ class FeedChangedGroup(FeedEntry):
         metadata["category term"] = "changed group membership"
         metadata["category label"] = "changed group membership"
         return metadata
-
-admin.site.register(FeedChangedGroup)
