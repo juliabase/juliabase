@@ -26,7 +26,6 @@ u"""Models in the relational database for Chantal-Common.
 """
 
 import django.contrib.auth.models
-from django.contrib import admin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -55,5 +54,3 @@ class UserDetails(models.Model):
 
     def __unicode__(self):
         return unicode(self.user)
-
-admin.site.register(UserDetails)
