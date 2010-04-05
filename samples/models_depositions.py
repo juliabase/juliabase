@@ -11,7 +11,6 @@ well as models for layers.
 from __future__ import absolute_import
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.contrib import admin
 import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
