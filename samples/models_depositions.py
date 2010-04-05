@@ -16,7 +16,6 @@ import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import Process
-from samples import permissions
 from samples.csv_common import CSVNode, CSVItem
 
 default_location_of_deposited_samples = {}
