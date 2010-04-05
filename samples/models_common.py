@@ -16,7 +16,6 @@ from matplotlib.figure import Figure
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
-from django.contrib import admin
 from django.template import defaultfilters
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
@@ -55,8 +54,6 @@ class ExternalOperator(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.external_operator.show", [urlquote(self.pk, safe="")])
-
-admin.site.register(ExternalOperator)
 
 
 timestamp_inaccuracy_choices = (
@@ -437,8 +434,6 @@ class Sample(models.Model):
         # set ``cvs_note.items``.
         return csv_node
 
-admin.site.register(Sample)
-
 
 class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
@@ -455,8 +450,6 @@ class SampleAlias(models.Model):
 
     def __unicode__(self):
         return self.name
-
-admin.site.register(SampleAlias)
 
 
 class SampleSplit(Process):
@@ -512,8 +505,6 @@ class SampleSplit(Process):
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
         return result
 
-admin.site.register(SampleSplit)
-
 
 substrate_materials = (
         # Translation hint: sample substrate type
@@ -547,8 +538,6 @@ class Substrate(Process):
         csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))
         return csv_node
 
-admin.site.register(Substrate)
-
 
 sample_death_reasons = (
     ("split", _(u"completely split")),
@@ -581,8 +570,6 @@ class SampleDeath(Process):
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             # Translation hint: Of a sample
             return _(u"cease of existence #%d") % self.pk
-
-admin.site.register(SampleDeath)
 
 
 image_type_choices=(("none", _(u"none")),
@@ -768,8 +755,6 @@ class Result(Process):
             csv_node.items.extend([CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
         return csv_node
 
-admin.site.register(Result)
-
 
 class SampleSeries(models.Model):
     u"""A sample series groups together zero or more `Sample`.  It must belong
@@ -818,8 +803,6 @@ class SampleSeries(models.Model):
         # don't set ``cvs_note.items``.
         return csv_node
 
-admin.site.register(SampleSeries)
-
 
 class Initials(models.Model):
     u"""Model for initials of people or external operators.  They are used to
@@ -847,8 +830,6 @@ class Initials(models.Model):
 
     def __unicode__(self):
         return self.initials
-
-admin.site.register(Initials)
 
 
 class UserDetails(models.Model):
@@ -881,8 +862,6 @@ class UserDetails(models.Model):
     def __unicode__(self):
         return unicode(self.user)
 
-admin.site.register(UserDetails)
-
 
 class GroupDetails(models.Model):
     u"""Model for further details about a group, beyond
@@ -904,5 +883,3 @@ class GroupDetails(models.Model):
 
     def __unicode__(self):
         return unicode(self.group)
-
-admin.site.register(GroupDetails)
