@@ -24,8 +24,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 11:50+0100\n"
-"PO-Revision-Date: 2010-03-23 11:51+0100\n"
+"POT-Creation-Date: 2010-04-06 22:55+0200\n"
+"PO-Revision-Date: 2010-04-06 22:56+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -59,21 +59,45 @@ msgstr "Französisch"
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models.py:46
+#: models.py:45
 msgid "user"
 msgstr "Benutzer"
 
-#: models.py:48
+#: models.py:47
 msgid "language"
 msgstr "Sprache"
 
-#: models.py:49
+#: models.py:48
 msgid "settings last modified"
 msgstr "letzte Änderung der Einstellungen"
+
+#: models.py:49
+msgid "is an external user"
+msgstr "ist ein externer Benutzer"
 
 #: models.py:52 models.py:53
 msgid "user details"
 msgstr "Benutzerdetails"
+
+#: models.py:70
+msgid "name"
+msgstr "Name"
+
+#: models.py:71
+msgid "members"
+msgstr "Mitglieder"
+
+#: models.py:73
+msgid "restricted"
+msgstr "beschränkt"
+
+#: models.py:76
+msgid "project"
+msgstr "Projekt"
+
+#: models.py:77
+msgid "projects"
+msgstr "Projekte"
 
 #: utils.py:152
 msgid "You mustn't use image and headings syntax in Markdown markup."
@@ -105,21 +129,25 @@ msgid ""
 "is correct, and/or check that the denoted sample, process, reference etc is "
 "already in the\n"
 "database.\n"
-msgstr "\nDie Ressource » <em>%(request_path)s</em> « konnte nicht gefunden werden.  Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, der angegebene Prozess, Zitation etc. schon in der Datenbank existiert.\n"
+msgstr ""
+"\n"
+"Die Ressource » <em>%(request_path)s</em> « konnte nicht gefunden werden.  "
+"Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
+"der angegebene Prozess, Zitation etc. schon in der Datenbank existiert.\n"
 
-#: templates/500.html:31
+#: templates/500.html:33
 msgid "Internal Chantal error"
 msgstr "Interner Chantal-Fehler"
 
-#: templates/500.html:39 templates/base_chantal.html:64
+#: templates/500.html:41 templates/base_chantal.html:68
 msgid "Log in"
 msgstr "Anmelden"
 
-#: templates/500.html:51
+#: templates/500.html:53
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: templates/500.html:52
+#: templates/500.html:54
 msgid ""
 "\n"
 "You experienced an internal error in the Chantal server software.  The\n"
@@ -134,28 +162,28 @@ msgstr ""
 "Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald "
 "der Fehler behoben ist.\n"
 
-#: templates/base_chantal.html:43
+#: templates/base_chantal.html:45
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: templates/base_chantal.html:49
+#: templates/base_chantal.html:51
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/base_chantal.html:52
+#: templates/base_chantal.html:55
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/base_chantal.html:55
+#: templates/base_chantal.html:58
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: templates/base_chantal.html:57 templates/base_chantal.html.py:62
+#: templates/base_chantal.html:60 templates/base_chantal.html.py:65
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/base_chantal.html:59
+#: templates/base_chantal.html:62
 msgid "Log out"
 msgstr "Abmelden"
 
@@ -268,7 +296,7 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templatetags/chantal.py:102
+#: templatetags/chantal.py:103
 #, python-format
 msgid "with %(markdown_link)s syntax"
 msgstr "mit %(markdown_link)s-Syntax"
@@ -280,4 +308,3 @@ msgstr "Ja"
 #: templatetags/chantal.py:112
 msgid "No"
 msgstr "Nein"
-
