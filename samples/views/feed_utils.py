@@ -23,12 +23,12 @@ class Reporter(object):
     respective view calls the following methods in this order::
 
         report_new_responsible_person_samples
-        report_changed_sample_group
+        report_changed_sample_project
         report_edited_samples
 
     Of course, the first two are only called if the respective data change
     really happend.  Thus, the new responsible person is signalled first, then
-    all people about a possible group change, and if this didn't happen, all
+    all people about a possible project change, and if this didn't happen, all
     so-far un-signalled users get a general message about changed sample data.
 
     If you want to signal something to all possibly interested users, no matter
@@ -136,17 +136,17 @@ class Reporter(object):
         """
         self.__add_interested_users(process_or_sample_series.samples.all(), important)
 
-    def __add_group_members(self, group):
-        u"""Add all members of the given group to the set of users connected
+    def __add_project_members(self, project):
+        u"""Add all members of the given project to the set of users connected
         with the next generated feed entry by `__connect_with_users`.
 
         :Parameters:
-          - `group`: the group whose members should be informed with the next
+          - `project`: the project whose members should be informed with the next
             feed entry
 
-        :type group: ``django.contrib.auth.models.Group``
+        :type project: ``chantal_common.models.Project``
         """
-        self.interested_users.update(utils.get_profile(user) for user in group.user_set.all())
+        self.interested_users.update(utils.get_profile(user) for user in project.members.all())
 
     def __get_subscribers(self, sample_series):
         u"""
@@ -174,9 +174,9 @@ class Reporter(object):
     def report_new_samples(self, samples):
         u"""Generate one feed entry for new samples.  If more than one sample
         is in the given list, they are assumed to have been generated at the
-        same time, so they should share the same group and purpose.
+        same time, so they should share the same project and purpose.
 
-        If the sample or samples are not in a group, no feed entry is generated
+        If the sample or samples are not in a project, no feed entry is generated
         (because nobody listens).
 
         :Parameters:
@@ -184,13 +184,13 @@ class Reporter(object):
 
         :type samples: list of `models.Sample`
         """
-        group = samples[0].group
-        if group:
+        project = samples[0].project
+        if project:
             common_purpose = samples[0].purpose
-            entry = models.FeedNewSamples.objects.create(originator=self.originator, group=group, purpose=common_purpose)
+            entry = models.FeedNewSamples.objects.create(originator=self.originator, project=project, purpose=common_purpose)
             entry.samples = samples
-            entry.auto_adders = group.auto_adders.all()
-            self.__add_group_members(group)
+            entry.auto_adders = project.auto_adders.all()
+            self.__add_project_members(project)
             self.__connect_with_users(entry)
 
     def report_physical_process(self, process, edit_description=None):
@@ -265,7 +265,7 @@ class Reporter(object):
         u"""Generate a feed entry for samples that changed their currently
         responsible person.  This feed entry is only sent to that new
         responsible person.  Note that it is possible that further things were
-        changed in the sample(s) at the same time (group, purpose …).  They
+        changed in the sample(s) at the same time (project, purpose …).  They
         should be mentioned in the description by the formerly responsible
         person.
 
@@ -286,35 +286,35 @@ class Reporter(object):
         self.interested_users.add(utils.get_profile(samples[0].currently_responsible_person))
         self.__connect_with_users(entry)
 
-    def report_changed_sample_group(self, samples, old_group, edit_description):
-        u"""Generate a feed entry about a group change for sample(s).  All
-        members of the former group (if any) and the new group are informed.
+    def report_changed_sample_project(self, samples, old_project, edit_description):
+        u"""Generate a feed entry about a project change for sample(s).  All
+        members of the former project (if any) and the new project are informed.
         Note that it is possible that further things were changed in the
         sample(s) at the same time (reponsible person, purpose …).  They should
         be mentioned in the description by the one who changed it.
 
         :Parameters:
-          - `samples`: the samples that went into a new group
-          - `old_group`: the old group of the samples; may be ``None`` if they
-            weren't in any group before
+          - `samples`: the samples that went into a new project
+          - `old_project`: the old project of the samples; may be ``None`` if
+            they weren't in any project before
           - `edit_description`: The dictionary containing data about what was
-            edited in the samples (besides the change of the group).  Its keys
-            correspond to the fields of `form_utils.EditDescriptionForm`.
+            edited in the samples (besides the change of the project).  Its
+            keys correspond to the fields of `form_utils.EditDescriptionForm`.
 
         :type samples: list of `models.Sample`
-        :type old_group: ``django.contrib.auth.models.Group``
+        :type old_project: ``chantal_common.models.Project``
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
-        group = samples[0].group
+        project = samples[0].project
         entry = models.FeedMovedSamples.objects.create(
             originator=self.originator, description=edit_description["description"],
-            important=important, group=group, old_group=old_group)
+            important=important, project=project, old_project=old_project)
         entry.samples = samples
-        entry.auto_adders = group.auto_adders.all()
-        if old_group:
-            self.__add_group_members(old_group)
-        self.__add_group_members(group)
+        entry.auto_adders = project.auto_adders.all()
+        if old_project:
+            self.__add_project_members(old_project)
+        self.__add_project_members(project)
         self.__connect_with_users(entry)
 
     def report_edited_samples(self, samples, edit_description):
@@ -381,8 +381,8 @@ class Reporter(object):
         u"""Generate a feed entry for a sample series that changed their
         currently responsible person.  This feed entry is only sent to that new
         responsible person.  Note that it is possible that further things were
-        changed in the sample series at the same time (group, samples …).  They
-        should be mentioned in the description by the formerly responsible
+        changed in the sample series at the same time (project, samples …).
+        They should be mentioned in the description by the formerly responsible
         person.
 
         :Parameters:
@@ -402,33 +402,34 @@ class Reporter(object):
         self.interested_users.add(utils.get_profile(sample_series.currently_responsible_person))
         self.__connect_with_users(entry)
 
-    def report_changed_sample_series_group(self, sample_series, old_group, edit_description):
-        u"""Generate a feed entry about a group change for a sample series.
-        All members of the former group and the new group are informed.  Note
-        that it is possible that further things were changed in the sample
+    def report_changed_sample_series_project(self, sample_series, old_project, edit_description):
+        u"""Generate a feed entry about a project change for a sample series.
+        All members of the former project and the new project are informed.
+        Note that it is possible that further things were changed in the sample
         series at the same time (reponsible person, samples …).  They should be
         mentioned in the description by the one who changed it.
 
         :Parameters:
-          - `sample_series`: the sample series that went into a new group
-          - `old_group`: the old group of the samples; may be ``None`` if they
-            weren't in any group before
+          - `sample_series`: the sample series that went into a new project
+          - `old_project`: the old project of the samples; may be ``None`` if
+            they weren't in any project before
           - `edit_description`: The dictionary containing data about what was
-            edited in the sample series (besides the change of the group).  Its
-            keys correspond to the fields of `form_utils.EditDescriptionForm`.
+            edited in the sample series (besides the change of the project).
+            Its keys correspond to the fields of
+            `form_utils.EditDescriptionForm`. 
 
         :type sample_series: list of `models.SampleSeries`
-        :type old_group: ``django.contrib.auth.models.Group``
+        :type old_project: ``chantal_common.models.Project``
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
-        group = sample_series.group
+        project = sample_series.project
         entry = models.FeedMovedSampleSeries.objects.create(
             originator=self.originator, description=edit_description["description"],
-            important=important, sample_series=sample_series, old_group=old_group, group=sample_series.group)
+            important=important, sample_series=sample_series, old_project=old_project, project=sample_series.project)
         entry.subscribers = self.__get_subscribers(sample_series)
-        self.__add_group_members(old_group)
-        self.__add_group_members(group)
+        self.__add_project_members(old_project)
+        self.__add_project_members(project)
         self.__connect_with_users(entry)
 
     def report_new_sample_series(self, sample_series):
@@ -439,27 +440,27 @@ class Reporter(object):
 
         :type sample_series: `models.SampleSeries`
         """
-        group = sample_series.group
-        entry = \
-            models.FeedNewSampleSeries.objects.create(originator=self.originator, sample_series=sample_series, group=group)
+        project = sample_series.project
+        entry = models.FeedNewSampleSeries.objects.create(
+            originator=self.originator, sample_series=sample_series, project=project)
         entry.subscribers = self.__get_subscribers(sample_series)
-        self.__add_group_members(group)
+        self.__add_project_members(project)
         self.__connect_with_users(entry)
 
-    def report_changed_group_membership(self, users, group, action):
-        u"""Generate one feed entry for changed group memberships, i.e. added
-        or removed users in a group.
+    def report_changed_project_membership(self, users, project, action):
+        u"""Generate one feed entry for changed project memberships, i.e. added
+        or removed users in a project.
 
         :Parameters:
           - `users`: the affected users
-          - `group`: the group whose memberships have changed
+          - `project`: the project whose memberships have changed
           - `action`: what was done; ``"added"`` for added users, ``"removed"``
             for removed users
 
         :type users: ``django.contrib.auth.models.User``
-        :type group: ``django.contrib.auth.models.Group``
+        :type project: ``chantal_common.models.Project``
         :type action: str
         """
-        entry = models.FeedChangedGroup.objects.create(originator=self.originator, group=group, action=action)
+        entry = models.FeedChangedProject.objects.create(originator=self.originator, project=project, action=action)
         self.interested_users = set(utils.get_profile(user) for user in users)
         self.__connect_with_users(entry)

@@ -39,7 +39,7 @@ def expire_feed_entries():
 def mark_inactive_users():
     u"""Sets all users which can't be found anymore in the central Active
     Directory to “inactive”.  It also removes all special rights from them, and
-    all group memberships.
+    all project memberships.
     """
     try:
         l = ldap.initialize(settings.AD_LDAP_URL)
@@ -51,6 +51,7 @@ def mark_inactive_users():
                 user.is_active = user.is_staff = user.is_superuser = False
                 user.save()
                 user.groups.clear()
+                user.projects.clear()
                 user.user_permissions.clear()
     except ldap.LDAPError, e:
         mail_admins("Chantal LDAP error", message=e.message["desc"])

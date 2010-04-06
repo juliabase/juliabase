@@ -236,7 +236,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
                               currently_responsible_person=user,
                               purpose=new_name_form.cleaned_data["new_purpose"], tags=parent.tags,
                               split_origin=sample_split,
-                              group=parent.group)
+                              project=parent.project)
         child.save()
         new_pieces[new_name] = child.pk
         for watcher in parent.watchers.all():

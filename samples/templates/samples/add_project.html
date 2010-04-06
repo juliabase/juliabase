@@ -6,13 +6,13 @@
 
 {% block frame_content %}
 <form method="post" action="">
-  {% error_list new_group _("New group") %}
+  {% error_list new_project _("New project") %}
   <table>
     <tr>
-      {% input_field new_group.new_group_name %}
+      {% input_field new_project.new_project_name %}
     </tr>
     <tr>
-      {% input_field new_group.restricted %}
+      {% input_field new_project.restricted %}
     </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

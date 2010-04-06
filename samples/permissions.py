@@ -31,6 +31,7 @@ from settings import WITH_EPYDOC
 if not WITH_EPYDOC:
     # Attention! This is a cyclic import.  Don't use models in top-level code.
     import samples.models
+from chantal_common.models import Project
 from samples.views import shared_utils
 
 
@@ -158,27 +159,25 @@ def get_allowed_physical_processes(user):
     return allowed_physical_processes
 
 
-def is_restricted(group):
-    u"""Returns whether the group is restricted, i.e., only accessibly by group
-    members, and in particular not accessable just because someone in a “senior
-    user”.
+# FixMe: Still necessary after transition from groups to projects?
+def is_restricted(project):
+    u"""Returns whether the project is restricted, i.e., only accessibly by
+    project members, and in particular not accessable just because someone in a
+    “senior user”.
 
     :Parameters:
-      - `group`: the groups which is about to be accessed
+      - `project`: the projects which is about to be accessed
 
-    :type group: ``django.contrib.auth.models.Group``
+    :type project: ``chantal_common.models.Project``
 
     :Return:
-      whether the group is restricted
+      whether the project is restricted
 
     :rtype: bool
     """
-    if not group:
+    if not project:
         return False
-    try:
-        return bool(group.details.restricted)
-    except samples.models.GroupDetails.DoesNotExist:
-        return False
+    return project.restricted
 
 
 class PermissionError(Exception):
@@ -188,28 +187,28 @@ class PermissionError(Exception):
       inclusive.  It should be a complete sentence, which addresses the user
       directly.  It should start with a capital letter and end with a full
       stop.  For example, it may be “You are not allowed to view sample 01B-410
-      because you're not … Note that a head of an institute group may add you
-      to new Chantal groups.”.
+      because you're not … Note that a head of an institute project may add you
+      to new projects.”.
 
     :type description: unicode
     """
 
-    def __init__(self, user, description, new_group_would_help=False):
+    def __init__(self, user, description, new_project_would_help=False):
         u"""Class constructor.
 
         :Parameters:
           - `user`: the user which has too few permissions
           - `description`: a sentence describing the denied action and what
             could be done about it
-          - `new_group_would_help`: if ``True``, adding the user to a certain
-            group would grant him the permission for the action
+          - `new_project_would_help`: if ``True``, adding the user to a certain
+            project would grant him the permission for the action
 
         :type user: ``django.contrib.auth.models.User``
         :type description: unicode
-        :type new_group_would_help: bool
+        :type new_project_would_help: bool
         """
         super(PermissionError, self).__init__(_(u"Permission denied: ") + description)
-        self.user, self.description, self.new_group_would_help = user, description, new_group_would_help
+        self.user, self.description, self.new_project_would_help = user, description, new_project_would_help
 
 
 def assert_can_view_sample(user, sample):
@@ -226,15 +225,15 @@ def assert_can_view_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to view the
         sample.
     """
-    if sample.group and sample.group not in user.groups.all() and sample.currently_responsible_person != user:
-        if is_restricted(sample.group):
-            description = _(u"You are not allowed to view the sample since you are not in the sample's group, nor are you "
+    if sample.project and sample.project not in user.projects.all() and sample.currently_responsible_person != user:
+        if is_restricted(sample.project):
+            description = _(u"You are not allowed to view the sample since you are not in the sample's project, nor are you "
                             u"its currently responsible person.")
-            raise PermissionError(user, description, new_group_would_help=True)
+            raise PermissionError(user, description, new_project_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
-            description = _(u"You are not allowed to view the sample since you are not in the sample's group, nor are you "
+            description = _(u"You are not allowed to view the sample since you are not in the sample's project, nor are you "
                             u"its currently responsible person, nor are you a senior user.")
-            raise PermissionError(user, description, new_group_would_help=True)
+            raise PermissionError(user, description, new_project_would_help=True)
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
@@ -321,7 +320,7 @@ def assert_can_view_physical_process(user, process):
             description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
                             u"permission “%(permission)s”, nor you are allowed to view one of the processed samples.") \
                             % {"process": unicode(process), "permission": permission}
-            raise PermissionError(user, description, new_group_would_help=True)
+            raise PermissionError(user, description, new_project_would_help=True)
 
 
 def assert_can_edit_result_process(user, result_process):
@@ -364,7 +363,7 @@ def assert_can_view_result_process(user, result_process):
                 for sample_series in result_process.sample_series.all()):
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
-        raise PermissionError(user, description, new_group_would_help=True)
+        raise PermissionError(user, description, new_project_would_help=True)
 
 
 def assert_can_add_result_process(user, sample_or_series):
@@ -382,13 +381,13 @@ def assert_can_add_result_process(user, sample_or_series):
       - `PermissionError`: raised if the user is not allowed to add the result
         process to the sample or series
     """
-    if sample_or_series.currently_responsible_person != user and sample_or_series.group not in user.groups.all():
+    if sample_or_series.currently_responsible_person != user and sample_or_series.project not in user.projects.all():
         if isinstance(sample_or_series, samples.models.Sample):
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
-                            u"responsible person for this sample, nor are you a member of its group.") % sample_or_series
+                            u"responsible person for this sample, nor are you a member of its project.") % sample_or_series
         else:
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
-                            u"responsible person for this sample series, nor are you a member of its group.") \
+                            u"responsible person for this sample series, nor are you a member of its project.") \
                             % sample_or_series
         raise PermissionError(user, description)
 
@@ -424,7 +423,7 @@ def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
             else:
                 description = _(u"You are not allowed to add a substrate because you are not allowed to edit all "
                                 u"affected samples.")
-            raise PermissionError(user, description, new_group_would_help=True)
+            raise PermissionError(user, description, new_project_would_help=True)
 
 
 def assert_can_edit_sample(user, sample):
@@ -440,7 +439,7 @@ def assert_can_edit_sample(user, sample):
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit the sample
     """
-    if sample.group and sample.currently_responsible_person != user:
+    if sample.project and sample.currently_responsible_person != user:
         description = _(u"You are not allowed to edit the sample “%s” (including splitting and declaring dead) because "
                         u"you are not the currently responsible person for this sample.") % sample
         raise PermissionError(user, description)
@@ -481,10 +480,10 @@ def assert_can_view_sample_series(user, sample_series):
       - `PermissionError`: raised if the user is not allowed to view the sample
         series
     """
-    if sample_series.currently_responsible_person != user and sample_series.group not in user.groups.all():
+    if sample_series.currently_responsible_person != user and sample_series.project not in user.projects.all():
         description = _(u"You are not allowed to view the sample series “%s” because neither are"
-                        u"you the currently responsible person for it, nor are you in its group.") % sample_series
-        raise PermissionError(user, description, new_group_would_help=True)
+                        u"you the currently responsible person for it, nor are you in its project.") % sample_series
+        raise PermissionError(user, description, new_project_would_help=True)
 
 
 def assert_can_add_external_operator(user):
@@ -550,29 +549,29 @@ def assert_can_view_external_operator(user, external_operator):
             raise PermissionError(user, description)
 
 
-def assert_can_edit_group(user, group=None):
-    u"""Tests whether the user can change group memberships of other users, set
-    the group's restriction status, and add new groups.  This typically is a
-    priviledge of heads of institute groups.
+def assert_can_edit_project(user, project=None):
+    u"""Tests whether the user can change project memberships of other users,
+    set the project's restriction status, and add new projects.  This typically
+    is a priviledge of heads of institute projects.
 
     :Parameters:
       - `user`: the user whose permission should be checked
-      - `group`: the group whose members are about to be edited; ``None`` if we
-        create a new one, list groups etc
+      - `project`: the project whose members are about to be edited; ``None``
+        if we create a new one, list projects etc
 
     :type user: ``django.contrib.auth.models.User``
-    :type group: ``django.contrib.auth.models.Group`` or ``NoneType``
+    :type project: ``chantal_common.models.Project`` or ``NoneType``
 
     :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit groups,
-        nor to add new groups.
+      - `PermissionError`: raised if the user is not allowed to edit projects,
+        nor to add new projects.
     """
-    if not user.has_perm("samples.edit_group"):
-        description = _(u"You are not allowed to change this group because you don't have the permission “%s”.") \
-            % translate_permission("edit_group")
+    if not user.has_perm("samples.edit_project"):
+        description = _(u"You are not allowed to change this project because you don't have the permission “%s”.") \
+            % translate_permission("edit_project")
         raise PermissionError(user, description)
-    elif group and is_restricted(group) and not group in user.groups.all():
-        description = _(u"You are not allowed to change this group because you are not in this group.")
+    elif project and is_restricted(project) and not project in user.projects.all():
+        description = _(u"You are not allowed to change this project because you are not in this project.")
         raise PermissionError(user, description)
 
 

@@ -15,6 +15,7 @@ from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
 from chantal_common.utils import get_really_full_name, check_markdown
+from chantal_common.models import Project
 from samples import models, permissions
 from samples.views import utils
 
@@ -236,12 +237,12 @@ class GeneralSampleField(object):
 
         :type samples: list of `models.Sample`
         """
-        groups, groupless_samples = utils.build_structured_sample_list(samples)
-        self.choices = [(sample.pk, unicode(sample)) for sample in groupless_samples]
-        for group in groups:
-            seriesless_samples = [(sample.pk, unicode(sample)) for sample in group.samples]
-            self.choices.append((group.group.name, seriesless_samples))
-            for series in group.sample_series:
+        projects, projectless_samples = utils.build_structured_sample_list(samples)
+        self.choices = [(sample.pk, unicode(sample)) for sample in projectless_samples]
+        for project in projects:
+            seriesless_samples = [(sample.pk, unicode(sample)) for sample in project.samples]
+            self.choices.append((project.name, seriesless_samples))
+            for series in project.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
@@ -326,7 +327,7 @@ class UserField(forms.ChoiceField):
 
 class MultipleUsersField(forms.MultipleChoiceField):
     u"""Form field class for the selection of zero or more users.  This can be
-    the set of members for a particular group.
+    the set of members for a particular project.
     """
 
     def set_users(self, additional_users=[]):
@@ -337,7 +338,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
 
         :Parameters:
           - `additional_users`: Optional additional users to be included into
-            the list.  Typically, it is the current users for the group whose
+            the list.  Typically, it is the current users for the project whose
             memberships are to be changed.
 
         :type additional_users: iterable of ``django.contrib.auth.models.User``
@@ -356,41 +357,42 @@ class MultipleUsersField(forms.MultipleChoiceField):
         return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
-class GroupField(forms.ChoiceField):
-    u"""Form field class for the selection of a single group.  This can be the
-    group for a sample or a sample series, for example.
+class ProjectField(forms.ChoiceField):
+    u"""Form field class for the selection of a single project.  This can be
+    the project for a sample or a sample series, for example.
     """
 
-    def set_groups(self, user, additional_group=None):
-        u"""Set the group list shown in the widget.  You *must* call this
+    def set_projects(self, user, additional_project=None):
+        u"""Set the project list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.  The selection list will
-        consist of all currently active groups, plus the given additional group
-        if any.  The “currently active groups” are all groups with at least one
-        active user amongst its members.
+        consist of all currently active projects, plus the given additional
+        project if any.  The “currently active projects” are all projects with
+        at least one active user amongst its members.
 
         :Parameters:
           - `user`: the currently logged-in user
-          - `additional_group`: Optional additional group to be included into
-            the list.  Typically, it is the current group of the sample, for
-            example.
+          - `additional_project`: Optional additional project to be included
+            into the list.  Typically, it is the current project of the sample,
+            for example.
 
         :type user: ``django.contrib.auth.models.User``
-        :type additional_group: ``django.contrib.auth.models.Group``
+        :type additional_project: ``chantal_common.models.Project``
         """
         self.choices = [(u"", 9*u"-")]
-        all_groups = django.contrib.auth.models.Group.objects.filter(user__is_active=True).distinct()
-        user_groups = user.groups.all()
-        groups = set(group for group in all_groups if not permissions.is_restricted(group) or group in user_groups)
-        if additional_group:
-            groups.add(additional_group)
-        groups = sorted(groups, key=lambda group: group.name)
-        self.choices.extend((group.pk, unicode(group)) for group in groups)
+        all_projects = Project.objects.filter(user__is_active=True).distinct()
+        user_projects = user.projects.all()
+        projects = \
+            set(project for project in all_projects if not permissions.is_restricted(project) or project in user_projects)
+        if additional_project:
+            projects.add(additional_project)
+        projects = sorted(projects, key=lambda project: project.name)
+        self.choices.extend((project.pk, unicode(project)) for project in projects)
 
     def clean(self, value):
-        value = super(GroupField, self).clean(value)
+        value = super(ProjectField, self).clean(value)
         if value:
-            return django.contrib.auth.models.Group.objects.get(pk=int(value))
+            return Project.objects.get(pk=int(value))
 
 
 class FixedOperatorField(forms.ChoiceField):

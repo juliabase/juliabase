@@ -589,7 +589,7 @@ class StructuredSeries(object):
     u"""Helper class to pass sample series data to the main menu template.
     This is *not* a data strcuture for sample series.  It just stores all data
     needed to display a certain sample series to a certain user.  It is used in
-    `StructuredGroup` and `build_structured_sample_list`.
+    `StructuredProject` and `build_structured_sample_list`.
 
     :ivar sample_series: the sample series for which data should be collected
       in this object
@@ -636,27 +636,27 @@ class StructuredSeries(object):
         return self.__is_complete
 
 
-class StructuredGroup(object):
-    u"""Class that represents one group which contains samples and sample
+class StructuredProject(object):
+    u"""Class that represents one project which contains samples and sample
     series, used for `build_structured_sample_list`.
 
-    :ivar group: the underlying Chantal group which is represented by this
+    :ivar project: the underlying Chantal project which is represented by this
       instance.
 
-    :ivar samples: the samples of this group which belong to the “My Samples”
+    :ivar samples: the samples of this project which belong to the “My Samples”
       of the user but which don't belong to any sample series.
 
-    :ivar sample_series: the sample series which belong to this group and which
-      contain “My Samples” of the user.  They themselves contain a list of
-      their samples.  See `StructuredSeries` for further information.
+    :ivar sample_series: the sample series which belong to this project and
+      which contain “My Samples” of the user.  They themselves contain a list
+      of their samples.  See `StructuredSeries` for further information.
 
-    :type group: ``django.contrib.auth.models.Group``
+    :type project: ``chantal_common.models.Project``
     :type samples: list of `models.Sample`
     :type sample_series: list of `StructuredSeries`
     """
 
-    def __init__(self, group):
-        self.group = group
+    def __init__(self, project):
+        self.project = project
         self.samples = []
         self.sample_series = []
 
@@ -668,10 +668,10 @@ def build_structured_sample_list(samples):
     u"""Generate a nested datastructure which contains the given samples in a
     handy way to be layouted in a certain way.  This routine is used for the
     “My Samples” list in the main menu, and for the multiple-selection box for
-    samples in various views.  It is a list of `StructuredGroup` at the
+    samples in various views.  It is a list of `StructuredProject` at the
     top-level.
 
-    As far as sorting is concerned, all groups are sorted by alphabet, all
+    As far as sorting is concerned, all projects are sorted by alphabet, all
     sample series by reverse timestamp of origin, and all samples by name.
 
     :Parameters:
@@ -681,36 +681,37 @@ def build_structured_sample_list(samples):
     :type samples: list of `models.Sample`
 
     :Return:
-      all groups of the user with his series and samples in them, all groupless
-      samples; both is sorted
+      all projects of the user with his series and samples in them, all
+      projectless samples; both is sorted
 
-    :rtype: list of `StructuredGroup`, list of `models.Sample`
+    :rtype: list of `StructuredProject`, list of `models.Sample`
     """
     structured_series = {}
-    structured_groups = {}
-    groupless_samples = []
+    structured_projects = {}
+    projectless_samples = []
     for sample in sorted(set(samples), key=lambda sample: sample.name):
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:
                 if series.name not in structured_series:
                     structured_series[series.name] = StructuredSeries(series)
-                    groupname = series.group.name
-                    if groupname not in structured_groups:
-                        structured_groups[groupname] = StructuredGroup(series.group)
-                    structured_groups[groupname].sample_series.append(structured_series[series.name])
+                    projectname = series.project.name
+                    if projectname not in structured_projects:
+                        structured_projects[projectname] = StructuredProject(series.project)
+                    structured_projects[projectname].sample_series.append(structured_series[series.name])
                 structured_series[series.name].append(sample)
-        elif sample.group:
-            groupname = sample.group.name
-            if groupname not in structured_groups:
-                structured_groups[groupname] = StructuredGroup(sample.group)
-            structured_groups[groupname].samples.append(sample)
+        elif sample.project:
+            projectname = sample.project.name
+            if projectname not in structured_projects:
+                structured_projects[projectname] = StructuredProject(sample.project)
+            structured_projects[projectname].samples.append(sample)
         else:
-            groupless_samples.append(sample)
-    structured_groups = sorted(structured_groups.itervalues(), key=lambda structured_group: structured_group.group.name)
-    for structured_group in structured_groups:
-        structured_group.sort_sample_series()
-    return structured_groups, groupless_samples
+            projectless_samples.append(sample)
+    structured_projects = sorted(structured_projects.itervalues(),
+                                 key=lambda structured_project: structured_project.project.name)
+    for structured_project in structured_projects:
+        structured_project.sort_sample_series()
+    return structured_projects, projectless_samples
 
 
 def extract_preset_sample(request):

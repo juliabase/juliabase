@@ -3,10 +3,10 @@
 
 {% with entry.samples.all as samples %}
   <p>
-    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.group as group %}
-      {{ originator }} has added the following sample in the group “{{ group }}” to the database:
+    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.project as project %}
+      {{ originator }} has added the following sample in the project “{{ project }}” to the database:
     {% plural %}
-      {{ originator }} has added the following samples in the group “{{ group }}” to the database:
+      {{ originator }} has added the following samples in the project “{{ project }}” to the database:
     {% endblocktrans %}
   </p>
 

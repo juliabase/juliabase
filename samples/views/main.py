@@ -24,7 +24,7 @@ class MySeries(object):
     u"""Helper class to pass sample series data to the main menu template.  It
     is used in `main_menu`.  This is *not* a data strcuture for sample series.
     It just stores all data needed to display a certain sample series to a
-    certain user, besing on his groups an “My Samples”.
+    certain user, besing on his projects an “My Samples”.
 
     :ivar sample_series: the sample series for which data should be collected
       in this object
@@ -90,7 +90,7 @@ def main_menu(request):
     :rtype: ``HttpResponse``
     """
     user_details = utils.get_profile(request.user)
-    my_groups, groupless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
+    my_projects, projectless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = []
     for process in allowed_physical_processes:
@@ -103,10 +103,10 @@ def main_menu(request):
     return render_to_response(
         "samples/main_menu.html",
         {"title": _(u"Main menu"),
-         "my_groups": my_groups,
-         "groupless_samples": groupless_samples,
+         "my_projects": my_projects,
+         "projectless_samples": projectless_samples,
          "user_hash": permissions.get_user_hash(request.user),
-         "can_edit_group": permissions.has_permission_to_edit_group(request.user),
+         "can_edit_project": permissions.has_permission_to_edit_project(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
          "has_external_contacts": request.user.external_contacts.count() > 0,
          "physical_processes": allowed_physical_processes,
