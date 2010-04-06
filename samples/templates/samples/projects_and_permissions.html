@@ -4,25 +4,25 @@
 
 
 {% block frame_content %}
-<h2>{% trans 'Groups' %}</h2>
+<h2>{% trans 'Projects' %}</h2>
 <p>
-  {% if groups %}
-    {% blocktrans count groups|length as counter %}
-      {{ full_user_name }} is member of the following group:
+  {% if projects %}
+    {% blocktrans count projects|length as counter %}
+      {{ full_user_name }} is member of the following project:
     {% plural %}
-      {{ full_user_name }} is member of the following groups:
+      {{ full_user_name }} is member of the following projects:
     {% endblocktrans %}
-    {% for group in groups %}
-      <strong>{{ group }}</strong>{% if not forloop.last %},{% endif %}
+    {% for project in projects %}
+      <strong>{{ project }}</strong>{% if not forloop.last %},{% endif %}
     {% endfor %}
   {% else %}
     {% blocktrans %}
-      {{ full_user_name }} isn't a member of any group.
+      {{ full_user_name }} isn't a member of any project.
     {% endblocktrans %}
   {% endif %}
 </p>
 
-<p>{% trans 'The head of your institute group is allowed to add you to further Chantal groups.' %}
+<p>{% trans 'The head of your institute group is allowed to add you to further Chantal projects.' %}
 
 
 <h2>{% trans 'Permissions' %}</h2>
@@ -34,8 +34,8 @@
 <ul style="color: green; font-weight: bold">
   <li>{% trans 'You can add new samples and sample series' %}</li>
   <li>{% trans 'You can edit all samples and sample series that you are the currently responsible person for' %}</li>
-  <li>{% trans 'You can view all samples of your groups' %}</li>
-  <li>{% trans 'You can add results to all samples of your groups' %}</li>
+  <li>{% trans 'You can view all samples of your projects' %}</li>
+  <li>{% trans 'You can add results to all samples of your projects' %}</li>
   <li>{% trans 'You can edit results that you added' %}</li>
 </ul>
 

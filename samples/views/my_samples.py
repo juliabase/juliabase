@@ -36,7 +36,7 @@ class ActionForm(forms.Form):
     """
     _ = ugettext_lazy
     new_currently_responsible_person = form_utils.UserField(label=_(u"New currently responsible person"), required=False)
-    new_group = form_utils.GroupField(label=_(u"New Group"), required=False)
+    new_project = form_utils.ProjectField(label=_(u"New Project"), required=False)
     new_current_location = forms.CharField(label=_(u"New current location"), required=False, max_length=50)
     copy_to_user = form_utils.UserField(label=_(u"Copy to user"), required=False)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
@@ -53,7 +53,7 @@ class ActionForm(forms.Form):
         super(ActionForm, self).__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].set_users_without(user)
         self.fields["copy_to_user"].set_users_without(user)
-        self.fields["new_group"].set_groups(user)
+        self.fields["new_project"].set_projects(user)
 
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -66,7 +66,7 @@ class ActionForm(forms.Form):
         cleaned_data = self.cleaned_data
         if cleaned_data["copy_to_user"] and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you copy samples over to another person, you must enter a short comment."))
-        if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_group"] or
+        if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_project"] or
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
         return cleaned_data
@@ -95,7 +95,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
     referentially_valid = True
     if not current_user.is_staff and my_samples_form.is_valid() and action_form.is_valid():
         action_data = action_form.cleaned_data
-        if action_data["new_currently_responsible_person"] or action_data["new_group"] or \
+        if action_data["new_currently_responsible_person"] or action_data["new_project"] or \
                     action_data["new_current_location"]:
             try:
                 for sample in my_samples_form.cleaned_data["samples"]:
@@ -128,24 +128,24 @@ def save_to_database(user, my_samples_form, action_form):
         current_user_my_samples = utils.get_profile(user).my_samples
     samples = my_samples_form.cleaned_data["samples"]
     samples_with_new_responsible_person = []
-    samples_with_new_group = {}
+    samples_with_new_project = {}
     for sample in samples:
-        old_group, old_responsible_person = sample.group, sample.currently_responsible_person
+        old_project, old_responsible_person = sample.project, sample.currently_responsible_person
         if action_data["new_currently_responsible_person"] and \
                 action_data["new_currently_responsible_person"] != sample.currently_responsible_person:
             sample.currently_responsible_person = action_data["new_currently_responsible_person"]
             samples_with_new_responsible_person.append(sample)
-        if action_data["new_group"] and action_data["new_group"] != sample.group:
-            if sample.group not in samples_with_new_group:
-                samples_with_new_group[sample.group] = [sample]
+        if action_data["new_project"] and action_data["new_project"] != sample.project:
+            if sample.project not in samples_with_new_project:
+                samples_with_new_project[sample.project] = [sample]
             else:
-                samples_with_new_group[sample.group].append(sample)
-            sample.group = action_data["new_group"]
+                samples_with_new_project[sample.project].append(sample)
+            sample.project = action_data["new_project"]
         if action_data["new_current_location"]:
             sample.current_location = action_data["new_current_location"]
         sample.save()
-        if sample.group and sample.group != old_group:
-            for watcher in sample.group.auto_adders.all():
+        if sample.project and sample.project != old_project:
+            for watcher in sample.project.auto_adders.all():
                 watcher.my_samples.add(sample)
         if sample.currently_responsible_person != old_responsible_person:
             utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
@@ -157,9 +157,9 @@ def save_to_database(user, my_samples_form, action_form):
     edit_description = {"important": True, "description": action_data["comment"]}
     if samples_with_new_responsible_person:
         feed_reporter.report_new_responsible_person_samples(samples_with_new_responsible_person, edit_description)
-    for old_group, samples in samples_with_new_group.iteritems():
-        feed_reporter.report_changed_sample_group(samples, old_group, edit_description)
-    if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_group"]:
+    for old_project, samples in samples_with_new_project.iteritems():
+        feed_reporter.report_changed_sample_project(samples, old_project, edit_description)
+    if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_project"]:
         feed_reporter.report_edited_samples(samples, edit_description)
     # Now a separate(!) message for copied samples
     if action_data["copy_to_user"]:

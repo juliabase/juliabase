@@ -12,17 +12,17 @@
     <tr>
       {% input_field user_details.only_important_news %}
     </tr>
-    {% if has_groups %}
+    {% if has_projects %}
       <tr>
         <td class="label">
-          <label for="id_{{ user_details.auto_addition_groups.html_name }}"
-                 >{{ user_details.auto_addition_groups.label }}:</label>
+          <label for="id_{{ user_details.auto_addition_projects.html_name }}"
+                 >{{ user_details.auto_addition_projects.label }}:</label>
           <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
             {% blocktrans %}(This list shows
-            all groups you are a member of.  You can mark those groups that you want all new samples of which to be
+            all projects you are a member of.  You can mark those projects that you want all new samples of which to be
             implicitly added to “My Samples”.){% endblocktrans %}</div>
         </td>
-        <td class="input">{{ user_details.auto_addition_groups }}</td>
+        <td class="input">{{ user_details.auto_addition_projects }}</td>
       </tr>
     {% endif %}
     <tr>

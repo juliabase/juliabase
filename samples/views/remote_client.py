@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
+from chantal_common.models import Project
 from samples.views import utils
 from samples import models, permissions
 
@@ -40,9 +41,10 @@ def primary_keys(request):
 
         {"samples": {"01B410": 5, "01B402": 42}}
 
-    The same works for ``"groups"`` and ``"users"``.  You can also mix all tree
-    in the query string.  If you pass ``"*"`` instead of a values list, you get
-    *all* primary keys.  For samples, however, this is limited to “My Samples”.
+    The same works for ``"projects"`` and ``"users"``.  You can also mix all
+    tree in the query string.  If you pass ``"*"`` instead of a values list,
+    you get *all* primary keys.  For samples, however, this is limited to
+    “My Samples”.
 
     The result is the JSON representation of the resulting nested dictionary.
 
@@ -58,15 +60,15 @@ def primary_keys(request):
     """
     query_dict = utils.parse_query_string(request)
     result_dict = {}
-    if "groups" in query_dict:
-        all_groups = set(group for group in django.contrib.auth.models.Group.objects.all()
-                         if not permissions.is_restricted(group) or group in user_groups)
-        if query_dict["groups"] == "*":
-            groups = all_groups
+    if "projects" in query_dict:
+        all_projects = set(project for project in Project.objects.all()
+                           if not project.restricted or project in user.projects)
+        if query_dict["projects"] == "*":
+            projects = all_projects
         else:
-            groupnames = query_dict["groups"].split(",")
-            groups = set(group for group in all_groups if group.name in groupnames)
-        result_dict["groups"] = dict((group.name, group.id) for group in groups)
+            projectnames = query_dict["projects"].split(",")
+            projects = set(project for project in all_projects if project.name in projectnames)
+        result_dict["projects"] = dict((project.name, project.id) for project in projects)
     if "samples" in query_dict:
         if query_dict["samples"] == "*":
             result_dict["samples"] = dict(utils.get_profile(request.user).my_samples.values_list("name", "id"))

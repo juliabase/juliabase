@@ -91,12 +91,12 @@ urlpatterns = patterns("samples.views",
 
                        (r"^users/(?P<login_name>.+)", "user_details.show_user"),
                        (r"^preferences/(?P<login_name>.+)", "user_details.edit_preferences"),
-                       (r"^groups_and_permissions/(?P<login_name>.+)", "user_details.groups_and_permissions"),
+                       (r"^projects_and_permissions/(?P<login_name>.+)", "user_details.projects_and_permissions"),
                        (r"^my_layers/(?P<login_name>.+)", "my_layers.edit"),
 
-                       (r"^groups/add/$", "group.add"),
-                       (r"^groups/$", "group.list_"),
-                       (r"^groups/(?P<name>.+)", "group.edit"),
+                       (r"^projects/add/$", "project.add"),
+                       (r"^projects/$", "project.list_"),
+                       (r"^projects/(?P<name>.+)", "project.edit"),
 
                        (r"^primary_keys$", "remote_client.primary_keys"),
                        (r"^available_items/(?P<model_name>[A-Za-z_][A-Za-z_0-9]*)", "remote_client.available_items"),

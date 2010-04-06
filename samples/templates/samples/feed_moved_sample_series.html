@@ -2,9 +2,9 @@
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.group as group and entry.old_group as old_group and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url %}
-    {{ originator }} has moved the sample series “<a href="{{ url }}">{{ sample_series }}</a>” from group 
-    “{{ old_group }}” to the group “{{ group }}”.
+  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.project as project and entry.old_project as old_project and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url %}
+    {{ originator }} has moved the sample series “<a href="{{ url }}">{{ sample_series }}</a>” from project 
+    “{{ old_project }}” to the project “{{ project }}”.
   {% endblocktrans %}
   {% if subscribed %}
     {% trans 'You are subscribed to this sample series because you have at least one of its samples amongst “My Samples”.' %}

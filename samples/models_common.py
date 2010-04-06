@@ -22,6 +22,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from chantal_common.utils import get_really_full_name
+from chantal_common.models import Project
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
@@ -39,7 +40,7 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
-        # Translation hint: Group which is not open to senior members
+        # Translation hint: Project which is not open to senior members
     restricted = models.BooleanField(_(u"restricted"), default=False)
 
     class Meta:
@@ -344,9 +345,9 @@ class Sample(models.Model):
                                      # Translation hint: ID of mother sample
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
-    group = models.ForeignKey(django.contrib.auth.models.Group, null=True, blank=True, related_name="samples",
-                              # Translation hint: Topic/project for samples and sample series
-                              verbose_name=_(u"group"))
+    project = models.ForeignKey(Project, null=True, blank=True, related_name="samples",
+                                # Translation hint: Topic/project for samples and sample series
+                                verbose_name=_(u"project"))
 
     class Meta:
         verbose_name = _(u"sample")
@@ -393,7 +394,7 @@ class Sample(models.Model):
         """
         return Sample(name=self.name, current_location=self.current_location,
                       currently_responsible_person=self.currently_responsible_person, tags=self.tags,
-                      split_origin=self.split_origin, group=self.group)
+                      split_origin=self.split_origin, project=self.project)
 
     def is_dead(self):
         return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
@@ -758,7 +759,7 @@ class Result(Process):
 
 class SampleSeries(models.Model):
     u"""A sample series groups together zero or more `Sample`.  It must belong
-    to a group, and it may contain processes, however, only *result processes*.
+    to a project, and it may contain processes, however, only *result processes*.
     The ``name`` and the ``timestamp`` of a sample series can never change
     after it has been created.
     """
@@ -771,7 +772,7 @@ class SampleSeries(models.Model):
     description = models.TextField(_(u"description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
-    group = models.ForeignKey(django.contrib.auth.models.Group, related_name="sample_series", verbose_name=_(u"group"))
+    project = models.ForeignKey(Project, related_name="sample_series", verbose_name=_(u"project"))
 
     class Meta:
         verbose_name = _(u"sample series")
@@ -840,9 +841,9 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="samples_user_details")
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
-    auto_addition_groups = models.ManyToManyField(
-        django.contrib.auth.models.Group, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition groups"),
-        help_text=_(u"new samples in these groups are automatically added to “My Samples”"))
+    auto_addition_projects = models.ManyToManyField(
+        Project, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition projects"),
+        help_text=_(u"new samples in these projects are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False)
     feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed entries"), related_name="users", blank=True)
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
@@ -857,29 +858,7 @@ class UserDetails(models.Model):
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
         _ = lambda x: x
-        permissions = (("edit_group", _("Can edit groups, and can add new groups")),)
+        permissions = (("edit_project", _("Can edit projects, and can add new projects")),)
 
     def __unicode__(self):
         return unicode(self.user)
-
-
-class GroupDetails(models.Model):
-    u"""Model for further details about a group, beyond
-    ``django.contrib.auth.models.Group``.  Here, you have all data about a
-    Chantal group that is not stored by Django's group model itself.
-
-    So far, this is just to have the additional attribute ``restricted`` which
-    means that senior users (i.e. users with the permission
-    ``"view_all_samples"``) cannot view samples of restricted groups (in order
-    to make non-disclosure agreements with external partners possible).
-    """
-    group = models.OneToOneField(django.contrib.auth.models.Group, primary_key=True, verbose_name=_(u"group"),
-                                 related_name="details")
-    restricted = models.BooleanField(_(u"restricted"), default=False)
-
-    class Meta:
-        verbose_name = _(u"group details")
-        verbose_name_plural = _(u"group details")
-
-    def __unicode__(self):
-        return unicode(self.group)

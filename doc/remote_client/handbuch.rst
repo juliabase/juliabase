@@ -178,12 +178,12 @@ legt 10 neue Proben an und gibt an, daß sie zur Zeit im MAIKE-Labor liegen::
 
 Es gibt noch einige optionale Parameter, nämlich Substrat, Zeitstempel, Zweck,
 Tags und Gruppe, bzw. ``substrate``, ``timestamp``, ``purpose``, ``tags`` und
-``group``.  Man könnte also auch schreiben::
+``project``.  Man könnte also auch schreiben::
 
     new_samples(10, "MAIKE-Labor",
 		substrate="asahi-u",
 		timestamp="2008-08-23 13:34:00",
-		group="SiC")
+		project="SiC")
 
 Aber ``"asahi-u"`` ist eh Default, und wenn kein Zeitstempel angegeben wird,
 gilt *jetzt*.  Bei optionalen Parametern schreibt man besser den Parameternamen

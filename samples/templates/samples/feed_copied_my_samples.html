@@ -3,7 +3,7 @@
 
 {% with entry.samples.all as samples %}
   <p>
-    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.group as group %}
+    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.project as project %}
       {{ originator }} has copied the following sample to your “My Samples” list:
     {% plural %}
       {{ originator }} has copied the following samples to your “My Samples” list:

@@ -83,7 +83,7 @@ class ChantalConnection(object):
             logging.error("Login failed.")
             raise ResponseError("Login failed")
         # FixMe: Test whether login was successful
-        self.primary_keys = self.open("primary_keys?groups=*&users=*")
+        self.primary_keys = self.open("primary_keys?projects=*&users=*")
 
     def logout(self):
         if not self.open("logout_remote_client"):
@@ -105,7 +105,7 @@ def logout():
 
 
 def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, timestamp_inaccuracy=None,
-                purpose=None, tags=None, group=None, substrate_comments=None):
+                purpose=None, tags=None, project=None, substrate_comments=None):
     samples = connection.open("samples/add/",
                               {"number_of_samples": number_of_samples,
                                "current_location": current_location,
@@ -115,7 +115,7 @@ def new_samples(number_of_samples, current_location, substrate=u"asahi-u", times
                                "substrate_comments": substrate_comments,
                                "purpose": purpose,
                                "tags": tags,
-                               "group": connection.primary_keys["groups"].get(group),
+                               "project": connection.primary_keys["projects"].get(project),
                                "currently_responsible_person":
                                    connection.primary_keys["users"][connection.username]})
     logging.info("Successfully created %d samples with the ids %s." % (len(samples), ",".join(str(id_) for id_ in samples)))

@@ -4,34 +4,34 @@
 {% load samples_extras %}
 
 {% block frame_content %}
-  {% if groupless_samples or my_groups %}
+  {% if projectless_samples or my_projects %}
     <div class="my-samples">
       <h2>{% trans 'My Samples' %}<a class="edit-icon" 
                              href="{% url samples.views.my_samples.edit username=user.username %}"
                              ><img src="{{ MEDIA_URL}}samples/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a></h2>
 
-      {% if groupless_samples %}
+      {% if projectless_samples %}
         <ul class="sample-list">
-          {% for sample in groupless_samples %}
+          {% for sample in projectless_samples %}
             <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
           {% endfor %}
         </ul>
       {% endif %}
-      <div class="my-samples-groups">
-        {% for group in my_groups %}
+      <div class="my-samples-projects">
+        {% for project in my_projects %}
 
-          <h3><img src="{{ MEDIA_URL}}samples/icons/group.png" alt="group icon" style="margin-right: 0.5em"/>{{ group.group }}</h3>
+          <h3><img src="{{ MEDIA_URL}}samples/icons/group.png" alt="project icon" style="margin-right: 0.5em"/>{{ project.project }}</h3>
 
-          {% if group.samples %}
+          {% if project.samples %}
             <ul class="sample-list">
-              {% for sample in group.samples %}
+              {% for sample in project.samples %}
                 <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
               {% endfor %}
             </ul>
           {% endif %}
 
           <div class="my-samples-series">
-            {% for series in group.sample_series %}
+            {% for series in project.sample_series %}
 
               <h4><img src="{{ MEDIA_URL}}samples/icons/chart_organisation.png" alt="sample series icon" style="margin-right: 0.5em"
                        /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
@@ -82,14 +82,14 @@
     </ul>
   {% endif %}
 
-  {% if can_edit_group %}
-    <h2>{% trans 'Edit groups' %}</h2>
+  {% if can_edit_project %}
+    <h2>{% trans 'Edit projects' %}</h2>
 
     <ul>
       <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group_add.png")'>
-        <a href="{% url samples.views.group.add %}">{% trans 'Add new group' %}</a></li>
+        <a href="{% url samples.views.project.add %}">{% trans 'Add new project' %}</a></li>
       <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group_gear.png")'>
-        <a href="{% url samples.views.group.list_ %}">{% trans 'Change group memberships' %}</a></li>
+        <a href="{% url samples.views.project.list_ %}">{% trans 'Change project memberships' %}</a></li>
     </ul>  
   {% endif %}  
 
@@ -115,8 +115,8 @@
       <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
          >{% trans 'Edit preferences' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/key.png")'>
-      <a href="{% url samples.views.user_details.groups_and_permissions login_name=user.username %}"
-         >{% trans 'My groups and permissions' %}</a></li>
+      <a href="{% url samples.views.user_details.projects_and_permissions login_name=user.username %}"
+         >{% trans 'My projects and permissions' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/shape_square_edit.png")'>
       <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
     {% if is_external %}

@@ -33,7 +33,7 @@ class SampleSeriesForm(forms.ModelForm):
     _ = ugettext_lazy
     short_name = forms.CharField(label=_(u"Name"), max_length=50)
     currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
-    group = form_utils.GroupField(label=_(u"Group"))
+    project = form_utils.ProjectField(label=_(u"Project"))
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"))
 
     def __init__(self, user_details, data=None, **kwargs):
@@ -55,7 +55,7 @@ class SampleSeriesForm(forms.ModelForm):
             self.fields["currently_responsible_person"].set_users(sample_series.currently_responsible_person)
         else:
             self.fields["currently_responsible_person"].choices = ((user_details.user.pk, unicode(user_details.user)),)
-        self.fields["group"].set_groups(user_details.user, sample_series.group if sample_series else None)
+        self.fields["project"].set_projects(user_details.user, sample_series.project if sample_series else None)
 
     def clean_description(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -81,8 +81,8 @@ class SampleSeriesForm(forms.ModelForm):
 @login_required
 def show(request, name):
     u"""View for showing a sample series.  You can see a sample series if
-    you're in its group, or you're the currently responsible person for it, or
-    if you can view all samples anyway.
+    you're in its project, or you're the currently responsible person for it,
+    or if you can view all samples anyway.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -111,7 +111,7 @@ def show(request, name):
 
 
 def is_referentially_valid(sample_series, sample_series_form, edit_description_form):
-    u"""Checks that the “important” checkbox is marked if the group or the
+    u"""Checks that the “important” checkbox is marked if the project or the
     currently responsible person were changed.
 
     :Parameters:
@@ -131,13 +131,13 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
     """
     referentially_valid = True
     if sample_series_form.is_valid() and edit_description_form.is_valid() and \
-            (sample_series_form.cleaned_data["group"] != sample_series.group or
+            (sample_series_form.cleaned_data["project"] != sample_series.project or
              sample_series_form.cleaned_data["currently_responsible_person"] !=
              sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
         append_error(edit_description_form,
-                     _(u"Changing the group or the responsible person must be marked as important."), "important")
+                     _(u"Changing the project or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
@@ -172,8 +172,8 @@ def edit(request, name):
             feed_reporter = feed_utils.Reporter(request.user)
             if sample_series.currently_responsible_person != sample_series_form.cleaned_data["currently_responsible_person"]:
                 feed_reporter.report_new_responsible_person_sample_series(sample_series, edit_description)
-            if sample_series.group != sample_series_form.cleaned_data["group"]:
-                feed_reporter.report_changed_sample_series_group(sample_series, sample_series.group, edit_description)
+            if sample_series.project != sample_series_form.cleaned_data["project"]:
+                feed_reporter.report_changed_sample_series_project(sample_series, sample_series.project, edit_description)
             feed_reporter.report_edited_sample_series(sample_series, edit_description)
             sample_series = sample_series_form.save()
             feed_reporter.report_edited_sample_series(sample_series, edit_description)
@@ -184,7 +184,7 @@ def edit(request, name):
             SampleSeriesForm(user_details, instance=sample_series,
                              initial={"short_name": sample_series.name.split("-", 2)[-1],
                                       "currently_responsible_person": sample_series.currently_responsible_person.pk,
-                                      "group": sample_series.group.pk,
+                                      "project": sample_series.project.pk,
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("samples/edit_sample_series.html",
