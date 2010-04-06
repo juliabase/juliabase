@@ -383,7 +383,7 @@ class ProjectField(forms.ChoiceField):
         all_projects = Project.objects.filter(user__is_active=True).distinct()
         user_projects = user.projects.all()
         projects = \
-            set(project for project in all_projects if not permissions.is_restricted(project) or project in user_projects)
+            set(project for project in all_projects if not project.restricted or project in user_projects)
         if additional_project:
             projects.add(additional_project)
         projects = sorted(projects, key=lambda project: project.name)

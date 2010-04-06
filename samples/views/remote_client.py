@@ -62,7 +62,7 @@ def primary_keys(request):
     result_dict = {}
     if "projects" in query_dict:
         all_projects = set(project for project in Project.objects.all()
-                           if not permissions.is_restricted(project) or project in user.projects)
+                           if not project.restricted or project in user.projects)
         if query_dict["projects"] == "*":
             projects = all_projects
         else:

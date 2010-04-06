@@ -93,7 +93,7 @@ def list_(request):
     permissions.assert_can_edit_project(request.user)
     all_projects = Project.objects.all()
     user_projects = request.user.projects.all()
-    projects = set(project for project in all_projects if not permissions.is_restricted(project) or project in user_projects)
+    projects = set(project for project in all_projects if not project.restricted or project in user_projects)
     return render_to_response("samples/list_projects.html",
                               {"title": _(u"List of all projects"), "projects": projects},
                               context_instance=RequestContext(request))
@@ -110,7 +110,7 @@ class EditProjectForm(forms.Form):
     def __init__(self, user, project, *args, **kwargs):
         super(EditProjectForm, self).__init__(*args, **kwargs)
         self.fields["members"].set_users(project.members.all())
-        self.fields["restricted"].initial = permissions.is_restricted(project)
+        self.fields["restricted"].initial = project.restricted
         self.user = user
 
     def clean(self):
@@ -127,7 +127,7 @@ class EditProjectForm(forms.Form):
 @login_required
 def edit(request, name):
     u"""View for changing the members of a particular project, and to set the
-    restriction status.  This is only allowed to heads of institute projects.
+    restriction status.  This is only allowed to heads of institute groups.
 
     :Parameters:
       - `request`: the current HTTP Request object

@@ -159,27 +159,6 @@ def get_allowed_physical_processes(user):
     return allowed_physical_processes
 
 
-# FixMe: Still necessary after transition from groups to projects?
-def is_restricted(project):
-    u"""Returns whether the project is restricted, i.e., only accessibly by
-    project members, and in particular not accessable just because someone in a
-    “senior user”.
-
-    :Parameters:
-      - `project`: the projects which is about to be accessed
-
-    :type project: ``chantal_common.models.Project``
-
-    :Return:
-      whether the project is restricted
-
-    :rtype: bool
-    """
-    if not project:
-        return False
-    return project.restricted
-
-
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
 
