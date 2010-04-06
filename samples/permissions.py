@@ -205,7 +205,7 @@ def assert_can_view_sample(user, sample):
         sample.
     """
     if sample.project and sample.project not in user.projects.all() and sample.currently_responsible_person != user:
-        if is_restricted(sample.project):
+        if sample.project.restricted:
             description = _(u"You are not allowed to view the sample since you are not in the sample's project, nor are you "
                             u"its currently responsible person.")
             raise PermissionError(user, description, new_project_would_help=True)
@@ -549,7 +549,7 @@ def assert_can_edit_project(user, project=None):
         description = _(u"You are not allowed to change this project because you don't have the permission “%s”.") \
             % translate_permission("edit_project")
         raise PermissionError(user, description)
-    elif project and is_restricted(project) and not project in user.projects.all():
+    elif project and project.restricted and project not in user.projects.all():
         description = _(u"You are not allowed to change this project because you are not in this project.")
         raise PermissionError(user, description)
 

@@ -380,7 +380,7 @@ class ProjectField(forms.ChoiceField):
         :type additional_project: ``chantal_common.models.Project``
         """
         self.choices = [(u"", 9*u"-")]
-        all_projects = Project.objects.filter(user__is_active=True).distinct()
+        all_projects = Project.objects.filter(members__is_active=True).distinct()
         user_projects = user.projects.all()
         projects = \
             set(project for project in all_projects if not project.restricted or project in user_projects)
