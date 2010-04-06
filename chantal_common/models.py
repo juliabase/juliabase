@@ -54,3 +54,27 @@ class UserDetails(models.Model):
 
     def __unicode__(self):
         return unicode(self.user)
+
+
+class Project(models.Model):
+    u"""Model for projects of the institution (institute/company).  Every
+    sample belongs to at most one project.  Every user can be in an arbitrary
+    number of projects.  The most important purpose of projects is to define
+    permissions.  Roughly speaking, a user can view samples of their projects.
+
+    The attribute ``restricted`` means that senior users (i.e. users with the
+    permission ``"view_all_samples"``) cannot view samples of restricted
+    projects (in order to make non-disclosure agreements with external partners
+    possible).
+    """
+    name = models.CharField(_("name"), max_length=80, unique=True)
+    members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_(u"members"),
+                                     related_name="projects")
+    restricted = models.BooleanField(_(u"restricted"), default=False)
+
+    class Meta:
+        verbose_name = _(u"project")
+        verbose_name_plural = _(u"projects")
+
+    def __unicode__(self):
+        return unicode(self.name)
