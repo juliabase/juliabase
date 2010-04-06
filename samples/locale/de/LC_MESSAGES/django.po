@@ -1243,7 +1243,7 @@ msgid_plural ""
 "s” to the project “%(project)s”:\n"
 "      "
 msgstr[0] "\n%(originator)s hat die folgende Probe vom Projekt „%(old_project)s“ in das Projekt „%(project)s“ verschoben:"
-msgstr[0] "\n%(originator)s hat die folgenden Proben vom Projekt „%(old_project)s“ in das Projekt „%(project)s“ verschoben:"
+msgstr[1] "\n%(originator)s hat die folgenden Proben vom Projekt „%(old_project)s“ in das Projekt „%(project)s“ verschoben:"
 
 #: templates/samples/feed_moved_samples.html:13
 #, python-format
@@ -1336,7 +1336,7 @@ msgid_plural ""
 "(project)s” to the database:\n"
 "    "
 msgstr[0] "\n%(originator)s hat die folgende Probe zum Projekt „%(project)s“ hinzugefügt:"
-msgstr "\n%(originator)s hat die folgenden Proben zum Projekt „%(project)s“ hinzugefügt:"
+msgstr[1] "\n%(originator)s hat die folgenden Proben zum Projekt „%(project)s“ hinzugefügt:"
 
 #: templates/samples/feed_new_samples.html:21
 #, python-format
