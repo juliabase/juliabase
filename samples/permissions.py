@@ -39,8 +39,8 @@ def translate_permission(permission_codename):
     u"""Translates a permission description to the user's language.
 
     :Parameters:
-      - `permission_codename`: the codename of the permission, without the
-        ``"samples."`` prefix
+      - `permission_codename`: the codename of the permission, *with* the
+        ``"all_label."`` prefix
 
     :type permission_codename: str
 
@@ -51,6 +51,7 @@ def translate_permission(permission_codename):
 
     :rtype: unicode
     """
+    permission_codename = permission_codename.partition(".")[2]
     return ugettext(django.contrib.auth.models.Permission.objects.get(codename=permission_codename).name)
 
 
@@ -239,15 +240,19 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
         process_class = process.__class__
     elif process:
         assert process_class == process.__class__
-    permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process_class.__name__))
+    permission = \
+        "{app_label}.add_edit_{process_name}".format(
+        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     if not user.has_perm(permission):
         if process:
             description = _(u"You are not allowed to edit the process “%(process)s” because you don't have the "
-                            u"permission “%(permission)s”.") % {"process": unicode(process), "permission": permission}
+                            u"permission “%(permission)s”.") % {"process": unicode(process),
+                                                                "permission": translate_permission(permission)}
         else:
             description = _(u"You are not allowed to add %(process_plural_name)s because you don't have the "
                             u"permission “%(permission)s”.") % \
-                            {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
+                            {"process_plural_name": process_class._meta.verbose_name_plural,
+                             "permission": translate_permission(permission)}
         raise PermissionError(user, description)
 
 
@@ -267,11 +272,14 @@ def assert_can_view_lab_notebook(user, process_class):
       - `PermissionError`: raised if the user is not allowed to view the lab
         notebook for this process class.
     """
-    permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process_class.__name__))
+    permission = \
+        "{app_label}.add_edit_{process_name}".format(
+        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     if not user.has_perm(permission):
         description = _(u"You are not allowed to view lab notebooks for %(process_plural_name)s because you don't have the "
                         u"permission “%(permission)s”.") % \
-                        {"process_plural_name": process_class._meta.verbose_name_plural, "permission": permission}
+                        {"process_plural_name": process_class._meta.verbose_name_plural,
+                         "permission": translate_permission(permission)}
         raise PermissionError(user, description)
 
 
@@ -290,7 +298,9 @@ def assert_can_view_physical_process(user, process):
       - `PermissionError`: raised if the user is not allowed to view the
         process.
     """
-    permission = translate_permission("add_edit_" + shared_utils.camel_case_to_underscores(process.__class__.__name__))
+    permission = \
+        "{app_label}.add_edit_{process_name}".format(
+        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     if not user.has_perm(permission):
         for sample in process.samples.all():
             if has_permission_to_view_sample(user, sample):
@@ -298,7 +308,7 @@ def assert_can_view_physical_process(user, process):
         else:
             description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
                             u"permission “%(permission)s”, nor you are allowed to view one of the processed samples.") \
-                            % {"process": unicode(process), "permission": permission}
+                            % {"process": unicode(process), "permission": translate_permission(permission)}
             raise PermissionError(user, description, new_project_would_help=True)
 
 
@@ -477,9 +487,10 @@ def assert_can_add_external_operator(user):
       - `PermissionError`: raised if the user is not allowed to add an external
         operator.
     """
-    if not user.has_perm("samples.add_external_operator"):
+    permission = "samples.add_external_operator"
+    if not user.has_perm(permission):
         description = _(u"You are not allowed to add an external operator because you don't have the permission “%s”.") \
-            % translate_permission("add_external_operator")
+            % translate_permission(permission)
         raise PermissionError(user, description)
 
 
@@ -545,9 +556,10 @@ def assert_can_edit_project(user, project=None):
       - `PermissionError`: raised if the user is not allowed to edit projects,
         nor to add new projects.
     """
-    if not user.has_perm("samples.edit_project"):
+    permission = "samples.edit_project"
+    if not user.has_perm(permission):
         description = _(u"You are not allowed to change this project because you don't have the permission “%s”.") \
-            % translate_permission("edit_project")
+            % translate_permission(permission)
         raise PermissionError(user, description)
     elif project and project.restricted and project not in user.projects.all():
         description = _(u"You are not allowed to change this project because you are not in this project.")
