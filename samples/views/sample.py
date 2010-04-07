@@ -216,7 +216,7 @@ def show(request, sample_name):
         is_my_sample_form = IsMySampleForm(
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
     processes = utils.ProcessContext(request.user, sample).collect_processes()
-    messages.debug("DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
+    messages.debug(request, "DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
     try:
         # FixMe: calling get_allowed_processes is too expensive
         get_allowed_processes(request.user, sample)
