@@ -76,14 +76,14 @@ def default(request):
             old_query_string = "?" + old_query_string
         switch_language_url = django.core.urlresolvers.reverse("chantal_common.views.switch_language").replace("%", "%%") + \
             "?lang=%s&next=" + urlquote_plus(request.path+old_query_string).replace("%", "%%")
-        pootle_string = "/trac/chantal/wiki/HumanLanguages"
+        rosetta_url = "https://translations.launchpad.net/chantal/trunk/+lang/{0}"
         result["translation_flags"] = (("de", _(u"German"), switch_language_url % "de"),
                                        ("en", _(u"English"), switch_language_url % "en"),
-                                       ("zh_CN", _(u"Chinese"), pootle_string),
-                                       ("uk", _(u"Ukrainian"), pootle_string),
-                                       ("ru", _(u"Russian"), pootle_string),
-                                       ("fr", _(u"French"), pootle_string),
-                                       ("nl", _(u"Dutch"), pootle_string),
+                                       ("zh_CN", _(u"Chinese"), rosetta_url.format("zh_CN")),
+                                       ("uk", _(u"Ukrainian"), rosetta_url.format("uk")),
+                                       ("ru", _(u"Russian"), rosetta_url.format("ru")),
+                                       ("fr", _(u"French"), rosetta_url.format("fr")),
+                                       ("nl", _(u"Dutch"), rosetta_url.format("nl")),
                                        )
     else:
         result["translation_flags"] = ()
