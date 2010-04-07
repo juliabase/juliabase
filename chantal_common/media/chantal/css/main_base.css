@@ -71,7 +71,7 @@ div.success-report, div.error-report, div.debug-report, div.warning-report, div.
     color: white; padding: 0.3ex 25px 0.5ex; text-align: right; font-size: small }
 div.success-report { background-color: green }
 div.error-report { background-color: red }
-div.debug-report { background-color: gainsboro }
+div.debug-report { background-color: gainsboro; color: black }
 div.warning-report { background-color: coral }
 div.info-report { background-color: mediumpurple }
 
