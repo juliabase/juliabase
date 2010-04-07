@@ -9,7 +9,7 @@
   <ul>
     {% for project in projects %}
       {% with project.name|urlquote as normalized_projectname %}
-        <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group.png")'
+        <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/group.png")'
             ><a href="{% url samples.views.project.edit name=normalized_projectname %}">{{ project.name }}</a></li>
       {% endwith %}
     {% endfor %}

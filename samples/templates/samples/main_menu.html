@@ -8,7 +8,7 @@
     <div class="my-samples">
       <h2>{% trans 'My Samples' %}<a class="edit-icon" 
                              href="{% url samples.views.my_samples.edit username=user.username %}"
-                             ><img src="{{ MEDIA_URL}}samples/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a></h2>
+                             ><img src="{{ MEDIA_URL }}samples/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a></h2>
 
       {% if projectless_samples %}
         <ul class="sample-list">
@@ -20,7 +20,7 @@
       <div class="my-samples-projects">
         {% for project in my_projects %}
 
-          <h3><img src="{{ MEDIA_URL}}samples/icons/group.png" alt="project icon" style="margin-right: 0.5em"/>{{ project.project }}</h3>
+          <h3><img src="{{ MEDIA_URL }}samples/icons/group.png" alt="project icon" style="margin-right: 0.5em"/>{{ project.project }}</h3>
 
           {% if project.samples %}
             <ul class="sample-list">
@@ -33,7 +33,7 @@
           <div class="my-samples-series">
             {% for series in project.sample_series %}
 
-              <h4><img src="{{ MEDIA_URL}}samples/icons/chart_organisation.png" alt="sample series icon" style="margin-right: 0.5em"
+              <h4><img src="{{ MEDIA_URL }}samples/icons/chart_organisation.png" alt="sample series icon" style="margin-right: 0.5em"
                        /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
 
               {% if not series.is_complete %}
@@ -54,12 +54,12 @@
   <h2>{% trans 'Add things' %}</h2>
 
   {# FixMe: make translated strings lowercase and use |capfirst #}
-  <ul style='list-style-image: url("{{ MEDIA_URL}}samples/icons/add.png")'>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/ruby_add.png")'>
+  <ul style='list-style-image: url("{{ MEDIA_URL }}samples/icons/add.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/ruby_add.png")'>
       <a href="{% url samples.views.sample.add %}">{% trans 'Samples' %}</a></li>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/chart_organisation_add.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/chart_organisation_add.png")'>
       <a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/lightbulb_add.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/lightbulb_add.png")'>
       <a href="{% url add_result %}">{% trans 'Result' %}</a></li>
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
@@ -67,7 +67,7 @@
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>
-  <ul style='list-style-image: url("{{ MEDIA_URL}}samples/icons/find.png")'>
+  <ul style='list-style-image: url("{{ MEDIA_URL }}samples/icons/find.png")'>
     <li><a href="{% url samples.views.sample.search %}">{% trans 'Samples' %}</a></li>
     <li><a href="{% url samples.views.main.deposition_search %}">{% trans 'Depositions' %}</a></li>
   </ul>
@@ -75,7 +75,7 @@
   {% if lab_notebooks %}
     <h2>{% trans 'Lab notebooks' %}</h2>
 
-    <ul style='list-style-image: url("{{ MEDIA_URL}}samples/icons/book.png")'>
+    <ul style='list-style-image: url("{{ MEDIA_URL }}samples/icons/book.png")'>
       {% for lab_notebook in lab_notebooks %}
         <li><a href="{{ lab_notebook.url }}">{{ lab_notebook.label|capfirst }}</a></li>
       {% endfor %}
@@ -86,9 +86,9 @@
     <h2>{% trans 'Edit projects' %}</h2>
 
     <ul>
-      <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group_add.png")'>
+      <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/group_add.png")'>
         <a href="{% url samples.views.project.add %}">{% trans 'Add new project' %}</a></li>
-      <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/group_gear.png")'>
+      <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/group_gear.png")'>
         <a href="{% url samples.views.project.list_ %}">{% trans 'Change project memberships' %}</a></li>
     </ul>  
   {% endif %}  
@@ -96,7 +96,7 @@
   {% if can_add_external_operator or has_external_contacts %}
     <h2>{% trans 'External operators' %}</h2>
 
-    <ul style='list-style-image: url("{{ MEDIA_URL}}samples/icons/user_gray.png")'>
+    <ul style='list-style-image: url("{{ MEDIA_URL }}samples/icons/user_gray.png")'>
       {% if can_add_external_operator %}
         <li><a href="{% url samples.views.external_operator.new %}">{% trans 'Add external operator' %}</a></li>
       {% endif %}  
@@ -109,25 +109,25 @@
   <h2>{% trans 'Miscellaneous' %}</h2>
   <ul>
     {% if user.is_staff %}
-      <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
+      <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
     {% endif %}
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/user_edit.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/user_edit.png")'>
       <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
          >{% trans 'Edit preferences' %}</a></li>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/key.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/key.png")'>
       <a href="{% url samples.views.user_details.projects_and_permissions login_name=user.username %}"
          >{% trans 'My projects and permissions' %}</a></li>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/shape_square_edit.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/shape_square_edit.png")'>
       <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
     {% if is_external %}
       <li><a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
     {% endif %}
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/feed.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/feed.png")'>
       <a href="{% url samples.views.feed.show username=user.username %}?hash={{ user_hash }}">{% trans 'Newsfeed' %}</a></li>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/server_lightning.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/server_lightning.png")'>
     <!-- FixMe: The about and statistics pages must not be links from here but from another menue page. -->
       <a href="{% url chantal_ipv.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
-    <li style='list-style-image: url("{{ MEDIA_URL}}samples/icons/server_chart.png")'>
+    <li style='list-style-image: url("{{ MEDIA_URL }}samples/icons/server_chart.png")'>
       <a href="{% url chantal_ipv.views.statistics.statistics %}">{% trans 'Server statistics' %}</a></li>
   </ul>
 {% endblock %}

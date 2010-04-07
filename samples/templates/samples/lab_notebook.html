@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content_title %}<h1>{{ title }}{% if export_url %}<a class="edit-icon" 
-     href="{{ export_url }}"><img src="{{ MEDIA_URL}}samples/icons/table.png" alt="export icon"
+     href="{{ export_url }}"><img src="{{ MEDIA_URL }}samples/icons/table.png" alt="export icon"
            title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endblock %}
 
 {% block frame_content %}
@@ -27,11 +27,11 @@
     <div class="screen-only" style="margin-top: 1ex">
       <input type="submit"/><br/>
       <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
-        <img src="{{ MEDIA_URL}}samples/icons/book_previous.png" alt="previous month icon" title="{% trans 'previous month' %}"/>
+        <img src="{{ MEDIA_URL }}samples/icons/book_previous.png" alt="previous month icon" title="{% trans 'previous month' %}"/>
       </a>
             
       <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %}>
-        <img src="{{ MEDIA_URL}}samples/icons/book_next.png" alt="next month icon" title="{% trans 'next month' %}"/>
+        <img src="{{ MEDIA_URL }}samples/icons/book_next.png" alt="next month icon" title="{% trans 'next month' %}"/>
       </a>
     </div>
   </div>

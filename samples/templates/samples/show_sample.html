@@ -10,18 +10,18 @@
     {% for alias in sample.aliases.all %}
     alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if can_edit %}<a class="edit-icon"
        href="{% url samples.views.sample.edit sample_name=sample.name %}?next={{ sample.get_absolute_url|urlquote_plus }}"
-                      ><img src="{{ MEDIA_URL}}samples/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+                      ><img src="{{ MEDIA_URL }}samples/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
     {% if number_for_rename %}<a class="edit-icon"
        href="{% url samples.views.bulk_rename.bulk_rename %}?numbers={{ number_for_rename }}&next={{ sample.get_absolute_url|urlquote_plus }}"
-                        ><img src="{{ MEDIA_URL}}samples/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
+                        ><img src="{{ MEDIA_URL }}samples/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
     {% endif %}
   {% endif %}
   {% if can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.name %}"
-                             ><img src="{{ MEDIA_URL}}samples/icons/cog_add.png" alt="add-process icon"
+                             ><img src="{{ MEDIA_URL }}samples/icons/cog_add.png" alt="add-process icon"
                                    title="{% trans 'add process' %}"/></a>{% endif %} 
   <a class="edit-icon" 
      href="{% url samples.views.sample.export sample_name=sample.name %}?next={{ sample.get_absolute_url|urlquote_plus }}"
-     ><img src="{{ MEDIA_URL}}samples/icons/table.png" alt="export icon"
+     ><img src="{{ MEDIA_URL }}samples/icons/table.png" alt="export icon"
            title="{% trans 'export as table' %}"/></a></h1>{% endspaceless %}{% endblock %}
 
 {% block css %}
@@ -89,13 +89,13 @@
       {% spaceless %}
         <h2>{{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
                                            href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-             ><img src="{{ MEDIA_URL}}samples/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+             ><img src="{{ MEDIA_URL }}samples/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
           {% endif %}{% if process.export_url %}<a class="edit-icon" 
                   href="{{ process.export_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-             ><img src="{{ MEDIA_URL}}samples/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
+             ><img src="{{ MEDIA_URL }}samples/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
           {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
                                         href="{{ process.resplit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-             ><img src="{{ MEDIA_URL}}samples/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
+             ><img src="{{ MEDIA_URL }}samples/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
           {% endif %}
         </h2>
       {% endspaceless %}
