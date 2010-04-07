@@ -17,6 +17,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
+from django.contrib import messages
 from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils
@@ -132,8 +133,8 @@ def bulk_rename(request):
     if not available_initials:
         query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
-        return utils.successful_response(request, _(u"You may change the sample names, but you must choose initials first."),
-                                         view="samples.views.user_details.edit_preferences",
+        messages.info(request, _(u"You may change the sample names, but you must choose initials first."))
+        return utils.successful_response(request, view="samples.views.user_details.edit_preferences",
                                          kwargs={"login_name": request.user.username},
                                          query_string=query_string, forced=True)
     single_initials = available_initials[0][1] if len(available_initials) == 1 else None
