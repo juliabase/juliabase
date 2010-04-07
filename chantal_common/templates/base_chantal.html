@@ -71,8 +71,10 @@
     </tr>
   </table>
 
-  {% if success_report %}
-    <div class="success-report">{{ success_report }}</div>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="success-report"><span{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span></div>
+    {% endfor %}
   {% endif %}
 
   <div class="main">

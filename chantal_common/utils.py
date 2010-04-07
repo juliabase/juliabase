@@ -29,6 +29,7 @@ from functools import update_wrapper
 import django.http
 from django.utils.encoding import iri_to_uri
 from django.forms.util import ErrorList, ValidationError
+from django.contrib import messages
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
@@ -228,7 +229,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :rtype: ``HttpResponse``
     """
     if success_report:
-        request.session["success_report"] = success_report
+        messages.success(request, success_report)
     next_url = request.GET.get("next")
     if next_url is not None:
         if forced:
