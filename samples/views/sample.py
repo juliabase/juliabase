@@ -16,6 +16,7 @@ from samples.models import Sample
 from samples import models, permissions
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
+from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, get_really_full_name, HttpResponseSeeOther
@@ -215,7 +216,7 @@ def show(request, sample_name):
         is_my_sample_form = IsMySampleForm(
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
     processes = utils.ProcessContext(request.user, sample).collect_processes()
-    request.session["db_access_time_in_ms"] = "%.1f" % ((time.time() - start) * 1000)
+    messages.debug("DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
     try:
         # FixMe: calling get_allowed_processes is too expensive
         get_allowed_processes(request.user, sample)
