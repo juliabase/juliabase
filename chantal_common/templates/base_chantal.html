@@ -53,15 +53,15 @@
           {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
           <a href="/"
              ><img src="{{ MEDIA_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"/></a>
-          <a href="/trac/chantal/newticket?reporter={{ user.email|urlquote_plus }}"
+          <a href="/trac/newticket?reporter={{ user.email|urlquote_plus }}"
                ><img src="{{ MEDIA_URL }}chantal/icons/bug_add.png" alt="add-bug icon" 
                      title="{% trans 'Report feature wish or bug' %}"/></a>
-          {% if help_link %} <a href="/trac/chantal/wiki/{{ help_link }}"><img 
+          {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img 
              src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
           <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}chantal/icons/door_open.png" 
                                                                     alt="log-out icon" title="{% trans 'Log out' %}"/></a>
         {% else %}
-          {% if help_link %}<a href="/trac/chantal/wiki/{{ help_link }}"><img 
+          {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img 
             src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
           {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
           <a href="/"><img src="{{ MEDIA_URL }}chantal/icons/house.png" 
