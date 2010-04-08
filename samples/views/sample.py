@@ -205,13 +205,13 @@ def show(request, sample_name):
                 if is_remote_client:
                     return utils.respond_to_remote_client(True)
                 else:
-                    request.session["success_report"] = _(u"Sample %s was added to Your Samples.") % sample
+                    messages.success(request, _(u"Sample %s was added to Your Samples.") % sample)
             else:
                 user_details.my_samples.remove(sample)
                 if is_remote_client:
                     return utils.respond_to_remote_client(True)
                 else:
-                    request.session["success_report"] = _(u"Sample %s was removed from Your Samples.") % sample
+                    messages.success(request, _(u"Sample %s was removed from Your Samples.") % sample)
     else:
         is_my_sample_form = IsMySampleForm(
             initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
