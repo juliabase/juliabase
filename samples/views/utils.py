@@ -391,7 +391,11 @@ def lookup_sample(sample_name, request):
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
-    permissions.assert_can_view_sample(request.user, sample)
+    try:
+        permissions.assert_can_view_sample(request.user, sample)
+    except permissions.PermissionError:
+        if not models.Clearance.objects.filter(user=request.user, sample=sample).count():
+            raise
     return sample
 
 

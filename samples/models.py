@@ -43,6 +43,26 @@ from samples.models_common import *
 from samples.models_depositions import *
 from samples.models_feeds import *
 
+u"""
+
+:var allowed_processes: Dictionary mapping permission codenames to Process
+  subclasses.  These Process classes are important for users having that
+  permission in the sense that they must be able to see such processes even for
+  samples that they are not allowed to see.  However, the approval is only
+  granted if another user who can see the sample copies it to the first user's
+  MySamples list.
+
+:type allowed_processes: dict mapping str to set of `Process`.
+"""
+
+
+class AllowedProcessesDict(dict):
+
+    def approve_processes(self, permission_codename, process_classes):
+        self.setdefault(permission_codename, set()).update(process_classes)
+
+allowed_processes = AllowedProcessesDict()
+
 
 # FixMe: In Python 3, this could be achieved with class decorators, I think.
 physical_process_models = {}

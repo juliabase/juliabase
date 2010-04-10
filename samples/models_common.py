@@ -507,6 +507,17 @@ class SampleSplit(Process):
         return result
 
 
+class Clearance(models.Model):
+    user = models.ForeignKeyField(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
+    sample = models.ForeignKeyField(Sample, verbose_name=_(u"sample"), related_name="clearances")
+    processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances")
+
+    class Meta:
+        unique_together = ("user", "sample")
+        verbose_name = _(u"clearance")
+        verbose_name_plural = _(u"clearances")
+
+
 substrate_materials = (
         # Translation hint: sample substrate type
     ("custom", _(u"custom")),
