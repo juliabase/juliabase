@@ -74,11 +74,14 @@ def get_user_permissions(user):
     """
     has = []
     has_not = []
-    for permission in django.contrib.auth.models.Permission.objects.all().values("name", "codename"):
-        if user.has_perm(permission["codename"]):
-            has.append(ugettext(permission["name"]))
+    for permission in django.contrib.auth.models.Permission.objects.all():
+        print permission.content_type.__dict__.keys()
+    for permission in django.contrib.auth.models.Permission.objects.all():
+        full_permission_name = permission.content_type.app_label + "." + permission.codename
+        if user.has_perm(full_permission_name):
+            has.append(ugettext(permission.name))
         else:
-            has_not.append(ugettext(permission["name"]))
+            has_not.append(ugettext(permission.name))
     return has, has_not
 
 
