@@ -370,7 +370,8 @@ def assert_can_add_result_process(user, sample_or_series):
       - `PermissionError`: raised if the user is not allowed to add the result
         process to the sample or series
     """
-    if sample_or_series.currently_responsible_person != user and sample_or_series.project not in user.projects.all():
+    if sample_or_series.currently_responsible_person != user and sample_or_series.project and \
+            sample_or_series.project not in user.projects.all():
         if isinstance(sample_or_series, samples.models.Sample):
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
                             u"responsible person for this sample, nor are you a member of its project.") % sample_or_series
