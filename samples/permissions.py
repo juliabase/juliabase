@@ -92,7 +92,7 @@ def get_user_hash(user):
     aggregator cannot login by itself, the URL must be made unguessable.  This
     is done by appending the secret hash.
 
-    Technically, it is the fist 10 characters of a salted SHA-1 hash of the
+    Technically, it is the first 10 characters of a salted SHA-1 hash of the
     user's name.
 
     :Parameters:
