@@ -52,6 +52,7 @@ class ExceptionsMiddleware(object):
                                         {"title": _(u"Access denied"), "exception": exception},
                                         context_instance=RequestContext(request)))
         elif isinstance(exception, utils.AmbiguityException):
-            render_to_response("samples/disambiguation.html", {"alias": exception.sample_name, "samples": exception.samples,
-                                                               "title": _("Ambiguous sample name")},
-                               context_instance=RequestContext(request))
+            return render_to_response("samples/disambiguation.html",
+                                      {"alias": exception.sample_name, "samples": exception.samples,
+                                       "title": _("Ambiguous sample name")},
+                                      context_instance=RequestContext(request))
