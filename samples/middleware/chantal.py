@@ -11,6 +11,7 @@ from django.contrib.auth.models import SiteProfileNotAvailable
 from samples.models import UserDetails
 from samples.views import utils
 from samples.permissions import PermissionError
+from chantal_common.utils import HttpResponseUnauthorized
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -18,17 +19,6 @@ from django.shortcuts import render_to_response
 
 u"""Middleware for handling samples-database-specific exceptions.
 """
-
-
-# FixMe: Should be taken from ``chantal_common.utils``.  Watch out also for
-# other occurences of this class.
-
-class HttpResponseUnauthorized(django.http.HttpResponse):
-    u"""The response sent back in case of a permission error.  This is another
-    missing response class in Django.  I have no clue why they leave out such
-    trivial code.
-    """
-    status_code = 401
 
 
 class ExceptionsMiddleware(object):
