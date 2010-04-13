@@ -8,6 +8,7 @@ u"""All views and helper routines directly connected with samples themselves
 from __future__ import absolute_import
 
 import time, datetime
+import re
 from django.db import transaction, IntegrityError
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -22,6 +23,8 @@ import django.core.urlresolvers
 from chantal_common.utils import append_error, get_really_full_name, HttpResponseSeeOther
 from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
+from django.forms.widgets import HiddenInput
+
 
 
 class IsMySampleForm(forms.Form):
@@ -287,7 +290,8 @@ class AddSamplesForm(forms.Form):
                            help_text=_(u"separated with commas, no whitespace"))
     project = form_utils.ProjectField(label=_(u"Project"), required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
-
+    
+     
     def __init__(self, user, data=None, **kwargs):
         _ = ugettext
         super(AddSamplesForm, self).__init__(data, **kwargs)
@@ -301,7 +305,9 @@ class AddSamplesForm(forms.Form):
             for external_operator in user.external_contacts.all():
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
             self.fields["substrate_originator"].required = True
-        self.user = user
+        self.user = user        
+        if user.has_perm("samples.clean_substrates"): 
+            self.fields["cleaning_number"] = forms.CharField(label=_(u"Cleaning number"), max_length=7, required=False)        
 
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
@@ -323,6 +329,17 @@ class AddSamplesForm(forms.Form):
         if not key or key == u"<>":
             return None
         return models.ExternalOperator.objects.get(pk=int(key))
+    
+    def clean_cleaning_number(self):
+        if self.cleaned_data["cleaning_number"]:            
+            cleaning_number = self.cleaned_data["cleaning_number"]
+            if not re.match('\d{2,2}N-\d{3,3}\s*$', cleaning_number)  or \
+            not cleaning_number.startswith(time.strftime("%y")):
+                append_error(self, _(u"The cleaning number you have chosen isn't valid."), "cleaning_number")
+            if models.Substrate.objects.filter(cleaning_number=cleaning_number).count():
+                append_error(self, _(u"The cleaning number you have chosen already exists."), "cleaning_number")     
+            return cleaning_number
+        return u""
 
     def clean(self):
         _ = ugettext
@@ -336,7 +353,7 @@ class AddSamplesForm(forms.Form):
         if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
                 append_error(self,_(u"You selected “no substrate”, so the external originator would be lost."),
-                             "substrate_originator")
+                             "substrate_originator")                
         return cleaned_data
 
 
@@ -362,27 +379,42 @@ def add_samples_to_database(add_samples_form, user):
         substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
                                                     material=add_samples_form.cleaned_data["substrate"],
                                                     comments=add_samples_form.cleaned_data["substrate_comments"],
-                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"])
+                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"],
+                                                    cleaning_number=add_samples_form.cleaned_data["cleaning_number"])
         inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
         if inaccuracy:
             substrate.timestamp_inaccuracy = inaccuracy
             substrate.save()
     else:
-        substrate = None
-    provisional_sample_names = \
-        models.Sample.objects.filter(name__startswith=u"*").values_list("name", flat=True)
-    occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
+        substrate = None        
+    if add_samples_form.cleaned_data["cleaning_number"]:
+        cleaning_number = add_samples_form.cleaned_data["cleaning_number"]
+    else:
+        cleaning_number = None        
+    if cleaning_number:
+        prefix = time.strftime(u"%yN")
+        provisional_sample_names = \
+            models.Sample.objects.filter(name__startswith=prefix).values_list("name", flat=True)
+        occupied_provisional_numbers = [int(name[name.rfind(u"-")+1:]) for name in provisional_sample_names]
+    else:    
+        provisional_sample_names = \
+            models.Sample.objects.filter(name__startswith=u"*").values_list("name", flat=True)
+        occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]            
     occupied_provisional_numbers.sort()
     occupied_provisional_numbers.insert(0, 0)
-    number_of_samples = add_samples_form.cleaned_data["number_of_samples"]
+    number_of_samples = add_samples_form.cleaned_data["number_of_samples"]    
     for i in range(len(occupied_provisional_numbers) - 1):
         if occupied_provisional_numbers[i+1] - occupied_provisional_numbers[i] - 1 >= number_of_samples:
             starting_number = occupied_provisional_numbers[i] + 1
             break
     else:
-        starting_number = occupied_provisional_numbers[-1] + 1
-    user_details = utils.get_profile(user)
-    names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
+        starting_number = occupied_provisional_numbers[-1] + 1        
+    user_details = utils.get_profile(user)    
+    if cleaning_number:
+        new_prefix = cleaning_number + u"-%02d"
+    else:
+        new_prefix = u"*%05d"        
+    names = [new_prefix % i for i in range(starting_number, starting_number + number_of_samples)]
     new_names = []
     samples = []
     for new_name in names:
@@ -396,6 +428,9 @@ def add_samples_to_database(add_samples_form, user):
         samples.append(sample)
         if substrate:
             sample.processes.add(substrate)
+        if cleaning_number:
+            models.SampleAlias.objects.create(name=cleaning_number,
+                                              sample=sample)
         user_details.my_samples.add(sample)
         if sample_project:
             for watcher in sample_project.auto_adders.all():
