@@ -387,7 +387,7 @@ def add_samples_to_database(add_samples_form, user):
             substrate.save()
     else:
         substrate = None    
-    cleaning_number = add_samples_form.cleaned_data["cleaning_number"]      
+    cleaning_number = add_samples_form.cleaned_data["cleaning_number"] if "cleaning_number" in add_samples_form.cleaned_data else None
     if cleaning_number:
         prefix = time.strftime(u"%yN")
         provisional_sample_names = \
