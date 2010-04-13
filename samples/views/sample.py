@@ -386,11 +386,8 @@ def add_samples_to_database(add_samples_form, user):
             substrate.timestamp_inaccuracy = inaccuracy
             substrate.save()
     else:
-        substrate = None        
-    if add_samples_form.cleaned_data["cleaning_number"]:
-        cleaning_number = add_samples_form.cleaned_data["cleaning_number"]
-    else:
-        cleaning_number = None        
+        substrate = None    
+    cleaning_number = add_samples_form.cleaned_data["cleaning_number"]      
     if cleaning_number:
         prefix = time.strftime(u"%yN")
         provisional_sample_names = \
@@ -411,10 +408,9 @@ def add_samples_to_database(add_samples_form, user):
         starting_number = occupied_provisional_numbers[-1] + 1        
     user_details = utils.get_profile(user)    
     if cleaning_number:
-        new_prefix = cleaning_number + u"-%02d"
+        names = [cleaning_number + u"-%02d" % i for i in range(1, number_of_samples +1)]
     else:
-        new_prefix = u"*%05d"        
-    names = [new_prefix % i for i in range(starting_number, starting_number + number_of_samples)]
+        names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
     new_names = []
     samples = []
     for new_name in names:
