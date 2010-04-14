@@ -307,7 +307,15 @@ class AddSamplesForm(forms.Form):
             self.fields["substrate_originator"].required = True
         self.user = user        
         if user.has_perm("samples.clean_substrates"): 
-            self.fields["cleaning_number"] = forms.CharField(label=_(u"Cleaning number"), max_length=7, required=False)        
+            try:
+                initial = models.SampleAlias.objects.latest("name").__str__()                 
+            except:
+                initial = time.strftime(u"%yN-000")      
+            initial = initial[:4] + "%03d" % (int(initial[4:]) + 1)      
+            self.fields["cleaning_number"] = forms.CharField(label=_(u"Cleaning number"), max_length=7, 
+                                                             required=False, initial=initial) 
+            self.fields["number_of_samples"].initial = 25       
+             
 
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
@@ -375,19 +383,22 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
+    
+    cleaning_number = add_samples_form.cleaned_data["cleaning_number"] if "cleaning_number" in add_samples_form.cleaned_data else None
     if add_samples_form.cleaned_data["substrate"]:
         substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
                                                     material=add_samples_form.cleaned_data["substrate"],
                                                     comments=add_samples_form.cleaned_data["substrate_comments"],
-                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"],
-                                                    cleaning_number=add_samples_form.cleaned_data["cleaning_number"])
+                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"])
         inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
         if inaccuracy:
             substrate.timestamp_inaccuracy = inaccuracy
             substrate.save()
+        if cleaning_number:
+            substrate.cleaning_number = cleaning_number
+            substrate.save()
     else:
-        substrate = None    
-    cleaning_number = add_samples_form.cleaned_data["cleaning_number"] if "cleaning_number" in add_samples_form.cleaned_data else None
+        substrate = None        
     if cleaning_number:
         prefix = time.strftime(u"%yN")
         provisional_sample_names = \
