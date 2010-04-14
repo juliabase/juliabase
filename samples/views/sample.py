@@ -310,8 +310,8 @@ class AddSamplesForm(forms.Form):
             try:
                 initial = models.SampleAlias.objects.latest("name").__str__()                 
             except:
-                initial = time.strftime(u"%yN-000")      
-            initial = initial[:4] + "%03d" % (int(initial[4:]) + 1)      
+                initial = u"0000000"      
+            initial = time.strftime(u"%yN-") + ("%03d" % (int(initial[4:]) + 1) )     
             self.fields["cleaning_number"] = forms.CharField(label=_(u"Cleaning number"), max_length=7, 
                                                              required=False, initial=initial) 
             self.fields["number_of_samples"].initial = 25       
