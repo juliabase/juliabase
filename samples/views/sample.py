@@ -283,6 +283,7 @@ class AddSamplesForm(forms.Form):
     substrate_originator = forms.ChoiceField(label=_(u"Substrate originator"), required=False)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     timestamp_inaccuracy = forms.IntegerField(required=False)
+    sample_name = forms.CharField(max_length=30, required=False)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
@@ -323,6 +324,14 @@ class AddSamplesForm(forms.Form):
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
 
+    def clean_sample_name(self):
+        """Assure that only admins can set arbitrary sample names this way.  It
+        is intended to be used only for importing legacy data through the
+        remote client.
+        """
+        if self.cleaned_data["sample_name"] and not self.user.is_superuser:
+            raise ValidationError(u"Only an administrator can give arbitrary sample names.")
+
     def clean_substrate(self):
         substrate = self.cleaned_data["substrate"]
         return substrate if substrate != u"<>" else None
@@ -340,7 +349,7 @@ class AddSamplesForm(forms.Form):
         cleaning_number = self.cleaned_data["cleaning_number"]
         if cleaning_number:
             if not self.can_clean_substrates:
-                # Not translatable because can't haven with unmodified browser
+                # Not translatable because can't happen with unmodified browser
                 raise ValidationError(u"You don't have the permission to give cleaning numbers.")
             if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
                 raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
@@ -359,8 +368,14 @@ class AddSamplesForm(forms.Form):
                              "substrate_comments")
         if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
-                append_error(self,_(u"You selected “no substrate”, so the external originator would be lost."),
+                append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
                              "substrate_originator")
+        if cleaned_data.get("sample_name"):
+            # Not translatable because can't happen with unmodified browser
+            if cleaned_data.get("number_of_samples") != 1:
+                append_error(self, u"You can give an arbitrary name only to exactly one sample.", "number_of_samples")
+            if cleaned_data.get("bulk_rename"):
+                append_error(self, u"You can't give an arbitrary name *and* perform a bulk rename.", "bulk_rename")
         return cleaned_data
 
 
@@ -382,14 +397,15 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
-    cleaning_number = add_samples_form.cleaned_data.get("cleaning_number")
-    if add_samples_form.cleaned_data["substrate"]:
-        substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
-                                                    material=add_samples_form.cleaned_data["substrate"],
-                                                    cleaning_number=add_samples_form.cleaned_data["cleaning_number"],
-                                                    comments=add_samples_form.cleaned_data["substrate_comments"],
-                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"])
-        inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
+    cleaned_data = add_samples_form.cleaned_data
+    cleaning_number = cleaned_data.get("cleaning_number")
+    if cleaned_data["substrate"]:
+        substrate = models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
+                                                    material=cleaned_data["substrate"],
+                                                    cleaning_number=cleaned_data["cleaning_number"],
+                                                    comments=cleaned_data["substrate_comments"],
+                                                    external_operator=cleaned_data["substrate_originator"])
+        inaccuracy = cleaned_data["timestamp_inaccuracy"]
         if inaccuracy:
             substrate.timestamp_inaccuracy = inaccuracy
             substrate.save()
@@ -400,7 +416,7 @@ def add_samples_to_database(add_samples_form, user):
     occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
     occupied_provisional_numbers.sort()
     occupied_provisional_numbers.insert(0, 0)
-    number_of_samples = add_samples_form.cleaned_data["number_of_samples"]
+    number_of_samples = cleaned_data["number_of_samples"]
     for i in range(len(occupied_provisional_numbers) - 1):
         if occupied_provisional_numbers[i+1] - occupied_provisional_numbers[i] - 1 >= number_of_samples:
             starting_number = occupied_provisional_numbers[i] + 1
@@ -408,20 +424,19 @@ def add_samples_to_database(add_samples_form, user):
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = utils.get_profile(user)
-    if cleaning_number:
+    if cleaned_data["sample_name"]:
+        names = [cleaned_data["sample_name"]]
+    elif cleaning_number:
         names = [cleaning_number + u"-%02d" % i for i in range(1, number_of_samples + 1)]
     else:
         names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
     new_names = []
     samples = []
+    current_location, purpose, tags, project = cleaned_data["current_location"], cleaned_data["purpose"], \
+        cleaned_data["tags"], cleaned_data["project"]
     for new_name in names:
-        sample_project = add_samples_form.cleaned_data["project"]
-        sample = models.Sample.objects.create(name=new_name,
-                                              current_location=add_samples_form.cleaned_data["current_location"],
-                                              currently_responsible_person=user,
-                                              purpose=add_samples_form.cleaned_data["purpose"],
-                                              tags=add_samples_form.cleaned_data["tags"],
-                                              project=sample_project)
+        sample = models.Sample.objects.create(name=new_name, current_location=current_location,
+                                              currently_responsible_person=user, purpose=purpose, tags=tags, project=project)
         samples.append(sample)
         if substrate:
             sample.processes.add(substrate)
@@ -429,8 +444,8 @@ def add_samples_to_database(add_samples_form, user):
             models.SampleAlias.objects.create(name=cleaning_number, sample=sample)
         else:
             user_details.my_samples.add(sample)
-        if sample_project:
-            for watcher in sample_project.auto_adders.all():
+        if project:
+            for watcher in project.auto_adders.all():
                 watcher.my_samples.add(sample)
         new_names.append(unicode(sample))
     return new_names, samples
