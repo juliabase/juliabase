@@ -525,7 +525,7 @@ class Substrate(Process):
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
     cleaning_number = models.CharField(_(u"cleaning number"), max_length=10)
-    
+
     class Meta:
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")

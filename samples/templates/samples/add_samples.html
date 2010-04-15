@@ -37,27 +37,27 @@
   <div style="display: none">
     {{ add_samples.timestamp_inaccuracy }}
   </div> -->
-  
-  <table>  
-    {% for field in add_samples %}             
-        {% if field.label == "Substrate originator" %}                        
+
+  <table>
+    {% for field in add_samples %}
+        {% if field.label == "Substrate originator" %}
             {% if external_operators_available %}
                 <tr>
                 {% input_field field %}
                 </tr>
-            {% endif %} 
-        {% else %}{% if field.label == "Timestamp inaccuracy" %}             
+            {% endif %}
+        {% else %}{% if field.label == "Timestamp inaccuracy" %}
         {% else %}
             <tr>
             {% input_field field %}
             </tr>
-        {% endif %}{% endif %}                            
+        {% endif %}{% endif %}
     {% endfor %}
   </table>
   <div style="display: none">
     {{ add_samples.timestamp_inaccuracy }}
   </div>
-  
+
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
 
