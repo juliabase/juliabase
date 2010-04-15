@@ -524,7 +524,7 @@ class Substrate(Process):
     `Process.external_operator`, it is an external sample.
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
-    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10)
+    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u"substrate")
@@ -539,7 +539,9 @@ class Substrate(Process):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Substrate, self).get_data()
-        csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))        
+        csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))
+        # FixMe: Should this be appended even if it doesn't exist?
+        csv_node.items.append(CSVItem(_(u"cleaning number"), self.cleaning_number))
         return csv_node
 
 
