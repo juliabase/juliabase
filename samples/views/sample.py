@@ -340,7 +340,8 @@ class AddSamplesForm(forms.Form):
         cleaning_number = self.cleaned_data["cleaning_number"]
         if cleaning_number:
             if not self.can_clean_substrates:
-                raise ValidationError(_(u"You have not the permission to give cleaning numbers."))
+                # Not translatable because can't haven with unmodified browser
+                raise ValidationError(u"You don't have the permission to give cleaning numbers.")
             if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
                 raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
             if models.Substrate.objects.filter(cleaning_number=cleaning_number).count():
