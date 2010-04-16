@@ -199,11 +199,12 @@ def add_sample(request):
     accounts.
 
     :Parameters:
-      - `request`: the current HTTP Request object
+      - `request`: the current HTTP Request object; it must contain the sample
+        data in the POST data.
 
     :Returns:
       The primary key of the created sample.  ``False`` if something went
-      wrong.
+      wrong.  It may return a 404 if the project wasn't found.
 
     :rtype: ``HttpResponse``
     """
@@ -229,3 +230,34 @@ def add_sample(request):
     except IntegrityError:
         return utils.respond_to_remote_client(False)
     return utils.respond_to_remote_client(sample.pk)
+
+
+@login_required
+def add_alias(request):
+    u"""Adds a new sample alias name to the database.  This view can only be
+    used by admin accounts.
+
+    :Parameters:
+      - `request`: the current HTTP Request object; it must contain the
+        sample's primary key and the alias name in the POST data.
+
+    :Returns:
+      ``True`` if it worked, ``False`` if something went wrong.  It returns a
+      404 if the sample wasn't found.
+
+    :rtype: ``HttpResponse``
+    """
+    if not request.user.is_staff:
+        return utils.respond_to_remote_client(False)
+    try:
+        sample_pk = request.POST["sample"]
+        alias = request.POST["alias"]
+    except KeyError:
+        return utils.respond_to_remote_client(False)
+    sample = get_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
+    try:
+        models.SampleAlias.create(name=alias, sample=sample)
+    except IntegrityError:
+        # Alias already present
+        return utils.respond_to_remote_client(False)
+    return utils.respond_to_remote_client(True)
