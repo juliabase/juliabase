@@ -7,7 +7,7 @@
 {% block frame_content %}
 <form method="post" action="">
   {% error_list add_samples _("General error") %}
- <!-- <table>
+  <table>
     <tr>
       {% input_field add_samples.number_of_samples %}
     </tr><tr>
@@ -33,32 +33,15 @@
     </tr><tr>
       {% input_field add_samples.bulk_rename %}
     </tr>
+    {% if add_samples.can_clean_substrates %}
+      <tr>
+        {% input_field add_samples.cleaning_number %}
+      </tr>
+    {% endif %}
   </table>
   <div style="display: none">
     {{ add_samples.timestamp_inaccuracy }}
-  </div> -->
-
-  <table>
-    {% for field in add_samples %}
-        {% if field.label == "Substrate originator" %}
-            {% if external_operators_available %}
-                <tr>
-                {% input_field field %}
-                </tr>
-            {% endif %}
-        {% else %}{% if field.label == "Timestamp inaccuracy" %}
-        {% else %}
-            <tr>
-            {% input_field field %}
-            </tr>
-        {% endif %}{% endif %}
-    {% endfor %}
-  </table>
-  <div style="display: none">
-    {{ add_samples.timestamp_inaccuracy }}
-    {{ add_samples.sample_name }}
-  </div>
-
+  </div> 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
 
