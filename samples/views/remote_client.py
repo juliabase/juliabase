@@ -108,7 +108,7 @@ def available_items(request, model_name):
 
     :rtype: ``HttpResponse``
     """
-    if not request.user.is_superuser:
+    if not request.user.is_staff:
         raise permissions.PermissionError(request.user, _(u"Only the administrator can access this resource."))
     for app_name in settings.INSTALLED_APPS:
         try:

@@ -284,6 +284,7 @@ class AddSamplesForm(forms.Form):
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     timestamp_inaccuracy = forms.IntegerField(required=False)
     sample_name = forms.CharField(max_length=30, required=False)
+    currently_responsible_person = forms.ChoiceField(label=_(u"Currently responsible person"), required=False)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
@@ -329,7 +330,7 @@ class AddSamplesForm(forms.Form):
         is intended to be used only for importing legacy data through the
         remote client.
         """
-        if self.cleaned_data["sample_name"] and not self.user.is_superuser:
+        if self.cleaned_data["sample_name"] and not self.user.is_staff:
             raise ValidationError(u"Only an administrator can give arbitrary sample names.")
 
     def clean_substrate(self):
