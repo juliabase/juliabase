@@ -10,6 +10,7 @@ in JSON format.
 from __future__ import absolute_import
 
 import sys
+from django.db import IntegrityError
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _
@@ -17,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
+from django.shortcuts import get_object_or_404
 from chantal_common.models import Project
 from samples.views import utils
 from samples import models, permissions
@@ -188,3 +190,42 @@ def next_deposition_number(request, letter):
     :rtype: ``HttpResponse``
     """
     return utils.respond_to_remote_client(utils.get_next_deposition_number(letter))
+
+
+@login_required
+def add_sample(request):
+    u"""Adds a new sample to the database.  It is added without processes, in
+    particular, without a substrate.  This view can only be used by admin
+    accounts.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :Returns:
+      The primary key of the created sample.  ``False`` if something went
+      wrong.
+
+    :rtype: ``HttpResponse``
+    """
+    if not request.user.is_staff:
+        return utils.respond_to_remote_client(False)
+    try:
+        name = request.POST["name"]
+        current_location = request.POST.get("current_location", u"")
+        currently_responsible_person = request.POST.get("currently_responsible_person")
+        purpose = request.POST.get("purpose", u"")
+        tags = request.POST.get("tags", u"")
+        project = request.POST.get("project")
+    except KeyError:
+        return utils.respond_to_remote_client(False)
+    if currently_responsible_person:
+        currently_responsible_person = get_or_404(django.contrib.auth.models.User, username=currently_responsible_person)
+    if project:
+        project = get_or_404(Project, name=project)
+    try:
+        sample = models.Sample.create(name=name, current_location=current_location,
+                                      currently_responsible_person=currently_responsible_person, purpose=purpose, tags=tags,
+                                      project=project)
+    except IntegrityError:
+        return utils.respond_to_remote_client(False)
+    return utils.respond_to_remote_client(sample.pk)
