@@ -446,6 +446,7 @@ class SampleAlias(models.Model):
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
 
     class Meta:
+        unique_together = (("name", "sample"),)
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
 
