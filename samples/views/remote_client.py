@@ -261,3 +261,32 @@ def add_alias(request):
         # Alias already present
         return utils.respond_to_remote_client(False)
     return utils.respond_to_remote_client(True)
+
+
+@login_required
+def substrate_by_sample(request, sample_id):
+    u"""Searches for the substrate of a sample.  It returns a tuple with the
+    primary key of the substrate process and its timestamp.  If the sample
+    isn't found, a 404 is returned.  If something else went wrong (in
+    particular, no substrate was found), ``False`` is returned.
+
+    :Parameters:
+      - `request`: the HTTP request object
+      - `sample_id`: the primary key of the sample
+
+    :type request: ``QueryDict``
+    :type sample_id: unicode
+
+    :Return:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    if not request.user.is_staff:
+        return utils.respond_to_remote_client(False)
+    sample = get_or_404(models.Sample, pk=utils.int_or_zero(sample_id))
+    for process in sample.processes.all():
+        process = process.find_actual_instance()
+        if isinstance(process, models.Substrate):
+            return utils.respond_to_remote_client((process.pk, process.timestamp))
+    return utils.respond_to_remote_client(False)

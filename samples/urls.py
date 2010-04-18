@@ -109,6 +109,7 @@ urlpatterns = patterns("samples.views",
                        (r"^logout_remote_client$", "remote_client.logout_remote_client"),
                        (r"^add_sample$", "remote_client.add_sample"),
                        (r"^add_alias$", "remote_client.add_alias"),
+                       (r"^substrates_by_sample/(?P<sample_id>.+)", "remote_client.substrate_by_sample"),
 
                        (r"^maintenance/%s$" % settings.CREDENTIALS["maintenance_hash"],
                         "maintenance.maintenance"),
