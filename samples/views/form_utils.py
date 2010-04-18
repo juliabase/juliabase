@@ -20,6 +20,8 @@ from samples import models, permissions
 from samples.views import utils
 
 
+# FixMe: Should this also contain "operator = OperatorField"?
+
 class ProcessForm(ModelForm):
     u"""Abstract model form class for processes.  It ensures that timestamps
     are not in the future, and that comments contain only allowed Markdown
@@ -431,6 +433,89 @@ class FixedOperatorField(forms.ChoiceField):
         value = super(FixedOperatorField, self).clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
+
+class OperatorField(forms.ChoiceField):
+    u"""Form field class for the selection of a single operator.  This is
+    intended for edit-process views when the operator must be the currently
+    logged-in user, or the previous operator.  In other words, it must be
+    impossible to change it.  Then, you can use this form field for the
+    operator, and hide the field from display by ``style="display: none"`` in
+    the HTML template.
+
+    If you want to use this field, do the following things:
+
+    1. This field must be made required
+
+    2. If the user is not staff, make the possible choices of the external
+       operator field empty.
+
+    3. Assure in your ``clean()`` method that non-staff doesn't submit an
+       external operator.  In the same method, say::
+
+           self.cleaned_data["external_operator"] = \
+               self.fields["operator"].external_operator
+
+    4. In the template, show the external operator field only for staff.
+    """
+
+    def set_choices(self, user, old_process):
+        u"""Set the operator list shown in the widget.  It combines selectable
+        users and external operators.  You *must* call this method in the
+        constructor of the form in which you use this field, otherwise the
+        selection box will remain emtpy.  It works even for staff users, which
+        can choose from *all* users and external operators (including inactive
+        users such as “nobody”).
+
+        :Parameters:
+          - `user`: the currently logged-in user.
+          - `old_process`: if the process is to be edited, the former instance
+            of the process; otherwise, ``None``
+
+        :type operator: ``django.contrib.auth.models.User``
+        :type is_staff: `models.Process`
+        """
+        self.user = user
+        if old_process:
+            if user.is_staff:
+                self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+            else:
+                self.choices = [(old_process.operator.pk, old_process.operator.username)]
+            self.initial = old_process.operator.pk
+        else:
+            if user.is_staff:
+                self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+            else:
+                self.choices = [(user.pk, user.username)]
+            self.initial = user.pk
+        if user.is_staff:
+            external_operators = list(models.ExternalOperator.objects.all())
+        else:
+            external_operators = list(user.external_contacts.all())
+        if old_process and old_process.external_operator:
+            if not old_process.external_operator in external_operators:
+                external_operators.append(old_process.external_operator)
+            self.initial = "extern-" + str(old_process.external_operator.pk)
+        for external_operator in external_operators:
+            self.choices.append(("extern-" + str(external_operator.pk), external_operator.name))
+
+    def clean(self, value):
+        u"""Return the selected operator.  Additionally, it sets the attribute
+        `external_operator` if the user selected one (it sets it to ``None``
+        otherwise).  If an external operator was selected, this routine returns
+        the currently logged-in user.
+        """
+        value = super(OperatorField, self).clean(value)
+        if value.startswith("extern-"):
+            self.external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
+            return self.user
+        else:
+            self.external_operator = None
+            return django.contrib.auth.models.User.objects.get(pk=int(value))
+
+
+# FixMe: This should be moved to chantal_ipv, because this special case is only
+# necessary because samples may get renamed after depositions.  Maybe
+# refactoring should be done because it is used for substrates, too.
 
 class DepositionSamplesForm(forms.Form):
     u"""Form for the list selection of samples that took part in the

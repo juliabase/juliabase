@@ -531,10 +531,14 @@ class Substrate(Process):
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")
         _ = lambda x: x
-        permissions = (("clean_substrates", _("Can clean substrates")),)
+        permissions = (("clean_substrate", _("Can clean substrates")),
+                       ("add_edit_substrate", _("Can create and edit substrates")))
 
     def __unicode__(self):
-        return self.material
+        result = self.material
+        if self.cleaning_number:
+            result += u" ({0})".format(self.cleaning_number)
+        return result
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
@@ -544,6 +548,21 @@ class Substrate(Process):
         # FixMe: Should this be appended even if it doesn't exist?
         csv_node.items.append(CSVItem(_(u"cleaning number"), self.cleaning_number))
         return csv_node
+
+    @classmethod
+    def get_add_link(cls):
+        u"""Return the URL to the “add” view for this process.
+
+        This method marks the current class as a so-called physical process.
+        This implies that it also must have an “add-edit” permission.
+
+        :Return:
+          the full URL to the add page for this process
+
+        :rtype: str
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_substrate")
 
 
 sample_death_reasons = (

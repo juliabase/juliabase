@@ -275,6 +275,8 @@ class AddSamplesForm(forms.Form):
     user to add arbitrary samples with the same properties (except for the name
     of course), this should be converted to a *model* form in order to satisfy
     the dont-repeat-yourself principle.
+
+    Besides, we have massive code duplication to substrate.SubstrateForm.
     """
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
@@ -305,7 +307,7 @@ class AddSamplesForm(forms.Form):
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
             self.fields["substrate_originator"].required = True
         self.user = user
-        self.can_clean_substrates = user.has_perm("samples.clean_substrates")
+        self.can_clean_substrates = user.has_perm("samples.clean_substrate")
         if self.can_clean_substrates:
             current_year = datetime.date.today().strftime(u"%y")
             old_cleaning_numbers = list(models.Substrate.objects.filter(cleaning_number__startswith=current_year).
