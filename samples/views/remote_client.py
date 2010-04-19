@@ -192,11 +192,44 @@ def next_deposition_number(request, letter):
     return utils.respond_to_remote_client(utils.get_next_deposition_number(letter))
 
 
+def get_next_quirky_name(sample_name):
+    u"""Returns the next sample name for legacy samples that don't fit into any
+    known name scheme.
+
+    :Parameters:
+      - `sample_name`: the legacy sample name
+
+    :type sample_name: unicode
+
+    :Return:
+      the Chantal legacy sample name
+
+    :rtype: unicode
+    """
+    names = models.Sample.objects.filter(name__startswith="90-LGCY-").filter(name__iendswith=sample_name).\
+        values_list("name", flat=True)
+    prefixes = set(name[8:].partition("-")[2] for name in names)
+    free_prefix = u""
+    while free_prefix in prefixes:
+        digits = [ord(digit) for digit in free_prefix]
+        for i in range(len(digits) - 1, -1 , -1):
+            digits[i] += 1
+            if digits[i] > 122:
+                digits[i] = 97
+            else:
+                break
+        else:
+            digits[0:0] = [97]
+        free_prefix = u"".join(unichr(digit) for digit in digits)
+    return utils.respond_to_remote_client(u"90-LGCY-{0}-{1}".format(free_prefix, sample_name))
+
+
 @login_required
 def add_sample(request):
     u"""Adds a new sample to the database.  It is added without processes, in
     particular, without a substrate.  This view can only be used by admin
-    accounts.
+    accounts.  If the query string contains ``"legacy=True"``, the sample gets
+    a quirky legacy name (and an appropriate alias).
 
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the sample
@@ -219,6 +252,9 @@ def add_sample(request):
         project = request.POST.get("project")
     except KeyError:
         return utils.respond_to_remote_client(False)
+    is_legacy_name = request.GET.get("legacy") == u"True"
+    if is_legacy_name:
+        name = get_next_quirky_name(name)
     if currently_responsible_person:
         currently_responsible_person = get_or_404(django.contrib.auth.models.User, username=currently_responsible_person)
     if project:
@@ -227,6 +263,8 @@ def add_sample(request):
         sample = models.Sample.create(name=name, current_location=current_location,
                                       currently_responsible_person=currently_responsible_person, purpose=purpose, tags=tags,
                                       project=project)
+        if is_legacy_name:
+            models.SampleAlias.create(name=request.POST["name"], sample=sample)
     except IntegrityError:
         return utils.respond_to_remote_client(False)
     return utils.respond_to_remote_client(sample.pk)
@@ -240,6 +278,8 @@ def add_alias(request):
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the
         sample's primary key and the alias name in the POST data.
+
+    :type request: ``HttpRequest``
 
     :Returns:
       ``True`` if it worked, ``False`` if something went wrong.  It returns a
@@ -274,7 +314,7 @@ def substrate_by_sample(request, sample_id):
       - `request`: the HTTP request object
       - `sample_id`: the primary key of the sample
 
-    :type request: ``QueryDict``
+    :type request: ``HttpRequest``
     :type sample_id: unicode
 
     :Return:
