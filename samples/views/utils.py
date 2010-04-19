@@ -334,7 +334,7 @@ def get_next_deposition_number(letter):
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
-    prefix = ur"%02d%s-" % (datetime.date.today().year % 100, letter)
+    prefix = ur"%s%s-" % (datetime.date.today().strftime(u"%y"), letter)
     prefix_length = len(prefix)
     pattern_string = ur"^%s[0-9]+" % re.escape(prefix)
     deposition_numbers = \
