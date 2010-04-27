@@ -116,7 +116,7 @@ def get_my_layers(user_details, deposition_model):
 
 class AddLayersForm(forms.Form):
     _ = ugettext_lazy
-    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
+    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, max_value=10, required=False)
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
 
     def __init__(self, user_details, model, data=None, **kwargs):
