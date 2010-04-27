@@ -203,6 +203,7 @@ sample_name_pattern = \
     re.compile(ur"(\W|\A)(?P<name>[0-9][0-9](([BVHLCS]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?)|"
                ur"(-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})-[-A-Za-z_/0-9]+)))(\W|\Z)", re.UNICODE)
 sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A-Za-zÄÖÜäöüß_/0-9]+)(\W|\Z)", re.UNICODE)
+
 @register.filter
 @stringfilter
 def markdown_samples(value):
@@ -217,7 +218,8 @@ def markdown_samples(value):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    value = escape(chantal_common.utils.substitute_html_entities(unicode(value)))
+    value = chantal_common.templatetags.chantal.substitute_formulae(
+        chantal_common.utils.substitute_html_entities(unicode(value)))
     position = 0
     result = u""
     while position < len(value):
