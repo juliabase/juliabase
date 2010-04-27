@@ -86,9 +86,22 @@ def substitute_formulae(string):
     This is achieved by using Google's formula chart API.  This means that I
     simply insert an ``<img>`` tag with a Google URL for every formula.
 
-    Note that any HTML which is found along the way is escaped.  Thus, this
-    routine returns a safe string.
+    Note that any HTML-like material which is found along the way is escaped.
+    Thus, this routine returns a safe string.
+
+    :Parameters:
+      - `string`: raw text from the user or the database
+
+    :type string: unicode
+
+    :Return:
+      The escaped string, marked as safe and ready to be used in the output
+      HTML.  Any LaTeX formulae are replaced by Google images.
+
+    :rtype: safe unicode
     """
+    if "$" not in string:
+        return mark_safe(escape(string))
     no_further_match = False
     position = 0
     result = u""
