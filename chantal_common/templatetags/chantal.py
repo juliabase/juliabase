@@ -79,6 +79,43 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
 get_really_full_name.needs_autoescape = True
 
 
+math_delimiter_pattern = re.compile(ur"(?<!\\)\$", re.UNICODE)
+
+def substitute_formulae(string):
+    u"""Substitute all math equations between ``$…$`` by the formula graphics.
+    This is achieved by using Google's formula chart API.  This means that I
+    simply insert an ``<img>`` tag with a Google URL for every formula.
+
+    Note that any HTML which is found along the way is escaped.  Thus, this
+    routine returns a safe string.
+    """
+    no_further_match = False
+    position = 0
+    result = u""
+    while position < len(string):
+        match = math_delimiter_pattern.search(string, position)
+        if match:
+            start = match.start() + 1
+            match = math_delimiter_pattern.search(string, start + 1)
+            if match:
+                end = match.start()
+                latex_markup = string[start:end]
+                result += escape(string[position:start - 1]) + \
+                    u"""<img style="vertical-align: middle" alt="{0}" """ \
+                    u"""src="http://chart.apis.google.com/chart?chf=bg,s,00000000&cht=tx&chl={1}"/>""".\
+                    format(escape(u" ".join(latex_markup.split())).replace("\\", "&#x5c;"),
+                           urlquote_plus(ur"\Large " + latex_markup))
+                position = end + 1
+            else:
+                no_further_match = True
+        else:
+            no_further_match = True
+        if no_further_match:
+            result += escape(string[position:])
+            break
+    return mark_safe(result)
+
+
 @register.filter
 @stringfilter
 def markdown(value):
@@ -92,7 +129,7 @@ def markdown(value):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    return markup.markdown(escape(utils.substitute_html_entities(unicode(value))))
+    return markup.markdown(substitute_formulae(utils.substitute_html_entities(unicode(value))))
 
 
 @register.simple_tag
