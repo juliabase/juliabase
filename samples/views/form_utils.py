@@ -503,6 +503,32 @@ def clean_time_field(value):
         return "%d:%02d:%02d" % (hours, minutes, seconds)
 
 
+def clean_date_field(value):
+    u"""General helper function for use in the ``clean_...`` methods in forms.
+    It tests whether the given date is not in the future.
+    It is a small an trivial test, but it is used in the most layer forms.
+
+    The test of correct input is performed by the `date field` itself.
+
+    :Parameter:
+        - `value`: the value input by the user.  Usually this is the result of a
+        ``cleaned_data[...]`` call.
+
+    :type value: datetime.date object
+
+    :Return:
+        the original ``value`` (unchanged)
+
+    :rtype: datetime.date object
+
+    :Exception:
+        -`ValidationError`: if the specified date lies in the future.
+    """
+    if value > datetime.date.today():
+        raise ValidationError(_(u"The date must not be in the future."))
+    return value
+
+
 quantity_pattern = re.compile(ur"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
 u"""Regular expression pattern for valid physical quantities."""
 def clean_quantity_field(value, units):

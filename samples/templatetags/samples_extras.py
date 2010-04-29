@@ -43,7 +43,6 @@ def quantity(value, unit=None, autoescape=False):
         value_string = conditional_escape(value_string)
         unit = conditional_escape(unit) if unit else None
     result = u""
-    i = 0
     match = re.match(ur"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
                      ur"(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
     match_dict = match.groupdict(u"")
@@ -313,3 +312,19 @@ def value_field(parser, token):
     else:
         raise template.TemplateSyntaxError, "value_field requires one or two arguments"
     return ValueFieldNode(field, unit)
+
+
+@register.simple_tag
+def split_field(field1, field2):
+    u"""Tag for combining two input fields wich have the same label and help text.
+    It consists of two ``<td>`` elements, one for the label and one for
+    the two input fields, so it spans two columns.  This tag is primarily used in
+    tamplates of edit views.  Example::
+
+        {% split_field layer.voltage1 layer.voltage2 %}
+    """
+    result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
+        {"html_name": field1.html_name, "label": field1.label}
+    help_text = u""" <span class="help">(%s)</span>""" % field1.help_text if field1.help_text else u""
+    result += u"""<td class="input">%(field1)s/%(field2)s%(help_text)s</td>""" % {"field1": field1, "field2": field2, "help_text": help_text}
+    return result
