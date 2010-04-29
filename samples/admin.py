@@ -8,7 +8,7 @@ from samples.models_common import ExternalOperator, Sample, SampleAlias, SampleS
     SampleSeries, Initials, UserDetails
 from samples.models_feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysicalProcess, FeedEditedPhysicalProcess, \
     FeedResult, FeedCopiedMySamples, FeedEditedSamples, FeedSampleSplit, FeedEditedSampleSeries, FeedNewSampleSeries, \
-    FeedMovedSampleSeries, FeedChangedProject
+    FeedMovedSampleSeries, FeedChangedTopic
 
 admin.site.register(ExternalOperator)
 admin.site.register(Sample)
@@ -32,4 +32,4 @@ admin.site.register(FeedSampleSplit)
 admin.site.register(FeedEditedSampleSeries)
 admin.site.register(FeedNewSampleSeries)
 admin.site.register(FeedMovedSampleSeries)
-admin.site.register(FeedChangedProject)
+admin.site.register(FeedChangedTopic)
