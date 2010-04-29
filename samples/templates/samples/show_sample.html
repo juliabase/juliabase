@@ -36,12 +36,12 @@
       {% value_field sample.currently_responsible_person "user" %}
     </tr>
     <tr>
-    {% if sample.project %}
-      {% value_field sample.project %}
+    {% if sample.topic %}
+      {% value_field sample.topic %}
     {% else %}
-      <td class="label">{% verbose_name Sample.project %}:</td>
+      <td class="label">{% verbose_name Sample.topic %}:</td>
       <td class="value">— <span style="color: red; font-weight: normal; margin-left: 1em"
-                                >({% trans 'Attention: Projectless samples may be viewed and edited by anyone.' %})</span></td>
+                                >({% trans 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
     {% endif %}
     </tr>
     {% if sample.tags %}

@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
-from chantal_common.models import Project
+from chantal_common.models import Topic
 from samples.views import utils
 from samples import models, permissions
 
@@ -41,7 +41,7 @@ def primary_keys(request):
 
         {"samples": {"01B410": 5, "01B402": 42}}
 
-    The same works for ``"projects"`` and ``"users"``.  You can also mix all
+    The same works for ``"topics"`` and ``"users"``.  You can also mix all
     tree in the query string.  If you pass ``"*"`` instead of a values list,
     you get *all* primary keys.  For samples, however, this is limited to
     “My Samples”.
@@ -60,15 +60,15 @@ def primary_keys(request):
     """
     query_dict = utils.parse_query_string(request)
     result_dict = {}
-    if "projects" in query_dict:
-        all_projects = set(project for project in Project.objects.all()
-                           if not project.restricted or project in user.projects)
-        if query_dict["projects"] == "*":
-            projects = all_projects
+    if "topics" in query_dict:
+        all_topics = set(topic for topic in Topic.objects.all()
+                           if not topic.restricted or topic in user.topics)
+        if query_dict["topics"] == "*":
+            topics = all_topics
         else:
-            projectnames = query_dict["projects"].split(",")
-            projects = set(project for project in all_projects if project.name in projectnames)
-        result_dict["projects"] = dict((project.name, project.id) for project in projects)
+            topicnames = query_dict["topics"].split(",")
+            topics = set(topic for topic in all_topics if topic.name in topicnames)
+        result_dict["topics"] = dict((topic.name, topic.id) for topic in topics)
     if "samples" in query_dict:
         if query_dict["samples"] == "*":
             result_dict["samples"] = dict(utils.get_profile(request.user).my_samples.values_list("name", "id"))

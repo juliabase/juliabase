@@ -3,17 +3,17 @@
 
 {% with entry.samples.all as samples %}
   <p>
-    {% if entry.old_project %}
-      {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.project as project and entry.old_project as old_project %}
-	{{ originator }} has moved the following sample from project “{{ old_project }}” to the project “{{ project }}”:
+    {% if entry.old_topic %}
+      {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.old_topic as old_topic %}
+	{{ originator }} has moved the following sample from topic “{{ old_topic }}” to the topic “{{ topic }}”:
       {% plural %}
-	{{ originator }} has added the following samples from project “{{ old_project }}” to the project “{{ project }}”:
+	{{ originator }} has added the following samples from topic “{{ old_topic }}” to the topic “{{ topic }}”:
       {% endblocktrans %}
     {% else %}
-      {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.project as project %}
-	{{ originator }} has moved the following formerly project-less sample to the project “{{ project }}”:
+      {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
+	{{ originator }} has moved the following formerly topic-less sample to the topic “{{ topic }}”:
       {% plural %}
-	{{ originator }} has added the following formerly project-less samples to the project “{{ project }}”:
+	{{ originator }} has added the following formerly topic-less samples to the topic “{{ topic }}”:
       {% endblocktrans %}
     {% endif %}
   </p>

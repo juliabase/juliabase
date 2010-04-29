@@ -47,16 +47,16 @@ def show_user(request, login_name):
 
 class UserDetailsForm(forms.ModelForm):
     u"""Model form for user preferences.  I exhibit only two field here, namely
-    the auto-addition projects and the switch whether a user wants to get only
+    the auto-addition topics and the switch whether a user wants to get only
     important news or all.
     """
     _ = ugettext_lazy
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
-        self.fields["auto_addition_projects"].queryset = user.projects
+        self.fields["auto_addition_topics"].queryset = user.topics
     class Meta:
         model = models.UserDetails
-        fields = ("auto_addition_projects", "only_important_news")
+        fields = ("auto_addition_topics", "only_important_news")
 
 
 @login_required
@@ -104,18 +104,18 @@ def edit_preferences(request, login_name):
     return render_to_response("samples/edit_preferences.html",
                               {"title": _(u"Change preferences for %s") % get_really_full_name(request.user),
                                "user_details": user_details_form, "initials": initials_form,
-                               "has_projects": bool(user.projects.count())},
+                               "has_topics": bool(user.topics.count())},
                               context_instance=RequestContext(request))
 
 
 @login_required
-def projects_and_permissions(request, login_name):
+def topics_and_permissions(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(
-            request.user, _(u"You can't access the list of projects and permissions of another user."))
-    return render_to_response("samples/projects_and_permissions.html",
-                              {"title": _(u"Projects and permissions for %s") % get_really_full_name(request.user),
-                               "projects": user.projects.all(), "permissions": permissions.get_user_permissions(user),
+            request.user, _(u"You can't access the list of topics and permissions of another user."))
+    return render_to_response("samples/topics_and_permissions.html",
+                              {"title": _(u"Topics and permissions for %s") % get_really_full_name(request.user),
+                               "topics": user.topics.all(), "permissions": permissions.get_user_permissions(user),
                                "full_user_name": get_really_full_name(request.user)},
                               context_instance=RequestContext(request))

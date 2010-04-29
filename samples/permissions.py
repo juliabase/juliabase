@@ -31,7 +31,7 @@ from settings import WITH_EPYDOC
 if not WITH_EPYDOC:
     # Attention! This is a cyclic import.  Don't use models in top-level code.
     import samples.models
-from chantal_common.models import Project
+from chantal_common.models import Topic
 from samples.views import shared_utils
 
 
@@ -170,28 +170,28 @@ class PermissionError(Exception):
       inclusive.  It should be a complete sentence, which addresses the user
       directly.  It should start with a capital letter and end with a full
       stop.  For example, it may be “You are not allowed to view sample 01B-410
-      because you're not … Note that a head of an institute project may add you
-      to new projects.”.
+      because you're not … Note that a head of an institute topic may add you
+      to new topics.”.
 
     :type description: unicode
     """
 
-    def __init__(self, user, description, new_project_would_help=False):
+    def __init__(self, user, description, new_topic_would_help=False):
         u"""Class constructor.
 
         :Parameters:
           - `user`: the user which has too few permissions
           - `description`: a sentence describing the denied action and what
             could be done about it
-          - `new_project_would_help`: if ``True``, adding the user to a certain
-            project would grant him the permission for the action
+          - `new_topic_would_help`: if ``True``, adding the user to a certain
+            topic would grant him the permission for the action
 
         :type user: ``django.contrib.auth.models.User``
         :type description: unicode
-        :type new_project_would_help: bool
+        :type new_topic_would_help: bool
         """
         super(PermissionError, self).__init__(_(u"Permission denied: ") + description)
-        self.user, self.description, self.new_project_would_help = user, description, new_project_would_help
+        self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
 
 def assert_can_view_sample(user, sample):
@@ -208,15 +208,15 @@ def assert_can_view_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to view the
         sample.
     """
-    if sample.project and sample.project not in user.projects.all() and sample.currently_responsible_person != user:
-        if sample.project.restricted:
-            description = _(u"You are not allowed to view the sample since you are not in the sample's project, nor are you "
+    if sample.topic and sample.topic not in user.topics.all() and sample.currently_responsible_person != user:
+        if sample.topic.restricted:
+            description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             u"its currently responsible person.")
-            raise PermissionError(user, description, new_project_would_help=True)
+            raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
-            description = _(u"You are not allowed to view the sample since you are not in the sample's project, nor are you "
+            description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             u"its currently responsible person, nor are you a senior user.")
-            raise PermissionError(user, description, new_project_would_help=True)
+            raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
@@ -312,7 +312,7 @@ def assert_can_view_physical_process(user, process):
             description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
                             u"permission “%(permission)s”, nor you are allowed to view one of the processed samples.") \
                             % {"process": unicode(process), "permission": translate_permission(permission)}
-            raise PermissionError(user, description, new_project_would_help=True)
+            raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_edit_result_process(user, result_process):
@@ -355,7 +355,7 @@ def assert_can_view_result_process(user, result_process):
                 for sample_series in result_process.sample_series.all()):
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
-        raise PermissionError(user, description, new_project_would_help=True)
+        raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_add_result_process(user, sample_or_series):
@@ -373,14 +373,14 @@ def assert_can_add_result_process(user, sample_or_series):
       - `PermissionError`: raised if the user is not allowed to add the result
         process to the sample or series
     """
-    if sample_or_series.currently_responsible_person != user and sample_or_series.project and \
-            sample_or_series.project not in user.projects.all():
+    if sample_or_series.currently_responsible_person != user and sample_or_series.topic and \
+            sample_or_series.topic not in user.topics.all():
         if isinstance(sample_or_series, samples.models.Sample):
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
-                            u"responsible person for this sample, nor are you a member of its project.") % sample_or_series
+                            u"responsible person for this sample, nor are you a member of its topic.") % sample_or_series
         else:
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
-                            u"responsible person for this sample series, nor are you a member of its project.") \
+                            u"responsible person for this sample series, nor are you a member of its topic.") \
                             % sample_or_series
         raise PermissionError(user, description)
 
@@ -416,7 +416,7 @@ def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
             else:
                 description = _(u"You are not allowed to add a substrate because you are not allowed to edit all "
                                 u"affected samples.")
-            raise PermissionError(user, description, new_project_would_help=True)
+            raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_edit_sample(user, sample):
@@ -432,7 +432,7 @@ def assert_can_edit_sample(user, sample):
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit the sample
     """
-    if sample.project and sample.currently_responsible_person != user:
+    if sample.topic and sample.currently_responsible_person != user:
         description = _(u"You are not allowed to edit the sample “%s” (including splitting and declaring dead) because "
                         u"you are not the currently responsible person for this sample.") % sample
         raise PermissionError(user, description)
@@ -473,10 +473,10 @@ def assert_can_view_sample_series(user, sample_series):
       - `PermissionError`: raised if the user is not allowed to view the sample
         series
     """
-    if sample_series.currently_responsible_person != user and sample_series.project not in user.projects.all():
+    if sample_series.currently_responsible_person != user and sample_series.topic not in user.topics.all():
         description = _(u"You are not allowed to view the sample series “%s” because neither are"
-                        u"you the currently responsible person for it, nor are you in its project.") % sample_series
-        raise PermissionError(user, description, new_project_would_help=True)
+                        u"you the currently responsible person for it, nor are you in its topic.") % sample_series
+        raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_add_external_operator(user):
@@ -543,30 +543,30 @@ def assert_can_view_external_operator(user, external_operator):
             raise PermissionError(user, description)
 
 
-def assert_can_edit_project(user, project=None):
-    u"""Tests whether the user can change project memberships of other users,
-    set the project's restriction status, and add new projects.  This typically
-    is a priviledge of heads of institute projects.
+def assert_can_edit_topic(user, topic=None):
+    u"""Tests whether the user can change topic memberships of other users,
+    set the topic's restriction status, and add new topics.  This typically
+    is a priviledge of heads of institute topics.
 
     :Parameters:
       - `user`: the user whose permission should be checked
-      - `project`: the project whose members are about to be edited; ``None``
-        if we create a new one, list projects etc
+      - `topic`: the topic whose members are about to be edited; ``None``
+        if we create a new one, list topics etc
 
     :type user: ``django.contrib.auth.models.User``
-    :type project: ``chantal_common.models.Project`` or ``NoneType``
+    :type topic: ``chantal_common.models.Topic`` or ``NoneType``
 
     :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit projects,
-        nor to add new projects.
+      - `PermissionError`: raised if the user is not allowed to edit topics,
+        nor to add new topics.
     """
-    permission = "samples.edit_project"
+    permission = "samples.edit_topic"
     if not user.has_perm(permission):
-        description = _(u"You are not allowed to change this project because you don't have the permission “%s”.") \
+        description = _(u"You are not allowed to change this topic because you don't have the permission “%s”.") \
             % translate_permission(permission)
         raise PermissionError(user, description)
-    elif project and project.restricted and project not in user.projects.all():
-        description = _(u"You are not allowed to change this project because you are not in this project.")
+    elif topic and topic.restricted and topic not in user.topics.all():
+        description = _(u"You are not allowed to change this topic because you are not in this topic.")
         raise PermissionError(user, description)
 
 

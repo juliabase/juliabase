@@ -5,16 +5,16 @@
 {% load samples_extras %}
 
 {% block frame_content %}
-{% if projects %}
+{% if topics %}
   <ul>
-    {% for project in projects %}
-      {% with project.name|urlquote as normalized_projectname %}
+    {% for topic in topics %}
+      {% with topic.name|urlquote as normalized_topicname %}
         <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/group.png")'
-            ><a href="{% url samples.views.project.edit name=normalized_projectname %}">{{ project.name }}</a></li>
+            ><a href="{% url samples.views.topic.edit name=normalized_topicname %}">{{ topic.name }}</a></li>
       {% endwith %}
     {% endfor %}
   </ul>
 {% else %}
-  <p>{% trans 'No projects available.' %}</p>
+  <p>{% trans 'No topics available.' %}</p>
 {% endif %}
 {% endblock %}
