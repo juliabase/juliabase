@@ -168,7 +168,7 @@ def get_allowed_processes(user, sample):
                                  "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
-        general_processes.append({"label": models.Result.Meta.verbose_name, "type": "result",
+        general_processes.append({"label": models.Result._meta.verbose_name, "type": "result",
                                   "url": django.core.urlresolvers.reverse("add_result")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:

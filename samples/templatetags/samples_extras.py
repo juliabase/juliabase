@@ -328,3 +328,69 @@ def split_field(field1, field2):
     help_text = u""" <span class="help">(%s)</span>""" % field1.help_text if field1.help_text else u""
     result += u"""<td class="input">%(field1)s/%(field2)s%(help_text)s</td>""" % {"field1": field1, "field2": field2, "help_text": help_text}
     return result
+
+class ValueSplitFieldNode(template.Node):
+    u"""Helper class to realise the `value_field` tag.
+    """
+
+    def __init__(self, field1, field2, unit):
+        self.field_name1 = field1
+        self.field_name2 = field2
+        self.field1 = template.Variable(field1)
+        self.field2 = template.Variable(field2)
+        self.unit = unit
+
+    def render(self, context):
+        field1 = self.field1.resolve(context)
+        field2 = self.field2.resolve(context)
+        if "." not in self.field_name1:
+            verbose_name = unicode(context[self.field_name1]._meta.verbose_name)
+        else:
+            instance, field_name = self.field_name1.rsplit(".", 1)
+            model = context[instance].__class__
+            verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
+        verbose_name = verbose_name[0].upper() + verbose_name[1:]
+        if self.unit == "sccm_collapse":
+            if not field1 and not field2:
+                return u"""<td colspan="2"/>"""
+            unit = "sccm"
+        else:
+            unit = self.unit
+        if not field1 and field1 != 0:
+            field1 = u"—"
+        if not field2 and field2 != 0:
+            field2 = u"—"
+        if field1 == field2 == u"—":
+            unit = None
+        return u"""<td class="label">%(label)s:</td><td class="value">%(value1)s / %(value2)s</td>""" % \
+            {"label": verbose_name, "value1": field1 if unit is None else quantity(field1, unit),
+             "value2": field2 if unit is None else quantity(field2, unit)}
+
+
+@register.tag
+def value_split_field(parser, token):
+    u"""Tag for inserting a field value into an HTML table.  It consists of two
+    ``<td>`` elements, one for the label and one for the value, so it spans two
+    columns.  This tag is primarily used in templates of show views, especially
+    those used to compile the sample history.  Example::
+
+        {% value_field layer.base_pressure "W" %}
+
+    The unit (``"W"`` for “Watt”) is optional.  If you have a boolean field,
+    you can give ``"yes/no"`` as the unit, which converts the boolean value to
+    a yes/no string (in the current language).  For gas flow fields that should
+    collapse if the gas wasn't used, use ``"sccm_collapse"``.
+    """
+    tokens = token.split_contents()
+    if len(tokens) == 4:
+        tag, field1, field2, unit = tokens
+        if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
+            raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
+        unit = unit[1:-1]
+    elif len(tokens) == 3:
+        tag, field1, field2 = tokens
+        unit = None
+    else:
+        raise template.TemplateSyntaxError, "value_field requires one or two arguments"
+    return ValueSplitFieldNode(field1, field2, unit)
+
