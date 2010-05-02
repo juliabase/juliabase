@@ -19,7 +19,7 @@ from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
-from chantal_common.models import Project, ExternalOperator
+from chantal_common.models import Project, ExternalOperator, SampleAlias
 from samples.views import utils
 from samples import models, permissions
 
@@ -77,6 +77,8 @@ def primary_keys(request):
         else:
             sample_names = query_dict["samples"].split(",")
             result_dict["samples"] = dict(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
+            for alias, sample_id in SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
+                result_dict["samples"].setdefault(alias, []).append(sample_id)
     if "users" in query_dict:
         if query_dict["users"] == "*":
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.values_list("username", "id"))
