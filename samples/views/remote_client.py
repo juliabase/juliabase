@@ -19,7 +19,7 @@ from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
-from chantal_common.models import Project
+from chantal_common.models import Project, ExternalOperator
 from samples.views import utils
 from samples import models, permissions
 
@@ -64,7 +64,7 @@ def primary_keys(request):
     result_dict = {}
     if "projects" in query_dict:
         all_projects = set(project for project in Project.objects.all()
-                           if not project.restricted or project in user.projects)
+                           if not project.restricted or project in request.user.projects)
         if query_dict["projects"] == "*":
             projects = all_projects
         else:
@@ -85,6 +85,21 @@ def primary_keys(request):
             # FixMe: Return only *active* users
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.filter(username__in=user_names).
                                         values_list("username", "id"))
+    if "external_operators" in query_dict:
+        if request.user.is_staff:
+            all_external_operators = set(ExternalOperator.objects.all())
+        else:
+            all_external_operators = set(external_operator for external_operator in ExternalOperator.objects.all()
+                                         if not external_operator.restricted or
+                                         external_operator.contact_person == request.user)
+        if query_dict["external_operators"] == "*":
+            external_operators = all_external_operators
+        else:
+            external_operator_names = query_dict["external_operators"].split(",")
+            external_operators = set(external_operator for external_operator in all_external_operators
+                                     if external_operator.name in external_operator_names)
+        result_dict["external_operators"] = dict((external_operator.name, external_operator.id)
+                                                 for external_operator in external_operators)
     return utils.respond_to_remote_client(result_dict)
 
 
@@ -237,11 +252,12 @@ def add_sample(request):
 
     :Returns:
       The primary key of the created sample.  ``False`` if something went
-      wrong.  It may return a 404 if the project wasn't found.
+      wrong.  It may return a 404 if the project or the currently responsible
+      person wasn't found.
 
     :rtype: ``HttpResponse``
     """
-    if not request.user.is_staff:
+    if not request.user.is_staff or request.method != "POST":
         return utils.respond_to_remote_client(False)
     try:
         name = request.POST["name"]
@@ -256,9 +272,10 @@ def add_sample(request):
     if is_legacy_name:
         name = get_next_quirky_name(name)
     if currently_responsible_person:
-        currently_responsible_person = get_or_404(django.contrib.auth.models.User, username=currently_responsible_person)
+        currently_responsible_person = get_or_404(django.contrib.auth.models.User,
+                                                  pk=utils.int_or_zero(currently_responsible_person))
     if project:
-        project = get_or_404(Project, name=project)
+        project = get_or_404(Project, pk=utils.int_or_zero(project))
     try:
         sample = models.Sample.create(name=name, current_location=current_location,
                                       currently_responsible_person=currently_responsible_person, purpose=purpose, tags=tags,
