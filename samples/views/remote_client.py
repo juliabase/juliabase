@@ -19,7 +19,7 @@ from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
-from chantal_common.models import Project, ExternalOperator, SampleAlias
+from chantal_common.models import Project
 from samples.views import utils
 from samples import models, permissions
 
@@ -77,7 +77,7 @@ def primary_keys(request):
         else:
             sample_names = query_dict["samples"].split(",")
             result_dict["samples"] = dict(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
-            for alias, sample_id in SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
+            for alias, sample_id in models.SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
                 result_dict["samples"].setdefault(alias, []).append(sample_id)
     if "users" in query_dict:
         if query_dict["users"] == "*":
@@ -89,9 +89,9 @@ def primary_keys(request):
                                         values_list("username", "id"))
     if "external_operators" in query_dict:
         if request.user.is_staff:
-            all_external_operators = set(ExternalOperator.objects.all())
+            all_external_operators = set(models.ExternalOperator.objects.all())
         else:
-            all_external_operators = set(external_operator for external_operator in ExternalOperator.objects.all()
+            all_external_operators = set(external_operator for external_operator in models.ExternalOperator.objects.all()
                                          if not external_operator.restricted or
                                          external_operator.contact_person == request.user)
         if query_dict["external_operators"] == "*":
@@ -223,9 +223,11 @@ def get_next_quirky_name(sample_name):
 
     :rtype: unicode
     """
-    names = models.Sample.objects.filter(name__startswith="90-LGCY-").filter(name__iendswith=sample_name).\
-        values_list("name", flat=True)
-    prefixes = set(name[8:].partition("-")[2] for name in names)
+    prefixes = set()
+    for name in models.Sample.objects.filter(name__startswith="90-LGCY-").values_list("name", flat=True):
+        prefix, __, original_name = name[8:].partition("-")
+        if original_name == sample_name:
+            prefixes.add(prefix)
     free_prefix = u""
     while free_prefix in prefixes:
         digits = [ord(digit) for digit in free_prefix]
@@ -283,7 +285,7 @@ def add_sample(request):
                                       currently_responsible_person=currently_responsible_person, purpose=purpose, tags=tags,
                                       project=project)
         if is_legacy_name:
-            models.SampleAlias.create(name=request.POST["name"], sample=sample)
+            models.models.SampleAlias.create(name=request.POST["name"], sample=sample)
     except IntegrityError:
         return utils.respond_to_remote_client(False)
     return utils.respond_to_remote_client(sample.pk)
@@ -315,7 +317,7 @@ def add_alias(request):
         return utils.respond_to_remote_client(False)
     sample = get_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
     try:
-        models.SampleAlias.create(name=alias, sample=sample)
+        models.models.SampleAlias.create(name=alias, sample=sample)
     except IntegrityError:
         # Alias already present
         return utils.respond_to_remote_client(False)
@@ -347,6 +349,9 @@ def substrate_by_sample(request, sample_id):
     process_pks = sample.processes.values_list("id", flat=True)
     substrates = list(models.Substrate.objects.filter(pk__in=process_pks).values())
     try:
-        return utils.respond_to_remote_client(substrates[0])
+        substrate = substrates[0]
     except IndexError:
         return utils.respond_to_remote_client(False)
+    substrate["timestamp"] = substrate["timestamp"].strftime("%Y-%m-%d %H:%M:%S.%f")
+    substrate["samples"] = models.Substrate.objects.get(pk=substrate["id"]).samples.values_list("id", flat=True)
+    return utils.respond_to_remote_client(substrate)
