@@ -99,7 +99,8 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
 
     :type substrate_form: `SubstrateForm`
     :type samples_form: `form_utils.DepositionSamplesForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm`
+    :type edit_description_form: `form_utils.EditDescriptionForm` or
+        ``NoneType``
 
     :Return:
       whether all forms are consistent with each other and the database
@@ -146,10 +147,10 @@ def edit(request, substrate_id):
     if request.method == "POST":
         substrate_form = SubstrateForm(request.user, request.POST, instance=substrate)
         samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, substrate, request.POST)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        edit_description_form = form_utils.EditDescriptionForm(request.POST) if substrate else None
         referentially_valid = is_referentially_valid(substrate_form, samples_form, edit_description_form)
-        if all([substrate_form.is_valid(), samples_form.is_valid(), edit_description_form.is_valid()]) and \
-                referentially_valid:
+        if all([substrate_form.is_valid(), samples_form.is_valid(),
+                edit_description_form.is_valid() if edit_description_form else True]) and referentially_valid:
             new_substrate = substrate_form.save(commit=False)
             cleaned_data = substrate_form.cleaned_data
             if isinstance(cleaned_data["operator"], models.ExternalOperator):
@@ -161,14 +162,14 @@ def edit(request, substrate_id):
             if samples_form.is_bound:
                 new_substrate.samples = samples_form.cleaned_data["sample_list"]
             feed_utils.Reporter(request.user).report_physical_process(
-                new_substrate, self.edit_description_form.cleaned_data if self.edit_description_form else None)
+                new_substrate, edit_description_form.cleaned_data if edit_description_form else None)
             return utils.successful_response(request,
                                              _(u"Substrate {0} was successfully changed in the database.").format(sample),
                                              new_substrate.get_absolute_url())
     else:
         substrate_form = SubstrateForm(request.user, instance=substrate)
         samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, substrate)
-        edit_description_form = form_utils.EditDescriptionForm()
+        edit_description_form = form_utils.EditDescriptionForm() if substrate else None
     title = _(u"Edit substrate “{0}”").format(substrate) if substrate else _(u"Add substrate")
     return render_to_response("samples/edit_substrate.html", {"title": title, "substrate": substrate_form,
                                                               "samples": samples_form,

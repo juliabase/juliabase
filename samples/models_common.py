@@ -439,8 +439,12 @@ class Sample(models.Model):
 class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
-    aliases needn't be unique.  Two old names may be the same.  However, they
-    must not be equal to a ``Sample.name``.
+    aliases needn't be unique.  Two old names may be the same.
+
+    Note that they may be equal to a ``Sample.name``.  However, when accessing
+    a sample by its name in the URL, this shadows any aliases of the same
+    name.  Only if you look for the name by the search function, you also find
+    aliases of the same name.
     """
     name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
@@ -512,7 +516,8 @@ substrate_materials = (
         # Translation hint: sample substrate type
     ("custom", _(u"custom")),
     ("asahi-u", _(u"ASAHI-U")),
-    ("100-Si", _(u"silicon 100 wafer")),
+    ("corning", _(u"Corning glass")),
+    ("si-wafer", _(u"silicon wafer")),
     )
 u"""Contains all possible choices for `Substrate.material`.
 """
