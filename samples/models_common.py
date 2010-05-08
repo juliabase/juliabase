@@ -530,7 +530,11 @@ class Substrate(Process):
     `Process.external_operator`, it is an external sample.
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
-    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, unique=True, null=True, blank=True)
+    # The following field should be unique, but this doesn't work, see
+    # <http://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django>.
+    # Karen Tracey's comment would probably help but this would exclude Oracle
+    # as a possible database backend.
+    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u"substrate")
