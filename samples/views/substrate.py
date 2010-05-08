@@ -163,9 +163,9 @@ def edit(request, substrate_id):
                 new_substrate.samples = samples_form.cleaned_data["sample_list"]
             feed_utils.Reporter(request.user).report_physical_process(
                 new_substrate, edit_description_form.cleaned_data if edit_description_form else None)
-            return utils.successful_response(request,
-                                             _(u"Substrate {0} was successfully changed in the database.").format(sample),
-                                             new_substrate.get_absolute_url())
+            return utils.successful_response(
+                request, _(u"Substrate {0} was successfully changed in the database.").format(new_substrate),
+                new_substrate.get_absolute_url())
     else:
         substrate_form = SubstrateForm(request.user, instance=substrate)
         samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, substrate)
