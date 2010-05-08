@@ -243,7 +243,7 @@ class GeneralSampleField(object):
         self.choices = [(sample.pk, unicode(sample)) for sample in projectless_samples]
         for project in projects:
             seriesless_samples = [(sample.pk, unicode(sample)) for sample in project.samples]
-            self.choices.append((project.name, seriesless_samples))
+            self.choices.append((project.project.name, seriesless_samples))
             for series in project.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
