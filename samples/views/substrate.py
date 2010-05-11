@@ -149,7 +149,7 @@ def edit(request, substrate_id):
         samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, substrate, request.POST)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if substrate else None
         referentially_valid = is_referentially_valid(substrate_form, samples_form, edit_description_form)
-        if all([substrate_form.is_valid(), samples_form.is_valid(),
+        if all([substrate_form.is_valid(), samples_form.is_valid() or not samples_form.is_bound,
                 edit_description_form.is_valid() if edit_description_form else True]) and referentially_valid:
             new_substrate = substrate_form.save(commit=False)
             cleaned_data = substrate_form.cleaned_data
@@ -163,9 +163,14 @@ def edit(request, substrate_id):
                 new_substrate.samples = samples_form.cleaned_data["sample_list"]
             feed_utils.Reporter(request.user).report_physical_process(
                 new_substrate, edit_description_form.cleaned_data if edit_description_form else None)
-            return utils.successful_response(
-                request, _(u"Substrate {0} was successfully changed in the database.").format(new_substrate),
-                new_substrate.get_absolute_url())
+            if substrate:
+                return utils.successful_response(
+                    request, _(u"Substrate {0} was successfully changed in the database.").format(new_substrate),
+                    new_substrate.get_absolute_url())
+            else:
+                return utils.successful_response(
+                    request, _(u"Substrate {0} was successfully added to the database.").format(new_substrate),
+                    new_substrate.get_absolute_url(), remote_client_response=new_substrate.pk)
     else:
         substrate_form = SubstrateForm(request.user, instance=substrate)
         samples_form = form_utils.DepositionSamplesForm(user_details, preset_sample, substrate)
