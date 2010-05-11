@@ -437,13 +437,18 @@ class Sample(models.Model):
 class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
-    aliases needn't be unique.  Two old names may be the same.  However, they
-    must not be equal to a ``Sample.name``.
+    aliases needn't be unique.  Two old names may be the same.
+
+    Note that they may be equal to a ``Sample.name``.  However, when accessing
+    a sample by its name in the URL, this shadows any aliases of the same
+    name.  Only if you look for the name by the search function, you also find
+    aliases of the same name.
     """
     name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
 
     class Meta:
+        unique_together = (("name", "sample"),)
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
 
@@ -509,7 +514,8 @@ substrate_materials = (
         # Translation hint: sample substrate type
     ("custom", _(u"custom")),
     ("asahi-u", _(u"ASAHI-U")),
-    ("100-Si", _(u"silicon 100 wafer")),
+    ("corning", _(u"Corning glass")),
+    ("si-wafer", _(u"silicon wafer")),
     )
 u"""Contains all possible choices for `Substrate.material`.
 """
@@ -522,16 +528,24 @@ class Substrate(Process):
     `Process.external_operator`, it is an external sample.
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
+    # The following field should be unique, but this doesn't work, see
+    # <http://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django>.
+    # Karen Tracey's comment would probably help but this would exclude Oracle
+    # as a possible database backend.
     cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")
         _ = lambda x: x
-        permissions = (("clean_substrates", _("Can clean substrates")),)
+        permissions = (("clean_substrate", _("Can clean substrates")),
+                       ("add_edit_substrate", _("Can create and edit substrates")))
 
     def __unicode__(self):
-        return self.material
+        result = self.material
+        if self.cleaning_number:
+            result += u" ({0})".format(self.cleaning_number)
+        return result
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
@@ -541,6 +555,21 @@ class Substrate(Process):
         # FixMe: Should this be appended even if it doesn't exist?
         csv_node.items.append(CSVItem(_(u"cleaning number"), self.cleaning_number))
         return csv_node
+
+    @classmethod
+    def get_add_link(cls):
+        u"""Return the URL to the “add” view for this process.
+
+        This method marks the current class as a so-called physical process.
+        This implies that it also must have an “add-edit” permission.
+
+        :Return:
+          the full URL to the add page for this process
+
+        :rtype: str
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_substrate")
 
 
 sample_death_reasons = (

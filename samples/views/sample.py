@@ -275,6 +275,8 @@ class AddSamplesForm(forms.Form):
     user to add arbitrary samples with the same properties (except for the name
     of course), this should be converted to a *model* form in order to satisfy
     the dont-repeat-yourself principle.
+
+    Besides, we have massive code duplication to substrate.SubstrateForm.
     """
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
@@ -283,7 +285,6 @@ class AddSamplesForm(forms.Form):
     substrate_originator = forms.ChoiceField(label=_(u"Substrate originator"), required=False)
     timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
     timestamp_inaccuracy = forms.IntegerField(required=False)
-    sample_name = forms.CharField(max_length=30, required=False)
     current_location = forms.CharField(label=_(u"Current location"), max_length=50)
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
@@ -306,7 +307,7 @@ class AddSamplesForm(forms.Form):
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
             self.fields["substrate_originator"].required = True
         self.user = user
-        self.can_clean_substrates = user.has_perm("samples.clean_substrates")
+        self.can_clean_substrates = user.has_perm("samples.clean_substrate")
         if self.can_clean_substrates:
             current_year = datetime.date.today().strftime(u"%y")
             old_cleaning_numbers = list(models.Substrate.objects.filter(cleaning_number__startswith=current_year).
@@ -323,14 +324,6 @@ class AddSamplesForm(forms.Form):
         if timestamp > datetime.datetime.now():
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
-
-    def clean_sample_name(self):
-        """Assure that only admins can set arbitrary sample names this way.  It
-        is intended to be used only for importing legacy data through the
-        remote client.
-        """
-        if self.cleaned_data["sample_name"] and not self.user.is_superuser:
-            raise ValidationError(u"Only an administrator can give arbitrary sample names.")
 
     def clean_substrate(self):
         substrate = self.cleaned_data["substrate"]
@@ -370,12 +363,6 @@ class AddSamplesForm(forms.Form):
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
                 append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
                              "substrate_originator")
-        if cleaned_data.get("sample_name"):
-            # Not translatable because can't happen with unmodified browser
-            if cleaned_data.get("number_of_samples") != 1:
-                append_error(self, u"You can give an arbitrary name only to exactly one sample.", "number_of_samples")
-            if cleaned_data.get("bulk_rename"):
-                append_error(self, u"You can't give an arbitrary name *and* perform a bulk rename.", "bulk_rename")
         return cleaned_data
 
 
@@ -424,9 +411,7 @@ def add_samples_to_database(add_samples_form, user):
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = utils.get_profile(user)
-    if cleaned_data["sample_name"]:
-        names = [cleaned_data["sample_name"]]
-    elif cleaning_number:
+    if cleaning_number:
         names = [cleaning_number + u"-%02d" % i for i in range(1, number_of_samples + 1)]
     else:
         names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]

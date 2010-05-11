@@ -301,6 +301,7 @@ def assert_can_view_physical_process(user, process):
       - `PermissionError`: raised if the user is not allowed to view the
         process.
     """
+    process_class = process.__class__
     permission = \
         "{app_label}.add_edit_{process_name}".format(
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
