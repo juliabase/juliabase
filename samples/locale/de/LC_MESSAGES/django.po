@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-04-29 13:59+0200\n"
-"PO-Revision-Date: 2010-04-29 13:56+0200\n"
+"PO-Revision-Date: 2010-04-29 17:05+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -358,7 +358,7 @@ msgstr "Themen mit Auto-Hinzufügen"
 #: models_common.py:849
 msgid "new samples in these topics are automatically added to “My Samples”"
 msgstr ""
-"neue Proben in diesen Themenn werden automatisch zu „Meine Proben“ "
+"neue Proben in diesen Themen werden automatisch zu „Meine Proben“ "
 "hinzugefügt"
 
 #: models_common.py:850
@@ -740,7 +740,7 @@ msgid ""
 "topic."
 msgstr ""
 "Sie dürfen kein Resultat zu %s hinzufügen, weil Sie weder der aktuell "
-"Verantwortliche für diese Probe sind, noch ein Mitglied ihres Themens."
+"Verantwortliche für diese Probe sind, noch ein Mitglied ihres Themas."
 
 #: permissions.py:382
 #, python-format
@@ -750,7 +750,7 @@ msgid ""
 "its topic."
 msgstr ""
 "Sie dürfen kein Resultat zu %s hinzufügen, weil Sie weder der aktuell "
-"Verantwortliche für diese Probenserie sind, noch ein Mitglied ihres Themens."
+"Verantwortliche für diese Probenserie sind, noch ein Mitglied ihres Themas."
 
 #: permissions.py:414
 #, python-format
@@ -795,7 +795,7 @@ msgid ""
 "the currently responsible person for it, nor are you in its topic."
 msgstr ""
 "Sie dürfen die Probenserie %s nicht sehen, weil Sie weder der aktuell "
-"Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themens."
+"Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themas."
 
 #: permissions.py:496
 #, python-format
@@ -1555,7 +1555,7 @@ msgstr "Neues Thema hinzufügen"
 
 #: templates/samples/main_menu.html:92
 msgid "Change topic memberships"
-msgstr "Mitglieder von Themenn ändern"
+msgstr "Mitglieder von Themen ändern"
 
 #: templates/samples/main_menu.html:97
 msgid "External operators"
@@ -1918,12 +1918,10 @@ msgid_plural ""
 "\n"
 "      %(full_user_name)s is member of the following topics:\n"
 "    "
-msgstr[0] ""
-"\n"
-"%(full_user_name)s ist Mitglied in des folgenden Themens:"
+msgstr[0] "\n%(full_user_name)s ist Mitglied im folgenden Thema:"
 msgstr[1] ""
 "\n"
-"%(full_user_name)s ist Mitglied der folgenden Themen:"
+"%(full_user_name)s ist Mitglied in den folgenden Themen:"
 
 #: templates/samples/topics_and_permissions.html:19
 #, python-format
@@ -1940,7 +1938,7 @@ msgid ""
 "The head of your institute group is allowed to add you to further Chantal "
 "topics."
 msgstr ""
-"Der Leiter Ihrer Institutsgruppe ist berechtigt, Sie zu Themenn hinzuzufügen."
+"Der Leiter Ihrer Institutsgruppe ist berechtigt, Sie zu Themen hinzuzufügen."
 
 #: templates/samples/topics_and_permissions.html:28
 msgid "Permissions"
@@ -2381,7 +2379,7 @@ msgstr "Aktuell Verantwortlicher"
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
-"Änderungen des Themens oder des Verantwortlichen müssen immer als „wichtig“ "
+"Änderungen des Themas oder des Verantwortlichen müssen immer als „wichtig“ "
 "markiert werden."
 
 #: views/sample.py:123
@@ -2730,7 +2728,7 @@ msgstr "Spalten der Probe „%s“"
 
 #: views/topic.py:29
 msgid "Name of new topic"
-msgstr "Name des neuen Themens"
+msgstr "Name des neuen Themas"
 
 #: views/topic.py:39
 msgid "This topic name is already used."
@@ -2754,20 +2752,20 @@ msgid ""
 "In restricted topics, at least one member must have permission to change "
 "topics."
 msgstr ""
-"Wenigstens ein Mitglied in eines beschränkten Themens muss die Berechtigung "
+"Wenigstens ein Mitglied in eines beschränkten Themas muss die Berechtigung "
 "haben, Themen zu ändern."
 
 #: views/topic.py:167
 #, python-format
 msgid "Members of topic “%s” were successfully updated."
 msgstr ""
-"Die Mitglieder des Themens „%s“ wurden erfolgreich auf den neuesten Stand "
+"Die Mitglieder des Themas „%s“ wurden erfolgreich auf den neuesten Stand "
 "gebracht."
 
 #: views/topic.py:172
 #, python-format
 msgid "Change topic memberships of “%s”"
-msgstr "Mitglieder des Themens “%s” ändern"
+msgstr "Mitglieder des Themas “%s” ändern"
 
 #: views/user_details.py:91
 msgid "You can't access the preferences of another user."
