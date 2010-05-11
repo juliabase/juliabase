@@ -2,9 +2,9 @@
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.project as project and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url %}
-    {{ originator }} has added the sample series “<a href="{{ url }}">{{ sample_series }}</a>” to the project 
-    “{{ project }}”.
+  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url %}
+    {{ originator }} has added the sample series “<a href="{{ url }}">{{ sample_series }}</a>” to the topic 
+    “{{ topic }}”.
   {% endblocktrans %}
   <p>{% trans 'Description' %}:</p>
   <blockquote>{{ entry.sample_series.description|markdown_samples }}</blockquote>

@@ -8,10 +8,12 @@ u"""All views and helper routines directly connected with samples themselves
 from __future__ import absolute_import
 
 import time, datetime
+import re
 from django.db import transaction, IntegrityError
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
+from django.forms.util import ValidationError
 from samples.models import Sample
 from samples import models, permissions
 from django.contrib.auth.decorators import login_required
@@ -21,7 +23,7 @@ from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, get_really_full_name, HttpResponseSeeOther
 from samples.views import utils, form_utils, feed_utils, csv_export
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
+from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
 
 
 class IsMySampleForm(forms.Form):
@@ -39,11 +41,11 @@ class SampleForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
-    project = form_utils.ProjectField(label=_(u"Project"), required=False)
+    topic = form_utils.TopicField(label=_(u"Topic"), required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
-        self.fields["project"].set_projects(user, kwargs["instance"].project if kwargs.get("instance") else None)
+        self.fields["topic"].set_topics(user, kwargs["instance"].topic if kwargs.get("instance") else None)
         self.fields["currently_responsible_person"].set_users(
             kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
 
@@ -53,7 +55,7 @@ class SampleForm(forms.ModelForm):
 
 
 def is_referentially_valid(sample, sample_form, edit_description_form):
-    u"""Checks that the “important” checkbox is marked if the project or the
+    u"""Checks that the “important” checkbox is marked if the topic or the
     currently responsible person were changed.
 
     :Parameters:
@@ -73,12 +75,12 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
     """
     referentially_valid = True
     if sample_form.is_valid() and edit_description_form.is_valid() and \
-            (sample_form.cleaned_data["project"] != sample.project or
+            (sample_form.cleaned_data["topic"] != sample.topic or
              sample_form.cleaned_data["currently_responsible_person"] != sample.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
         append_error(edit_description_form,
-                     _(u"Changing the project or the responsible person must be marked as important."), "important")
+                     _(u"Changing the topic or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
@@ -100,7 +102,7 @@ def edit(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request)
     permissions.assert_can_edit_sample(request.user, sample)
-    old_project, old_responsible_person = sample.project, sample.currently_responsible_person
+    old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = utils.get_profile(request.user)
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
@@ -112,10 +114,10 @@ def edit(request, sample_name):
             if sample.currently_responsible_person != old_responsible_person:
                 utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
                 feed_reporter.report_new_responsible_person_samples([sample], edit_description_form.cleaned_data)
-            if sample.project and sample.project != old_project:
-                for watcher in sample.project.auto_adders.all():
+            if sample.topic and sample.topic != old_topic:
+                for watcher in sample.topic.auto_adders.all():
                     watcher.my_samples.add(sample)
-                feed_reporter.report_changed_sample_project([sample], old_project, edit_description_form.cleaned_data)
+                feed_reporter.report_changed_sample_topic([sample], old_topic, edit_description_form.cleaned_data)
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
             return utils.successful_response(request,
                                              _(u"Sample %s was successfully changed in the database.") % sample,
@@ -172,8 +174,8 @@ def get_allowed_processes(user, sample):
     if not sample_processes and not general_processes:
         raise permissions.PermissionError(user, _(u"You are not allowed to add any processes to the sample %s "
                                                   u"because neither are you its currently responsible person, "
-                                                  u"nor in its project, nor do you have special permissions for a "
-                                                  u"physical process.") % sample, new_project_would_help=True)
+                                                  u"nor in its topic, nor do you have special permissions for a "
+                                                  u"physical process.") % sample, new_topic_would_help=True)
     return sample_processes, general_processes
 
 
@@ -265,7 +267,7 @@ def by_id(request, sample_id, path_suffix):
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else u""))
 
-    
+
 class AddSamplesForm(forms.Form):
     u"""Form for adding new samples.
 
@@ -273,6 +275,8 @@ class AddSamplesForm(forms.Form):
     user to add arbitrary samples with the same properties (except for the name
     of course), this should be converted to a *model* form in order to satisfy
     the dont-repeat-yourself principle.
+
+    Besides, we have massive code duplication to substrate.SubstrateForm.
     """
     _ = ugettext_lazy
     number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
@@ -285,13 +289,14 @@ class AddSamplesForm(forms.Form):
     purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
                            help_text=_(u"separated with commas, no whitespace"))
-    project = form_utils.ProjectField(label=_(u"Project"), required=False)
+    topic = form_utils.TopicField(label=_(u"Topic"), required=False)
     bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
+    cleaning_number = forms.CharField(label=_(u"Cleaning number"), max_length=8, required=False)
 
     def __init__(self, user, data=None, **kwargs):
         _ = ugettext
         super(AddSamplesForm, self).__init__(data, **kwargs)
-        self.fields["project"].set_projects(user)
+        self.fields["topic"].set_topics(user)
         self.fields["substrate_comments"].help_text = \
             u"""<span class="markdown-hint">""" + _(u"""with %(markdown_link)s syntax""") \
             % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
@@ -302,6 +307,15 @@ class AddSamplesForm(forms.Form):
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
             self.fields["substrate_originator"].required = True
         self.user = user
+        self.can_clean_substrates = user.has_perm("samples.clean_substrate")
+        if self.can_clean_substrates:
+            current_year = datetime.date.today().strftime(u"%y")
+            old_cleaning_numbers = list(models.Substrate.objects.filter(cleaning_number__startswith=current_year).
+                                        values_list("cleaning_number", flat=True))
+            next_cleaning_number = max(int(cleaning_number[4:]) for cleaning_number in old_cleaning_numbers) + 1 \
+                if old_cleaning_numbers else 1
+            self.fields["cleaning_number"].initial = "{0}N-{1:03}".format(current_year, next_cleaning_number)
+            self.fields["number_of_samples"].initial = 25
 
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
@@ -324,6 +338,18 @@ class AddSamplesForm(forms.Form):
             return None
         return models.ExternalOperator.objects.get(pk=int(key))
 
+    def clean_cleaning_number(self):
+        cleaning_number = self.cleaned_data["cleaning_number"]
+        if cleaning_number:
+            if not self.can_clean_substrates:
+                # Not translatable because can't happen with unmodified browser
+                raise ValidationError(u"You don't have the permission to give cleaning numbers.")
+            if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
+                raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
+            if models.Substrate.objects.filter(cleaning_number=cleaning_number).count():
+                raise ValidationError(_(u"The cleaning number you have chosen already exists."))
+        return cleaning_number
+
     def clean(self):
         _ = ugettext
         cleaned_data = self.cleaned_data
@@ -335,7 +361,7 @@ class AddSamplesForm(forms.Form):
                              "substrate_comments")
         if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
             if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
-                append_error(self,_(u"You selected “no substrate”, so the external originator would be lost."),
+                append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
                              "substrate_originator")
         return cleaned_data
 
@@ -358,12 +384,15 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
-    if add_samples_form.cleaned_data["substrate"]:
-        substrate = models.Substrate.objects.create(operator=user, timestamp=add_samples_form.cleaned_data["timestamp"],
-                                                    material=add_samples_form.cleaned_data["substrate"],
-                                                    comments=add_samples_form.cleaned_data["substrate_comments"],
-                                                    external_operator=add_samples_form.cleaned_data["substrate_originator"])
-        inaccuracy = add_samples_form.cleaned_data["timestamp_inaccuracy"]
+    cleaned_data = add_samples_form.cleaned_data
+    cleaning_number = cleaned_data.get("cleaning_number")
+    if cleaned_data["substrate"]:
+        substrate = models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
+                                                    material=cleaned_data["substrate"],
+                                                    cleaning_number=cleaned_data["cleaning_number"],
+                                                    comments=cleaned_data["substrate_comments"],
+                                                    external_operator=cleaned_data["substrate_originator"])
+        inaccuracy = cleaned_data["timestamp_inaccuracy"]
         if inaccuracy:
             substrate.timestamp_inaccuracy = inaccuracy
             substrate.save()
@@ -374,7 +403,7 @@ def add_samples_to_database(add_samples_form, user):
     occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
     occupied_provisional_numbers.sort()
     occupied_provisional_numbers.insert(0, 0)
-    number_of_samples = add_samples_form.cleaned_data["number_of_samples"]
+    number_of_samples = cleaned_data["number_of_samples"]
     for i in range(len(occupied_provisional_numbers) - 1):
         if occupied_provisional_numbers[i+1] - occupied_provisional_numbers[i] - 1 >= number_of_samples:
             starting_number = occupied_provisional_numbers[i] + 1
@@ -382,23 +411,26 @@ def add_samples_to_database(add_samples_form, user):
     else:
         starting_number = occupied_provisional_numbers[-1] + 1
     user_details = utils.get_profile(user)
-    names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
+    if cleaning_number:
+        names = [cleaning_number + u"-%02d" % i for i in range(1, number_of_samples + 1)]
+    else:
+        names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
     new_names = []
     samples = []
+    current_location, purpose, tags, topic = cleaned_data["current_location"], cleaned_data["purpose"], \
+        cleaned_data["tags"], cleaned_data["topic"]
     for new_name in names:
-        sample_project = add_samples_form.cleaned_data["project"]
-        sample = models.Sample.objects.create(name=new_name,
-                                              current_location=add_samples_form.cleaned_data["current_location"],
-                                              currently_responsible_person=user,
-                                              purpose=add_samples_form.cleaned_data["purpose"],
-                                              tags=add_samples_form.cleaned_data["tags"],
-                                              project=sample_project)
+        sample = models.Sample.objects.create(name=new_name, current_location=current_location,
+                                              currently_responsible_person=user, purpose=purpose, tags=tags, topic=topic)
         samples.append(sample)
         if substrate:
             sample.processes.add(substrate)
-        user_details.my_samples.add(sample)
-        if sample_project:
-            for watcher in sample_project.auto_adders.all():
+        if cleaning_number:
+            models.SampleAlias.objects.create(name=cleaning_number, sample=sample)
+        else:
+            user_details.my_samples.add(sample)
+        if topic:
+            for watcher in topic.auto_adders.all():
                 watcher.my_samples.add(sample)
         new_names.append(unicode(sample))
     return new_names, samples
@@ -438,11 +470,17 @@ def add(request):
                     break
             ids = [sample.pk for sample in samples]
             feed_utils.Reporter(user).report_new_samples(samples)
-            if add_samples_form.cleaned_data["project"]:
-                for watcher in add_samples_form.cleaned_data["project"].auto_adders.all():
+            if add_samples_form.cleaned_data["topic"]:
+                for watcher in add_samples_form.cleaned_data["topic"].auto_adders.all():
                     for sample in samples:
                         watcher.my_samples.add(sample)
-            if len(new_names) > 1:
+            if add_samples_form.cleaned_data["cleaning_number"]:
+                success_report = \
+                    ungettext(
+                    u"{number_of_samples} sample with cleaning number “{cleaning_number}” was added to the database.",
+                    u"{number_of_samples} samples with cleaning number “{cleaning_number}” were added to the database.",
+                    add_samples_form.cleaned_data["number_of_samples"]).format(**add_samples_form.cleaned_data)
+            elif len(new_names) > 1:
                 success_report = \
                     _(u"Your samples have the provisional names from %(first_name)s to "
                       u"%(last_name)s.  They were added to “My Samples”.") % \

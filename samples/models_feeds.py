@@ -5,8 +5,8 @@ u"""Models for feed entries.
 
 It is important to note that in some case, you may wonder why certain fields
 are included into the model.  For example, if I report a new sample in the
-feed, it seems to be superfluous to include the project it has been added since
-it is already stored in the new sample itself.  However, the project may change
+feed, it seems to be superfluous to include the topic it has been added since
+it is already stored in the new sample itself.  However, the topic may change
 afterwards which would render old feed entries incorrect.  Therefore, the feed
 entries are self-contained.
 """
@@ -18,7 +18,7 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.db import models
 import django.core.urlresolvers
-from chantal_common.models import Project
+from chantal_common.models import Topic
 from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
 
 
@@ -106,8 +106,7 @@ class FeedNewSamples(FeedEntry):
     database.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
-    # Translation hint: Topic/project for samples and sample series
-    project = models.ForeignKey(Project, verbose_name=_(u"project"), related_name="new_samples_news")
+    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="new_samples_news")
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
 
@@ -120,7 +119,7 @@ class FeedNewSamples(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         result = {}
-        result["title"] = ungettext(u"New sample in “%s”", u"New samples in “%s”", self.samples.count()) % self.project
+        result["title"] = ungettext(u"New sample in “%s”", u"New samples in “%s”", self.samples.count()) % self.topic
         result["category term"] = "new samples"
         result["category label"] = "new samples"
         return result
@@ -130,11 +129,11 @@ class FeedNewSamples(FeedEntry):
 
 
 class FeedMovedSamples(FeedEntry):
-    u"""Model for feed entries about samples moved to a new project.
+    u"""Model for feed entries about samples moved to a new topic.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
-    project = models.ForeignKey(Project, verbose_name=_(u"project"), related_name="moved_samples_news")
-    old_project = models.ForeignKey(Project, verbose_name=_(u"old project"), null=True, blank=True)
+    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="moved_samples_news")
+    old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True)
     auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
     description = models.TextField(_(u"description"))
 
@@ -146,7 +145,7 @@ class FeedMovedSamples(FeedEntry):
         _ = ugettext
         result = {}
         result["title"] = ungettext(u"New sample moved to “%s”", u"New samples moved to “%s”",
-                                    self.samples.count()) % self.project
+                                    self.samples.count()) % self.topic
         result["category term"] = "moved samples"
         result["category label"] = "moved samples"
         return result
@@ -329,7 +328,7 @@ class FeedNewSampleSeries(FeedEntry):
     u"""Model for feed entries for new sample series.
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
-    project = models.ForeignKey(Project, verbose_name=_(u"project"))
+    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
     subscribers = models.ManyToManyField(UserDetails, verbose_name=_(u"subscribers"), blank=True)
 
     class Meta:
@@ -339,8 +338,8 @@ class FeedNewSampleSeries(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New sample series “%(sample_series)s” in project “%(project)s”") % \
-            {"sample_series": self.sample_series, "project": self.project}
+        metadata["title"] = _(u"New sample series “%(sample_series)s” in topic “%(topic)s”") % \
+            {"sample_series": self.sample_series, "topic": self.topic}
         metadata["category term"] = "new sample series"
         metadata["category label"] = "new sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
@@ -351,11 +350,11 @@ class FeedNewSampleSeries(FeedEntry):
 
 
 class FeedMovedSampleSeries(FeedEntry):
-    u"""Model for feed entries for sample series moved to a new project.
+    u"""Model for feed entries for sample series moved to a new topic.
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
-    project = models.ForeignKey(Project, verbose_name=_(u"project"))
-    old_project = models.ForeignKey(Project, verbose_name=_(u"old project"), null=True, blank=True,
+    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
+    old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True,
                                   related_name="news_ex_sample_series")
     description = models.TextField(_(u"description"))
     subscribers = models.ManyToManyField(UserDetails, verbose_name=_(u"subscribers"), blank=True)
@@ -367,8 +366,8 @@ class FeedMovedSampleSeries(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample series %(sample_series)s was moved to project “%(project)s”") % \
-            {"sample_series": self.sample_series, "project": self.project}
+        metadata["title"] = _(u"Sample series %(sample_series)s was moved to topic “%(topic)s”") % \
+            {"sample_series": self.sample_series, "topic": self.topic}
         metadata["category term"] = "moved sample series"
         metadata["category label"] = "moved sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
@@ -378,29 +377,29 @@ class FeedMovedSampleSeries(FeedEntry):
         return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
 
 
-changed_project_action_choices = (
+changed_topic_action_choices = (
     ("added", _(u"added")),
     ("removed", _(u"removed")),
     )
 
-class FeedChangedProject(FeedEntry):
-    u"""Model for feed entries for sample series moved to a new project.
+class FeedChangedTopic(FeedEntry):
+    u"""Model for feed entries for sample series moved to a new topic.
     """
-    project = models.ForeignKey(Project, verbose_name=_(u"project"))
+    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
         # Translation hint: Action is either addition or removal
-    action = models.CharField(_("action"), max_length=7, choices=changed_project_action_choices)
+    action = models.CharField(_("action"), max_length=7, choices=changed_topic_action_choices)
 
     class Meta:
-        verbose_name = _(u"changed project feed entry")
-        verbose_name_plural = _(u"changed project feed entries")
+        verbose_name = _(u"changed topic feed entry")
+        verbose_name_plural = _(u"changed topic feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
         if self.action == "added":
-            metadata["title"] = _(u"Now in project “%s”") % self.project
+            metadata["title"] = _(u"Now in topic “%s”") % self.topic
         else:
-            metadata["title"] = _(u"Not anymore in project “%s”") % self.project
-        metadata["category term"] = "changed project membership"
-        metadata["category label"] = "changed project membership"
+            metadata["title"] = _(u"Not anymore in topic “%s”") % self.topic
+        metadata["category term"] = "changed topic membership"
+        metadata["category label"] = "changed topic membership"
         return metadata

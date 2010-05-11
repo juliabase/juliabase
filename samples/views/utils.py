@@ -22,8 +22,8 @@ from samples import models, permissions
 from samples.views.shared_utils import *
 
 
-old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9]*)?$")
-new_sample_name_pattern = re.compile(r"\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})-[-A-Za-z_/0-9]+$")
+old_sample_name_pattern = re.compile(r"\d\d[BVHLCS]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#]*)?$")
+new_sample_name_pattern = re.compile(r"\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})-[-A-Za-z_/0-9#]+$")
 provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)")
 def sample_name_format(name):
     u"""Determines which sample name format the given name has.
@@ -334,7 +334,7 @@ def get_next_deposition_number(letter):
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
-    prefix = ur"%02d%s-" % (datetime.date.today().year % 100, letter)
+    prefix = ur"%s%s-" % (datetime.date.today().strftime(u"%y"), letter)
     prefix_length = len(prefix)
     pattern_string = ur"^%s[0-9]+" % re.escape(prefix)
     deposition_numbers = \
@@ -593,7 +593,7 @@ class StructuredSeries(object):
     u"""Helper class to pass sample series data to the main menu template.
     This is *not* a data strcuture for sample series.  It just stores all data
     needed to display a certain sample series to a certain user.  It is used in
-    `StructuredProject` and `build_structured_sample_list`.
+    `StructuredTopic` and `build_structured_sample_list`.
 
     :ivar sample_series: the sample series for which data should be collected
       in this object
@@ -640,27 +640,27 @@ class StructuredSeries(object):
         return self.__is_complete
 
 
-class StructuredProject(object):
-    u"""Class that represents one project which contains samples and sample
+class StructuredTopic(object):
+    u"""Class that represents one topic which contains samples and sample
     series, used for `build_structured_sample_list`.
 
-    :ivar project: the underlying Chantal project which is represented by this
+    :ivar topic: the underlying Chantal topic which is represented by this
       instance.
 
-    :ivar samples: the samples of this project which belong to the “My Samples”
+    :ivar samples: the samples of this topic which belong to the “My Samples”
       of the user but which don't belong to any sample series.
 
-    :ivar sample_series: the sample series which belong to this project and
+    :ivar sample_series: the sample series which belong to this topic and
       which contain “My Samples” of the user.  They themselves contain a list
       of their samples.  See `StructuredSeries` for further information.
 
-    :type project: ``chantal_common.models.Project``
+    :type topic: ``chantal_common.models.Topic``
     :type samples: list of `models.Sample`
     :type sample_series: list of `StructuredSeries`
     """
 
-    def __init__(self, project):
-        self.project = project
+    def __init__(self, topic):
+        self.topic = topic
         self.samples = []
         self.sample_series = []
 
@@ -672,10 +672,10 @@ def build_structured_sample_list(samples):
     u"""Generate a nested datastructure which contains the given samples in a
     handy way to be layouted in a certain way.  This routine is used for the
     “My Samples” list in the main menu, and for the multiple-selection box for
-    samples in various views.  It is a list of `StructuredProject` at the
+    samples in various views.  It is a list of `StructuredTopic` at the
     top-level.
 
-    As far as sorting is concerned, all projects are sorted by alphabet, all
+    As far as sorting is concerned, all topics are sorted by alphabet, all
     sample series by reverse timestamp of origin, and all samples by name.
 
     :Parameters:
@@ -685,37 +685,37 @@ def build_structured_sample_list(samples):
     :type samples: list of `models.Sample`
 
     :Return:
-      all projects of the user with his series and samples in them, all
-      projectless samples; both is sorted
+      all topics of the user with his series and samples in them, all
+      topicless samples; both is sorted
 
-    :rtype: list of `StructuredProject`, list of `models.Sample`
+    :rtype: list of `StructuredTopic`, list of `models.Sample`
     """
     structured_series = {}
-    structured_projects = {}
-    projectless_samples = []
+    structured_topics = {}
+    topicless_samples = []
     for sample in sorted(set(samples), key=lambda sample: sample.name):
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:
                 if series.name not in structured_series:
                     structured_series[series.name] = StructuredSeries(series)
-                    projectname = series.project.name
-                    if projectname not in structured_projects:
-                        structured_projects[projectname] = StructuredProject(series.project)
-                    structured_projects[projectname].sample_series.append(structured_series[series.name])
+                    topicname = series.topic.name
+                    if topicname not in structured_topics:
+                        structured_topics[topicname] = StructuredTopic(series.topic)
+                    structured_topics[topicname].sample_series.append(structured_series[series.name])
                 structured_series[series.name].append(sample)
-        elif sample.project:
-            projectname = sample.project.name
-            if projectname not in structured_projects:
-                structured_projects[projectname] = StructuredProject(sample.project)
-            structured_projects[projectname].samples.append(sample)
+        elif sample.topic:
+            topicname = sample.topic.name
+            if topicname not in structured_topics:
+                structured_topics[topicname] = StructuredTopic(sample.topic)
+            structured_topics[topicname].samples.append(sample)
         else:
-            projectless_samples.append(sample)
-    structured_projects = sorted(structured_projects.itervalues(),
-                                 key=lambda structured_project: structured_project.project.name)
-    for structured_project in structured_projects:
-        structured_project.sort_sample_series()
-    return structured_projects, projectless_samples
+            topicless_samples.append(sample)
+    structured_topics = sorted(structured_topics.itervalues(),
+                                 key=lambda structured_topic: structured_topic.topic.name)
+    for structured_topic in structured_topics:
+        structured_topic.sort_sample_series()
+    return structured_topics, topicless_samples
 
 
 def extract_preset_sample(request):

@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<p>
+  {% ifequal entry.action "added" %}
+    {% blocktrans with entry.topic as topic %}
+      You were added to topic “{{ topic }}”.
+    {% endblocktrans %}
+  {% else %}
+    {% blocktrans with entry.topic as topic %}
+      You are no longer a member of topic “{{ topic }}”.
+    {% endblocktrans %}
+  {% endifequal %}
+</p>

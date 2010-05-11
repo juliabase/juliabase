@@ -6,17 +6,15 @@
 
 {% block frame_content %}
 <form method="post" action="">
-  {% error_list edit_project _("Error in project data") %}
+  {% error_list new_topic _("New topic") %}
   <table>
     <tr>
-      {% input_field edit_project.members %}
+      {% input_field new_topic.new_topic_name %}
     </tr>
     <tr>
-      {% input_field edit_project.restricted %}
+      {% input_field new_topic.restricted %}
     </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
-
-
 {% endblock %}

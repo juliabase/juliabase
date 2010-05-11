@@ -22,7 +22,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from chantal_common.utils import get_really_full_name
-from chantal_common.models import Project
+from chantal_common.models import Topic
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
@@ -40,7 +40,7 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
-        # Translation hint: Project which is not open to senior members
+        # Translation hint: Topic which is not open to senior members
     restricted = models.BooleanField(_(u"restricted"), default=False)
 
     class Meta:
@@ -345,9 +345,7 @@ class Sample(models.Model):
                                      # Translation hint: ID of mother sample
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
-    project = models.ForeignKey(Project, null=True, blank=True, related_name="samples",
-                                # Translation hint: Topic/project for samples and sample series
-                                verbose_name=_(u"project"))
+    topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
 
     class Meta:
         verbose_name = _(u"sample")
@@ -394,7 +392,7 @@ class Sample(models.Model):
         """
         return Sample(name=self.name, current_location=self.current_location,
                       currently_responsible_person=self.currently_responsible_person, tags=self.tags,
-                      split_origin=self.split_origin, project=self.project)
+                      split_origin=self.split_origin, topic=self.topic)
 
     def is_dead(self):
         return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
@@ -439,13 +437,18 @@ class Sample(models.Model):
 class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
-    aliases needn't be unique.  Two old names may be the same.  However, they
-    must not be equal to a ``Sample.name``.
+    aliases needn't be unique.  Two old names may be the same.
+
+    Note that they may be equal to a ``Sample.name``.  However, when accessing
+    a sample by its name in the URL, this shadows any aliases of the same
+    name.  Only if you look for the name by the search function, you also find
+    aliases of the same name.
     """
     name = models.CharField(_(u"name"), max_length=30)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
 
     class Meta:
+        unique_together = (("name", "sample"),)
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
 
@@ -522,7 +525,8 @@ substrate_materials = (
         # Translation hint: sample substrate type
     ("custom", _(u"custom")),
     ("asahi-u", _(u"ASAHI-U")),
-    ("100-Si", _(u"silicon 100 wafer")),
+    ("corning", _(u"Corning glass")),
+    ("si-wafer", _(u"silicon wafer")),
     )
 u"""Contains all possible choices for `Substrate.material`.
 """
@@ -535,20 +539,48 @@ class Substrate(Process):
     `Process.external_operator`, it is an external sample.
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
+    # The following field should be unique, but this doesn't work, see
+    # <http://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django>.
+    # Karen Tracey's comment would probably help but this would exclude Oracle
+    # as a possible database backend.
+    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")
+        _ = lambda x: x
+        permissions = (("clean_substrate", _("Can clean substrates")),
+                       ("add_edit_substrate", _("Can create and edit substrates")))
 
     def __unicode__(self):
-        return self.material
+        result = self.material
+        if self.cleaning_number:
+            result += u" ({0})".format(self.cleaning_number)
+        return result
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Substrate, self).get_data()
         csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))
+        # FixMe: Should this be appended even if it doesn't exist?
+        csv_node.items.append(CSVItem(_(u"cleaning number"), self.cleaning_number))
         return csv_node
+
+    @classmethod
+    def get_add_link(cls):
+        u"""Return the URL to the “add” view for this process.
+
+        This method marks the current class as a so-called physical process.
+        This implies that it also must have an “add-edit” permission.
+
+        :Return:
+          the full URL to the add page for this process
+
+        :rtype: str
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_substrate")
 
 
 sample_death_reasons = (
@@ -770,7 +802,7 @@ class Result(Process):
 
 class SampleSeries(models.Model):
     u"""A sample series groups together zero or more `Sample`.  It must belong
-    to a project, and it may contain processes, however, only *result processes*.
+    to a topic, and it may contain processes, however, only *result processes*.
     The ``name`` and the ``timestamp`` of a sample series can never change
     after it has been created.
     """
@@ -783,7 +815,7 @@ class SampleSeries(models.Model):
     description = models.TextField(_(u"description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
-    project = models.ForeignKey(Project, related_name="sample_series", verbose_name=_(u"project"))
+    topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_(u"topic"))
 
     class Meta:
         verbose_name = _(u"sample series")
@@ -852,9 +884,9 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="samples_user_details")
     my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
-    auto_addition_projects = models.ManyToManyField(
-        Project, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition projects"),
-        help_text=_(u"new samples in these projects are automatically added to “My Samples”"))
+    auto_addition_topics = models.ManyToManyField(
+        Topic, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition topics"),
+        help_text=_(u"new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False)
     feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed entries"), related_name="users", blank=True)
     my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
@@ -869,7 +901,7 @@ class UserDetails(models.Model):
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
         _ = lambda x: x
-        permissions = (("edit_project", _("Can edit projects, and can add new projects")),)
+        permissions = (("edit_topic", _("Can edit topics, and can add new topics")),)
 
     def __unicode__(self):
         return unicode(self.user)

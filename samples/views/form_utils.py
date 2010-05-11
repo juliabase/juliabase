@@ -15,10 +15,12 @@ from django.forms import ModelForm, ModelChoiceField
 import django.forms as forms
 import django.contrib.auth.models
 from chantal_common.utils import get_really_full_name, check_markdown
-from chantal_common.models import Project
+from chantal_common.models import Topic
 from samples import models, permissions
 from samples.views import utils
 
+
+# FixMe: Should this also contain "operator = OperatorField"?
 
 class ProcessForm(ModelForm):
     u"""Abstract model form class for processes.  It ensures that timestamps
@@ -116,7 +118,7 @@ def get_my_layers(user_details, deposition_model):
 
 class AddLayersForm(forms.Form):
     _ = ugettext_lazy
-    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, required=False)
+    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, max_value=10, required=False)
     my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
 
     def __init__(self, user_details, model, data=None, **kwargs):
@@ -237,12 +239,12 @@ class GeneralSampleField(object):
 
         :type samples: list of `models.Sample`
         """
-        projects, projectless_samples = utils.build_structured_sample_list(samples)
-        self.choices = [(sample.pk, unicode(sample)) for sample in projectless_samples]
-        for project in projects:
-            seriesless_samples = [(sample.pk, unicode(sample)) for sample in project.samples]
-            self.choices.append((project.name, seriesless_samples))
-            for series in project.sample_series:
+        topics, topicless_samples = utils.build_structured_sample_list(samples)
+        self.choices = [(sample.pk, unicode(sample)) for sample in topicless_samples]
+        for topic in topics:
+            seriesless_samples = [(sample.pk, unicode(sample)) for sample in topic.samples]
+            self.choices.append((topic.topic.name, seriesless_samples))
+            for series in topic.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
@@ -327,7 +329,7 @@ class UserField(forms.ChoiceField):
 
 class MultipleUsersField(forms.MultipleChoiceField):
     u"""Form field class for the selection of zero or more users.  This can be
-    the set of members for a particular project.
+    the set of members for a particular topic.
     """
 
     def set_users(self, additional_users=[]):
@@ -338,7 +340,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
 
         :Parameters:
           - `additional_users`: Optional additional users to be included into
-            the list.  Typically, it is the current users for the project whose
+            the list.  Typically, it is the current users for the topic whose
             memberships are to be changed.
 
         :type additional_users: iterable of ``django.contrib.auth.models.User``
@@ -357,42 +359,42 @@ class MultipleUsersField(forms.MultipleChoiceField):
         return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
-class ProjectField(forms.ChoiceField):
-    u"""Form field class for the selection of a single project.  This can be
-    the project for a sample or a sample series, for example.
+class TopicField(forms.ChoiceField):
+    u"""Form field class for the selection of a single topic.  This can be
+    the topic for a sample or a sample series, for example.
     """
 
-    def set_projects(self, user, additional_project=None):
-        u"""Set the project list shown in the widget.  You *must* call this
+    def set_topics(self, user, additional_topic=None):
+        u"""Set the topic list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.  The selection list will
-        consist of all currently active projects, plus the given additional
-        project if any.  The “currently active projects” are all projects with
+        consist of all currently active topics, plus the given additional
+        topic if any.  The “currently active topics” are all topics with
         at least one active user amongst its members.
 
         :Parameters:
           - `user`: the currently logged-in user
-          - `additional_project`: Optional additional project to be included
-            into the list.  Typically, it is the current project of the sample,
+          - `additional_topic`: Optional additional topic to be included
+            into the list.  Typically, it is the current topic of the sample,
             for example.
 
         :type user: ``django.contrib.auth.models.User``
-        :type additional_project: ``chantal_common.models.Project``
+        :type additional_topic: ``chantal_common.models.Topic``
         """
         self.choices = [(u"", 9*u"-")]
-        all_projects = Project.objects.filter(members__is_active=True).distinct()
-        user_projects = user.projects.all()
-        projects = \
-            set(project for project in all_projects if not project.restricted or project in user_projects)
-        if additional_project:
-            projects.add(additional_project)
-        projects = sorted(projects, key=lambda project: project.name)
-        self.choices.extend((project.pk, unicode(project)) for project in projects)
+        all_topics = Topic.objects.filter(members__is_active=True).distinct()
+        user_topics = user.topics.all()
+        topics = \
+            set(topic for topic in all_topics if not topic.restricted or topic in user_topics)
+        if additional_topic:
+            topics.add(additional_topic)
+        topics = sorted(topics, key=lambda topic: topic.name)
+        self.choices.extend((topic.pk, unicode(topic)) for topic in topics)
 
     def clean(self, value):
-        value = super(ProjectField, self).clean(value)
+        value = super(TopicField, self).clean(value)
         if value:
-            return Project.objects.get(pk=int(value))
+            return Topic.objects.get(pk=int(value))
 
 
 class FixedOperatorField(forms.ChoiceField):
@@ -431,6 +433,89 @@ class FixedOperatorField(forms.ChoiceField):
         value = super(FixedOperatorField, self).clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
+
+class OperatorField(forms.ChoiceField):
+    u"""Form field class for the selection of a single operator.  This is
+    intended for edit-process views when the operator must be the currently
+    logged-in user, or the previous operator.  In other words, it must be
+    impossible to change it.  Then, you can use this form field for the
+    operator, and hide the field from display by ``style="display: none"`` in
+    the HTML template.
+
+    If you want to use this field, do the following things:
+
+    1. This field must be made required
+
+    2. If the user is not staff, make the possible choices of the external
+       operator field empty.
+
+    3. Assure in your ``clean()`` method that non-staff doesn't submit an
+       external operator.  In the same method, say::
+
+           self.cleaned_data["external_operator"] = \
+               self.fields["operator"].external_operator
+
+    4. In the template, show the external operator field only for staff.
+    """
+
+    def set_choices(self, user, old_process):
+        u"""Set the operator list shown in the widget.  It combines selectable
+        users and external operators.  You *must* call this method in the
+        constructor of the form in which you use this field, otherwise the
+        selection box will remain emtpy.  It works even for staff users, which
+        can choose from *all* users and external operators (including inactive
+        users such as “nobody”).
+
+        :Parameters:
+          - `user`: the currently logged-in user.
+          - `old_process`: if the process is to be edited, the former instance
+            of the process; otherwise, ``None``
+
+        :type operator: ``django.contrib.auth.models.User``
+        :type is_staff: `models.Process`
+        """
+        self.user = user
+        if old_process:
+            if user.is_staff:
+                self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+            else:
+                self.choices = [(old_process.operator.pk, old_process.operator.username)]
+            self.initial = old_process.operator.pk
+        else:
+            if user.is_staff:
+                self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+            else:
+                self.choices = [(user.pk, user.username)]
+            self.initial = user.pk
+        if user.is_staff:
+            external_operators = list(models.ExternalOperator.objects.all())
+        else:
+            external_operators = list(user.external_contacts.all())
+        if old_process and old_process.external_operator:
+            if not old_process.external_operator in external_operators:
+                external_operators.append(old_process.external_operator)
+            self.initial = "extern-" + str(old_process.external_operator.pk)
+        for external_operator in external_operators:
+            self.choices.append(("extern-" + str(external_operator.pk), external_operator.name))
+
+    def clean(self, value):
+        u"""Return the selected operator.  Additionally, it sets the attribute
+        `external_operator` if the user selected one (it sets it to ``None``
+        otherwise).  If an external operator was selected, this routine returns
+        the currently logged-in user.
+        """
+        value = super(OperatorField, self).clean(value)
+        if value.startswith("extern-"):
+            self.external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
+            return self.user
+        else:
+            self.external_operator = None
+            return django.contrib.auth.models.User.objects.get(pk=int(value))
+
+
+# FixMe: This should be moved to chantal_ipv, because this special case is only
+# necessary because samples may get renamed after depositions.  Maybe
+# refactoring should be done because it is used for substrates, too.
 
 class DepositionSamplesForm(forms.Form):
     u"""Form for the list selection of samples that took part in the
@@ -501,6 +586,32 @@ def clean_time_field(value):
         return "%d:%02d" % (minutes, seconds)
     else:
         return "%d:%02d:%02d" % (hours, minutes, seconds)
+
+
+def clean_date_field(value):
+    u"""General helper function for use in the ``clean_...`` methods in forms.
+    It tests whether the given date is not in the future.
+    It is a small an trivial test, but it is used in the most layer forms.
+
+    The test of correct input is performed by the `date field` itself.
+
+    :Parameter:
+        - `value`: the value input by the user.  Usually this is the result of a
+        ``cleaned_data[...]`` call.
+
+    :type value: datetime.date object
+
+    :Return:
+        the original ``value`` (unchanged)
+
+    :rtype: datetime.date object
+
+    :Exception:
+        -`ValidationError`: if the specified date lies in the future.
+    """
+    if value > datetime.date.today():
+        raise ValidationError(_(u"The date must not be in the future."))
+    return value
 
 
 quantity_pattern = re.compile(ur"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
