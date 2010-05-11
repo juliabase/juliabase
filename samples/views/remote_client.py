@@ -10,11 +10,12 @@ in JSON format.
 from __future__ import absolute_import
 
 import sys
-from django.db import IntegrityError
+from django.db.utils import IntegrityError
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
@@ -26,6 +27,7 @@ from samples import models, permissions
 
 @login_required
 @never_cache
+@require_http_methods(["GET"])
 def primary_keys(request):
     u"""Return the mappings of names of database objects to primary keys.
     While this can be used by everyone by entering the URL directly, this view
@@ -76,9 +78,10 @@ def primary_keys(request):
             result_dict["samples"] = dict(utils.get_profile(request.user).my_samples.values_list("name", "id"))
         else:
             sample_names = query_dict["samples"].split(",")
-            result_dict["samples"] = dict(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
+            result_dict["samples"] = {}
             for alias, sample_id in models.SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
                 result_dict["samples"].setdefault(alias, []).append(sample_id)
+            result_dict["samples"].update(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
     if "users" in query_dict:
         if query_dict["users"] == "*":
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.values_list("username", "id"))
@@ -107,6 +110,7 @@ def primary_keys(request):
 
 @login_required
 @never_cache
+@require_http_methods(["GET"])
 def available_items(request, model_name):
     u"""Returns the unique ids of all items that are already in the database
     for this model.  The point is that it will almost never return primary
@@ -142,6 +146,7 @@ def available_items(request, model_name):
     return utils.respond_to_remote_client(list(model.objects.values_list(id_field, flat=True)))
 
 
+@require_http_methods(["POST"])
 def login_remote_client(request):
     u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
     method and expects ``username`` and ``password``.
@@ -169,6 +174,7 @@ def login_remote_client(request):
     return utils.respond_to_remote_client(False)
 
 
+@require_http_methods(["GET"])
 def logout_remote_client(request):
     u"""By requesting this view, the Chantal Remote Client can log out.  This
     view can never fail.
@@ -188,10 +194,9 @@ def logout_remote_client(request):
     return utils.respond_to_remote_client(True)
 
 
+@require_http_methods(["GET"])
 def next_deposition_number(request, letter):
-    u"""Send the next free deposition number to the Chantal Remote Client.  It
-    only supports the HTTP POST method and expects ``username`` and
-    ``password``.
+    u"""Send the next free deposition number to the Chantal Remote Client.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -240,10 +245,11 @@ def get_next_quirky_name(sample_name):
         else:
             digits[0:0] = [97]
         free_prefix = u"".join(unichr(digit) for digit in digits)
-    return utils.respond_to_remote_client(u"90-LGCY-{0}-{1}".format(free_prefix, sample_name))
+    return u"90-LGCY-{0}-{1}".format(free_prefix, sample_name)
 
 
 @login_required
+@require_http_methods(["POST"])
 def add_sample(request):
     u"""Adds a new sample to the database.  It is added without processes, in
     particular, without a substrate.  This view can only be used by admin
@@ -261,7 +267,7 @@ def add_sample(request):
 
     :rtype: ``HttpResponse``
     """
-    if not request.user.is_staff or request.method != "POST":
+    if not request.user.is_staff:
         return utils.respond_to_remote_client(False)
     try:
         name = request.POST["name"]
@@ -276,22 +282,31 @@ def add_sample(request):
     if is_legacy_name:
         name = get_next_quirky_name(name)
     if currently_responsible_person:
-        currently_responsible_person = get_or_404(django.contrib.auth.models.User,
-                                                  pk=utils.int_or_zero(currently_responsible_person))
+        currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
+                                                         pk=utils.int_or_zero(currently_responsible_person))
     if project:
-        project = get_or_404(Project, pk=utils.int_or_zero(project))
+        project = get_object_or_404(Project, pk=utils.int_or_zero(project))
     try:
-        sample = models.Sample.create(name=name, current_location=current_location,
-                                      currently_responsible_person=currently_responsible_person, purpose=purpose, tags=tags,
-                                      project=project)
+        sample = models.Sample.objects.create(name=name, current_location=current_location,
+                                              currently_responsible_person=currently_responsible_person, purpose=purpose,
+                                              tags=tags, project=project)
         if is_legacy_name:
-            models.models.SampleAlias.create(name=request.POST["name"], sample=sample)
+            models.SampleAlias.objects.create(name=request.POST["name"], sample=sample)
+        else:
+            for alias in models.SampleAlias.objects.filter(name=name):
+                # They will be shadowed anyway.  Nevertheless, this action is
+                # an emergency measure.  Probably the samples the aliases point
+                # to should be merged with the sample but this can't be decided
+                # automatically.
+                alias.delete()
     except IntegrityError:
         return utils.respond_to_remote_client(False)
+    sample.watchers.add(request.user.samples_user_details)
     return utils.respond_to_remote_client(sample.pk)
 
 
 @login_required
+@require_http_methods(["POST"])
 def add_alias(request):
     u"""Adds a new sample alias name to the database.  This view can only be
     used by admin accounts.
@@ -315,7 +330,7 @@ def add_alias(request):
         alias = request.POST["alias"]
     except KeyError:
         return utils.respond_to_remote_client(False)
-    sample = get_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
+    sample = get_object_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
     try:
         models.models.SampleAlias.create(name=alias, sample=sample)
     except IntegrityError:
@@ -325,6 +340,7 @@ def add_alias(request):
 
 
 @login_required
+@require_http_methods(["GET"])
 def substrate_by_sample(request, sample_id):
     u"""Searches for the substrate of a sample.  It returns a dictionary with
     the substrate data.  If the sample isn't found, a 404 is returned.  If
@@ -345,7 +361,7 @@ def substrate_by_sample(request, sample_id):
     """
     if not request.user.is_staff:
         return utils.respond_to_remote_client(False)
-    sample = get_or_404(models.Sample, pk=utils.int_or_zero(sample_id))
+    sample = get_object_or_404(models.Sample, pk=utils.int_or_zero(sample_id))
     process_pks = sample.processes.values_list("id", flat=True)
     substrates = list(models.Substrate.objects.filter(pk__in=process_pks).values())
     try:
@@ -353,5 +369,5 @@ def substrate_by_sample(request, sample_id):
     except IndexError:
         return utils.respond_to_remote_client(False)
     substrate["timestamp"] = substrate["timestamp"].strftime("%Y-%m-%d %H:%M:%S.%f")
-    substrate["samples"] = models.Substrate.objects.get(pk=substrate["id"]).samples.values_list("id", flat=True)
+    substrate["samples"] = list(models.Substrate.objects.get(pk=substrate["id"]).samples.values_list("id", flat=True))
     return utils.respond_to_remote_client(substrate)
