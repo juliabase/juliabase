@@ -262,7 +262,7 @@ def add_sample(request):
 
     :Returns:
       The primary key of the created sample.  ``False`` if something went
-      wrong.  It may return a 404 if the project or the currently responsible
+      wrong.  It may return a 404 if the topic or the currently responsible
       person wasn't found.
 
     :rtype: ``HttpResponse``
@@ -275,7 +275,7 @@ def add_sample(request):
         currently_responsible_person = request.POST.get("currently_responsible_person")
         purpose = request.POST.get("purpose", u"")
         tags = request.POST.get("tags", u"")
-        project = request.POST.get("project")
+        topic = request.POST.get("topic")
     except KeyError:
         return utils.respond_to_remote_client(False)
     is_legacy_name = request.GET.get("legacy") == u"True"
@@ -284,12 +284,12 @@ def add_sample(request):
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
                                                          pk=utils.int_or_zero(currently_responsible_person))
-    if project:
-        project = get_object_or_404(Project, pk=utils.int_or_zero(project))
+    if topic:
+        topic = get_object_or_404(Topic, pk=utils.int_or_zero(topic))
     try:
         sample = models.Sample.objects.create(name=name, current_location=current_location,
                                               currently_responsible_person=currently_responsible_person, purpose=purpose,
-                                              tags=tags, project=project)
+                                              tags=tags, topic=topic)
         if is_legacy_name:
             models.SampleAlias.objects.create(name=request.POST["name"], sample=sample)
         else:
