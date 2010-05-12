@@ -75,8 +75,6 @@ def get_user_permissions(user):
     has = []
     has_not = []
     for permission in django.contrib.auth.models.Permission.objects.all():
-        print permission.content_type.__dict__.keys()
-    for permission in django.contrib.auth.models.Permission.objects.all():
         full_permission_name = permission.content_type.app_label + "." + permission.codename
         if user.has_perm(full_permission_name):
             has.append(ugettext(permission.name))
