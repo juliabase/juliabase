@@ -55,7 +55,8 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users_without(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
-        self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")), ("1", _(u"all processes"))]
+        self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
+                                            ("1", _(u"all processes up to now"))]
         self.fields["clearance"].choices.extend((str(i), name) for i, name in enumerate(models.clearance_sets, 2))
         self.clearance_choices = {"": None, "0": [], "1": "all"}
         self.clearance_choices.update((i, models.clearance_sets[name]) for i, name in self.fields["clearance"].choices[3:])
