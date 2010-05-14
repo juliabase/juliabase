@@ -39,6 +39,7 @@ class ActionForm(forms.Form):
     new_topic = form_utils.TopicField(label=_(u"New Topic"), required=False)
     new_current_location = forms.CharField(label=_(u"New current location"), required=False, max_length=50)
     copy_to_user = form_utils.UserField(label=_(u"Copy to user"), required=False)
+    clearance = forms.ChoiceField(label=_("Clearance"), required=False)
     comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
 
@@ -54,6 +55,10 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users_without(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
+        self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")), ("1", _(u"all processes"))]
+        self.fields["clearance"].choices.extend((str(i), name) for i, name in enumerate(models.clearance_sets, 2))
+        self.clearance_choices = {"": None, "0": [], "1": "all"}
+        self.clearance_choices.update((i, models.clearance_sets[name]) for i, name in self.fields["clearance"].choices[3:])
 
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -62,10 +67,20 @@ class ActionForm(forms.Form):
         chantal_common.utils.check_markdown(comment)
         return comment
 
+    def clean_clearance(self):
+        return self.clearance_choices[self.cleaned_data["clearance"]]
+
     def clean(self):
         cleaned_data = self.cleaned_data
-        if cleaned_data["copy_to_user"] and not cleaned_data["comment"]:
-            raise ValidationError(_(u"If you copy samples over to another person, you must enter a short comment."))
+        if cleaned_data["copy_to_user"]:
+            if not cleaned_data["comment"]:
+                append_error(self, _(u"If you copy samples over to another person, you must enter a short comment."),
+                             "comment")
+                cleaned_data.pop("copy_to_user", None)
+            if not cleaned_data["clearance"]:
+                append_error(self, _(u"If you copy samples over to another person, you must select a clearance option."),
+                             "clearance")
+                cleaned_data.pop("copy_to_user", None)
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you edit samples, you must enter a short comment."))

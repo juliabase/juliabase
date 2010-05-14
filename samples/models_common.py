@@ -511,8 +511,8 @@ class SampleSplit(Process):
 
 
 class Clearance(models.Model):
-    user = models.ForeignKeyField(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
-    sample = models.ForeignKeyField(Sample, verbose_name=_(u"sample"), related_name="clearances")
+    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
+    sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances")
 
     class Meta:

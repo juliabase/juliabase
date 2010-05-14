@@ -45,23 +45,17 @@ from samples.models_feeds import *
 
 u"""
 
-:var allowed_processes: Dictionary mapping permission codenames to Process
-  subclasses.  These Process classes are important for users having that
-  permission in the sense that they must be able to see such processes even for
-  samples that they are not allowed to see.  However, the approval is only
-  granted if another user who can see the sample copies it to the first user's
-  MySamples list.
+:var clearance_sets: Dictionary mapping clearance codenames to Process
+  subclasses.  This dictionary is used in the “edit MySamples“ view to offer
+  pre-defined sets of Processes that should be allowed to see by the user to
+  whom the samples are copied.  The dictionary may be left empty.  Otherwise,
+  it may be injected here from the ``models.py`` of another app.
 
-:type allowed_processes: dict mapping str to set of `Process`.
+:type clearance_sets: dict mapping unicode to set of `Process`.
 """
 
 
-class AllowedProcessesDict(dict):
-
-    def approve_processes(self, permission_codename, process_classes):
-        self.setdefault(permission_codename, set()).update(process_classes)
-
-allowed_processes = AllowedProcessesDict()
+clearance_sets = {}
 
 
 # FixMe: In Python 3, this could be achieved with class decorators, I think.
