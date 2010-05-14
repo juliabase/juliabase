@@ -77,10 +77,6 @@ class ActionForm(forms.Form):
                 append_error(self, _(u"If you copy samples over to another person, you must enter a short comment."),
                              "comment")
                 cleaned_data.pop("copy_to_user", None)
-            if not cleaned_data["clearance"]:
-                append_error(self, _(u"If you copy samples over to another person, you must select a clearance option."),
-                             "clearance")
-                cleaned_data.pop("copy_to_user", None)
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
@@ -108,16 +104,26 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
     :rtype: bool
     """
     referentially_valid = True
-    if not current_user.is_staff and my_samples_form.is_valid() and action_form.is_valid():
-        action_data = action_form.cleaned_data
-        if action_data["new_currently_responsible_person"] or action_data["new_topic"] or \
-                    action_data["new_current_location"]:
+    if my_samples_form.is_valid() and action_form.is_valid():
+        if not current_user.is_staff:
+            action_data = action_form.cleaned_data
+            if action_data["new_currently_responsible_person"] or action_data["new_topic"] or \
+                        action_data["new_current_location"]:
+                try:
+                    for sample in my_samples_form.cleaned_data["samples"]:
+                        permissions.assert_can_edit_sample(current_user, sample)
+                except permissions.PermissionError:
+                    append_error(action_form,
+                                 _(u"You must be the currently responsible person for samples you'd like to change."))
+                    referentially_valid = False
+        if action_form.cleaned_data["clearance"] is None:
             try:
                 for sample in my_samples_form.cleaned_data["samples"]:
-                    permissions.assert_can_edit_sample(current_user, sample)
+                    permissions.assert_can_fully_view_sample(action_form.cleaned_data["copy_to_user"], sample)
+                    print permissions.has_permission_to_fully_view_sample(action_form.cleaned_data["copy_to_user"], sample)
             except permissions.PermissionError:
-                append_error(action_form,
-                             _(u"You must be the currently responsible person for samples you'd like to change."))
+                append_error(action_form, _(u"If you copy samples over to another person who cannot fully view one of the "
+                                            u"samples, you must select a clearance option."), "clearance")
                 referentially_valid = False
     return referentially_valid
 
