@@ -58,7 +58,7 @@ class ActionForm(forms.Form):
         self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
                                             ("1", _(u"all processes up to now"))]
         self.fields["clearance"].choices.extend((str(i), name) for i, name in enumerate(models.clearance_sets, 2))
-        self.clearance_choices = {"": None, "0": [], "1": "all"}
+        self.clearance_choices = {"": None, "0": (), "1": "all"}
         self.clearance_choices.update((i, models.clearance_sets[name]) for i, name in self.fields["clearance"].choices[3:])
 
     def clean_comment(self):
@@ -77,7 +77,9 @@ class ActionForm(forms.Form):
             if not cleaned_data["comment"]:
                 append_error(self, _(u"If you copy samples over to another person, you must enter a short comment."),
                              "comment")
-                cleaned_data.pop("copy_to_user", None)
+        if cleaned_data["clearance"] is not None and not cleaned_data.get("copy_to_user"):
+                append_error(self, _(u"If you set a clearance, you must copy samples to another user."), "copy_to_user")
+                del cleaned_data["clearance"]
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
@@ -173,6 +175,12 @@ def save_to_database(user, my_samples_form, action_form):
             utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
+            if action_data["clearance"] is not None:
+                clearance, __ = models.Clearance.objects.get_or_create(user=action_data["copy_to_user"], sample=sample)
+                for process in sample.processes.all():
+                    if action_data["clearance"] == "all" or \
+                            isinstance(process.find_actual_instance(), action_data["clearance"]):
+                        clearance.processes.add(process)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
     feed_reporter = feed_utils.Reporter(user)

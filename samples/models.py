@@ -51,7 +51,7 @@ u"""
   whom the samples are copied.  The dictionary may be left empty.  Otherwise,
   it may be injected here from the ``models.py`` of another app.
 
-:type clearance_sets: dict mapping unicode to set of `Process`.
+:type clearance_sets: dict mapping unicode to tuple of `Process`.
 """
 
 
