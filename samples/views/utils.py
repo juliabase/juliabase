@@ -392,7 +392,7 @@ def lookup_sample(sample_name, request):
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
     try:
-        permissions.assert_can_view_sample(request.user, sample)
+        permissions.assert_can_fully_view_sample(request.user, sample)
     except permissions.PermissionError:
         if not models.Clearance.objects.filter(user=request.user, sample=sample).count():
             raise

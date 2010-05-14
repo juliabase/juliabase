@@ -263,5 +263,5 @@ def export(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
     for sample in sample_series.samples.all():
-        permissions.assert_can_view_sample(request.user, sample)
+        permissions.assert_can_fully_view_sample(request.user, sample)
     return csv_export.export(request, sample_series.get_data(), _(u"sample"), renaming_offset=2)

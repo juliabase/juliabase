@@ -261,7 +261,7 @@ def by_id(request, sample_id, path_suffix):
         # No redirect for the remote client
         return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
-    permissions.assert_can_view_sample(request.user, sample)
+    permissions.assert_can_fully_view_sample(request.user, sample)
     query_string = request.META["QUERY_STRING"] or u""
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
