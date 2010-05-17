@@ -195,19 +195,23 @@ class SamplesAndProcesses(object):
     :ivar process_lists: list of `SamplesAndProcesses` of child samples.
     """
 
-    def __init__(self, sample, user, post_data):
+    def __init__(self, sample, full_view, user, post_data):
         u"""
         :Parameters:
           - `sample`: the sample to which the processes belong
+          - `full_view`: whether the user can fully view the sample; ``False``
+            currently means that the sample is accessed through a clearance
           - `user`: the currently logged-in user
           - `post_data`: the POST data if it was an HTTP POST request, and
             ``None`` otherwise
 
         :type sample: `models.Sample`
+        :type full_view: bool
         :type user: ``django.contrib.auth.models.User``
         :type post_data: ``QueryDict`` or ``NoneType``
         """
         self.sample = sample
+        self.full_view = full_view
         self.user = user
         self.user_details = utils.get_profile(user)
         self.is_my_sample = self.user_details.my_samples.filter(id__exact=sample.id).exists()
@@ -241,7 +245,7 @@ class SamplesAndProcesses(object):
 
         :rtype: ``generator``
         """
-        sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form}
+        sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form, "full_view": self.full_view}
         try:
             # FixMe: calling get_allowed_processes is too expensive
             get_allowed_processes(self.user, self.sample)
@@ -252,7 +256,7 @@ class SamplesAndProcesses(object):
         sample["number_for_rename"] = \
             self.sample.name[1:] if self.sample.name.startswith("*") and sample["can_edit"] else None
         if self.processes:
-            yield sample, process[0]
+            yield sample, self.processes[0]
             for process in self.processes[1:]:
                 yield None, process
         else:
@@ -409,7 +413,7 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: `SamplesAndProcesses`
         """
-        process_list = SamplesAndProcesses(self.original_sample, self.user, post_data)
+        process_list = SamplesAndProcesses(self.original_sample, self.clearance is None, self.user, post_data)
         split_origin = self.current_sample.split_origin
         if split_origin:
             process_list.processes.extend(self.split(split_origin).collect_processes(post_data))
