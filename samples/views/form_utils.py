@@ -178,7 +178,7 @@ class InitialsForm(forms.Form):
         if not initials_pattern.match(initials):
             raise ValidationError(_(u"The initials must start with two uppercase letters.  "
                                     u"They must contain uppercase letters and digits only.  Digits must be at the end."))
-        if models.Initials.objects.filter(initials=initials).count():
+        if models.Initials.objects.filter(initials=initials).exists():
             raise ValidationError(_(u"These initials are already used."))
         return initials
 
@@ -191,10 +191,10 @@ class InitialsForm(forms.Form):
         initials = self.cleaned_data["initials"]
         if initials:
             if self.is_user:
-                if models.Initials.objects.filter(user=self.person).count() == 0:
+                if not models.Initials.objects.filter(user=self.person).exists():
                     models.Initials.objects.create(initials=initials, user=self.person)
             else:
-                if models.Initials.objects.filter(external_operator=self.person).count() == 0:
+                if not models.Initials.objects.filter(external_operator=self.person).exists():
                     models.Initials.objects.create(initials=initials, external_operator=self.person)
 
 
@@ -297,7 +297,7 @@ class UserField(forms.ChoiceField):
         :type additional_user: ``django.contrib.auth.models.User``
         """
         self.choices = [(u"", 9*u"-")]
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True))
         if additional_user:
             users.add(additional_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
@@ -316,7 +316,7 @@ class UserField(forms.ChoiceField):
         :type excluded_user: ``django.contrib.auth.models.User``
         """
         self.choices = [(u"", 9*u"-")]
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True))
         users.remove(excluded_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
@@ -345,7 +345,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
 
         :type additional_users: iterable of ``django.contrib.auth.models.User``
         """
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True).all())
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True))
         users |= set(additional_users)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices = [(user.pk, get_really_full_name(user)) for user in users]

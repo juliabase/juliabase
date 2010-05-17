@@ -210,7 +210,7 @@ class SamplesAndProcesses(object):
         self.sample = sample
         self.user = user
         self.user_details = utils.get_profile(user)
-        self.is_my_sample = bool(self.user_details.my_samples.filter(id__exact=sample.id).count())
+        self.is_my_sample = self.user_details.my_samples.filter(id__exact=sample.id).exists()
         self.is_my_sample_form = IsMySampleForm(
             prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
             else IsMySampleForm(post_data, prefix=str(sample.pk))
@@ -523,8 +523,9 @@ class AddSamplesForm(forms.Form):
             % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
                django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u"</span>"
         self.fields["substrate_originator"].choices = [(u"<>", get_really_full_name(user))]
-        if user.external_contacts.count() > 0:
-            for external_operator in user.external_contacts.all():
+        external_contacts = user.external_contacts.all()
+        if external_contacts:
+            for external_operator in external_contacts:
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
             self.fields["substrate_originator"].required = True
         self.user = user
@@ -567,7 +568,7 @@ class AddSamplesForm(forms.Form):
                 raise ValidationError(u"You don't have the permission to give cleaning numbers.")
             if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
                 raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
-            if models.Substrate.objects.filter(cleaning_number=cleaning_number).count():
+            if models.Substrate.objects.filter(cleaning_number=cleaning_number).exists():
                 raise ValidationError(_(u"The cleaning number you have chosen already exists."))
         return cleaning_number
 
@@ -719,7 +720,7 @@ def add(request):
     return render_to_response("samples/add_samples.html",
                               {"title": _(u"Add samples"),
                                "add_samples": add_samples_form,
-                               "external_operators_available": user.external_contacts.count() > 0},
+                               "external_operators_available": user.external_contacts.exists()},
                               context_instance=RequestContext(request))
 
 
@@ -793,7 +794,7 @@ def search(request):
             found_samples = \
                 models.Sample.objects.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
             too_many_results = found_samples.count() > max_results
-            found_samples = found_samples.all()[:max_results] if too_many_results else found_samples.all()
+            found_samples = found_samples[:max_results] if too_many_results else found_samples
         else:
             found_samples = []
         my_samples = user_details.my_samples.all()

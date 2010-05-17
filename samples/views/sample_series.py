@@ -216,7 +216,7 @@ def new(request):
             timestamp = datetime.datetime.today()
             full_name = \
                 u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["short_name"])
-            if models.SampleSeries.objects.filter(name=full_name).count():
+            if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length

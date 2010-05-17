@@ -395,7 +395,7 @@ class Sample(models.Model):
                       split_origin=self.split_origin, topic=self.topic)
 
     def is_dead(self):
-        return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
+        return self.processes.filter(sampledeath__timestamp__isnull=False).exists()
 
     def last_process_if_split(self):
         u"""Test whether the most recent process applied to the sample – except

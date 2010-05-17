@@ -88,8 +88,8 @@ def does_sample_exist(sample_name):
 
     :rtype: bool
     """
-    return (models.Sample.objects.filter(name=sample_name).count() or
-            models.SampleAlias.objects.filter(name=sample_name).count())
+    return models.Sample.objects.filter(name=sample_name).exists() or \
+        models.SampleAlias.objects.filter(name=sample_name).exists()
 
 
 def normalize_sample_name(sample_name):
@@ -106,7 +106,7 @@ def normalize_sample_name(sample_name):
 
     :rtype: unicode
     """
-    if models.Sample.objects.filter(name=sample_name).count():
+    if models.Sample.objects.filter(name=sample_name).exists():
         return sample_name
     try:
         sample_alias = models.SampleAlias.objects.get(name=sample_name)

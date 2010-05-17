@@ -104,7 +104,7 @@ def edit_preferences(request, login_name):
     return render_to_response("samples/edit_preferences.html",
                               {"title": _(u"Change preferences for %s") % get_really_full_name(request.user),
                                "user_details": user_details_form, "initials": initials_form,
-                               "has_topics": bool(user.topics.count())},
+                               "has_topics": user.topics.exists()},
                               context_instance=RequestContext(request))
 
 

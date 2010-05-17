@@ -125,7 +125,7 @@ class FeedNewSamples(FeedEntry):
         return result
 
     def get_additional_template_context(self, user_details):
-        return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
+        return {"auto_added": self.auto_adders.filter(pk=user_details.pk).exists()}
 
 
 class FeedMovedSamples(FeedEntry):

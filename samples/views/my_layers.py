@@ -46,7 +46,7 @@ class MyLayerForm(forms.Form):
         except ValueError:
             raise ValidationError(_(u"Layer number isn't a number."))
         # FixMe: Handle the case when there is no "layers" attribute
-        if not deposition.layers.filter(number=layer_number).count():
+        if not deposition.layers.filter(number=layer_number).exists():
             raise ValidationError(_(u"This layer does not exist in this deposition."))
         return u"%d-%s" % (deposition.id, layer_number)
 
