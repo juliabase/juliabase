@@ -10,6 +10,7 @@ from __future__ import absolute_import
 import time, datetime
 import re
 from django.db import transaction, IntegrityError
+from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
@@ -100,7 +101,7 @@ def edit(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = utils.get_profile(request.user)
@@ -179,6 +180,158 @@ def get_allowed_processes(user, sample):
     return sample_processes, general_processes
 
 
+class SamplesAndProcesses(object):
+
+    def __init__(self, sample, user, post_data):
+        self.sample = sample
+        self.user = user
+        self.user_details = utils.get_profile(user)
+        self.is_my_sample = bool(self.user_details.my_samples.filter(id__exact=sample.id).count())
+        self.is_my_sample_form = IsMySampleForm(
+            prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
+            else IsMySampleForm(post_data, prefix=str(sample.pk))
+        self.processes = []
+        self.process_lists = []
+
+    def samples_and_processes(self):
+        for i, process in enumerate(self.processes):
+            if i == 0:
+                sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form}
+                try:
+                    # FixMe: calling get_allowed_processes is too expensive
+                    get_allowed_processes(self.user, self.sample)
+                    sample["can_add_process"] = True
+                except permissions.PermissionError:
+                    sample["can_add_process"] = False
+                sample["can_edit"] = permissions.has_permission_to_edit_sample(self.user, self.sample)
+                sample["number_for_rename"] = \
+                    self.sample.name[1:] if self.sample.name.startswith("*") and sample["can_edit"] else None
+                yield sample, process
+            else:
+                yield None, process
+        for process_list in self.process_lists:
+            for sample, process in process_list.samples_and_processes():
+                yield sample, process
+
+    def is_valid(self):
+        all_valid = self.is_my_sample_form.is_valid()
+        all_valid = all_valid and all([process_list.is_valid() for process_list in self.process_lists])
+        return all_valid
+
+    def save_to_database(self):
+        added = set()
+        removed = set()
+        if self.is_my_sample_form.cleaned_data["is_my_sample"] and not self.is_my_sample:
+            added.add(self.sample)
+            self.user_details.my_samples.add(self.sample)
+        elif not self.is_my_sample_form.cleaned_data["is_my_sample"] and self.is_my_sample:
+            removed.add(self.sample)
+            self.user_details.my_samples.remove(self.sample)
+        for process_list in self.process_lists:
+            added_, removed_ = process_list.save_to_database()
+            added.update(added_)
+            removed.update(removed_)
+        return added, removed
+
+
+class ProcessContext(utils.ResultContext):
+    u"""Contains all info that processes must know in order to render
+    themselves as HTML.  It does the same as the parent class `ResultContext`
+    (see there for full information), however, it extends its functionality a
+    little bit for being useful for *samples* instead of sample series.
+
+    :ivar original_sample: the sample for which the history is about to be
+      generated
+
+    :ivar current_sample: the sample the processes of which are *currently*
+      collected an processed.  This is an ancestor of `original_sample`.  In
+      other words, `original_sample` is a direct or indirect split piece of
+      ``current_sample``.
+
+    :ivar cutoff_timestamp: the timestamp of the split of `current_sample`
+      which generated the (ancestor of) the `original_sample`.  Thus, processes
+      of `current_sample` that came *after* the cutoff timestamp must not be
+      included into the history.
+    """
+
+    def __init__(self, user, sample_name, post_data=None):
+        u"""
+        :Parameters:
+          - `user`: the user that wants to see all the generated HTML
+          - `original_sample`: the sample the history of which is about to be
+            generated
+
+        :type user: django.contrib.auth.models.User
+        :type original_sample: `models.Sample`
+        """
+        self.original_sample, self.clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
+        self.current_sample = self.original_sample
+        self.latest_descendant = None
+        self.user = user
+        self.cutoff_timestamp = None
+        self.post_data = post_data
+
+    def split(self, split):
+        u"""Generate a copy of this `ProcessContext` for the parent of the
+        current sample.
+
+        :Parameters:
+          - `split`: the split process
+
+        :type split: `models.SampleSplit`
+
+        :Return:
+          a new process context for collecting the processes of the parent in
+          order to add them to the complete history of the `original_sample`.
+
+        :rtype: `ProcessContext`
+        """
+        result = copy.copy(self)
+        result.current_sample = split.parent
+        result.latest_descendant = self.current_sample
+        result.cutoff_timestamp = split.timestamp
+        return result
+
+    def get_processes(self):
+        u"""Get all relevant processes of the `current_sample`.
+
+        :Return:
+          all processes of the `current_sample` that must be included into the
+          history of `original_sample`, i.e. up to `cutoff_timestamp`.
+
+        :rtype: list of `models.Process`
+        """
+        if self.cutoff_timestamp is None:
+            return models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                 Q(result__sample_series__samples=self.current_sample)).distinct()
+        else:
+            return models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                 Q(result__sample_series__samples=self.current_sample)). \
+                                                 filter(timestamp__lte=self.cutoff_timestamp).distinct()
+        return processes
+
+    def collect_processes(self):
+        u"""Make a list of all processes for `current_sample`.  This routine is
+        called recursively in order to resolve all upstream sample splits,
+        i.e. it also collects all processes of ancestors that the current
+        sample has experienced, too.
+
+        :Return:
+          a list with all result processes of this sample in chronological
+          order.  Every list item is a dictionary with the information
+          described in `digest_process`.
+
+        :rtype: list of dict
+        """
+        process_list = SamplesAndProcesses(self.original_sample, self.user, self.post_data)
+        split_origin = self.current_sample.split_origin
+        if split_origin:
+            process_list.processes.extend(self.split(split_origin).collect_processes())
+        for process in self.get_processes():
+            process_list.processes.append(self.digest_process(process))
+        return process_list
+
+
 @login_required
 def show(request, sample_name):
     u"""A view for showing existing samples.
@@ -197,41 +350,30 @@ def show(request, sample_name):
     """
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
-    sample = utils.lookup_sample(sample_name, request)
-    user_details = utils.get_profile(request.user)
     if request.method == "POST":
-        is_my_sample_form = IsMySampleForm(request.POST)
-        if is_my_sample_form.is_valid():
-            if is_my_sample_form.cleaned_data["is_my_sample"]:
-                user_details.my_samples.add(sample)
-                if is_remote_client:
-                    return utils.respond_to_remote_client(True)
-                else:
-                    messages.success(request, _(u"Sample %s was added to Your Samples.") % sample)
+        samples_and_processes = ProcessContext(request.user, sample_name, request.POST).collect_processes()
+        if samples_and_processes.is_valid():
+            added, removed = samples_and_processes.save_to_database()
+            if added:
+                success_message = ungettext(u"Sample {samples} was added to My Samples.",
+                                            u"Samples {samples} were added to My Samples.",
+                                            len(added)).format(samples=utils.format_enumeration(added))
             else:
-                user_details.my_samples.remove(sample)
-                if is_remote_client:
-                    return utils.respond_to_remote_client(True)
-                else:
-                    messages.success(request, _(u"Sample %s was removed from Your Samples.") % sample)
+                success_message = u""
+            if removed:
+                if added:
+                    success_message += u"  "
+                success_message += ungettext(u"Sample {samples} was removed from My Samples.",
+                                             u"Samples {samples} were removed from My Samples.",
+                                             len(removed)).format(samples=utils.format_enumeration(removed))
+            elif not added:
+                success_message = _(u"Nothing was changed.")
+            messages.success(request, success_message)
     else:
-        is_my_sample_form = IsMySampleForm(
-            initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
-    processes = utils.ProcessContext(request.user, sample).collect_processes()
+        samples_and_processes = ProcessContext(request.user, sample_name).collect_processes()
     messages.debug(request, "DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
-    try:
-        # FixMe: calling get_allowed_processes is too expensive
-        get_allowed_processes(request.user, sample)
-        can_add_process = True
-    except permissions.PermissionError:
-        can_add_process = False
-    can_edit = permissions.has_permission_to_edit_sample(request.user, sample)
-    number_for_rename = sample.name[1:] if sample.name.startswith("*") and can_edit else None
-    return render_to_response("samples/show_sample.html", {"processes": processes, "sample": sample,
-                                                           "can_edit": can_edit,
-                                                           "number_for_rename": number_for_rename,
-                                                           "can_add_process": can_add_process,
-                                                           "is_my_sample_form": is_my_sample_form},
+    return render_to_response("samples/show_sample.html", {"title": _(u"Sample “{0}”").format(samples_and_processes.sample),
+                                                           "samples_and_processes": samples_and_processes},
                               context_instance=RequestContext(request))
 
 
@@ -518,7 +660,7 @@ def add_process(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
         process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())
@@ -616,5 +758,5 @@ def export(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     return csv_export.export(request, sample.get_data(), _(u"process"))
