@@ -181,8 +181,32 @@ def get_allowed_processes(user, sample):
 
 
 class SamplesAndProcesses(object):
+    u"""This is a container data structure for holding (almost) all data for
+    the “show sample” template.  It represents one sample.  By nesting it,
+    child samples can be embedded, too.
+
+    Thus, the purpose of this class is two-fold: First, it contains one sample
+    and all processes associated with it.  And secondly, it contains further
+    instances of `SamplesAndProcesses` of child samples.
+
+    :ivar processes: List of processes associated with the sample.  This is a
+      list of dictionaries rather than a list of model instances.
+
+    :ivar process_lists: list of `SamplesAndProcesses` of child samples.
+    """
 
     def __init__(self, sample, user, post_data):
+        u"""
+        :Parameters:
+          - `sample`: the sample to which the processes belong
+          - `user`: the currently logged-in user
+          - `post_data`: the POST data if it was an HTTP POST request, and
+            ``None`` otherwise
+
+        :type sample: `models.Sample`
+        :type user: ``django.contrib.auth.models.User``
+        :type post_data: ``QueryDict`` or ``NoneType``
+        """
         self.sample = sample
         self.user = user
         self.user_details = utils.get_profile(user)
@@ -194,6 +218,24 @@ class SamplesAndProcesses(object):
         self.process_lists = []
 
     def samples_and_processes(self):
+        u"""Returns an iterator over all samples and processes.  It is used in
+        the template to generate the whole page.  Note that because no
+        recursion is allowed in Django's template language, this generator
+        method must flatten the nested structure, and it must return sample and
+        process at the same time, although the first is mostly ``None``.
+
+        Note that both sample and process aren't model instances.  Instead,
+        they are dictionaries containing everything the template needs.  In
+        particular, the actual sample instance is ``sample["sample"]`` or, in
+        template code syntax, ``sample.sample``.
+
+        :Return:
+          Generator for iterating over all samples and processes.  It returns a
+          tuple with two values, ``sample`` and ``process``.  ``sample`` is
+          ``None`` except when processes of a new sample start.
+
+        :rtype: ``generator``
+        """
         for i, process in enumerate(self.processes):
             if i == 0:
                 sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form}
@@ -214,11 +256,29 @@ class SamplesAndProcesses(object):
                 yield sample, process
 
     def is_valid(self):
+        u"""Checks whether all “is My Sample” forms of the “show sample” view
+        are valid.  Actually, this method is rather silly because the forms
+        consist only of checkboxes and they can never be invalid.  But sticking
+        to rituals reduces errors …
+
+        :Return:
+          whether all forms are valid
+
+        :rtype: bool
+        """
         all_valid = self.is_my_sample_form.is_valid()
         all_valid = all_valid and all([process_list.is_valid() for process_list in self.process_lists])
         return all_valid
 
     def save_to_database(self):
+        u"""Changes the members of the “My Samples” list according to what the
+        user selected.
+
+        :Return:
+          names of added samples, names of removed samples
+
+        :rtype: set of unicode, set of unicode
+        """
         added = set()
         removed = set()
         if self.is_my_sample_form.cleaned_data["is_my_sample"] and not self.is_my_sample:
@@ -236,9 +296,13 @@ class SamplesAndProcesses(object):
 
 class ProcessContext(utils.ResultContext):
     u"""Contains all info that processes must know in order to render
-    themselves as HTML.  It does the same as the parent class `ResultContext`
-    (see there for full information), however, it extends its functionality a
-    little bit for being useful for *samples* instead of sample series.
+    themselves as HTML.  It does the same as the parent class
+    `utils.ResultContext` (see there for full information), however, it extends
+    its functionality a little bit for being useful for *samples* instead of
+    sample series.
+
+    Its main purpose is to create the datastructure built of nested
+    `SamplesAndProcesses`, which is later used in the template.
 
     :ivar original_sample: the sample for which the history is about to be
       generated
@@ -252,6 +316,11 @@ class ProcessContext(utils.ResultContext):
       which generated the (ancestor of) the `original_sample`.  Thus, processes
       of `current_sample` that came *after* the cutoff timestamp must not be
       included into the history.
+
+    :ivar latest_descendant: This is used in ``show_sample_split.html`` for
+      identifying direct ancestors of the sample when displaying a sample split
+      of an ancestor which is not the parent.  When walking up through the
+      ancestors, `latest_descendant` contains the respectively previous sample.
     """
 
     def __init__(self, user, sample_name):
@@ -259,10 +328,15 @@ class ProcessContext(utils.ResultContext):
         :Parameters:
           - `user`: the user that wants to see all the generated HTML
           - `sample_name`: the sample or alias of the sample to display
-          - `post_data`: 
 
         :type user: django.contrib.auth.models.User
         :type original_sample: `models.Sample`
+
+        :Exceptions:
+          - `Http404`: if the sample name could not be found
+          - `AmbiguityException`: if more than one matching alias was found
+          - `permissions.PermissionError`: if the user is not allowed to view the
+            sample
         """
         self.original_sample, self.clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
         self.current_sample = self.original_sample
@@ -326,7 +400,7 @@ class ProcessContext(utils.ResultContext):
           order.  Every list item is a dictionary with the information
           described in `digest_process`.
 
-        :rtype: list of dict
+        :rtype: `SamplesAndProcesses`
         """
         process_list = SamplesAndProcesses(self.original_sample, self.user, post_data)
         split_origin = self.current_sample.split_origin
