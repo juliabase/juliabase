@@ -229,7 +229,7 @@ class Process(models.Model):
     def draw_plot(self, axes, number, filename, for_thumbnail):
         u"""Generate a plot using Matplotlib commands.  You may do whatever you
         want here – but eventually, there must be a savable Matplotlib plot in
-        the `axes`.  The ``filename`` parameter ist not really necessary but it
+        the `axes`.  The ``filename`` parameter is not really necessary but it
         makes things a little bit faster and easier.
 
         This method must be overridden in derived classes that wish to offer
