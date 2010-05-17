@@ -7,7 +7,7 @@ and validation.
 
 from __future__ import absolute_import
 
-import re, datetime
+import re, os.path, datetime
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -729,3 +729,19 @@ def dead_samples(samples, timestamp):
         if death_timestamps and death_timestamps[0] <= timestamp:
             result.add(sample)
     return result
+
+def test_for_datafile(filename, root_dir):
+    u"""Test whether a certain file is openable by Chantal.
+
+    :Parameters:
+    - `filename`: Path to the file to be tested.  Note that this is a
+    relative path: The `root_dir` is implicitly prepended to the
+    filename.
+
+    :type filename: str
+    """
+    if filename:
+        try:
+            open(os.path.join(root_dir, filename))
+        except IOError:
+            raise ValidationError(_(u"Couldn't open %s." % filename))
