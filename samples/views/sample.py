@@ -374,14 +374,12 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: list of `models.Process`
         """
+        basic_query = models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                    Q(result__sample_series__samples=self.current_sample))
         if self.cutoff_timestamp is None:
-            return models.Process.objects.filter(Q(samples=self.current_sample) |
-                                                 Q(result__sample_series__samples=self.current_sample)).distinct()
+            return basic_query.distinct()
         else:
-            return models.Process.objects.filter(Q(samples=self.current_sample) |
-                                                 Q(result__sample_series__samples=self.current_sample)). \
-                                                 filter(timestamp__lte=self.cutoff_timestamp).distinct()
-        return processes
+            return basic_query.filter(timestamp__lte=self.cutoff_timestamp).distinct()
 
     def collect_processes(self, post_data=None):
         u"""Make a list of all processes for `current_sample`.  This routine is
