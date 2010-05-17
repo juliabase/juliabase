@@ -254,12 +254,12 @@ class ProcessContext(utils.ResultContext):
       included into the history.
     """
 
-    def __init__(self, user, sample_name, post_data=None):
+    def __init__(self, user, sample_name):
         u"""
         :Parameters:
           - `user`: the user that wants to see all the generated HTML
-          - `original_sample`: the sample the history of which is about to be
-            generated
+          - `sample_name`: the sample or alias of the sample to display
+          - `post_data`: 
 
         :type user: django.contrib.auth.models.User
         :type original_sample: `models.Sample`
@@ -269,7 +269,6 @@ class ProcessContext(utils.ResultContext):
         self.latest_descendant = None
         self.user = user
         self.cutoff_timestamp = None
-        self.post_data = post_data
 
     def split(self, split):
         u"""Generate a copy of this `ProcessContext` for the parent of the
@@ -310,11 +309,17 @@ class ProcessContext(utils.ResultContext):
                                                  filter(timestamp__lte=self.cutoff_timestamp).distinct()
         return processes
 
-    def collect_processes(self):
+    def collect_processes(self, post_data=None):
         u"""Make a list of all processes for `current_sample`.  This routine is
         called recursively in order to resolve all upstream sample splits,
         i.e. it also collects all processes of ancestors that the current
         sample has experienced, too.
+
+        :Parameters:
+          - `post_data`: the POST dictionary if it was an HTTP POST request, or
+            ``None`` otherwise
+
+        :type post_data: ``QueryDict``
 
         :Return:
           a list with all result processes of this sample in chronological
@@ -323,10 +328,10 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: list of dict
         """
-        process_list = SamplesAndProcesses(self.original_sample, self.user, self.post_data)
+        process_list = SamplesAndProcesses(self.original_sample, self.user, post_data)
         split_origin = self.current_sample.split_origin
         if split_origin:
-            process_list.processes.extend(self.split(split_origin).collect_processes())
+            process_list.processes.extend(self.split(split_origin).collect_processes(post_data))
         for process in self.get_processes():
             process_list.processes.append(self.digest_process(process))
         return process_list
@@ -351,7 +356,7 @@ def show(request, sample_name):
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
     if request.method == "POST":
-        samples_and_processes = ProcessContext(request.user, sample_name, request.POST).collect_processes()
+        samples_and_processes = ProcessContext(request.user, sample_name).collect_processes(request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
             if added:
