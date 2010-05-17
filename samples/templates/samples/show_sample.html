@@ -10,8 +10,8 @@
   <form method="post" action="">
       {% for sample, process in samples_and_processes.samples_and_processes %}
         {% if sample %}
-            {% spaceless %}<h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
-            {% for alias in sample.sample.aliases.all %}
+          {% spaceless %}<h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
+          {% for alias in sample.sample.aliases.all %}
             alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
                href="{% url samples.views.sample.edit sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                               ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
@@ -82,26 +82,28 @@
           {{ sample.is_my_sample_form.as_p }}
         {% endif %}
 
-        <div class="process">
-          <p class="operator_and_timestamp">
-            {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
-          </p>
-          {% spaceless %}
-            <h2>
-              {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
-                                               href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-                 ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
-              {% endif %}{% if process.export_url %}<a class="edit-icon" 
-                      href="{{ process.export_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-                 ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
-              {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
-                                            href="{{ process.resplit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-                 ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
-              {% endif %}
-            </h2>
-          {% endspaceless %}
-          {{ process.html_body }}
-        </div>
+        {% if process %}
+          <div class="process">
+            <p class="operator_and_timestamp">
+              {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
+            </p>
+            {% spaceless %}
+              <h2>
+                {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
+                                                 href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+                   ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+                {% endif %}{% if process.export_url %}<a class="edit-icon" 
+                        href="{{ process.export_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+                   ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
+                {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
+                                              href="{{ process.resplit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+                   ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
+                {% endif %}
+              </h2>
+            {% endspaceless %}
+            {{ process.html_body }}
+          </div>
+        {% endif %}
       {% endfor %}
     <p class="submit-button" style="margin-top: 0pt"><input type="submit"/></p>
   </form>

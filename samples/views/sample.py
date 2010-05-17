@@ -222,7 +222,12 @@ class SamplesAndProcesses(object):
         the template to generate the whole page.  Note that because no
         recursion is allowed in Django's template language, this generator
         method must flatten the nested structure, and it must return sample and
-        process at the same time, although the first is mostly ``None``.
+        process at the same time, although one of them may be ``None``.  The
+        template must be able to cope with that fact.
+
+        If the sample is not ``None``, this means that a new section with a new
+        sample starts, and that all subsequent processes belong to that sample
+        – until the next sample.
 
         Note that both sample and process aren't model instances.  Instead,
         they are dictionaries containing everything the template needs.  In
@@ -231,26 +236,27 @@ class SamplesAndProcesses(object):
 
         :Return:
           Generator for iterating over all samples and processes.  It returns a
-          tuple with two values, ``sample`` and ``process``.  ``sample`` is
-          ``None`` except when processes of a new sample start.
+          tuple with two values, ``sample`` and ``process``.  Either one or
+          none of them may be ``None``.
 
         :rtype: ``generator``
         """
-        for i, process in enumerate(self.processes):
-            if i == 0:
-                sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form}
-                try:
-                    # FixMe: calling get_allowed_processes is too expensive
-                    get_allowed_processes(self.user, self.sample)
-                    sample["can_add_process"] = True
-                except permissions.PermissionError:
-                    sample["can_add_process"] = False
-                sample["can_edit"] = permissions.has_permission_to_edit_sample(self.user, self.sample)
-                sample["number_for_rename"] = \
-                    self.sample.name[1:] if self.sample.name.startswith("*") and sample["can_edit"] else None
-                yield sample, process
-            else:
+        sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form}
+        try:
+            # FixMe: calling get_allowed_processes is too expensive
+            get_allowed_processes(self.user, self.sample)
+            sample["can_add_process"] = True
+        except permissions.PermissionError:
+            sample["can_add_process"] = False
+        sample["can_edit"] = permissions.has_permission_to_edit_sample(self.user, self.sample)
+        sample["number_for_rename"] = \
+            self.sample.name[1:] if self.sample.name.startswith("*") and sample["can_edit"] else None
+        if self.processes:
+            yield sample, process[0]
+            for process in self.processes[1:]:
                 yield None, process
+        else:
+            yield sample, None
         for process_list in self.process_lists:
             for sample, process in process_list.samples_and_processes():
                 yield sample, process
@@ -374,8 +380,11 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: list of `models.Process`
         """
-        basic_query = models.Process.objects.filter(Q(samples=self.current_sample) |
-                                                    Q(result__sample_series__samples=self.current_sample))
+        if self.clearance:
+            basic_query = self.clearance.processes
+        else:
+            basic_query = models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                        Q(result__sample_series__samples=self.current_sample))
         if self.cutoff_timestamp is None:
             return basic_query.distinct()
         else:
@@ -480,7 +489,11 @@ def by_id(request, sample_id, path_suffix):
         # No redirect for the remote client
         return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
-    permissions.assert_can_fully_view_sample(request.user, sample)
+    try:
+        permissions.assert_can_fully_view_sample(request.user, sample)
+    except permissions.PermissionError:
+        if not models.Clearance.objects.filter(user=request.user, sample=sample).exists():
+            raise
     query_string = request.META["QUERY_STRING"] or u""
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
