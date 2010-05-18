@@ -131,11 +131,38 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
     return referentially_valid
 
 
-def enforce_clearance(clearance_processes, destination_user, sample):
-    clearance, __ = models.Clearance.objects.get_or_create(user=destination_user, sample=sample)
-    for process in sample.processes.all():
+def enforce_clearance(clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
+    u"""Unblocks specified processes of a sample for a given user.
+
+    :Parameters:
+      - `clearance_processes`: all process classes that the destination user
+        should be able to see; ``"all"`` means all processes
+      - `destination_user`: the user for whom the sample should be unblocked
+      - `sample`: the sample to be unblocked
+      - `clearance`: The current clearance to which further unblocked processes
+        should be added.  This is only used in the internal recursion of this
+        routine in order to traverse through sample splits upwards.
+      - `cutoff_timestamp`: The timestamp after which no processes in the
+        sample should be unblocked.  This is only used in the internal
+        recursion of this routine in order to traverse through sample splits
+        upwards.  It is a similar algorithm as the one used in
+        `samples.views.sample.ProcessContext`.
+
+    :type clearance_processes: tuple of `models.Process`, or str
+    :type destination_user: ``django.contrib.auth.models.User``
+    :type sample: `models.Sample`
+    :type clearance: `models.Clearance`
+    :type cutoff_timestamp: ``datetime.datetime``
+    """
+    if not clearance:
+        clearance, __ = models.Clearance.objects.get_or_create(user=destination_user, sample=sample)
+    processes = sample.processes.all() if not cutoff_timestamp else sample.processes.filter(timestamp__lte=cutoff_timestamp)
+    for process in processes:
         if clearance_processes == "all" or isinstance(process.find_actual_instance(), clearance_processes):
             clearance.processes.add(process)
+    split_origin = sample.split_origin
+    if split_origin:
+        enforce_clearance(clearance_processes, destination_user, split_origin.parent, clearance, split_origin.timestamp)
 
 
 def save_to_database(user, my_samples_form, action_form):
