@@ -511,6 +511,13 @@ class SampleSplit(Process):
 
 
 class Clearance(models.Model):
+    u"""Model for clearances for specific samples to specific users.  Apart
+    from unblocking the sample itself (at least, some fields), particular
+    processes can be unblocked, too.
+
+    Note that the processes needn't be processes connected with the sample.
+    They may also belong to one of its ancestors.
+    """
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances", blank=True)
