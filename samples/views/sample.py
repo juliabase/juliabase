@@ -8,6 +8,7 @@ u"""All views and helper routines directly connected with samples themselves
 from __future__ import absolute_import
 
 import time, datetime, copy, re
+from django.views.decorators.http import last_modified
 from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.template import RequestContext
@@ -434,7 +435,16 @@ class ProcessContext(utils.ResultContext):
         return process_list
 
 
+def sample_timestamp(request, sample_name):
+    try:
+        timestamp = models.Sample.objects.get(name=sample_name).last_modified
+    except models.Sample.DoesNotExist:
+        return None
+    return max(timestamp, request.user.samples_user_details.sample_settings_timestamp)
+
+
 @login_required
+@last_modified(sample_timestamp)
 def show(request, sample_name):
     u"""A view for showing existing samples.
 

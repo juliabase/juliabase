@@ -108,13 +108,15 @@ class Process(models.Model):
 
         :type updated_cache_keys_only: bool
         """
-        if not kwargs.pop("updated_cache_keys_only", False):
+        updated_cache_keys_only = kwargs.pop("updated_cache_keys_only", False)
+        if not updated_cache_keys_only:
             cache.delete_many(self.cache_keys.split(","))
             self.cache_keys = ""
             self.last_modified = datetime.datetime.now()
+        super(Process, self).save(*args, **kwargs)
+        if not updated_cache_keys_only:
             for sample in self.samples.all():
                 sample.save()
-        super(Process, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return unicode(self.find_actual_instance())
@@ -945,6 +947,11 @@ class UserDetails(models.Model):
     *process id* (``Process.pk``, not the deposition number!) of the
     deposition, and “layer” is the layer number (`models_depositions.Layer.number`).
     """
+    sample_settings_timestamp = models.DateTimeField(_(u"sample settings last modified"), auto_now_add=True)
+    u"""This timestamp denotes when anything changed which influences the
+    display of a sample, e.g. the language, “My Samples”, the skin etc.  It is
+    used for expiring sample datasheet caching.  See `touch_sample_settings`.
+    """
 
     class Meta:
         verbose_name = _(u"user details")
@@ -954,3 +961,12 @@ class UserDetails(models.Model):
 
     def __unicode__(self):
         return unicode(self.user)
+
+    def touch_sample_settings(self):
+        u"""Set the last modifications of sample settings to the current time.
+        This method must be called every time when something was changes which
+        influences the display of a sample datasheet, e. g. the language or the
+        “My Samples” list.
+        """
+        self.sample_settings_timestamp = datetime.datetime.now()
+        self.save()
