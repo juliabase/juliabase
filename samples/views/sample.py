@@ -436,6 +436,23 @@ class ProcessContext(utils.ResultContext):
 
 
 def sample_timestamp(request, sample_name):
+    u"""Check whether the sample datasheet can be taken from the browser cache.
+    For this, the timestamp of last modification of the sample is taken, and
+    that of other things that influence the sample datasheet (language, “My
+    Samples”).  The later timestamp is chosen and returned.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the timestamp of the last modification of the sample's datasheet
+
+    :rtype: ``datetime.datetime``
+    """
     try:
         timestamp = models.Sample.objects.get(name=sample_name).last_modified
     except models.Sample.DoesNotExist:
