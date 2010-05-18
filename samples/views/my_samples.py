@@ -131,6 +131,13 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
     return referentially_valid
 
 
+def enforce_clearance(clearance_processes, destination_user, sample):
+    clearance, __ = models.Clearance.objects.get_or_create(user=destination_user, sample=sample)
+    for process in sample.processes.all():
+        if clearance_processes == "all" or isinstance(process.find_actual_instance(), clearance_processes):
+            clearance.processes.add(process)
+
+
 def save_to_database(user, my_samples_form, action_form):
     u"""Execute the things that should be done with the selected “My Samples”.
     I do also the feed generation here.
@@ -176,11 +183,7 @@ def save_to_database(user, my_samples_form, action_form):
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
             if action_data["clearance"] is not None:
-                clearance, __ = models.Clearance.objects.get_or_create(user=action_data["copy_to_user"], sample=sample)
-                for process in sample.processes.all():
-                    if action_data["clearance"] == "all" or \
-                            isinstance(process.find_actual_instance(), action_data["clearance"]):
-                        clearance.processes.add(process)
+                enforce_clearance(action_data["clearance"], action_data["copy_to_user"], sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
     feed_reporter = feed_utils.Reporter(user)
