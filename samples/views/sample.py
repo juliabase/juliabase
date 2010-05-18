@@ -384,7 +384,7 @@ class ProcessContext(utils.ResultContext):
         :rtype: list of `models.Process`
         """
         if self.clearance:
-            basic_query = self.clearance.processes
+            basic_query = self.clearance.processes.filter(samples=self.current_sample)
         else:
             basic_query = models.Process.objects.filter(Q(samples=self.current_sample) |
                                                         Q(result__sample_series__samples=self.current_sample))
@@ -399,6 +399,23 @@ class ProcessContext(utils.ResultContext):
         i.e. it also collects all processes of ancestors that the current
         sample has experienced, too.
 
+        :Return:
+          all processes of `current_sample`, including those of ancestors
+
+        :rtype: list of `model.Process`
+        """
+        processes = []
+        split_origin = self.current_sample.split_origin
+        if split_origin:
+            processes.extend(self.split(split_origin).collect_processes())
+        for process in self.get_processes():
+            processes.append(self.digest_process(process))
+        return processes
+
+    def samples_and_processes(self, post_data=None):
+        u"""Returns the data structure used in the template to display the
+        sample with all its processes.
+
         :Parameters:
           - `post_data`: the POST dictionary if it was an HTTP POST request, or
             ``None`` otherwise
@@ -412,15 +429,6 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: `SamplesAndProcesses`
         """
-        processes = []
-        split_origin = self.current_sample.split_origin
-        if split_origin:
-            processes.extend(self.split(split_origin).collect_processes())
-        for process in self.get_processes():
-            processes.append(self.digest_process(process))
-        return processes
-
-    def samples_and_processes(self, post_data=None):
         process_list = SamplesAndProcesses(self.original_sample, self.clearance is None, self.user, post_data)
         process_list.processes = self.collect_processes()
         return process_list
