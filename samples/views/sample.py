@@ -453,11 +453,20 @@ def sample_timestamp(request, sample_name):
 
     :rtype: ``datetime.datetime``
     """
+    timestamps = []
     try:
-        timestamp = models.Sample.objects.get(name=sample_name).last_modified
+        sample = models.Sample.objects.get(name=sample_name)
     except models.Sample.DoesNotExist:
         return None
-    return max(timestamp, request.user.samples_user_details.sample_settings_timestamp)
+    timestamps.append(sample.last_modified)
+    try:
+        clearance = models.Clearance.objects.get(user=request.user, sample=sample)
+    except models.Clearance.DoesNotExist:
+        pass
+    else:
+        timestamps.append(clearance.last_modified)
+    timestamps.append(request.user.samples_user_details.sample_settings_timestamp)
+    return max(timestamps)
 
 
 @login_required
