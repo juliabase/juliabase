@@ -7,8 +7,7 @@ u"""All views and helper routines directly connected with samples themselves
 
 from __future__ import absolute_import
 
-import time, datetime
-import re
+import time, datetime, copy, re
 from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.template import RequestContext
@@ -394,7 +393,7 @@ class ProcessContext(utils.ResultContext):
         else:
             return basic_query.filter(timestamp__lte=self.cutoff_timestamp).distinct()
 
-    def collect_processes(self, post_data=None):
+    def collect_processes(self):
         u"""Make a list of all processes for `current_sample`.  This routine is
         called recursively in order to resolve all upstream sample splits,
         i.e. it also collects all processes of ancestors that the current
@@ -413,12 +412,17 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: `SamplesAndProcesses`
         """
-        process_list = SamplesAndProcesses(self.original_sample, self.clearance is None, self.user, post_data)
+        processes = []
         split_origin = self.current_sample.split_origin
         if split_origin:
-            process_list.processes.extend(self.split(split_origin).collect_processes(post_data))
+            processes.extend(self.split(split_origin).collect_processes())
         for process in self.get_processes():
-            process_list.processes.append(self.digest_process(process))
+            processes.append(self.digest_process(process))
+        return processes
+
+    def samples_and_processes(self, post_data=None):
+        process_list = SamplesAndProcesses(self.original_sample, self.clearance is None, self.user, post_data)
+        process_list.processes = self.collect_processes()
         return process_list
 
 
@@ -441,7 +445,7 @@ def show(request, sample_name):
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
     if request.method == "POST":
-        samples_and_processes = ProcessContext(request.user, sample_name).collect_processes(request.POST)
+        samples_and_processes = ProcessContext(request.user, sample_name).samples_and_processes(request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
             if added:
@@ -460,7 +464,7 @@ def show(request, sample_name):
                 success_message = _(u"Nothing was changed.")
             messages.success(request, success_message)
     else:
-        samples_and_processes = ProcessContext(request.user, sample_name).collect_processes()
+        samples_and_processes = ProcessContext(request.user, sample_name).samples_and_processes()
     messages.debug(request, "DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
     return render_to_response("samples/show_sample.html", {"title": _(u"Sample “{0}”").format(samples_and_processes.sample),
                                                            "samples_and_processes": samples_and_processes},

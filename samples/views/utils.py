@@ -8,7 +8,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import
 
-import re, string, copy, datetime, json
+import re, string, datetime, json
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
