@@ -21,6 +21,7 @@ from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
+from django.core.cache import cache
 from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic
 from samples import permissions
@@ -88,11 +89,32 @@ class Process(models.Model):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
+    last_modified = models.DateTimeField(_(u"last modified"))
+    cache_keys = models.TextField(_(u"cache keys"), blank=True)
 
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")
         verbose_name_plural = _(u"processes")
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and clears stalled cache items.
+
+        :Parameters:
+          - `updated_cache_keys_only`: Whether the `cache_keys` should not be
+            used to delete cache items, and whether `cache_keys` should be
+            reset. Obviously, this should be set to ``True`` if you set
+            `cache_keys` deliberately, and only this.
+
+        :type updated_cache_keys_only: bool
+        """
+        if not kwargs.pop("updated_cache_keys_only", False):
+            cache.delete_many(self.cache_keys.split(","))
+            self.cache_keys = ""
+            self.last_modified = datetime.datetime.now()
+            for sample in self.samples.all():
+                sample.save()
+        super(Process, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return unicode(self.find_actual_instance())
@@ -346,6 +368,8 @@ class Sample(models.Model):
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
+    last_modified = models.DateTimeField(_(u"last modified"))
+    cache_keys = models.TextField(_(u"cache keys"), blank=True)
 
     class Meta:
         verbose_name = _(u"sample")
@@ -353,6 +377,23 @@ class Sample(models.Model):
         ordering = ["name"]
         _ = lambda x: x
         permissions = (("view_all_samples", _("Can view all samples (senior user)")),)
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and clears stalled cache items.
+
+        :Parameters:
+          - `updated_cache_keys_only`: Whether the `cache_keys` should not be
+            used to delete cache items, and whether `cache_keys` should be
+            reset. Obviously, this should be set to ``True`` if you set
+            `cache_keys` deliberately, and only this.
+
+        :type updated_cache_keys_only: bool
+        """
+        if not kwargs.pop("updated_cache_keys_only", False):
+            cache.delete_many(self.cache_keys.split(","))
+            self.cache_keys = ""
+            self.last_modified = datetime.datetime.now()
+        super(Sample, self).save(*args, **kwargs)
 
     def __unicode__(self):
         u"""Here, I realise the peculiar naming scheme of provisional sample
@@ -521,6 +562,7 @@ class Clearance(models.Model):
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances", blank=True)
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True)
 
     class Meta:
         unique_together = ("user", "sample")
