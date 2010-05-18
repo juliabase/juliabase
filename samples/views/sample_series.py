@@ -216,7 +216,7 @@ def new(request):
             timestamp = datetime.datetime.today()
             full_name = \
                 u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["short_name"])
-            if models.SampleSeries.objects.filter(name=full_name).count():
+            if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
@@ -263,5 +263,5 @@ def export(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
     for sample in sample_series.samples.all():
-        permissions.assert_can_view_sample(request.user, sample)
+        permissions.assert_can_fully_view_sample(request.user, sample)
     return csv_export.export(request, sample_series.get_data(), _(u"sample"), renaming_offset=2)

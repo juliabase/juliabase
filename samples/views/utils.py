@@ -8,7 +8,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import
 
-import re, string, copy, datetime, json
+import re, string, datetime, json
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
@@ -16,7 +16,6 @@ from functools import update_wrapper
 from django.template import Context, loader, RequestContext
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
-from django.db.models import Q
 import chantal_common.utils
 from samples import models, permissions
 from samples.views.shared_utils import *
@@ -89,8 +88,8 @@ def does_sample_exist(sample_name):
 
     :rtype: bool
     """
-    return (models.Sample.objects.filter(name=sample_name).count() or
-            models.SampleAlias.objects.filter(name=sample_name).count())
+    return models.Sample.objects.filter(name=sample_name).exists() or \
+        models.SampleAlias.objects.filter(name=sample_name).exists()
 
 
 def normalize_sample_name(sample_name):
@@ -107,7 +106,7 @@ def normalize_sample_name(sample_name):
 
     :rtype: unicode
     """
-    if models.Sample.objects.filter(name=sample_name).count():
+    if models.Sample.objects.filter(name=sample_name).exists():
         return sample_name
     try:
         sample_alias = models.SampleAlias.objects.get(name=sample_name)
@@ -223,102 +222,6 @@ class ResultContext(object):
         return results
 
 
-class ProcessContext(ResultContext):
-    u"""Contains all info that processes must know in order to render
-    themselves as HTML.  It does the same as the parent class `ResultContext`
-    (see there for full information), however, it extends its functionality a
-    little bit for being useful for *samples* instead of sample series.
-
-    :ivar original_sample: the sample for which the history is about to be
-      generated
-
-    :ivar current_sample: the sample the processes of which are *currently*
-      collected an processed.  This is an ancestor of `original_sample`.  In
-      other words, `original_sample` is a direct or indirect split piece of
-      ``current_sample``.
-
-    :ivar cutoff_timestamp: the timestamp of the split of `current_sample`
-      which generated the (ancestor of) the `original_sample`.  Thus, processes
-      of `current_sample` that came *after* the cutoff timestamp must not be
-      included into the history.
-    """
-
-    def __init__(self, user, original_sample=None):
-        u"""
-        :Parameters:
-          - `user`: the user that wants to see all the generated HTML
-          - `original_sample`: the sample the history of which is about to be
-            generated
-
-        :type user: django.contrib.auth.models.User
-        :type original_sample: `models.Sample`
-        """
-        self.original_sample = self.current_sample = original_sample
-        self.latest_descendant = None
-        self.user = user
-        self.cutoff_timestamp = None
-
-    def split(self, split):
-        u"""Generate a copy of this `ProcessContext` for the parent of the
-        current sample.
-
-        :Parameters:
-          - `split`: the split process
-
-        :type split: `models.SampleSplit`
-
-        :Return:
-          a new process context for collecting the processes of the parent in
-          order to add them to the complete history of the `original_sample`.
-
-        :rtype: `ProcessContext`
-        """
-        result = copy.copy(self)
-        result.current_sample = split.parent
-        result.latest_descendant = self.current_sample
-        result.cutoff_timestamp = split.timestamp
-        return result
-
-    def get_processes(self):
-        u"""Get all relevant processes of the `current_sample`.
-
-        :Return:
-          all processes of the `current_sample` that must be included into the
-          history of `original_sample`, i.e. up to `cutoff_timestamp`.
-
-        :rtype: list of `models.Process`
-        """
-        if self.cutoff_timestamp is None:
-            return models.Process.objects.filter(Q(samples=self.current_sample) |
-                                                 Q(result__sample_series__samples=self.current_sample)).distinct()
-        else:
-            return models.Process.objects.filter(Q(samples=self.current_sample) |
-                                                 Q(result__sample_series__samples=self.current_sample)). \
-                                                 filter(timestamp__lte=self.cutoff_timestamp).distinct()
-        return processes
-
-    def collect_processes(self):
-        u"""Make a list of all processes for `current_sample`.  This routine is
-        called recursively in order to resolve all upstream sample splits,
-        i.e. it also collects all processes of ancestors that the current
-        sample has experienced, too.
-
-        :Return:
-          a list with all result processes of this sample in chronological
-          order.  Every list item is a dictionary with the information
-          described in `digest_process`.
-
-        :rtype: list of dict
-        """
-        processes = []
-        split_origin = self.current_sample.split_origin
-        if split_origin:
-            processes.extend(self.split(split_origin).collect_processes())
-        for process in self.get_processes():
-            processes.append(self.digest_process(process))
-        return processes
-
-
 def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
     called “08B-045”, this routine yields “08B-046” (unless the new year has
@@ -358,7 +261,7 @@ class AmbiguityException(Exception):
         self.sample_name, self.samples = sample_name, samples
 
 
-def lookup_sample(sample_name, request):
+def lookup_sample(sample_name, user, with_clearance=False):
     u"""Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
     to view it.  Shortened provisional names like “*2” are also found.  If
@@ -367,15 +270,19 @@ def lookup_sample(sample_name, request):
 
     :Parameters:
       - `sample_name`: name of the sample
-      - `request`: the HTTP request object
+      - `user`: the currently logged-in user
+      - `with_clearance`: whether also clearances should be serached for and
+        returned
 
     :type sample_name: unicode
-    :type request: ``HttpRequest``
+    :type user: ``django.contrib.auth.models.User``
+    :type with_clearance: bool
 
     :Return:
-      the single found sample
+      the single found sample; or the sample and the clearance instance if this
+      is necessary to view the sample and ``with_clearance=True``
 
-    :rtype: `models.Sample`
+    :rtype: `models.Sample` or `models.Sample`, `models.Clearance`
 
     :Exceptions:
       - `Http404`: if the sample name could not be found
@@ -391,8 +298,19 @@ def lookup_sample(sample_name, request):
         raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
-    permissions.assert_can_view_sample(request.user, sample)
-    return sample
+    if with_clearance:
+        clearance = None
+        try:
+            permissions.assert_can_fully_view_sample(user, sample)
+        except permissions.PermissionError as error:
+            try:
+                clearance = models.Clearance.objects.get(user=user, sample=sample)
+            except models.Clearance.DoesNotExist:
+                raise error
+        return sample, clearance
+    else:
+        permissions.assert_can_fully_view_sample(user, sample)
+        return sample
 
 
 def convert_id_to_int(process_id):
@@ -754,15 +672,16 @@ def format_enumeration(items):
     c"``.
 
     :Parameters:
-      - `items`: list of names to be put into the enumeration
+      - `items`: iterable of names to be put into the enumeration
 
-    :type items: list of unicode
+    :type items: iterable of unicode
 
     :Return:
       human-friendly enumeration of all names
 
     :rtype: unicode
     """
+    items = sorted(unicode(item) for item in items)
     if len(items) > 2:
         return _(u", ").join(items[:-1]) + _(u", and ") + items[-1]
     elif len(items) == 2:

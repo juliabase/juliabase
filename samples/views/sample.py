@@ -7,9 +7,9 @@ u"""All views and helper routines directly connected with samples themselves
 
 from __future__ import absolute_import
 
-import time, datetime
-import re
+import time, datetime, copy, re
 from django.db import transaction, IntegrityError
+from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
@@ -100,7 +100,7 @@ def edit(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = utils.get_profile(request.user)
@@ -179,6 +179,261 @@ def get_allowed_processes(user, sample):
     return sample_processes, general_processes
 
 
+class SamplesAndProcesses(object):
+    u"""This is a container data structure for holding (almost) all data for
+    the “show sample” template.  It represents one sample.  By nesting it,
+    child samples can be embedded, too.
+
+    Thus, the purpose of this class is two-fold: First, it contains one sample
+    and all processes associated with it.  And secondly, it contains further
+    instances of `SamplesAndProcesses` of child samples.
+
+    :ivar processes: List of processes associated with the sample.  This is a
+      list of dictionaries rather than a list of model instances.
+
+    :ivar process_lists: list of `SamplesAndProcesses` of child samples.
+    """
+
+    def __init__(self, sample, full_view, user, post_data):
+        u"""
+        :Parameters:
+          - `sample`: the sample to which the processes belong
+          - `full_view`: whether the user can fully view the sample; ``False``
+            currently means that the sample is accessed through a clearance
+          - `user`: the currently logged-in user
+          - `post_data`: the POST data if it was an HTTP POST request, and
+            ``None`` otherwise
+
+        :type sample: `models.Sample`
+        :type full_view: bool
+        :type user: ``django.contrib.auth.models.User``
+        :type post_data: ``QueryDict`` or ``NoneType``
+        """
+        self.sample = sample
+        self.full_view = full_view
+        self.user = user
+        self.user_details = utils.get_profile(user)
+        self.is_my_sample = self.user_details.my_samples.filter(id__exact=sample.id).exists()
+        self.is_my_sample_form = IsMySampleForm(
+            prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
+            else IsMySampleForm(post_data, prefix=str(sample.pk))
+        self.processes = []
+        self.process_lists = []
+
+    def samples_and_processes(self):
+        u"""Returns an iterator over all samples and processes.  It is used in
+        the template to generate the whole page.  Note that because no
+        recursion is allowed in Django's template language, this generator
+        method must flatten the nested structure, and it must return sample and
+        process at the same time, although one of them may be ``None``.  The
+        template must be able to cope with that fact.
+
+        If the sample is not ``None``, this means that a new section with a new
+        sample starts, and that all subsequent processes belong to that sample
+        – until the next sample.
+
+        Note that both sample and process aren't model instances.  Instead,
+        they are dictionaries containing everything the template needs.  In
+        particular, the actual sample instance is ``sample["sample"]`` or, in
+        template code syntax, ``sample.sample``.
+
+        :Return:
+          Generator for iterating over all samples and processes.  It returns a
+          tuple with two values, ``sample`` and ``process``.  Either one or
+          none of them may be ``None``.
+
+        :rtype: ``generator``
+        """
+        sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form, "full_view": self.full_view}
+        try:
+            # FixMe: calling get_allowed_processes is too expensive
+            get_allowed_processes(self.user, self.sample)
+            sample["can_add_process"] = True
+        except permissions.PermissionError:
+            sample["can_add_process"] = False
+        sample["can_edit"] = permissions.has_permission_to_edit_sample(self.user, self.sample)
+        sample["number_for_rename"] = \
+            self.sample.name[1:] if self.sample.name.startswith("*") and sample["can_edit"] else None
+        if self.processes:
+            yield sample, self.processes[0]
+            for process in self.processes[1:]:
+                yield None, process
+        else:
+            yield sample, None
+        for process_list in self.process_lists:
+            for sample, process in process_list.samples_and_processes():
+                yield sample, process
+
+    def is_valid(self):
+        u"""Checks whether all “is My Sample” forms of the “show sample” view
+        are valid.  Actually, this method is rather silly because the forms
+        consist only of checkboxes and they can never be invalid.  But sticking
+        to rituals reduces errors …
+
+        :Return:
+          whether all forms are valid
+
+        :rtype: bool
+        """
+        all_valid = self.is_my_sample_form.is_valid()
+        all_valid = all_valid and all([process_list.is_valid() for process_list in self.process_lists])
+        return all_valid
+
+    def save_to_database(self):
+        u"""Changes the members of the “My Samples” list according to what the
+        user selected.
+
+        :Return:
+          names of added samples, names of removed samples
+
+        :rtype: set of unicode, set of unicode
+        """
+        added = set()
+        removed = set()
+        if self.is_my_sample_form.cleaned_data["is_my_sample"] and not self.is_my_sample:
+            added.add(self.sample)
+            self.user_details.my_samples.add(self.sample)
+        elif not self.is_my_sample_form.cleaned_data["is_my_sample"] and self.is_my_sample:
+            removed.add(self.sample)
+            self.user_details.my_samples.remove(self.sample)
+        for process_list in self.process_lists:
+            added_, removed_ = process_list.save_to_database()
+            added.update(added_)
+            removed.update(removed_)
+        return added, removed
+
+
+class ProcessContext(utils.ResultContext):
+    u"""Contains all info that processes must know in order to render
+    themselves as HTML.  It does the same as the parent class
+    `utils.ResultContext` (see there for full information), however, it extends
+    its functionality a little bit for being useful for *samples* instead of
+    sample series.
+
+    Its main purpose is to create the datastructure built of nested
+    `SamplesAndProcesses`, which is later used in the template.
+
+    :ivar original_sample: the sample for which the history is about to be
+      generated
+
+    :ivar current_sample: the sample the processes of which are *currently*
+      collected an processed.  This is an ancestor of `original_sample`.  In
+      other words, `original_sample` is a direct or indirect split piece of
+      ``current_sample``.
+
+    :ivar cutoff_timestamp: the timestamp of the split of `current_sample`
+      which generated the (ancestor of) the `original_sample`.  Thus, processes
+      of `current_sample` that came *after* the cutoff timestamp must not be
+      included into the history.
+
+    :ivar latest_descendant: This is used in ``show_sample_split.html`` for
+      identifying direct ancestors of the sample when displaying a sample split
+      of an ancestor which is not the parent.  When walking up through the
+      ancestors, `latest_descendant` contains the respectively previous sample.
+    """
+
+    def __init__(self, user, sample_name):
+        u"""
+        :Parameters:
+          - `user`: the user that wants to see all the generated HTML
+          - `sample_name`: the sample or alias of the sample to display
+
+        :type user: django.contrib.auth.models.User
+        :type original_sample: `models.Sample`
+
+        :Exceptions:
+          - `Http404`: if the sample name could not be found
+          - `AmbiguityException`: if more than one matching alias was found
+          - `permissions.PermissionError`: if the user is not allowed to view the
+            sample
+        """
+        self.original_sample, self.clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
+        self.current_sample = self.original_sample
+        self.latest_descendant = None
+        self.user = user
+        self.cutoff_timestamp = None
+
+    def split(self, split):
+        u"""Generate a copy of this `ProcessContext` for the parent of the
+        current sample.
+
+        :Parameters:
+          - `split`: the split process
+
+        :type split: `models.SampleSplit`
+
+        :Return:
+          a new process context for collecting the processes of the parent in
+          order to add them to the complete history of the `original_sample`.
+
+        :rtype: `ProcessContext`
+        """
+        result = copy.copy(self)
+        result.current_sample = split.parent
+        result.latest_descendant = self.current_sample
+        result.cutoff_timestamp = split.timestamp
+        return result
+
+    def get_processes(self):
+        u"""Get all relevant processes of the `current_sample`.
+
+        :Return:
+          all processes of the `current_sample` that must be included into the
+          history of `original_sample`, i.e. up to `cutoff_timestamp`.
+
+        :rtype: list of `models.Process`
+        """
+        if self.clearance:
+            basic_query = self.clearance.processes.filter(samples=self.current_sample)
+        else:
+            basic_query = models.Process.objects.filter(Q(samples=self.current_sample) |
+                                                        Q(result__sample_series__samples=self.current_sample))
+        if self.cutoff_timestamp is None:
+            return basic_query.distinct()
+        else:
+            return basic_query.filter(timestamp__lte=self.cutoff_timestamp).distinct()
+
+    def collect_processes(self):
+        u"""Make a list of all processes for `current_sample`.  This routine is
+        called recursively in order to resolve all upstream sample splits,
+        i.e. it also collects all processes of ancestors that the current
+        sample has experienced, too.
+
+        :Return:
+          all processes of `current_sample`, including those of ancestors
+
+        :rtype: list of `model.Process`
+        """
+        processes = []
+        split_origin = self.current_sample.split_origin
+        if split_origin:
+            processes.extend(self.split(split_origin).collect_processes())
+        for process in self.get_processes():
+            processes.append(self.digest_process(process))
+        return processes
+
+    def samples_and_processes(self, post_data=None):
+        u"""Returns the data structure used in the template to display the
+        sample with all its processes.
+
+        :Parameters:
+          - `post_data`: the POST dictionary if it was an HTTP POST request, or
+            ``None`` otherwise
+
+        :type post_data: ``QueryDict``
+
+        :Return:
+          a list with all result processes of this sample in chronological
+          order.  Every list item is a dictionary with the information
+          described in `digest_process`.
+
+        :rtype: `SamplesAndProcesses`
+        """
+        process_list = SamplesAndProcesses(self.original_sample, self.clearance is None, self.user, post_data)
+        process_list.processes = self.collect_processes()
+        return process_list
+
+
 @login_required
 def show(request, sample_name):
     u"""A view for showing existing samples.
@@ -197,41 +452,30 @@ def show(request, sample_name):
     """
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
-    sample = utils.lookup_sample(sample_name, request)
-    user_details = utils.get_profile(request.user)
     if request.method == "POST":
-        is_my_sample_form = IsMySampleForm(request.POST)
-        if is_my_sample_form.is_valid():
-            if is_my_sample_form.cleaned_data["is_my_sample"]:
-                user_details.my_samples.add(sample)
-                if is_remote_client:
-                    return utils.respond_to_remote_client(True)
-                else:
-                    messages.success(request, _(u"Sample %s was added to Your Samples.") % sample)
+        samples_and_processes = ProcessContext(request.user, sample_name).samples_and_processes(request.POST)
+        if samples_and_processes.is_valid():
+            added, removed = samples_and_processes.save_to_database()
+            if added:
+                success_message = ungettext(u"Sample {samples} was added to My Samples.",
+                                            u"Samples {samples} were added to My Samples.",
+                                            len(added)).format(samples=utils.format_enumeration(added))
             else:
-                user_details.my_samples.remove(sample)
-                if is_remote_client:
-                    return utils.respond_to_remote_client(True)
-                else:
-                    messages.success(request, _(u"Sample %s was removed from Your Samples.") % sample)
+                success_message = u""
+            if removed:
+                if added:
+                    success_message += u"  "
+                success_message += ungettext(u"Sample {samples} was removed from My Samples.",
+                                             u"Samples {samples} were removed from My Samples.",
+                                             len(removed)).format(samples=utils.format_enumeration(removed))
+            elif not added:
+                success_message = _(u"Nothing was changed.")
+            messages.success(request, success_message)
     else:
-        is_my_sample_form = IsMySampleForm(
-            initial={"is_my_sample": user_details.my_samples.filter(id__exact=sample.id).count()})
-    processes = utils.ProcessContext(request.user, sample).collect_processes()
+        samples_and_processes = ProcessContext(request.user, sample_name).samples_and_processes()
     messages.debug(request, "DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
-    try:
-        # FixMe: calling get_allowed_processes is too expensive
-        get_allowed_processes(request.user, sample)
-        can_add_process = True
-    except permissions.PermissionError:
-        can_add_process = False
-    can_edit = permissions.has_permission_to_edit_sample(request.user, sample)
-    number_for_rename = sample.name[1:] if sample.name.startswith("*") and can_edit else None
-    return render_to_response("samples/show_sample.html", {"processes": processes, "sample": sample,
-                                                           "can_edit": can_edit,
-                                                           "number_for_rename": number_for_rename,
-                                                           "can_add_process": can_add_process,
-                                                           "is_my_sample_form": is_my_sample_form},
+    return render_to_response("samples/show_sample.html", {"title": _(u"Sample “{0}”").format(samples_and_processes.sample),
+                                                           "samples_and_processes": samples_and_processes},
                               context_instance=RequestContext(request))
 
 
@@ -261,7 +505,11 @@ def by_id(request, sample_id, path_suffix):
         # No redirect for the remote client
         return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
-    permissions.assert_can_view_sample(request.user, sample)
+    try:
+        permissions.assert_can_fully_view_sample(request.user, sample)
+    except permissions.PermissionError:
+        if not models.Clearance.objects.filter(user=request.user, sample=sample).exists():
+            raise
     query_string = request.META["QUERY_STRING"] or u""
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
@@ -302,8 +550,9 @@ class AddSamplesForm(forms.Form):
             % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
                django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u"</span>"
         self.fields["substrate_originator"].choices = [(u"<>", get_really_full_name(user))]
-        if user.external_contacts.count() > 0:
-            for external_operator in user.external_contacts.all():
+        external_contacts = user.external_contacts.all()
+        if external_contacts:
+            for external_operator in external_contacts:
                 self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
             self.fields["substrate_originator"].required = True
         self.user = user
@@ -346,7 +595,7 @@ class AddSamplesForm(forms.Form):
                 raise ValidationError(u"You don't have the permission to give cleaning numbers.")
             if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
                 raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
-            if models.Substrate.objects.filter(cleaning_number=cleaning_number).count():
+            if models.Substrate.objects.filter(cleaning_number=cleaning_number).exists():
                 raise ValidationError(_(u"The cleaning number you have chosen already exists."))
         return cleaning_number
 
@@ -498,7 +747,7 @@ def add(request):
     return render_to_response("samples/add_samples.html",
                               {"title": _(u"Add samples"),
                                "add_samples": add_samples_form,
-                               "external_operators_available": user.external_contacts.count() > 0},
+                               "external_operators_available": user.external_contacts.exists()},
                               context_instance=RequestContext(request))
 
 
@@ -518,7 +767,7 @@ def add_process(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
         process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())
@@ -572,7 +821,7 @@ def search(request):
             found_samples = \
                 models.Sample.objects.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
             too_many_results = found_samples.count() > max_results
-            found_samples = found_samples.all()[:max_results] if too_many_results else found_samples.all()
+            found_samples = found_samples[:max_results] if too_many_results else found_samples
         else:
             found_samples = []
         my_samples = user_details.my_samples.all()
@@ -616,5 +865,5 @@ def export(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     return csv_export.export(request, sample.get_data(), _(u"process"))

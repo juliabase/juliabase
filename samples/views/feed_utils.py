@@ -113,7 +113,7 @@ class Reporter(object):
         for sample in samples:
             for user in sample.watchers.all():
                 if (important or not user.only_important_news) and \
-                        permissions.has_permission_to_view_sample(user.user, sample):
+                        permissions.has_permission_to_fully_view_sample(user.user, sample):
                     self.interested_users.add(user)
 
     def __add_watchers(self, process_or_sample_series, important=True):

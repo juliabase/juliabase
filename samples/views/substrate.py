@@ -69,7 +69,7 @@ class SubstrateForm(form_utils.ProcessForm):
                 raise ValidationError(u"You don't have the permission to give cleaning numbers.")
             if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
                 raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
-            if models.Substrate.objects.filter(cleaning_number=cleaning_number).count():
+            if models.Substrate.objects.filter(cleaning_number=cleaning_number).exists():
                 raise ValidationError(_(u"The cleaning number you have chosen already exists."))
         return cleaning_number
 

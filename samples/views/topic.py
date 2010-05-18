@@ -35,7 +35,7 @@ class NewTopicForm(forms.Form):
     def clean_new_topic_name(self):
         topic_name = self.cleaned_data["new_topic_name"]
         topic_name = u" ".join(topic_name.split())
-        if Topic.objects.filter(name=topic_name).count():
+        if Topic.objects.filter(name=topic_name).exists():
             raise ValidationError(_(u"This topic name is already used."))
         return topic_name
 

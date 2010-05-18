@@ -65,7 +65,7 @@ def new(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)
     if sample.is_dead():
         raise Http404(u"Sample is already dead.")

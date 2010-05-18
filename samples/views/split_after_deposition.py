@@ -389,13 +389,13 @@ def forms_from_database(deposition, remote_client):
     :rtype: list of `OriginalDataForm`, list of lists of `NewNameForm`,
       `GlobalNewDataForm`
     """
-    samples = deposition.samples
+    samples = deposition.samples.all()
     original_data_forms = [OriginalDataForm(remote_client, deposition.number, initial={"sample": sample.name}, prefix=str(i))
-                           for i, sample in enumerate(samples.all())]
+                           for i, sample in enumerate(samples)]
     new_name_form_lists = [[NewNameForm(
                 readonly=True,
                 initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else deposition.number},
-                prefix="%d_0"%i)] for i, sample in enumerate(samples.all())]
+                prefix="%d_0"%i)] for i, sample in enumerate(samples)]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
 

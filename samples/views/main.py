@@ -108,7 +108,7 @@ def main_menu(request):
          "user_hash": permissions.get_user_hash(request.user),
          "can_edit_topic": permissions.has_permission_to_edit_topic(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
-         "has_external_contacts": request.user.external_contacts.count() > 0,
+         "has_external_contacts": request.user.external_contacts.exists(),
          "physical_processes": allowed_physical_processes,
          "lab_notebooks": lab_notebooks,
          "is_external": request.user.chantal_user_details.external},
@@ -154,7 +154,7 @@ def deposition_search(request):
             found_depositions = \
                 models.Deposition.objects.filter(number__icontains=search_depositions_form.cleaned_data["number_pattern"])
             too_many_results = found_depositions.count() > max_results
-            found_depositions = found_depositions.all()[:max_results] if too_many_results else found_depositions.all()
+            found_depositions = found_depositions[:max_results] if too_many_results else found_depositions
             found_depositions = [deposition.find_actual_instance() for deposition in found_depositions]
     else:
         search_depositions_form = SearchDepositionsForm()

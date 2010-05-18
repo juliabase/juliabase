@@ -8,11 +8,11 @@ thirdly, top-level code that generates a ``has_permission_to_...`` function for
 every ``assert_can_...`` function.
 
 The idea is the following.  For example, there is a function called
-``assert_can_view_sample``.  If the user can't view the sample, a
+``assert_can_fully_view_sample``.  If the user can't view the sample, a
 ``PermissionError`` is raised.  Sometimes however, you just want to check it
 without having to catch an exception.  Then, you use
-``has_permission_to_view_sample``.  The parameters are the same but instead of
-raising an exception, it returns ``True`` or ``False``.
+``has_permission_to_fully_view_sample``.  The parameters are the same but
+instead of raising an exception, it returns ``True`` or ``False``.
 
 The ``assert_can_...`` function are typically used at the beginning of views
 where permissions need to be checked and every failure means an error.  By
@@ -192,7 +192,7 @@ class PermissionError(Exception):
         self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
 
-def assert_can_view_sample(user, sample):
+def assert_can_fully_view_sample(user, sample):
     u"""Tests whether the user can view the sample.
 
     :Parameters:
@@ -305,7 +305,7 @@ def assert_can_view_physical_process(user, process):
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     if not user.has_perm(permission):
         for sample in process.samples.all():
-            if has_permission_to_view_sample(user, sample):
+            if has_permission_to_fully_view_sample(user, sample):
                 break
         else:
             description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
@@ -349,8 +349,8 @@ def assert_can_view_result_process(user, result_process):
         process.
     """
     if result_process.operator != user and \
-            all(not has_permission_to_view_sample(user, sample) for sample in result_process.samples.all()) and \
-            all(not has_permission_to_view_sample_series(user, sample_series)
+            all(not has_permission_to_fully_view_sample(user, sample) for sample in result_process.samples.all()) and \
+            all(not has_permission_to_fully_view_sample_series(user, sample_series)
                 for sample_series in result_process.sample_series.all()):
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)

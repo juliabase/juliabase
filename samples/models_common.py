@@ -395,7 +395,7 @@ class Sample(models.Model):
                       split_origin=self.split_origin, topic=self.topic)
 
     def is_dead(self):
-        return self.processes.filter(sampledeath__timestamp__isnull=False).count() > 0
+        return self.processes.filter(sampledeath__timestamp__isnull=False).exists()
 
     def last_process_if_split(self):
         u"""Test whether the most recent process applied to the sample – except
@@ -508,6 +508,24 @@ class SampleSplit(Process):
             result["resplit_url"] = django.core.urlresolvers.reverse(
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
         return result
+
+
+class Clearance(models.Model):
+    u"""Model for clearances for specific samples to specific users.  Apart
+    from unblocking the sample itself (at least, some fields), particular
+    processes can be unblocked, too.
+
+    Note that the processes needn't be processes connected with the sample.
+    They may also belong to one of its ancestors.
+    """
+    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
+    sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="clearances")
+    processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances", blank=True)
+
+    class Meta:
+        unique_together = ("user", "sample")
+        verbose_name = _(u"clearance")
+        verbose_name_plural = _(u"clearances")
 
 
 substrate_materials = (

@@ -43,6 +43,20 @@ from samples.models_common import *
 from samples.models_depositions import *
 from samples.models_feeds import *
 
+u"""
+
+:var clearance_sets: Dictionary mapping clearance codenames to Process
+  subclasses.  This dictionary is used in the “edit MySamples“ view to offer
+  pre-defined sets of Processes that should be allowed to see by the user to
+  whom the samples are copied.  The dictionary may be left empty.  Otherwise,
+  it may be injected here from the ``models.py`` of another app.
+
+:type clearance_sets: dict mapping unicode to tuple of `Process`.
+"""
+
+
+clearance_sets = {}
+
 
 # FixMe: In Python 3, this could be achieved with class decorators, I think.
 physical_process_models = {}

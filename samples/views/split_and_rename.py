@@ -274,7 +274,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     assert (parent_name or old_split_id) and not (parent_name and old_split_id)
     if parent_name:
         old_split = None
-        parent = utils.lookup_sample(parent_name, request)
+        parent = utils.lookup_sample(parent_name, request.user)
     else:
         old_split = get_object_or_404(models.SampleSplit, pk=utils.convert_id_to_int(old_split_id))
         parent = old_split.parent
@@ -326,6 +326,6 @@ def latest_split(request, sample_name):
 
     :rtype: ``HttpResponse``
     """
-    sample = utils.lookup_sample(sample_name, request)
+    sample = utils.lookup_sample(sample_name, request.user)
     split = sample.last_process_if_split()
     return utils.respond_to_remote_client(split.pk if split else None)
