@@ -8,7 +8,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import
 
-import re, string, datetime, json
+import re, string, datetime, json, hashlib
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
@@ -116,6 +116,12 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
+def get_session_settings_hash(request):
+    hash_ = hashlib.sha1()
+    hash_.update(request.user.chantal_user_details.language)
+    return hash_.digest()
+
+
 class ResultContext(object):
     u"""Contains all info that result processes must know in order to render
     themselves as HTML.  It retrieves all processes, resolve the polymorphism
@@ -194,13 +200,13 @@ class ResultContext(object):
         :rtype: dict
         """
         process = process.find_actual_instance()
-        # FixMe: This can be made clearer with "render_to_string()"
-        template = loader.get_template("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
         name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
         template_context = self.get_template_context(process)
+        html_body = render_to_string("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html",
+                                     context_instance=Context(template_context))
         context_dict = {"name": name[:1].upper()+name[1:], "operator": process.external_operator or process.operator,
                         "timestamp": process.timestamp, "timestamp_inaccuracy": process.timestamp_inaccuracy,
-                        "html_body": template.render(Context(template_context))}
+                        "html_body": html_body}
         for key in ["edit_url", "export_url", "duplicate_url", "resplit_url"]:
             if key in template_context:
                 context_dict[key] = template_context[key]
