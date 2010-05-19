@@ -13,7 +13,8 @@ from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
-from django.template import Context, loader, RequestContext
+from django.template import Context, RequestContext
+from django.template.loader import render_to_string
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
 import chantal_common.utils
