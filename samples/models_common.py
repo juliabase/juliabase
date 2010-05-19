@@ -386,19 +386,10 @@ class Sample(models.Model):
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
-
-        :Parameters:
-          - `updated_cache_keys_only`: Whether the `cache_keys` should not be
-            used to delete cache items, and whether `cache_keys` should be
-            reset. Obviously, this should be set to ``True`` if you set
-            `cache_keys` deliberately, and only this.
-
-        :type updated_cache_keys_only: bool
         """
-        if not kwargs.pop("updated_cache_keys_only", False):
-            cache.delete_many(self.cache_keys.split(","))
-            self.cache_keys = ""
-            self.last_modified = datetime.datetime.now()
+        cache.delete_many(self.cache_keys.split(","))
+        self.cache_keys = ""
+        self.last_modified = datetime.datetime.now()
         super(Sample, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -479,6 +470,21 @@ class Sample(models.Model):
         # export; people only want to see the *process* data.  Thus, I don't
         # set ``cvs_note.items``.
         return csv_node
+
+    def append_cache_key(self, cache_key):
+        u"""Append a new cache key to the list of cache keys for this sample.
+        If the sample is updated, those cache items are deleted in `save`.
+
+        :Parameters:
+          - `cache_key`: the cache key
+
+        :type cache_key: str
+        """
+        if self.cache_keys:
+            self.cache_keys += "," + cache_key
+        else:
+            self.cache_keys = cache_key
+        super(Sample, self).save()
 
 
 class SampleAlias(models.Model):
