@@ -99,24 +99,13 @@ class Process(models.Model):
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
-
-        :Parameters:
-          - `updated_cache_keys_only`: Whether the `cache_keys` should not be
-            used to delete cache items, and whether `cache_keys` should be
-            reset. Obviously, this should be set to ``True`` if you set
-            `cache_keys` deliberately, and only this.
-
-        :type updated_cache_keys_only: bool
         """
-        updated_cache_keys_only = kwargs.pop("updated_cache_keys_only", False)
-        if not updated_cache_keys_only:
-            cache.delete_many(self.cache_keys.split(","))
-            self.cache_keys = ""
-            self.last_modified = datetime.datetime.now()
+        cache.delete_many(self.cache_keys.split(","))
+        self.cache_keys = ""
+        self.last_modified = datetime.datetime.now()
+        for sample in self.samples.all():
+            sample.save()
         super(Process, self).save(*args, **kwargs)
-        if not updated_cache_keys_only:
-            for sample in self.samples.all():
-                sample.save()
 
     def __unicode__(self):
         return unicode(self.find_actual_instance())
@@ -354,7 +343,8 @@ class Process(models.Model):
         return {"processes": processes}
 
     def append_cache_key(self, cache_key):
-        u"""
+        u"""Append a new cache key to the list of cache keys for this process.
+        If the process is updated, those cache items are deleted in `save`.
 
         :Parameters:
           - `cache_key`: the cache key
@@ -365,7 +355,7 @@ class Process(models.Model):
             self.cache_keys += "," + cache_key
         else:
             self.cache_keys = cache_key
-        self.save(updated_cache_keys_only=True)
+        super(Process, self).save()
 
 
 class Sample(models.Model):
