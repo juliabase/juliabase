@@ -353,6 +353,13 @@ class Process(models.Model):
         processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
         return {"processes": processes}
 
+    def append_cache_key(self, cache_key):
+        if self.cache_keys:
+            self.cache_keys += "," + cache_key
+        else:
+            self.cache_keys = cache_key
+        self.save(updated_cache_keys_only=True)
+
 
 class Sample(models.Model):
     u"""The model for samples.

@@ -12,6 +12,7 @@ import re, string, datetime, json, hashlib
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
+from django.core.cache import cache
 from functools import update_wrapper
 from django.template import Context, RequestContext
 from django.template.loader import render_to_string
@@ -117,10 +118,10 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
-def get_session_settings_hash(request):
+def get_session_settings_hash(user):
     hash_ = hashlib.sha1()
-    hash_.update(request.user.chantal_user_details.language)
-    return hash_.digest()
+    hash_.update(user.chantal_user_details.language)
+    return hash_.hexdigest()
 
 
 class ResultContext(object):
@@ -203,8 +204,13 @@ class ResultContext(object):
         process = process.find_actual_instance()
         name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
         template_context = self.get_template_context(process)
-        html_body = render_to_string("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html",
-                                     context_instance=Context(template_context))
+        cache_key = "{0}-{1}".format(process.pk, get_session_settings_hash(self.user))
+        html_body = cache.get(cache_key)
+        if html_body is None:
+            html_body = render_to_string("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html",
+                                         context_instance=Context(template_context))
+            cache.set(cache_key, html_body)
+            process.append_cache_key(cache_key)
         context_dict = {"name": name[:1].upper()+name[1:], "operator": process.external_operator or process.operator,
                         "timestamp": process.timestamp, "timestamp_inaccuracy": process.timestamp_inaccuracy,
                         "html_body": html_body}
