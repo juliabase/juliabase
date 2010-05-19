@@ -118,7 +118,25 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
-def get_session_settings_hash(user):
+def get_user_settings_hash(user):
+    u"""Calculate a hash of the user's settings.  This is used for caching.  In
+    order to fetch HTML-containing material from the cache, it is necessary to
+    have the user's settings in the cache key.  Otherwise, the HTML would be
+    wrong.  Currently, this is only the language.  So if you switch the
+    language from English to German, this hash prevents Chantal from fetching
+    HTML that still is in English.  Theoretically, a skin setting may also be
+    included here (if skins are not solely realised via CSS).
+
+    :Parameters:
+      - `user`: the currently logged-in user
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      an ASCII hash representing the user's settings
+
+    :rtype: str
+    """
     hash_ = hashlib.sha1()
     hash_.update(user.chantal_user_details.language)
     return hash_.hexdigest()
@@ -128,7 +146,7 @@ class ResultContext(object):
     u"""Contains all info that result processes must know in order to render
     themselves as HTML.  It retrieves all processes, resolve the polymorphism
     (see `models.find_actual_instance`), and executes the proper template with
-    the proper context dictionary in order to het HTML fragments.  These
+    the proper context dictionary in order to get HTML fragments.  These
     fragments are then collected in a list structure together with other info.
 
     This list is the final output of this class.  It can be passed to a
@@ -204,7 +222,7 @@ class ResultContext(object):
         process = process.find_actual_instance()
         name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
         template_context = self.get_template_context(process)
-        cache_key = "{0}-{1}".format(process.pk, get_session_settings_hash(self.user))
+        cache_key = "{0}-{1}".format(process.pk, get_user_settings_hash(self.user))
         html_body = cache.get(cache_key)
         if html_body is None:
             html_body = render_to_string("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html",

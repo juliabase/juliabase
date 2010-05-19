@@ -354,6 +354,13 @@ class Process(models.Model):
         return {"processes": processes}
 
     def append_cache_key(self, cache_key):
+        u"""
+
+        :Parameters:
+          - `cache_key`: the cache key
+
+        :type cache_key: str
+        """
         if self.cache_keys:
             self.cache_keys += "," + cache_key
         else:
