@@ -51,3 +51,30 @@ def add_user_details(sender, instance, **kwargs):
     samples_app.UserDetails.objects.get_or_create(user=instance)
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
+
+
+def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
+    u"""Touch samples and processes when the relation between both changes.
+    For example, if the samples connected with a process are changed, both the
+    process and all affected samples are marked as “modified”.
+    """
+    if reverse:
+        # `instance` is a process
+        instance.save()
+        if action == "pre_clear":
+            for sample in instance.samples.all():
+                sample.save()
+        elif action in ["post_add", "post_remove"]:
+            for sample in samples_app.Sample.objects.in_bulk(pk_set).itervalues():
+                sample.save()
+    else:
+        # `instance` is a sample; shouldn't actually occur in Chantal's code
+        instance.save()
+        if action == "pre_clear":
+            for process in instance.processes.all():
+                process.save(with_samples=False)
+        elif action in ["post_add", "post_remove"]:
+            for process in samples_app.Process.objects.in_bulk(pk_set).itervalues():
+                process.save(with_samples=False)
+
+signals.m2m_changed.connect(touch_process_samples, sender=samples_app.Sample.processes.through)

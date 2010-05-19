@@ -103,8 +103,9 @@ class Process(models.Model):
         cache.delete_many(self.cache_keys.split(","))
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
-        for sample in self.samples.all():
-            sample.save()
+        if kwargs.pop("with_samples", True):
+            for sample in self.samples.all():
+                sample.save()
         super(Process, self).save(*args, **kwargs)
 
     def __unicode__(self):
