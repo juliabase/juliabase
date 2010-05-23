@@ -222,7 +222,7 @@ class ResultContext(object):
         process = process.find_actual_instance()
         name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
         template_context = self.get_template_context(process)
-        cache_key = "{0}-{1}".format(process.pk, get_user_settings_hash(self.user))
+        cache_key = "process:{0}-{1}".format(process.pk, get_user_settings_hash(self.user))
         html_body = cache.get(cache_key)
         if html_body is None:
             html_body = render_to_string("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html",
