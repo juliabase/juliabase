@@ -15,6 +15,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
 from django.forms.util import ValidationError
+from django.core.cache import cache
 from samples.models import Sample
 from samples import models, permissions
 from django.contrib.auth.decorators import login_required
@@ -430,8 +431,13 @@ class ProcessContext(utils.ResultContext):
 
         :rtype: `SamplesAndProcesses`
         """
-        process_list = SamplesAndProcesses(self.original_sample, self.clearance is None, self.user, post_data)
-        process_list.processes = self.collect_processes()
+        cache_key = "sample:{0}-{1}".format(self.sample.pk, utils.get_user_settings_hash(self.user))
+        process_list = cache.get(cache_key)
+        if process_list is None:
+            process_list = SamplesAndProcesses(self.original_sample)
+            process_list.processes = self.collect_processes()
+            cache.set(cache_key, process_list)
+
         return process_list
 
 
