@@ -180,7 +180,7 @@ def show(request, username):
             ElementTree.SubElement(entry_element, "link", rel="alternate", href=metadata["link"])
         else:
             # Add bogus <link> tags for Thunderbird, see
-            # https://bugzilla.mozilla.org/show_bug.cgi?id=462511
+            # https://bugzilla.mozilla.org/show_bug.cgi?id=297569
             user_agent = request.META.get("HTTP_USER_AGENT", "")
             if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
                 ElementTree.SubElement(
