@@ -16,7 +16,8 @@ from matplotlib.figure import Figure
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
-from django.template import defaultfilters
+from django.template import defaultfilters, Context
+from django.template.loader import render_to_string
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
@@ -27,6 +28,30 @@ from chantal_common.models import Topic
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
+
+
+def get_user_settings_hash(user):
+    u"""Calculate a hash of the user's settings.  This is used for caching.  In
+    order to fetch HTML-containing material from the cache, it is necessary to
+    have the user's settings in the cache key.  Otherwise, the HTML would be
+    wrong.  Currently, this is only the language.  So if you switch the
+    language from English to German, this hash prevents Chantal from fetching
+    HTML that still is in English.  Theoretically, a skin setting may also be
+    included here (if skins are not solely realised via CSS).
+
+    :Parameters:
+      - `user`: the currently logged-in user
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      an ASCII hash representing the user's settings
+
+    :rtype: str
+    """
+    hash_ = hashlib.sha1()
+    hash_.update(user.chantal_user_details.language)
+    return hash_.hexdigest()
 
 
 class ExternalOperator(models.Model):
@@ -104,8 +129,13 @@ class Process(models.Model):
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
         if kwargs.pop("with_samples", True):
-            for sample in self.samples.all():
-                sample.save()
+            try:
+                samples = self.samples.all()
+            except ValueError:
+                pass
+            else:
+                for sample in samples:
+                    sample.save()
         super(Process, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -358,6 +388,49 @@ class Process(models.Model):
             self.cache_keys = cache_key
         super(Process, self).save()
 
+    def get_context_for_user(self, sample_context, user, old_context={}):
+        u"""Create the context dict for this process, or fill missing fields,
+        or adapt existing fields to the given user.  Note that adaption only
+        happens to the current user and not to any settings like e.g. language.
+        In other words, if a non-empty `context` is passed, the caller must
+        assure that language etc is already correct, just that it may be a
+        cached context from another *user*.
+
+        A process context has always the following fields: ``process``,
+        ``html_body``, ``name``, ``operator``, ``timestamp``, and
+        ``timestamp_inaccuracy``.  Optional standard fields are ``edit_url``,
+        ``export_url``, and ``duplicate_url``.  It may also have further
+        fields, which must be iterpreted by the respective ``"show_…"``
+        template.
+
+        Note that it is necessary that ``self`` is the actual instance and not
+        a parent class.
+        """
+        context = old_context.copy()
+        if "process" not in context:
+            context["process"] = self
+        if "name" not in context:
+            name = unicode(self._meta.verbose_name) if not isinstance(self, Result) else self.title
+            context["name"] = name[:1].upper()+name[1:]
+        context.update(sample_context)
+        if "html_body" not in context:
+            cache_key = "process:{0}-{1}".format(self.pk, get_user_settings_hash(user))
+            html_body = cache.get(cache_key)
+            if html_body is None:
+                html_body = render_to_string(
+                    "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
+                    context_instance=Context(context))
+                cache.set(cache_key, html_body)
+                self.append_cache_key(cache_key)
+            context["html_body"] = html_body
+        if "operator" not in context:
+            context["operator"] = self.external_operator or self.operator
+        if "timestamp" not in context:
+            context["timestamp"] = self.timestamp
+        if "timestamp_inaccuracy" not in context:
+            context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
+        return context
+
 
 class Sample(models.Model):
     u"""The model for samples.
@@ -530,38 +603,27 @@ class SampleSplit(Process):
         _ = ugettext
         return _(u"split of %s") % self.parent.name
 
-    def get_additional_template_context(self, process_context):
-        u"""See
-        `models_depositions.SixChamberDeposition.get_additional_template_context`
-        for general information.
-
-        :Parameters:
-          - `process_context`: context information for this process.  This
-            routine needs ``current_sample`` and ``original_sample`` from the
-            process context.
-
-        :type process_context: `views.utils.ProcessContext`
-
-        :Return:
-          dict with additional fields that are supposed to be given to the
-          sample split template: ``"parent"``, ``"original_sample"``,
-          ``"current_sample"``, and ``"latest_descendant"``.
-
-        :rtype: dict mapping string to arbitrary objects
-        """
-        assert process_context.current_sample
-        if process_context.current_sample != process_context.original_sample:
-            parent = process_context.current_sample
+    def get_context_for_user(self, sample_context, user, old_context={}):
+        context = old_context.copy()
+        if sample_context["sample"] != sample_context["original_sample"]:
+            parent = sample_context["sample"]
         else:
             parent = None
-        result = {"parent": parent, "original_sample": process_context.original_sample,
-                  "current_sample": process_context.current_sample, "latest_descendant": process_context.latest_descendant}
-        result["resplit_url"] = None
-        if process_context.current_sample.last_process_if_split() == self and \
-                permissions.has_permission_to_edit_sample(process_context.user, process_context.current_sample):
-            result["resplit_url"] = django.core.urlresolvers.reverse(
+        context.update({"parent": parent, "original_sample": sample_context["original_sample"],
+                        "sample": sample_context["sample"],
+                        "latest_descendant": sample_context["latest_descendant"]})
+        context["resplit_url"] = None
+        if sample_context["sample"].last_process_if_split() == self and \
+                permissions.has_permission_to_edit_sample(user, sample_context["sample"]):
+            context["resplit_url"] = django.core.urlresolvers.reverse(
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
-        return result
+        if old_context.get("original_sample") != context["original_sample"] or \
+                old_context.get("sample") != context["sample"] or \
+                old_context.get("latest_descendant") != context["latest_descendant"]:
+            context.pop("html_body", None)
+            print old_context.get("sample"), context["sample"], context["process"].pk
+            self.save()
+        return super(SampleSplit, self).get_context_for_user(sample_context, user, context)
 
 
 class Clearance(models.Model):
@@ -643,6 +705,15 @@ class Substrate(Process):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_substrate")
+
+    def get_context_for_user(self, sample_context, user, old_context={}):
+        context = old_context.copy()
+        if permissions.has_permission_to_add_edit_physical_process(user, self):
+            context["edit_url"] = \
+                django.core.urlresolvers.reverse("edit_substrate", kwargs={"substrate_id": self.pk})
+        else:
+            context.pop("edit_url", None)
+        return super(Substrate, self).get_context_for_user(sample_context, user, context)
 
 
 sample_death_reasons = (
@@ -800,32 +871,21 @@ class Result(Process):
                                  image_locations["thumbnail_file"]])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
 
-    def get_additional_template_context(self, process_context):
-        u"""See
-        `models_depositions.SixChamberDeposition.get_additional_template_context`
-        for general information.
-
-        :Parameters:
-          - `process_context`: context information for this process.  This
-            routine needs only ``user`` from the process context.
-
-        :type process_context: `views.utils.ProcessContext`
-
-        :Return:
-          dict with additional fields that are supposed to be given to the
-          result process template, e.g. ``"edit_url"``.
-
-        :rtype: dict mapping str to str
-        """
-        result = self.result.get_image()
-        if permissions.has_permission_to_edit_result_process(process_context.user, self):
-            result["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+    def get_context_for_user(self, sample_context, user, old_context={}):
+        context = old_context.copy()
         if self.quantities_and_values:
-            result["quantities"], result["value_lists"] = shared_utils.ascii_unpickle(self.quantities_and_values)
-            result["export_url"] = \
+            if "quantities" not in context or "value_lists" not in context:
+                context["quantities"], context["value_lists"] = shared_utils.ascii_unpickle(self.quantities_and_values)
+            context["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
-        return result
+        if "thumbnail_url" not in context or "image_url" not in context:
+            context.update(self.result.get_image())
+        if permissions.has_permission_to_edit_result_process(user, self):
+            context["edit_url"] = \
+                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+        else:
+            context.pop("edit_url", None)
+        return super(Result, self).get_context_for_user(sample_context, user, context)
 
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
@@ -975,9 +1035,9 @@ class UserDetails(models.Model):
 
     def touch_sample_settings(self):
         u"""Set the last modifications of sample settings to the current time.
-        This method must be called every time when something was changes which
+        This method must be called every time when something was changed which
         influences the display of a sample datasheet, e. g. the language or the
-        “My Samples” list.
+        “My Samples” list.  It is used for efficient caching.
         """
         self.sample_settings_timestamp = datetime.datetime.now()
         self.save()

@@ -8,14 +8,13 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import
 
-import re, string, datetime, json, hashlib
+import re, string, datetime, json
 from django.http import Http404, HttpResponse
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from django.core.cache import cache
 from functools import update_wrapper
 from django.template import Context, RequestContext
-from django.template.loader import render_to_string
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
 import chantal_common.utils
@@ -116,30 +115,6 @@ def normalize_sample_name(sample_name):
         return
     else:
         return sample_alias.sample.name
-
-
-def get_user_settings_hash(user):
-    u"""Calculate a hash of the user's settings.  This is used for caching.  In
-    order to fetch HTML-containing material from the cache, it is necessary to
-    have the user's settings in the cache key.  Otherwise, the HTML would be
-    wrong.  Currently, this is only the language.  So if you switch the
-    language from English to German, this hash prevents Chantal from fetching
-    HTML that still is in English.  Theoretically, a skin setting may also be
-    included here (if skins are not solely realised via CSS).
-
-    :Parameters:
-      - `user`: the currently logged-in user
-
-    :type user: ``django.contrib.auth.models.User``
-
-    :Return:
-      an ASCII hash representing the user's settings
-
-    :rtype: str
-    """
-    hash_ = hashlib.sha1()
-    hash_.update(user.chantal_user_details.language)
-    return hash_.hexdigest()
 
 
 class ResultContext(object):

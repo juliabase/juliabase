@@ -99,7 +99,7 @@ urlpatterns = patterns("samples.views",
                        (r"^topics/(?P<name>.+)", "topic.edit"),
 
                        url(r"^substrates/add/$", "substrate.edit", {"substrate_id": None}, "add_substrate"),
-                       (r"^substrates/(?P<substrate_id>.+)/edit/$", "substrate.edit"),
+                       url(r"^substrates/(?P<substrate_id>.+)/edit/$", "substrate.edit", name="edit_substrate"),
 
                        (r"^primary_keys$", "remote_client.primary_keys"),
                        (r"^available_items/(?P<model_name>[A-Za-z_][A-Za-z_0-9]*)", "remote_client.available_items"),

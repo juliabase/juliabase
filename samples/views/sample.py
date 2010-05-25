@@ -196,7 +196,40 @@ class SamplesAndProcesses(object):
     :ivar process_lists: list of `SamplesAndProcesses` of child samples.
     """
 
-    def __init__(self, sample, full_view, user, post_data):
+    @staticmethod
+    def samples_and_processes(sample_name, user, post_data=None):
+        u"""Returns the data structure used in the template to display the
+        sample with all its processes.
+
+        :Parameters:
+          - `sample_name`: the sample or alias of the sample to display
+          - `user`: the currently logged-in user
+          - `post_data`: the POST dictionary if it was an HTTP POST request, or
+            ``None`` otherwise
+
+        :type sample_name: unicode
+        :type user: ``django.contrib.auth.models.User``
+        :type post_data: ``QueryDict``
+
+        :Return:
+          a list with all result processes of this sample in chronological
+          order.  Every list item is a dictionary with the information
+          described in `digest_process`.
+
+        :rtype: `SamplesAndProcesses`
+        """
+        sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
+        cache_key = "sample:{0}-{1}".format(sample.pk, models.get_user_settings_hash(user))
+        samples_and_processes = cache.get(cache_key)
+        if samples_and_processes is None:
+            samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
+            cache.set(cache_key, samples_and_processes)
+            sample.append_cache_key(cache_key)
+        else:
+            samples_and_processes.personalize(user, clearance, post_data)
+        return samples_and_processes
+
+    def __init__(self, sample, clearance, user, post_data):
         u"""
         :Parameters:
           - `sample`: the sample to which the processes belong
@@ -211,18 +244,61 @@ class SamplesAndProcesses(object):
         :type user: ``django.contrib.auth.models.User``
         :type post_data: ``QueryDict`` or ``NoneType``
         """
-        self.sample = sample
-        self.full_view = full_view
+        self.sample_context = {"sample": sample, "original_sample": sample, "latest_descendant": None,
+                               "cutoff_timestamp": None}
+        self.update_sample_context_for_user(user, clearance, post_data)
+        self.process_contexts = []
+        def collect_process_contexts(sample_context):
+            split = sample_context["sample"].split_origin
+            if split:
+                new_sample_context = sample_context.copy()
+                new_sample_context["sample"] = split.parent
+                new_sample_context["latest_descendant"] = sample_context["sample"]
+                new_sample_context["cutoff_timestamp"] = split.timestamp
+                collect_process_contexts(new_sample_context)
+            if sample_context["clearance"]:
+                basic_query = sample_context["clearance"].processes.filter(samples=sample_context["sample"])
+            else:
+                basic_query = models.Process.objects.filter(Q(samples=sample_context["sample"]) |
+                                                            Q(result__sample_series__samples=sample_context["sample"]))
+            if sample_context["cutoff_timestamp"] is None:
+                processes = basic_query.distinct()
+            else:
+                processes = basic_query.filter(timestamp__lte=sample_context["cutoff_timestamp"]).distinct()
+            for process in processes:
+                process = process.find_actual_instance()
+                self.process_contexts.append(process.get_context_for_user(sample_context, user))
+        collect_process_contexts(self.sample_context)
+        self.process_lists = []
+
+    def update_sample_context_for_user(self, user, clearance, post_data):
         self.user = user
         self.user_details = utils.get_profile(user)
+        sample = self.sample_context["sample"]
         self.is_my_sample = self.user_details.my_samples.filter(id__exact=sample.id).exists()
         self.is_my_sample_form = IsMySampleForm(
             prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
             else IsMySampleForm(post_data, prefix=str(sample.pk))
-        self.processes = []
-        self.process_lists = []
+        self.sample_context.update({"is_my_sample_form": self.is_my_sample_form, "clearance": clearance})
+        try:
+            # FixMe: calling get_allowed_processes is too expensive
+            get_allowed_processes(self.user, sample)
+            self.sample_context["can_add_process"] = True
+        except permissions.PermissionError:
+            self.sample_context["can_add_process"] = False
+        self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
+        self.sample_context["number_for_rename"] = \
+            sample.name[1:] if sample.name.startswith("*") and self.sample_context["can_edit"] else None
 
-    def samples_and_processes(self):
+    def personalize(self, user, clearance, post_data):
+        self.update_sample_context_for_user(user, clearance, post_data)
+        for process_context in self.process_contexts:
+            process_context.update(
+                process_context["process"].get_context_for_user(self.sample_context, user, process_context))
+        for process_list in self.process_lists:
+            process_list.personalize(user, clearance, post_data)
+
+    def __iter__(self):
         u"""Returns an iterator over all samples and processes.  It is used in
         the template to generate the whole page.  Note that because no
         recursion is allowed in Django's template language, this generator
@@ -246,25 +322,15 @@ class SamplesAndProcesses(object):
 
         :rtype: ``generator``
         """
-        sample = {"sample": self.sample, "is_my_sample_form": self.is_my_sample_form, "full_view": self.full_view}
-        try:
-            # FixMe: calling get_allowed_processes is too expensive
-            get_allowed_processes(self.user, self.sample)
-            sample["can_add_process"] = True
-        except permissions.PermissionError:
-            sample["can_add_process"] = False
-        sample["can_edit"] = permissions.has_permission_to_edit_sample(self.user, self.sample)
-        sample["number_for_rename"] = \
-            self.sample.name[1:] if self.sample.name.startswith("*") and sample["can_edit"] else None
-        if self.processes:
-            yield sample, self.processes[0]
-            for process in self.processes[1:]:
-                yield None, process
+        if self.process_contexts:
+            yield self.sample_context, self.process_contexts[0]
+            for process_context in self.process_contexts[1:]:
+                yield None, process_context
         else:
-            yield sample, None
+            yield self.sample_context, None
         for process_list in self.process_lists:
-            for sample, process in process_list.samples_and_processes():
-                yield sample, process
+            for sample_context, process_context in process_list:
+                yield sample_context, process_context
 
     def is_valid(self):
         u"""Checks whether all “is My Sample” forms of the “show sample” view
@@ -305,142 +371,6 @@ class SamplesAndProcesses(object):
         return added, removed
 
 
-class ProcessContext(utils.ResultContext):
-    u"""Contains all info that processes must know in order to render
-    themselves as HTML.  It does the same as the parent class
-    `utils.ResultContext` (see there for full information), however, it extends
-    its functionality a little bit for being useful for *samples* instead of
-    sample series.
-
-    Its main purpose is to create the datastructure built of nested
-    `SamplesAndProcesses`, which is later used in the template.
-
-    :ivar original_sample: the sample for which the history is about to be
-      generated
-
-    :ivar current_sample: the sample the processes of which are *currently*
-      collected an processed.  This is an ancestor of `original_sample`.  In
-      other words, `original_sample` is a direct or indirect split piece of
-      ``current_sample``.
-
-    :ivar cutoff_timestamp: the timestamp of the split of `current_sample`
-      which generated the (ancestor of) the `original_sample`.  Thus, processes
-      of `current_sample` that came *after* the cutoff timestamp must not be
-      included into the history.
-
-    :ivar latest_descendant: This is used in ``show_sample_split.html`` for
-      identifying direct ancestors of the sample when displaying a sample split
-      of an ancestor which is not the parent.  When walking up through the
-      ancestors, `latest_descendant` contains the respectively previous sample.
-    """
-
-    def __init__(self, user, sample_name):
-        u"""
-        :Parameters:
-          - `user`: the user that wants to see all the generated HTML
-          - `sample_name`: the sample or alias of the sample to display
-
-        :type user: django.contrib.auth.models.User
-        :type original_sample: `models.Sample`
-
-        :Exceptions:
-          - `Http404`: if the sample name could not be found
-          - `AmbiguityException`: if more than one matching alias was found
-          - `permissions.PermissionError`: if the user is not allowed to view the
-            sample
-        """
-        self.original_sample, self.clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
-        self.current_sample = self.original_sample
-        self.latest_descendant = None
-        self.user = user
-        self.cutoff_timestamp = None
-
-    def split(self, split):
-        u"""Generate a copy of this `ProcessContext` for the parent of the
-        current sample.
-
-        :Parameters:
-          - `split`: the split process
-
-        :type split: `models.SampleSplit`
-
-        :Return:
-          a new process context for collecting the processes of the parent in
-          order to add them to the complete history of the `original_sample`.
-
-        :rtype: `ProcessContext`
-        """
-        result = copy.copy(self)
-        result.current_sample = split.parent
-        result.latest_descendant = self.current_sample
-        result.cutoff_timestamp = split.timestamp
-        return result
-
-    def get_processes(self):
-        u"""Get all relevant processes of the `current_sample`.
-
-        :Return:
-          all processes of the `current_sample` that must be included into the
-          history of `original_sample`, i.e. up to `cutoff_timestamp`.
-
-        :rtype: list of `models.Process`
-        """
-        if self.clearance:
-            basic_query = self.clearance.processes.filter(samples=self.current_sample)
-        else:
-            basic_query = models.Process.objects.filter(Q(samples=self.current_sample) |
-                                                        Q(result__sample_series__samples=self.current_sample))
-        if self.cutoff_timestamp is None:
-            return basic_query.distinct()
-        else:
-            return basic_query.filter(timestamp__lte=self.cutoff_timestamp).distinct()
-
-    def collect_processes(self):
-        u"""Make a list of all processes for `current_sample`.  This routine is
-        called recursively in order to resolve all upstream sample splits,
-        i.e. it also collects all processes of ancestors that the current
-        sample has experienced, too.
-
-        :Return:
-          all processes of `current_sample`, including those of ancestors
-
-        :rtype: list of `model.Process`
-        """
-        processes = []
-        split_origin = self.current_sample.split_origin
-        if split_origin:
-            processes.extend(self.split(split_origin).collect_processes())
-        for process in self.get_processes():
-            processes.append(self.digest_process(process))
-        return processes
-
-    def samples_and_processes(self, post_data=None):
-        u"""Returns the data structure used in the template to display the
-        sample with all its processes.
-
-        :Parameters:
-          - `post_data`: the POST dictionary if it was an HTTP POST request, or
-            ``None`` otherwise
-
-        :type post_data: ``QueryDict``
-
-        :Return:
-          a list with all result processes of this sample in chronological
-          order.  Every list item is a dictionary with the information
-          described in `digest_process`.
-
-        :rtype: `SamplesAndProcesses`
-        """
-        cache_key = "sample:{0}-{1}".format(self.sample.pk, utils.get_user_settings_hash(self.user))
-        process_list = cache.get(cache_key)
-        if process_list is None:
-            process_list = SamplesAndProcesses(self.original_sample)
-            process_list.processes = self.collect_processes()
-            cache.set(cache_key, process_list)
-
-        return process_list
-
-
 def sample_timestamp(request, sample_name):
     u"""Check whether the sample datasheet can be taken from the browser cache.
     For this, the timestamp of last modification of the sample is taken, and
@@ -476,7 +406,7 @@ def sample_timestamp(request, sample_name):
 
 
 @login_required
-@last_modified(sample_timestamp)
+#@last_modified(sample_timestamp)
 def show(request, sample_name):
     u"""A view for showing existing samples.
 
@@ -495,7 +425,7 @@ def show(request, sample_name):
     start = time.time()
     is_remote_client = utils.is_remote_client(request)
     if request.method == "POST":
-        samples_and_processes = ProcessContext(request.user, sample_name).samples_and_processes(request.POST)
+        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
             if added:
@@ -514,10 +444,11 @@ def show(request, sample_name):
                 success_message = _(u"Nothing was changed.")
             messages.success(request, success_message)
     else:
-        samples_and_processes = ProcessContext(request.user, sample_name).samples_and_processes()
+        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
-    return render_to_response("samples/show_sample.html", {"title": _(u"Sample “{0}”").format(samples_and_processes.sample),
-                                                           "samples_and_processes": samples_and_processes},
+    return render_to_response("samples/show_sample.html",
+                              {"title": _(u"Sample “{0}”").format(samples_and_processes.sample_context["sample"]),
+                               "samples_and_processes": samples_and_processes},
                               context_instance=RequestContext(request))
 
 
