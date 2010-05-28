@@ -250,6 +250,14 @@ def markdown_samples(value):
             break
     return markup.markdown(result)
 
+@register.filter
+@stringfilter
+def first_upper(value):
+    u"""Filter for formatting the value to set the first character to uppercase.
+    """
+
+    if value:
+        return value[0].upper() + value[1:]
 
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
