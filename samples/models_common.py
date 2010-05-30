@@ -388,7 +388,10 @@ class Process(models.Model):
             self.cache_keys = cache_key
         super(Process, self).save()
 
-    def get_context_for_user(self, sample_context, user, old_context={}):
+    def get_cache_key(self, user_settings_hash, local_context):
+        return "process:{0}-{1}".format(self.pk, user_settings_hash)
+
+    def get_context_for_user(self, user, old_context):
         u"""Create the context dict for this process, or fill missing fields,
         or adapt existing fields to the given user.  Note that adaption only
         happens to the current user and not to any settings like e.g. language.
@@ -412,17 +415,10 @@ class Process(models.Model):
         if "name" not in context:
             name = unicode(self._meta.verbose_name) if not isinstance(self, Result) else self.title
             context["name"] = name[:1].upper()+name[1:]
-        context.update(sample_context)
         if "html_body" not in context:
-            cache_key = "process:{0}-{1}".format(self.pk, get_user_settings_hash(user))
-            html_body = cache.get(cache_key)
-            if html_body is None:
-                html_body = render_to_string(
-                    "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
-                    context_instance=Context(context))
-                cache.set(cache_key, html_body)
-                self.append_cache_key(cache_key)
-            context["html_body"] = html_body
+            context["html_body"] = render_to_string(
+                "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
+                context_instance=Context(context))
         if "operator" not in context:
             context["operator"] = self.external_operator or self.operator
         if "timestamp" not in context:
@@ -603,27 +599,27 @@ class SampleSplit(Process):
         _ = ugettext
         return _(u"split of %s") % self.parent.name
 
-    def get_context_for_user(self, sample_context, user, old_context={}):
+    def get_cache_key(self, user_settings_hash, local_context):
+        hash_ = hashlib.sha1()
+        hash_.update(user_settings_hash)
+        hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
+                                                    local_context.get("latest_descendant", ""),
+                                                    local_context.get("sample", "")))
+        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
+
+    def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if sample_context["sample"] != sample_context["original_sample"]:
-            parent = sample_context["sample"]
+        if context["sample"] != context["original_sample"]:
+            context["parent"] = context["sample"]
         else:
-            parent = None
-        context.update({"parent": parent, "original_sample": sample_context["original_sample"],
-                        "sample": sample_context["sample"],
-                        "latest_descendant": sample_context["latest_descendant"]})
-        context["resplit_url"] = None
-        if sample_context["sample"].last_process_if_split() == self and \
-                permissions.has_permission_to_edit_sample(user, sample_context["sample"]):
+            context["parent"] = None
+        if context["sample"].last_process_if_split() == self and \
+                permissions.has_permission_to_edit_sample(user, context["sample"]):
             context["resplit_url"] = django.core.urlresolvers.reverse(
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
-        if old_context.get("original_sample") != context["original_sample"] or \
-                old_context.get("sample") != context["sample"] or \
-                old_context.get("latest_descendant") != context["latest_descendant"]:
-            context.pop("html_body", None)
-            print old_context.get("sample"), context["sample"], context["process"].pk
-            self.save()
-        return super(SampleSplit, self).get_context_for_user(sample_context, user, context)
+        else:
+            context["resplit_url"] = None
+        return super(SampleSplit, self).get_context_for_user(user, context)
 
 
 class Clearance(models.Model):
@@ -706,14 +702,14 @@ class Substrate(Process):
         _ = ugettext
         return django.core.urlresolvers.reverse("add_substrate")
 
-    def get_context_for_user(self, sample_context, user, old_context={}):
+    def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if permissions.has_permission_to_add_edit_physical_process(user, self):
             context["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_substrate", kwargs={"substrate_id": self.pk})
         else:
             context.pop("edit_url", None)
-        return super(Substrate, self).get_context_for_user(sample_context, user, context)
+        return super(Substrate, self).get_context_for_user(user, context)
 
 
 sample_death_reasons = (
@@ -871,7 +867,7 @@ class Result(Process):
                                  image_locations["thumbnail_file"]])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
 
-    def get_context_for_user(self, sample_context, user, old_context={}):
+    def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if self.quantities_and_values:
             if "quantities" not in context or "value_lists" not in context:
@@ -885,7 +881,7 @@ class Result(Process):
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
         else:
             context.pop("edit_url", None)
-        return super(Result, self).get_context_for_user(sample_context, user, context)
+        return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a

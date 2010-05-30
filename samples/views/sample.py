@@ -244,31 +244,44 @@ class SamplesAndProcesses(object):
         :type user: ``django.contrib.auth.models.User``
         :type post_data: ``QueryDict`` or ``NoneType``
         """
-        self.sample_context = {"sample": sample, "original_sample": sample, "latest_descendant": None,
-                               "cutoff_timestamp": None}
+        # This will be filled with more, once child samples are displayed, too.
+        self.sample_context = {"sample": sample}
         self.update_sample_context_for_user(user, clearance, post_data)
         self.process_contexts = []
-        def collect_process_contexts(sample_context):
-            split = sample_context["sample"].split_origin
+        def collect_process_contexts(local_context=None):
+            if local_context is None:
+                local_context = self.sample_context.copy()
+                local_context.update({"original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None})
+            split = local_context["sample"].split_origin
             if split:
-                new_sample_context = sample_context.copy()
-                new_sample_context["sample"] = split.parent
-                new_sample_context["latest_descendant"] = sample_context["sample"]
-                new_sample_context["cutoff_timestamp"] = split.timestamp
-                collect_process_contexts(new_sample_context)
-            if sample_context["clearance"]:
-                basic_query = sample_context["clearance"].processes.filter(samples=sample_context["sample"])
+                new_local_context = local_context.copy()
+                new_local_context["sample"] = split.parent
+                new_local_context["latest_descendant"] = local_context["sample"]
+                new_local_context["cutoff_timestamp"] = split.timestamp
+                collect_process_contexts(new_local_context)
+            if local_context["clearance"]:
+                basic_query = local_context["clearance"].processes.filter(samples=local_context["sample"])
             else:
-                basic_query = models.Process.objects.filter(Q(samples=sample_context["sample"]) |
-                                                            Q(result__sample_series__samples=sample_context["sample"]))
-            if sample_context["cutoff_timestamp"] is None:
+                basic_query = models.Process.objects.filter(Q(samples=local_context["sample"]) |
+                                                            Q(result__sample_series__samples=local_context["sample"]))
+            if local_context["cutoff_timestamp"] is None:
                 processes = basic_query.distinct()
             else:
-                processes = basic_query.filter(timestamp__lte=sample_context["cutoff_timestamp"]).distinct()
+                processes = basic_query.filter(timestamp__lte=local_context["cutoff_timestamp"]).distinct()
             for process in processes:
                 process = process.find_actual_instance()
-                self.process_contexts.append(process.get_context_for_user(sample_context, user))
-        collect_process_contexts(self.sample_context)
+                cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
+                cached_context = cache.get(cache_key) if cache_key else None
+                if cached_context is None:
+                    process_context = process.get_context_for_user(user, local_context)
+                    if cache_key:
+                        cache.set(cache_key, process_context)
+                        process.append_cache_key(cache_key)
+                else:
+                    cached_context.update(local_context)
+                    process_context = process.get_context_for_user(user, cached_context)
+                self.process_contexts.append(process_context)
+        collect_process_contexts()
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
@@ -294,7 +307,7 @@ class SamplesAndProcesses(object):
         self.update_sample_context_for_user(user, clearance, post_data)
         for process_context in self.process_contexts:
             process_context.update(
-                process_context["process"].get_context_for_user(self.sample_context, user, process_context))
+                process_context["process"].get_context_for_user(user, process_context))
         for process_list in self.process_lists:
             process_list.personalize(user, clearance, post_data)
 
