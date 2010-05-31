@@ -640,6 +640,15 @@ class SampleSplit(Process):
         return _(u"split of %s") % self.parent.name
 
     def get_cache_key(self, user_settings_hash, local_context):
+        u"""Calculate a cache key for this context instance of the sample
+        split.  Here, I actually use `local_context` in order to generate
+        different cached items for different positions of the sample split in
+        the process list.  The underlying reason for it is that in contrast to
+        other process classes, the display of sample splits depends on many
+        things.  For example, if the sample split belongs to the sample the
+        datasheet of which is displayed, the rendering is different from the
+        very same sample split on the data sheet of a child sample.
+        """
         hash_ = hashlib.sha1()
         hash_.update(user_settings_hash)
         hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
