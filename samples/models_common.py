@@ -125,7 +125,7 @@ class Process(models.Model):
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
         """
-        cache.delete_many(self.cache_keys.split(","))
+        cache.delete_many(self.cache_keys.split("\n"))
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
         if kwargs.pop("with_samples", True):
@@ -383,7 +383,7 @@ class Process(models.Model):
         :type cache_key: str
         """
         if self.cache_keys:
-            self.cache_keys += "," + cache_key
+            self.cache_keys += "\n" + cache_key
         else:
             self.cache_keys = cache_key
         super(Process, self).save()
@@ -497,7 +497,7 @@ class Sample(models.Model):
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
         """
-        cache.delete_many(self.cache_keys.split(","))
+        cache.delete_many(self.cache_keys.split("\n"))
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
         super(Sample, self).save(*args, **kwargs)
@@ -591,7 +591,7 @@ class Sample(models.Model):
         :type cache_key: str
         """
         if self.cache_keys:
-            self.cache_keys += "," + cache_key
+            self.cache_keys += "\n" + cache_key
         else:
             self.cache_keys = cache_key
         super(Sample, self).save()
