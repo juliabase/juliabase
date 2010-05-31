@@ -389,15 +389,38 @@ class Process(models.Model):
         super(Process, self).save()
 
     def get_cache_key(self, user_settings_hash, local_context):
+        u"""Calculate a cache key for this context instance of the process.
+        Note that there may be many cache items to one process, e. g. one for
+        every language.  Each of them needs a unique cache key.  The only this
+        that is *never* included in a cache key is the user himself because
+        then, the cache would lose much of its effectiveness.  Instead, the
+        purpose of the sample cache is to fetch the whole sample which was
+        calculated for another user and simply adapt it to the current one.
+        This is important because this is a frequent use case.
+
+        :Parameters:
+          - `user_settings_hash`: hash over all settings which affect the
+            rendering of processes, e. g. language
+          - `local_context`: the local sample context; currently, this is only
+            relevant to `SampleSplit`, see `SampleSplit.get_cache_key`.
+
+        :type user_settings_hash: str
+        :type local_context: dict mapping str to ``object``
+
+        :Return:
+          the cache key for this process instance
+
+        :rtype: str
+        """
         return "process:{0}-{1}".format(self.pk, user_settings_hash)
 
     def get_context_for_user(self, user, old_context):
         u"""Create the context dict for this process, or fill missing fields,
         or adapt existing fields to the given user.  Note that adaption only
         happens to the current user and not to any settings like e.g. language.
-        In other words, if a non-empty `context` is passed, the caller must
+        In other words, if a non-empty `old_context` is passed, the caller must
         assure that language etc is already correct, just that it may be a
-        cached context from another *user*.
+        cached context from another user with different permissions.
 
         A process context has always the following fields: ``process``,
         ``html_body``, ``name``, ``operator``, ``timestamp``, and
@@ -408,6 +431,23 @@ class Process(models.Model):
 
         Note that it is necessary that ``self`` is the actual instance and not
         a parent class.
+
+        :Parameters:
+          - `user`: the current user
+          - `old_context`: The present context for the process.  This may be
+             only the sample context (i. e. ``sample``, ``original_sample``
+             etc) if the process hasn't been found in the cache. Otherwise, it
+             is the full process context, although (possibly) for another user,
+             so it needs to be adapted.  This dictionary will not be touched in
+             this method.
+
+        :type user: ``django.contrib.auth.models.User``
+        :type old_context: dict mapping str to ``object``
+
+        :Return:
+          the adapted full context for the process
+
+        :rtype: dict mapping str to ``object``
         """
         context = old_context.copy()
         if "process" not in context:

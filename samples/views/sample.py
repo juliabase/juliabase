@@ -190,10 +190,25 @@ class SamplesAndProcesses(object):
     and all processes associated with it.  And secondly, it contains further
     instances of `SamplesAndProcesses` of child samples.
 
-    :ivar processes: List of processes associated with the sample.  This is a
-      list of dictionaries rather than a list of model instances.
+    Objects of this class are cached so that they can be re-used for another
+    user.  Therefore, it is necessary to have methods that adaps the object to
+    the current user.
 
-    :ivar process_lists: list of `SamplesAndProcesses` of child samples.
+    We make extensive use of dictionaries mapping strings to arbitrary objects
+    here.  This is because such a data structure can be passed as a context to
+    templates very easily.
+
+    :ivar process_contexts: List of processes associated with the sample.  This
+      is a list of dictionaries rather than a list of model instances.  The
+      dictionaries can be used as contexts for both the “inner” templates
+      (the ``show_….html`` templates for single processes) as well as the
+      “outer” template ``show_sample.html``.
+
+    :ivar process_lists: Data of child samples
+
+    :type process_lists: list of `SamplesAndProcesses`
+
+    :type process_contexts: list of dict mapping str to ``object``
     """
 
     @staticmethod
@@ -249,6 +264,26 @@ class SamplesAndProcesses(object):
         self.update_sample_context_for_user(user, clearance, post_data)
         self.process_contexts = []
         def collect_process_contexts(local_context=None):
+            u"""Constructs the list of process context dictionaries.  This
+            internal helper function directly populates
+            ``self.process_contexts``.  It consists of three parts: First, we
+            ascend through the ancestors of the sample to the first parent.
+            Then, for every ancestor and for the sample itself, the relevant
+            processes are found in form of a ``QuerySet``, paying attention to
+            a possible clearance and to the so-called “cutoff timestamps”.  And
+            finally, we iterate over the ``QuerySet`` and get the process
+            context dictionary, possibly from the cache.
+
+            :Parameters:
+              - `local_context`: Information about the current sample to
+                process.  This is important when we walk through the ancestors
+                and need to keep track of where we are currently.  In
+                particular, this is used for sample splits because they must
+                know which is the current sample, which is the main sample
+                which will be actually displayed etc.
+
+            :type local_context: dict mapping str to ``object``
+            """
             if local_context is None:
                 local_context = self.sample_context.copy()
                 local_context.update({"original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None})
@@ -285,6 +320,27 @@ class SamplesAndProcesses(object):
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
+        u"""Updates the sample data in this data structure according to the
+        current user.  If the ``SamplesAndProcesses`` object was taken from the
+        cache, it was probably for another user, so I must modify the
+        user-dependent fields.  In particular, the “is-my-sample” checkboxes
+        are generated here, as well as the icons to edit the sample or to add
+        processes.
+
+        This method is also called if the ``SamplesAndProcesses`` object is
+        constructed from scratch.
+
+        :Parameters:
+          - `user`: the currently logged-in user
+          - `clearance`: the clearance object that was used to show the sample,
+            or ``None`` if no clearance was necessary (though maybe existing)
+          - `post_data`: the POST data if it was an HTTP POST request, and
+            ``None`` otherwise
+
+        :type user: ``django.contrib.auth.models.User``
+        :type clearance: `models.Clearance`
+        :type post_data: ``QueryDict`` or ``NoneType``
+        """
         self.user = user
         self.user_details = utils.get_profile(user)
         sample = self.sample_context["sample"]
@@ -304,6 +360,23 @@ class SamplesAndProcesses(object):
             sample.name[1:] if sample.name.startswith("*") and self.sample_context["can_edit"] else None
 
     def personalize(self, user, clearance, post_data):
+        u"""Change the ``SamplesAndProcesses`` object so that it is suitable
+        for the current user.  If the object was taken from the cache, it was
+        probably for another user, so many things need to be adapted.  Here, I
+        walk through all processes to change them.  In particular, the
+        edit/duplicate/resplit icons are corrected.
+
+        :Parameters:
+          - `user`: the currently logged-in user
+          - `clearance`: the clearance object that was used to show the sample,
+            or ``None`` if no clearance was necessary (though maybe existing)
+          - `post_data`: the POST data if it was an HTTP POST request, and
+            ``None`` otherwise
+
+        :type user: ``django.contrib.auth.models.User``
+        :type clearance: `models.Clearance`
+        :type post_data: ``QueryDict`` or ``NoneType``
+        """
         self.update_sample_context_for_user(user, clearance, post_data)
         for process_context in self.process_contexts:
             process_context.update(
