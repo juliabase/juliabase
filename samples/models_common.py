@@ -114,6 +114,7 @@ class Process(models.Model):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
+    # I don't use auto_now because then, `append_cache_key` wouldn't work.
     last_modified = models.DateTimeField(_(u"last modified"))
     cache_keys = models.TextField(_(u"cache keys"), blank=True)
 
@@ -124,18 +125,26 @@ class Process(models.Model):
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
+
+        :Parameters:
+          - `with_relations`: If ``True`` (default), also touch the related
+            samples.  Should be set to ``False`` if called from another
+            ``save`` method in order to avoid endless recursion.
+
+        :type with_relations: bool
         """
         cache.delete_many(self.cache_keys.split("\n"))
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
-        if kwargs.pop("with_samples", True):
+        if kwargs.pop("with_relations", True):
             try:
                 samples = self.samples.all()
             except ValueError:
+                # The process was newly created
                 pass
             else:
                 for sample in samples:
-                    sample.save()
+                    sample.save(with_relations=False)
         super(Process, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -429,6 +438,13 @@ class Process(models.Model):
         fields, which must be iterpreted by the respective ``"show_…"``
         template.
 
+        It is very important to see that ``html_body`` (the result of the
+        ``show_<process name>.html`` template) must not depend on sample data!
+        Otherwise, you see outdated process data after having changed sample
+        data.  (There is only one exception: sample splits.)  If you really
+        need this dependency, then expire the cached sample items yourself in a
+        signal function.
+
         Note that it is necessary that ``self`` is the actual instance and not
         a parent class.
 
@@ -496,10 +512,50 @@ class Sample(models.Model):
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
+
+        It also touches all ancestors and children and the associated split
+        processes.
+
+        :Parameters:
+          - `with_relations`: If ``True`` (default), also touch the related
+            samples.  Should be set to ``False`` if called from another
+            ``save`` method in order to avoid endless recursion.
+          - `from_split`: When walking through the decendents, this is set to
+            the originating split so that the child sample knows which of its
+            splits should be followed, too.  Thus, only the timestamp of
+            ``from_split`` is actually used.  It must be ``None`` (default)
+            when this method is called from outside this method, or while
+            walking through the ancestors.
+
+        :type with_relations: bool
+        :type from_split: `SampleSplit` or ``NoneType``
         """
         cache.delete_many(self.cache_keys.split("\n"))
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
+        with_relations = kwargs.pop("with_relations", True)
+        if with_relations:
+            try:
+                sample_series = self.series.all()
+            except ValueError:
+                pass
+            else:
+                for series in sample_series:
+                    series.save(with_relations=False)
+        from_split = kwargs.pop("from_split", None)
+        # Now we touch the decendents ...
+        if from_split:
+            splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
+        else:
+            splits = SampleSplit.objects.filter(parent=self)
+        for split in splits:
+            split.save(with_relations=False)
+            for child in split.pieces.all():
+                child.save(from_split=split, with_relations=False)
+        # ... and the ancestors
+        if not from_split and self.split_origin:
+            self.split_origin.save(with_relations=False)
+            self.split_origin.parent.save(with_relations=False)
         super(Sample, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -983,6 +1039,7 @@ class SampleSeries(models.Model):
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_(u"topic"))
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True)
 
     class Meta:
         verbose_name = _(u"sample series")
@@ -990,6 +1047,24 @@ class SampleSeries(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and clears stalled cache items of related
+        objects (samples and result processes).
+
+        :Parameters:
+          - `with_relations`: If ``True`` (default), also touch the related
+            samples and result processes.  Should be set to ``False`` if called
+            from another ``save`` method in order to avoid endless recursion.
+
+        :type with_relations: bool
+        """
+        if kwargs.pop("with_relations", True):
+            for sample in self.samples.all():
+                sample.save(with_relations=False)
+            for result in self.results.all():
+                result.save(with_relations=False)
+        super(SampleSeries, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
