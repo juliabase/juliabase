@@ -1131,7 +1131,7 @@ class UserDetails(models.Model):
         help_text=_(u"new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False)
     feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed entries"), related_name="users", blank=True)
-    my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
+    my_layers = models.TextField(_(u"my layers"), blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
     deposition2-layer2, ..."``, where “nickname” can be chosen freely except
     that it mustn't contain “:” or “,” or whitespace.  “deposition” is the
