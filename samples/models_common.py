@@ -75,6 +75,11 @@ class ExternalOperator(models.Model):
         _ = lambda x: x
         permissions = (("add_external_operator", _("Can add an external operator")),)
 
+    def save(self, *args, **kwargs):
+        super(ExternalOperator, self).save(*args, **kwargs)
+        for process in self.processes.all():
+            process.find_actual_instance().save()
+
     def __unicode__(self):
         return self.name
 
@@ -136,16 +141,11 @@ class Process(models.Model):
         cache.delete_many(self.cache_keys.split("\n"))
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
-        if kwargs.pop("with_relations", True):
-            try:
-                samples = self.samples.all()
-            except ValueError:
-                # The process was newly created
-                pass
-            else:
-                for sample in samples:
-                    sample.save(with_relations=False)
+        with_relations = kwargs.pop("with_relations", True)
         super(Process, self).save(*args, **kwargs)
+        if with_relations:
+            for sample in self.samples.all():
+                sample.save(with_relations=False)
 
     def __unicode__(self):
         return unicode(self.find_actual_instance())
@@ -671,6 +671,12 @@ class SampleAlias(models.Model):
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
 
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and touches the affected sample.
+        """
+        super(SampleAlias, self).save(*args, **kwargs)
+        self.sample.save(with_relations=False)
+
     def __unicode__(self):
         return self.name
 
@@ -882,6 +888,16 @@ class Result(Process):
             # Translation hint: experimental results
         verbose_name_plural = _(u"results")
 
+    def save(self, *args, **kwargs):
+        u"""Do everything in `Process.save`, plus touching all samples in all
+        connected sample series and the series themselves.
+        """
+        with_relations = kwargs.get("with_relations", True)
+        super(Result, self).save(*args, **kwargs)
+        if with_relations:
+            for sample_series in self.sample_series.all():
+                sample_series.save(touch_samples=True)
+
     def __unicode__(self):
         _ = ugettext
         try:
@@ -1045,26 +1061,25 @@ class SampleSeries(models.Model):
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
 
-    def __unicode__(self):
-        return self.name
-
     def save(self, *args, **kwargs):
-        u"""Saves the instance and clears stalled cache items of related
-        objects (samples and result processes).
+        u"""Saves the instance.
 
         :Parameters:
-          - `with_relations`: If ``True`` (default), also touch the related
-            samples and result processes.  Should be set to ``False`` if called
-            from another ``save`` method in order to avoid endless recursion.
+          - `touch_samples`: If ``True``, also touch all samples in this
+            series.  ``False`` is default because samples don't store
+            information about the sample series that may change (note that the
+            sample series' name never changes).
 
-        :type with_relations: bool
+        :type touch_samples: bool
         """
-        if kwargs.pop("with_relations", True):
+        touch_samples = kwargs.pop("touch_samples", False)
+        super(SampleSeries, self).save(*args, **kwargs)
+        if touch_samples:
             for sample in self.samples.all():
                 sample.save(with_relations=False)
-            for result in self.results.all():
-                result.save(with_relations=False)
-        super(SampleSeries, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
 
     @models.permalink
     def get_absolute_url(self):
@@ -1088,6 +1103,15 @@ class SampleSeries(models.Model):
         # table export; people only want to see the *sample* data.  Thus, I
         # don't set ``cvs_note.items``.
         return csv_node
+
+    def touch_samples(self):
+        u"""Touch all samples of this series for cache expiring.  This isn't
+        done in a custom ``save()`` method because sample don't store
+        information about the sample series that may change (note that the
+        sample series' name never changes).
+        """
+        for sample in self.samples.all():
+            sample.save(with_relations=False)
 
 
 class Initials(models.Model):
@@ -1138,10 +1162,15 @@ class UserDetails(models.Model):
     *process id* (``Process.pk``, not the deposition number!) of the
     deposition, and “layer” is the layer number (`models_depositions.Layer.number`).
     """
-    sample_settings_timestamp = models.DateTimeField(_(u"sample settings last modified"), auto_now_add=True)
+    display_settings_timestamp = models.DateTimeField(_(u"display settings last modified"), auto_now_add=True)
     u"""This timestamp denotes when anything changed which influences the
-    display of a sample, e.g. the language, “My Samples”, the skin etc.  It is
-    used for expiring sample datasheet caching.  See `touch_sample_settings`.
+    display of a sample, process, sample series etc, e.g. the language, the
+    skin etc.  It is used for expiring browser caching.  See
+    `touch_display_settings`.
+    """
+    my_samples_timestamp = models.DateTimeField(_(u"My Samples last modified"), auto_now_add=True)
+    u"""This timestamp denotes when My Samples were changed most recently.  It
+    is used for expiring sample datasheet caching.
     """
 
     class Meta:
@@ -1153,11 +1182,11 @@ class UserDetails(models.Model):
     def __unicode__(self):
         return unicode(self.user)
 
-    def touch_sample_settings(self):
+    def touch_display_settings(self):
         u"""Set the last modifications of sample settings to the current time.
         This method must be called every time when something was changed which
         influences the display of a sample datasheet, e. g. the language or the
         “My Samples” list.  It is used for efficient caching.
         """
-        self.sample_settings_timestamp = datetime.datetime.now()
+        self.display_settings_timestamp = datetime.datetime.now()
         self.save()
