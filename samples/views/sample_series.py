@@ -78,7 +78,33 @@ class SampleSeriesForm(forms.ModelForm):
         exclude = ("timestamp", "results", "name")
 
 
+def sample_series_timestamp(request, name):
+    u"""Check whether the sample series datasheet can be taken from the browser
+    cache.  For this, the timestamp of last modification of the sample series
+    is taken, and that of other things that influence the sample datasheet
+    (e.g. language).  The later timestamp is chosen and returned.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: the name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the timestamp of the last modification of the sample's datasheet
+
+    :rtype: ``datetime.datetime``
+    """
+    try:
+        sample_series = models.SampleSeries.objects.get(name=name)
+    except models.SampleSeries.DoesNotExist:
+        return None
+    return max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+
+
 @login_required
+@last_modified(sample_series_timestamp)
 def show(request, name):
     u"""View for showing a sample series.  You can see a sample series if
     you're in its topic, or you're the currently responsible person for it,
