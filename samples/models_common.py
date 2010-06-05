@@ -120,8 +120,8 @@ class Process(models.Model):
                                           related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
     # I don't use auto_now because then, `append_cache_key` wouldn't work.
-    last_modified = models.DateTimeField(_(u"last modified"))
-    cache_keys = models.TextField(_(u"cache keys"), blank=True)
+    last_modified = models.DateTimeField(_(u"last modified"), editable=False)
+    cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
 
     class Meta:
         ordering = ["timestamp"]
@@ -500,8 +500,8 @@ class Sample(models.Model):
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
-    last_modified = models.DateTimeField(_(u"last modified"))
-    cache_keys = models.TextField(_(u"cache keys"), blank=True)
+    last_modified = models.DateTimeField(_(u"last modified"), editable=False)
+    cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
 
     class Meta:
         verbose_name = _(u"sample")
@@ -1055,7 +1055,7 @@ class SampleSeries(models.Model):
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_(u"topic"))
-    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True)
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
 
     class Meta:
         verbose_name = _(u"sample series")
