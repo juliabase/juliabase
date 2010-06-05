@@ -2,6 +2,137 @@
 # -*- coding: utf-8 -*-
 
 
+u"""The samples database app.
+
+
+Caching in Chantal-Samples
+==========================
+
+Since this module contains a lot of Chantal-Samples' caching code, it is the
+right place to say some general words about it.  It is rather complicated and
+scattered over a couple of modules, so it is important to document it
+thoroughly.
+
+
+Goals
+.....
+
+We need caching of the most-accessed pages, especially if they are costly to
+generate, too.  These are the samples view, the sample series view, and the
+main menu page.  We implement a three-level cache:
+
+1. The browser cache.  It is activated with ``last_modified`` functions for all
+   three views.  If the page hasn't been modified since the user has last
+   accessed it, a 304 (Not Modified) is returned by the server.  We don't use
+   ETags for dynamic HTML material.
+
+2. The samples cache.  This is only used for the samples view.  Whole samples
+   are stored in the cache as a special data structure called
+   ``SamplesAndProcesses``.  In order to increase cache efficiency, this data
+   structure can be re-used for different users.  Additionally, it is stored
+   multiple times in the cache, for different “display settings” (language,
+   skin).  However, it becomes invalid if the sample or some of the displayed
+   information is changed.
+
+3. The processes cache.  Every process may be cached so that a sample or sample
+   series view may be built from cached items.
+
+These three levels are tried from top to bottom.
+
+
+Cache invalidation
+..................
+
+Of course, the server must never serve outdated data to the user.  In order to
+prevent that, every change in the database triggers deletion of those cache
+items which have become obsolete.  This is very difficult to achive because
+Chantal-Samples contains so many inter-model dependencies (partly indirect).
+
+It may also be possible to compare timestamps in order to detect obsolete cache
+items, however, calculating these timestamps is not much easier and required
+more work for read accesses, but it is sensible to do as much computation as
+possible after write accesses because they occur much more seldomly.
+
+There is no silver bullet for reliable cache invalidation.  On the contrary,
+one must go through all models and determine those cached models which are
+affected by changes in the first models.  There is not even a good general
+strategy for this.  I myself made a big table with paper and pencil.
+
+The best approach is to have in mind the six models that need to be “touched”
+in order to delete cache items or to update a last-modified timestamp:
+
+1. ``Sample``.  This contains both a ``last_modified`` timestamp and a list of
+   cache items.
+
+2. ``Process``.  The same as with ``Sample``.
+
+3. ``Clearance``.  This contains a ``last_modified``.  ``Clearance`` is very
+   low-maintenance: ``last_modified`` is auto-updated whenever the respective
+   ``Clearance`` instance is saved, and it doesn't depend on data from any
+   other model.
+
+4. ``SampleSeries``.  This contains a ``last_modified``, which is also
+   auto-updated whenever the respective series is saved.
+
+5. ``UserDetails``.  This contains a ``display_settings_timestamp`` which is
+   the last time the user has changed display settings (language, skin, etc).
+   Moreover, it contains ``my_samples_timestamp`` which is the last time the
+   user has changed his “My Samples”.
+
+Note that ``SampleSplit`` needs special treatment because it is the only
+process which contains sample data (namely the sample's name).  Additionally,
+it is the only process the visual representation of which depends on the sample
+it is listed with.  The latter is realised by an extended cache key which
+contains also the context of the split.
+
+Also note that ``Result`` is special because it can be connected with sample
+series.  This way, it may be included into sample data sheets indirectly.  You
+see, there's a lot to consider.
+
+
+Cache invalidation helper methods in ``models_common.py``
+.........................................................
+
+A couple of methods have been added to the core models in order to make cache
+invalidation more convenient.
+
+First, a couple of models have custom ``save()`` methods which update the
+``last_modified`` timestamps.  Some of them have a ``with_relations`` keyword
+parameter.  If this is ``True`` (the default), all dependent instances (via
+foreign-key or M2M relationships) are touched too.  However normally, the
+maximal nesting depth is 1 in order to prevent endless loops.
+
+The special ``save()`` parameters should only be used by other ``save()``
+methods or the cache-related signal function in this module.  In particular,
+you should not use them in views code.
+
+The same warning applies to the model method ``touch_display_settings``.
+
+
+Cache invalidation for M2M relationships
+........................................
+
+If an M2M relationship changes, no instance in saved.  Thus, we cannot do
+proper cache invalidation via ``save()`` methods.  Instead, we use signal
+routines in this module.  Additionally, this module contains signal routines
+for Django's ``User`` model because we cannot change its ``save()`` method in a
+clean way.
+
+
+Multihop touches
+................
+
+In rare cases, the nesting depth of followed relations for cache invalidation
+is greater than 1:
+
+``Result`` → ``SampleSeries`` → ``Sample``
+
+``User``/``ExternalOperator`` → ``Process`` → ``Sample``
+
+``User``/``ExternalOperator`` → ``Result`` → ``SampleSeries``
+"""
+
+
 from __future__ import absolute_import
 
 import datetime
