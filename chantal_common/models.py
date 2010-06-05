@@ -45,12 +45,14 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="chantal_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
-    settings_last_modified = models.DateTimeField(_(u"settings last modified"), auto_now=True)
-    external = models.BooleanField(_(u"is an external user"), default=False)
 
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
+
+    def __init__(self, *args, **kwargs):
+        super(UserDetails, self).__init__(*args, **kwargs)
+        self._old = {"language": self.language}
 
     def __unicode__(self):
         return unicode(self.user)
