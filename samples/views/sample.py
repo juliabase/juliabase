@@ -501,11 +501,12 @@ def show(request, sample_name):
     :rtype: ``HttpResponse``
     """
     start = time.time()
-    is_remote_client = utils.is_remote_client(request)
     if request.method == "POST":
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
+            if utils.is_remote_client(request):
+                return utils.respond_to_remote_client(True)
             if added:
                 success_message = ungettext(u"Sample {samples} was added to My Samples.",
                                             u"Samples {samples} were added to My Samples.",
@@ -553,7 +554,8 @@ def by_id(request, sample_id, path_suffix):
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     if utils.is_remote_client(request):
-        # No redirect for the remote client
+        # No redirect for the remote client.  This also makes a POST request
+        # possible.
         return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
     try:

@@ -370,4 +370,5 @@ def substrate_by_sample(request, sample_id):
         return utils.respond_to_remote_client(False)
     substrate["timestamp"] = substrate["timestamp"].strftime("%Y-%m-%d %H:%M:%S.%f")
     substrate["samples"] = list(models.Substrate.objects.get(pk=substrate["id"]).samples.values_list("id", flat=True))
+    del substrate["cache_keys"], substrate["last_modified"]
     return utils.respond_to_remote_client(substrate)
