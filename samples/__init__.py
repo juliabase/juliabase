@@ -278,7 +278,7 @@ def touch_sample_series_results(sender, instance, action, reverse, model, pk_set
     if reverse:
         # `instance` is a result
         if action == "pre_clear":
-            for sample_series in instance.series.all():
+            for sample_series in instance.sample_series.all():
                 sample_series.save(touch_samples=True)
         elif action in ["post_add", "post_remove"]:
             for sample_series in samples_app.SampleSeries.objects.in_bulk(pk_set).itervalues():
@@ -297,7 +297,7 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
     """
     if reverse:
         # `instance` is a user
-        instance.touch_display_settings()
+        instance.samples_user_details.touch_display_settings()
     else:
         # `instance` is a topic
         if action == "pre_clear":
