@@ -585,38 +585,35 @@ def format_enumeration(items):
         return u"".join(items)
 
 
-def collect_process_contexts(processes, user, local_context={}):
-    u"""Convert processes to process contexts.  This conversion extracts the
+def digest_process(process, user, local_context={}):
+    u"""Convert a process to a process context.  This conversion extracts the
     relevant information of the process and saves it in a form which can easily
     be processed in a template.
 
     :Parameters:
-      - `processes`: the processes to be converted
+      - `process`: the process to be digest
       - `user`: current user
       - `local_context`: the local sample context; currently, this is only
         relevant to ``SampleSplit``, see ``SampleSplit.get_cache_key``.
 
-    :type processes: an ordered iterable of `models.Process`
+    :type process: `models.Process`
     :type user: ``django.contrib.auth.models.User``
     :type local_context: dict mapping str to ``object``
 
     :Return:
-      the process contexts of the given processes, in the same order
+      the process context of the given process
 
-    :rtype: list of dict mapping str to ``object``
+    :rtype: dict mapping str to ``object``
     """
-    contexts = []
-    for process in processes:
-        process = process.find_actual_instance()
-        cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
-        cached_context = cache.get(cache_key) if cache_key else None
-        if cached_context is None:
-            process_context = process.get_context_for_user(user, local_context)
-            if cache_key:
-                cache.set(cache_key, process_context)
-                process.append_cache_key(cache_key)
-        else:
-            cached_context.update(local_context)
-            process_context = process.get_context_for_user(user, cached_context)
-        contexts.append(process_context)
-    return contexts
+    process = process.find_actual_instance()
+    cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
+    cached_context = cache.get(cache_key) if cache_key else None
+    if cached_context is None:
+        process_context = process.get_context_for_user(user, local_context)
+        if cache_key:
+            cache.set(cache_key, process_context)
+            process.append_cache_key(cache_key)
+    else:
+        cached_context.update(local_context)
+        process_context = process.get_context_for_user(user, cached_context)
+    return process_contexts

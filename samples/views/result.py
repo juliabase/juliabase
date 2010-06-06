@@ -548,7 +548,7 @@ def show(request, process_id):
     permissions.assert_can_view_result_process(request.user, result)
     template_context = {"title": _(u"Result “%s”") % result.title, "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
-    template_context.update(utils.collect_process_contexts([result], request.user)[0])
+    template_context.update(utils.digest_process(result, request.user))
     return render_to_response("samples/show_single_result.html", template_context, context_instance=RequestContext(request))
 
 

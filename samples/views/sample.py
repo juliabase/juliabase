@@ -228,8 +228,7 @@ class SamplesAndProcesses(object):
 
         :Return:
           a list with all result processes of this sample in chronological
-          order.  Every list item is a dictionary with the information
-          described in `digest_process`.
+          order.
 
         :rtype: `SamplesAndProcesses`
         """
@@ -303,8 +302,9 @@ class SamplesAndProcesses(object):
                 processes = basic_query.distinct()
             else:
                 processes = basic_query.filter(timestamp__lte=local_context["cutoff_timestamp"]).distinct()
-            process_contexts = utils.collect_process_contexts(processes, user, local_context)
-            self.process_contexts.extend(process_contexts)
+            for process in processes:
+                process_context = utils.digest_process(process, user, local_context)
+                self.process_contexts.append(process_context)
         collect_process_contexts()
         self.process_lists = []
 

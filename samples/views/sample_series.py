@@ -126,7 +126,7 @@ def show(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
     user_details = utils.get_profile(request.user)
-    result_processes = utils.collect_process_contexts(sample_series.results.all(), request.user)
+    result_processes = [utils.digest_process(result, request.user) for result in sample_series.results.all()]
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
     return render_to_response("samples/show_sample_series.html",
