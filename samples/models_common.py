@@ -534,15 +534,11 @@ class Sample(models.Model):
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
         with_relations = kwargs.pop("with_relations", True)
-        if with_relations:
-            try:
-                sample_series = self.series.all()
-            except ValueError:
-                pass
-            else:
-                for series in sample_series:
-                    series.save(with_relations=False)
         from_split = kwargs.pop("from_split", None)
+        super(Sample, self).save(*args, **kwargs)
+        if with_relations:
+            for series in self.series.all():
+                series.save()
         # Now we touch the decendents ...
         if from_split:
             splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
@@ -556,7 +552,6 @@ class Sample(models.Model):
         if not from_split and self.split_origin:
             self.split_origin.save(with_relations=False)
             self.split_origin.parent.save(with_relations=False)
-        super(Sample, self).save(*args, **kwargs)
 
     def __unicode__(self):
         u"""Here, I realise the peculiar naming scheme of provisional sample
