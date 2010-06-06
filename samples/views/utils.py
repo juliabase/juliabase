@@ -616,4 +616,4 @@ def digest_process(process, user, local_context={}):
     else:
         cached_context.update(local_context)
         process_context = process.get_context_for_user(user, cached_context)
-    return process_contexts
+    return process_context
