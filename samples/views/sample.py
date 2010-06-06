@@ -433,12 +433,13 @@ class SamplesAndProcesses(object):
         """
         added = set()
         removed = set()
+        sample = self.sample_context["sample"]
         if self.is_my_sample_form.cleaned_data["is_my_sample"] and not self.is_my_sample:
-            added.add(self.sample)
-            self.user_details.my_samples.add(self.sample)
+            added.add(sample)
+            self.user_details.my_samples.add(sample)
         elif not self.is_my_sample_form.cleaned_data["is_my_sample"] and self.is_my_sample:
-            removed.add(self.sample)
-            self.user_details.my_samples.remove(self.sample)
+            removed.add(sample)
+            self.user_details.my_samples.remove(sample)
         for process_list in self.process_lists:
             added_, removed_ = process_list.save_to_database()
             added.update(added_)
