@@ -48,7 +48,7 @@ from django.conf import settings
 
 urlpatterns = patterns("samples.views",
                        (r"^$", "main.main_menu"),
-                       (r"^feeds/(?P<username>.+)", "feed.show"),
+                       (r"^feeds/(?P<username>.+)\+(?P<user_hash>.+)", "feed.show"),
                        (r"^my_samples/(?P<username>.+)", "my_samples.edit"),
 
                        (r"^depositions/split_and_rename_samples/(?P<deposition_number>.+)",
