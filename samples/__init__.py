@@ -118,6 +118,13 @@ routines in this module.  Additionally, this module contains signal routines
 for Django's ``User`` model because we cannot change its ``save()`` method in a
 clean way.
 
+Although even many changes which can only be applied through the admin
+interface of Django are dealt with in Chantal-Samples' cache invalidation code,
+some changes are not.  For example, if you change the name of a sample series,
+you must purge the cache manually.  This is done for efficiency reasons.  The
+name of a sample series shouldn't change after all, and cannot be changed from
+within Chantal-Samples.
+
 
 Multihop touches
 ................
