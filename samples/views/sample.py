@@ -303,19 +303,8 @@ class SamplesAndProcesses(object):
                 processes = basic_query.distinct()
             else:
                 processes = basic_query.filter(timestamp__lte=local_context["cutoff_timestamp"]).distinct()
-            for process in processes:
-                process = process.find_actual_instance()
-                cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
-                cached_context = cache.get(cache_key) if cache_key else None
-                if cached_context is None:
-                    process_context = process.get_context_for_user(user, local_context)
-                    if cache_key:
-                        cache.set(cache_key, process_context)
-                        process.append_cache_key(cache_key)
-                else:
-                    cached_context.update(local_context)
-                    process_context = process.get_context_for_user(user, cached_context)
-                self.process_contexts.append(process_context)
+            process_contexts = utils.collect_process_contexts(processes, user, local_context)
+            self.process_contexts.extend(process_contexts)
         collect_process_contexts()
         self.process_lists = []
 
