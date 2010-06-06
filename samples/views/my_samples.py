@@ -145,7 +145,7 @@ def enforce_clearance(clearance_processes, destination_user, sample, clearance=N
         sample should be unblocked.  This is only used in the internal
         recursion of this routine in order to traverse through sample splits
         upwards.  It is a similar algorithm as the one used in
-        `samples.views.sample.ProcessContext`.
+        `samples.views.sample.SamplesAndProcesses`.
 
     :type clearance_processes: tuple of `models.Process`, or str
     :type destination_user: ``django.contrib.auth.models.User``
