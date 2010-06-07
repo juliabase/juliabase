@@ -78,8 +78,8 @@ class ActionForm(forms.Form):
                 append_error(self, _(u"If you copy samples over to another person, you must enter a short comment."),
                              "comment")
         if cleaned_data["clearance"] is not None and not cleaned_data.get("copy_to_user"):
-                append_error(self, _(u"If you set a clearance, you must copy samples to another user."), "copy_to_user")
-                del cleaned_data["clearance"]
+            append_error(self, _(u"If you set a clearance, you must copy samples to another user."), "copy_to_user")
+            del cleaned_data["clearance"]
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
             raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
@@ -119,7 +119,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     append_error(action_form,
                                  _(u"You must be the currently responsible person for samples you'd like to change."))
                     referentially_valid = False
-        if action_form.cleaned_data["clearance"] is None:
+        if action_form.cleaned_data["clearance"] is None and action_form.cleaned_data["copy_to_user"]:
             try:
                 for sample in my_samples_form.cleaned_data["samples"]:
                     permissions.assert_can_fully_view_sample(action_form.cleaned_data["copy_to_user"], sample)
