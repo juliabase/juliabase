@@ -5,7 +5,7 @@ from __future__ import absolute_import
 
 from django.contrib import admin
 from samples.models_common import ExternalOperator, Sample, SampleAlias, SampleSplit, Substrate, SampleDeath, Result, \
-    SampleSeries, Initials, UserDetails, Process, Clearance
+    SampleSeries, Initials, UserDetails, Process, Clearance, CleaningProcess
 from samples.models_feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysicalProcess, FeedEditedPhysicalProcess, \
     FeedResult, FeedCopiedMySamples, FeedEditedSamples, FeedSampleSplit, FeedEditedSampleSeries, FeedNewSampleSeries, \
     FeedMovedSampleSeries, FeedChangedTopic
@@ -22,6 +22,7 @@ admin.site.register(Initials)
 admin.site.register(UserDetails)
 admin.site.register(Process)
 admin.site.register(Clearance)
+admin.site.register(CleaningProcess)
 
 admin.site.register(FeedNewSamples)
 admin.site.register(FeedMovedSamples)

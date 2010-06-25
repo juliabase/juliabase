@@ -32,9 +32,6 @@ class SubstrateForm(form_utils.ProcessForm):
         self.fields["operator"].set_choices(user, self.old_substrate)
         if not user.is_staff:
             self.fields["external_operator"].choices = []
-        self.can_clean_substrates = user.has_perm("samples.clean_substrate")
-        if not self.can_clean_substrates:
-            self.fields["cleaning_number"].widget.attrs["readonly"] = "readonly"
         if self.old_substrate:
             if not user.is_staff:
                 self.fields["timestamp"].widget.attrs["readonly"] = "readonly"
@@ -43,7 +40,6 @@ class SubstrateForm(form_utils.ProcessForm):
                 self.fields["operator"].widget.attrs["disabled"] = "disabled"
                 self.fields["operator"].required = False
                 self.fields["external_operator"].widget.attrs["disabled"] = "disabled"
-            self.fields["cleaning_number"].widget.attrs["readonly"] = "readonly"
         self.fields["timestamp"].initial = datetime.datetime.now()
 
     def clean_timestamp(self):
@@ -58,20 +54,6 @@ class SubstrateForm(form_utils.ProcessForm):
                 self.old_substrate.timestamp_inaccuracy != timestamp_inaccuracy:
             raise ValidationError(u"You must be admin to change the timestamp inaccuracy of an existing substrate.")
         return timestamp_inaccuracy
-
-    def clean_cleaning_number(self):
-        cleaning_number = self.cleaned_data["cleaning_number"]
-        if self.old_substrate and self.old_substrate.cleaning_number != cleaning_number:
-            raise ValidationError(u"You can't change the cleaning number of an existing substrate.")
-        if not self.old_substrate and cleaning_number:
-            if not self.can_clean_substrates:
-                # Not translatable because can't happen with unmodified browser
-                raise ValidationError(u"You don't have the permission to give cleaning numbers.")
-            if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
-                raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
-            if models.Substrate.objects.filter(cleaning_number=cleaning_number).exists():
-                raise ValidationError(_(u"The cleaning number you have chosen already exists."))
-        return cleaning_number
 
     def clean(self):
         _ = ugettext
