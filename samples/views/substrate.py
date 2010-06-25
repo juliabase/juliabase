@@ -119,7 +119,7 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
                 for process in processes:
                     if isinstance(process.find_actual_instance(), models.Substrate):
                         append_error(samples_form, _(u"Sample {0} has already a substrate.").format(sample), "sample_list")
-                        referencially_valid = False
+                        referentially_valid = False
                         break
     return referentially_valid
 
