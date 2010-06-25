@@ -113,4 +113,8 @@ urlpatterns = patterns("samples.views",
 
                        (r"^maintenance/%s$" % settings.CREDENTIALS["maintenance_hash"],
                         "maintenance.maintenance"),
+
+                        url(r"^cleaning_process/add/$", "cleaning_process.edit", {"cleaning_process_id": None}, "add_cleaning_process"),
+                       (r"^cleaning_process/(?P<cleaning_process_id>.+)/edit/$", "cleaning_process.edit"),
+
                        )

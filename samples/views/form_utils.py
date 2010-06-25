@@ -555,8 +555,8 @@ class RemoveFromMySamplesForm(forms.Form):
     from the “My Samples” list after the process.
     """
     _ = ugettext_lazy
-    remove_deposited_from_my_samples = forms.BooleanField(label=_(u"Remove the sample(s) from My Samples"),
-                                                          required=False, initial=True)
+    remove_from_my_samples = forms.BooleanField(label=_(u"Remove processed sample(s) from My Samples"),
+                                                          required=False, initial=False)
 
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
