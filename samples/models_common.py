@@ -546,32 +546,21 @@ class Substrate(Process):
     `Process.external_operator`, it is an external sample.
     """
     material = models.CharField(_(u"substrate material"), max_length=30, choices=substrate_materials)
-    # The following field should be unique, but this doesn't work, see
-    # <http://stackoverflow.com/questions/454436/unique-fields-that-allow-nulls-in-django>.
-    # Karen Tracey's comment would probably help but this would exclude Oracle
-    # as a possible database backend.
-    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = _(u"substrate")
         verbose_name_plural = _(u"substrates")
         _ = lambda x: x
-        permissions = (("clean_substrate", _("Can clean substrates")),
-                       ("add_edit_substrate", _("Can create and edit substrates")))
+        permissions = (("add_edit_substrate", _("Can create and edit substrates")),)
 
     def __unicode__(self):
-        result = self.material
-        if self.cleaning_number:
-            result += u" ({0})".format(self.cleaning_number)
-        return result
+        return self.material
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Substrate, self).get_data()
         csv_node.items.append(CSVItem(_(u"material"), self.get_material_display()))
-        # FixMe: Should this be appended even if it doesn't exist?
-        csv_node.items.append(CSVItem(_(u"cleaning number"), self.cleaning_number))
         return csv_node
 
     @classmethod
@@ -588,6 +577,42 @@ class Substrate(Process):
         """
         _ = ugettext
         return django.core.urlresolvers.reverse("add_substrate")
+
+class CleaningProcess(Process):
+    u"""
+    """
+    cleaning_number = models.CharField(_(u"cleaning number"), max_length=10, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u"cleaning process")
+        verbose_name_plural = _(u"cleaning processes")
+        _ = lambda x: x
+        permissions = (("clean_substrate", _("Can clean substrates")),)
+
+    def __unicode__(self):
+        return self.cleaning_number
+
+    def get_data(self):
+        # See `Process.get_data` for the documentation.
+        _ = ugettext
+        csv_node = super(CleaningProcess, self).get_data()
+        csv_node.items.append(CSVItem(_(u"cleaning number"), self.cleaning_number))
+        return csv_node
+
+    @classmethod
+    def get_add_link(cls):
+        u"""Return the URL to the “add” view for this process.
+
+        This method marks the current class as a so-called physical process.
+        This implies that it also must have an “add-edit” permission.
+
+        :Return:
+          the full URL to the add page for this process
+
+        :rtype: str
+        """
+        _ = ugettext
+        return django.core.urlresolvers.reverse("add_cleaning_process")
 
 
 sample_death_reasons = (

@@ -550,6 +550,15 @@ class DepositionSamplesForm(forms.Form):
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
+class RemoveFromMySamplesForm(forms.Form):
+    u"""Form for the question whether the user wants to remove the samples
+    from the “My Samples” list after the process.
+    """
+    _ = ugettext_lazy
+    remove_from_my_samples = forms.BooleanField(label=_(u"Remove processed sample(s) from My Samples"),
+                                                          required=False, initial=False)
+
+
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 u"""Standard regular expression pattern for time durations in Chantal:
 HH:MM:SS, where hours can also be 3-digit and are optional."""

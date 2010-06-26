@@ -6,32 +6,32 @@
 
 {% block frame_content %}
 <form method="post" action="">
-  {% error_list substrate _("Substrate error") %}
+  {% error_list cleaning_process _("cleaning process error") %}
   {% error_list samples _("Sample list error") %}
   <table>
     <tr>
       {% input_field samples.sample_list %}
     </tr>
     <tr>
-      {% input_field substrate.timestamp %}
+      {% input_field cleaning_process.timestamp %}
     </tr>
     <tr>
-      {% input_field substrate.operator %}
+      {% input_field cleaning_process.operator %}
     </tr>
-    {% if substrate.user.is_staff %}
+    {% if cleaning_process.user.is_staff %}
       <tr>
-        {% input_field substrate.external_operator %}
+        {% input_field cleaning_process.external_operator %}
       </tr>
     {% endif %}
     <tr>
-      {% input_field substrate.material %}
+      {% input_field cleaning_process.comments %}
     </tr>
     <tr>
-      {% input_field substrate.comments %}
+      {% input_field cleaning_process.cleaning_number %}
     </tr>
   </table>
   <div style="display: none">
-    {{ substrate.timestamp_inaccuracy }}
+    {{ cleaning_process.timestamp_inaccuracy }}
   </div>
 
   {% include "samples/edit_description.html" %}
