@@ -14,6 +14,7 @@ from samples import models, permissions
 from django.http import HttpResponsePermanentRedirect
 import django.core.urlresolvers
 import django.forms as forms
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from samples.views import utils
@@ -105,6 +106,7 @@ def main_menu(request):
         {"title": _(u"Main menu"),
          "my_topics": my_topics,
          "topicless_samples": topicless_samples,
+         "add_sample_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLE_VIEW),
          "user_hash": permissions.get_user_hash(request.user),
          "can_edit_topic": permissions.has_permission_to_edit_topic(request.user),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),

@@ -251,10 +251,10 @@ def get_next_quirky_name(sample_name):
 @login_required
 @require_http_methods(["POST"])
 def add_sample(request):
-    u"""Adds a new sample to the database.  It is added without processes, in
-    particular, without a substrate.  This view can only be used by admin
-    accounts.  If the query string contains ``"legacy=True"``, the sample gets
-    a quirky legacy name (and an appropriate alias).
+    u"""Adds a new sample to the database.  It is added without processes.
+    This view can only be used by admin accounts.  If the query string contains
+    ``"legacy=True"``, the sample gets a quirky legacy name (and an appropriate
+    alias).
 
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the sample
@@ -337,37 +337,3 @@ def add_alias(request):
         # Alias already present
         return utils.respond_to_remote_client(False)
     return utils.respond_to_remote_client(True)
-
-
-@login_required
-@require_http_methods(["GET"])
-def substrate_by_sample(request, sample_id):
-    u"""Searches for the substrate of a sample.  It returns a dictionary with
-    the substrate data.  If the sample isn't found, a 404 is returned.  If
-    something else went wrong (in particular, no substrate was found),
-    ``False`` is returned.
-
-    :Parameters:
-      - `request`: the HTTP request object
-      - `sample_id`: the primary key of the sample
-
-    :type request: ``HttpRequest``
-    :type sample_id: unicode
-
-    :Return:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    if not request.user.is_staff:
-        return utils.respond_to_remote_client(False)
-    sample = get_object_or_404(models.Sample, pk=utils.int_or_zero(sample_id))
-    process_pks = sample.processes.values_list("id", flat=True)
-    substrates = list(models.Substrate.objects.filter(pk__in=process_pks).values())
-    try:
-        substrate = substrates[0]
-    except IndexError:
-        return utils.respond_to_remote_client(False)
-    substrate["timestamp"] = substrate["timestamp"].strftime("%Y-%m-%d %H:%M:%S.%f")
-    substrate["samples"] = list(models.Substrate.objects.get(pk=substrate["id"]).samples.values_list("id", flat=True))
-    return utils.respond_to_remote_client(substrate)

@@ -59,7 +59,8 @@ urlpatterns = patterns("samples.views",
                        url(r"^samples/by_id/(?P<sample_id>\d+)(?P<path_suffix>.*)", "sample.by_id",
                            name="show_sample_by_id"),
                        (r"^samples/$", "sample.search"),
-                       (r"^samples/add/$", "sample.add"),
+                       # FixMe: Must be regenerated with a minimal add-sample form
+#                       (r"^samples/add/$", "sample.add"),
                        (r"^samples/(?P<parent_name>.+)/split/$", "split_and_rename.split_and_rename"),
                        (r"^samples/(?P<sample_name>.+)/kill/$", "sample_death.new"),
                        (r"^samples/(?P<sample_name>.+)/add_process/$", "sample.add_process"),
@@ -98,9 +99,6 @@ urlpatterns = patterns("samples.views",
                        (r"^topics/$", "topic.list_"),
                        (r"^topics/(?P<name>.+)", "topic.edit"),
 
-                       url(r"^substrates/add/$", "substrate.edit", {"substrate_id": None}, "add_substrate"),
-                       (r"^substrates/(?P<substrate_id>.+)/edit/$", "substrate.edit"),
-
                        (r"^primary_keys$", "remote_client.primary_keys"),
                        (r"^available_items/(?P<model_name>[A-Za-z_][A-Za-z_0-9]*)", "remote_client.available_items"),
                        (r"^next_deposition_number/(?P<letter>.+)", "remote_client.next_deposition_number"),
@@ -109,12 +107,7 @@ urlpatterns = patterns("samples.views",
                        (r"^logout_remote_client$", "remote_client.logout_remote_client"),
                        (r"^add_sample$", "remote_client.add_sample"),
                        (r"^add_alias$", "remote_client.add_alias"),
-                       (r"^substrates_by_sample/(?P<sample_id>.+)", "remote_client.substrate_by_sample"),
 
                        (r"^maintenance/%s$" % settings.CREDENTIALS["maintenance_hash"],
                         "maintenance.maintenance"),
-
-                        url(r"^cleaning_process/add/$", "cleaning_process.edit", {"cleaning_process_id": None}, "add_cleaning_process"),
-                       (r"^cleaning_process/(?P<cleaning_process_id>.+)/edit/$", "cleaning_process.edit"),
-
                        )

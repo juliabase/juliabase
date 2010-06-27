@@ -384,40 +384,6 @@ def assert_can_add_result_process(user, sample_or_series):
         raise PermissionError(user, description)
 
 
-def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
-    u"""Tests whether the user can add or edit a substrate to *already
-    existing* samples.  This is not used if samples and substrate process are
-    created in the same request.
-
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `substrate`: the substrate process to be edited; ``None`` if the user
-        wants to create one
-      - `affected_samples`: the samples that belong to the newly created
-        substrate process; ``None`` if the user wants to edit one
-
-    :type user: ``django.contrib.auth.models.User``
-    :type substrate: `models.Substrate`
-    :type affected_samples: list of `models.Sample`
-
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to add or edit the
-        substrate process for those samples
-    """
-    assert (substrate and affected_samples is None) or (substrate is None and affected_samples is not None)
-    if substrate:
-        affected_samples = substrate.samples.all()
-    for sample in affected_samples:
-        if sample.currently_responsible_person != user:
-            if substrate:
-                description = _(u"You are not allowed to edit the substrate #%d because you are not allowed to edit "
-                                u"all affected samples.") % substrate.pk
-            else:
-                description = _(u"You are not allowed to add a substrate because you are not allowed to edit all "
-                                u"affected samples.")
-            raise PermissionError(user, description, new_topic_would_help=True)
-
-
 def assert_can_edit_sample(user, sample):
     u"""Tests whether the user can edit, split, and kill a sample.
 
