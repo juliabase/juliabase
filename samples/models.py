@@ -63,8 +63,6 @@ physical_process_models = {}
 def register_physical_process(cls):
     physical_process_models[cls.__name__] = cls
 
-register_physical_process(Substrate)
-
 
 _globals = copy.copy(globals())
 all_models = [cls for cls in _globals.values() if inspect.isclass(cls) and issubclass(cls, models.Model)]

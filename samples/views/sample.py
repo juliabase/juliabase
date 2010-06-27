@@ -7,23 +7,19 @@ u"""All views and helper routines directly connected with samples themselves
 
 from __future__ import absolute_import
 
-import time, datetime, copy, re
-from django.db import transaction, IntegrityError
+import time, copy
 from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
-from django.forms.util import ValidationError
-from samples.models import Sample
 from samples import models, permissions
 from django.contrib.auth.decorators import login_required
-import django.contrib.auth.models
 from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal_common.utils import append_error, get_really_full_name, HttpResponseSeeOther
+from chantal_common.utils import append_error, HttpResponseSeeOther
 from samples.views import utils, form_utils, feed_utils, csv_export
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
+from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 
 
 class IsMySampleForm(forms.Form):
@@ -514,241 +510,6 @@ def by_id(request, sample_id, path_suffix):
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else u""))
-
-
-class AddSamplesForm(forms.Form):
-    u"""Form for adding new samples.
-
-    FixMe: Although this form can never represent *one* sample but allows the
-    user to add arbitrary samples with the same properties (except for the name
-    of course), this should be converted to a *model* form in order to satisfy
-    the dont-repeat-yourself principle.
-
-    Besides, we have massive code duplication to substrate.SubstrateForm.
-    """
-    _ = ugettext_lazy
-    number_of_samples = forms.IntegerField(label=_(u"Number of samples"), min_value=1, max_value=100)
-    substrate = forms.ChoiceField(label=_(u"Substrate"), choices=models.substrate_materials + ((u"<>", 9*u"-"),))
-    substrate_comments = forms.CharField(label=_(u"Substrate comments"), required=False)
-    substrate_originator = forms.ChoiceField(label=_(u"Substrate originator"), required=False)
-    timestamp = forms.DateTimeField(label=_(u"timestamp"), initial=datetime.datetime.now())
-    timestamp_inaccuracy = forms.IntegerField(required=False)
-    current_location = forms.CharField(label=_(u"Current location"), max_length=50)
-    purpose = forms.CharField(label=_(u"Purpose"), max_length=80, required=False)
-    tags = forms.CharField(label=_(u"Tags"), max_length=255, required=False,
-                           help_text=_(u"separated with commas, no whitespace"))
-    topic = form_utils.TopicField(label=_(u"Topic"), required=False)
-    bulk_rename = forms.BooleanField(label=_(u"Give names"), required=False)
-    cleaning_number = forms.CharField(label=_(u"Cleaning number"), max_length=8, required=False)
-
-    def __init__(self, user, data=None, **kwargs):
-        _ = ugettext
-        super(AddSamplesForm, self).__init__(data, **kwargs)
-        self.fields["topic"].set_topics(user)
-        self.fields["substrate_comments"].help_text = \
-            u"""<span class="markdown-hint">""" + _(u"""with %(markdown_link)s syntax""") \
-            % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-               django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u"</span>"
-        self.fields["substrate_originator"].choices = [(u"<>", get_really_full_name(user))]
-        external_contacts = user.external_contacts.all()
-        if external_contacts:
-            for external_operator in external_contacts:
-                self.fields["substrate_originator"].choices.append((external_operator.pk, external_operator.name))
-            self.fields["substrate_originator"].required = True
-        self.user = user
-        self.can_clean_substrates = user.has_perm("samples.clean_substrate")
-        if self.can_clean_substrates:
-            current_year = datetime.date.today().strftime(u"%y")
-            old_cleaning_numbers = list(models.Substrate.objects.filter(cleaning_number__startswith=current_year).
-                                        values_list("cleaning_number", flat=True))
-            next_cleaning_number = max(int(cleaning_number[4:]) for cleaning_number in old_cleaning_numbers) + 1 \
-                if old_cleaning_numbers else 1
-            self.fields["cleaning_number"].initial = "{0}N-{1:03}".format(current_year, next_cleaning_number)
-            self.fields["number_of_samples"].initial = 25
-
-    def clean_timestamp(self):
-        u"""Forbid timestamps that are in the future.
-        """
-        timestamp = self.cleaned_data["timestamp"]
-        if timestamp > datetime.datetime.now():
-            raise ValidationError(_(u"The timestamp must not be in the future."))
-        return timestamp
-
-    def clean_substrate(self):
-        substrate = self.cleaned_data["substrate"]
-        return substrate if substrate != u"<>" else None
-
-    def clean_substrate_originator(self):
-        u"""Return the cleaned substrate originator.  Note that something is
-        returned only if it is an external operator.
-        """
-        key = self.cleaned_data["substrate_originator"]
-        if not key or key == u"<>":
-            return None
-        return models.ExternalOperator.objects.get(pk=int(key))
-
-    def clean_cleaning_number(self):
-        cleaning_number = self.cleaned_data["cleaning_number"]
-        if cleaning_number:
-            if not self.can_clean_substrates:
-                # Not translatable because can't happen with unmodified browser
-                raise ValidationError(u"You don't have the permission to give cleaning numbers.")
-            if not re.match(datetime.date.today().strftime("%y") + r"N-\d{3,4}$", cleaning_number):
-                raise ValidationError(_(u"The cleaning number you have chosen isn't valid."))
-            if models.Substrate.objects.filter(cleaning_number=cleaning_number).exists():
-                raise ValidationError(_(u"The cleaning number you have chosen already exists."))
-        return cleaning_number
-
-    def clean(self):
-        _ = ugettext
-        cleaned_data = self.cleaned_data
-        if "substrate" in cleaned_data and "substrate_comments" in cleaned_data:
-            if cleaned_data["substrate"] == "custom" and not cleaned_data["substrate_comments"]:
-                append_error(self, _(u"For a custom substrate, you must give substrate comments."), "substrate_comments")
-            if cleaned_data["substrate"] == "" and cleaned_data["substrate_comments"]:
-                append_error(self, _(u"You selected “no substrate”, so your substrate comments would be lost."),
-                             "substrate_comments")
-        if "substrate" in cleaned_data and "substrate_originator" in cleaned_data:
-            if cleaned_data["substrate"] == "" and cleaned_data["substrate_originator"] != self.user:
-                append_error(self, _(u"You selected “no substrate”, so the external originator would be lost."),
-                             "substrate_originator")
-        return cleaned_data
-
-
-def add_samples_to_database(add_samples_form, user):
-    u"""Create the new samples and add them to the database.  This routine
-    consists of two parts: First, it tries to find a consecutive block of
-    provisional sample names.  Then, in actuall creates the samples.
-
-    :Parameters:
-      - `add_samples_form`: the form with the samples' common data, including
-        the substrate
-      - `user`: the current user
-
-    :type add_samples_form: `AddSamplesForm`
-    :type user: ``django.contrib.auth.models.User``
-
-    :Return:
-      the names of the new samples
-
-    :rtype: list of unicode
-    """
-    cleaned_data = add_samples_form.cleaned_data
-    cleaning_number = cleaned_data.get("cleaning_number")
-    if cleaned_data["substrate"]:
-        substrate = models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
-                                                    material=cleaned_data["substrate"],
-                                                    cleaning_number=cleaned_data["cleaning_number"],
-                                                    comments=cleaned_data["substrate_comments"],
-                                                    external_operator=cleaned_data["substrate_originator"])
-        inaccuracy = cleaned_data["timestamp_inaccuracy"]
-        if inaccuracy:
-            substrate.timestamp_inaccuracy = inaccuracy
-            substrate.save()
-    else:
-        substrate = None
-    provisional_sample_names = \
-        models.Sample.objects.filter(name__startswith=u"*").values_list("name", flat=True)
-    occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
-    occupied_provisional_numbers.sort()
-    occupied_provisional_numbers.insert(0, 0)
-    number_of_samples = cleaned_data["number_of_samples"]
-    for i in range(len(occupied_provisional_numbers) - 1):
-        if occupied_provisional_numbers[i+1] - occupied_provisional_numbers[i] - 1 >= number_of_samples:
-            starting_number = occupied_provisional_numbers[i] + 1
-            break
-    else:
-        starting_number = occupied_provisional_numbers[-1] + 1
-    user_details = utils.get_profile(user)
-    if cleaning_number:
-        names = [cleaning_number + u"-%02d" % i for i in range(1, number_of_samples + 1)]
-    else:
-        names = [u"*%05d" % i for i in range(starting_number, starting_number + number_of_samples)]
-    new_names = []
-    samples = []
-    current_location, purpose, tags, topic = cleaned_data["current_location"], cleaned_data["purpose"], \
-        cleaned_data["tags"], cleaned_data["topic"]
-    for new_name in names:
-        sample = models.Sample.objects.create(name=new_name, current_location=current_location,
-                                              currently_responsible_person=user, purpose=purpose, tags=tags, topic=topic)
-        samples.append(sample)
-        if substrate:
-            sample.processes.add(substrate)
-        if cleaning_number:
-            models.SampleAlias.objects.create(name=cleaning_number, sample=sample)
-        else:
-            user_details.my_samples.add(sample)
-        if topic:
-            for watcher in topic.auto_adders.all():
-                watcher.my_samples.add(sample)
-        new_names.append(unicode(sample))
-    return new_names, samples
-
-
-@login_required
-def add(request):
-    u"""View for adding new samples.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-
-    :type request: ``HttpRequest``
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    user = request.user
-    if request.method == "POST":
-        add_samples_form = AddSamplesForm(user, request.POST)
-        if add_samples_form.is_valid():
-            # FixMe: Find more reliable way to find stared sample names
-            max_cycles = 10
-            while max_cycles > 0:
-                max_cycles -= 1
-                try:
-                    savepoint_without_samples = transaction.savepoint()
-                    new_names, samples = add_samples_to_database(add_samples_form, user)
-                except IntegrityError:
-                    if max_cycles > 0:
-                        transaction.savepoint_rollback(savepoint_without_samples)
-                    else:
-                        raise
-                else:
-                    break
-            ids = [sample.pk for sample in samples]
-            feed_utils.Reporter(user).report_new_samples(samples)
-            if add_samples_form.cleaned_data["topic"]:
-                for watcher in add_samples_form.cleaned_data["topic"].auto_adders.all():
-                    for sample in samples:
-                        watcher.my_samples.add(sample)
-            if add_samples_form.cleaned_data["cleaning_number"]:
-                success_report = \
-                    ungettext(
-                    u"{number_of_samples} sample with cleaning number “{cleaning_number}” was added to the database.",
-                    u"{number_of_samples} samples with cleaning number “{cleaning_number}” were added to the database.",
-                    add_samples_form.cleaned_data["number_of_samples"]).format(**add_samples_form.cleaned_data)
-            elif len(new_names) > 1:
-                success_report = \
-                    _(u"Your samples have the provisional names from %(first_name)s to "
-                      u"%(last_name)s.  They were added to “My Samples”.") % \
-                      {"first_name": new_names[0], "last_name": new_names[-1]}
-            else:
-                success_report = _(u"Your sample has the provisional name %s.  It was added to “My Samples”.") % new_names[0]
-            if add_samples_form.cleaned_data["bulk_rename"]:
-                return utils.successful_response(request, success_report, "samples.views.bulk_rename.bulk_rename",
-                                                 query_string="numbers=" + ",".join(new_name[1:] for new_name in new_names),
-                                                 forced=True, remote_client_response=ids)
-            else:
-                return utils.successful_response(request, success_report, remote_client_response=ids)
-    else:
-        add_samples_form = AddSamplesForm(user)
-    return render_to_response("samples/add_samples.html",
-                              {"title": _(u"Add samples"),
-                               "add_samples": add_samples_form,
-                               "external_operators_available": user.external_contacts.exists()},
-                              context_instance=RequestContext(request))
 
 
 @login_required

@@ -56,7 +56,7 @@
   {# FixMe: make translated strings lowercase and use |capfirst #}
   <ul style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/add.png")'>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/ruby_add.png")'>
-      <a href="{% url samples.views.sample.add %}">{% trans 'Samples' %}</a></li>
+      <a href="{{ add_sample_url }}">{% trans 'Samples' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/chart_organisation_add.png")'>
       <a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/lightbulb_add.png")'>
