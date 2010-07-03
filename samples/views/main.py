@@ -157,7 +157,7 @@ def deposition_search(request):
                 models.Deposition.objects.filter(number__icontains=search_depositions_form.cleaned_data["number_pattern"])
             too_many_results = found_depositions.count() > max_results
             found_depositions = found_depositions[:max_results] if too_many_results else found_depositions
-            found_depositions = [deposition.find_actual_instance() for deposition in found_depositions]
+            found_depositions = [deposition.actual_instance for deposition in found_depositions]
     else:
         search_depositions_form = SearchDepositionsForm()
     return render_to_response("samples/search_depositions.html", {"title": _(u"Search for deposition"),
@@ -188,5 +188,5 @@ def show_deposition(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    deposition = get_object_or_404(models.Deposition, number=deposition_number).find_actual_instance()
+    deposition = get_object_or_404(models.Deposition, number=deposition_number).actual_instance
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())

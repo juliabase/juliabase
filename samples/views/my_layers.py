@@ -38,7 +38,7 @@ class MyLayerForm(forms.Form):
             raise ValidationError(_(u"Deposition and layer number must be separated by \"-\"."))
         deposition_number, layer_number = self.cleaned_data["deposition_and_layer"].rsplit("-", 1)
         try:
-            deposition = models.Deposition.objects.get(number=deposition_number).find_actual_instance()
+            deposition = models.Deposition.objects.get(number=deposition_number).actual_instance
         except models.Deposition.DoesNotExist:
             raise ValidationError(_(u"Deposition number doesn't exist."))
         try:
@@ -74,7 +74,7 @@ def forms_from_database(user):
         nickname, raw_layer_identifier = next_match.group("nickname"), next_match.group("raw_layer_identifier")
         process_id, layer_number = raw_layer_identifier.rsplit("-", 1)
         process_id, layer_number = int(process_id), int(layer_number)
-        deposition_number = models.Process.objects.get(pk=process_id).find_actual_instance().number
+        deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
         deposition_and_layer = u"%s-%d" % (deposition_number, layer_number)
         my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
                                           prefix=str(len(my_layer_forms))))
