@@ -157,7 +157,7 @@ def enforce_clearance(clearance_processes, destination_user, sample, clearance=N
         clearance, __ = models.Clearance.objects.get_or_create(user=destination_user, sample=sample)
     processes = sample.processes.all() if not cutoff_timestamp else sample.processes.filter(timestamp__lte=cutoff_timestamp)
     for process in processes:
-        if clearance_processes == "all" or isinstance(process.find_actual_instance(), clearance_processes):
+        if clearance_processes == "all" or process.content_type.model_class() in clearance_processes:
             clearance.processes.add(process)
     split_origin = sample.split_origin
     if split_origin:

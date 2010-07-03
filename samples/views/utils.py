@@ -119,8 +119,8 @@ def normalize_sample_name(sample_name):
 class ResultContext(object):
     u"""Contains all info that result processes must know in order to render
     themselves as HTML.  It retrieves all processes, resolve the polymorphism
-    (see `models.find_actual_instance`), and executes the proper template with
-    the proper context dictionary in order to het HTML fragments.  These
+    (see `PolymorphicModel.actual_instance`), and executes the proper template
+    with the proper context dictionary in order to het HTML fragments.  These
     fragments are then collected in a list structure together with other info.
 
     This list is the final output of this class.  It can be passed to a
@@ -193,7 +193,7 @@ class ResultContext(object):
 
         :rtype: dict
         """
-        process = process.find_actual_instance()
+        process = process.actual_instance
         # FixMe: This can be made clearer with "render_to_string()"
         template = loader.get_template("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
         name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title

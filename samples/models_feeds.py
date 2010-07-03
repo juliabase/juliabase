@@ -18,15 +18,15 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.db import models
 import django.core.urlresolvers
-from chantal_common.models import Topic
+from chantal_common.models import Topic, PolymorphicModel
 from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
 
 
-class FeedEntry(models.Model):
+class FeedEntry(PolymorphicModel):
     u"""Abstract base model for newsfeed entries.  This is also not really
     abstract as it has a table in the database, however, it is never
-    instantiated itself.  Instead, see `find_actual_instance` which is also
-    injected into this class.
+    instantiated itself.  Instead, see `PolymorphicModel.actual_instance` which
+    is inherited by this class.
     """
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
@@ -166,7 +166,7 @@ class FeedNewPhysicalProcess(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         result = {}
-        process = self.process.find_actual_instance()
+        process = self.process.actual_instance
         result["title"] = _(u"New %s") % process
         result["category term"] = "new physical process"
         result["category label"] = "new physical process"
@@ -174,7 +174,7 @@ class FeedNewPhysicalProcess(FeedEntry):
         return result
 
     def get_additional_template_context(self, user_details):
-        return {"process": self.process.find_actual_instance()}
+        return {"process": self.process.actual_instance}
 
 
 class FeedEditedPhysicalProcess(FeedEntry):
@@ -190,7 +190,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        process = self.process.find_actual_instance()
+        process = self.process.actual_instance
         metadata["title"] = _(u"Edited %s") % process
         metadata["category term"] = "new physical process"
         metadata["category label"] = "new physical process"
@@ -198,7 +198,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
         return metadata
 
     def get_additional_template_context(self, user_details):
-        return {"process": self.process.find_actual_instance()}
+        return {"process": self.process.actual_instance}
 
 
 class FeedResult(FeedEntry):

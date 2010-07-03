@@ -22,7 +22,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from chantal_common.utils import get_really_full_name
-from chantal_common.models import Topic
+from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
@@ -68,19 +68,18 @@ timestamp_inaccuracy_choices = (
     (6, _(u"not even accurate to the year")),
     )
 
-class Process(models.Model):
+class Process(PolymorphicModel):
     u"""This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
     in the ``Meta`` subclass because I must be able to link to it with
     ``ForeignKey``.
 
-    If you retrieve a `Process`, you may call (injected) method
-    `find_actual_instance` to get the actual object, e.g. a
-    `SixChamberDeposition`::
+    If you retrieve a `Process`, you may read (inherited) field
+    `actual_instance` to get the actual object, e.g. a `SixChamberDeposition`::
 
         process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
-        process = process.find_actual_instance()
+        process = process.actual_instance
     """
     timestamp = models.DateTimeField(_(u"timestamp"))
     timestamp_inaccuracy = models.IntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
@@ -95,7 +94,11 @@ class Process(models.Model):
         verbose_name_plural = _(u"processes")
 
     def __unicode__(self):
-        return unicode(self.find_actual_instance())
+        actual_instance = self.actual_instance
+        if actual_instance == self:
+            return _("process #{0}").format(self.pk)
+        else:
+            return unicode(actual_instance)
 
     @models.permalink
     def get_absolute_url(self):
@@ -407,7 +410,7 @@ class Sample(models.Model):
         :rtype: `models.SampleSplit` or ``NoneType``
         """
         for process in self.processes.order_by("-timestamp"):
-            process = process.find_actual_instance()
+            process = process.actual_instance
             if isinstance(process, SampleSplit):
                 return process
             if not isinstance(process, Result):
@@ -427,7 +430,7 @@ class Sample(models.Model):
         """
         _ = ugettext
         csv_node = CSVNode(self, unicode(self))
-        csv_node.children.extend(process.find_actual_instance().get_data() for process in self.processes.all())
+        csv_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
         # set ``cvs_note.items``.
