@@ -333,6 +333,31 @@ class Process(PolymorphicModel):
         return {"processes": processes}
 
 
+class PhysicalProcess(Process):
+    u"""Abstract class for physical processes.  These processes are “real”
+    processes such as depositions, etching processes, measurements etc.  This
+    class doesn't define anything.  Its main purpose is to bring structure to
+    the class hierarchy by pooling all physical processes.
+
+    Such processes must have a permission of the form ``"add_edit_model_name"``
+    where the model name is in lowercase with underscores.
+    """
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def get_add_link(cls):
+        u"""Return the URL to the “add” view for this process.  This must be
+        implemented in derived model classes which is actually instantiated.
+
+        :Return:
+          the full URL to the add page for this process
+
+        :rtype: str
+        """
+        raise NotImplementedError
+
+
 class Sample(models.Model):
     u"""The model for samples.
     """

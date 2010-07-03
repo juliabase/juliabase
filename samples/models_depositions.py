@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
-from samples.models_common import Process
+from samples.models_common import PhysicalProcess
 from samples.csv_common import CSVNode, CSVItem
 
 default_location_of_deposited_samples = {}
@@ -25,10 +25,11 @@ This is used in
 """
 
 
-class Deposition(Process):
+class Deposition(PhysicalProcess):
     u"""The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
-    class from it.
+    class from it.  (By the way, this is the reason why this class needn't
+    define a ``get_add_link`` method.)
 
     Every derived class, if it has sub-objects which resemble layers, must
     implement them as a class derived from `Layer`, with a ``ForeignKey`` field

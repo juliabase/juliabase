@@ -26,11 +26,7 @@ actually here.
 
 :var physical_process_models: dictionary of all models that denote physical
   processes (i.e. depositions, measurements, etching processes etc).  It maps
-  the name to the model class itself.  Such processes must have a permission of
-  the form ``"add_edit_model_name"`` where the model name is in lowercase with
-  underscores.  Additionally, they must have the method ``get_add_link`` (see
-  `SixChamberDeposition.get_add_link`).  For the sake of performance, I don't
-  want to enforce the latter by a common parent class.
+  the name to the model class itself.
 
 :type physical_process_models: dict mapping ``str`` to ``class``.
 """
