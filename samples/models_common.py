@@ -22,7 +22,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from chantal_common.utils import get_really_full_name
-from chantal_common.models import Topic
+from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
@@ -68,7 +68,7 @@ timestamp_inaccuracy_choices = (
     (6, _(u"not even accurate to the year")),
     )
 
-class Process(models.Model):
+class Process(PolymorphicModel):
     u"""This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
@@ -95,7 +95,11 @@ class Process(models.Model):
         verbose_name_plural = _(u"processes")
 
     def __unicode__(self):
-        return unicode(self.find_actual_instance())
+        actual_instance = self.find_actual_instance()
+        if actual_instance == self:
+            return _("process #{0}").format(self.pk)
+        else:
+            return unicode(actual_instance)
 
     @models.permalink
     def get_absolute_url(self):

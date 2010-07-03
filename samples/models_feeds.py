@@ -18,11 +18,11 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.db import models
 import django.core.urlresolvers
-from chantal_common.models import Topic
+from chantal_common.models import Topic, PolymorphicModel
 from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
 
 
-class FeedEntry(models.Model):
+class FeedEntry(PolymorphicModel):
     u"""Abstract base model for newsfeed entries.  This is also not really
     abstract as it has a table in the database, however, it is never
     instantiated itself.  Instead, see `find_actual_instance` which is also
