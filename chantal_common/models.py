@@ -83,9 +83,27 @@ class Topic(models.Model):
 
 
 class PolymorphicModel(models.Model):
-    content_type = models.ForeignKey(ContentType, null=True, blank=True)
-    object_id = models.PositiveIntegerField(null=True, blank=True)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    u"""Abstract model class, which provides the attribute ``actual_instance``.
+    This solves the problem that Django's ORM does not implement automatic
+    resolution of polymorphy.  For example, if you get a list of Toppings,
+    they're just Toppings.  However sometimes, you must have the actual object,
+    i.e. CheeseTopping, SalamiTopping etc.  Then, ``topping.actual_instance``
+    will give just that.
 
-    def find_actual_instance(self):
-        return self.content_object or self
+    Simply derive the top-level model class from this one, and then you can
+    easily resolve polymorphy in it and its derived classes.
+    """
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    actual_object_id = models.PositiveIntegerField(null=True, blank=True)
+    actual_instance = generic.GenericForeignKey("content_type", "actual_object_id")
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and assures that `actual_instance` is set.
+        """
+        super(PolymorphicModel, self).save(*args, **kwargs)
+        if not self.actual_object_id:
+            self.actual_instance = self
+            super(PolymorphicModel, self).save()
+
+    class Meta:
+        abstract = True

@@ -52,11 +52,3 @@ def add_user_details(sender, instance, created=True, **kwargs):
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
-
-
-def inject_polymorphic_contenttypes(sender, instance, created=True, **kwargs):
-    if created and isinstance(instance, chantal_app.PolymorphicModel):
-        instance.content_object = instance
-        instance.save()
-
-signals.post_save.connect(inject_polymorphic_contenttypes)
