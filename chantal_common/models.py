@@ -26,6 +26,8 @@ u"""Models in the relational database for Chantal-Common.
 """
 
 import django.contrib.auth.models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -78,3 +80,12 @@ class Topic(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+
+class PolymorphicModel(models.Model):
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    def find_actual_instance(self):
+        return self.content_object or self
