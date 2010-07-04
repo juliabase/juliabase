@@ -78,7 +78,7 @@ class ExternalOperator(models.Model):
     def save(self, *args, **kwargs):
         super(ExternalOperator, self).save(*args, **kwargs)
         for process in self.processes.all():
-            process.find_actual_instance().save()
+            process.actual_instance.save()
 
     def __unicode__(self):
         return self.name
