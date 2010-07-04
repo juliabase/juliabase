@@ -8,7 +8,7 @@
 
 {% block frame_content %}
   <form method="post" action="">
-      {% for sample, process in samples_and_processes.samples_and_processes %}
+      {% for sample, process in samples_and_processes %}
         {% if sample %}
           {% spaceless %}<h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
           {% for alias in sample.sample.aliases.all %}
@@ -23,23 +23,23 @@
           {% if sample.can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.sample.name %}"
                                      ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add-process icon"
                                            title="{% trans 'add process' %}"/></a>{% endif %} 
-          {% if sample.full_view %}<a class="edit-icon" 
+          {% if not sample.clearance %}<a class="edit-icon" 
              href="{% url samples.views.sample.export sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
              ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon"
                    title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
 
-          {% if not sample.full_view %}
+          {% if sample.clearance %}
             <p style="color: red">
               {% trans "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
             </p>
           {% endif %}
-          {% with sample.full_view as full_view %}
+          {% with sample.nearance as clearance %}
             {% with sample.sample as sample %}
               <table>
                 <tr>
                   {% value_field sample.currently_responsible_person "user" %}
                 </tr>
-                {% if full_view %}
+                {% if not clearance %}
                   <tr>
                   {% if sample.topic %}
                     {% value_field sample.topic %}
@@ -50,12 +50,12 @@
                   {% endif %}
                   </tr>
                 {% endif %}
-                {% if sample.tags and full_view %}
+                {% if sample.tags and not clearance %}
                   <tr>
                     {% value_field sample.tags %}
                   </tr>
                 {% endif %}
-                {% if sample.purpose and full_view %}
+                {% if sample.purpose and not clearance %}
                   <tr>
                     {% value_field sample.purpose %}
                   </tr>
@@ -65,7 +65,7 @@
                 </tr>
               </table>
 
-              {% if full_view %}
+              {% if not clearance %}
                 {% with sample.series.count as number_of_sample_series %}
                   {% with sample.series.all as sample_serieses %}
                     {% if number_of_sample_series %}
@@ -101,13 +101,13 @@
             {% spaceless %}
               <h2>
                 {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
-                                                 href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+                                                 href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                    ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
                 {% endif %}{% if process.export_url %}<a class="edit-icon" 
-                        href="{{ process.export_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+                        href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                    ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
                 {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
-                                              href="{{ process.resplit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
+                                              href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                    ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
                 {% endif %}
               </h2>

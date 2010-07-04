@@ -18,7 +18,7 @@ The ``assert_can_...`` function are typically used at the beginning of views
 where permissions need to be checked and every failure means an error.  By
 contrast, the ``has_permission_to_...`` functions are used where a missing
 permission just means that e.g. a link is not generated (for example, in the
-``get_additional_template_context`` methods in the models).
+``get_context_for_user`` methods in the models).
 """
 
 from __future__ import absolute_import

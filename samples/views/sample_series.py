@@ -12,6 +12,7 @@ be changed once they have been created.
 from __future__ import absolute_import
 
 import datetime
+from django.views.decorators.http import last_modified
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
@@ -78,7 +79,33 @@ class SampleSeriesForm(forms.ModelForm):
         exclude = ("timestamp", "results", "name")
 
 
+def sample_series_timestamp(request, name):
+    u"""Check whether the sample series datasheet can be taken from the browser
+    cache.  For this, the timestamp of last modification of the sample series
+    is taken, and that of other things that influence the sample datasheet
+    (e.g. language).  The later timestamp is chosen and returned.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: the name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the timestamp of the last modification of the sample's datasheet
+
+    :rtype: ``datetime.datetime``
+    """
+    try:
+        sample_series = models.SampleSeries.objects.get(name=name)
+    except models.SampleSeries.DoesNotExist:
+        return None
+    return max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+
+
 @login_required
+@last_modified(sample_series_timestamp)
 def show(request, name):
     u"""View for showing a sample series.  You can see a sample series if
     you're in its topic, or you're the currently responsible person for it,
@@ -99,7 +126,7 @@ def show(request, name):
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
     user_details = utils.get_profile(request.user)
-    result_processes = utils.ResultContext(request.user, sample_series).collect_processes()
+    result_processes = [utils.digest_process(result, request.user) for result in sample_series.results.all()]
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
     return render_to_response("samples/show_sample_series.html",
