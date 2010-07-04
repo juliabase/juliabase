@@ -24,7 +24,8 @@
 from __future__ import absolute_import
 
 import locale, re
-from django.utils.cache import patch_vary_headers
+from django.contrib.messages.storage import default_storage
+from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
@@ -34,8 +35,9 @@ from django.utils.translation import ugettext as _
 import django.http
 from django.shortcuts import render_to_response
 
+
 u"""Middleware for setting the current language to what can be found in
-`models.UserDetails`.
+`models.UserDetails` and for cache-disabling in presence of temporary messages.
 """
 
 
@@ -79,4 +81,35 @@ class LocaleMiddleware(object):
         patch_vary_headers(response, ("Accept-Language",))
         response["Content-Language"] = translation.get_language()
         translation.deactivate()
+        return response
+
+
+class MessageMiddleware(object):
+    u"""Middleware that handles temporary messages.  It is a copy of Django's
+    original ``MessageMiddleware`` but it adds cache disabling.  This way,
+    pages with messages are never cached by the browser, so that the messages
+    don't get persistent.
+    """
+    def process_request(self, request):
+        request._messages = default_storage(request)
+
+    def process_response(self, request, response):
+        """
+        Updates the storage backend (i.e., saves the messages).
+
+        If not all messages could not be stored and ``DEBUG`` is ``True``, a
+        ``ValueError`` is raised.
+        """
+        # A higher middleware layer may return a request which does not contain
+        # messages storage, so make no assumption that it will be there.
+        if hasattr(request, '_messages'):
+            unstored_messages = request._messages.update(response)
+            if unstored_messages and settings.DEBUG:
+                raise ValueError('Not all temporary messages could be stored.')
+            if request._messages.used:
+                add_never_cache_headers(response)
+#                response["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+#                response["Pragma"] = "no-cache"
+#                response["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, private"
+
         return response
