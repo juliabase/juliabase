@@ -472,7 +472,7 @@ class OperatorField(forms.ChoiceField):
             of the process; otherwise, ``None``
 
         :type operator: ``django.contrib.auth.models.User``
-        :type is_staff: `models.Process`
+        :type old_process: `models.Process`
         """
         self.user = user
         if old_process:
