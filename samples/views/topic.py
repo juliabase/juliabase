@@ -91,7 +91,7 @@ def list_(request):
     """
     all_topics = Topic.objects.all()
     user_topics = request.user.topics.all()
-    topics = set(topic for topic in all_topics if has_permission_to_edit_topic(topic, request.user))
+    topics = set(topic for topic in all_topics if permissions.has_permission_to_edit_topic(topic, request.user))
     if not topics:
         raise Http404(u"Can't find any topic that you can edit.")
     return render_to_response("samples/list_topics.html",
