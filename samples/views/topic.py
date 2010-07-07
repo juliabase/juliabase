@@ -89,13 +89,13 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
+    user = request.user
     all_topics = Topic.objects.all()
-    user_topics = request.user.topics.all()
-    topics = set(topic for topic in all_topics if permissions.has_permission_to_edit_topic(topic, request.user))
+    user_topics = user.topics.all()
+    topics = set(topic for topic in all_topics if permissions.has_permission_to_edit_topic(user, topic))
     if not topics:
         raise Http404(u"Can't find any topic that you can edit.")
-    return render_to_response("samples/list_topics.html",
-                              {"title": _(u"List of all topics"), "topics": topics},
+    return render_to_response("samples/list_topics.html", {"title": _(u"List of all topics"), "topics": topics},
                               context_instance=RequestContext(request))
 
 
