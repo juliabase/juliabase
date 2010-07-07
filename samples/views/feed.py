@@ -113,7 +113,7 @@ def format_timestamp(timestamp):
 
 
 @cache_page(600)
-def show(request, username):
+def show(request, username, user_hash):
     u"""View which doesn't generate an HTML page but an Atom 1.0 feed with
     current news for the user.
 
@@ -128,9 +128,12 @@ def show(request, username):
       - `request`: the current HTTP Request object
       - `username`: the login name of the user for whic the news should be
         delivered
+      - `user_hash`: the secret user hash, which works as an ersatz password
+        because the feed clients can't login.
 
     :type request: ``HttpRequest``
     :type username: str
+    :type user_hash: str
 
     :Returns:
       the HTTP response object
@@ -138,13 +141,10 @@ def show(request, username):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    try:
-        user_hash = utils.parse_query_string(request)["hash"]
-    except KeyError:
-        raise Http404(_(u"You must add a \"hash\" parameter to the query string."))
     permissions.assert_can_view_feed(user_hash, user)
     url_prefix = "http://" + settings.DOMAIN_NAME
-    feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show, kwargs={"username": username})
+    feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show,
+                                                                      kwargs={"username": username, "user_hash": user_hash})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % get_really_full_name(user)
@@ -180,7 +180,7 @@ def show(request, username):
             ElementTree.SubElement(entry_element, "link", rel="alternate", href=metadata["link"])
         else:
             # Add bogus <link> tags for Thunderbird, see
-            # https://bugzilla.mozilla.org/show_bug.cgi?id=462511
+            # https://bugzilla.mozilla.org/show_bug.cgi?id=297569
             user_agent = request.META.get("HTTP_USER_AGENT", "")
             if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
                 ElementTree.SubElement(

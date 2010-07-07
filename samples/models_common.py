@@ -16,16 +16,42 @@ from matplotlib.figure import Figure
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
-from django.template import defaultfilters
+from django.template import defaultfilters, Context
+from django.template.loader import render_to_string
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
+from django.core.cache import cache
 from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
 from samples.csv_common import CSVNode, CSVItem
+
+
+def get_user_settings_hash(user):
+    u"""Calculate a hash of the user's settings.  This is used for caching.  In
+    order to fetch HTML-containing material from the cache, it is necessary to
+    have the user's settings in the cache key.  Otherwise, the HTML would be
+    wrong.  Currently, this is only the language.  So if you switch the
+    language from English to German, this hash prevents Chantal from fetching
+    HTML that still is in English.  Theoretically, a skin setting may also be
+    included here (if skins are not solely realised via CSS).
+
+    :Parameters:
+      - `user`: the currently logged-in user
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      an ASCII hash representing the user's settings
+
+    :rtype: str
+    """
+    hash_ = hashlib.sha1()
+    hash_.update(user.chantal_user_details.language)
+    return hash_.hexdigest()
 
 
 class ExternalOperator(models.Model):
@@ -48,6 +74,11 @@ class ExternalOperator(models.Model):
         verbose_name_plural = _(u"external operators")
         _ = lambda x: x
         permissions = (("add_external_operator", _("Can add an external operator")),)
+
+    def save(self, *args, **kwargs):
+        super(ExternalOperator, self).save(*args, **kwargs)
+        for process in self.processes.all():
+            process.find_actual_instance().save()
 
     def __unicode__(self):
         return self.name
@@ -87,11 +118,33 @@ class Process(PolymorphicModel):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
+    # I don't use auto_now because then, `append_cache_key` wouldn't work.
+    last_modified = models.DateTimeField(_(u"last modified"), editable=False)
+    cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
 
     class Meta:
         ordering = ["timestamp"]
         verbose_name = _(u"process")
         verbose_name_plural = _(u"processes")
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and clears stalled cache items.
+
+        :Parameters:
+          - `with_relations`: If ``True`` (default), also touch the related
+            samples.  Should be set to ``False`` if called from another
+            ``save`` method in order to avoid endless recursion.
+
+        :type with_relations: bool
+        """
+        cache.delete_many(self.cache_keys.split("\n"))
+        self.cache_keys = ""
+        self.last_modified = datetime.datetime.now()
+        with_relations = kwargs.pop("with_relations", True)
+        super(Process, self).save(*args, **kwargs)
+        if with_relations:
+            for sample in self.samples.all():
+                sample.save(with_relations=False)
 
     def __unicode__(self):
         actual_instance = self.actual_instance
@@ -332,6 +385,107 @@ class Process(PolymorphicModel):
         processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
         return {"processes": processes}
 
+    def append_cache_key(self, cache_key):
+        u"""Append a new cache key to the list of cache keys for this process.
+        If the process is updated, those cache items are deleted in `save`.
+
+        :Parameters:
+          - `cache_key`: the cache key
+
+        :type cache_key: str
+        """
+        if self.cache_keys:
+            self.cache_keys += "\n" + cache_key
+        else:
+            self.cache_keys = cache_key
+        super(Process, self).save()
+
+    def get_cache_key(self, user_settings_hash, local_context):
+        u"""Calculate a cache key for this context instance of the process.
+        Note that there may be many cache items to one process, e. g. one for
+        every language.  Each of them needs a unique cache key.  The only this
+        that is *never* included in a cache key is the user himself because
+        then, the cache would lose much of its effectiveness.  Instead, the
+        purpose of the sample cache is to fetch the whole sample which was
+        calculated for another user and simply adapt it to the current one.
+        This is important because this is a frequent use case.
+
+        :Parameters:
+          - `user_settings_hash`: hash over all settings which affect the
+            rendering of processes, e. g. language
+          - `local_context`: the local sample context; currently, this is only
+            relevant to `SampleSplit`, see `SampleSplit.get_cache_key`.
+
+        :type user_settings_hash: str
+        :type local_context: dict mapping str to ``object``
+
+        :Return:
+          the cache key for this process instance
+
+        :rtype: str
+        """
+        return "process:{0}-{1}".format(self.pk, user_settings_hash)
+
+    def get_context_for_user(self, user, old_context):
+        u"""Create the context dict for this process, or fill missing fields,
+        or adapt existing fields to the given user.  Note that adaption only
+        happens to the current user and not to any settings like e.g. language.
+        In other words, if a non-empty `old_context` is passed, the caller must
+        assure that language etc is already correct, just that it may be a
+        cached context from another user with different permissions.
+
+        A process context has always the following fields: ``process``,
+        ``html_body``, ``name``, ``operator``, ``timestamp``, and
+        ``timestamp_inaccuracy``.  Optional standard fields are ``edit_url``,
+        ``export_url``, and ``duplicate_url``.  It may also have further
+        fields, which must be iterpreted by the respective ``"show_…"``
+        template.
+
+        It is very important to see that ``html_body`` (the result of the
+        ``show_<process name>.html`` template) must not depend on sample data!
+        Otherwise, you see outdated process data after having changed sample
+        data.  (There is only one exception: sample splits.)  If you really
+        need this dependency, then expire the cached sample items yourself in a
+        signal function.
+
+        Note that it is necessary that ``self`` is the actual instance and not
+        a parent class.
+
+        :Parameters:
+          - `user`: the current user
+          - `old_context`: The present context for the process.  This may be
+             only the sample context (i. e. ``sample``, ``original_sample``
+             etc) if the process hasn't been found in the cache. Otherwise, it
+             is the full process context, although (possibly) for another user,
+             so it needs to be adapted.  This dictionary will not be touched in
+             this method.
+
+        :type user: ``django.contrib.auth.models.User``
+        :type old_context: dict mapping str to ``object``
+
+        :Return:
+          the adapted full context for the process
+
+        :rtype: dict mapping str to ``object``
+        """
+        context = old_context.copy()
+        if "process" not in context:
+            context["process"] = self
+        if "name" not in context:
+            name = unicode(self._meta.verbose_name) if not isinstance(self, Result) else self.title
+            context["name"] = name[:1].upper()+name[1:]
+        if "html_body" not in context:
+            context["html_body"] = render_to_string(
+                "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
+                context_instance=Context(context))
+        if "operator" not in context:
+            context["operator"] = self.external_operator or self.operator
+        if "timestamp" not in context:
+            context["timestamp"] = self.timestamp
+        if "timestamp_inaccuracy" not in context:
+            context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
+        return context
+
 
 class PhysicalProcess(Process):
     u"""Abstract class for physical processes.  These processes are “real”
@@ -374,6 +528,8 @@ class Sample(models.Model):
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
+    last_modified = models.DateTimeField(_(u"last modified"), editable=False)
+    cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
 
     class Meta:
         verbose_name = _(u"sample")
@@ -381,6 +537,49 @@ class Sample(models.Model):
         ordering = ["name"]
         _ = lambda x: x
         permissions = (("view_all_samples", _("Can view all samples (senior user)")),)
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and clears stalled cache items.
+
+        It also touches all ancestors and children and the associated split
+        processes.
+
+        :Parameters:
+          - `with_relations`: If ``True`` (default), also touch the related
+            samples.  Should be set to ``False`` if called from another
+            ``save`` method in order to avoid endless recursion.
+          - `from_split`: When walking through the decendents, this is set to
+            the originating split so that the child sample knows which of its
+            splits should be followed, too.  Thus, only the timestamp of
+            ``from_split`` is actually used.  It must be ``None`` (default)
+            when this method is called from outside this method, or while
+            walking through the ancestors.
+
+        :type with_relations: bool
+        :type from_split: `SampleSplit` or ``NoneType``
+        """
+        cache.delete_many(self.cache_keys.split("\n"))
+        self.cache_keys = ""
+        self.last_modified = datetime.datetime.now()
+        with_relations = kwargs.pop("with_relations", True)
+        from_split = kwargs.pop("from_split", None)
+        super(Sample, self).save(*args, **kwargs)
+        if with_relations:
+            for series in self.series.all():
+                series.save()
+        # Now we touch the decendents ...
+        if from_split:
+            splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
+        else:
+            splits = SampleSplit.objects.filter(parent=self)
+        for split in splits:
+            split.save(with_relations=False)
+            for child in split.pieces.all():
+                child.save(from_split=split, with_relations=False)
+        # ... and the ancestors
+        if not from_split and self.split_origin:
+            self.split_origin.save(with_relations=False)
+            self.split_origin.parent.save(with_relations=False)
 
     def __unicode__(self):
         u"""Here, I realise the peculiar naming scheme of provisional sample
@@ -461,6 +660,21 @@ class Sample(models.Model):
         # set ``cvs_note.items``.
         return csv_node
 
+    def append_cache_key(self, cache_key):
+        u"""Append a new cache key to the list of cache keys for this sample.
+        If the sample is updated, those cache items are deleted in `save`.
+
+        :Parameters:
+          - `cache_key`: the cache key
+
+        :type cache_key: str
+        """
+        if self.cache_keys:
+            self.cache_keys += "\n" + cache_key
+        else:
+            self.cache_keys = cache_key
+        super(Sample, self).save()
+
 
 class SampleAlias(models.Model):
     u"""Model for former names of samples.  If a sample gets renamed (for
@@ -479,6 +693,12 @@ class SampleAlias(models.Model):
         unique_together = (("name", "sample"),)
         verbose_name = _(u"name alias")
         verbose_name_plural = _(u"name aliases")
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance and touches the affected sample.
+        """
+        super(SampleAlias, self).save(*args, **kwargs)
+        self.sample.save(with_relations=False)
 
     def __unicode__(self):
         return self.name
@@ -504,38 +724,36 @@ class SampleSplit(Process):
         _ = ugettext
         return _(u"split of %s") % self.parent.name
 
-    def get_additional_template_context(self, process_context):
-        u"""See
-        `models_depositions.SixChamberDeposition.get_additional_template_context`
-        for general information.
-
-        :Parameters:
-          - `process_context`: context information for this process.  This
-            routine needs ``current_sample`` and ``original_sample`` from the
-            process context.
-
-        :type process_context: `views.utils.ProcessContext`
-
-        :Return:
-          dict with additional fields that are supposed to be given to the
-          sample split template: ``"parent"``, ``"original_sample"``,
-          ``"current_sample"``, and ``"latest_descendant"``.
-
-        :rtype: dict mapping string to arbitrary objects
+    def get_cache_key(self, user_settings_hash, local_context):
+        u"""Calculate a cache key for this context instance of the sample
+        split.  Here, I actually use `local_context` in order to generate
+        different cached items for different positions of the sample split in
+        the process list.  The underlying reason for it is that in contrast to
+        other process classes, the display of sample splits depends on many
+        things.  For example, if the sample split belongs to the sample the
+        datasheet of which is displayed, the rendering is different from the
+        very same sample split on the data sheet of a child sample.
         """
-        assert process_context.current_sample
-        if process_context.current_sample != process_context.original_sample:
-            parent = process_context.current_sample
+        hash_ = hashlib.sha1()
+        hash_.update(user_settings_hash)
+        hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
+                                                    local_context.get("latest_descendant", ""),
+                                                    local_context.get("sample", "")))
+        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
+
+    def get_context_for_user(self, user, old_context):
+        context = old_context.copy()
+        if context["sample"] != context["original_sample"]:
+            context["parent"] = context["sample"]
         else:
-            parent = None
-        result = {"parent": parent, "original_sample": process_context.original_sample,
-                  "current_sample": process_context.current_sample, "latest_descendant": process_context.latest_descendant}
-        result["resplit_url"] = None
-        if process_context.current_sample.last_process_if_split() == self and \
-                permissions.has_permission_to_edit_sample(process_context.user, process_context.current_sample):
-            result["resplit_url"] = django.core.urlresolvers.reverse(
+            context["parent"] = None
+        if context["sample"].last_process_if_split() == self and \
+                permissions.has_permission_to_edit_sample(user, context["sample"]):
+            context["resplit_url"] = django.core.urlresolvers.reverse(
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
-        return result
+        else:
+            context["resplit_url"] = None
+        return super(SampleSplit, self).get_context_for_user(user, context)
 
 
 class Clearance(models.Model):
@@ -549,6 +767,7 @@ class Clearance(models.Model):
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances", blank=True)
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True)
 
     class Meta:
         unique_together = ("user", "sample")
@@ -620,6 +839,16 @@ class Result(Process):
         verbose_name = _(u"result")
             # Translation hint: experimental results
         verbose_name_plural = _(u"results")
+
+    def save(self, *args, **kwargs):
+        u"""Do everything in `Process.save`, plus touching all samples in all
+        connected sample series and the series themselves.
+        """
+        with_relations = kwargs.get("with_relations", True)
+        super(Result, self).save(*args, **kwargs)
+        if with_relations:
+            for sample_series in self.sample_series.all():
+                sample_series.save(touch_samples=True)
 
     def __unicode__(self):
         _ = ugettext
@@ -711,32 +940,21 @@ class Result(Process):
                                  image_locations["thumbnail_file"]])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
 
-    def get_additional_template_context(self, process_context):
-        u"""See
-        `models_depositions.SixChamberDeposition.get_additional_template_context`
-        for general information.
-
-        :Parameters:
-          - `process_context`: context information for this process.  This
-            routine needs only ``user`` from the process context.
-
-        :type process_context: `views.utils.ProcessContext`
-
-        :Return:
-          dict with additional fields that are supposed to be given to the
-          result process template, e.g. ``"edit_url"``.
-
-        :rtype: dict mapping str to str
-        """
-        result = self.result.get_image()
-        if permissions.has_permission_to_edit_result_process(process_context.user, self):
-            result["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+    def get_context_for_user(self, user, old_context):
+        context = old_context.copy()
         if self.quantities_and_values:
-            result["quantities"], result["value_lists"] = shared_utils.ascii_unpickle(self.quantities_and_values)
-            result["export_url"] = \
+            if "quantities" not in context or "value_lists" not in context:
+                context["quantities"], context["value_lists"] = shared_utils.ascii_unpickle(self.quantities_and_values)
+            context["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
-        return result
+        if "thumbnail_url" not in context or "image_url" not in context:
+            context.update(self.result.get_image())
+        if permissions.has_permission_to_edit_result_process(user, self):
+            context["edit_url"] = \
+                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+        else:
+            context.pop("edit_url", None)
+        return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
@@ -789,10 +1007,28 @@ class SampleSeries(models.Model):
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
     topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_(u"topic"))
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
 
     class Meta:
         verbose_name = _(u"sample series")
         verbose_name_plural = _(u"sample serieses")
+
+    def save(self, *args, **kwargs):
+        u"""Saves the instance.
+
+        :Parameters:
+          - `touch_samples`: If ``True``, also touch all samples in this
+            series.  ``False`` is default because samples don't store
+            information about the sample series that may change (note that the
+            sample series' name never changes).
+
+        :type touch_samples: bool
+        """
+        touch_samples = kwargs.pop("touch_samples", False)
+        super(SampleSeries, self).save(*args, **kwargs)
+        if touch_samples:
+            for sample in self.samples.all():
+                sample.save(with_relations=False)
 
     def __unicode__(self):
         return self.name
@@ -819,6 +1055,15 @@ class SampleSeries(models.Model):
         # table export; people only want to see the *sample* data.  Thus, I
         # don't set ``cvs_note.items``.
         return csv_node
+
+    def touch_samples(self):
+        u"""Touch all samples of this series for cache expiring.  This isn't
+        done in a custom ``save()`` method because sample don't store
+        information about the sample series that may change (note that the
+        sample series' name never changes).
+        """
+        for sample in self.samples.all():
+            sample.save(with_relations=False)
 
 
 class Initials(models.Model):
@@ -862,12 +1107,22 @@ class UserDetails(models.Model):
         help_text=_(u"new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False)
     feed_entries = models.ManyToManyField("FeedEntry", verbose_name=_(u"feed entries"), related_name="users", blank=True)
-    my_layers = models.CharField(_(u"my layers"), max_length=255, blank=True)
+    my_layers = models.TextField(_(u"my layers"), blank=True)
     u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
     deposition2-layer2, ..."``, where “nickname” can be chosen freely except
     that it mustn't contain “:” or “,” or whitespace.  “deposition” is the
     *process id* (``Process.pk``, not the deposition number!) of the
     deposition, and “layer” is the layer number (`models_depositions.Layer.number`).
+    """
+    display_settings_timestamp = models.DateTimeField(_(u"display settings last modified"), auto_now_add=True)
+    u"""This timestamp denotes when anything changed which influences the
+    display of a sample, process, sample series etc, e.g. the language, the
+    skin etc.  It is used for expiring browser caching.  See
+    `touch_display_settings`.
+    """
+    my_samples_timestamp = models.DateTimeField(_(u"My Samples last modified"), auto_now_add=True)
+    u"""This timestamp denotes when My Samples were changed most recently.  It
+    is used for expiring sample datasheet caching.
     """
 
     class Meta:
@@ -878,3 +1133,12 @@ class UserDetails(models.Model):
 
     def __unicode__(self):
         return unicode(self.user)
+
+    def touch_display_settings(self):
+        u"""Set the last modifications of sample settings to the current time.
+        This method must be called every time when something was changed which
+        influences the display of a sample datasheet, e. g. the language or the
+        “My Samples” list.  It is used for efficient caching.
+        """
+        self.display_settings_timestamp = datetime.datetime.now()
+        self.save()

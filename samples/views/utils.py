@@ -10,10 +10,11 @@ from __future__ import absolute_import
 
 import re, string, datetime, json
 from django.http import Http404, HttpResponse
+from django.core.cache import cache
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
-from django.template import Context, loader, RequestContext
+from django.template import Context, RequestContext
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
 import chantal_common.utils
@@ -688,3 +689,37 @@ def format_enumeration(items):
         return _(u" and ").join(items)
     else:
         return u"".join(items)
+
+
+def digest_process(process, user, local_context={}):
+    u"""Convert a process to a process context.  This conversion extracts the
+    relevant information of the process and saves it in a form which can easily
+    be processed in a template.
+
+    :Parameters:
+      - `process`: the process to be digest
+      - `user`: current user
+      - `local_context`: the local sample context; currently, this is only
+        relevant to ``SampleSplit``, see ``SampleSplit.get_cache_key``.
+
+    :type process: `models.Process`
+    :type user: ``django.contrib.auth.models.User``
+    :type local_context: dict mapping str to ``object``
+
+    :Return:
+      the process context of the given process
+
+    :rtype: dict mapping str to ``object``
+    """
+    process = process.find_actual_instance()
+    cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
+    cached_context = cache.get(cache_key) if cache_key else None
+    if cached_context is None:
+        process_context = process.get_context_for_user(user, local_context)
+        if cache_key:
+            cache.set(cache_key, process_context)
+            process.append_cache_key(cache_key)
+    else:
+        cached_context.update(local_context)
+        process_context = process.get_context_for_user(user, cached_context)
+    return process_context
