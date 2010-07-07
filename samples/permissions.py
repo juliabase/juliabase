@@ -529,16 +529,28 @@ def assert_can_edit_topic(user, topic=None):
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit topics,
-        nor to add new topics.
+        or to add new topics.
     """
-    permission = "samples.can_edit_all_topics"
-    if not user.has_perm(permission):
-        description = _(u"You are not allowed to change this topic because you don't have the permission “%s”.") \
-            % translate_permission(permission)
-        raise PermissionError(user, description)
-    elif topic and topic.restricted and topic not in user.topics.all() and not user.is_superuser:
-        description = _(u"You are not allowed to change this topic because it is restricted and you are not in this topic.")
-        raise PermissionError(user, description)
+    if not topic:
+        if not user.has_perm("samples.can_edit_all_topics"):
+            description = _(u"You are not allowed to add or list topics because you don't have the permission “%s”.") \
+                % translate_permission("samples.can_edit_all_topics")
+            raise PermissionError(user, description)
+    if user in topic.members.all():
+        if not user.has_perm("samples.can_edit_all_topics") and not user.has_perm("samples.can_edit_their_topics"):
+            description = _(u"You are not allowed to change this topic because you don't have the permission "
+                            u"“{0}” or “{1}”.").format(translate_permission("samples.can_edit_all_topics"),
+                                                       translate_permission("samples.can_edit_their_topics"))
+            raise PermissionError(user, description)
+    else:
+        if not user.has_perm("samples.can_edit_all_topics"):
+            description = _(u"You are not allowed to change this topic because you don't have the permission “%s”.") \
+                % translate_permission("samples.can_edit_all_topics")
+            raise PermissionError(user, description)
+        elif topic.restricted and not user.is_superuser:
+            description = _(u"You are not allowed to change this topic because it is restricted and you are not in this "
+                            u"topic.")
+            raise PermissionError(user, description)
 
 
 def assert_can_view_feed(hash_value, user):
