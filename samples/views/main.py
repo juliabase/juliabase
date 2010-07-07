@@ -111,7 +111,7 @@ def main_menu(request):
          "user_hash": permissions.get_user_hash(request.user),
          "can_add_topic": permissions.has_permission_to_edit_topic(request.user),
          "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
-                                for topic in Topic.objects.all())
+                                for topic in Topic.objects.all()),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
          "has_external_contacts": request.user.external_contacts.exists(),
          "physical_processes": allowed_physical_processes,
