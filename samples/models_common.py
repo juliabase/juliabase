@@ -74,6 +74,7 @@ class ExternalOperator(models.Model):
         verbose_name_plural = _(u"external operators")
         _ = lambda x: x
         permissions = (("add_external_operator", _("Can add an external operator")),)
+        permissions = (("view_all_external_operators", _("Can view all external operators")),)
 
     def save(self, *args, **kwargs):
         super(ExternalOperator, self).save(*args, **kwargs)

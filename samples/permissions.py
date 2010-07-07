@@ -127,8 +127,8 @@ def get_editable_sample_series(user):
 
 
 def get_allowed_physical_processes(user):
-    u"""Get a list with all pysical processes (depositions, measurements; no
-    sample splits) that the user is allowed to add or edit.  This routine is
+    u"""Get a list with all pysical process classes (depositions, measurements;
+    no sample splits) that the user is allowed to add or edit.  This routine is
     typically used where a list of all processes that the user is allowed to
     *add* is to be build, on the main menu page and the “add process to sample”
     page.
@@ -213,7 +213,7 @@ def assert_can_fully_view_sample(user, sample):
             raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
             description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            u"its currently responsible person, nor are you a senior user.")
+                            u"its currently responsible person, nor can you view all samples.")
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
@@ -244,17 +244,18 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
     permission = \
         "{app_label}.add_edit_{process_name}".format(
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
-    if not user.has_perm(permission):
-        if process:
-            description = _(u"You are not allowed to edit the process “%(process)s” because you don't have the "
-                            u"permission “%(permission)s”.") % {"process": unicode(process),
-                                                                "permission": translate_permission(permission)}
-        else:
+    if process:
+        if process.operator != user and not user.is_superuser:
+            description = _(u"You are not allowed to edit the process “%(process)s” because you are not the operator "
+                            u"of this process.") % {"process": unicode(process)}
+            raise PermissionError(user, description)
+    else:
+        if not user.has_perm(permission):
             description = _(u"You are not allowed to add %(process_plural_name)s because you don't have the "
                             u"permission “%(permission)s”.") % \
                             {"process_plural_name": process_class._meta.verbose_name_plural,
                              "permission": translate_permission(permission)}
-        raise PermissionError(user, description)
+            raise PermissionError(user, description)
 
 
 def assert_can_view_lab_notebook(user, process_class):
@@ -308,10 +309,12 @@ def assert_can_view_physical_process(user, process):
             if has_permission_to_fully_view_sample(user, sample):
                 break
         else:
-            description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
-                            u"permission “%(permission)s”, nor you are allowed to view one of the processed samples.") \
-                            % {"process": unicode(process), "permission": translate_permission(permission)}
-            raise PermissionError(user, description, new_topic_would_help=True)
+            if not models.Clearance.objects.filter(user=user, processes=process).exists():
+                description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
+                                u"permission “%(permission)s”, nor you are allowed to view one of the processed samples, "
+                                "nor is there a clearance for you for this process.") \
+                                % {"process": unicode(process), "permission": translate_permission(permission)}
+                raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_edit_result_process(user, result_process):
@@ -328,7 +331,7 @@ def assert_can_edit_result_process(user, result_process):
       - `PermissionError`: raised if the user is not allowed to edit the result
         process.
     """
-    if result_process.operator != user:
+    if result_process.operator != user and not user.is_superuser:
         description = _(u"You are not allowed to edit the result “%s” because you didn't create this result.") \
             % unicode(result_process)
         raise PermissionError(user, description)
@@ -351,9 +354,11 @@ def assert_can_view_result_process(user, result_process):
     if result_process.operator != user and \
             all(not has_permission_to_fully_view_sample(user, sample) for sample in result_process.samples.all()) and \
             all(not has_permission_to_fully_view_sample_series(user, sample_series)
-                for sample_series in result_process.sample_series.all()):
+                for sample_series in result_process.sample_series.all()) and \
+                not models.Clearance.objects.filter(user=user, processes=result_process).exists():
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
-                        u"nor are you allowed to view its connected samples or sample series.") % unicode(result_process)
+                        u"nor are you allowed to view its connected samples or sample series, nor is there a "
+                        "clearance for you for this result.") % unicode(result_process)
         raise PermissionError(user, description, new_topic_would_help=True)
 
 
@@ -373,7 +378,7 @@ def assert_can_add_result_process(user, sample_or_series):
         process to the sample or series
     """
     if sample_or_series.currently_responsible_person != user and sample_or_series.topic and \
-            sample_or_series.topic not in user.topics.all():
+            sample_or_series.topic not in user.topics.all() and not user.is_superuser:
         if isinstance(sample_or_series, samples.models.Sample):
             description = _(u"You are not allowed to add the result to %s because neither are you the currently "
                             u"responsible person for this sample, nor are you a member of its topic.") % sample_or_series
@@ -397,7 +402,7 @@ def assert_can_edit_sample(user, sample):
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit the sample
     """
-    if sample.topic and sample.currently_responsible_person != user:
+    if sample.topic and sample.currently_responsible_person != user and not user.is_superuser:
         description = _(u"You are not allowed to edit the sample “%s” (including splitting and declaring dead) because "
                         u"you are not the currently responsible person for this sample.") % sample
         raise PermissionError(user, description)
@@ -418,7 +423,7 @@ def assert_can_edit_sample_series(user, sample_series):
       - `PermissionError`: raised if the user is not allowed to edit the sample
         series
     """
-    if sample_series.currently_responsible_person != user:
+    if sample_series.currently_responsible_person != user and not user.is_superuser:
         description = _(u"You are not allowed to edit the sample series “%s” because "
                         u"you are not the currently responsible person for this sample series.") % sample_series
         raise PermissionError(user, description)
@@ -438,7 +443,8 @@ def assert_can_view_sample_series(user, sample_series):
       - `PermissionError`: raised if the user is not allowed to view the sample
         series
     """
-    if sample_series.currently_responsible_person != user and sample_series.topic not in user.topics.all():
+    if sample_series.currently_responsible_person != user and sample_series.topic not in user.topics.all() and \
+            not user.is_superuser:
         description = _(u"You are not allowed to view the sample series “%s” because neither are"
                         u"you the currently responsible person for it, nor are you in its topic.") % sample_series
         raise PermissionError(user, description, new_topic_would_help=True)
@@ -477,7 +483,7 @@ def assert_can_edit_external_operator(user, external_operator):
       - `PermissionError`: raised if the user is not allowed to edit an
         external operator.
     """
-    if external_operator.contact_person != user:
+    if external_operator.contact_person != user and not user.is_superuser:
         description = _(u"You are not allowed to edit this external operator because you aren't their "
                         u"current contact person.")
         raise PermissionError(user, description)
@@ -497,14 +503,14 @@ def assert_can_view_external_operator(user, external_operator):
       - `PermissionError`: raised if the user is not allowed to view an
         external operator.
     """
-    if external_operator.contact_person != user:
+    if external_operator.contact_person != user and not user.is_superuser:
         if external_operator.restricted:
             description = _(u"You are not allowed to view this external operator because you are not their "
                             u"current contact person.")
             raise PermissionError(user, description)
-        elif not user.has_perm("samples.view_all_samples"):
+        elif not user.has_perm("samples.view_all_external_operators"):
             description = _(u"You are not allowed to view this external operator because neither are you their "
-                            u"current contact person, nor are you a senior user.")
+                            u"current contact person, nor can you view all external operators.")
             raise PermissionError(user, description)
 
 
@@ -530,8 +536,8 @@ def assert_can_edit_topic(user, topic=None):
         description = _(u"You are not allowed to change this topic because you don't have the permission “%s”.") \
             % translate_permission(permission)
         raise PermissionError(user, description)
-    elif topic and topic.restricted and topic not in user.topics.all():
-        description = _(u"You are not allowed to change this topic because you are not in this topic.")
+    elif topic and topic.restricted and topic not in user.topics.all() and not user.is_superuser:
+        description = _(u"You are not allowed to change this topic because it is restricted and you are not in this topic.")
         raise PermissionError(user, description)
 
 
@@ -557,13 +563,14 @@ def assert_can_view_feed(hash_value, user):
         user's news feed.  It's ``user`` parameter is always ``None`` because
         we don't know the user who is currently accessing Chantal.
     """
-    if hash_value != get_user_hash(user):
-        description = _(u"You gave an invalid hash parameter in the query string.  "
-                        u"Note that you can't access the news feed of another user.")
-        raise PermissionError(None, description)
-    if not user.is_active:
-        description = _(u"You can't access the feed of an inactive user.")
-        raise PermissionError(None, description)
+    if not user.is_superuser:
+        if hash_value != get_user_hash(user):
+            description = _(u"You gave an invalid hash parameter in the query string.  "
+                            u"Note that you can't access the news feed of another user.")
+            raise PermissionError(None, description)
+        if not user.is_active:
+            description = _(u"You can't access the feed of an inactive user.")
+            raise PermissionError(None, description)
 
 
 # Now, I inject the ``has_permission_to_...`` functions into this module for
