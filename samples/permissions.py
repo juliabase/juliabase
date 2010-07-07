@@ -309,7 +309,7 @@ def assert_can_view_physical_process(user, process):
             if has_permission_to_fully_view_sample(user, sample):
                 break
         else:
-            if not models.Clearance.objects.filter(user=user, processes=process).exists():
+            if not samples.models.Clearance.objects.filter(user=user, processes=process).exists():
                 description = _(u"You are not allowed to view the process “%(process)s” because neither you have the "
                                 u"permission “%(permission)s”, nor you are allowed to view one of the processed samples, "
                                 "nor is there a clearance for you for this process.") \
@@ -355,7 +355,7 @@ def assert_can_view_result_process(user, result_process):
             all(not has_permission_to_fully_view_sample(user, sample) for sample in result_process.samples.all()) and \
             all(not has_permission_to_fully_view_sample_series(user, sample_series)
                 for sample_series in result_process.sample_series.all()) and \
-                not models.Clearance.objects.filter(user=user, processes=result_process).exists():
+                not samples.models.Clearance.objects.filter(user=user, processes=result_process).exists():
         description = _(u"You are not allowed to view the result “%s” because neither did you create this result, "
                         u"nor are you allowed to view its connected samples or sample series, nor is there a "
                         "clearance for you for this result.") % unicode(result_process)
