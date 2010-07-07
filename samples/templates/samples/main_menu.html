@@ -82,14 +82,18 @@
     </ul>
   {% endif %}
 
-  {% if can_edit_topic %}
+  {% if can_add_topic or can_edit_topics %}
     <h2>{% trans 'Edit topics' %}</h2>
 
     <ul>
-      <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/group_add.png")'>
-        <a href="{% url samples.views.topic.add %}">{% trans 'Add new topic' %}</a></li>
-      <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/group_gear.png")'>
-        <a href="{% url samples.views.topic.list_ %}">{% trans 'Change topic memberships' %}</a></li>
+      {% if can_add_topic %}
+        <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/group_add.png")'>
+          <a href="{% url samples.views.topic.add %}">{% trans 'Add new topic' %}</a></li>
+      {% endif %}
+      {% if can_edit_topics %}
+        <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/group_gear.png")'>
+          <a href="{% url samples.views.topic.list_ %}">{% trans 'Change topic memberships' %}</a></li>
+      {% endif %}
     </ul>  
   {% endif %}  
 
