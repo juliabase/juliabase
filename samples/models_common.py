@@ -1130,7 +1130,7 @@ class UserDetails(models.Model):
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
         _ = lambda x: x
-        permissions = (("edit_topic", _("Can edit topics, and can add new topics")),)
+        permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),)
 
     def __unicode__(self):
         return unicode(self.user)

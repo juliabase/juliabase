@@ -531,7 +531,7 @@ def assert_can_edit_topic(user, topic=None):
       - `PermissionError`: raised if the user is not allowed to edit topics,
         nor to add new topics.
     """
-    permission = "samples.edit_topic"
+    permission = "samples.can_edit_all_topics"
     if not user.has_perm(permission):
         description = _(u"You are not allowed to change this topic because you don't have the permission “%s”.") \
             % translate_permission(permission)
