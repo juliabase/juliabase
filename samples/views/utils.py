@@ -117,112 +117,6 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
-class ResultContext(object):
-    u"""Contains all info that result processes must know in order to render
-    themselves as HTML.  It retrieves all processes, resolve the polymorphism
-    (see `PolymorphicModel.actual_instance`), and executes the proper template
-    with the proper context dictionary in order to het HTML fragments.  These
-    fragments are then collected in a list structure together with other info.
-
-    This list is the final output of this class.  It can be passed to a
-    template for creating the whole history of a sample or sample series.
-
-    ``ResultContext`` is specialised in sample *series*, though.  However, it
-    is expanded by the child class `ProcessContext`, which is about rendering
-    histories of samples themselves.
-    """
-
-    def __init__(self, user, sample_series):
-        u"""Class constructor.
-
-        :Parameters:
-          - `user`: the user that wants to see all the generated HTML
-          - `sample_series`: the sample series the history of which is about to
-            be generated
-
-        :type user: ``django.contrib.auth.models.User``
-        :type sample_series: `models.SampleSeries`
-        """
-        self.sample_series = sample_series
-        self.user = user
-
-    def get_template_context(self, process):
-        u"""Generate the complete context that the template of the process
-        needs.  The process itself is always part of it; further key/value
-        pairs may be added by the process class'
-        ``get_additional_template_context`` method – which in turn gets this
-        ``ResultContext`` instance as a parameter.
-
-        :Parameters:
-          - `process`: the process for which the context dictionary should be
-            generated.
-
-        :type process: `models.Process`
-
-        :Return:
-          the context dictionary to be passed to the template of this process.
-
-        :rtype: dict
-        """
-        context_dict = {"process": process}
-        if hasattr(process, "get_additional_template_context"):
-            context_dict.update(process.get_additional_template_context(self))
-        return context_dict
-
-    def digest_process(self, process):
-        u"""Return one item for the list of processes, which is later passed to
-        the main template for the sample's/sample series' history.  Each item
-        is a dictionary which always contains ``"name"``, ``"operator"``,
-        ``"timestamp"``, and ``"html_body"``.  The latter contains the result
-        of the process rendering.  Additionally, ``"edit_url"``,
-        ``"export_url"``, ``"duplicate_url"``, and ``"resplit_url"`` are
-        inserted, if the ``get_additional_template_context`` of the process had
-        provided them.
-
-        All these things are used in the “outer” part of the history rendering.
-        The inner part is the value of ``"html_body"``.
-
-        :Parameters:
-          - `process`: the process for which the element for the processes list
-            should be generated.
-
-        :type process: `models.Process`
-
-        :Return:
-          everything the show-history template needs to know for displaying the
-          process.
-
-        :rtype: dict
-        """
-        process = process.actual_instance
-        # FixMe: This can be made clearer with "render_to_string()"
-        template = loader.get_template("samples/show_" + camel_case_to_underscores(process.__class__.__name__) + ".html")
-        name = unicode(process._meta.verbose_name) if not isinstance(process, models.Result) else process.title
-        template_context = self.get_template_context(process)
-        context_dict = {"name": name[:1].upper()+name[1:], "operator": process.external_operator or process.operator,
-                        "timestamp": process.timestamp, "timestamp_inaccuracy": process.timestamp_inaccuracy,
-                        "html_body": template.render(Context(template_context))}
-        for key in ["edit_url", "export_url", "duplicate_url", "resplit_url"]:
-            if key in template_context:
-                context_dict[key] = template_context[key]
-        return context_dict
-
-    def collect_processes(self):
-        u"""Make a list of all result processes for the sample series.
-
-        :Return:
-          a list with all result processes of this sample in chronological
-          order.  Every list item is a dictionary with the information
-          described in `digest_process`.
-
-        :rtype: list of dict
-        """
-        results = []
-        for result in self.sample_series.results.all():
-            results.append(self.digest_process(result))
-        return results
-
-
 def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
     called “08B-045”, this routine yields “08B-046” (unless the new year has
@@ -711,7 +605,7 @@ def digest_process(process, user, local_context={}):
 
     :rtype: dict mapping str to ``object``
     """
-    process = process.find_actual_instance()
+    process = process.actual_instance
     cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
     cached_context = cache.get(cache_key) if cache_key else None
     if cached_context is None:

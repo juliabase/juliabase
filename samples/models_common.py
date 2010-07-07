@@ -73,7 +73,13 @@ class ExternalOperator(models.Model):
         verbose_name = _(u"external operator")
         verbose_name_plural = _(u"external operators")
         _ = lambda x: x
-        permissions = (("add_external_operator", _("Can add an external operator")),)
+        permissions = (("add_external_operator", _("Can add an external operator")),
+                       ("view_all_external_operators", _("Can view all external operators")))
+
+    def save(self, *args, **kwargs):
+        super(ExternalOperator, self).save(*args, **kwargs)
+        for process in self.processes.all():
+            process.actual_instance.save()
 
     def save(self, *args, **kwargs):
         super(ExternalOperator, self).save(*args, **kwargs)
@@ -1129,7 +1135,8 @@ class UserDetails(models.Model):
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
         _ = lambda x: x
-        permissions = (("edit_topic", _("Can edit topics, and can add new topics")),)
+        permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
+                       ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
 
     def __unicode__(self):
         return unicode(self.user)

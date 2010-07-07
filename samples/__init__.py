@@ -216,7 +216,7 @@ def touch_user_samples_and_processes(sender, instance, created, **kwargs):
     for sample in instance.samples.all():
         sample.save(with_relations=False)
     for process in instance.processes.all():
-        process.find_actual_instance().save()
+        process.actual_instance.save()
     for sample_series in instance.sample_series.all():
         sample_series.save()
 

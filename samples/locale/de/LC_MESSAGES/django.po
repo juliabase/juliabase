@@ -6,431 +6,407 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-18 13:11+0200\n"
-"PO-Revision-Date: 2010-05-18 15:34+0200\n"
+"POT-Creation-Date: 2010-07-04 23:28+0200\n"
+"PO-Revision-Date: 2010-07-04 23:49+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models_common.py:36 models_common.py:336 models_common.py:447
-#: models_common.py:816
+#: models_common.py:62 models_common.py:518 models_common.py:689
+#: models_common.py:1000
 msgid "name"
 msgstr "Name"
 
-#: models_common.py:37
+#: models_common.py:63
 msgid "institution"
 msgstr "Institution"
 
-#: models_common.py:38
+#: models_common.py:64
 msgid "email"
 msgstr "Email"
 
-#: models_common.py:39
+#: models_common.py:65
 msgid "alternative email"
 msgstr "alternative Email"
 
-#: models_common.py:40
+#: models_common.py:66
 msgid "phone"
 msgstr "Telefon"
 
-#: models_common.py:42
+#: models_common.py:68
 msgid "contact person in the institute"
 msgstr "Kontaktperson im Institut"
 
 #. Translation hint: Topic which is not open to senior members
-#: models_common.py:44 views/topic.py:31 views/topic.py:107
+#: models_common.py:70 views/topic.py:31 views/topic.py:107
 msgid "restricted"
 msgstr "beschränkt"
 
-#: models_common.py:47 models_common.py:88 models_common.py:874
+#: models_common.py:73 models_common.py:118 models_common.py:1085
 msgid "external operator"
 msgstr "externer Operateur"
 
-#: models_common.py:48
+#: models_common.py:74
 msgid "external operators"
 msgstr "externe Operateure"
 
-#: models_common.py:50
+#: models_common.py:76
 msgid "Can add an external operator"
 msgstr "Darf externen Operateur anlegen"
 
 #. Translation hint: It's about timestamps
-#: models_common.py:62
+#: models_common.py:93
 msgid "totally accurate"
 msgstr "vollständig genau"
 
-#: models_common.py:63
+#: models_common.py:94
 msgid "accurate to the minute"
 msgstr "auf die Minute genau"
 
-#: models_common.py:64
+#: models_common.py:95
 msgid "accurate to the hour"
 msgstr "auf die Stunde genau"
 
-#: models_common.py:65
+#: models_common.py:96
 msgid "accurate to the day"
 msgstr "auf den Tag genau"
 
-#: models_common.py:66
+#: models_common.py:97
 msgid "accurate to the month"
 msgstr "auf den Monat genau"
 
-#: models_common.py:67
+#: models_common.py:98
 msgid "accurate to the year"
 msgstr "auf das Jahr genau"
 
-#: models_common.py:68
+#: models_common.py:99
 msgid "not even accurate to the year"
 msgstr "nicht einmal auf das Jahr genau"
 
-#: models_common.py:85 models_common.py:322 models_common.py:819
-#: models_feeds.py:32 views/sample.py:534
+#: models_common.py:115 models_common.py:378 models_common.py:1003
+#: models_feeds.py:32
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: models_common.py:86
+#: models_common.py:116
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: models_common.py:87 models_common.py:323
+#: models_common.py:117 models_common.py:379
 msgid "operator"
 msgstr "Operateur"
 
-#: models_common.py:90 models_common.py:324 models_feeds.py:241
+#: models_common.py:120 models_common.py:380 models_feeds.py:241
 msgid "comments"
 msgstr "Kommentare"
 
-#: models_common.py:94 models_feeds.py:160 models_feeds.py:183
-#: views/lab_notebook.py:196 views/sample.py:869
+#: models_common.py:122 models_common.py:531 models_common.py:770
+#: models_common.py:1010
+msgid "last modified"
+msgstr "zuletzt geändert"
+
+#: models_common.py:123 models_common.py:532
+msgid "cache keys"
+msgstr "Cache-Schlüssel"
+
+#: models_common.py:127 models_feeds.py:160 models_feeds.py:183
+#: views/lab_notebook.py:196 views/sample.py:683
 msgid "process"
 msgstr "Prozess"
 
-#: models_common.py:95 models_common.py:347 models_common.py:523
+#: models_common.py:128 models_common.py:529 models_common.py:769
 msgid "processes"
 msgstr "Prozesse"
 
+#: models_common.py:152
+msgid "process #{0}"
+msgstr "Prozess #{0}"
+
 #. Translation hint: location of a sample
-#: models_common.py:338
+#: models_common.py:520
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: models_common.py:340 models_common.py:821
+#: models_common.py:522 models_common.py:1005
 #: templates/samples/show_sample_series.html:37
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
-#: models_common.py:341 models_feeds.py:110
+#: models_common.py:523 models_feeds.py:110
 msgid "purpose"
 msgstr "Zweck"
 
 #. Translation hint: keywords for samples
-#: models_common.py:343
+#: models_common.py:525
 msgid "tags"
 msgstr "Tags"
 
-#: models_common.py:343 views/sample.py:539
+#: models_common.py:525
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
 #. Translation hint: ID of mother sample
-#: models_common.py:346
+#: models_common.py:528
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: models_common.py:348 models_common.py:825 models_feeds.py:109
+#: models_common.py:530 models_common.py:1009 models_feeds.py:109
 #: models_feeds.py:135 models_feeds.py:331 models_feeds.py:356
 #: models_feeds.py:388
 msgid "topic"
 msgstr "Thema"
 
-#: models_common.py:351 models_common.py:448 models_common.py:522
-#: views/sample_series.py:267
+#: models_common.py:535 models_common.py:690 models_common.py:768
+#: views/sample_series.py:294
 msgid "sample"
 msgstr "Probe"
 
-#: models_common.py:352 models_common.py:823 models_feeds.py:108
+#: models_common.py:536 models_common.py:1007 models_feeds.py:108
 #: models_feeds.py:134 models_feeds.py:240 models_feeds.py:263
 msgid "samples"
 msgstr "Proben"
 
-#: models_common.py:355
+#: models_common.py:539
 msgid "Can view all samples (senior user)"
 msgstr "Darf alle Proben sehen (Seniornutzer)"
 
-#: models_common.py:452
+#: models_common.py:694
 msgid "name alias"
 msgstr "Alternativname"
 
-#: models_common.py:453
+#: models_common.py:695
 msgid "name aliases"
 msgstr "Alternativnamen"
 
 #. Translation hint: parent of a sample
-#: models_common.py:466
+#: models_common.py:714
 msgid "parent"
 msgstr "Elter"
 
-#: models_common.py:472 models_feeds.py:286
+#: models_common.py:720 models_feeds.py:286
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: models_common.py:473
+#: models_common.py:721
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: models_common.py:477
+#: models_common.py:725
 #, python-format
 msgid "split of %s"
 msgstr "Spaltung von %s"
 
-#: models_common.py:521 models_common.py:872 models_common.py:891
+#: models_common.py:767 models_common.py:1083 models_common.py:1102
 msgid "user"
 msgstr "Benutzer"
 
-#: models_common.py:527
+#: models_common.py:774
 msgid "clearance"
 msgstr "Freigabe"
 
-#: models_common.py:528
+#: models_common.py:775
 msgid "clearances"
 msgstr "Freigaben"
 
-#. Translation hint: sample substrate type
-#: models_common.py:533
-msgid "custom"
-msgstr "speziell"
-
-#: models_common.py:534
-msgid "ASAHI-U"
-msgstr "ASAHI-U"
-
-#: models_common.py:535
-msgid "Corning glass"
-msgstr "Corning-Glas"
-
-#: models_common.py:536
-msgid "silicon wafer"
-msgstr "Silizium-Wafer"
-
-#: models_common.py:548
-msgid "substrate material"
-msgstr "Substrat-Material"
-
-#: models_common.py:553 models_common.py:574
-msgid "cleaning number"
-msgstr "Reinigungsnummer"
-
-#: models_common.py:556
-msgid "substrate"
-msgstr "Substrat"
-
-#: models_common.py:557
-msgid "substrates"
-msgstr "Substrate"
-
-#: models_common.py:559
-msgid "Can clean substrates"
-msgstr "Darf Substrate reinigen"
-
-#: models_common.py:560
-msgid "Can create and edit substrates"
-msgstr "Darf Substrate hinzufügen und ändern"
-
-#: models_common.py:572
-msgid "material"
-msgstr "Material"
-
-#: models_common.py:594
+#: models_common.py:779
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: models_common.py:595
+#: models_common.py:780
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: models_common.py:596
+#: models_common.py:781
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
 #. Translation hint: Of a sample
-#: models_common.py:608
+#: models_common.py:793
 msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translation hint: Of a sample
-#: models_common.py:612 views/sample.py:167
+#: models_common.py:797 views/sample.py:165
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:614
+#: models_common.py:799
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:620
+#: models_common.py:805
 #, python-format
 msgid "cease of existence of %s"
 msgstr "Beendigung der Existenz von %s"
 
 #. Translation hint: Of a sample
-#: models_common.py:623
+#: models_common.py:808
 #, python-format
 msgid "cease of existence #%d"
 msgstr "Beendigung der Existenz #%d"
 
-#: models_common.py:626 templates/samples/topics_and_permissions.html:65
+#: models_common.py:811 templates/samples/topics_and_permissions.html:65
 #: templates/samples/topics_and_permissions.html:78
 msgid "none"
 msgstr "keine"
 
 #. Translation hint: Of a result
-#: models_common.py:637
+#: models_common.py:822
 msgid "title"
 msgstr "Überschrift"
 
-#: models_common.py:638
+#: models_common.py:823
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
 #. Translation hint: Physical quantities are meant
-#: models_common.py:640
+#: models_common.py:825
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
 
-#: models_common.py:640
+#: models_common.py:825
 msgid "in Python pickle format"
 msgstr "im Python-Pickle-Format"
 
 #. Translation hint: experimental result
-#: models_common.py:654 models_feeds.py:210
+#: models_common.py:839 models_feeds.py:210
 msgid "result"
 msgstr "Ergebnis"
 
 #. Translation hint: experimental results
-#: models_common.py:656 models_common.py:824
+#: models_common.py:841 models_common.py:1008
 msgid "results"
 msgstr "Ergebnisse"
 
 #. Translation hint: experimental result
-#: models_common.py:662 models_common.py:666
+#: models_common.py:857 models_common.py:861
 #, python-format
 msgid "result for %s"
 msgstr "Ergebnis für %s"
 
 #. Translation hint: experimental result
-#: models_common.py:669
+#: models_common.py:864
 #, python-format
 msgid "result #%d"
 msgstr "Ergebnis #%d"
 
 #. Translation hint: In a table
-#: models_common.py:802 views/result.py:609
+#: models_common.py:986 views/result.py:609
 msgid "row"
 msgstr "Zeile"
 
-#: models_common.py:802
+#: models_common.py:986
 #, python-format
 msgid "row #%d"
 msgstr "Zeile %d"
 
 #. Translation hint: The “Y” stands for “year”
-#: models_common.py:818
+#: models_common.py:1002
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
-#: models_common.py:822 models_feeds.py:138 models_feeds.py:184
+#: models_common.py:1006 models_feeds.py:138 models_feeds.py:184
 #: models_feeds.py:211 models_feeds.py:264 models_feeds.py:310
 #: models_feeds.py:359
 msgid "description"
 msgstr "Beschreibung"
 
-#: models_common.py:828 models_feeds.py:309 models_feeds.py:330
+#: models_common.py:1013 models_feeds.py:309 models_feeds.py:330
 #: models_feeds.py:355
 msgid "sample series"
 msgstr "Probenserie"
 
-#: models_common.py:829
+#: models_common.py:1014
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: models_common.py:871 models_common.py:878
+#: models_common.py:1082 models_common.py:1089
 msgid "initials"
 msgstr "Kürzel"
 
 #. Translation hint: Plural of “initials”
-#: models_common.py:880
+#: models_common.py:1091
 msgid "initialses"
 msgstr "Kürzel"
 
-#: models_common.py:893
+#: models_common.py:1104
 msgid "my samples"
 msgstr "meine Proben"
 
-#: models_common.py:895
+#: models_common.py:1106
 msgid "auto-addition topics"
 msgstr "Themen mit Auto-Hinzufügen"
 
-#: models_common.py:896
+#: models_common.py:1107
 msgid "new samples in these topics are automatically added to “My Samples”"
 msgstr ""
 "neue Proben in diesen Themen werden automatisch zu „Meine Proben“ hinzugefügt"
 
-#: models_common.py:897
+#: models_common.py:1108
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: models_common.py:898 models_feeds.py:40
+#: models_common.py:1109 models_feeds.py:40
 msgid "feed entries"
 msgstr "Feed-Einträge"
 
-#: models_common.py:899
+#: models_common.py:1110
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: models_common.py:908 models_common.py:909
+#: models_common.py:1117
+msgid "display settings last modified"
+msgstr "Anzeigeoptionen zuletzt geändert"
+
+#: models_common.py:1123
+msgid "My Samples last modified"
+msgstr "Meine Proben zuletzt geändert"
+
+#: models_common.py:1129 models_common.py:1130
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models_common.py:911
+#: models_common.py:1132
 msgid "Can edit topics, and can add new topics"
 msgstr "Darf Themen ändern und neue Themen hinzufügen"
 
-#: models_depositions.py:39
+#: models_depositions.py:40
 msgid "deposition number"
 msgstr "Depositionsnummer"
 
-#: models_depositions.py:42
+#: models_depositions.py:43
 msgid "deposition"
 msgstr "Deposition"
 
-#: models_depositions.py:43
+#: models_depositions.py:44
 msgid "depositions"
 msgstr "Depositionen"
 
-#: models_depositions.py:51
+#: models_depositions.py:52
 #, python-format
 msgid "deposition %s"
 msgstr "Deposition %s"
 
-#: models_depositions.py:57 models_depositions.py:119
+#: models_depositions.py:58 models_depositions.py:120
 msgid "number"
 msgstr "Nummer"
 
-#: models_depositions.py:99
+#: models_depositions.py:100
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: models_depositions.py:104
+#: models_depositions.py:105
 msgid "layer"
 msgstr "Schicht"
 
-#: models_depositions.py:105
+#: models_depositions.py:106
 msgid "layers"
 msgstr "Schichten"
 
-#: models_depositions.py:118
+#: models_depositions.py:119
 #, python-format
 msgid "layer %d"
 msgstr "Schicht %d"
@@ -768,24 +744,7 @@ msgstr ""
 "Sie dürfen kein Resultat zu %s hinzufügen, weil Sie weder der aktuell "
 "Verantwortliche für diese Probenserie sind, noch ein Mitglied ihres Themas."
 
-#: permissions.py:413
-#, python-format
-msgid ""
-"You are not allowed to edit the substrate #%d because you are not allowed to "
-"edit all affected samples."
-msgstr ""
-"Sie dürfen das Substrat #%d nicht verändern, weil Sie nicht alle betroffenen "
-"Proben ändern dürfen."
-
-#: permissions.py:416
-msgid ""
-"You are not allowed to add a substrate because you are not allowed to edit "
-"all affected samples."
-msgstr ""
-"Sie dürfen das Substrat nicht neu anlegen, weil Sie nicht alle betroffenen "
-"Proben ändern dürfen."
-
-#: permissions.py:435
+#: permissions.py:401
 #, python-format
 msgid ""
 "You are not allowed to edit the sample “%s” (including splitting and "
@@ -795,7 +754,7 @@ msgstr ""
 "Sie dürfen die Probe „%s“ nicht ändern (inklusive spalten und für tot "
 "erklären), weil Sie nicht ihr aktuell Verantwortlicher sind."
 
-#: permissions.py:456
+#: permissions.py:422
 #, python-format
 msgid ""
 "You are not allowed to edit the sample series “%s” because you are not the "
@@ -804,7 +763,7 @@ msgstr ""
 "Sie dürfen die Probenserie „%s“ nicht ändern, weil Sie nicht ihr aktuell "
 "Verantwortlicher sind."
 
-#: permissions.py:476
+#: permissions.py:442
 #, python-format
 msgid ""
 "You are not allowed to view the sample series “%s” because neither areyou "
@@ -813,7 +772,7 @@ msgstr ""
 "Sie dürfen die Probenserie %s nicht sehen, weil Sie weder der aktuell "
 "Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themas."
 
-#: permissions.py:495
+#: permissions.py:461
 #, python-format
 msgid ""
 "You are not allowed to add an external operator because you don't have the "
@@ -822,7 +781,7 @@ msgstr ""
 "Sie dürfen keinen neuen externen Operateur anlegen, weil Ihnen die "
 "Berechtgung „%s“ fehlt."
 
-#: permissions.py:515
+#: permissions.py:481
 msgid ""
 "You are not allowed to edit this external operator because you aren't their "
 "current contact person."
@@ -830,7 +789,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht ändern, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: permissions.py:536
+#: permissions.py:502
 msgid ""
 "You are not allowed to view this external operator because you are not their "
 "current contact person."
@@ -838,7 +797,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht einsehen, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: permissions.py:540
+#: permissions.py:506
 msgid ""
 "You are not allowed to view this external operator because neither are you "
 "their current contact person, nor are you a senior user."
@@ -846,7 +805,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht einsehen, weil Sie weder die "
 "aktuelle Kontaktperson für ihn sind, noch ein Seniornutzer sind."
 
-#: permissions.py:564
+#: permissions.py:530
 #, python-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -854,13 +813,13 @@ msgid ""
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „%s“ fehlt."
 
-#: permissions.py:568
+#: permissions.py:534
 msgid ""
 "You are not allowed to change this topic because you are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
 
-#: permissions.py:595
+#: permissions.py:561
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
@@ -869,7 +828,7 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
-#: permissions.py:599
+#: permissions.py:565
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
@@ -880,15 +839,6 @@ msgstr "Zugriff verweigert"
 #: middleware/chantal.py:47
 msgid "Ambiguous sample name"
 msgstr "Mehrdeutiger Probenname"
-
-#: templates/samples/add_samples.html:9
-#: templates/samples/edit_description.html:6
-#: templates/samples/edit_my_samples.html:9
-#: templates/samples/edit_result.html:10
-#: templates/samples/edit_sample_death.html:9
-#: templates/samples/split_and_rename.html:9
-msgid "General error"
-msgstr "Allgemeiner Fehler"
 
 #: templates/samples/add_topic.html:9
 msgid "New topic"
@@ -997,6 +947,14 @@ msgstr ""
 "\n"
 "Der Name %(alias)s ist ein Alias für die folgenden Proben:"
 
+#: templates/samples/edit_description.html:6
+#: templates/samples/edit_my_samples.html:9
+#: templates/samples/edit_result.html:10
+#: templates/samples/edit_sample_death.html:9
+#: templates/samples/split_and_rename.html:9
+msgid "General error"
+msgstr "Allgemeiner Fehler"
+
 #: templates/samples/edit_external_operator.html:9
 msgid "Error in external operator"
 msgstr "Fehler im externen Operateur"
@@ -1055,14 +1013,6 @@ msgstr "Fehler in den Proben"
 #: templates/samples/edit_sample_series.html:10
 msgid "Error in sample series"
 msgstr "Fehler in Probenserie"
-
-#: templates/samples/edit_substrate.html:9
-msgid "Substrate error"
-msgstr "Substratfehler"
-
-#: templates/samples/edit_substrate.html:10
-msgid "Sample list error"
-msgstr "Probenlistenfehler"
 
 #: templates/samples/edit_topic.html:9
 msgid "Error in topic data"
@@ -1547,7 +1497,7 @@ msgid "Add things"
 msgstr "Dinge hinzufügen"
 
 #: templates/samples/main_menu.html:59 templates/samples/main_menu.html:71
-#: views/form_utils.py:526 views/result.py:93 views/sample_series.py:37
+#: views/form_utils.py:526 views/result.py:93 views/sample_series.py:38
 msgid "Samples"
 msgstr "Proben"
 
@@ -1615,19 +1565,19 @@ msgstr "Meine Themen und Berechtigungen"
 msgid "Edit “My Layers”"
 msgstr "„Meine Schichten“ ändern"
 
-#: templates/samples/main_menu.html:123
+#: templates/samples/main_menu.html:122
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/samples/main_menu.html:126
+#: templates/samples/main_menu.html:124
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:129
+#: templates/samples/main_menu.html:127
 msgid "About Chantal"
 msgstr "Über Chantal"
 
-#: templates/samples/main_menu.html:131
+#: templates/samples/main_menu.html:129
 msgid "Server statistics"
 msgstr "Server-Statistik"
 
@@ -1789,7 +1739,9 @@ msgstr "Prozess hinzufügen"
 msgid ""
 "You can see this sample only due to a clearance.  Therefore, some fields and "
 "processes are hidden."
-msgstr "Sie können diese Probe nur aufgrund einer Freigabe sehen.  Deshalb sind einige Angaben und Prozesse versteckt."
+msgstr ""
+"Sie können diese Probe nur aufgrund einer Freigabe sehen.  Deshalb sind "
+"einige Angaben und Prozesse versteckt."
 
 #: templates/samples/show_sample.html:49
 msgid "Attention: Topicless samples may be viewed and edited by anyone."
@@ -1808,7 +1760,10 @@ msgid_plural ""
 "                          This sample is part of the following sample "
 "series:  <!-- %(first_url)s  %(first_series)s -->\n"
 "                        "
-msgstr[0] "\nDiese Probe gehört zur Probenserie „<a href=\"%(first_url)s\">%(first_series)s</a>“."
+msgstr[0] ""
+"\n"
+"Diese Probe gehört zur Probenserie „<a href=\"%(first_url)s\">%(first_series)"
+"s</a>“."
 msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien:"
@@ -1833,8 +1788,8 @@ msgstr "Diese Probenserie umfasst die folgenden Proben:"
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
-#: templates/samples/show_sample_series.html:36 views/sample.py:44
-#: views/sample.py:540 views/sample_series.py:36
+#: templates/samples/show_sample_series.html:36 views/sample.py:42
+#: views/sample_series.py:37
 msgid "Topic"
 msgstr "Thema"
 
@@ -1904,14 +1859,6 @@ msgstr[1] ""
 #: templates/samples/show_single_result.html:47
 msgid "Edit this result"
 msgstr "Ergebnis ändern"
-
-#: templates/samples/show_substrate.html:6
-msgid "Material"
-msgstr "Material"
-
-#: templates/samples/show_substrate.html:8 views/sample.py:542
-msgid "Cleaning number"
-msgstr "Reinigungsnummer"
 
 #: templates/samples/split_after_deposition.html:17
 #: templates/samples/split_after_deposition.html:34
@@ -2123,16 +2070,12 @@ msgstr "Sie haben keine externen Kontakte."
 msgid "All you external contacts"
 msgstr "Alle Ihre externen Kontakte"
 
-#: views/feed.py:144
-msgid "You must add a \"hash\" parameter to the query string."
-msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
-
 #: views/feed.py:150
 #, python-format
 msgid "Chantal news for %s"
 msgstr "Chantal-Neuigkeiten für %s"
 
-#: views/form_utils.py:43 views/sample.py:574
+#: views/form_utils.py:43
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
@@ -2164,39 +2107,43 @@ msgstr "Beschreibung der Änderung"
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: views/form_utils.py:580
+#: views/form_utils.py:558
+msgid "Remove processed sample(s) from My Samples"
+msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
+
+#: views/form_utils.py:589
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: views/form_utils.py:584
+#: views/form_utils.py:593
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: views/form_utils.py:613
+#: views/form_utils.py:622
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: views/form_utils.py:645
+#: views/form_utils.py:654
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: views/form_utils.py:651
+#: views/form_utils.py:660
 #, python-format
 msgid "The unit is invalid.  Valid units are: %s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %s"
 
 #. Translation hint: “YY” is year, “L” is letter, and “NNN” is number
-#: views/form_utils.py:680
+#: views/form_utils.py:689
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr ""
 "Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
 
-#: views/form_utils.py:682
+#: views/form_utils.py:691
 #, python-format
 msgid "The deposition letter must be an uppercase “%s”."
 msgstr "Der Depositionsbuchstabe muss ein großes „%s“ sein."
 
-#: views/form_utils.py:832
+#: views/form_utils.py:841
 #, python-format
 msgid "Couldn't open %s."
 msgstr "Konnte %s nicht öffnen."
@@ -2215,19 +2162,19 @@ msgid "Lab notebook for %s"
 msgstr "Laborbuch für %s"
 
 #. Translation hint: This is a page name in the Chantal wiki
-#: views/main.py:75
+#: views/main.py:76
 msgid "MainMenu"
 msgstr "MainMenu"
 
-#: views/main.py:105
+#: views/main.py:106
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: views/main.py:124
+#: views/main.py:125
 msgid "Deposition number pattern"
 msgstr "Muster für Depositionsnummer"
 
-#: views/main.py:161
+#: views/main.py:162
 msgid "Search for deposition"
 msgstr "Nach Deposition suchen"
 
@@ -2321,7 +2268,9 @@ msgstr ""
 
 #: views/my_samples.py:81
 msgid "If you set a clearance, you must copy samples to another user."
-msgstr "Wenn Sie eine Freigabe setzen, müssen sie die Proben zu einem anderen Benutzer kopieren."
+msgstr ""
+"Wenn Sie eine Freigabe setzen, müssen sie die Proben zu einem anderen "
+"Benutzer kopieren."
 
 #: views/my_samples.py:85
 msgid "If you edit samples, you must enter a short comment."
@@ -2339,7 +2288,9 @@ msgstr ""
 msgid ""
 "If you copy samples over to another person who cannot fully view one of the "
 "samples, you must select a clearance option."
-msgstr "Wenn Sie Proben zu einer anderen Person kopieren, die die Probe nicht vollständig sehen kann, müssen Sie eine Freigabe-Option wählen."
+msgstr ""
+"Wenn Sie Proben zu einer anderen Person kopieren, die die Probe nicht "
+"vollständig sehen kann, müssen Sie eine Freigabe-Option wählen."
 
 #: views/my_samples.py:258
 msgid "You can't access the “My Samples” section of another user."
@@ -2425,36 +2376,36 @@ msgstr "Ergebnis hinzufügen"
 msgid "Result “%s”"
 msgstr "Ergebnis „%s“"
 
-#: views/sample.py:34
+#: views/sample.py:32
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
-#: views/sample.py:43 views/sample_series.py:35
+#: views/sample.py:41 views/sample_series.py:36
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
-#: views/sample.py:83 views/sample_series.py:140
+#: views/sample.py:81 views/sample_series.py:167
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
 "Änderungen des Themas oder des Verantwortlichen müssen immer als „wichtig“ "
 "markiert werden."
 
-#: views/sample.py:123
+#: views/sample.py:121
 #, python-format
 msgid "Sample %s was successfully changed in the database."
 msgstr "Die Probe %s wurde erfolgreich in der Datenbank geändert."
 
-#: views/sample.py:128
+#: views/sample.py:126
 #, python-format
 msgid "Edit sample “%s”"
 msgstr "Ändern der Probe „%s“"
 
-#: views/sample.py:165
+#: views/sample.py:163
 msgid "split"
 msgstr "Spaltung"
 
-#: views/sample.py:175
+#: views/sample.py:173
 #, python-format
 msgid ""
 "You are not allowed to add any processes to the sample %s because neither "
@@ -2465,129 +2416,36 @@ msgstr ""
 "aktueller Verantwortlicher sind, noch in ihrem Thema sind, noch spezielle "
 "Berechtigungen für physikalische Prozesse haben."
 
-#: views/sample.py:460
+#: views/sample.py:507
 msgid "Sample {samples} was added to My Samples."
 msgid_plural "Samples {samples} were added to My Samples."
 msgstr[0] "Probe {samples} wurde zu Meinen Proben hinzugefügt."
 msgstr[1] "Die Proben {samples} wurden zu Meinen Proben hinzugefügt."
 
-#: views/sample.py:468
+#: views/sample.py:515
 msgid "Sample {samples} was removed from My Samples."
 msgid_plural "Samples {samples} were removed from My Samples."
 msgstr[0] "Probe {samples} wurde von Meinen Proben entfernt."
 msgstr[1] "Die Proben {samples} wurden von Meinen Proben entfernt."
 
-#: views/sample.py:472
+#: views/sample.py:519
 msgid "Nothing was changed."
 msgstr "Es wurde nichts geändert."
 
-#: views/sample.py:477
+#: views/sample.py:525
 msgid "Sample “{0}”"
 msgstr "Probe „{0}“"
 
-#: views/sample.py:530
-msgid "Number of samples"
-msgstr "Anzahl der Proben"
-
-#: views/sample.py:531
-msgid "Substrate"
-msgstr "Substrat"
-
-#: views/sample.py:532
-msgid "Substrate comments"
-msgstr "Substrat-Kommentare"
-
-#: views/sample.py:533
-msgid "Substrate originator"
-msgstr "Substrat-Urheber"
-
-#: views/sample.py:536
-msgid "Current location"
-msgstr "Aktueller Probenort"
-
-#: views/sample.py:537
-msgid "Purpose"
-msgstr "Zweck"
-
-#: views/sample.py:538
-msgid "Tags"
-msgstr "Tags"
-
-#: views/sample.py:541
-msgid "Give names"
-msgstr "Namen vergeben"
-
-#: views/sample.py:549
-#, python-format
-msgid "with %(markdown_link)s syntax"
-msgstr "mit %(markdown_link)s-Syntax"
-
-#: views/sample.py:597 views/substrate.py:71
-msgid "The cleaning number you have chosen isn't valid."
-msgstr "Diese Reinigungsnummer ist ungültig."
-
-#: views/sample.py:599 views/substrate.py:73
-msgid "The cleaning number you have chosen already exists."
-msgstr "Diese Reinigungsnummer existiert bereits."
-
-#: views/sample.py:607 views/substrate.py:80
-msgid "For a custom substrate, you must give substrate comments."
-msgstr ""
-"Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
-"beschreiben."
-
-#: views/sample.py:609
-msgid "You selected “no substrate”, so your substrate comments would be lost."
-msgstr ""
-"Sie haben „kein Substrat“ gewählt, also würden Ihre Substrat-Kommentare "
-"verloren gehen."
-
-#: views/sample.py:613
-msgid "You selected “no substrate”, so the external originator would be lost."
-msgstr ""
-"Sie haben „kein Substrat“ gewählt, also würde der externe Operateur verloren "
-"gehen."
-
-#: views/sample.py:729
-msgid ""
-"{number_of_samples} sample with cleaning number “{cleaning_number}” was "
-"added to the database."
-msgid_plural ""
-"{number_of_samples} samples with cleaning number “{cleaning_number}” were "
-"added to the database."
-msgstr[0] "{number_of_samples} Probe mit der Reinigungsnummer „{cleaning_number}“ wurde zur Datenbank hinzugefügt."
-msgstr[1] "{number_of_samples} Proben mit der Reinigungsnummer „{cleaning_number}“ wurden zur Datenbank hinzugefügt."
-
-#: views/sample.py:734
-#, python-format
-msgid ""
-"Your samples have the provisional names from %(first_name)s to %(last_name)"
-"s.  They were added to “My Samples”."
-msgstr ""
-"Ihre Proben haben die provisorischen Namen von %(first_name)s bis %"
-"(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
-
-#: views/sample.py:738
-#, python-format
-msgid "Your sample has the provisional name %s.  It was added to “My Samples”."
-msgstr ""
-"Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ "
-"hinzugefügt."
-
-#: views/sample.py:748
-msgid "Add samples"
-msgstr "Proben hinzufügen"
-
-#: views/sample.py:775
+#: views/sample.py:589
 #, python-format
 msgid "Add process to sample “%s”"
 msgstr "Prozess zu Probe „%s“ hinzufügen"
 
-#: views/sample.py:785
+#: views/sample.py:599
 msgid "Name pattern"
 msgstr "Namensmuster"
 
-#: views/sample.py:843
+#: views/sample.py:657
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
@@ -2605,42 +2463,42 @@ msgstr "Probe „%s“ wurde getötet."
 msgid "Kill sample “%s”"
 msgstr "Töten der Probe „%s“"
 
-#: views/sample_series.py:34
+#: views/sample_series.py:35
 msgid "Name"
 msgstr "Name"
 
-#: views/sample_series.py:106
+#: views/sample_series.py:133
 #, python-format
 msgid "Sample series “%s”"
 msgstr "Probenserie „%s“"
 
-#: views/sample_series.py:181
+#: views/sample_series.py:208
 #, python-format
 msgid "Sample series %s was successfully updated in the database."
 msgstr "Die Probenserie %s wurde erfolgreich in der Datenbank geändert."
 
-#: views/sample_series.py:191
+#: views/sample_series.py:218
 #, python-format
 msgid "Edit sample series “%s”"
 msgstr "Ändern der Probenserie „%s“"
 
-#: views/sample_series.py:220
+#: views/sample_series.py:247
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: views/sample_series.py:223
+#: views/sample_series.py:250
 #, python-format
 msgid "The name is %d letter too long."
 msgid_plural "The name is %d letters too long."
 msgstr[0] "Der Name ist %d Buchstaben zu lang."
 msgstr[1] "Der Name ist %d Buchstaben zu lang."
 
-#: views/sample_series.py:234
+#: views/sample_series.py:261
 #, python-format
 msgid "Sample series %s was successfully added to the database."
 msgstr "Die Probenserie %s wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/sample_series.py:238
+#: views/sample_series.py:265
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
@@ -2794,36 +2652,6 @@ msgstr "Die Probe „%s“ wurde erfolgreich gespalten."
 msgid "Split sample “%s”"
 msgstr "Spalten der Probe „%s“"
 
-#: views/substrate.py:23
-msgid "Operator"
-msgstr "Operateur"
-
-#: views/substrate.py:117
-msgid ""
-"Sample {0} has already processes before the timestamp of this substrate, "
-"namely from {1}."
-msgstr "Die Probe {0} hat bereits einen Prozess vor dem Zeitstempel dieses Substrates, nämlich von {1}."
-
-#: views/substrate.py:121
-msgid "Sample {0} has already a substrate."
-msgstr "Die Probe {0} hat bereits ein Substrat."
-
-#: views/substrate.py:168
-msgid "Substrate {0} was successfully changed in the database."
-msgstr "Das Substrat {0} wurde erfolgreich in der Datenbank geändert."
-
-#: views/substrate.py:172
-msgid "Substrate {0} was successfully added to the database."
-msgstr "Das Substrat {0} wurde erfolgreich zur Datenbank hinzugefügt."
-
-#: views/substrate.py:178
-msgid "Edit substrate “{0}”"
-msgstr "Ändern des Substrats „{0}“"
-
-#: views/substrate.py:178
-msgid "Add substrate"
-msgstr "Substrat hinzufügen"
-
 #: views/topic.py:29
 msgid "Name of new topic"
 msgstr "Name des neuen Themas"
@@ -2890,22 +2718,188 @@ msgstr ""
 msgid "Topics and permissions for %s"
 msgstr "Themen und Berechtigungen von %s"
 
-#: views/utils.py:298
+#: views/utils.py:193
 #, python-format
 msgid "Sample %s could not be found (neither as an alias)."
 msgstr "Probe %s konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: views/utils.py:686
+#: views/utils.py:581
 msgid ", "
 msgstr ", "
 
-#: views/utils.py:686
+#: views/utils.py:581
 msgid ", and "
 msgstr " und "
 
-#: views/utils.py:688
+#: views/utils.py:583
 msgid " and "
 msgstr " und "
+
+#~ msgid "custom"
+#~ msgstr "speziell"
+
+#~ msgid "ASAHI-U"
+#~ msgstr "ASAHI-U"
+
+#~ msgid "Corning glass"
+#~ msgstr "Corning-Glas"
+
+#~ msgid "silicon wafer"
+#~ msgstr "Silizium-Wafer"
+
+#~ msgid "substrate material"
+#~ msgstr "Substrat-Material"
+
+#~ msgid "cleaning number"
+#~ msgstr "Reinigungsnummer"
+
+#~ msgid "substrate"
+#~ msgstr "Substrat"
+
+#~ msgid "substrates"
+#~ msgstr "Substrate"
+
+#~ msgid "Can clean substrates"
+#~ msgstr "Darf Substrate reinigen"
+
+#~ msgid "Can create and edit substrates"
+#~ msgstr "Darf Substrate hinzufügen und ändern"
+
+#~ msgid "material"
+#~ msgstr "Material"
+
+#~ msgid ""
+#~ "You are not allowed to edit the substrate #%d because you are not allowed "
+#~ "to edit all affected samples."
+#~ msgstr ""
+#~ "Sie dürfen das Substrat #%d nicht verändern, weil Sie nicht alle "
+#~ "betroffenen Proben ändern dürfen."
+
+#~ msgid ""
+#~ "You are not allowed to add a substrate because you are not allowed to "
+#~ "edit all affected samples."
+#~ msgstr ""
+#~ "Sie dürfen das Substrat nicht neu anlegen, weil Sie nicht alle "
+#~ "betroffenen Proben ändern dürfen."
+
+#~ msgid "Substrate error"
+#~ msgstr "Substratfehler"
+
+#~ msgid "Sample list error"
+#~ msgstr "Probenlistenfehler"
+
+#~ msgid "Material"
+#~ msgstr "Material"
+
+#~ msgid "Cleaning number"
+#~ msgstr "Reinigungsnummer"
+
+#~ msgid "You must add a \"hash\" parameter to the query string."
+#~ msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
+
+#~ msgid "Number of samples"
+#~ msgstr "Anzahl der Proben"
+
+#~ msgid "Substrate"
+#~ msgstr "Substrat"
+
+#~ msgid "Substrate comments"
+#~ msgstr "Substrat-Kommentare"
+
+#~ msgid "Substrate originator"
+#~ msgstr "Substrat-Urheber"
+
+#~ msgid "Current location"
+#~ msgstr "Aktueller Probenort"
+
+#~ msgid "Purpose"
+#~ msgstr "Zweck"
+
+#~ msgid "Tags"
+#~ msgstr "Tags"
+
+#~ msgid "Give names"
+#~ msgstr "Namen vergeben"
+
+#~ msgid "with %(markdown_link)s syntax"
+#~ msgstr "mit %(markdown_link)s-Syntax"
+
+#~ msgid "The cleaning number you have chosen isn't valid."
+#~ msgstr "Diese Reinigungsnummer ist ungültig."
+
+#~ msgid "The cleaning number you have chosen already exists."
+#~ msgstr "Diese Reinigungsnummer existiert bereits."
+
+#~ msgid "For a custom substrate, you must give substrate comments."
+#~ msgstr ""
+#~ "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
+#~ "beschreiben."
+
+#~ msgid ""
+#~ "You selected “no substrate”, so your substrate comments would be lost."
+#~ msgstr ""
+#~ "Sie haben „kein Substrat“ gewählt, also würden Ihre Substrat-Kommentare "
+#~ "verloren gehen."
+
+#~ msgid ""
+#~ "You selected “no substrate”, so the external originator would be lost."
+#~ msgstr ""
+#~ "Sie haben „kein Substrat“ gewählt, also würde der externe Operateur "
+#~ "verloren gehen."
+
+#~ msgid ""
+#~ "{number_of_samples} sample with cleaning number “{cleaning_number}” was "
+#~ "added to the database."
+#~ msgid_plural ""
+#~ "{number_of_samples} samples with cleaning number “{cleaning_number}” were "
+#~ "added to the database."
+#~ msgstr[0] ""
+#~ "{number_of_samples} Probe mit der Reinigungsnummer „{cleaning_number}“ "
+#~ "wurde zur Datenbank hinzugefügt."
+#~ msgstr[1] ""
+#~ "{number_of_samples} Proben mit der Reinigungsnummer „{cleaning_number}“ "
+#~ "wurden zur Datenbank hinzugefügt."
+
+#~ msgid ""
+#~ "Your samples have the provisional names from %(first_name)s to %"
+#~ "(last_name)s.  They were added to “My Samples”."
+#~ msgstr ""
+#~ "Ihre Proben haben die provisorischen Namen von %(first_name)s bis %"
+#~ "(last_name)s.  Sie wurden zu „Meine Proben“ hinzugefügt."
+
+#~ msgid ""
+#~ "Your sample has the provisional name %s.  It was added to “My Samples”."
+#~ msgstr ""
+#~ "Ihre Probe hat den provisorischen Namen %s.  Sie wurde zu „Meine Proben“ "
+#~ "hinzugefügt."
+
+#~ msgid "Add samples"
+#~ msgstr "Proben hinzufügen"
+
+#~ msgid "Operator"
+#~ msgstr "Operateur"
+
+#~ msgid ""
+#~ "Sample {0} has already processes before the timestamp of this substrate, "
+#~ "namely from {1}."
+#~ msgstr ""
+#~ "Die Probe {0} hat bereits einen Prozess vor dem Zeitstempel dieses "
+#~ "Substrates, nämlich von {1}."
+
+#~ msgid "Sample {0} has already a substrate."
+#~ msgstr "Die Probe {0} hat bereits ein Substrat."
+
+#~ msgid "Substrate {0} was successfully changed in the database."
+#~ msgstr "Das Substrat {0} wurde erfolgreich in der Datenbank geändert."
+
+#~ msgid "Substrate {0} was successfully added to the database."
+#~ msgstr "Das Substrat {0} wurde erfolgreich zur Datenbank hinzugefügt."
+
+#~ msgid "Edit substrate “{0}”"
+#~ msgstr "Ändern des Substrats „{0}“"
+
+#~ msgid "Add substrate"
+#~ msgstr "Substrat hinzufügen"
 
 #~ msgid "You have not the permission to give cleaning numbers."
 #~ msgstr "Sie haben nicht die Berechtigung, Reinigungsnummern zu vergeben."

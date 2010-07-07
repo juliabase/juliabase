@@ -111,14 +111,14 @@ class EditTopicForm(forms.Form):
         self.fields["members"].set_users(topic.members.all())
         self.fields["restricted"].initial = topic.restricted
         self.user = user
+        self.topic = topic
 
     def clean(self):
         cleaned_data = self.cleaned_data
         if "members" in cleaned_data and "restricted" in cleaned_data:
             if cleaned_data["restricted"] and \
-                    not any(permissions.has_permission_to_edit_topic(user) for user in cleaned_data["members"]):
-                append_error(self,
-                             _(u"In restricted topics, at least one member must have permission to change topics."),
+                    not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):
+                append_error(self, _(u"In restricted topics, at least one member must have permission to edit the topic."),
                              "members")
         return cleaned_data
 
@@ -126,7 +126,8 @@ class EditTopicForm(forms.Form):
 @login_required
 def edit(request, name):
     u"""View for changing the members of a particular topic, and to set the
-    restriction status.  This is only allowed to heads of institute groups.
+    restriction status.  This is only allowed to heads of institute groups and
+    topic managers.
 
     :Parameters:
       - `request`: the current HTTP Request object
