@@ -542,7 +542,7 @@ class Sample(models.Model):
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples")),)
+        permissions = (("can_view_all_samples", _("Can view all samples")),)
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
@@ -1134,9 +1134,6 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
-        _ = lambda x: x
-        permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
-                       ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
 
     def __unicode__(self):
         return unicode(self.user)
