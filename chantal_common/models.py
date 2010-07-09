@@ -79,6 +79,9 @@ class Topic(models.Model):
     class Meta:
         verbose_name = _(u"topic")
         verbose_name_plural = _(u"topics")
+        _ = lambda x: x
+        permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
+                       ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
 
     def __unicode__(self):
         return unicode(self.name)
