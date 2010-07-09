@@ -125,7 +125,7 @@ def show(request, name):
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
-    user_details = utils.get_profile(request.user)
+    user_details = request.user.samples_user_details
     result_processes = [utils.digest_process(result, request.user) for result in sample_series.results.all()]
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
@@ -187,7 +187,7 @@ def edit(request, name):
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_edit_sample_series(request.user, sample_series)
-    user_details = utils.get_profile(request.user)
+    user_details = request.user.samples_user_details
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(user_details, request.POST, instance=sample_series)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
@@ -236,7 +236,7 @@ def new(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = utils.get_profile(request.user)
+    user_details = request.user.samples_user_details
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(user_details, request.POST)
         if sample_series_form.is_valid():

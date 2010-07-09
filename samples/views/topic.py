@@ -156,11 +156,11 @@ def edit(request, name):
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)
-                    topic.auto_adders.add(utils.get_profile(user))
+                    topic.auto_adders.add(user.samples_user_details)
             for user in old_members:
                 if user not in new_members:
                     removed_members.append(user)
-                    topic.auto_adders.remove(utils.get_profile(user))
+                    topic.auto_adders.remove(user.samples_user_details)
             if added_members:
                 feed_utils.Reporter(request.user).report_changed_topic_membership(added_members, topic, "added")
             if removed_members:

@@ -89,7 +89,7 @@ class Reporter(object):
         """
         self.interested_users -= self.already_informed_users
         self.already_informed_users.update(self.interested_users)
-        self.interested_users.discard(utils.get_profile(self.originator))
+        self.interested_users.discard(self.originator.samples_user_details)
         if self.interested_users:
             entry.users = self.interested_users
         else:
@@ -146,7 +146,7 @@ class Reporter(object):
 
         :type topic: ``chantal_common.models.Topic``
         """
-        self.interested_users.update(utils.get_profile(user) for user in topic.members.all())
+        self.interested_users.update(user.samples_user_details for user in topic.members.all())
 
     def __get_subscribers(self, sample_series):
         u"""
@@ -258,7 +258,7 @@ class Reporter(object):
         """
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
         entry.samples = samples
-        self.interested_users.add(utils.get_profile(recipient))
+        self.interested_users.add(recipient.samples_user_details)
         self.__connect_with_users(entry)
 
     def report_new_responsible_person_samples(self, samples, edit_description):
@@ -283,7 +283,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True)
         entry.samples = samples
-        self.interested_users.add(utils.get_profile(samples[0].currently_responsible_person))
+        self.interested_users.add(samples[0].currently_responsible_person.samples_user_details)
         self.__connect_with_users(entry)
 
     def report_changed_sample_topic(self, samples, old_topic, edit_description):
@@ -399,7 +399,7 @@ class Reporter(object):
         entry = models.FeedEditedSampleSeries.objects.create(
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True, sample_series=sample_series)
-        self.interested_users.add(utils.get_profile(sample_series.currently_responsible_person))
+        self.interested_users.add(sample_series.currently_responsible_person.samples_user_details)
         self.__connect_with_users(entry)
 
     def report_changed_sample_series_topic(self, sample_series, old_topic, edit_description):
@@ -462,5 +462,5 @@ class Reporter(object):
         :type action: str
         """
         entry = models.FeedChangedTopic.objects.create(originator=self.originator, topic=topic, action=action)
-        self.interested_users = set(utils.get_profile(user) for user in users)
+        self.interested_users = set(user.samples_user_details for user in users)
         self.__connect_with_users(entry)

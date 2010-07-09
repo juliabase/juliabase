@@ -270,7 +270,7 @@ class FormSet(object):
         :type process_id: unicode or ``NoneType``
         """
         self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
-        self.user_details = utils.get_profile(request.user)
+        self.user_details = request.user.samples_user_details
         self.query_string_dict = utils.parse_query_string(request) if not self.result else None
 
     def from_database(self):

@@ -180,9 +180,9 @@ def save_to_database(user, my_samples_form, action_form):
     """
     action_data = action_form.cleaned_data
     if action_data["copy_to_user"]:
-        recipient_my_samples = utils.get_profile(action_data["copy_to_user"]).my_samples
+        recipient_my_samples = action_data["copy_to_user"].samples_user_details.my_samples
     if action_data["remove_from_my_samples"]:
-        current_user_my_samples = utils.get_profile(user).my_samples
+        current_user_my_samples = user.samples_user_details.my_samples
     samples = my_samples_form.cleaned_data["samples"]
     samples_with_new_responsible_person = []
     samples_with_new_topic = {}
@@ -205,7 +205,7 @@ def save_to_database(user, my_samples_form, action_form):
             for watcher in sample.topic.auto_adders.all():
                 watcher.my_samples.add(sample)
         if sample.currently_responsible_person != old_responsible_person:
-            utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
+            sample.currently_responsible_person.samples_user_details.my_samples.add(sample)
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
             if action_data["clearance"] is not None:
@@ -253,7 +253,7 @@ def edit(request, username):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    user_details = utils.get_profile(user)
+    user_details = user.samples_user_details
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     if request.method == "POST":

@@ -148,7 +148,7 @@ def show(request, username, user_hash):
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % get_really_full_name(user)
-    user_details = utils.get_profile(user)
+    user_details = user.samples_user_details
     entries = [entry.actual_instance for entry in user_details.feed_entries.all()]
     if entries:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)

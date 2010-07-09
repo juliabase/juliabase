@@ -101,7 +101,7 @@ def edit(request, sample_name):
     sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
-    user_details = utils.get_profile(request.user)
+    user_details = request.user.samples_user_details
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
@@ -110,7 +110,7 @@ def edit(request, sample_name):
             sample = sample_form.save()
             feed_reporter = feed_utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
-                utils.get_profile(sample.currently_responsible_person).my_samples.add(sample)
+                sample.currently_responsible_person.samples_user_details.my_samples.add(sample)
                 feed_reporter.report_new_responsible_person_samples([sample], edit_description_form.cleaned_data)
             if sample.topic and sample.topic != old_topic:
                 for watcher in sample.topic.auto_adders.all():
@@ -327,7 +327,7 @@ class SamplesAndProcesses(object):
         :type post_data: ``QueryDict`` or ``NoneType``
         """
         self.user = user
-        self.user_details = utils.get_profile(user)
+        self.user_details = user.samples_user_details
         sample = self.sample_context["sample"]
         self.is_my_sample = self.user_details.my_samples.filter(id__exact=sample.id).exists()
         self.is_my_sample_form = IsMySampleForm(
@@ -619,7 +619,7 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = utils.get_profile(request.user)
+    user_details = request.user.samples_user_details
     found_samples = []
     too_many_results = False
     if request.method == "POST":

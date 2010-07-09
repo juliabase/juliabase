@@ -39,7 +39,7 @@ def show_user(request, login_name):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
-    userdetails = utils.get_profile(user)
+    userdetails = user.samples_user_details
     username = get_really_full_name(user)
     return render_to_response("samples/show_user.html", {"title": username, "user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
@@ -90,7 +90,7 @@ def edit_preferences(request, login_name):
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the preferences of another user."))
     initials_mandatory = utils.parse_query_string(request).get("initials_mandatory") == "True"
-    user_details = utils.get_profile(user)
+    user_details = user.samples_user_details
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
         initials_form = form_utils.InitialsForm(user, initials_mandatory, request.POST)
