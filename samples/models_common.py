@@ -523,6 +523,8 @@ class Sample(models.Model):
     u"""The model for samples.
     """
     name = models.CharField(_(u"name"), max_length=30, unique=True, db_index=True)
+    watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
+                                      verbose_name=_(u"watchers"))
         # Translation hint: location of a sample
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
@@ -1108,7 +1110,6 @@ class UserDetails(models.Model):
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="samples_user_details")
-    my_samples = models.ManyToManyField(Sample, blank=True, related_name="watchers", verbose_name=_(u"my samples"))
     auto_addition_topics = models.ManyToManyField(
         Topic, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition topics"),
         help_text=_(u"new samples in these topics are automatically added to “My Samples”"))

@@ -26,9 +26,9 @@ class MySamplesForm(forms.Form):
     _ = ugettext_lazy
     samples = form_utils.MultipleSamplesField(label=_(u"My Samples"))
 
-    def __init__(self, user_details, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
-        self.fields["samples"].set_samples(user_details.my_samples.all())
+        self.fields["samples"].set_samples(user.my_samples.all())
 
 
 class ActionForm(forms.Form):
@@ -180,9 +180,9 @@ def save_to_database(user, my_samples_form, action_form):
     """
     action_data = action_form.cleaned_data
     if action_data["copy_to_user"]:
-        recipient_my_samples = action_data["copy_to_user"].samples_user_details.my_samples
+        recipient_my_samples = action_data["copy_to_user"].my_samples
     if action_data["remove_from_my_samples"]:
-        current_user_my_samples = user.samples_user_details.my_samples
+        current_user_my_samples = user.my_samples
     samples = my_samples_form.cleaned_data["samples"]
     samples_with_new_responsible_person = []
     samples_with_new_topic = {}
@@ -205,7 +205,7 @@ def save_to_database(user, my_samples_form, action_form):
             for watcher in sample.topic.auto_adders.all():
                 watcher.my_samples.add(sample)
         if sample.currently_responsible_person != old_responsible_person:
-            sample.currently_responsible_person.samples_user_details.my_samples.add(sample)
+            sample.currently_responsible_person.my_samples.add(sample)
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
             if action_data["clearance"] is not None:
@@ -253,18 +253,17 @@ def edit(request, username):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    user_details = user.samples_user_details
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
     if request.method == "POST":
-        my_samples_form = MySamplesForm(user_details, request.POST)
+        my_samples_form = MySamplesForm(user, request.POST)
         action_form = ActionForm(user, request.POST)
         referentially_valid = is_referentially_valid(request.user, my_samples_form, action_form)
         if my_samples_form.is_valid() and action_form.is_valid() and referentially_valid:
             save_to_database(user, my_samples_form, action_form)
             return utils.successful_response(request, _(u"Successfully processed “My Samples”."))
     else:
-        my_samples_form = MySamplesForm(user_details)
+        my_samples_form = MySamplesForm(user)
         action_form = ActionForm(user)
     return render_to_response("samples/edit_my_samples.html",
                               {"title": _(u"Edit “My Samples” of %s") % get_really_full_name(user),

@@ -356,19 +356,19 @@ def respond_to_remote_client(value):
     return HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
 
 
-def remove_samples_from_my_samples(samples, user_details):
+def remove_samples_from_my_samples(samples, user):
     u"""Remove the given samples from the user's MySamples list
 
     :Parameters:
       - `samples`: the samples to be removed.  FixMe: How does it react if a
         sample hasn't been in ``my_samples``?
-      - `user_details`: details of the user whose MySamples list is affected
+      - `user`: the user whose MySamples list is affected
 
     :type samples: list of `models.Sample`
-    :type user_details: `models.UserDetails`
+    :type user: ``django.contrib.auth.models.User``
     """
     for sample in samples:
-        user_details.my_samples.remove(sample)
+        sample.watchers.remove(user)
 
 
 class StructuredSeries(object):

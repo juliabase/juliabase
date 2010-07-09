@@ -75,7 +75,7 @@ def primary_keys(request):
         result_dict["topics"] = dict((topic.name, topic.id) for topic in topics)
     if "samples" in query_dict:
         if query_dict["samples"] == "*":
-            result_dict["samples"] = dict(request.user.samples_user_details.my_samples.values_list("name", "id"))
+            result_dict["samples"] = dict(request.user.my_samples.values_list("name", "id"))
         else:
             sample_names = query_dict["samples"].split(",")
             result_dict["samples"] = {}
@@ -301,7 +301,7 @@ def add_sample(request):
                 alias.delete()
     except IntegrityError:
         return utils.respond_to_remote_client(False)
-    sample.watchers.add(request.user.samples_user_details)
+    sample.watchers.add(request.user)
     return utils.respond_to_remote_client(sample.pk)
 
 

@@ -41,9 +41,6 @@ class Reporter(object):
         feed_utils.Reporter(request.user).report_result_process(
                 result, edit_description=None)
 
-    Note that some internal data structures here seem to contain users but in
-    fact they contains user *details*.
-
     :ivar interested_users: all users that get informed with the next generated
       feed entry by a call to `__connect_with_users`
 
@@ -54,8 +51,8 @@ class Reporter(object):
     :ivar originator: the user responsible for the databse change reported by
       the feed entry of this instance of ``Reporter``.
 
-    :type interested_users: set of `models.UserDetails`
-    :type already_informed_users: set of `models.UserDetails`
+    :type interested_users: set of `django.contrib.auth.models.User`
+    :type already_informed_users: set of `django.contrib.auth.models.User`
     :type originator: ``django.contrib.auth.models.User``
     """
 
@@ -89,7 +86,7 @@ class Reporter(object):
         """
         self.interested_users -= self.already_informed_users
         self.already_informed_users.update(self.interested_users)
-        self.interested_users.discard(self.originator.samples_user_details)
+        self.interested_users.discard(self.originator)
         if self.interested_users:
             entry.users = self.interested_users
         else:
@@ -112,8 +109,8 @@ class Reporter(object):
         """
         for sample in samples:
             for user in sample.watchers.all():
-                if (important or not user.only_important_news) and \
-                        permissions.has_permission_to_fully_view_sample(user.user, sample):
+                if (important or not user.samples_user_details.only_important_news) and \
+                        permissions.has_permission_to_fully_view_sample(user, sample):
                     self.interested_users.add(user)
 
     def __add_watchers(self, process_or_sample_series, important=True):
@@ -146,7 +143,7 @@ class Reporter(object):
 
         :type topic: ``chantal_common.models.Topic``
         """
-        self.interested_users.update(user.samples_user_details for user in topic.members.all())
+        self.interested_users.update(topic.members.all())
 
     def __get_subscribers(self, sample_series):
         u"""
@@ -258,7 +255,7 @@ class Reporter(object):
         """
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
         entry.samples = samples
-        self.interested_users.add(recipient.samples_user_details)
+        self.interested_users.add(recipient)
         self.__connect_with_users(entry)
 
     def report_new_responsible_person_samples(self, samples, edit_description):
@@ -283,7 +280,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True)
         entry.samples = samples
-        self.interested_users.add(samples[0].currently_responsible_person.samples_user_details)
+        self.interested_users.add(samples[0].currently_responsible_person)
         self.__connect_with_users(entry)
 
     def report_changed_sample_topic(self, samples, old_topic, edit_description):
@@ -399,7 +396,7 @@ class Reporter(object):
         entry = models.FeedEditedSampleSeries.objects.create(
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True, sample_series=sample_series)
-        self.interested_users.add(sample_series.currently_responsible_person.samples_user_details)
+        self.interested_users.add(sample_series.currently_responsible_person)
         self.__connect_with_users(entry)
 
     def report_changed_sample_series_topic(self, sample_series, old_topic, edit_description):
@@ -462,5 +459,5 @@ class Reporter(object):
         :type action: str
         """
         entry = models.FeedChangedTopic.objects.create(originator=self.originator, topic=topic, action=action)
-        self.interested_users = set(user.samples_user_details for user in users)
+        self.interested_users = set(users)
         self.__connect_with_users(entry)

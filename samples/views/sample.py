@@ -110,7 +110,7 @@ def edit(request, sample_name):
             sample = sample_form.save()
             feed_reporter = feed_utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
-                sample.currently_responsible_person.samples_user_details.my_samples.add(sample)
+                sample.currently_responsible_person.my_samples.add(sample)
                 feed_reporter.report_new_responsible_person_samples([sample], edit_description_form.cleaned_data)
             if sample.topic and sample.topic != old_topic:
                 for watcher in sample.topic.auto_adders.all():
@@ -329,7 +329,7 @@ class SamplesAndProcesses(object):
         self.user = user
         self.user_details = user.samples_user_details
         sample = self.sample_context["sample"]
-        self.is_my_sample = self.user_details.my_samples.filter(id__exact=sample.id).exists()
+        self.is_my_sample = self.user.my_samples.filter(id__exact=sample.id).exists()
         self.is_my_sample_form = IsMySampleForm(
             prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
             else IsMySampleForm(post_data, prefix=str(sample.pk))
@@ -432,10 +432,10 @@ class SamplesAndProcesses(object):
         sample = self.sample_context["sample"]
         if self.is_my_sample_form.cleaned_data["is_my_sample"] and not self.is_my_sample:
             added.add(sample)
-            self.user_details.my_samples.add(sample)
+            self.user.my_samples.add(sample)
         elif not self.is_my_sample_form.cleaned_data["is_my_sample"] and self.is_my_sample:
             removed.add(sample)
-            self.user_details.my_samples.remove(sample)
+            self.user.my_samples.remove(sample)
         for process_list in self.process_lists:
             added_, removed_ = process_list.save_to_database()
             added.update(added_)
@@ -473,7 +473,7 @@ def sample_timestamp(request, sample_name):
         pass
     else:
         timestamps.append(clearance.last_modified)
-    user_details = request.user.samples_user_details
+    user = request.user.samples_user_details
     timestamps.append(user_details.display_settings_timestamp)
     timestamps.append(user_details.my_samples_timestamp)
     return max(timestamps)
@@ -619,7 +619,6 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = request.user.samples_user_details
     found_samples = []
     too_many_results = False
     if request.method == "POST":
@@ -638,14 +637,14 @@ def search(request):
             found_samples = found_samples[:max_results] if too_many_results else found_samples
         else:
             found_samples = []
-        my_samples = user_details.my_samples.all()
+        my_samples = request.user.my_samples.all()
         add_to_my_samples_forms = [AddToMySamplesForm(request.POST, prefix=str(sample.pk))
                                    if sample not in my_samples else None for sample in found_samples]
         new_forms = []
         for add_to_my_samples_form in add_to_my_samples_forms:
             if add_to_my_samples_form and add_to_my_samples_form.is_valid() and \
                     add_to_my_samples_form.cleaned_data["add_to_my_samples"]:
-                user_details.my_samples.add(get_object_or_404(models.Sample, pk=int(add_to_my_samples_form.prefix)))
+                request.user.my_samples.add(get_object_or_404(models.Sample, pk=int(add_to_my_samples_form.prefix)))
                 new_forms.append(None)
             else:
                 new_forms.append(add_to_my_samples_form)

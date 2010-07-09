@@ -37,14 +37,14 @@ class SampleSeriesForm(forms.ModelForm):
     topic = form_utils.TopicField(label=_(u"Topic"))
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"))
 
-    def __init__(self, user_details, data=None, **kwargs):
+    def __init__(self, user, data=None, **kwargs):
         u"""Form constructor.  I have to initialise the form here, especially
         because the sample set to choose from must be found and the name of an
         existing series must not be changed.
         """
         super(SampleSeriesForm, self).__init__(data, **kwargs)
         sample_series = kwargs.get("instance")
-        samples = user_details.my_samples.all()
+        samples = user.my_samples.all()
         if sample_series:
             samples = list(samples) + list(sample_series.samples.all())
         self.fields["samples"].set_samples(samples)
@@ -55,8 +55,8 @@ class SampleSeriesForm(forms.ModelForm):
         if sample_series:
             self.fields["currently_responsible_person"].set_users(sample_series.currently_responsible_person)
         else:
-            self.fields["currently_responsible_person"].choices = ((user_details.user.pk, unicode(user_details.user)),)
-        self.fields["topic"].set_topics(user_details.user, sample_series.topic if sample_series else None)
+            self.fields["currently_responsible_person"].choices = ((user.pk, unicode(user)),)
+        self.fields["topic"].set_topics(user, sample_series.topic if sample_series else None)
 
     def clean_description(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -187,9 +187,8 @@ def edit(request, name):
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_edit_sample_series(request.user, sample_series)
-    user_details = request.user.samples_user_details
     if request.method == "POST":
-        sample_series_form = SampleSeriesForm(user_details, request.POST, instance=sample_series)
+        sample_series_form = SampleSeriesForm(request.user, request.POST, instance=sample_series)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
         all_valid = sample_series_form.is_valid()
         all_valid = edit_description_form.is_valid() and all_valid
@@ -208,7 +207,7 @@ def edit(request, name):
                 request, _(u"Sample series %s was successfully updated in the database.") % sample_series.name)
     else:
         sample_series_form = \
-            SampleSeriesForm(user_details, instance=sample_series,
+            SampleSeriesForm(request.user, instance=sample_series,
                              initial={"short_name": sample_series.name.split("-", 2)[-1],
                                       "currently_responsible_person": sample_series.currently_responsible_person.pk,
                                       "topic": sample_series.topic.pk,
@@ -236,9 +235,8 @@ def new(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = request.user.samples_user_details
     if request.method == "POST":
-        sample_series_form = SampleSeriesForm(user_details, request.POST)
+        sample_series_form = SampleSeriesForm(request.user, request.POST)
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
             full_name = \
@@ -260,7 +258,7 @@ def new(request):
                 return utils.successful_response(request,
                                                  _(u"Sample series %s was successfully added to the database.") % full_name)
     else:
-        sample_series_form = SampleSeriesForm(user_details)
+        sample_series_form = SampleSeriesForm(request.user)
     return render_to_response("samples/edit_sample_series.html",
                               {"title": _(u"Create new sample series"),
                                "sample_series": sample_series_form,

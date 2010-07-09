@@ -161,24 +161,24 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
     Samples”.  But the gain would be small and the code significantly more
     complex.
     """
-    def touch_my_samples(user_details):
+    def touch_my_samples(user):
+        user_details = user.samples_user_details
         user_details.my_samples_timestamp = datetime.datetime.now()
         user_details.save()
     if reverse:
-        # `instance` is ``Sample``.  Shouldn't actually occur in Chantal's
-        # code.
-        if action == "pre_clear":
-            for user_details in instance.watchers.all():
-                touch_my_samples(user_details)
-        elif action in ["post_add", "post_remove"]:
-            for user_details in samples_app.UserDetails.objects.in_bulk(pk_set).itervalues():
-                touch_my_samples(user_details)
-    else:
-        # `instance` is ``UserDetails``
+        # `instance` is ``django.contrib.auth.models.User``
         if action in ["post_add", "post_remove", "post_clear"]:
             touch_my_samples(instance)
+    else:
+        # `instance` is ``Sample``.
+        if action == "pre_clear":
+            for user in instance.watchers.all():
+                touch_my_samples(user)
+        elif action in ["post_add", "post_remove"]:
+            for user in django.contrib.auth.models.User.objects.in_bulk(pk_set).itervalues():
+                touch_my_samples(user)
 
-signals.m2m_changed.connect(touch_my_samples, sender=samples_app.UserDetails.my_samples.through)
+signals.m2m_changed.connect(touch_my_samples, sender=samples_app.Sample.watchers.through)
 
 
 def touch_display_settings(sender, instance, **kwargs):
