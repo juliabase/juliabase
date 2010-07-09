@@ -47,6 +47,7 @@ class UserDetails(models.Model):
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="chantal_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
+    browser_system = models.CharField(_(u"operating system"), max_length=10, default="windows")
 
     class Meta:
         verbose_name = _(u"user details")
