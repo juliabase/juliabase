@@ -51,6 +51,7 @@ def get_user_settings_hash(user):
     """
     hash_ = hashlib.sha1()
     hash_.update(user.chantal_user_details.language)
+    hash_.update(user.chantal_user_details.browser_system)
     return hash_.hexdigest()
 
 
@@ -80,11 +81,6 @@ class ExternalOperator(models.Model):
         super(ExternalOperator, self).save(*args, **kwargs)
         for process in self.processes.all():
             process.actual_instance.save()
-
-    def save(self, *args, **kwargs):
-        super(ExternalOperator, self).save(*args, **kwargs)
-        for process in self.processes.all():
-            process.find_actual_instance().save()
 
     def __unicode__(self):
         return self.name
@@ -475,6 +471,8 @@ class Process(PolymorphicModel):
         :rtype: dict mapping str to ``object``
         """
         context = old_context.copy()
+        if "browser_system" not in context:
+            context["browser_system"] = user.chantal_user_details.browser_system
         if "process" not in context:
             context["process"] = self
         if "name" not in context:
