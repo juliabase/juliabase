@@ -373,8 +373,8 @@ class FormSet(object):
         referentially_valid = True
         if self.result and self.related_data_form.is_valid() and self.edit_description_form.is_valid():
             old_related_objects = set(self.result.samples.all()) | set(self.result.sample_series.all())
-            new_related_objects = set(self.related_data_form.cleaned_data["samples"] +
-                                      self.related_data_form.cleaned_data["sample_series"])
+            new_related_objects = set(self.related_data_form.cleaned_data["samples"]) | \
+                set(self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
                 append_error(self.edit_description_form, _(u"Adding samples or sample series must be marked as important."),
                              "important")

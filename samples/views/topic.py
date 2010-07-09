@@ -9,6 +9,7 @@ topics is actually only a stepping stone to the membership edit view.
 from __future__ import absolute_import
 
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
 import django.utils.http
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
@@ -74,10 +75,9 @@ def add(request):
 
 @login_required
 def list_(request):
-    u"""View for a complete list of all topics.  The user may select one, which
-    leads him to the membership view for this topic.  Note this this view is
-    also restricted to users who can change memberships in topics, although it
-    is not really necessary.
+    u"""View for a complete list of all topics that the user can edit.  The
+    user may select one, which leads him to the membership view for this topic.
+    If the user can't edit any topic, a 404 is raised.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -89,12 +89,13 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_edit_topic(request.user)
+    user = request.user
     all_topics = Topic.objects.all()
-    user_topics = request.user.topics.all()
-    topics = set(topic for topic in all_topics if not topic.restricted or topic in user_topics)
-    return render_to_response("samples/list_topics.html",
-                              {"title": _(u"List of all topics"), "topics": topics},
+    user_topics = user.topics.all()
+    topics = set(topic for topic in all_topics if permissions.has_permission_to_edit_topic(user, topic))
+    if not topics:
+        raise Http404(u"Can't find any topic that you can edit.")
+    return render_to_response("samples/list_topics.html", {"title": _(u"List of all topics"), "topics": topics},
                               context_instance=RequestContext(request))
 
 
