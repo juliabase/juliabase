@@ -454,7 +454,7 @@ class Reporter(object):
           - `action`: what was done; ``"added"`` for added users, ``"removed"``
             for removed users
 
-        :type users: ``django.contrib.auth.models.User``
+        :type users: iterable of ``django.contrib.auth.models.User``
         :type topic: ``chantal_common.models.Topic``
         :type action: str
         """

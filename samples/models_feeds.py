@@ -29,6 +29,8 @@ class FeedEntry(PolymorphicModel):
     is inherited by this class.
     """
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
+    users = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"users"), related_name="feed_entries",
+                                   blank=True)
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
     important = models.BooleanField(_(u"is important"), default=True)
     sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
