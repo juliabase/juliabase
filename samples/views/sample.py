@@ -473,7 +473,7 @@ def sample_timestamp(request, sample_name):
         pass
     else:
         timestamps.append(clearance.last_modified)
-    user = request.user.samples_user_details
+    user_details = request.user.samples_user_details
     timestamps.append(user_details.display_settings_timestamp)
     timestamps.append(user_details.my_samples_timestamp)
     return max(timestamps)
