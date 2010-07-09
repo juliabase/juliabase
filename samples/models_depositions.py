@@ -97,7 +97,7 @@ class Layer(models.Model):
         class Meta(Layer.Meta):
             unique_together = ("deposition", "number")
     """
-    number = models.IntegerField(_(u"layer number"))
+    number = models.PositiveIntegerField(_(u"layer number"))
 
     class Meta:
         abstract = True

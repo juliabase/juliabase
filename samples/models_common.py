@@ -119,7 +119,8 @@ class Process(PolymorphicModel):
         process = process.actual_instance
     """
     timestamp = models.DateTimeField(_(u"timestamp"))
-    timestamp_inaccuracy = models.IntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
+    timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices,
+                                                            default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"), related_name="processes")
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
