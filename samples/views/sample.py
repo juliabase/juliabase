@@ -113,7 +113,7 @@ def edit(request, sample_name):
                 sample.currently_responsible_person.my_samples.add(sample)
                 feed_reporter.report_new_responsible_person_samples([sample], edit_description_form.cleaned_data)
             if sample.topic and sample.topic != old_topic:
-                for watcher in sample.topic.auto_adders.all():
+                for watcher in (user_details.user for user_details in sample.topic.auto_adders.all()):
                     watcher.my_samples.add(sample)
                 feed_reporter.report_changed_sample_topic([sample], old_topic, edit_description_form.cleaned_data)
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)

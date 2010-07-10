@@ -148,7 +148,6 @@ def show(request, username, user_hash):
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % get_really_full_name(user)
-    user_details = user.samples_user_details
     entries = [entry.actual_instance for entry in user.feed_entries.all()]
     if entries:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)
@@ -161,7 +160,7 @@ def show(request, username, user_hash):
     ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
     ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/ipv/sonne.png"
     ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/ipv/juelich.png"
-    only_important = user_details.only_important_news
+    only_important = user.samples_user_details.only_important_news
     for entry in entries:
         if only_important and not entry.important:
             continue
@@ -189,7 +188,7 @@ def show(request, username, user_hash):
         template = loader.get_template("samples/" + utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
-        context_dict.update(entry.get_additional_template_context(user_details))
+        context_dict.update(entry.get_additional_template_context(user))
         content.text = template.render(Context(context_dict))
         content.attrib["type"] = "html"
 #    indent(feed)

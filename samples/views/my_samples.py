@@ -202,7 +202,7 @@ def save_to_database(user, my_samples_form, action_form):
             sample.current_location = action_data["new_current_location"]
         sample.save()
         if sample.topic and sample.topic != old_topic:
-            for watcher in sample.topic.auto_adders.all():
+            for watcher in (user_details.user for user in sample.topic.auto_adders.all()):
                 watcher.my_samples.add(sample)
         if sample.currently_responsible_person != old_responsible_person:
             sample.currently_responsible_person.my_samples.add(sample)

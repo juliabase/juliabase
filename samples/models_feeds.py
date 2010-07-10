@@ -79,7 +79,7 @@ class FeedEntry(PolymorphicModel):
         """
         raise NotImplementedError
 
-    def get_additional_template_context(self, user_details):
+    def get_additional_template_context(self, user):
         u"""Return a dictionary with additional context that should be
         available in the template.  It is similar to
         `models_depositions.SixChamberDeposition.get_additional_template_context`.
@@ -90,9 +90,9 @@ class FeedEntry(PolymorphicModel):
         dictionary.
 
         :Parameters:
-          - `user_details`: the details of the user fetching the feed
+          - `user`: the user fetching the feed
 
-        :type user_details: `UserDetails`
+        :type user: ``django.contrib.auth.models.User``
 
         :Return:
           dict with additional fields that are supposed to be given to the
@@ -110,7 +110,7 @@ class FeedNewSamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="new_samples_news")
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
-    auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
+    auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
 
     class Meta:
         # FixMe: The labels are gramatically unfortunate.  “feed entry for new
@@ -126,8 +126,8 @@ class FeedNewSamples(FeedEntry):
         result["category label"] = "new samples"
         return result
 
-    def get_additional_template_context(self, user_details):
-        return {"auto_added": self.auto_adders.filter(pk=user_details.pk).exists()}
+    def get_additional_template_context(self, user):
+        return {"auto_added": self.auto_adders.filter(pk=user.pk).exists()}
 
 
 class FeedMovedSamples(FeedEntry):
@@ -136,7 +136,7 @@ class FeedMovedSamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="moved_samples_news")
     old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True)
-    auto_adders = models.ManyToManyField(UserDetails, verbose_name=_(u"auto adders"), blank=True)
+    auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
     description = models.TextField(_(u"description"))
 
     class Meta:
@@ -152,8 +152,8 @@ class FeedMovedSamples(FeedEntry):
         result["category label"] = "moved samples"
         return result
 
-    def get_additional_template_context(self, user_details):
-        return {"auto_added": self.auto_adders.filter(pk=user_details.pk).count() != 0}
+    def get_additional_template_context(self, user):
+        return {"auto_added": self.auto_adders.filter(pk=user.pk).exists()}
 
 
 class FeedNewPhysicalProcess(FeedEntry):
@@ -175,7 +175,7 @@ class FeedNewPhysicalProcess(FeedEntry):
         result["link"] = process.get_absolute_url()
         return result
 
-    def get_additional_template_context(self, user_details):
+    def get_additional_template_context(self, user):
         return {"process": self.process.actual_instance}
 
 
@@ -199,7 +199,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
         metadata["link"] = process.get_absolute_url()
         return metadata
 
-    def get_additional_template_context(self, user_details):
+    def get_additional_template_context(self, user):
         return {"process": self.process.actual_instance}
 
 
@@ -231,7 +231,7 @@ class FeedResult(FeedEntry):
         metadata["link"] = self.result.get_absolute_url()
         return metadata
 
-    def get_additional_template_context(self, user_details):
+    def get_additional_template_context(self, user):
         return self.result.get_image()
 
 
@@ -331,7 +331,7 @@ class FeedNewSampleSeries(FeedEntry):
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
-    subscribers = models.ManyToManyField(UserDetails, verbose_name=_(u"subscribers"), blank=True)
+    subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"subscribers"), blank=True)
 
     class Meta:
         verbose_name = _(u"new sample series feed entry")
@@ -347,8 +347,8 @@ class FeedNewSampleSeries(FeedEntry):
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
 
-    def get_additional_template_context(self, user_details):
-        return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
+    def get_additional_template_context(self, user):
+        return {"subscribed": self.subscribers.filter(pk=user.pk).exists()}
 
 
 class FeedMovedSampleSeries(FeedEntry):
@@ -359,7 +359,7 @@ class FeedMovedSampleSeries(FeedEntry):
     old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True,
                                   related_name="news_ex_sample_series")
     description = models.TextField(_(u"description"))
-    subscribers = models.ManyToManyField(UserDetails, verbose_name=_(u"subscribers"), blank=True)
+    subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"subscribers"), blank=True)
 
     class Meta:
         verbose_name = _(u"moved sample series feed entry")
@@ -376,7 +376,7 @@ class FeedMovedSampleSeries(FeedEntry):
         return metadata
 
     def get_additional_template_context(self, user_details):
-        return {"subscribed": self.subscribers.filter(pk=user_details.pk).count() != 0}
+        return {"subscribed": self.subscribers.filter(pk=user.pk).exists()}
 
 
 changed_topic_action_choices = (
