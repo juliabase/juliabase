@@ -68,7 +68,7 @@ def forms_from_database(user):
     :rtype: list of `MyLayerForm`
     """
     my_layer_forms = []
-    my_layers_serialized = utils.get_profile(user).my_layers
+    my_layers_serialized = user.samples_user_details.my_layers
     while my_layers_serialized:
         next_match = layer_item_pattern.match(my_layers_serialized)
         nickname, raw_layer_identifier = next_match.group("nickname"), next_match.group("raw_layer_identifier")
@@ -140,7 +140,7 @@ def is_referentially_valid(my_layer_forms):
 def save_to_database(my_layer_forms, user):
     u"""Save the new “My Layers” into the database.
     """
-    user_details = utils.get_profile(user)
+    user_details = user.samples_user_details
     user_details.my_layers = \
         u", ".join(["%s: %s" % (form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
                     for form in my_layer_forms])

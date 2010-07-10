@@ -356,46 +356,19 @@ def respond_to_remote_client(value):
     return HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
 
 
-def remove_samples_from_my_samples(samples, user_details):
+def remove_samples_from_my_samples(samples, user):
     u"""Remove the given samples from the user's MySamples list
 
     :Parameters:
       - `samples`: the samples to be removed.  FixMe: How does it react if a
         sample hasn't been in ``my_samples``?
-      - `user_details`: details of the user whose MySamples list is affected
+      - `user`: the user whose MySamples list is affected
 
     :type samples: list of `models.Sample`
-    :type user_details: `models.UserDetails`
+    :type user: ``django.contrib.auth.models.User``
     """
     for sample in samples:
-        user_details.my_samples.remove(sample)
-
-
-# FixMe: Assure that every user has a UserDetails by using signals.  Then,
-# remove this function and access the user details directly.
-
-def get_profile(user):
-    u"""Retrieve the user details for the given user.  If this user hasn't yet
-    any record in the ``UserDetails`` table, create one with sane defaults and
-    return it.
-
-    :Parameters:
-      - `user`: the user the profile of which should be fetched
-
-    :type user: ``django.contrib.auth.models.User``
-
-    :Return:
-      the user details (aka profile) for the user
-
-    :rtype: `models.UserDetails`
-    """
-    try:
-        return user.samples_user_details
-    except models.UserDetails.DoesNotExist:
-        # FixMe: Should be fleshed out with e.g. FZJ homepage data
-        user_details = models.UserDetails(user=user)
-        user_details.save()
-        return user_details
+        sample.watchers.remove(user)
 
 
 class StructuredSeries(object):

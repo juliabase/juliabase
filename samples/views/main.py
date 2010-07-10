@@ -91,8 +91,7 @@ def main_menu(request):
 
     :rtype: ``HttpResponse``
     """
-    user_details = utils.get_profile(request.user)
-    my_topics, topicless_samples = utils.build_structured_sample_list(user_details.my_samples.all())
+    my_topics, topicless_samples = utils.build_structured_sample_list(request.user.my_samples.all())
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = []
     for process in allowed_physical_processes:

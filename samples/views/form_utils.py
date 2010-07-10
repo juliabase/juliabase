@@ -525,11 +525,11 @@ class DepositionSamplesForm(forms.Form):
     _ = ugettext_lazy
     sample_list = MultipleSamplesField(label=_(u"Samples"))
 
-    def __init__(self, user_details, preset_sample, deposition, data=None, **kwargs):
+    def __init__(self, user, preset_sample, deposition, data=None, **kwargs):
         u"""Class constructor.  Note that I have to distinguish clearly here
         between new and existing depositions.
         """
-        samples = list(user_details.my_samples.all())
+        samples = list(user.my_samples.all())
         if deposition:
             # If editing an existing deposition, always have an *unbound* form
             # so that the samples are set although sample selection is

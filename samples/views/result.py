@@ -94,7 +94,7 @@ class RelatedDataForm(forms.Form):
     sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
 
-    def __init__(self, user_details, query_string_dict, old_result, data=None, files=None, **kwargs):
+    def __init__(self, user, query_string_dict, old_result, data=None, files=None, **kwargs):
         u"""Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
 
@@ -105,16 +105,16 @@ class RelatedDataForm(forms.Form):
         """
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
         self.old_relationships = set(old_result.samples.all()) | set(old_result.sample_series.all()) if old_result else set()
-        self.user = user_details.user
+        self.user = user
         now = datetime.datetime.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
-        samples = list(user_details.my_samples.all())
+        samples = list(user.my_samples.all())
         if old_result:
             samples.extend(old_result.samples.all())
             self.fields["sample_series"].queryset = \
                 models.SampleSeries.objects.filter(
-                Q(samples__watchers=user_details) | ( Q(currently_responsible_person=user_details.user) &
-                                                      Q(timestamp__range=(three_months_ago, now)))
+                Q(samples__watchers=user) | ( Q(currently_responsible_person=user) &
+                                              Q(timestamp__range=(three_months_ago, now)))
                 | Q(pk__in=old_result.sample_series.values_list("pk", flat=True))).distinct()
             self.fields["samples"].initial = old_result.samples.values_list("pk", flat=True)
             self.fields["sample_series"].initial = old_result.sample_series.values_list("pk", flat=True)
@@ -124,8 +124,8 @@ class RelatedDataForm(forms.Form):
                 self.fields["samples"].initial = [preset_sample.pk]
                 samples.append(preset_sample)
             self.fields["sample_series"].queryset = \
-                models.SampleSeries.objects.filter(Q(samples__watchers=user_details) |
-                                                   ( Q(currently_responsible_person=user_details.user) &
+                models.SampleSeries.objects.filter(Q(samples__watchers=user) |
+                                                   ( Q(currently_responsible_person=user) &
                                                      Q(timestamp__range=(three_months_ago, now)))
                                                    | Q(name=query_string_dict.get("sample_series", u""))).distinct()
             if "sample_series" in query_string_dict:
@@ -270,7 +270,7 @@ class FormSet(object):
         :type process_id: unicode or ``NoneType``
         """
         self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
-        self.user_details = utils.get_profile(request.user)
+        self.user = request.user
         self.query_string_dict = utils.parse_query_string(request) if not self.result else None
 
     def from_database(self):
@@ -278,7 +278,7 @@ class FormSet(object):
         GET method was sent with the request.
         """
         self.result_form = ResultForm(instance=self.result)
-        self.related_data_form = RelatedDataForm(self.user_details, self.query_string_dict, self.result)
+        self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result)
         self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
         if self.result and self.result.quantities_and_values:
             quantities, values = utils.ascii_unpickle(self.result.quantities_and_values)
@@ -307,8 +307,7 @@ class FormSet(object):
         :type post_files: ``django.utils.datastructures.MultiValueDict``
         """
         self.result_form = ResultForm(post_data, instance=self.result)
-        self.related_data_form = \
-            RelatedDataForm(self.user_details, self.query_string_dict, self.result, post_data, post_files)
+        self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result, post_data, post_files)
         self.dimensions_form = DimensionsForm(post_data)
         self.previous_dimensions_form = DimensionsForm(post_data, prefix="previous")
         if self.previous_dimensions_form.is_valid():
@@ -455,7 +454,7 @@ class FormSet(object):
                 result = self.result_form.save()
             else:
                 result = self.result_form.save(commit=False)
-                result.operator = self.user_details.user
+                result.operator = self.user
                 result.timestamp = datetime.datetime.now()
             result.quantities_and_values = self.serialize_quantities_and_values()
             result.save()
