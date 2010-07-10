@@ -186,7 +186,7 @@ class Reporter(object):
             common_purpose = samples[0].purpose
             entry = models.FeedNewSamples.objects.create(originator=self.originator, topic=topic, purpose=common_purpose)
             entry.samples = samples
-            entry.auto_adders = [user_details.user for user in topic.auto_adders.all()]
+            entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
             self.__add_topic_members(topic)
             self.__connect_with_users(entry)
 
@@ -308,7 +308,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"],
             important=important, topic=topic, old_topic=old_topic)
         entry.samples = samples
-        entry.auto_adders = [user_details.user for user in topic.auto_adders.all()]
+        entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
         if old_topic:
             self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
