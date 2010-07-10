@@ -49,7 +49,7 @@ class SampleForm(forms.ModelForm):
 
     class Meta:
         model = models.Sample
-        exclude = ("name", "split_origin", "processes")
+        exclude = ("name", "split_origin", "processes", "watchers")
 
 
 def is_referentially_valid(sample, sample_form, edit_description_form):
