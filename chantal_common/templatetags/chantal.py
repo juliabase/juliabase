@@ -227,5 +227,3 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
     :type outest_tag: unicode
     """
     return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
-
-
