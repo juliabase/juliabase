@@ -24,82 +24,82 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-06 22:55+0200\n"
-"PO-Revision-Date: 2010-04-29 14:02+0200\n"
+"POT-Creation-Date: 2010-07-11 13:11+0200\n"
+"PO-Revision-Date: 2010-07-11 13:12+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: context_processors.py:80
+#: context_processors.py:70
 msgid "German"
 msgstr "Deutsch"
 
-#: context_processors.py:81
+#: context_processors.py:71
 msgid "English"
 msgstr "Englisch"
 
-#: context_processors.py:82
+#: context_processors.py:72
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: context_processors.py:83
+#: context_processors.py:73
 msgid "Ukrainian"
 msgstr "Ukrainisch"
 
-#: context_processors.py:84
+#: context_processors.py:74
 msgid "Russian"
 msgstr "Russisch"
 
-#: context_processors.py:85
+#: context_processors.py:75
 msgid "French"
 msgstr "Französisch"
 
-#: context_processors.py:86
+#: context_processors.py:76
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models.py:45
+#: models.py:47
 msgid "user"
 msgstr "Benutzer"
 
-#: models.py:47
+#: models.py:49
 msgid "language"
 msgstr "Sprache"
-
-#: models.py:48
-msgid "settings last modified"
-msgstr "letzte Änderung der Einstellungen"
-
-#: models.py:49
-msgid "is an external user"
-msgstr "ist ein externer Benutzer"
 
 #: models.py:52 models.py:53
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models.py:70
+#: models.py:74
 msgid "name"
 msgstr "Name"
 
-#: models.py:71
+#: models.py:75
 msgid "members"
 msgstr "Mitglieder"
 
-#: models.py:73
+#: models.py:77
 msgid "restricted"
 msgstr "beschränkt"
 
-#: models.py:76
+#: models.py:80
 msgid "topic"
 msgstr "Thema"
 
-#: models.py:77
+#: models.py:81
 msgid "topics"
 msgstr "Themen"
 
-#: utils.py:152
+#: models.py:83
+msgid "Can edit all topics, and can add new topics"
+msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
+
+#: models.py:84
+msgid "Can edit topics that he/she is a member of"
+msgstr "Darf Themen ähnern, in denen er/sie Mitglied ist"
+
+#: utils.py:153
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
@@ -139,7 +139,7 @@ msgstr ""
 msgid "Internal Chantal error"
 msgstr "Interner Chantal-Fehler"
 
-#: templates/500.html:41 templates/base_chantal.html:68
+#: templates/500.html:41 templates/base_chantal.html:69
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -162,28 +162,28 @@ msgstr ""
 "Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald "
 "der Fehler behoben ist.\n"
 
-#: templates/base_chantal.html:45
+#: templates/base_chantal.html:46
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: templates/base_chantal.html:51
+#: templates/base_chantal.html:52
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/base_chantal.html:55
+#: templates/base_chantal.html:56
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/base_chantal.html:58
+#: templates/base_chantal.html:59
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: templates/base_chantal.html:60 templates/base_chantal.html.py:65
+#: templates/base_chantal.html:61 templates/base_chantal.html.py:66
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/base_chantal.html:62
+#: templates/base_chantal.html:63
 msgid "Log out"
 msgstr "Abmelden"
 
@@ -296,15 +296,21 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templatetags/chantal.py:103
+#: templatetags/chantal.py:153
 #, python-format
 msgid "with %(markdown_link)s syntax"
 msgstr "mit %(markdown_link)s-Syntax"
 
-#: templatetags/chantal.py:112
+#: templatetags/chantal.py:162
 msgid "Yes"
 msgstr "Ja"
 
-#: templatetags/chantal.py:112
+#: templatetags/chantal.py:162
 msgid "No"
 msgstr "Nein"
+
+#~ msgid "settings last modified"
+#~ msgstr "letzte Änderung der Einstellungen"
+
+#~ msgid "is an external user"
+#~ msgstr "ist ein externer Benutzer"
