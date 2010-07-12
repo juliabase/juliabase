@@ -223,3 +223,22 @@ def mkdirs(path):
         os.makedirs(os.path.dirname(path))
     except OSError:
         pass
+
+
+def capitalize_first_letter(text):
+    u"""Capitalise the first letter of the given string.
+
+    :Parameters:
+      - `text`: text whose first letter should be capitalised
+
+    :type text: unicode
+
+    :Return:
+      the text with capitalised first letter
+
+    :rtype: unicode
+    """
+    if text:
+        return text[0].upper() + text[1:]
+    else:
+        return u""

@@ -91,7 +91,7 @@ class VerboseNameNode(template.Node):
             return u""
         verbose_name = unicode(model._meta.get_field(field).verbose_name)
         if verbose_name:
-            verbose_name = verbose_name[0].upper() + verbose_name[1:]
+            verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         return verbose_name
 
 
@@ -257,7 +257,7 @@ def first_upper(value):
     """
 
     if value:
-        return value[0].upper() + value[1:]
+        return samples.views.utils.capitalize_first_letter(value)
 
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
@@ -276,7 +276,7 @@ class ValueFieldNode(template.Node):
             instance, field_name = self.field_name.rsplit(".", 1)
             model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
-        verbose_name = verbose_name[0].upper() + verbose_name[1:]
+        verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = chantal_common.templatetags.chantal.fancy_bool(field)
             unit = None
@@ -359,7 +359,7 @@ class ValueSplitFieldNode(template.Node):
             instance, field_name = self.field_name1.rsplit(".", 1)
             model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
-        verbose_name = verbose_name[0].upper() + verbose_name[1:]
+        verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if not field1 and not field2:
                 return u"""<td colspan="2"/>"""
