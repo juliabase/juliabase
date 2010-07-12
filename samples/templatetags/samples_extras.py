@@ -255,7 +255,6 @@ def markdown_samples(value):
 def first_upper(value):
     u"""Filter for formatting the value to set the first character to uppercase.
     """
-
     if value:
         return value[0].upper() + value[1:]
 
@@ -395,12 +394,11 @@ def value_split_field(parser, token):
     if len(tokens) == 4:
         tag, field1, field2, unit = tokens
         if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
-            raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
+            raise template.TemplateSyntaxError, "value_split_field's unit argument should be in quotes"
         unit = unit[1:-1]
     elif len(tokens) == 3:
         tag, field1, field2 = tokens
         unit = None
     else:
-        raise template.TemplateSyntaxError, "value_field requires one or two arguments"
+        raise template.TemplateSyntaxError, "value_split_field requires two or three arguments"
     return ValueSplitFieldNode(field1, field2, unit)
-
