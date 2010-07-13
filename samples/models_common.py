@@ -140,7 +140,7 @@ class Process(PolymorphicModel):
 
         :type with_relations: bool
         """
-        cache.delete_many(self.cache_keys.split("\n"))
+        cache.delete_many(key for key in self.cache_keys.split("\n") if key)
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
         with_relations = kwargs.pop("with_relations", True)
@@ -565,7 +565,7 @@ class Sample(models.Model):
         :type with_relations: bool
         :type from_split: `SampleSplit` or ``NoneType``
         """
-        cache.delete_many(self.cache_keys.split("\n"))
+        cache.delete_many(key for key in self.cache_keys.split("\n") if key)
         self.cache_keys = ""
         self.last_modified = datetime.datetime.now()
         with_relations = kwargs.pop("with_relations", True)
