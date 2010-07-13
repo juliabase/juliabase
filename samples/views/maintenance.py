@@ -36,6 +36,8 @@ def expire_feed_entries():
 
 # FixMe: This routine must go to "chantal_ipv".
 
+# FixMe: Exclude external users (i.e. with password set)
+
 def mark_inactive_users():
     u"""Sets all users which can't be found anymore in the central Active
     Directory to “inactive”.  It also removes all special rights from them, and
