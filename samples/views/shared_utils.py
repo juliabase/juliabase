@@ -8,6 +8,10 @@ of Django with the Remove Client (which uses this module).
 
 Note that all names defined here are also available in `utils`, so this module
 is really only interesting for the Remote Client.
+
+Important: A *copy* of this module is bundled with the remote client, which is
+part of the institute-specific package.  So synchronise it now and then with
+its copy there.
 """
 
 from __future__ import absolute_import
@@ -242,3 +246,32 @@ def capitalize_first_letter(text):
         return text[0].upper() + text[1:]
     else:
         return u""
+
+
+def sanitize_for_markdown(text):
+    u"""Convert a raw string to Markdown syntax.  This is used when external
+    (legacy) strings are important.  For example, comments found in data files
+    must be sent through this function before being stored in the database.
+
+    :Parameters:
+      - `text`: the original string
+
+    :type text: unicode
+
+    :Return:
+      the Markdown-ready string
+
+    :rtype: unicode
+    """
+    # FixMe: So far, this routine only sanitises line breaks.  However, there
+    # is more to be done, especially escaping.
+    text = text.replace(u"\r\n", u"\n").replace(u"\r", u"\n")
+    # FixMe: Add ``flags=re.UNICODE`` with Python 2.7+
+    paragraphs = re.split(ur"\n\s*\n", text)
+    for i, paragraph in enumerate(paragraphs):
+        lines = paragraph.split("\n")
+        for j, line in enumerate(lines):
+            if len(line) < 70:
+                lines[j] += "  "
+        paragraphs[i] = u"\n".join(lines)
+    return u"\n\n".join(paragraphs)
