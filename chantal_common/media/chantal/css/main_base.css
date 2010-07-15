@@ -100,7 +100,7 @@ ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; backg
 .errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }
 div.errorlist li { padding-left: 0pt }
 
-table.about { font-size: large; margin-top: 2ex; margin-bottom: 0pt; min-width: 60% }
+table.about { font-size: large; margin-top: 2ex; margin-bottom: 0pt; width: 60% }
 table.about th { border-bottom: solid gray 1px; padding-right: 2em; text-align: right; width: 40%; vertical-align: top }
 table.about td { text-align: left; width: 60%; vertical-align: top; text-indent: -3em; padding-left: 3.5em;
 		 padding-bottom: 2ex }
