@@ -142,7 +142,7 @@ is greater than 1:
 
 from __future__ import absolute_import
 
-import datetime
+import datetime, hashlib
 from django.db.models import signals
 import django.contrib.auth.models
 from . import models as samples_app
@@ -199,11 +199,34 @@ def touch_display_settings(sender, instance, **kwargs):
 signals.post_save.connect(touch_display_settings, sender=chantal_common_app.UserDetails)
 
 
+def get_identifying_data_hash(user):
+    u"""Return the hash of username, firstname, and lastname.  See the
+    ``idenfifying_data_hash`` field in ``UserDetails`` for further information.
+
+    :Parameters:
+      - `user`: the user
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Return:
+      the SHA1 hash of the identifying data of the user
+
+    :rtype: str
+    """
+    hash_ = hashlib.sha1()
+    hash_.update(user.username)
+    hash_.update(user.first_name)
+    hash_.update(user.last_name)
+    hash_.update(user.chantal_user_details.browser_system)
+    return hash_.hexdigest()
+
+
 def add_user_details(sender, instance, created, **kwargs):
     u"""Create ``UserDetails`` for every newly created user.
     """
     if created:
-        samples_app.UserDetails.objects.get_or_create(user=instance)
+        samples_app.UserDetails.objects.get_or_create(user=instance,
+                                                      idenfifying_data_hash=get_identifying_data_hash(instance))
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
@@ -213,12 +236,16 @@ def touch_user_samples_and_processes(sender, instance, created, **kwargs):
     which are connected with a user.  This is done because the user's name may
     have changed.
     """
-    for sample in instance.samples.all():
-        sample.save(with_relations=False)
-    for process in instance.processes.all():
-        process.actual_instance.save()
-    for sample_series in instance.sample_series.all():
-        sample_series.save()
+    former_identifying_data_hash = get_identifying_data_hash(instance)
+    if former_identifying_data_hash != instance.samples_user_details.idenfifying_data_hash:
+        instance.samples_user_details.idenfifying_data_hash = former_identifying_data_hash
+        instance.samples_user_details.save()
+        for sample in instance.samples.all():
+            sample.save(with_relations=False)
+        for process in instance.processes.all():
+            process.actual_instance.save()
+        for sample_series in instance.sample_series.all():
+            sample_series.save()
 
 signals.post_save.connect(touch_user_samples_and_processes, sender=django.contrib.auth.models.User)
 
