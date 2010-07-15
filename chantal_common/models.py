@@ -25,6 +25,7 @@
 u"""Models in the relational database for Chantal-Common.
 """
 
+import hashlib
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -55,10 +56,25 @@ class UserDetails(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(UserDetails, self).__init__(*args, **kwargs)
-        self._old = {"language": self.language}
+        self._old = self.get_data_hash()
 
     def __unicode__(self):
         return unicode(self.user)
+
+    def get_data_hash(self):
+        u"""Get the hash of all fields that change the HTML's appearance,
+        e.g. language, skin, browser type etc.
+
+        :Return:
+          the data hash value
+
+        :rtype: str
+        """
+        hash_ = hashlib.sha1()
+        hash_.update(self.language)
+        hash_.update("\x03")
+        hash_.update(self.browser_system)
+        return hash_.hexdigest()
 
 
 class Topic(models.Model):
