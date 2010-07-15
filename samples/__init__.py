@@ -182,7 +182,7 @@ signals.m2m_changed.connect(touch_my_samples, sender=samples_app.Sample.watchers
 
 
 def touch_display_settings(sender, instance, **kwargs):
-    u"""Touch the “sample settings modified” field in the ``UserDetails``.
+    u"""Touch the “display settings modified” field in the ``UserDetails``.
     This function is called whenever the ``UserDetails`` of ``chantal_common``
     are changed.  In particular this means that the sample datasheet is not
     taken from the browser cache if the user's preferred language has recently
@@ -324,7 +324,7 @@ signals.m2m_changed.connect(touch_sample_series_results, sender=samples_app.Samp
 
 
 def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch the sample settings of all users for which the topics have
+    u"""Touch the display settings of all users for which the topics have
     changed because we must invalidate the browser cache for those users (the
     permissions may have changed).
     """
