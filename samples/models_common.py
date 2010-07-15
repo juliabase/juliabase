@@ -34,10 +34,11 @@ def get_user_settings_hash(user):
     u"""Calculate a hash of the user's settings.  This is used for caching.  In
     order to fetch HTML-containing material from the cache, it is necessary to
     have the user's settings in the cache key.  Otherwise, the HTML would be
-    wrong.  Currently, this is only the language.  So if you switch the
-    language from English to German, this hash prevents Chantal from fetching
-    HTML that still is in English.  Theoretically, a skin setting may also be
-    included here (if skins are not solely realised via CSS).
+    wrong.  Currently, this is only the language and the user's operating
+    system.  So if you switch the language from English to German, this hash
+    prevents Chantal from fetching HTML that still is in English.
+    Theoretically, a skin setting may also be included here (if skins are not
+    solely realised via CSS).
 
     :Parameters:
       - `user`: the currently logged-in user
@@ -1130,6 +1131,15 @@ class UserDetails(models.Model):
     my_samples_timestamp = models.DateTimeField(_(u"My Samples last modified"), auto_now_add=True)
     u"""This timestamp denotes when My Samples were changed most recently.  It
     is used for expiring sample datasheet caching.
+    """
+    idenfifying_data_hash = models.CharField(_(u"identifying data hash"), max_length=40)
+    u"""Contains the SHA1 hash of the username, first name, and family name of
+    the user.  It is used for efficient caching.  If the name of the user
+    changes, all connected processes, samples, and sample series must be
+    expired in the cache.  If other things on the user data are changed (in
+    particular, the "last_login" field at each login of the user), nothing must
+    be done.  In order to be able to distinguish between the two cases, we save
+    the old data here, for comparison.
     """
 
     class Meta:
