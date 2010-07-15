@@ -217,7 +217,6 @@ def get_identifying_data_hash(user):
     hash_.update(user.username)
     hash_.update(user.first_name.encode("utf-8"))
     hash_.update(user.last_name.encode("utf-8"))
-    hash_.update(user.chantal_user_details.browser_system)
     return hash_.hexdigest()
 
 
