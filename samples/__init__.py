@@ -189,7 +189,7 @@ def touch_display_settings(sender, instance, **kwargs):
     changed.
     """
     try:
-        if instance.language != instance._old["language"]:
+        if instance.get_data_hash() != instance._old:
             instance.user.samples_user_details.touch_display_settings()
     except samples_app.UserDetails.DoesNotExist:
         # We can safely ignore it.  The initial value of
@@ -215,7 +215,9 @@ def get_identifying_data_hash(user):
     """
     hash_ = hashlib.sha1()
     hash_.update(user.username)
+    hash_.update("\x03")
     hash_.update(user.first_name.encode("utf-8"))
+    hash_.update("\x03")
     hash_.update(user.last_name.encode("utf-8"))
     return hash_.hexdigest()
 
