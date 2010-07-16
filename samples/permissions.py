@@ -191,7 +191,6 @@ class PermissionError(Exception):
         super(PermissionError, self).__init__(_(u"Permission denied: ") + description)
         self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
-
 def assert_can_fully_view_sample(user, sample):
     u"""Tests whether the user can view the sample.
 
@@ -284,7 +283,6 @@ def assert_can_view_lab_notebook(user, process_class):
                          "permission": translate_permission(permission)}
         raise PermissionError(user, description)
 
-
 def assert_can_view_physical_process(user, process):
     u"""Tests whether the user can view a physical process (i.e. deposition,
     measurement, etching process, clean room work etc).
@@ -301,10 +299,13 @@ def assert_can_view_physical_process(user, process):
         process.
     """
     process_class = process.__class__
-    permission = \
+    permission_to_edit = \
         "{app_label}.add_edit_{process_name}".format(
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
-    if not user.has_perm(permission):
+    permission_to_view_all = \
+        "{app_label}.can_view_all_{process_name}".format(
+        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
+    if not user.has_perm(permission_to_edit) and not user.has_perm(permission_to_view_all):
         for sample in process.samples.all():
             if has_permission_to_fully_view_sample(user, sample):
                 break
