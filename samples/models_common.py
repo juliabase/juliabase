@@ -545,7 +545,7 @@ class Sample(models.Model):
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("can_view_all_samples", _("Can view all samples")),)
+        permissions = (("view_all_samples", _("Can view all samples")),)
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
