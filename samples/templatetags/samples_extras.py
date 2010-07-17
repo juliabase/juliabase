@@ -198,6 +198,7 @@ def timestamp(value):
     return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
+# FixMe: This pattern should probably be moved to settings.py.
 sample_name_pattern = \
     re.compile(ur"""(\W|\A)(?P<name>[0-9][0-9][A-Z]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9#]*)?|  # old-style sample name
                             ([0-9][0-9]-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})|           # initials of a user
