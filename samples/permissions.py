@@ -275,7 +275,7 @@ def assert_can_view_lab_notebook(user, process_class):
         notebook for this process class.
     """
     permission = \
-        "{app_label}.add_edit_{process_name}".format(
+        "{app_label}.view_every_{process_name}".format(
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     if not user.has_perm(permission):
         description = _(u"You are not allowed to view lab notebooks for %(process_plural_name)s because you don't have the "
