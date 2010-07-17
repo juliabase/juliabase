@@ -28,7 +28,8 @@ new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]
                                          -[-A-Za-z_/0-9#]+$""", re.VERBOSE)
 provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)")
 def sample_name_format(name):
-    u"""Determines which sample name format the given name has.
+    u"""Determines which sample name format the given name has.  It doesn't
+    test whether the sample name is existing, nor if the initials are valid.
 
     :Parameters:
       - `name`: the sample name
