@@ -49,7 +49,7 @@ class NewNameForm(forms.Form):
           - `year`: the two-digit year of origin
           - `initials`: The initials to be used.  If, for some reason, there
             are no initials available, give an empty string.  Validation will
-            the fail, however, it would fail for the whole page anyway without
+            then fail, however, it would fail for the whole page anyway without
             initials.
 
         :type year: str
