@@ -19,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal_common.utils import append_error, HttpResponseSeeOther, add_timezone_information
+from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information
 from samples.views import utils, form_utils, feed_utils, csv_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 
@@ -476,9 +476,7 @@ def sample_timestamp(request, sample_name):
     user_details = request.user.samples_user_details
     timestamps.append(user_details.display_settings_timestamp)
     timestamps.append(user_details.my_samples_timestamp)
-    timestamp = max(timestamps)
-    add_timezone_information(timestamp)
-    return timestamp
+    return adjust_timezone_information(max(timestamps))
 
 
 @login_required
