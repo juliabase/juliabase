@@ -26,7 +26,9 @@ from __future__ import absolute_import
 
 import codecs, re, os.path
 from functools import update_wrapper
+import dateutil.tz
 import django.http
+from django.conf import settings
 from django.utils.encoding import iri_to_uri
 from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
@@ -273,3 +275,24 @@ def unicode_strftime(timestamp, format_string):
     :rtype: unicode
     """
     return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+
+
+def adjust_timezone_information(timestamp):
+    u"""Adds proper timezone information to the timestamp.  It assumes that the
+    timestamp has no previous ``tzinfo`` set, but it refers to the
+    ``TIME_ZONE`` Django setting.  This is the case with the PostgreSQL backend
+    as long as http://code.djangoproject.com/ticket/2626 is not fixed.
+
+    FixMe: This is not tested with another database backend except PostgreSQL.
+
+    :Parameters:
+      - `timestamp`: the timestamp whose ``tzinfo`` should be modified
+
+    :type timestamp: ``datetime.datetime``
+
+    :Return:
+      the timestamp with the correct timezone setting
+
+    :rtype: ``datetime.datetime``
+    """
+    return timestamp.replace(tzinfo=dateutil.tz.tzlocal())
