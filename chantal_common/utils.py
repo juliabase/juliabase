@@ -277,7 +277,7 @@ def unicode_strftime(timestamp, format_string):
     return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
 
 
-def add_timezone_information(timestamp):
+def adjust_timezone_information(timestamp):
     u"""Adds proper timezone information to the timestamp.  It assumes that the
     timestamp has no previous ``tzinfo`` set, but it refers to the
     ``TIME_ZONE`` Django setting.  This is the case with the PostgreSQL backend
@@ -286,10 +286,13 @@ def add_timezone_information(timestamp):
     FixMe: This is not tested with another database backend except PostgreSQL.
 
     :Parameters:
-      - `timestamp`: the timestamp whose ``tzinfo`` should be modified; it is
-        modified in place
+      - `timestamp`: the timestamp whose ``tzinfo`` should be modified
 
     :type timestamp: ``datetime.datetime``
+
+    :Return:
+      the timestamp with the correct timezone setting
+
+    :rtype: ``datetime.datetime``
     """
-    timezone = dateutil.tz.tzstr(settings.TIME_ZONE) if settings.TIME_ZONE else dateutil.tz.tzlocal()
-    timestamp.replace(tzinfo=timezone)
+    return timestamp.replace(tzinfo=dateutil.tz.tzlocal())
