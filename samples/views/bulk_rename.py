@@ -8,7 +8,7 @@ view just to rename *one* sample (but it *must* have a provisional name).
 
 from __future__ import absolute_import
 
-import datetime
+import datetime, string
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import Http404
@@ -66,28 +66,37 @@ class NewNameForm(forms.Form):
         return new_name
 
 
-def is_referentially_valid(new_name_forms):
+def is_referentially_valid(samples, prefixes_form, new_name_forms):
     u"""Check whether there are duplicate names on the page.  Note that I don't
     check here wheter samples with these names already exist in the database.
     This is done in the form itself.
 
     :Parameters:
+      - `samples`: the samples to be re-named
+      - `prefixes_form`: the form with the selected common prefix
       - `new_name_forms`: all forms with the new names
 
+    :type samples: list of `models.Sample`
+    :type prefixes_form: `PrefixesForm`
     :type new_name_forms: list of `NewNameForm`
 
     :Return:
-      whether there were no duplicates on the page.
+      whether there were no duplicates on the page, and whether no old-style
+      names are renamed to external names
 
     :rtype: bool
     """
     referentially_valid = True
     new_names = set()
-    for new_name_form in new_name_forms:
+    prefix_is_external = prefixes_form.cleaned_data.get("prefix").startswith(tuple(string.ascii_uppercase))
+    for sample, new_name_form in zip(samples, new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
             if new_name in new_names:
                 append_error(new_name_form, _(u"This sample name has been used already on this page."), "name")
+                referentially_valid = False
+            elif utils.sample_name_format(sample.name) != "provisional" and prefix_is_external:
+                append_error(new_name_form, _(u"Only provisional names can be changed to an external name."), "name")
                 referentially_valid = False
             else:
                 new_names.add(new_name)
@@ -117,11 +126,18 @@ def bulk_rename(request):
         available_prefixes = [(own_prefix, own_prefix)]
     except models.Initials.DoesNotExist:
         available_prefixes = []
-    numbers_list = utils.parse_query_string(request).get("numbers", "")
-    samples = [get_object_or_404(models.Sample, name="*"+number.zfill(5)) for number in numbers_list.split(",")]
+    if "numbers" in request.GET:
+        numbers_list = request.GET.get("numbers", "")
+        samples = [get_object_or_404(models.Sample, name="*"+number.zfill(5)) for number in numbers_list.split(",")]
+    elif "ids" in request.GET:
+        ids = request.GET["ids"].split(",")
+        samples = [get_object_or_404(models.Sample, pk=utils.int_or_zero(id_)) for id_ in ids]
+        if not all(utils.sample_name_format(sample.name) in ["old", "provisional"] for sample in samples):
+            raise Http404(_(u"Some given samples not found amongst those with old-style names."))
+    else:
+        samples = None
     if not samples:
-        raise Http404(_(u"Please give the list of provisional samples names (without the asterisk, but with leading "
-                        u"zeros) as a comma-separated list without whitespace in the “numbers” query string parameter."))
+        raise Http404(_(u"No samples given."))
     for sample in samples:
         permissions.assert_can_edit_sample(request.user, sample)
     for external_operator in request.user.external_contacts.all():
@@ -145,7 +161,7 @@ def bulk_rename(request):
         new_name_forms = [NewNameForm(prefix, request.POST, prefix=str(sample.pk)) for sample in samples]
         all_valid = prefixes_form.is_valid() or bool(single_prefix)
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms]) and all_valid
-        referentially_valid = is_referentially_valid(new_name_forms)
+        referentially_valid = is_referentially_valid(samples, prefixes_form, new_name_forms)
         if all_valid and referentially_valid:
             for sample, new_name_form in zip(samples, new_name_forms):
                 sample.name = new_name_form.cleaned_data["name"]
