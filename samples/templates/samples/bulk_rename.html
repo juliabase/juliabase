@@ -17,12 +17,12 @@
     <tr>
       <td> </td>
       <td>
-        {% if single_initials %}
-          {{ year }}-{{ single_initials }}-…
+        {% if single_prefix %}
+          {{ single_prefix }}…
         {% else %}
-          {% error_list initials _("Error in initials") %}
+          {% error_list prefixes _("Error in prefixes") %}
           <div>
-            {{ year }}-{{ initials.initials }}-…
+            {{ prefixes.prefix }}…
           </div>
         {% endif %}
       </td>
