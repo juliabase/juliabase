@@ -24,7 +24,7 @@ from django.forms.util import ValidationError
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import chantal_common.utils
-from chantal_common.utils import append_error
+from chantal_common.utils import append_error, adjust_timezone_information
 from samples.views import utils, form_utils, feed_utils, csv_export
 
 
@@ -101,7 +101,8 @@ def sample_series_timestamp(request, name):
         sample_series = models.SampleSeries.objects.get(name=name)
     except models.SampleSeries.DoesNotExist:
         return None
-    return max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+    timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+    return adjust_timezone_information(timestamp)
 
 
 @login_required
