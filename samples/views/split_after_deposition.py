@@ -25,8 +25,8 @@ from samples.views import utils, form_utils, feed_utils
 
 
 class OriginalDataForm(Form):
-    u"""Form holding the old sample and the number of pieces it is about to be
-    split into.
+    u"""Form holding the old sample, the new name for the unsplit sample, and
+    the number of pieces it is about to be split into.
     """
     _ = ugettext_lazy
     sample = forms.CharField(label=_(u"Old sample name"), max_length=30,
@@ -77,19 +77,17 @@ class OriginalDataForm(Form):
 
     def clean(self):
         if "new_name" in self.cleaned_data:
+            new_name = self.cleaned_data["new_name"]
             sample = self.cleaned_data.get("sample")
-            if sample:
-                new_name = self.cleaned_data["new_name"]
-                if utils.sample_name_format(new_name) == "new":
-                    if new_name != sample.name:
-                        append_error(self, _(u"If you choose a new-style name, it must not change."), "new_name")
-                        del self.cleaned_data["new_name"]
-                else:
-                    if not new_name.startswith(self.deposition_number):
-                        append_error(
-                            self, _(u"If you choose a deposition-style name, it must begin with the deposition number."),
-                            "new_name")
-                        del self.cleaned_data["new_name"]
+            old_sample_name_format = utils.sample_name_format(sample.name)
+            if old_sample_name_format == "new":
+                if not new_name.startswith(sample.name):
+                    append_error(self, _(u"The new name must begin with the old name."), "new_name")
+                    del self.cleaned_data["new_name"]
+            else:
+                if not new_name.startswith(self.deposition_number):
+                    append_error(self, _(u"The new name must begin with the deposition number."), "new_name")
+                    del self.cleaned_data["new_name"]
         return self.cleaned_data
 
 
