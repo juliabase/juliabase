@@ -341,8 +341,10 @@ class SamplesAndProcesses(object):
         except permissions.PermissionError:
             self.sample_context["can_add_process"] = False
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
-        self.sample_context["number_for_rename"] = \
-            sample.name[1:] if sample.name.startswith("*") and self.sample_context["can_edit"] else None
+        if self.sample_context["can_edit"] and utils.sample_name_format(sample.name) in ["provisional", "old"]:
+            self.sample_context["id_for_rename"] = str(sample.pk)
+        else:
+            self.sample_context["id_for_rename"] = None
 
     def personalize(self, user, clearance, post_data):
         u"""Change the ``SamplesAndProcesses`` object so that it is suitable

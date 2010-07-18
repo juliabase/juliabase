@@ -126,6 +126,8 @@ def bulk_rename(request):
         available_prefixes = [(own_prefix, own_prefix)]
     except models.Initials.DoesNotExist:
         available_prefixes = []
+    # FixMe: Get rid of the "numbers" parameter.  I think it is only used in
+    # the remote client.
     if "numbers" in request.GET:
         numbers_list = request.GET.get("numbers", "")
         samples = [get_object_or_404(models.Sample, name="*"+number.zfill(5)) for number in numbers_list.split(",")]
@@ -164,6 +166,8 @@ def bulk_rename(request):
         referentially_valid = is_referentially_valid(samples, prefixes_form, new_name_forms)
         if all_valid and referentially_valid:
             for sample, new_name_form in zip(samples, new_name_forms):
+                if not sample.name.startswith("*"):
+                    models.SampleAlias(name=sample.name, sample=sample).save()
                 sample.name = new_name_form.cleaned_data["name"]
                 sample.save()
             return utils.successful_response(request, _(u"Successfully renamed the samples."))
