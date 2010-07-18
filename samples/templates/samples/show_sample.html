@@ -15,8 +15,8 @@
             alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
                href="{% url samples.views.sample.edit sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                               ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
-            {% if sample.number_for_rename %}<a class="edit-icon"
-               href="{% url samples.views.bulk_rename.bulk_rename %}?numbers={{ sample.number_for_rename }}&next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+            {% if sample.id_for_rename %}<a class="edit-icon"
+               href="{% url samples.views.bulk_rename.bulk_rename %}?ids={{ sample.id_for_rename }}&next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                                 ><img src="{{ MEDIA_URL }}chantal/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
             {% endif %}
           {% endif %}
