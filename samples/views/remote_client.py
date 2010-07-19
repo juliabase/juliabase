@@ -229,7 +229,7 @@ def get_next_quirky_name(sample_name):
     :rtype: unicode
     """
     prefixes = set()
-    for name in models.Sample.objects.filter(name__startswith="90-LGCY-").values_list("name", flat=True):
+    for name in models.Sample.objects.filter(name__startswith="LGCY-").values_list("name", flat=True):
         prefix, __, original_name = name[8:].partition("-")
         if original_name == sample_name:
             prefixes.add(prefix)
@@ -245,7 +245,7 @@ def get_next_quirky_name(sample_name):
         else:
             digits[0:0] = [97]
         free_prefix = u"".join(unichr(digit) for digit in digits)
-    return u"90-LGCY-{0}-{1}".format(free_prefix, sample_name)
+    return u"LGCY-{0}-{1}".format(free_prefix, sample_name)
 
 
 @login_required
