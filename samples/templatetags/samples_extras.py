@@ -351,7 +351,7 @@ class ValueSplitFieldNode(template.Node):
         self.field_name2 = field2
         self.field1 = template.Variable(field1)
         self.field2 = template.Variable(field2)
-        self.separator = separator if separator is not None else ""
+        self.separator = separator if separator is not None else ''
         self.unit = unit
 
     def render(self, context):
@@ -409,6 +409,7 @@ def value_split_field(parser, token):
     elif len(tokens) == 4:
         tag, field1, field2, separator = tokens
         unit = None
+        separator = separator[1:-1]
     elif len(tokens) == 3:
         tag, field1, field2 = tokens
         separator = None
