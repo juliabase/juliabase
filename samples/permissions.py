@@ -206,7 +206,8 @@ def assert_can_fully_view_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to view the
         sample.
     """
-    if sample.topic and sample.topic not in user.topics.all() and sample.currently_responsible_person != user:
+    if sample.topic and sample.topic not in user.topics.all() and sample.currently_responsible_person != user and \
+            not user.is_superuser:
         if sample.topic.restricted:
             description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             u"its currently responsible person.")
