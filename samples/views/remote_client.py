@@ -66,7 +66,7 @@ def primary_keys(request):
     result_dict = {}
     if "topics" in query_dict:
         all_topics = set(topic for topic in Topic.objects.all()
-                         if not topic.restricted or topic in request.user.topics)
+                         if not topic.restricted or topic in request.user.topics.all())
         if query_dict["topics"] == "*":
             topics = all_topics
         else:
