@@ -103,6 +103,8 @@
                 {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
                                                  href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                    ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+                {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
+                   ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"/></a>
                 {% endif %}{% if process.export_url %}<a class="edit-icon" 
                         href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                    ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>

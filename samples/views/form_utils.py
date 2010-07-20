@@ -450,7 +450,8 @@ class OperatorField(forms.ChoiceField):
        operator field empty.
 
     3. Assure in your ``clean()`` method that non-staff doesn't submit an
-       external operator.  In the same method, say::
+       external operator.  In the same method, say if the ``external_operator``
+       field was empty::
 
            self.cleaned_data["external_operator"] = \
                self.fields["operator"].external_operator
@@ -475,22 +476,17 @@ class OperatorField(forms.ChoiceField):
         :type old_process: `models.Process`
         """
         self.user = user
-        if old_process:
-            if user.is_staff:
-                self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
-            else:
-                self.choices = [(old_process.operator.pk, old_process.operator.username)]
-            self.initial = old_process.operator.pk
-        else:
-            if user.is_staff:
-                self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
-            else:
-                self.choices = [(user.pk, user.username)]
-            self.initial = user.pk
         if user.is_staff:
+            self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
             external_operators = list(models.ExternalOperator.objects.all())
         else:
+            if old_process:
+                self.choices = [(old_process.operator.pk, old_process.operator.username)]
+            else:
+                self.choices = [(user.pk, user.username)]
             external_operators = list(user.external_contacts.all())
+        self.initial = old_process.operator.pk if old_process else user.pk
+        self.default_operator = old_process.operator if old_process else user
         if old_process and old_process.external_operator:
             if not old_process.external_operator in external_operators:
                 external_operators.append(old_process.external_operator)
@@ -507,7 +503,7 @@ class OperatorField(forms.ChoiceField):
         value = super(OperatorField, self).clean(value)
         if value.startswith("extern-"):
             self.external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
-            return self.user
+            return self.default_operator
         else:
             self.external_operator = None
             return django.contrib.auth.models.User.objects.get(pk=int(value))

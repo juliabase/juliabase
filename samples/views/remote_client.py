@@ -66,7 +66,7 @@ def primary_keys(request):
     result_dict = {}
     if "topics" in query_dict:
         all_topics = set(topic for topic in Topic.objects.all()
-                         if not topic.restricted or topic in request.user.topics)
+                         if not topic.restricted or topic in request.user.topics.all() or request.user.is_staff)
         if query_dict["topics"] == "*":
             topics = all_topics
         else:
@@ -229,8 +229,9 @@ def get_next_quirky_name(sample_name):
     :rtype: unicode
     """
     prefixes = set()
-    for name in models.Sample.objects.filter(name__startswith="90-LGCY-").values_list("name", flat=True):
-        prefix, __, original_name = name[8:].partition("-")
+    legacy_prefix = "LGCY-"
+    for name in models.Sample.objects.filter(name__startswith=legacy_prefix).values_list("name", flat=True):
+        prefix, __, original_name = name[len(legacy_prefix):].partition("-")
         if original_name == sample_name:
             prefixes.add(prefix)
     free_prefix = u""
@@ -245,7 +246,7 @@ def get_next_quirky_name(sample_name):
         else:
             digits[0:0] = [97]
         free_prefix = u"".join(unichr(digit) for digit in digits)
-    return u"90-LGCY-{0}-{1}".format(free_prefix, sample_name)
+    return u"{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
 
 
 @login_required

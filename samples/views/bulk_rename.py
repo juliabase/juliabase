@@ -88,7 +88,10 @@ def is_referentially_valid(samples, prefixes_form, new_name_forms):
     """
     referentially_valid = True
     new_names = set()
-    prefix_is_external = prefixes_form.cleaned_data.get("prefix").startswith(tuple(string.ascii_uppercase))
+    if prefixes_form.is_valid():
+        prefix_is_external = prefixes_form.cleaned_data.get("prefix").startswith(tuple(string.ascii_uppercase))
+    else:
+        prefix_is_external = False
     for sample, new_name_form in zip(samples, new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
