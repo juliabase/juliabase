@@ -450,7 +450,8 @@ class OperatorField(forms.ChoiceField):
        operator field empty.
 
     3. Assure in your ``clean()`` method that non-staff doesn't submit an
-       external operator.  In the same method, say::
+       external operator.  In the same method, say if the ``external_operator``
+       field was empty::
 
            self.cleaned_data["external_operator"] = \
                self.fields["operator"].external_operator
