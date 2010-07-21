@@ -149,8 +149,8 @@ def show(request, process_name, year_and_month):
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
     template = loader.get_template("samples/lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
-    template_context = process_class.get_lab_notebook_context(year, month)
-    html_body = template.render(Context(template_context))
+    template_context = RequestContext(request, process_class.get_lab_notebook_context(year, month))
+    html_body = template.render(template_context)
     previous_url, next_url = get_previous_next_urls(process_name, year, month)
     try:
         export_url = django.core.urlresolvers.reverse(
