@@ -103,6 +103,23 @@ class Topic(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+    def get_name_for_user(self, user):
+        u"""Determine the topic's name that can be shown to a certain user.  If
+        the topic is restricted and the user is not a memeber of the project,
+        he must not read the actual topic name.  Therefore, a generic name is
+        generated.  This is used e.g. for the “My Samples” list on the main
+        menu page.
+
+        :Parameters:
+          - `user`: the user for which the name should be displayed
+
+        :type user: ``django.contrib.auth.models.User``
+        """
+        if self.restricted and not self.members.filter(pk=user.pk).exists():
+            return _(u"topic #{number} (confidential)").format(number=self.id)
+        else:
+            return self.name
+
 
 class PolymorphicModel(models.Model):
     u"""Abstract model class, which provides the attribute ``actual_instance``.
