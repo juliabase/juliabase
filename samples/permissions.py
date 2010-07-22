@@ -447,7 +447,7 @@ def assert_can_view_sample_series(user, sample_series):
     """
     if sample_series.currently_responsible_person != user and sample_series.topic not in user.topics.all() and \
             not user.is_superuser:
-        description = _(u"You are not allowed to view the sample series “{name}” because neither are"
+        description = _(u"You are not allowed to view the sample series “{name}” because neither are "
                         u"you the currently responsible person for it, nor are you in its topic.").format(name=sample_series)
         raise PermissionError(user, description, new_topic_would_help=True)
 

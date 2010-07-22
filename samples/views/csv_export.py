@@ -645,7 +645,7 @@ def export(request, data, label_column_heading, renaming_offset=1):
         column_groups_form = ColumnGroupsForm(column_groups) if not single_column_group else None
         columns_form = ColumnsForm(column_groups, columns, single_column_group)
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
-    title = _(u"Table export for “{0}”").format(data.descriptive_name)
+    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
     return render_to_response("samples/csv_export.html", {"title": title, "column_groups": column_groups_form,
                                                           "columns": columns_form,
                                                           "rows": zip(table, switch_row_forms) if table else None,
