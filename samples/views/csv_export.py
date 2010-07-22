@@ -294,7 +294,7 @@ class Column(object):
         another column group, ``disambig_key_names`` calls this method to make
         it unique.
         """
-        self.heading = u"%s {%s}" % (self.key, u" / ".join(self.column_group_names))
+        self.heading = u"{0} {{{1}}}".format(self.key, u" / ".join(self.column_group_names))
 
     def get_value(self, row):
         u"""Return the value of this column in the given row.
@@ -635,7 +635,7 @@ def export(request, data, label_column_heading, renaming_offset=1):
                         [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \
-                        "attachment; filename=chantal--%s.txt" % defaultfilters.slugify(data.descriptive_name)
+                        "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
                     writer = UnicodeWriter(response)
                     writer.writerows(reduced_table)
                     return response
@@ -645,7 +645,7 @@ def export(request, data, label_column_heading, renaming_offset=1):
         column_groups_form = ColumnGroupsForm(column_groups) if not single_column_group else None
         columns_form = ColumnsForm(column_groups, columns, single_column_group)
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
-    title = _(u"Table export for “%s”") % data.descriptive_name
+    title = _(u"Table export for “{0}”").format(data.descriptive_name)
     return render_to_response("samples/csv_export.html", {"title": title, "column_groups": column_groups_form,
                                                           "columns": columns_form,
                                                           "rows": zip(table, switch_row_forms) if table else None,

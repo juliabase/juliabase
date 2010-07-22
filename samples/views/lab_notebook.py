@@ -105,13 +105,13 @@ def get_previous_next_urls(process_name, year, month):
         previous_year -= 1
     if previous_year >= 1990:
         previous_url = django.core.urlresolvers.reverse(
-            "lab_notebook_"+process_name, kwargs={"year_and_month": "%d/%d" % (previous_year, previous_month)})
+            "lab_notebook_"+process_name, kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
     next_month += 1
     if next_month == 13:
         next_month = 1
         next_year += 1
     next_url = django.core.urlresolvers.reverse(
-        "lab_notebook_"+process_name, kwargs={"year_and_month": "%d/%d" % (next_year, next_month)})
+        "lab_notebook_"+process_name, kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
     return previous_url, next_url
 
     
@@ -145,7 +145,7 @@ def show(request, process_name, year_and_month):
         if year_month_form.is_valid():
             return HttpResponseSeeOther(django.core.urlresolvers.reverse(
                     "lab_notebook_"+process_name,
-                    kwargs={"year_and_month": "%(year)d/%(month)d" % year_month_form.cleaned_data}))
+                    kwargs={"year_and_month": "{year}/{month}".format(**year_month_form.cleaned_data)}))
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
     template = loader.get_template("samples/lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
@@ -159,10 +159,11 @@ def show(request, process_name, year_and_month):
     except django.core.urlresolvers.NoReverseMatch:
         export_url = None
     return render_to_response(
-        "samples/lab_notebook.html", {"title": _(u"Lab notebook for %s") % process_class._meta.verbose_name_plural,
-                                      "year": year, "month": month, "year_month": year_month_form,
-                                      "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
-                                      "export_url": export_url},
+        "samples/lab_notebook.html",
+        {"title": _(u"Lab notebook for {name}").format(name=process_class._meta.verbose_name_plural),
+         "year": year, "month": month, "year_month": year_month_form,
+         "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
+         "export_url": export_url},
         context_instance=RequestContext(request))
 
 

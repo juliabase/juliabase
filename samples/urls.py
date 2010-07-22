@@ -108,6 +108,6 @@ urlpatterns = patterns("samples.views",
                        (r"^add_sample$", "remote_client.add_sample"),
                        (r"^add_alias$", "remote_client.add_alias"),
 
-                       (r"^maintenance/%s$" % settings.CREDENTIALS["maintenance_hash"],
+                       (r"^maintenance/{0}$".format(settings.CREDENTIALS["maintenance_hash"]),
                         "maintenance.maintenance"),
                        )

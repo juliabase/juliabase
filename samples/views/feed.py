@@ -93,7 +93,7 @@ def get_timezone_string(timestamp=None):
     seconds = abs(seconds)
     hours = seconds // 3600
     minutes = (seconds-hours*3600) // 60
-    return "%s%02d:%02d" % (sign, hours, minutes)
+    return "{0}{1:02}:{2:02}".format(sign, hours, minutes)
 
 
 def format_timestamp(timestamp):
@@ -147,7 +147,8 @@ def show(request, username, user_hash):
                                                                       kwargs={"username": username, "user_hash": user_hash})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
-    ElementTree.SubElement(feed, "title").text = _(u"Chantal news for %s") % get_really_full_name(user)
+    ElementTree.SubElement(feed, "title").text = \
+        _(u"Chantal news for {user_name}").format(user_name=get_really_full_name(user))
     entries = [entry.actual_instance for entry in user.feed_entries.all()]
     if entries:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)
@@ -166,7 +167,7 @@ def show(request, username, user_hash):
             continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
-            "tag:%s,%s:%s" % (settings.DOMAIN_NAME, entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
+            "tag:{0},{1}:{2}".format(settings.DOMAIN_NAME, entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
         metadata = entry.get_metadata()
         ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)

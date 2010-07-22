@@ -290,7 +290,7 @@ class FormSet(object):
                                for i, quantity in enumerate(quantities)]
         self.value_form_lists = []
         for j, value_list in enumerate(values):
-            self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="%d_%d" % (i, j))
+            self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="{0}_{1}".format(i, j))
                                           for i, value in enumerate(value_list)])
 
     def from_post_data(self, post_data, post_files):
@@ -331,9 +331,9 @@ class FormSet(object):
             values = []
             for i in range(number_of_quantities):
                 if i < found_number_of_quantities and j < found_number_of_values:
-                    values.append(ValueForm(post_data, prefix="%d_%d" % (i, j)))
+                    values.append(ValueForm(post_data, prefix="{0}_{1}".format(i, j)))
                 else:
-                    values.append(ValueForm(prefix="%d_%d" % (i, j)))
+                    values.append(ValueForm(prefix="{0}_{1}".format(i, j)))
             self.value_form_lists.append(values)
         self.edit_description_form = form_utils.EditDescriptionForm(post_data) if self.result else None
 
@@ -545,7 +545,7 @@ def show(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
-    template_context = {"title": _(u"Result “%s”") % result.title, "result": result,
+    template_context = {"title": _(u"Result “{title}”").format(title=result.title), "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.digest_process(result, request.user))
     return render_to_response("samples/show_single_result.html", template_context, context_instance=RequestContext(request))

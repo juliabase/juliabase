@@ -48,7 +48,7 @@ class MyLayerForm(forms.Form):
         # FixMe: Handle the case when there is no "layers" attribute
         if not deposition.layers.filter(number=layer_number).exists():
             raise ValidationError(_(u"This layer does not exist in this deposition."))
-        return u"%d-%s" % (deposition.id, layer_number)
+        return u"{0}-{1}".format(deposition.id, layer_number)
 
 
 layer_item_pattern = re.compile(ur"\s*(?P<nickname>.+?)\s*:\s*(?P<raw_layer_identifier>.+?)\s*(?:,\s*|\Z)")
@@ -75,7 +75,7 @@ def forms_from_database(user):
         process_id, layer_number = raw_layer_identifier.rsplit("-", 1)
         process_id, layer_number = int(process_id), int(layer_number)
         deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
-        deposition_and_layer = u"%s-%d" % (deposition_number, layer_number)
+        deposition_and_layer = u"{0}-{1}".format(deposition_number, layer_number)
         my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
                                           prefix=str(len(my_layer_forms))))
         my_layers_serialized = my_layers_serialized[next_match.end():]
@@ -102,14 +102,14 @@ def forms_from_post_data(post_data):
     structure_changed = False
     index = 0
     while True:
-        if "%d-nickname" % index not in post_data:
+        if "{0}-nickname".format(index) not in post_data:
             break
-        if "%d-delete" % index in post_data:
+        if "{0}-delete".format(index) in post_data:
             structure_changed = True
         else:
             my_layer_forms.append(MyLayerForm(post_data, prefix=str(index)))
         index += 1
-    if my_layer_forms and not post_data["%d-nickname"%(index-1)]:
+    if my_layer_forms and not post_data["{0}-nickname".format(index - 1)]:
         del my_layer_forms[-1]
     else:
         structure_changed = True
@@ -142,7 +142,7 @@ def save_to_database(my_layer_forms, user):
     """
     user_details = user.samples_user_details
     user_details.my_layers = \
-        u", ".join(["%s: %s" % (form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
+        u", ".join(["{0}: {0}".format(form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
                     for form in my_layer_forms])
     user_details.save()
 

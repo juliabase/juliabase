@@ -49,7 +49,7 @@ class Deposition(PhysicalProcess):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"deposition %s") % self.number
+        return _(u"deposition {number}").format(number=self.number)
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
@@ -116,6 +116,6 @@ class Layer(models.Model):
         :rtype: `samples.csv_common.CSVNode`
         """
         _ = ugettext
-        csv_node = CSVNode(self, _(u"layer %d") % self.number)
+        csv_node = CSVNode(self, _(u"layer {number}").format(number=self.number))
         csv_node.items = [CSVItem(_(u"number"), unicode(self.number), "layer")]
         return csv_node

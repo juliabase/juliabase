@@ -180,7 +180,7 @@ def change_structure(original_data_forms, new_name_form_lists):
                 for new_name_index in range(len(new_name_forms), number_of_pieces):
                     new_name_forms.append(NewNameForm(readonly=False,
                                                       initial={"new_name": original_data_form.cleaned_data["new_name"]},
-                                                      prefix="%d_%d"%(sample_index, new_name_index)))
+                                                      prefix="{0}_{1}".format(sample_index, new_name_index)))
                 structure_changed = True
     return structure_changed
 
@@ -271,11 +271,13 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
             if original_sample in original_samples:
-                append_error(original_data_form, _(u"Sample %s occurs multiple times.") % original_sample, "sample")
+                append_error(original_data_form, _(u"Sample {sample} occurs multiple times.").format(sample=original_sample),
+                             "sample")
                 referentially_valid = False
             original_samples.add(original_sample)
             if original_sample not in samples:
-                append_error(original_data_form, _(u"Sample %s doesn't belong to this deposition.") % original_sample,
+                append_error(original_data_form,
+                             _(u"Sample {sample} doesn't belong to this deposition.").format(sample=original_sample),
                              "sample")
                 referentially_valid = False
             new_name = original_data_form.cleaned_data["new_name"]
@@ -353,7 +355,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
         number_of_pieces = original_data_form.cleaned_data["number_of_pieces"] if original_data_form.is_valid() else None
         new_name_forms = []
         for new_name_index in range(list_of_number_of_new_names[sample_index]):
-            prefix = "%d_%d" % (sample_index, new_name_index)
+            prefix = "{0}_{1}".format(sample_index, new_name_index)
             new_name_form = \
                 NewNameForm(readonly=number_of_pieces==1, data=post_data, prefix=prefix)
             if number_of_pieces == 1 and new_name_form.is_valid() and original_data_form.is_valid() \
@@ -393,7 +395,7 @@ def forms_from_database(deposition, remote_client):
     new_name_form_lists = [[NewNameForm(
                 readonly=True,
                 initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else deposition.number},
-                prefix="%d_0"%i)] for i, sample in enumerate(samples)]
+                prefix="{0}_0".format(i))] for i, sample in enumerate(samples)]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
 
@@ -434,7 +436,7 @@ def split_and_rename_after_deposition(request, deposition_number):
     else:
         original_data_forms, new_name_form_lists, global_new_data_form = forms_from_database(deposition, remote_client)
     return render_to_response("samples/split_after_deposition.html",
-                              {"title": _(u"Bulk sample rename for %s") % deposition,
+                              {"title": _(u"Bulk sample rename for {deposition}").format(deposition=deposition),
                                "samples": zip(original_data_forms, new_name_form_lists),
                                "new_sample_data": global_new_data_form},
                               context_instance=RequestContext(request))
