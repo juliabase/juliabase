@@ -226,7 +226,7 @@ class GeneralSampleField(object):
     because of this; you may select both without a negative effect.
     """
 
-    def set_samples(self, samples):
+    def set_samples(self, samples, user):
         u"""Set the sample list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.
@@ -236,14 +236,18 @@ class GeneralSampleField(object):
             are the current user's “My Samples”, plus the samples that were
             already connected with the deposition or measurement when you edit
             it.
+          - `user`: the user for which this field is generated; he may not be
+            allowed to see all topic names, therefore it is necessary to know
+            who it is
 
         :type samples: list of `models.Sample`
+        :type user: ``django.contrib.auth.models.User``
         """
-        topics, topicless_samples = utils.build_structured_sample_list(samples)
+        topics, topicless_samples = utils.build_structured_sample_list(samples, user)
         self.choices = [(sample.pk, unicode(sample)) for sample in topicless_samples]
         for topic in topics:
             seriesless_samples = [(sample.pk, unicode(sample)) for sample in topic.samples]
-            self.choices.append((topic.topic.name, seriesless_samples))
+            self.choices.append((topic.topic_name, seriesless_samples))
             for series in topic.sample_series:
                 samples = [(sample.pk, 4*u" " + unicode(sample)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
@@ -542,7 +546,7 @@ class DepositionSamplesForm(forms.Form):
             if preset_sample:
                 samples.append(preset_sample)
                 self.fields["sample_list"].initial = [preset_sample.pk]
-        self.fields["sample_list"].set_samples(samples)
+        self.fields["sample_list"].set_samples(samples, user)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 

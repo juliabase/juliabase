@@ -28,7 +28,7 @@ class MySamplesForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
-        self.fields["samples"].set_samples(user.my_samples.all())
+        self.fields["samples"].set_samples(user.my_samples.all(), user)
 
 
 class ActionForm(forms.Form):

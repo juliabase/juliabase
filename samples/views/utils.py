@@ -429,8 +429,9 @@ class StructuredTopic(object):
     u"""Class that represents one topic which contains samples and sample
     series, used for `build_structured_sample_list`.
 
-    :ivar topic: the underlying Chantal topic which is represented by this
-      instance.
+    :ivar topic_name: the underlying Chantal topic's name which is represented
+      by this instance.  It may be a surrogate name if the user is not allowed
+      to see the actual name.
 
     :ivar samples: the samples of this topic which belong to the “My Samples”
       of the user but which don't belong to any sample series.
@@ -444,8 +445,8 @@ class StructuredTopic(object):
     :type sample_series: list of `StructuredSeries`
     """
 
-    def __init__(self, topic):
-        self.topic = topic
+    def __init__(self, topic_name):
+        self.topic_name = topic_name
         self.samples = []
         self.sample_series = []
 
@@ -453,7 +454,7 @@ class StructuredTopic(object):
         self.sample_series.sort(key=lambda series: series.timestamp, reverse=True)
 
 
-def build_structured_sample_list(samples):
+def build_structured_sample_list(samples, user):
     u"""Generate a nested datastructure which contains the given samples in a
     handy way to be layouted in a certain way.  This routine is used for the
     “My Samples” list in the main menu, and for the multiple-selection box for
@@ -466,8 +467,10 @@ def build_structured_sample_list(samples):
     :Parameters:
       - `samples`: the samples to be processed; it doesn't matter if a sample
         occurs twice because this list is made unique first
+      - `user`: the user which sees the sample list eventually
 
     :type samples: list of `models.Sample`
+    :type user: ``django.contrib.auth.models.User``
 
     :Return:
       all topics of the user with his series and samples in them, all
@@ -486,18 +489,18 @@ def build_structured_sample_list(samples):
                     structured_series[series.name] = StructuredSeries(series)
                     topicname = series.topic.name
                     if topicname not in structured_topics:
-                        structured_topics[topicname] = StructuredTopic(series.topic)
+                        structured_topics[topicname] = StructuredTopic(series.topic.get_name_for_user(user))
                     structured_topics[topicname].sample_series.append(structured_series[series.name])
                 structured_series[series.name].append(sample)
         elif sample.topic:
             topicname = sample.topic.name
             if topicname not in structured_topics:
-                structured_topics[topicname] = StructuredTopic(sample.topic)
+                structured_topics[topicname] = StructuredTopic(sample.topic.get_name_for_user(user))
             structured_topics[topicname].samples.append(sample)
         else:
             topicless_samples.append(sample)
     structured_topics = sorted(structured_topics.itervalues(),
-                                 key=lambda structured_topic: structured_topic.topic.name)
+                                 key=lambda structured_topic: structured_topic.topic_name)
     for structured_topic in structured_topics:
         structured_topic.sort_sample_series()
     return structured_topics, topicless_samples

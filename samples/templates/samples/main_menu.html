@@ -20,7 +20,7 @@
       <div class="my-samples-topics">
         {% for topic in my_topics %}
 
-          <h3><img src="{{ MEDIA_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em"/>{{ topic.topic }}</h3>
+          <h3><img src="{{ MEDIA_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em"/>{{ topic.topic_name }}</h3>
 
           {% if topic.samples %}
             <ul class="sample-list">
