@@ -12,7 +12,7 @@ be changed once they have been created.
 from __future__ import absolute_import
 
 import datetime
-from django.views.decorators.http import last_modified
+from django.views.decorators.http import condition
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
@@ -97,16 +97,60 @@ def sample_series_timestamp(request, name):
 
     :rtype: ``datetime.datetime``
     """
-    try:
-        sample_series = models.SampleSeries.objects.get(name=name)
-    except models.SampleSeries.DoesNotExist:
-        return None
-    timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
-    return adjust_timezone_information(timestamp)
+    if not hasattr(request, "_sample_series_timestamp"):
+        try:
+            sample_series = models.SampleSeries.objects.get(name=name)
+        except models.SampleSeries.DoesNotExist:
+            return None
+        timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+        request._sample_series_timestamp adjust_timezone_information(timestamp)
+
+
+def sample_series_timestamp(request, name):
+    u"""Calculate the timestamp of a sample series.  See
+    `sample.sample_timestamp` for further information.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: the name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the timestamp of the last modification of the sample series' datasheet
+
+    :rtype: ``datetime.datetime``
+    """
+    embed_timestamp(request, name)
+    return request._sample_series_timestamp
+
+
+def sample_series_etag(request, name):
+    u"""Calculate an ETag for the sample series page.  See
+    `sample.sample_timestamp` for further information.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `name`: the name of the sample series
+
+    :type request: ``HttpRequest``
+    :type name: unicode
+
+    :Returns:
+      the ETag of the sample series' page
+
+    :rtype: str
+    """
+    embed_timestamp(request, name)
+    hash_ = hashlib.sha1()
+    hash_.update(str(request._sample_series_timestamp))
+    hash_.update(str(request.user.pk))
+    return hash_.hexdigest()
 
 
 @login_required
-@last_modified(sample_series_timestamp)
+@condition(sample_series_etag, sample_series_timestamp)
 def show(request, name):
     u"""View for showing a sample series.  You can see a sample series if
     you're in its topic, or you're the currently responsible person for it,

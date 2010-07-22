@@ -7,8 +7,8 @@ u"""All views and helper routines directly connected with samples themselves
 
 from __future__ import absolute_import
 
-import time, copy
-from django.views.decorators.http import last_modified
+import time, copy, hashlib
+from django.views.decorators.http import condition
 from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -445,11 +445,43 @@ class SamplesAndProcesses(object):
         return added, removed
 
 
+def embed_timestamp(request, sample_name):
+    u"""Put a timestamp field in the request object that is used by both
+    `sample_timestamp` and `sample_etag`.  It's really a pity that you can't
+    give *one* function for returning both with Django's API for conditional
+    view processing.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+    """
+    if not hasattr(request, "_sample_timestamp"):
+        timestamps = []
+        try:
+            sample = models.Sample.objects.get(name=sample_name)
+        except models.Sample.DoesNotExist:
+            return None
+        timestamps.append(sample.last_modified)
+        try:
+            clearance = models.Clearance.objects.get(user=request.user, sample=sample)
+        except models.Clearance.DoesNotExist:
+            pass
+        else:
+            timestamps.append(clearance.last_modified)
+        user_details = request.user.samples_user_details
+        timestamps.append(user_details.display_settings_timestamp)
+        timestamps.append(user_details.my_samples_timestamp)
+        request._sample_timestamp = adjust_timezone_information(max(timestamps))
+
+
 def sample_timestamp(request, sample_name):
-    u"""Check whether the sample datasheet can be taken from the browser cache.
-    For this, the timestamp of last modification of the sample is taken, and
-    that of other things that influence the sample datasheet (language, “My
-    Samples”).  The later timestamp is chosen and returned.
+    u"""Calculate the timestamp of a sample.  For this, the timestamp of last
+    modification of the sample is taken, and that of other things that
+    influence the sample datasheet (language, “My Samples”).  The latest
+    timestamp is chosen and returned.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -463,26 +495,41 @@ def sample_timestamp(request, sample_name):
 
     :rtype: ``datetime.datetime``
     """
-    timestamps = []
-    try:
-        sample = models.Sample.objects.get(name=sample_name)
-    except models.Sample.DoesNotExist:
-        return None
-    timestamps.append(sample.last_modified)
-    try:
-        clearance = models.Clearance.objects.get(user=request.user, sample=sample)
-    except models.Clearance.DoesNotExist:
-        pass
-    else:
-        timestamps.append(clearance.last_modified)
-    user_details = request.user.samples_user_details
-    timestamps.append(user_details.display_settings_timestamp)
-    timestamps.append(user_details.my_samples_timestamp)
-    return adjust_timezone_information(max(timestamps))
+    embed_timestamp(request, sample_name)
+    return request._sample_timestamp
+
+
+def sample_etag(request, sample_name):
+    u"""Calculate an ETag for the sample datasheet.  For this, the timestamp of
+    last modification of the sample is taken, and the primary key of the
+    current user.  The checksum of both is returned.
+
+    This routine is necessary because browsers don't handle the "Vary: Cookie"
+    header well.  In order to avoid one user getting cached pages of another
+    user who used the same browser instance befor (e.g. in a lab), I must
+    create an ETag.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `sample_name`: the name of the sample
+
+    :type request: ``HttpRequest``
+    :type sample_name: unicode
+
+    :Returns:
+      the ETag of the sample's datasheet
+
+    :rtype: str
+    """
+    embed_timestamp(request, sample_name)
+    hash_ = hashlib.sha1()
+    hash_.update(str(request._sample_timestamp))
+    hash_.update(str(request.user.pk))
+    return hash_.hexdigest()
 
 
 @login_required
-@last_modified(sample_timestamp)
+@condition(sample_etag, sample_timestamp)
 def show(request, sample_name):
     u"""A view for showing existing samples.
 
