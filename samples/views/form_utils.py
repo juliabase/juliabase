@@ -112,7 +112,7 @@ def get_my_layers(user_details, deposition_model):
         # and layer number, so that change_structure() doesn't have to re-parse
         # it.  In other words: Maybe the first element of the tuples can be of
         # any type and needn't be strings.
-        fitting_items.append((u"%d-%d" % (deposition_id, layer_number), nickname))
+        fitting_items.append((u"{0}-{1}".format(deposition_id, layer_number), nickname))
     return fitting_items
 
 
@@ -592,9 +592,9 @@ def clean_time_field(value):
     if minutes >= 60 or seconds >= 60:
         raise ValidationError(_(u"Minutes and seconds must be smaller than 60."))
     if not hours:
-        return "%d:%02d" % (minutes, seconds)
+        return "{0}:{1:02}".format(minutes, seconds)
     else:
-        return "%d:%02d:%02d" % (hours, minutes, seconds)
+        return "{0}:{1:02}:{2:02}".format(hours, minutes, seconds)
 
 
 def clean_date_field(value):
@@ -657,7 +657,7 @@ def clean_quantity_field(value, units):
         if unit.lower() == original_unit.lower():
             break
     else:
-        raise ValidationError(_(u"The unit is invalid.  Valid units are: %s")%", ".join(units))
+        raise ValidationError(_(u"The unit is invalid.  Valid units are: {units}").format(units=", ".join(units)))
     return match.group("number") + " " + unit
 
 
@@ -688,7 +688,7 @@ def clean_deposition_number_field(value, letter):
         # Translation hint: “YY” is year, “L” is letter, and “NNN” is number
         raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
     if value[2] != letter:
-        raise ValidationError(_(u"The deposition letter must be an uppercase “%s”.") % letter)
+        raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(letter))
     return value
 
 
@@ -790,10 +790,11 @@ def normalize_prefixes(post_data):
             if isinstance(key, basestring):
                 new_post_data.setlist(key, value)
             elif len(key) == 2:
-                new_post_data.setlist("%d-%s" % (level0_indices.index(key[0]), key[1]), value)
+                new_post_data.setlist("{0}-{1}".format(level0_indices.index(key[0]), key[1]), value)
             else:
                 new_level0_index = level0_indices.index(key[1])
-                new_post_data.setlist("%d_%d-%s" % (new_level0_index, level1_indices[key[1]].index(key[0]), key[2]), value)
+                new_post_data.setlist("{0}_{1}-{2}".format(new_level0_index, level1_indices[key[1]].index(key[0]), key[2]),
+                                      value)
     else:
         new_post_data = post_data
     return new_post_data, len(level0_indices), [len(level1_indices[i]) for i in level0_indices]
@@ -838,4 +839,4 @@ def test_for_datafile(filename, root_dir):
         try:
             open(os.path.join(root_dir, filename))
         except IOError:
-            raise ValidationError(_(u"Couldn't open %s." % filename))
+            raise ValidationError(_(u"Couldn't open {filename}.".format(filename=filename)))

@@ -66,8 +66,8 @@ def add(request):
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
             return utils.successful_response(
-                request, _(u"Topic %s was successfully created.") % new_topic.name, "samples.views.topic.edit",
-                kwargs={"name": django.utils.http.urlquote(new_topic.name, safe="")})
+                request, _(u"Topic {name} was successfully created.").format(name=new_topic.name),
+                "samples.views.topic.edit", kwargs={"name": django.utils.http.urlquote(new_topic.name, safe="")})
     else:
         new_topic_form = NewTopicForm()
     return render_to_response("samples/add_topic.html", {"title": _(u"Add new topic"), "new_topic": new_topic_form},
@@ -166,8 +166,8 @@ def edit(request, name):
                 feed_utils.Reporter(request.user).report_changed_topic_membership(added_members, topic, "added")
             if removed_members:
                 feed_utils.Reporter(request.user).report_changed_topic_membership(removed_members, topic, "removed")
-            return utils.successful_response(request,
-                                             _(u"Members of topic “%s” were successfully updated.") % topic.name)
+            return utils.successful_response(
+                request, _(u"Members of topic “{name}” were successfully updated.").format(name=topic.name))
     else:
         edit_topic_form = \
             EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True)})

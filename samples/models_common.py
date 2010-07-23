@@ -732,7 +732,7 @@ class SampleSplit(Process):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"split of %s") % self.parent.name
+        return _(u"split of {parent_name}").format(parent_name=self.parent.name)
 
     def get_cache_key(self, user_settings_hash, local_context):
         u"""Calculate a cache key for this context instance of the sample
@@ -812,10 +812,10 @@ class SampleDeath(Process):
         _ = ugettext
         try:
             # Translation hint: Of a sample
-            return _(u"cease of existence of %s") % self.samples.get()
+            return _(u"cease of existence of {sample}").format(sample=self.samples.get())
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             # Translation hint: Of a sample
-            return _(u"cease of existence #%d") % self.pk
+            return _(u"cease of existence #{number}").format(number=self.pk)
 
 
 image_type_choices=(("none", _(u"none")),
@@ -864,14 +864,14 @@ class Result(Process):
         _ = ugettext
         try:
             # Translation hint: experimental result
-            return _(u"result for %s") % self.samples.get()
+            return _(u"result for {sample}").format(sample=self.samples.get())
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             try:
                 # Translation hint: experimental result
-                return _(u"result for %s") % self.sample_series.get()
+                return _(u"result for {sample}").format(sample=self.sample_series.get())
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
                 # Translation hint: experimental result
-                return _(u"result #%d") % self.pk
+                return _(u"result #{number}").format(number=self.pk)
 
     @models.permalink
     def get_absolute_url(self):
@@ -946,7 +946,7 @@ class Result(Process):
             shared_utils.mkdirs(image_locations["thumbnail_file"])
             if not os.path.exists(image_locations["thumbnail_file"]):
                 subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
-                                 "-resize", "%(width)dx%(width)d" % {"width": settings.THUMBNAIL_WIDTH},
+                                 "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
                                  image_locations["thumbnail_file"]])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
 
@@ -993,7 +993,7 @@ class Result(Process):
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translation hint: In a table
-                child_node = CSVNode(_(u"row"), _(u"row #%d") % (i + 1))
+                child_node = CSVNode(_(u"row"), _(u"row #{number}").format(i + 1))
                 child_node.items = [CSVItem(quantities[j], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         elif len(value_lists) == 1:

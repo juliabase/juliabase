@@ -72,7 +72,7 @@ class CSVNode(object):
         for i, child in enumerate(self.children):
             if renaming_offset <= 0:
                 if names.count(child.name) > 1:
-                    child.name += u" #%d" % (names[:i].count(child.name) + 1)
+                    child.name += u" #{0}".format(names[:i].count(child.name) + 1)
                 child.name = self.name + ", " + child.name
             child.find_unambiguous_names(renaming_offset - 1)
 

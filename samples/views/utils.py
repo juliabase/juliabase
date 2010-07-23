@@ -135,9 +135,9 @@ def get_next_deposition_number(letter):
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
-    prefix = ur"%s%s-" % (datetime.date.today().strftime(u"%y"), letter)
+    prefix = ur"{0}{1}-".format(datetime.date.today().strftime(u"%y"), letter)
     prefix_length = len(prefix)
-    pattern_string = ur"^%s[0-9]+" % re.escape(prefix)
+    pattern_string = ur"^{0}[0-9]+".format(re.escape(prefix))
     deposition_numbers = \
         models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
     try:
@@ -146,7 +146,7 @@ def get_next_deposition_number(letter):
         if e.message != "max() arg is an empty sequence":
             raise
         next_number = 1
-    return prefix + u"%03d" % next_number
+    return prefix + u"{0:03}".format(next_number)
 
 
 class AmbiguityException(Exception):
@@ -190,10 +190,10 @@ def lookup_sample(sample_name, user, with_clearance=False):
     """
     match = provisional_sample_name_pattern.match(sample_name)
     if match:
-        sample_name = "*%05d" % int(match.group("id"))
+        sample_name = "*{0:05}".format(int(match.group("id")))
     sample = get_sample(sample_name)
     if not sample:
-        raise Http404(_(u"Sample %s could not be found (neither as an alias).") % sample_name)
+        raise Http404(_(u"Sample {name} could not be found (neither as an alias).").format(name=sample_name))
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
     if with_clearance:
@@ -237,7 +237,7 @@ def convert_id_to_int(process_id):
     try:
         return int(process_id)
     except ValueError:
-        raise Http404(u"Invalid ID: “%s”" % process_id)
+        raise Http404(u"Invalid ID: “{id}”".format(id=process_id))
 
 
 # FixMe: Possibly the whole function is superfluous because there is

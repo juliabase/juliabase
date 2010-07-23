@@ -117,13 +117,13 @@ def edit(request, sample_name):
                     watcher.my_samples.add(sample)
                 feed_reporter.report_changed_sample_topic([sample], old_topic, edit_description_form.cleaned_data)
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
-            return utils.successful_response(request,
-                                             _(u"Sample %s was successfully changed in the database.") % sample,
-                                             sample.get_absolute_url())
+            return utils.successful_response(
+                request, _(u"Sample {sample} was successfully changed in the database.").format(sample=sample),
+                sample.get_absolute_url())
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("samples/edit_sample.html", {"title": _(u"Edit sample “%s”") % sample,
+    return render_to_response("samples/edit_sample.html", {"title": _(u"Edit sample “{sample}”").format(sample=sample),
                                                            "sample": sample_form,
                                                            "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
@@ -170,10 +170,10 @@ def get_allowed_processes(user, sample):
                                   "url": django.core.urlresolvers.reverse("add_result")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:
-        raise permissions.PermissionError(user, _(u"You are not allowed to add any processes to the sample %s "
+        raise permissions.PermissionError(user, _(u"You are not allowed to add any processes to the sample {sample} "
                                                   u"because neither are you its currently responsible person, "
                                                   u"nor in its topic, nor do you have special permissions for a "
-                                                  u"physical process.") % sample, new_topic_would_help=True)
+                                                  u"physical process.").format(sample=sample), new_topic_would_help=True)
     return sample_processes, general_processes
 
 
@@ -569,11 +569,12 @@ def show(request, sample_name):
             messages.success(request, success_message)
     else:
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
-    messages.debug(request, "DB-Zugriffszeit: %.1f ms" % ((time.time() - start) * 1000))
-    return render_to_response("samples/show_sample.html",
-                              {"title": _(u"Sample “{0}”").format(samples_and_processes.sample_context["sample"]),
-                               "samples_and_processes": samples_and_processes},
-                              context_instance=RequestContext(request))
+    messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
+    return render_to_response(
+        "samples/show_sample.html",
+        {"title": _(u"Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
+         "samples_and_processes": samples_and_processes},
+        context_instance=RequestContext(request))
 
 
 @login_required
@@ -633,9 +634,9 @@ def add_process(request, sample_name):
     sample = utils.lookup_sample(sample_name, request.user)
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
-        process["url"] += "?sample=%s&next=%s" % (urlquote_plus(sample_name), sample.get_absolute_url())
+        process["url"] += "?sample={0}&next={1}".format(urlquote_plus(sample_name), sample.get_absolute_url())
     return render_to_response("samples/add_process.html",
-                              {"title": _(u"Add process to sample “%s”") % sample,
+                              {"title": _(u"Add process to sample “{sample}”").format(sample=sample),
                                "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
 

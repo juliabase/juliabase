@@ -175,7 +175,7 @@ def show(request, name):
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
     return render_to_response("samples/show_sample_series.html",
-                              {"title": _(u"Sample series “%s”") % sample_series.name,
+                              {"title": _(u"Sample series “{name}”").format(name=sample_series.name),
                                "can_edit": can_edit, "can_add_result": can_add_result,
                                "sample_series": sample_series,
                                "result_processes": result_processes},
@@ -249,7 +249,8 @@ def edit(request, name):
             sample_series = sample_series_form.save()
             feed_reporter.report_edited_sample_series(sample_series, edit_description)
             return utils.successful_response(
-                request, _(u"Sample series %s was successfully updated in the database.") % sample_series.name)
+                request,
+                _(u"Sample series {name} was successfully updated in the database.").format(name=sample_series.name))
     else:
         sample_series_form = \
             SampleSeriesForm(request.user, instance=sample_series,
@@ -259,7 +260,7 @@ def edit(request, name):
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("samples/edit_sample_series.html",
-                              {"title": _(u"Edit sample series “%s”") % sample_series.name,
+                              {"title": _(u"Edit sample series “{name}”").format(name=sample_series.name),
                                "sample_series": sample_series_form,
                                "is_new": False, "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
@@ -284,14 +285,14 @@ def new(request):
         sample_series_form = SampleSeriesForm(request.user, request.POST)
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
-            full_name = \
-                u"%s-%02d-%s" % (request.user.username, timestamp.year % 100, sample_series_form.cleaned_data["short_name"])
+            full_name = u"{0}-{1}-{2}".format(
+                request.user.username, timestamp.stftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
-                error_message = ungettext("The name is %d letter too long.", "The name is %d letters too long.",
-                                          overfull_letters) % overfull_letters
+                error_message = ungettext("The name is {number} letter too long.", "The name is {number} letters too long.",
+                                          overfull_letters).format(number=overfull_letters)
                 append_error(sample_series_form, error_message, "short_name")
             else:
                 sample_series = sample_series_form.save(commit=False)
@@ -300,16 +301,17 @@ def new(request):
                 sample_series.save()
                 sample_series_form.save_m2m()
                 feed_utils.Reporter(request.user).report_new_sample_series(sample_series)
-                return utils.successful_response(request,
-                                                 _(u"Sample series %s was successfully added to the database.") % full_name)
+                return utils.successful_response(
+                    request, _(u"Sample series {name} was successfully added to the database.").format(name=full_name))
     else:
         sample_series_form = SampleSeriesForm(request.user)
-    return render_to_response("samples/edit_sample_series.html",
-                              {"title": _(u"Create new sample series"),
-                               "sample_series": sample_series_form,
-                               "is_new": True,
-                               "name_prefix": u"%s-%02d" % (request.user.username, datetime.datetime.today().year % 100)},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        "samples/edit_sample_series.html",
+        {"title": _(u"Create new sample series"),
+         "sample_series": sample_series_form,
+         "is_new": True,
+         "name_prefix": u"{0}-{1}".format(request.user.username, datetime.datetime.today().strftime("%y"))},
+        context_instance=RequestContext(request))
 
 
 @login_required

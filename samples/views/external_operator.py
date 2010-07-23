@@ -60,8 +60,9 @@ def new(request):
         external_operator_form = AddExternalOperatorForm(request.user, request.POST)
         if external_operator_form.is_valid():
             external_operator = external_operator_form.save()
-            return utils.successful_response(request, _(u"The external operator “%s” was successfully added." %
-                                                        external_operator.name))
+            return utils.successful_response(
+                request,
+                _(u"The external operator “{operator}” was successfully added.".format(operator=external_operator.name)))
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
     return render_to_response("samples/edit_external_operator.html", {"title": _(u"Add external operator"),
@@ -112,13 +113,14 @@ def edit(request, external_operator_id):
         if external_operator_form.is_valid() and initials_form.is_valid():
             external_operator = external_operator_form.save()
             initials_form.save()
-            return utils.successful_response(request, _(u"The external operator “%s” was successfully changed.") %
-                                                        external_operator.name)
+            return utils.successful_response(
+                request,
+                _(u"The external operator “{operator}” was successfully changed.").format(operator=external_operator.name))
     else:
         external_operator_form = EditExternalOperatorForm(instance=external_operator)
         initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=False)
     return render_to_response("samples/edit_external_operator.html",
-                              {"title": _(u"Edit external operator “%s”") % external_operator.name,
+                              {"title": _(u"Edit external operator “{operator}”").format(operator=external_operator.name),
                                "external_operator": external_operator_form,
                                "initials": initials_form},
                               context_instance=RequestContext(request))
@@ -149,7 +151,7 @@ def show(request, external_operator_id):
     except models.Initials.DoesNotExist:
         initials = None
     return render_to_response("samples/show_external_operator.html",
-                              {"title": _(u"External operator “%(name)s”") % {"name": external_operator.name},
+                              {"title": _(u"External operator “{name}”").format(name=external_operator.name),
                                "external_operator": external_operator, "initials": initials,
                                "can_edit": request.user == external_operator.contact_person},
                               context_instance=RequestContext(request))

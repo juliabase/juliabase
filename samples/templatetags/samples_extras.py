@@ -38,7 +38,7 @@ def quantity(value, unit=None, autoescape=False):
     """
     if value is None:
         return None
-    value_string = u"%g" % value if isinstance(value, float) else unicode(value)
+    value_string = u"{0:g}".format(value) if isinstance(value, float) else unicode(value)
     if autoescape:
         value_string = conditional_escape(value_string)
         unit = conditional_escape(unit) if unit else None
@@ -68,7 +68,7 @@ def three_digits(number):
     u"""Filter for padding an integer with zeros so that it has at least three
     digits.
     """
-    return mark_safe(u"%03d" % number)
+    return mark_safe(u"{0:03}".format(number))
 
 
 class VerboseNameNode(template.Node):
@@ -139,10 +139,10 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         if autoescape:
             full_name = conditional_escape(full_name)
         if anchor_type == "http":
-            return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse(
+            return mark_safe(u'<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
                         "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), full_name))
         elif anchor_type == "mailto":
-            return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
+            return mark_safe(u'<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
         elif anchor_type == "plain":
             return mark_safe(full_name)
         else:
@@ -157,12 +157,12 @@ def calculate_silane_concentration(value):
     u"""Filter for calculating the silane concentration for a large-area
     deposition layer from the silane and hydrogen fluxes.
     """
-    silane = float(value.sih4)*0.6
+    silane = float(value.sih4) * 0.6
     hydrogen = float(value.h2)
     if silane + hydrogen == 0:
         return None
     # Cheap way to cut the digits
-    return float(u"%5.2f" % (100 * silane / (silane + hydrogen)))
+    return float(u"{0:5.2f}".format(100 * silane / (silane + hydrogen)))
 
 
 timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
@@ -247,7 +247,7 @@ def markdown_samples(value):
                 except samples.models.SampleSeries.DoesNotExist:
                     pass
             name = name
-            result += "[%s](%s)" % (name, database_item.get_absolute_url()) if database_item else name
+            result += "[{0}]({1})".format(name, database_item.get_absolute_url()) if database_item else name
         else:
             result += value[position:]
             break
@@ -294,8 +294,8 @@ class ValueFieldNode(template.Node):
             field = u"—"
         else:
             unit = self.unit
-        return u"""<td class="label">%(label)s:</td><td class="value">%(value)s</td>""" % \
-            {"label": verbose_name, "value": field if unit is None else quantity(field, unit)}
+        return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
+            label=verbose_name, value=field if unit is None else quantity(field, unit))
 
 
 @register.tag
@@ -335,11 +335,11 @@ def split_field(field1, field2, separator=""):
 
         {% split_field layer.voltage1 layer.voltage2 "/" %}
     """
-    result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
-        {"html_name": field1.html_name, "label": field1.label}
-    help_text = u""" <span class="help">(%s)</span>""" % field1.help_text if field1.help_text else u""
-    result += u"""<td class="input">%(field1)s%(separator)s%(field2)s%(help_text)s</td>""" % \
-    {"field1": field1, "field2": field2, "help_text": help_text, "separator": separator}
+    result = u"""<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
+        html_name=field1.html_name, label=field1.label)
+    help_text = u""" <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else u""
+    result += u"""<td class="input">{field1}{separator}{field2}{help_text}</td>""".format(
+        field1=field1, field2=field2, help_text=help_text, separator=separator)
     return result
 
 class ValueSplitFieldNode(template.Node):
@@ -376,10 +376,10 @@ class ValueSplitFieldNode(template.Node):
             field2 = u"—"
         if field1 == field2 == u"—":
             unit = None
-        return u"""<td class="label">%(label)s:</td><td class="value">%(value1)s %(separator)s %(value2)s</td>""" % \
-            {"label": verbose_name, "value1": field1 if unit is None else quantity(field1, unit),
-             "value2": field2 if unit is None else quantity(field2, unit),
-             "separator": self.separator}
+        return u"""<td class="label">{label}:</td><td class="value">{value1} {separator} {value2}</td>""".format(
+            label=verbose_name, value1=field1 if unit is None else quantity(field1, unit),
+            value2=field2 if unit is None else quantity(field2, unit),
+            separator=self.separator)
 
 
 @register.tag

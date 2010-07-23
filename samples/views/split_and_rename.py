@@ -90,16 +90,16 @@ def forms_from_post_data(post_data, parent, user_details):
     index = 0
     last_deleted = False
     while True:
-        if "%d-new_name" % index not in post_data:
+        if "{0}-new_name".format(index) not in post_data:
             break
-        if "%d-delete" % index in post_data:
+        if "{0}-delete".format(index) in post_data:
             structure_changed = True
             last_deleted = True
         else:
             new_name_forms.append(NewNameForm(parent.name, post_data, prefix=str(index)))
             last_deleted = False
         index += 1
-    if not last_deleted and post_data.get("%d-new_name" % (index-1), parent.name) == parent.name:
+    if not last_deleted and post_data.get("{0}-new_name".format(index - 1), parent.name) == parent.name:
         del new_name_forms[-1]
     else:
         structure_changed = True
@@ -292,14 +292,14 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
             feed_utils.Reporter(request.user).report_sample_split(
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
-                request, _(u"Sample “%s” was successfully split.") % parent,
+                request, _(u"Sample “{sample}” was successfully split.").format(sample=parent),
                 "show_sample_by_name", {"sample_name": parent.name}, remote_client_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=str(len(new_name_forms))))
     return render_to_response("samples/split_and_rename.html",
-                              {"title": _(u"Split sample “%s”") % parent,
+                              {"title": _(u"Split sample “{sample}”").format(sample=parent),
                                "new_names": zip(range(number_of_old_pieces+1,
                                                       number_of_old_pieces+1+len(new_name_forms)),
                                                 new_name_forms),

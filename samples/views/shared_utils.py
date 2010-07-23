@@ -83,7 +83,7 @@ def three_digits(number):
 
     :rtype: unicode
     """
-    return u"%03d" % number
+    return u"{0:03}".format(number)
 
 
 quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
@@ -112,7 +112,7 @@ def normalize_legacy_sample_name(sample_name):
     parts = match.groupdict(u"")
     parts["number"] = int(parts["number"])
     parts["letter"] = parts["letter"].upper()
-    return u"%(year)s%(letter)s-%(number)03d%(suffix)s" % parts
+    return u"{year}{letter}-{number:03}{suffix}".format(**parts)
 
 
 def ascii_pickle(python_object):

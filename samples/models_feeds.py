@@ -44,7 +44,7 @@ class FeedEntry(PolymorphicModel):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"feed entry #%d") % self.pk
+        return _(u"feed entry #{number}").format(number=self.pk)
 
     def save(self, *args, **kwargs):
         u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
@@ -121,7 +121,8 @@ class FeedNewSamples(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         result = {}
-        result["title"] = ungettext(u"New sample in “%s”", u"New samples in “%s”", self.samples.count()) % self.topic
+        result["title"] = ungettext(u"New sample in “{topic}”", u"New samples in “{topic}”", self.samples.count()).format(
+            topic=self.topic)
         result["category term"] = "new samples"
         result["category label"] = "new samples"
         return result
@@ -146,8 +147,8 @@ class FeedMovedSamples(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         result = {}
-        result["title"] = ungettext(u"New sample moved to “%s”", u"New samples moved to “%s”",
-                                    self.samples.count()) % self.topic
+        result["title"] = ungettext(u"New sample moved to “{topic}”", u"New samples moved to “{topic}”",
+                                    self.samples.count()).format(topic=self.topic)
         result["category term"] = "moved samples"
         result["category label"] = "moved samples"
         return result
@@ -169,7 +170,7 @@ class FeedNewPhysicalProcess(FeedEntry):
         _ = ugettext
         result = {}
         process = self.process.actual_instance
-        result["title"] = _(u"New %s") % process
+        result["title"] = _(u"New {process}").format(process=process)
         result["category term"] = "new physical process"
         result["category label"] = "new physical process"
         result["link"] = process.get_absolute_url()
@@ -193,7 +194,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
         _ = ugettext
         metadata = {}
         process = self.process.actual_instance
-        metadata["title"] = _(u"Edited %s") % process
+        metadata["title"] = _(u"Edited {process}").format(process=process)
         metadata["category term"] = "new physical process"
         metadata["category label"] = "new physical process"
         metadata["link"] = process.get_absolute_url()
@@ -221,11 +222,11 @@ class FeedResult(FeedEntry):
         _ = ugettext
         metadata = {}
         if self.is_new:
-            metadata["title"] = _(u"New: %s") % self.result.title
+            metadata["title"] = _(u"New: {result_title}").format(result_title=self.result.title)
             metadata["category term"] = "new result"
             metadata["category label"] = "new result"
         else:
-            metadata["title"] = _(u"Edited: %s") % self.result.title
+            metadata["title"] = _(u"Edited: {result_title}").format(result_title=self.result.title)
             metadata["category term"] = "edited result"
             metadata["category label"] = "edited result"
         metadata["link"] = self.result.get_absolute_url()
@@ -249,7 +250,7 @@ class FeedCopiedMySamples(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"%s copied samples to you") % self.originator
+        metadata["title"] = _(u"{name} copied samples to you").format(name=self.originator)
         metadata["category term"] = "copied samples"
         metadata["category label"] = "copied My Samples"
         return metadata
@@ -274,7 +275,7 @@ class FeedEditedSamples(FeedEntry):
         _ = ugettext
         metadata = {}
         if self.samples.count() == 1:
-            metadata["title"] = _(u"Sample %s was edited") % self.samples.all()[0]
+            metadata["title"] = _(u"Sample {sample} was edited").format(sample=self.samples.all()[0])
         else:
             metadata["title"] = _(u"Samples were edited")
         metadata["category term"] = "edited samples"
@@ -297,7 +298,7 @@ class FeedSampleSplit(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample “%s” was split") % self.sample_split.parent
+        metadata["title"] = _(u"Sample “{parent_sample}” was split").format(parent_sample=self.sample_split.parent)
         metadata["category term"] = "split sample"
         metadata["category label"] = "split sample"
         return metadata
@@ -319,7 +320,7 @@ class FeedEditedSampleSeries(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample series %s was edited") % self.sample_series
+        metadata["title"] = _(u"Sample series {name} was edited").format(name=self.sample_series)
         metadata["category term"] = "edited sample series"
         metadata["category label"] = "edited sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
@@ -340,8 +341,8 @@ class FeedNewSampleSeries(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New sample series “%(sample_series)s” in topic “%(topic)s”") % \
-            {"sample_series": self.sample_series, "topic": self.topic}
+        metadata["title"] = _(u"New sample series “{sample_series}” in topic “{topic}”").format(
+            sample_series=self.sample_series, topic=self.topic)
         metadata["category term"] = "new sample series"
         metadata["category label"] = "new sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
@@ -368,8 +369,8 @@ class FeedMovedSampleSeries(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample series %(sample_series)s was moved to topic “%(topic)s”") % \
-            {"sample_series": self.sample_series, "topic": self.topic}
+        metadata["title"] = _(u"Sample series {sample_series} was moved to topic “{topic}”").format(
+            sample_series=self.sample_series, topic=self.topic)
         metadata["category term"] = "moved sample series"
         metadata["category label"] = "moved sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
@@ -399,9 +400,9 @@ class FeedChangedTopic(FeedEntry):
         _ = ugettext
         metadata = {}
         if self.action == "added":
-            metadata["title"] = _(u"Now in topic “%s”") % self.topic
+            metadata["title"] = _(u"Now in topic “{name}”").format(name=self.topic)
         else:
-            metadata["title"] = _(u"Not anymore in topic “%s”") % self.topic
+            metadata["title"] = _(u"Not anymore in topic “{name}”").format(name=self.topic)
         metadata["category term"] = "changed topic membership"
         metadata["category label"] = "changed topic membership"
         return metadata
