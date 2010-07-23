@@ -154,6 +154,7 @@ def edit(request, name):
             new_members = edit_topic_form.cleaned_data["members"]
             topic.members = new_members
             topic.restricted = edit_topic_form.cleaned_data["restricted"]
+            topic.save()
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)
