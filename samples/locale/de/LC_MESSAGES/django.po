@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-07-22 21:58+0200\n"
-"PO-Revision-Date: 2010-07-22 22:06+0200\n"
+"PO-Revision-Date: 2010-07-23 09:49+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2392,7 +2392,7 @@ msgstr ""
 
 #: views/sample.py:121
 msgid "Sample {sample} was successfully changed in the database."
-msgstr "Die Probe {smaple} wurde erfolgreich in der Datenbank geändert."
+msgstr "Die Probe {sample} wurde erfolgreich in der Datenbank geändert."
 
 #: views/sample.py:126
 msgid "Edit sample “{sample}”"

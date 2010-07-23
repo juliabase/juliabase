@@ -123,7 +123,10 @@
          >{% trans 'My topics and permissions' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/shape_square_edit.png")'>
       <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
-    <li><a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
+    {% if user.has_usable_password %}
+      <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/lock_edit.png")'>
+        <a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
+    {% endif %}
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/feed.png")'>
       <a href="{% url samples.views.feed.show username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/server_lightning.png")'>
