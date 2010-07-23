@@ -35,28 +35,41 @@ def quantity(value, unit=None, autoescape=False):
 
         {{ deposition.pressure|quantity:"mbar" }}
 
+    It is also possible to give a list of two values.  This is formatted in a
+    from–to notation.
     """
+    def pretty_print_number(number):
+        u"""Pretty-print a single value.  For the from–to notation, this
+        function is called twice.
+        """
+        value_string = u"{0:g}".format(number) if isinstance(number, float) else unicode(number)
+        if autoescape:
+            value_string = conditional_escape(value_string)
+        result = u""
+        match = re.match(ur"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
+                         ur"(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
+        match_dict = match.groupdict(u"")
+        result = match_dict["leading"] + match_dict["prepoint"].replace(u"-", u"−")
+        if match_dict["postpoint"]:
+            result += "." + match_dict["postpoint"]
+        if match_dict["exponent"]:
+            result += u" · 10<sup>"
+            match_exponent = re.match(ur"(?P<sign>[-+])?0*(?P<digits>\d+)", match_dict["exponent"])
+            if match_exponent.group("sign") == "-":
+                result += u"−"
+            result += match_exponent.group("digits")
+            result += u"</sup>"
+        result += match_dict["trailing"]
+        return result
+
     if value is None:
         return None
-    value_string = u"{0:g}".format(value) if isinstance(value, float) else unicode(value)
+    if isinstance(value, (tuple, list)):
+        result = u"{0}–{1}".format(pretty_print_number(value[0]), pretty_print_number(value[1]))
+    else:
+        result = pretty_print_number(value)
     if autoescape:
-        value_string = conditional_escape(value_string)
         unit = conditional_escape(unit) if unit else None
-    result = u""
-    match = re.match(ur"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
-                     ur"(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
-    match_dict = match.groupdict(u"")
-    result = match_dict["leading"] + match_dict["prepoint"].replace(u"-", u"−")
-    if match_dict["postpoint"]:
-        result += "." + match_dict["postpoint"]
-    if match_dict["exponent"]:
-        result += u" · 10<sup>"
-        match_exponent = re.match(ur"(?P<sign>[-+])?0*(?P<digits>\d+)", match_dict["exponent"])
-        if match_exponent.group("sign") == "-":
-            result += u"−"
-        result += match_exponent.group("digits")
-        result += u"</sup>"
-    result += match_dict["trailing"]
     if unit:
         result += "&nbsp;" + unit
     return mark_safe(result)
@@ -161,8 +174,15 @@ def calculate_silane_concentration(value):
     hydrogen = float(value.h2)
     if silane + hydrogen == 0:
         return None
-    # Cheap way to cut the digits
-    return float(u"{0:5.2f}".format(100 * silane / (silane + hydrogen)))
+    calculate_sc = lambda s: 100 * s / (s + hydrogen)
+    sc = calculate_sc(silane)
+    if not value.sih4_max:
+        # Cheap way to cut the digits
+        return float(u"{0:5.2f} %".format(silane))
+    else:
+        silane_max = float(value.sih4_max) * 0.6
+        sc_max = calculate_sc(silane_max)
+        return float(u"{0:5.2f}".format(sc)), float(u"{0:5.2f}".format(sc_max))
 
 
 timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
