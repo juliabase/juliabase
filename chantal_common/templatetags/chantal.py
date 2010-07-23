@@ -67,10 +67,10 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         full_name = conditional_escape(full_name)
     if anchor_type == "http":
         # FixMe: The view should be one of chantal_common.
-        return mark_safe(u'<a href="%s">%s</a>' % (django.core.urlresolvers.reverse(
+        return mark_safe(u'<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
                     "samples.views.user_details.show_user", kwargs={"login_name": user.username}), full_name))
     elif anchor_type == "mailto":
-        return mark_safe(u'<a href="mailto:%s">%s</a>' % (user.email, full_name))
+        return mark_safe(u'<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
     elif anchor_type == "plain":
         return mark_safe(full_name)
     else:
@@ -150,9 +150,9 @@ def markdown_hint():
     u"""Tag for inserting a short remark that Markdown syntax must be used
     here, with a link to further information.
     """
-    return u"""<span class="markdown-hint">(""" + _(u"""with %(markdown_link)s syntax""") \
-        % {"markdown_link": u"""<a href="%s">Markdown</a>""" %
-           django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox")} + u")</span>"
+    return u"""<span class="markdown-hint">(""" + _(u"""with {markdown_link} syntax""") \
+        .format(markdown_link=u"""<a href="{0}">Markdown</a>""".format(
+           django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox"))) + u")</span>"
 
 
 @register.filter
@@ -198,10 +198,10 @@ def input_field(field):
 
         {% input_field deposition.number %}
     """
-    result = u"""<td class="label"><label for="id_%(html_name)s">%(label)s:</label></td>""" % \
-        {"html_name": field.html_name, "label": field.label}
-    help_text = u""" <span class="help">(%s)</span>""" % field.help_text if field.help_text else u""
-    result += u"""<td class="input">%(field)s%(help_text)s</td>""" % {"field": field, "help_text": help_text}
+    result = u"""<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
+        html_name=field.html_name, label=field.label)
+    help_text = u""" <span class="help">({0})</span>""".format(field.help_text) if field.help_text else u""
+    result += u"""<td class="input">{field}{help_text}</td>""".format(field=field, help_text=help_text)
     return result
 
 
