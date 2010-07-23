@@ -176,11 +176,11 @@ def calculate_silane_concentration(value):
         return None
     calculate_sc = lambda s: 100 * s / (s + hydrogen)
     sc = calculate_sc(silane)
-    if not value.sih4_max:
+    if not value.sih4_end:
         # Cheap way to cut the digits
         return float(u"{0:5.2f}".format(sc))
     else:
-        silane_max = float(value.sih4_max) * 0.6
+        silane_max = float(value.sih4_end) * 0.6
         sc_max = calculate_sc(silane_max)
         return float(u"{0:5.2f}".format(sc)), float(u"{0:5.2f}".format(sc_max))
 
