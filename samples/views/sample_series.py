@@ -285,7 +285,7 @@ def new(request):
         sample_series_form = SampleSeriesForm(request.user, request.POST)
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
-            full_name = u"{0}-{1:02}-{2}".format(
+            full_name = u"{0}-{1}-{2}".format(
                 request.user.username, timestamp.stftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
@@ -310,7 +310,7 @@ def new(request):
         {"title": _(u"Create new sample series"),
          "sample_series": sample_series_form,
          "is_new": True,
-         "name_prefix": u"{0}-{1:02}".format(request.user.username, datetime.datetime.today().strftime("%y"))},
+         "name_prefix": u"{0}-{1}".format(request.user.username, datetime.datetime.today().strftime("%y"))},
         context_instance=RequestContext(request))
 
 
