@@ -123,7 +123,7 @@
          >{% trans 'My topics and permissions' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/shape_square_edit.png")'>
       <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
-    {% is user.has_usable_password %}
+    {% if user.has_usable_password %}
       <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/lock_edit.png")'>
         <a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
     {% endif %}
