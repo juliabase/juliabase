@@ -119,7 +119,8 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     append_error(action_form,
                                  _(u"You must be the currently responsible person for samples you'd like to change."))
                     referentially_valid = False
-        if action_form.cleaned_data["clearance"] is None and action_form.cleaned_data["copy_to_user"]:
+        if action_form.cleaned_data["clearance"] is None and action_form.cleaned_data["copy_to_user"] and \
+                action_data["new_currently_responsible_person"] != action_form.cleaned_data["copy_to_user"]:
             try:
                 for sample in my_samples_form.cleaned_data["samples"]:
                     permissions.assert_can_fully_view_sample(action_form.cleaned_data["copy_to_user"], sample)
