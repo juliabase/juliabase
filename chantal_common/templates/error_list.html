@@ -29,7 +29,7 @@
     <tr>
       <td class="error-messages" colspan="0">
 	{% for field in form %}
-	  {% if field.errors %}<p>{{ field.label }}</p>{{ field.errors }}{% endif %}
+	  {% if field.errors %}<p>{{ field.label|safe }}</p>{{ field.errors }}{% endif %}
 	{% endfor %}
 	{% if form.non_field_errors %}
 	  <p>{{ form_error_title }}</p>{{ form.non_field_errors }}
