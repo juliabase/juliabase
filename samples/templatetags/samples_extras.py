@@ -178,7 +178,7 @@ def calculate_silane_concentration(value):
     sc = calculate_sc(silane)
     if not value.sih4_max:
         # Cheap way to cut the digits
-        return float(u"{0:5.2f} %".format(silane))
+        return float(u"{0:5.2f}".format(silane))
     else:
         silane_max = float(value.sih4_max) * 0.6
         sc_max = calculate_sc(silane_max)
