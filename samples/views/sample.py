@@ -463,18 +463,19 @@ def embed_timestamp(request, sample_name):
         try:
             sample = models.Sample.objects.get(name=sample_name)
         except models.Sample.DoesNotExist:
-            return None
-        timestamps.append(sample.last_modified)
-        try:
-            clearance = models.Clearance.objects.get(user=request.user, sample=sample)
-        except models.Clearance.DoesNotExist:
-            pass
+            request._sample_timestamp = None
         else:
-            timestamps.append(clearance.last_modified)
-        user_details = request.user.samples_user_details
-        timestamps.append(user_details.display_settings_timestamp)
-        timestamps.append(user_details.my_samples_timestamp)
-        request._sample_timestamp = adjust_timezone_information(max(timestamps))
+            timestamps.append(sample.last_modified)
+            try:
+                clearance = models.Clearance.objects.get(user=request.user, sample=sample)
+            except models.Clearance.DoesNotExist:
+                pass
+            else:
+                timestamps.append(clearance.last_modified)
+            user_details = request.user.samples_user_details
+            timestamps.append(user_details.display_settings_timestamp)
+            timestamps.append(user_details.my_samples_timestamp)
+            request._sample_timestamp = adjust_timezone_information(max(timestamps))
 
 
 def sample_timestamp(request, sample_name):
@@ -522,10 +523,11 @@ def sample_etag(request, sample_name):
     :rtype: str
     """
     embed_timestamp(request, sample_name)
-    hash_ = hashlib.sha1()
-    hash_.update(str(request._sample_timestamp))
-    hash_.update(str(request.user.pk))
-    return hash_.hexdigest()
+    if request._sample_timestamp:
+        hash_ = hashlib.sha1()
+        hash_.update(str(request._sample_timestamp))
+        hash_.update(str(request.user.pk))
+        return hash_.hexdigest()
 
 
 @login_required

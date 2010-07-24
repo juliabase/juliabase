@@ -101,9 +101,10 @@ def sample_series_timestamp(request, name):
         try:
             sample_series = models.SampleSeries.objects.get(name=name)
         except models.SampleSeries.DoesNotExist:
-            return None
-        timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
-        request._sample_series_timestamp = adjust_timezone_information(timestamp)
+            request._sample_series_timestamp = None
+        else:
+            timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+            request._sample_series_timestamp = adjust_timezone_information(timestamp)
 
 
 def sample_series_timestamp(request, name):
@@ -143,10 +144,11 @@ def sample_series_etag(request, name):
     :rtype: str
     """
     embed_timestamp(request, name)
-    hash_ = hashlib.sha1()
-    hash_.update(str(request._sample_series_timestamp))
-    hash_.update(str(request.user.pk))
-    return hash_.hexdigest()
+    if request._sample_series_timestamp:
+        hash_ = hashlib.sha1()
+        hash_.update(str(request._sample_series_timestamp))
+        hash_.update(str(request.user.pk))
+        return hash_.hexdigest()
 
 
 @login_required
