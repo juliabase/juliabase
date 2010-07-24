@@ -250,7 +250,7 @@ def capitalize_first_letter(text):
 
 def sanitize_for_markdown(text):
     u"""Convert a raw string to Markdown syntax.  This is used when external
-    (legacy) strings are important.  For example, comments found in data files
+    (legacy) strings are imported.  For example, comments found in data files
     must be sent through this function before being stored in the database.
 
     :Parameters:
@@ -263,9 +263,10 @@ def sanitize_for_markdown(text):
 
     :rtype: unicode
     """
-    # FixMe: So far, this routine only sanitises line breaks.  However, there
-    # is more to be done, especially escaping.
-    text = text.replace(u"\r\n", u"\n").replace(u"\r", u"\n")
+    text = text.replace(u"\r\n", u"\n").replace(u"\r", u"\n").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`"). \
+        replace("\n#", "\n\\#").replace("\n>", "\n\\>").replace("\n+", "\n\\+").replace("\n-", "\n\\-")
+    if text.startswith(tuple("#>+-")):
+        text = u"\\" + text
     # FixMe: Add ``flags=re.UNICODE`` with Python 2.7+
     paragraphs = re.split(ur"\n\s*\n", text)
     for i, paragraph in enumerate(paragraphs):
