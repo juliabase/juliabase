@@ -458,7 +458,7 @@ def embed_timestamp(request, sample_name):
     :type request: ``HttpRequest``
     :type sample_name: unicode
     """
-    if not hasattr(request, "_sample_timestamp"):
+    if not hasattr(request, "sample_timestamp"):
         timestamps = []
         try:
             sample = models.Sample.objects.get(name=sample_name)
@@ -474,7 +474,7 @@ def embed_timestamp(request, sample_name):
         user_details = request.user.samples_user_details
         timestamps.append(user_details.display_settings_timestamp)
         timestamps.append(user_details.my_samples_timestamp)
-        request._sample_timestamp = adjust_timezone_information(max(timestamps))
+        request.sample_timestamp = adjust_timezone_information(max(timestamps))
 
 
 def sample_timestamp(request, sample_name):
@@ -496,7 +496,7 @@ def sample_timestamp(request, sample_name):
     :rtype: ``datetime.datetime``
     """
     embed_timestamp(request, sample_name)
-    return request._sample_timestamp
+    return request.sample_timestamp
 
 
 def sample_etag(request, sample_name):
@@ -523,7 +523,7 @@ def sample_etag(request, sample_name):
     """
     embed_timestamp(request, sample_name)
     hash_ = hashlib.sha1()
-    hash_.update(str(request._sample_timestamp))
+    hash_.update(str(request.sample_timestamp))
     hash_.update(str(request.user.pk))
     return hash_.hexdigest()
 
