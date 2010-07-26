@@ -24,82 +24,90 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-11 13:11+0200\n"
-"PO-Revision-Date: 2010-07-11 13:12+0200\n"
+"POT-Creation-Date: 2010-07-26 18:18+0200\n"
+"PO-Revision-Date: 2010-07-26 18:19+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: context_processors.py:70
+#: context_processors.py:73
 msgid "German"
 msgstr "Deutsch"
 
-#: context_processors.py:71
+#: context_processors.py:74
 msgid "English"
 msgstr "Englisch"
 
-#: context_processors.py:72
+#: context_processors.py:75
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: context_processors.py:73
+#: context_processors.py:76
 msgid "Ukrainian"
 msgstr "Ukrainisch"
 
-#: context_processors.py:74
+#: context_processors.py:77
 msgid "Russian"
 msgstr "Russisch"
 
-#: context_processors.py:75
+#: context_processors.py:78
 msgid "French"
 msgstr "Französisch"
 
-#: context_processors.py:76
+#: context_processors.py:79
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models.py:47
+#: models.py:48
 msgid "user"
 msgstr "Benutzer"
 
-#: models.py:49
+#: models.py:50
 msgid "language"
 msgstr "Sprache"
 
-#: models.py:52 models.py:53
+#: models.py:51
+msgid "operating system"
+msgstr "Betriebssystem"
+
+#: models.py:54 models.py:55
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models.py:74
+#: models.py:91
 msgid "name"
 msgstr "Name"
 
-#: models.py:75
+#: models.py:92
 msgid "members"
 msgstr "Mitglieder"
 
-#: models.py:77
+#: models.py:94
 msgid "restricted"
 msgstr "beschränkt"
 
-#: models.py:80
+#: models.py:97
 msgid "topic"
 msgstr "Thema"
 
-#: models.py:81
+#: models.py:98
 msgid "topics"
 msgstr "Themen"
 
-#: models.py:83
+#: models.py:100
 msgid "Can edit all topics, and can add new topics"
 msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
-#: models.py:84
+#: models.py:101
 msgid "Can edit topics that he/she is a member of"
 msgstr "Darf Themen ähnern, in denen er/sie Mitglied ist"
 
-#: utils.py:153
+#: models.py:119
+msgid "topic #{number} (confidential)"
+msgstr "Thema Nr. {number} (vertraulich)"
+
+#: utils.py:159
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
@@ -297,9 +305,8 @@ msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
 #: templatetags/chantal.py:153
-#, python-format
-msgid "with %(markdown_link)s syntax"
-msgstr "mit %(markdown_link)s-Syntax"
+msgid "with {markdown_link} syntax"
+msgstr "mit {markdown_link}-Syntax"
 
 #: templatetags/chantal.py:162
 msgid "Yes"
