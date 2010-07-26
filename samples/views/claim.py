@@ -97,11 +97,11 @@ to withdraw the request.
 Chantal.
 """), approver, {"approver": get_really_full_name(approver), "requester": get_really_full_name(user),
                  "url": "http://" + settings.DOMAIN_NAME +
-                 django.core.urlresolvers.reverse(view, kwargs={"claim_id": claim.pk})})
+                 django.core.urlresolvers.reverse(show, kwargs={"claim_id": claim.pk})})
             _ = ugettext
             claim.samples = samples=samples_form.cleaned_data["samples"]
             return utils.successful_response(request, _(u"Claim {id_} was successfully asserted.").format(id_=claim.pk),
-                                             view, kwargs={"claim_id": claim.pk})
+                                             show, kwargs={"claim_id": claim.pk})
     else:
         samples_form = SamplesForm(user)
         approver_form = ApproverForm()
@@ -116,6 +116,100 @@ def list_(request, username):
     pass
 
 
+class CloseForm(forms.Form):
+    _ = ugettext_lazy
+    close = forms.BooleanField(required=False)
+
+    def __init__(self, label, *args, **kwargs):
+        super(CloseForm, self).__init__(*args, **kwargs)
+        self.fields["close"].label = label
+
+
+def is_referentially_valid(withdraw_form, approve_form):
+    u"""Test whether all forms are consistent with each other.  I only test
+    here whether the user has selected both checkboxes.  This can only happen
+    if requester and approver are the same person (i.e., the user wants to aopt
+    the samples himself).
+
+    :Return:
+      whether all forms are consistent with each other
+
+    :rtype: bool
+    """
+    referencially_valid = True
+    if (approve_form and approve_form.cleaned_data["close"]) and \
+            (withdraw_form and withdraw_form.cleaned_data["close"]):
+        append_error(withdraw_form, _(u"You can't withdraw and approve at the same time."))
+        referencially_valid = False
+    if (approve_form and not approve_form.cleaned_data["close"]) and \
+            (withdraw_form and not withdraw_form.cleaned_data["close"]):
+        append_error(withdraw_form, _(u"You must select exactly one option, or leave this page."))
+        referencially_valid = False
+    return referencially_valid
+
+
 @login_required
-def view(request, claim_id):
-    pass
+def show(request, claim_id):
+    u"""View for reviewing a claim.  
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `claim_id`: the primary key of the claim to be viewd
+
+    :type request: ``HttpRequest``
+    :type claim_id: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    _ = ugettext
+    claim = get_object_or_404(models.Claim, pk=utils.int_or_zero(claim_id))
+    is_approver = request.user == claim.approver
+    is_requester = request.user == claim.requester
+    if not is_approver and not is_requester:
+        raise permissions.PermissionError(request.user, _(u"You are neither the requester nor the approver of this claim."))
+    if request.method == "POST" and not claim.closed:
+        withdraw_form = CloseForm(_(u"withdraw claim"), request.POST, prefix="withdraw") if is_requester else None
+        approve_form = CloseForm(_(u"approve claim"), request.POST, prefix="approve") if is_approver else None
+        all_valid = (withdraw_form is None or withdraw_form.is_valid()) and (approve_form is None or approve_form.is_valid())
+        referencially_valid = is_referentially_valid(withdraw_form, approve_form)
+        if all_valid and referencially_valid:
+            approved = approve_form and approve_form.cleaned_data["close"]
+            closed = approved or (withdraw_form and withdraw_form.cleaned_data["close"])
+            response = None
+            if approved:
+                sample_list = list(claim.samples.all())
+                for sample in sample_list:
+                    sample.currently_responsible_person = claim.requester
+                    sample.save()
+                sample_enumeration = u"    " + u",\n    ".join(unicode(sample) for sample in sample_list)
+                _ = lambda x: x
+                send_email(_("Sample request approved"),
+                       _(u"""Hello {requester},
+
+your sample claim was approved.  You are now the “currently
+responsible person” of the following samples:
+
+{samples}
+
+Chantal.
+"""), claim.requester, {"requester": get_really_full_name(claim.requester), "samples": sample_enumeration})
+                _ = ugettext
+                response = \
+                    utils.successful_response(request, _(u"Claim {id_} was successfully approved.").format(id_=claim.pk))
+            if closed:
+                claim.closed = True
+                claim.save()
+                response = response or \
+                    utils.successful_response(request, _(u"Claim {id_} was successfully withdrawn.").format(id_=claim.pk))
+            return response
+    else:
+        withdraw_form = CloseForm(_(u"withdraw claim"), prefix="withdraw") if is_requester else None
+        approve_form = CloseForm(_(u"approve claim"), prefix="approve") if is_approver else None
+    return render_to_response("samples/show_claim.html", {"title": _(u"Claim #{number}").format(number=claim_id),
+                                                          "claim": claim, "is_approver": is_approver,
+                                                          "is_requester": is_requester,
+                                                          "withdraw": withdraw_form, "approve": approve_form},
+                              context_instance=RequestContext(request))

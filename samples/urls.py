@@ -101,7 +101,7 @@ urlpatterns = patterns("samples.views",
 
                        (r"^claims/(?P<username>.+)/add/$", "claim.add"),
                        (r"^claims/(?P<username>.+)/$", "claim.list_"),
-                       (r"^claims/(?P<claim_id>.+)", "claim.view"),
+                       (r"^claims/(?P<claim_id>.+)", "claim.show"),
 
                        (r"^primary_keys$", "remote_client.primary_keys"),
                        (r"^available_items/(?P<model_name>[A-Za-z_][A-Za-z_0-9]*)", "remote_client.available_items"),
