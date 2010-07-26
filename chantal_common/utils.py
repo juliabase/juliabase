@@ -24,7 +24,8 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os.path
+import codecs, re, os.path, time
+from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
 import django.http
@@ -32,6 +33,9 @@ from django.conf import settings
 from django.utils.encoding import iri_to_uri
 from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.utils import translation
+from django.utils.translation import ugettext
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
@@ -296,3 +300,51 @@ def adjust_timezone_information(timestamp):
     :rtype: ``datetime.datetime``
     """
     return timestamp.replace(tzinfo=dateutil.tz.tzlocal())
+
+
+def send_email(subject, content, recipient, format_dict=None):
+    u"""Sends one email to a user.  Both subject and content are translated to
+    the recipient's language.  To make this work, you must tag the original
+    text with a dummy ``_`` function in the calling content, e.g.::
+
+        _ = lambda x: x
+        send_mail(_("Error notification"), _("An error has occured."), user)
+        _ = ugettext
+
+    If you need to use string formatting à la
+
+    ::
+
+        ``"Hello {name}".format(name=user.name)``,
+
+    you must pass a dictionary like ``{"name": user.name}`` to this function.
+    String formatting must be done here, otherwise, translating wouldn't work.
+
+    :Parameters:
+      - `subject`: the subject of the email
+      - `content`: the content of the email; it may contain substitution tags
+      - `recipient`: the recipient of the email
+      - `format_dict`: the substitions used for the ``format`` string method
+        for both the subject and the content
+
+    :type subject: unicode
+    :type content: unicode
+    :type recipient: ``django.contrib.auth.models.User``
+    :type format_dict: dict mapping unicode to unicode
+    """
+    current_language = translation.get_language()
+    translation.activate(recipient.chantal_user_details.language)
+    subject, content = ugettext(subject), ugettext(content)
+    if format_dict is not None:
+        subject = subject.format(**format_dict)
+        content = content.format(**format_dict)
+    cycles_left = 3
+    while cycles_left:
+        try:
+            send_mail(subject, content, settings.DEFAULT_FROM_EMAIL, [recipient.email])
+        except SMTPException:
+            cycles_left -= 1
+            time.wait(0.3)
+        else:
+            break
+    translation.activate(current_language)
