@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-26 05:49+0200\n"
-"PO-Revision-Date: 2010-07-26 05:56+0200\n"
+"POT-Creation-Date: 2010-07-26 08:11+0200\n"
+"PO-Revision-Date: 2010-07-26 08:12+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2069,21 +2069,23 @@ msgstr "Proben erfolgreich umbenannt."
 msgid "Giving new-style names"
 msgstr "Probennamen nach „neuer Art“ vergeben"
 
-#: views/claim.py:35
+#: views/claim.py:34
 msgid "Claimed samples"
 msgstr "Beanspruchte Proben"
 
-#: views/claim.py:35
+#: views/claim.py:34
 msgid "“My Samples” are eligible."
 msgstr "„Meine Proben“ sind auswählbar."
 
-#: views/claim.py:46
+#: views/claim.py:45
 msgid "Requested approver"
 msgstr "Gewünschter Sachbearbeiter"
 
 #: views/claim.py:76
 msgid "You are not allowed to add a claim in another user's name."
-msgstr "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers erheben."
+msgstr ""
+"Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
+"erheben."
 
 #: views/claim.py:85
 msgid "Sample request from {requester}"
@@ -2117,11 +2119,11 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:101
+#: views/claim.py:103
 msgid "Claim {id_} was successfully asserted."
 msgstr "Der Anspruch {id_} wurde erfolgreich erhoben."
 
-#: views/claim.py:106
+#: views/claim.py:108
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 

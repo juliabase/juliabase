@@ -16,15 +16,14 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
 from django.core.cache import cache
-from django.core.mail import send_mail
 from samples import models, permissions
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
 from django.conf import settings
-from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information
+from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, send_email
 from samples.views import utils, form_utils, feed_utils, csv_export
 from samples import permissions, models
 from chantal_common.utils import get_really_full_name
@@ -71,6 +70,7 @@ def add(request, username):
 
     :rtype: ``HttpResponse``
     """
+    _ = ugettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _(u"You are not allowed to add a claim in another user's name."))
@@ -81,9 +81,9 @@ def add(request, username):
             approver = approver_form.cleaned_data["approver"]
             claim = models.Claim(requester=user, approver=approver)
             claim.save()
-            claim.samples = samples=samples_form.cleaned_data["samples"]
-            send_mail(_("Sample request from {requester}").format(requester=get_really_full_name(user)),
-                      _(u"""Hello {approver},
+            _ = lambda x: x
+            send_email(_("Sample request from {requester}"),
+                       _(u"""Hello {approver},
 
 {requester} wants to become the new “currently responsible person”
 of one or more samples.  Please visit
@@ -95,9 +95,11 @@ the request, please contact {requester} directly and ask him or her
 to withdraw the request.
 
 Chantal.
-""").format(approver=get_really_full_name(approver), requester=get_really_full_name(user),
-            url="http://" + settings.DOMAIN_NAME + django.core.urlresolvers.reverse(view, kwargs={"claim_id": claim.pk})),
-                      settings.DEFAULT_FROM_EMAIL, [approver.email], fail_silently=False)
+"""), approver, {"approver": get_really_full_name(approver), "requester": get_really_full_name(user),
+                 "url": "http://" + settings.DOMAIN_NAME +
+                 django.core.urlresolvers.reverse(view, kwargs={"claim_id": claim.pk})})
+            _ = ugettext
+            claim.samples = samples=samples_form.cleaned_data["samples"]
             return utils.successful_response(request, _(u"Claim {id_} was successfully asserted.").format(id_=claim.pk),
                                              view, kwargs={"claim_id": claim.pk})
     else:

@@ -1,0 +1,21 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list samples _("Samples list") %}
+  {% error_list approver _("Approver") %}
+  <table>
+    <tr>
+      {% input_field samples.samples %}
+    </tr>
+    <tr>
+      {% input_field approver.approver %}
+    </tr>
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+{% endblock %}
