@@ -785,6 +785,10 @@ class Clearance(models.Model):
         verbose_name = _(u"clearance")
         verbose_name_plural = _(u"clearances")
 
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
+
 
 class SampleClaim(models.Model):
         # Translation hint: someone who assert a claim to samples
@@ -798,6 +802,14 @@ class SampleClaim(models.Model):
     class Meta:
         verbose_name = _(u"sample claim")
         verbose_name_plural = _(u"sample claims")
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"sample claim #{number}").format(number=self.pk)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.claim.show", (self.pk,))
 
 
 sample_death_reasons = (

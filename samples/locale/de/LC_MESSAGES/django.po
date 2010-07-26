@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-26 11:33+0200\n"
-"PO-Revision-Date: 2010-07-26 11:34+0200\n"
+"POT-Creation-Date: 2010-07-26 13:20+0200\n"
+"PO-Revision-Date: 2010-07-26 13:21+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: models_common.py:64 models_common.py:525 models_common.py:700
-#: models_common.py:1025
+#: models_common.py:1037
 msgid "name"
 msgstr "Name"
 
@@ -43,7 +43,7 @@ msgstr "Kontaktperson im Institut"
 msgid "restricted"
 msgstr "beschränkt"
 
-#: models_common.py:75 models_common.py:122 models_common.py:1110
+#: models_common.py:75 models_common.py:122 models_common.py:1122
 msgid "external operator"
 msgstr "externer Operateur"
 
@@ -88,7 +88,7 @@ msgstr "auf das Jahr genau"
 msgid "not even accurate to the year"
 msgstr "nicht einmal auf das Jahr genau"
 
-#: models_common.py:118 models_common.py:383 models_common.py:1028
+#: models_common.py:118 models_common.py:383 models_common.py:1040
 #: models_feeds.py:34
 msgid "timestamp"
 msgstr "Zeitstempel"
@@ -106,7 +106,7 @@ msgid "comments"
 msgstr "Kommentare"
 
 #: models_common.py:126 models_common.py:540 models_common.py:781
-#: models_common.py:1035
+#: models_common.py:1047
 msgid "last modified"
 msgstr "zuletzt geändert"
 
@@ -136,7 +136,7 @@ msgstr "Beobachter"
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: models_common.py:531 models_common.py:1030
+#: models_common.py:531 models_common.py:1042
 #: templates/samples/show_claim.html:24
 #: templates/samples/show_sample_series.html:37
 msgid "currently responsible person"
@@ -161,7 +161,7 @@ msgstr "mit Kommas getrennt, keine Leerzeichen"
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: models_common.py:539 models_common.py:1034 models_feeds.py:111
+#: models_common.py:539 models_common.py:1046 models_feeds.py:111
 #: models_feeds.py:138 models_feeds.py:334 models_feeds.py:359
 #: models_feeds.py:391 templates/samples/show_claim.html:26
 msgid "topic"
@@ -172,7 +172,7 @@ msgstr "Thema"
 msgid "sample"
 msgstr "Probe"
 
-#: models_common.py:545 models_common.py:794 models_common.py:1032
+#: models_common.py:545 models_common.py:798 models_common.py:1044
 #: models_feeds.py:110 models_feeds.py:137 models_feeds.py:243
 #: models_feeds.py:266
 msgid "samples"
@@ -211,7 +211,7 @@ msgstr "Probenspaltungen"
 msgid "split of {parent_name}"
 msgstr "Spaltung von {parent_name}"
 
-#: models_common.py:778 models_common.py:1108 models_common.py:1127
+#: models_common.py:778 models_common.py:1120 models_common.py:1139
 msgid "user"
 msgstr "Benutzer"
 
@@ -223,176 +223,184 @@ msgstr "Freigabe"
 msgid "clearances"
 msgstr "Freigaben"
 
+#: models_common.py:790
+msgid "clearance of {sample} for {user}"
+msgstr "Freigabe von {sample} für {user}"
+
 #. Translation hint: someone who assert a claim to samples
-#: models_common.py:791
+#: models_common.py:795
 msgid "requester"
 msgstr "Antragssteller"
 
-#: models_common.py:792
+#: models_common.py:796
 msgid "reviewer"
 msgstr "Reviewer"
 
 #. Translation hint: "closed" claim to samples
-#: models_common.py:796
+#: models_common.py:800
 msgid "closed"
 msgstr "geschlossen"
 
-#: models_common.py:799
+#: models_common.py:803
 msgid "sample claim"
 msgstr "Beanspruchung von Proben"
 
-#: models_common.py:800
+#: models_common.py:804
 msgid "sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: models_common.py:804
+#: models_common.py:808
+msgid "sample claim #{number}"
+msgstr "Probenanspruch Nr. {number}"
+
+#: models_common.py:816
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: models_common.py:805
+#: models_common.py:817
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: models_common.py:806
+#: models_common.py:818
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
 #. Translation hint: Of a sample
-#: models_common.py:818
+#: models_common.py:830
 msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translation hint: Of a sample
-#: models_common.py:822 views/sample.py:165
+#: models_common.py:834 views/sample.py:165
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:824
+#: models_common.py:836
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:830
+#: models_common.py:842
 msgid "cease of existence of {sample}"
 msgstr "Beendigung der Existenz von {sample}"
 
 #. Translation hint: Of a sample
-#: models_common.py:833
+#: models_common.py:845
 msgid "cease of existence #{number}"
 msgstr "Beendigung der Existenz #{number}"
 
-#: models_common.py:836 templates/samples/topics_and_permissions.html:65
+#: models_common.py:848 templates/samples/topics_and_permissions.html:65
 #: templates/samples/topics_and_permissions.html:78
 msgid "none"
 msgstr "keine"
 
 #. Translation hint: Of a result
-#: models_common.py:847
+#: models_common.py:859
 msgid "title"
 msgstr "Überschrift"
 
-#: models_common.py:848
+#: models_common.py:860
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
 #. Translation hint: Physical quantities are meant
-#: models_common.py:850
+#: models_common.py:862
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
 
-#: models_common.py:850
+#: models_common.py:862
 msgid "in Python pickle format"
 msgstr "im Python-Pickle-Format"
 
 #. Translation hint: experimental result
-#: models_common.py:864 models_feeds.py:213
+#: models_common.py:876 models_feeds.py:213
 msgid "result"
 msgstr "Ergebnis"
 
 #. Translation hint: experimental results
-#: models_common.py:866 models_common.py:1033
+#: models_common.py:878 models_common.py:1045
 msgid "results"
 msgstr "Ergebnisse"
 
 #. Translation hint: experimental result
-#: models_common.py:882 models_common.py:886
+#: models_common.py:894 models_common.py:898
 msgid "result for {sample}"
 msgstr "Ergebnis für {sample}"
 
 #. Translation hint: experimental result
-#: models_common.py:889
+#: models_common.py:901
 msgid "result #{number}"
 msgstr "Ergebnis Nr. {number}"
 
 #. Translation hint: In a table
-#: models_common.py:1011 views/result.py:608
+#: models_common.py:1023 views/result.py:608
 msgid "row"
 msgstr "Zeile"
 
-#: models_common.py:1011
+#: models_common.py:1023
 msgid "row #{number}"
 msgstr "Zeile Nr. {number}"
 
 #. Translation hint: The “Y” stands for “year”
-#: models_common.py:1027
+#: models_common.py:1039
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
-#: models_common.py:1031 models_feeds.py:141 models_feeds.py:187
+#: models_common.py:1043 models_feeds.py:141 models_feeds.py:187
 #: models_feeds.py:214 models_feeds.py:267 models_feeds.py:313
 #: models_feeds.py:362
 msgid "description"
 msgstr "Beschreibung"
 
-#: models_common.py:1038 models_feeds.py:312 models_feeds.py:333
+#: models_common.py:1050 models_feeds.py:312 models_feeds.py:333
 #: models_feeds.py:358
 msgid "sample series"
 msgstr "Probenserie"
 
-#: models_common.py:1039
+#: models_common.py:1051
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: models_common.py:1107 models_common.py:1114
+#: models_common.py:1119 models_common.py:1126
 msgid "initials"
 msgstr "Kürzel"
 
 #. Translation hint: Plural of “initials”
-#: models_common.py:1116
+#: models_common.py:1128
 msgid "initialses"
 msgstr "Kürzel"
 
-#: models_common.py:1130
+#: models_common.py:1142
 msgid "auto-addition topics"
 msgstr "Themen mit Auto-Hinzufügen"
 
-#: models_common.py:1131
+#: models_common.py:1143
 msgid "new samples in these topics are automatically added to “My Samples”"
 msgstr ""
 "neue Proben in diesen Themen werden automatisch zu „Meine Proben“ hinzugefügt"
 
-#: models_common.py:1132
+#: models_common.py:1144
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: models_common.py:1133
+#: models_common.py:1145
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: models_common.py:1140
+#: models_common.py:1152
 msgid "display settings last modified"
 msgstr "Anzeigeoptionen zuletzt geändert"
 
-#: models_common.py:1146
+#: models_common.py:1158
 msgid "My Samples last modified"
 msgstr "Meine Proben zuletzt geändert"
 
-#: models_common.py:1150
+#: models_common.py:1162
 msgid "identifying data hash"
 msgstr "identifizierender Daten-Hash"
 
-#: models_common.py:1161 models_common.py:1162
+#: models_common.py:1173 models_common.py:1174
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -1465,6 +1473,18 @@ msgstr "vorheriger Monat"
 msgid "next month"
 msgstr "nächster Monat"
 
+#: templates/samples/list_claims.html:8
+msgid "Claims with you being the requester"
+msgstr "Ansprüche, die Sie beantragt haben"
+
+#: templates/samples/list_claims.html:15
+msgid "Assert a new claim to samples"
+msgstr "Einen neuen Anspruch auf Proben einreichen"
+
+#: templates/samples/list_claims.html:17
+msgid "Claims with you being the reviewer"
+msgstr "Ansprüche, die Sie überprüfen sollen"
+
 #: templates/samples/list_topics.html:18
 msgid "No topics available."
 msgstr "Keine Themen vorhanden."
@@ -1600,11 +1620,15 @@ msgstr "Ändere Passwort"
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:134
+#: templates/samples/main_menu.html:133
+msgid "Sample claims"
+msgstr "Beanspruchungen von Proben"
+
+#: templates/samples/main_menu.html:136
 msgid "About Chantal"
 msgstr "Über Chantal"
 
-#: templates/samples/main_menu.html:136
+#: templates/samples/main_menu.html:138
 msgid "Server statistics"
 msgstr "Server-Statistik"
 
@@ -2077,29 +2101,29 @@ msgstr "Proben erfolgreich umbenannt."
 msgid "Giving new-style names"
 msgstr "Probennamen nach „neuer Art“ vergeben"
 
-#: views/claim.py:34
+#: views/claim.py:35
 msgid "Claimed samples"
 msgstr "Beanspruchte Proben"
 
-#: views/claim.py:34
+#: views/claim.py:35
 msgid "“My Samples” are eligible."
 msgstr "„Meine Proben“ sind auswählbar."
 
-#: views/claim.py:45
+#: views/claim.py:46
 msgid "Requested reviewer"
 msgstr "Gewünschter Reviewer"
 
-#: views/claim.py:76
+#: views/claim.py:77
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: views/claim.py:85
+#: views/claim.py:86
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: views/claim.py:86
+#: views/claim.py:87
 msgid ""
 "Hello {reviewer},\n"
 "\n"
@@ -2127,39 +2151,47 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:104
+#: views/claim.py:105
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: views/claim.py:109
+#: views/claim.py:110
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: views/claim.py:143
+#: views/claim.py:120
+msgid "You are not allowed to see claims of another user."
+msgstr "Sie dürfen beine Probenansprüche anderer Benutzer sehen."
+
+#: views/claim.py:122
+msgid "Claims for {user}"
+msgstr "Ansprüche von {user}"
+
+#: views/claim.py:151
 msgid "You can't withdraw and approve at the same time."
 msgstr "Sie konnen nicht gleichzeitig zurückziehen und genehmigen."
 
-#: views/claim.py:147
+#: views/claim.py:155
 msgid "You must select exactly one option, or leave this page."
 msgstr "Sie müssen genau eine Option wählen, oder die Seite verlassen."
 
-#: views/claim.py:173
+#: views/claim.py:181
 msgid "You are neither the requester nor the reviewer of this claim."
 msgstr "Sie sind weder der Antragssteller noch der Reviewer dieses Anspruchs."
 
-#: views/claim.py:175 views/claim.py:212
+#: views/claim.py:183 views/claim.py:220
 msgid "withdraw claim"
 msgstr "Anspruch zurückziehen"
 
-#: views/claim.py:176 views/claim.py:213
+#: views/claim.py:184 views/claim.py:221
 msgid "approve claim"
 msgstr "Anspruch genehmigen"
 
-#: views/claim.py:190
+#: views/claim.py:198
 msgid "Sample request approved"
 msgstr "Probenanspruch genemigt"
 
-#: views/claim.py:191
+#: views/claim.py:199
 msgid ""
 "Hello {requester},\n"
 "\n"
@@ -2179,15 +2211,15 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:203
+#: views/claim.py:211
 msgid "Sample claim {id_} was successfully approved."
 msgstr "Der Anspruch {id_} wurde erfolgreich genemigt."
 
-#: views/claim.py:209
+#: views/claim.py:217
 msgid "Sample claim {id_} was successfully withdrawn."
 msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 
-#: views/claim.py:214
+#: views/claim.py:222
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
 

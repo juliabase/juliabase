@@ -23,7 +23,8 @@ from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
 from django.conf import settings
-from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, send_email
+from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, send_email, \
+    get_really_full_name
 from samples.views import utils, form_utils, feed_utils, csv_export
 from samples import permissions, models
 from chantal_common.utils import get_really_full_name
@@ -114,7 +115,14 @@ Chantal.
 
 @login_required
 def list_(request, username):
-    pass
+    user = get_object_or_404(django.contrib.auth.models.User, username=username)
+    if user != request.user:
+        raise permissions.PermissionError(request.user, _(u"You are not allowed to see claims of another user."))
+    return render_to_response("samples/list_claims.html",
+                              {"title": _(u"Claims for {user}").format(user=get_really_full_name(user)),
+                               "claims": user.claims.filter(closed=False),
+                               "claims_as_reviewer": user.claims_as_reviewer.filter(closed=False)},
+                              context_instance=RequestContext(request))
 
 
 class CloseForm(forms.Form):
