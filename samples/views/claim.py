@@ -8,26 +8,18 @@ set of samples.
 
 from __future__ import absolute_import
 
-import time, copy, hashlib
-from django.views.decorators.http import condition
 import django.contrib.auth.models
 from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
-from django.core.cache import cache
-from samples import models, permissions
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.conf import settings
-from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, send_email, \
-    get_really_full_name
-from samples.views import utils, form_utils, feed_utils, csv_export
+from chantal_common.utils import append_error, send_email, get_really_full_name
+from samples.views import utils, form_utils
 from samples import permissions, models
-from chantal_common.utils import get_really_full_name
 
 
 class SamplesForm(forms.Form):

@@ -12,6 +12,7 @@ from django.views.decorators.http import condition
 from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.http import Http404
 import django.forms as forms
 from django.core.cache import cache
 from samples import models, permissions
@@ -659,7 +660,10 @@ class AddToMySamplesForm(forms.Form):
 max_results = 50
 @login_required
 def search(request):
-    u"""View for searching for samples.
+    u"""View for searching for samples.  The rule is: Everyonw can see the
+    *names* (not the data sheets) of all samples, unless they are in a
+    restricted topic, unless the user is a member in that topic, its currently
+    responsible person, or you have a clearance for the sample.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -673,6 +677,9 @@ def search(request):
     """
     found_samples = []
     too_many_results = False
+    base_query = models.Sample.objects.filter(Q(topic__restricted=False) | Q(topic__members=request.user) |
+                                              Q(currently_responsible_person=request.user) |
+                                              Q(clearances__user=request.user)).distinct()
     if request.method == "POST":
         search_samples_form = SearchSamplesForm(request.POST)
         if search_samples_form.is_valid():
@@ -683,8 +690,7 @@ def search(request):
             # all found samples to find the prefixes, the routine should
             # collect all prefixes from ``request.POST``.  Then nothing can be
             # missed.
-            found_samples = \
-                models.Sample.objects.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
+            found_samples = base_query.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
             too_many_results = found_samples.count() > max_results
             found_samples = found_samples[:max_results] if too_many_results else found_samples
         else:
@@ -696,7 +702,11 @@ def search(request):
         for add_to_my_samples_form in add_to_my_samples_forms:
             if add_to_my_samples_form and add_to_my_samples_form.is_valid() and \
                     add_to_my_samples_form.cleaned_data["add_to_my_samples"]:
-                request.user.my_samples.add(get_object_or_404(models.Sample, pk=int(add_to_my_samples_form.prefix)))
+                try:
+                    found_sample = base_query.filter(pk=int(add_to_my_samples_form.prefix))[0]
+                except IndexError:
+                    raise Http404("Sample not found.")
+                request.user.my_samples.add(found_sample)
                 new_forms.append(None)
             else:
                 new_forms.append(add_to_my_samples_form)
