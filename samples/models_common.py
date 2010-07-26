@@ -545,7 +545,8 @@ class Sample(models.Model):
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples")),)
+        permissions = (("view_all_samples", _("Can view all samples")),
+                       ("adopt_samples", _("Can adopt samples")))
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
@@ -783,6 +784,20 @@ class Clearance(models.Model):
         unique_together = ("user", "sample")
         verbose_name = _(u"clearance")
         verbose_name_plural = _(u"clearances")
+
+
+class Claim(models.Model):
+        # Translation hint: someone who assert a claim to samples
+    requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"requester"), related_name="claims")
+    approver = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"approver"),
+                                 related_name="claims_as_approver")
+    samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_(u"samples"))
+        # Translation hint: "closed" claim to samples
+    closed = models.BooleanField(_(u"closed"), default=False)
+
+    class Meta:
+        verbose_name = _(u"claim")
+        verbose_name_plural = _(u"claims")
 
 
 sample_death_reasons = (
