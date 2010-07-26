@@ -28,7 +28,7 @@ class SamplesForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super(SamplesForm, self).__init__(*args, **kwargs)
-        self.fields["samples"].set_samples(user.my_samples.all(), user)
+        self.fields["samples"].set_samples(user.my_samples.exclude(currently_responsible_person=user), user)
 
 
 class ReviewerForm(forms.Form):
@@ -173,7 +173,7 @@ def show(request, claim_id):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `claim_id`: the primary key of the claim to be viewd
+      - `claim_id`: the primary key of the claim to be viewed
 
     :type request: ``HttpRequest``
     :type claim_id: unicode
