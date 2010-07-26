@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-26 11:05+0200\n"
-"PO-Revision-Date: 2010-07-26 11:06+0200\n"
+"POT-Creation-Date: 2010-07-26 11:33+0200\n"
+"PO-Revision-Date: 2010-07-26 11:34+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -229,8 +229,8 @@ msgid "requester"
 msgstr "Antragssteller"
 
 #: models_common.py:792
-msgid "approver"
-msgstr "genehmigende Person"
+msgid "reviewer"
+msgstr "Reviewer"
 
 #. Translation hint: "closed" claim to samples
 #: models_common.py:796
@@ -238,12 +238,12 @@ msgid "closed"
 msgstr "geschlossen"
 
 #: models_common.py:799
-msgid "claim"
-msgstr "Anspruch"
+msgid "sample claim"
+msgstr "Beanspruchung von Proben"
 
 #: models_common.py:800
-msgid "claims"
-msgstr "Ansprüche"
+msgid "sample claims"
+msgstr "Beanspruchungen von Proben"
 
 #: models_common.py:804
 msgid "completely split"
@@ -1684,8 +1684,8 @@ msgid "Requester"
 msgstr "Antragssteller"
 
 #: templates/samples/show_claim.html:16
-msgid "Approver"
-msgstr "Genehmigende Person"
+msgid "Reviewer"
+msgstr "Reviewer"
 
 #: templates/samples/show_external_operator.html:8
 #, python-format
@@ -2086,8 +2086,8 @@ msgid "“My Samples” are eligible."
 msgstr "„Meine Proben“ sind auswählbar."
 
 #: views/claim.py:45
-msgid "Requested approver"
-msgstr "Gewünschter Sachbearbeiter"
+msgid "Requested reviewer"
+msgstr "Gewünschter Reviewer"
 
 #: views/claim.py:76
 msgid "You are not allowed to add a claim in another user's name."
@@ -2101,7 +2101,7 @@ msgstr "Probenanfrage von {requester}"
 
 #: views/claim.py:86
 msgid ""
-"Hello {approver},\n"
+"Hello {reviewer},\n"
 "\n"
 "{requester} wants to become the new “currently responsible person”\n"
 "of one or more samples.  Please visit\n"
@@ -2114,7 +2114,7 @@ msgid ""
 "\n"
 "Chantal.\n"
 msgstr ""
-"Hallo {approver},\n"
+"Hallo {reviewer},\n"
 "\n"
 "{requester} möchte gerne die neue „aktuell verantwortliche Person“\n"
 "von einer oder mehreren Proben werden.  Bitte besuchen Sie\n"
@@ -2127,40 +2127,39 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:103
-msgid "Claim {id_} was successfully asserted."
-msgstr "Der Anspruch {id_} wurde erfolgreich erhoben."
+#: views/claim.py:104
+msgid "Sample claim {id_} was successfully submitted."
+msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: views/claim.py:108
+#: views/claim.py:109
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: views/claim.py:142
+#: views/claim.py:143
 msgid "You can't withdraw and approve at the same time."
 msgstr "Sie konnen nicht gleichzeitig zurückziehen und genehmigen."
 
-#: views/claim.py:146
+#: views/claim.py:147
 msgid "You must select exactly one option, or leave this page."
 msgstr "Sie müssen genau eine Option wählen, oder die Seite verlassen."
 
-#: views/claim.py:172
-msgid "You are neither the requester nor the approver of this claim."
-msgstr ""
-"Sie sind weder der Antragssteller noch der Bearbeiter dieses Anspruchs."
+#: views/claim.py:173
+msgid "You are neither the requester nor the reviewer of this claim."
+msgstr "Sie sind weder der Antragssteller noch der Reviewer dieses Anspruchs."
 
-#: views/claim.py:174 views/claim.py:209
+#: views/claim.py:175 views/claim.py:212
 msgid "withdraw claim"
 msgstr "Anspruch zurückziehen"
 
-#: views/claim.py:175 views/claim.py:210
+#: views/claim.py:176 views/claim.py:213
 msgid "approve claim"
 msgstr "Anspruch genehmigen"
 
-#: views/claim.py:189
+#: views/claim.py:190
 msgid "Sample request approved"
 msgstr "Probenanspruch genemigt"
 
-#: views/claim.py:190
+#: views/claim.py:191
 msgid ""
 "Hello {requester},\n"
 "\n"
@@ -2180,15 +2179,15 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:201
-msgid "Claim {id_} was successfully approved."
+#: views/claim.py:203
+msgid "Sample claim {id_} was successfully approved."
 msgstr "Der Anspruch {id_} wurde erfolgreich genemigt."
 
-#: views/claim.py:206
-msgid "Claim {id_} was successfully withdrawn."
+#: views/claim.py:209
+msgid "Sample claim {id_} was successfully withdrawn."
 msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 
-#: views/claim.py:211
+#: views/claim.py:214
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
 
@@ -2868,6 +2867,18 @@ msgstr " und "
 #: views/utils.py:562
 msgid " and "
 msgstr " und "
+
+#~ msgid "approver"
+#~ msgstr "genehmigende Person"
+
+#~ msgid "claim"
+#~ msgstr "Anspruch"
+
+#~ msgid "claims"
+#~ msgstr "Ansprüche"
+
+#~ msgid "Approver"
+#~ msgstr "Genehmigende Person"
 
 #~ msgid "Samples list"
 #~ msgstr "Probenliste"

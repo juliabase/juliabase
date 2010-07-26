@@ -6,13 +6,13 @@
 {% block frame_content %}
 <form method="post" action="">
   {% error_list samples _("General error") %}
-  {% error_list approver _("General error") %}
+  {% error_list reviewer _("General error") %}
   <table>
     <tr>
       {% input_field samples.samples %}
     </tr>
     <tr>
-      {% input_field approver.approver %}
+      {% input_field reviewer.reviewer %}
     </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

@@ -38,15 +38,15 @@ class SamplesForm(forms.Form):
         self.fields["samples"].set_samples(user.my_samples.all(), user)
 
 
-class ApproverForm(forms.Form):
+class ReviewerForm(forms.Form):
     u"""Form giving the user who should approve the claim.
     """
     _ = ugettext_lazy
-    approver = forms.ModelChoiceField(label=_(u"Requested approver"), queryset=None)
+    reviewer = forms.ModelChoiceField(label=_(u"Requested reviewer"), queryset=None)
     def __init__(self, *args, **kwargs):
-        super(ApproverForm, self).__init__(*args, **kwargs)
+        super(ReviewerForm, self).__init__(*args, **kwargs)
         permission = django.contrib.auth.models.Permission.objects.get(codename="adopt_samples")
-        self.fields["approver"].queryset = django.contrib.auth.models.User.objects.filter(
+        self.fields["reviewer"].queryset = django.contrib.auth.models.User.objects.filter(
             Q(groups__permissions=permission) | Q(user_permissions=permission)).distinct()
 
 
@@ -76,14 +76,14 @@ def add(request, username):
         raise permissions.PermissionError(request.user, _(u"You are not allowed to add a claim in another user's name."))
     if request.method == "POST":
         samples_form = SamplesForm(user, request.POST)
-        approver_form = ApproverForm(request.POST)
-        if samples_form.is_valid() and approver_form.is_valid():
-            approver = approver_form.cleaned_data["approver"]
-            claim = models.Claim(requester=user, approver=approver)
+        reviewer_form = ReviewerForm(request.POST)
+        if samples_form.is_valid() and reviewer_form.is_valid():
+            reviewer = reviewer_form.cleaned_data["reviewer"]
+            claim = models.SampleClaim(requester=user, reviewer=reviewer)
             claim.save()
             _ = lambda x: x
             send_email(_("Sample request from {requester}"),
-                       _(u"""Hello {approver},
+                       _(u"""Hello {reviewer},
 
 {requester} wants to become the new “currently responsible person”
 of one or more samples.  Please visit
@@ -95,18 +95,19 @@ the request, please contact {requester} directly and ask him or her
 to withdraw the request.
 
 Chantal.
-"""), approver, {"approver": get_really_full_name(approver), "requester": get_really_full_name(user),
+"""), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
                  "url": "http://" + settings.DOMAIN_NAME +
                  django.core.urlresolvers.reverse(show, kwargs={"claim_id": claim.pk})})
             _ = ugettext
             claim.samples = samples=samples_form.cleaned_data["samples"]
-            return utils.successful_response(request, _(u"Claim {id_} was successfully asserted.").format(id_=claim.pk),
+            return utils.successful_response(request,
+                                             _(u"Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
                                              show, kwargs={"claim_id": claim.pk})
     else:
         samples_form = SamplesForm(user)
-        approver_form = ApproverForm()
+        reviewer_form = ReviewerForm()
     return render_to_response("samples/add_claim.html", {"title": _(u"Assert claim"), "samples": samples_form,
-                                                         "approver": approver_form},
+                                                         "reviewer": reviewer_form},
                               context_instance=RequestContext(request))
 
 
@@ -128,7 +129,7 @@ class CloseForm(forms.Form):
 def is_referentially_valid(withdraw_form, approve_form):
     u"""Test whether all forms are consistent with each other.  I only test
     here whether the user has selected both checkboxes.  This can only happen
-    if requester and approver are the same person (i.e., the user wants to aopt
+    if requester and reviewer are the same person (i.e., the user wants to aopt
     the samples himself).
 
     :Return:
@@ -165,14 +166,14 @@ def show(request, claim_id):
     :rtype: ``HttpResponse``
     """
     _ = ugettext
-    claim = get_object_or_404(models.Claim, pk=utils.int_or_zero(claim_id))
-    is_approver = request.user == claim.approver
+    claim = get_object_or_404(models.SampleClaim, pk=utils.int_or_zero(claim_id))
+    is_reviewer = request.user == claim.reviewer
     is_requester = request.user == claim.requester
-    if not is_approver and not is_requester:
-        raise permissions.PermissionError(request.user, _(u"You are neither the requester nor the approver of this claim."))
+    if not is_reviewer and not is_requester:
+        raise permissions.PermissionError(request.user, _(u"You are neither the requester nor the reviewer of this claim."))
     if request.method == "POST" and not claim.closed:
         withdraw_form = CloseForm(_(u"withdraw claim"), request.POST, prefix="withdraw") if is_requester else None
-        approve_form = CloseForm(_(u"approve claim"), request.POST, prefix="approve") if is_approver else None
+        approve_form = CloseForm(_(u"approve claim"), request.POST, prefix="approve") if is_reviewer else None
         all_valid = (withdraw_form is None or withdraw_form.is_valid()) and (approve_form is None or approve_form.is_valid())
         referencially_valid = is_referentially_valid(withdraw_form, approve_form)
         if all_valid and referencially_valid:
@@ -198,18 +199,20 @@ Chantal.
 """), claim.requester, {"requester": get_really_full_name(claim.requester), "samples": sample_enumeration})
                 _ = ugettext
                 response = \
-                    utils.successful_response(request, _(u"Claim {id_} was successfully approved.").format(id_=claim.pk))
+                    utils.successful_response(request,
+                                              _(u"Sample claim {id_} was successfully approved.").format(id_=claim.pk))
             if closed:
                 claim.closed = True
                 claim.save()
                 response = response or \
-                    utils.successful_response(request, _(u"Claim {id_} was successfully withdrawn.").format(id_=claim.pk))
+                    utils.successful_response(request,
+                                              _(u"Sample claim {id_} was successfully withdrawn.").format(id_=claim.pk))
             return response
     else:
         withdraw_form = CloseForm(_(u"withdraw claim"), prefix="withdraw") if is_requester else None
-        approve_form = CloseForm(_(u"approve claim"), prefix="approve") if is_approver else None
+        approve_form = CloseForm(_(u"approve claim"), prefix="approve") if is_reviewer else None
     return render_to_response("samples/show_claim.html", {"title": _(u"Claim #{number}").format(number=claim_id),
-                                                          "claim": claim, "is_approver": is_approver,
+                                                          "claim": claim, "is_reviewer": is_reviewer,
                                                           "is_requester": is_requester,
                                                           "withdraw": withdraw_form, "approve": approve_form},
                               context_instance=RequestContext(request))

@@ -786,18 +786,18 @@ class Clearance(models.Model):
         verbose_name_plural = _(u"clearances")
 
 
-class Claim(models.Model):
+class SampleClaim(models.Model):
         # Translation hint: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"requester"), related_name="claims")
-    approver = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"approver"),
-                                 related_name="claims_as_approver")
+    reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"reviewer"),
+                                 related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_(u"samples"))
         # Translation hint: "closed" claim to samples
     closed = models.BooleanField(_(u"closed"), default=False)
 
     class Meta:
-        verbose_name = _(u"claim")
-        verbose_name_plural = _(u"claims")
+        verbose_name = _(u"sample claim")
+        verbose_name_plural = _(u"sample claims")
 
 
 sample_death_reasons = (
