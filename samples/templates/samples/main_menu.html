@@ -129,6 +129,8 @@
     {% endif %}
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/feed.png")'>
       <a href="{% url samples.views.feed.show username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
+    <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/flag_blue.png")'>
+      <a href="{% url samples.views.claim.list_ username=user.username %}">{% trans 'Sample claims' %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/server_lightning.png")'>
     <!-- FixMe: The about and statistics pages must not be links from here but from another menue page. -->
       <a href="{% url chantal_ipv.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
