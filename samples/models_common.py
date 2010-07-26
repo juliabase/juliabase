@@ -545,7 +545,8 @@ class Sample(models.Model):
         verbose_name_plural = _(u"samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples")),)
+        permissions = (("view_all_samples", _("Can view all samples")),
+                       ("adopt_samples", _("Can adopt samples")))
 
     def save(self, *args, **kwargs):
         u"""Saves the instance and clears stalled cache items.
@@ -783,6 +784,32 @@ class Clearance(models.Model):
         unique_together = ("user", "sample")
         verbose_name = _(u"clearance")
         verbose_name_plural = _(u"clearances")
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
+
+
+class SampleClaim(models.Model):
+        # Translation hint: someone who assert a claim to samples
+    requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"requester"), related_name="claims")
+    reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"reviewer"),
+                                 related_name="claims_as_reviewer")
+    samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_(u"samples"))
+        # Translation hint: "closed" claim to samples
+    closed = models.BooleanField(_(u"closed"), default=False)
+
+    class Meta:
+        verbose_name = _(u"sample claim")
+        verbose_name_plural = _(u"sample claims")
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"sample claim #{number}").format(number=self.pk)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("samples.views.claim.show", (self.pk,))
 
 
 sample_death_reasons = (

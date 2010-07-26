@@ -1,0 +1,58 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+
+{% block frame_content %}
+{% if claim.closed %}
+  <p>{% trans 'This claim was either approved or withdrawn.' %}</p>
+{% else %}
+  <table cellpadding="5">
+    <tr>
+      <td>{% trans "Requester" %}:</td>
+      <td>{{ claim.requester|get_really_full_name }}</td>
+    </tr>
+    <tr>
+      <td>{% trans "Reviewer" %}:</td>
+      <td>{{ claim.reviewer|get_really_full_name }}</td>
+    </tr>
+  </table>
+  <table border="1" cellpadding="10" style="margin-top: 4ex; margin-bottom: 4ex">
+    <tr>
+      <th>{% trans "sample" %}</th>
+      {% if is_reviewer %}
+        <th>{% trans "currently responsible person" %}</th>
+        <th>{% trans "purpose" %}</th>
+        <th>{% trans "topic" %}</th>
+      {% endif %}
+    </tr>
+    {% for sample in claim.samples.all %}
+      <tr>
+        <td><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></td>
+        {% if is_reviewer %}
+          <td>{{ sample.currently_responsible_person|get_really_full_name }}</td>
+          <td>{{ sample.purpose }}</td>
+          <td>{{ sample.topic }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </table>
+  <form method="post" action="">
+    {% error_list approve _("General error") %}
+    {% error_list withdraw _("General error") %}
+    <table>
+      {% if is_reviewer %}
+        <tr>
+          {% input_field approve.close %}
+        </tr>
+      {% endif %}
+      {% if is_requester %}
+        <tr>
+          {% input_field withdraw.close %}
+        </tr>
+      {% endif %}
+    </table>
+    <p class="submit-button" style="clear: both"><input type="submit"/></p>
+  </form>
+{% endif %}
+{% endblock %}

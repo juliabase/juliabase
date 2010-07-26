@@ -1,0 +1,20 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+
+{% block frame_content %}
+<form method="post" action="">
+  {% error_list samples _("General error") %}
+  {% error_list reviewer _("General error") %}
+  <table>
+    <tr>
+      {% input_field samples.samples %}
+    </tr>
+    <tr>
+      {% input_field reviewer.reviewer %}
+    </tr>
+  </table>
+  <p class="submit-button" style="clear: none"><input type="submit"/></p>
+</form>
+{% endblock %}
