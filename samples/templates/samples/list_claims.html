@@ -1,0 +1,24 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% load i18n %}
+{% load chantal %}
+
+{% block frame_content %}
+  {% if claims %}
+    <h2>{% trans 'Claims with you being the requester' %}</h2>
+    <ul>
+      {% for claim in claims %}
+        <li><a href="{{ claim.get_absolute_url }}">{{ claim }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <p><a href="{% url samples.views.claim.add username=user.username %}">{% trans 'Assert a new claim to samples' %}</a></p>
+  {% if claims_as_reviewer %}
+    <h2>{% trans 'Claims with you being the reviewer' %}</h2>
+    <ul>
+      {% for claim in claims_as_reviewer %}
+        <li><a href="{{ claim.get_absolute_url }}">{{ claim }}</a> ({{ claim.requester|get_really_full_name }})</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
