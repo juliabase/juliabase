@@ -115,6 +115,24 @@ Chantal.
 
 @login_required
 def list_(request, username):
+    u"""View for listing claim, both those with you being the requester and the
+    reviewer.  The ``username`` parameter is actually superfluous because it
+    must be the currently logged-in user anyway.  But this way, it is more
+    consistent and more RESTful.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `username`: the name of the user whose claims will be listed; it must
+        be the currently logged-in user
+
+    :type request: ``HttpRequest``
+    :type username: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _(u"You are not allowed to see claims of another user."))
