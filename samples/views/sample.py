@@ -664,8 +664,8 @@ max_results = 50
 def search(request):
     u"""View for searching for samples.  The rule is: Everyonw can see the
     *names* (not the data sheets) of all samples, unless they are in a
-    restricted topic, unless the user is a member in that topic, its currently
-    responsible person, or you have a clearance for the sample.
+    confidential topic, unless the user is a member in that topic, its
+    currently responsible person, or you have a clearance for the sample.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -679,7 +679,7 @@ def search(request):
     """
     found_samples = []
     too_many_results = False
-    base_query = models.Sample.objects.filter(Q(topic__restricted=False) | Q(topic__members=request.user) |
+    base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
                                               Q(currently_responsible_person=request.user) |
                                               Q(clearances__user=request.user)).distinct()
     if request.method == "POST":

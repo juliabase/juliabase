@@ -69,7 +69,7 @@ class ExternalOperator(models.Model):
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
         # Translation hint: Topic which is not open to senior members
-    restricted = models.BooleanField(_(u"restricted"), default=False)
+    confidential = models.BooleanField(_(u"confidential"), default=False)
 
     class Meta:
         verbose_name = _(u"external operator")

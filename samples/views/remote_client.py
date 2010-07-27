@@ -66,7 +66,7 @@ def primary_keys(request):
     result_dict = {}
     if "topics" in query_dict:
         all_topics = set(topic for topic in Topic.objects.all()
-                         if not topic.restricted or topic in request.user.topics.all() or request.user.is_staff)
+                         if not topic.confidential or topic in request.user.topics.all() or request.user.is_staff)
         if query_dict["topics"] == "*":
             topics = all_topics
         else:
@@ -95,7 +95,7 @@ def primary_keys(request):
             all_external_operators = set(models.ExternalOperator.objects.all())
         else:
             all_external_operators = set(external_operator for external_operator in models.ExternalOperator.objects.all()
-                                         if not external_operator.restricted or
+                                         if not external_operator.confidential or
                                          external_operator.contact_person == request.user)
         if query_dict["external_operators"] == "*":
             external_operators = all_external_operators

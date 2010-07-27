@@ -40,8 +40,8 @@ msgstr "Kontaktperson im Institut"
 
 #. Translation hint: Topic which is not open to senior members
 #: models_common.py:72 views/topic.py:32 views/topic.py:109
-msgid "restricted"
-msgstr "beschränkt"
+msgid "confidential"
+msgstr "vertraulich"
 
 #: models_common.py:75 models_common.py:122 models_common.py:1122
 msgid "external operator"
@@ -844,7 +844,7 @@ msgstr ""
 
 #: permissions.py:555
 msgid ""
-"You are not allowed to change this topic because it is restricted and you "
+"You are not allowed to change this topic because it is confidential and you "
 "are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
@@ -1719,12 +1719,12 @@ msgstr "Externer Operateur „%(name)s“"
 #: templates/samples/show_external_operator.html:51
 msgid ""
 "\n"
-"  This external contact is <em>restricted</em>, which means that only the "
+"  This external contact is <em>confidential</em>, which means that only the "
 "current contact person can\n"
 "  view its data.\n"
 msgstr ""
 "\n"
-"Dieser externe Kontakt ist <em>beschränkt</em>, was bedeutet, daß nur die "
+"Dieser externe Kontakt ist <em>vertraulich</em>, was bedeutet, daß nur die "
 "aktuelle Kontaktperson seine Daten einsehen kann.\n"
 
 #: templates/samples/show_process.html:14
@@ -2848,10 +2848,10 @@ msgstr "Mitglieder"
 
 #: views/topic.py:123
 msgid ""
-"In restricted topics, at least one member must have permission to edit the "
+"In confidential topics, at least one member must have permission to edit the "
 "topic."
 msgstr ""
-"Wenigstens ein Mitglied in eines beschränkten Themas muss die Berechtigung "
+"Wenigstens ein Mitglied in eines vertraulichen Themas muss die Berechtigung "
 "haben, das Thema zu ändern."
 
 #: views/topic.py:171

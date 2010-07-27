@@ -29,7 +29,7 @@ class NewTopicForm(forms.Form):
     _ = ugettext_lazy
     new_topic_name = forms.CharField(label=_(u"Name of new topic"), max_length=80)
     # Translation hint: Topic which is not open to senior members
-    restricted = forms.BooleanField(label=_(u"restricted"), required=False)
+    confidential = forms.BooleanField(label=_(u"confidential"), required=False)
     def __init__(self, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
         self.fields["new_topic_name"].widget.attrs["size"] = 40
@@ -61,7 +61,7 @@ def add(request):
         new_topic_form = NewTopicForm(request.POST)
         if new_topic_form.is_valid():
             new_topic = Topic(name=new_topic_form.cleaned_data["new_topic_name"],
-                                  restricted=new_topic_form.cleaned_data["restricted"])
+                              confidential=new_topic_form.cleaned_data["confidential"])
             new_topic.save()
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
@@ -102,25 +102,25 @@ def list_(request):
 
 class EditTopicForm(forms.Form):
     u"""Form for the member list of a topic.  Note that it is allowed to have
-    no members at all in a topic.  However, if the topic is restricted, the
+    no members at all in a topic.  However, if the topic is confidential, the
     currently logged-in user must remain a member of the topic.
     """
     members = form_utils.MultipleUsersField(label=_(u"Members"), required=False)
-    restricted = forms.BooleanField(label=_(u"restricted"), required=False)
+    confidential = forms.BooleanField(label=_(u"confidential"), required=False)
 
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)
         self.fields["members"].set_users(topic.members.all())
-        self.fields["restricted"].initial = topic.restricted
+        self.fields["confidential"].initial = topic.confidential
         self.user = user
         self.topic = topic
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        if "members" in cleaned_data and "restricted" in cleaned_data:
-            if cleaned_data["restricted"] and \
+        if "members" in cleaned_data and "confidential" in cleaned_data:
+            if cleaned_data["confidential"] and \
                     not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):
-                append_error(self, _(u"In restricted topics, at least one member must have permission to edit the topic."),
+                append_error(self, _(u"In confidential topics, at least one member must have permission to edit the topic."),
                              "members")
         return cleaned_data
 
@@ -153,7 +153,7 @@ def edit(request, name):
             old_members = list(topic.members.all())
             new_members = edit_topic_form.cleaned_data["members"]
             topic.members = new_members
-            topic.restricted = edit_topic_form.cleaned_data["restricted"]
+            topic.confidential = edit_topic_form.cleaned_data["confidential"]
             topic.save()
             for user in new_members:
                 if user not in old_members:
