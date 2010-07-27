@@ -83,15 +83,15 @@ class Topic(models.Model):
     topics.  The most important purpose of topics is to define permissions.
     Roughly speaking, a user can view samples of their topics.
 
-    The attribute ``restricted`` means that senior users (i.e. users with the
-    permission ``"view_all_samples"``) cannot view samples of restricted topics
-    (in order to make non-disclosure agreements with external partners
+    The attribute ``confidential`` means that senior users (i.e. users with the
+    permission ``"view_all_samples"``) cannot view samples of confidential
+    topics (in order to make non-disclosure agreements with external partners
     possible).
     """
     name = models.CharField(_("name"), max_length=80, unique=True)
     members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_(u"members"),
                                      related_name="topics")
-    restricted = models.BooleanField(_(u"restricted"), default=False)
+    confidential = models.BooleanField(_(u"confidential"), default=False)
 
     class Meta:
         verbose_name = _(u"topic")
@@ -105,7 +105,7 @@ class Topic(models.Model):
 
     def get_name_for_user(self, user):
         u"""Determine the topic's name that can be shown to a certain user.  If
-        the topic is restricted and the user is not a memeber of the project,
+        the topic is confidential and the user is not a memeber of the project,
         he must not read the actual topic name.  Therefore, a generic name is
         generated.  This is used e.g. for the “My Samples” list on the main
         menu page.
@@ -115,7 +115,7 @@ class Topic(models.Model):
 
         :type user: ``django.contrib.auth.models.User``
         """
-        if self.restricted and not self.members.filter(pk=user.pk).exists():
+        if self.confidential and not self.members.filter(pk=user.pk).exists():
             return _(u"topic #{number} (confidential)").format(number=self.id)
         else:
             return self.name

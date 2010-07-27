@@ -84,8 +84,8 @@ msgid "members"
 msgstr "Mitglieder"
 
 #: models.py:94
-msgid "restricted"
-msgstr "beschränkt"
+msgid "confidential"
+msgstr "vertraulich"
 
 #: models.py:97
 msgid "topic"
