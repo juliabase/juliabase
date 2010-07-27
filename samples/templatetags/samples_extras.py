@@ -177,7 +177,8 @@ def get_safe_operator_name(user, autoescape=False):
     name = _(u"Confidential operator #{number}").format(number=user.pk)
     if autoescape:
         name = conditional_escape(name)
-    return mark_safe(name)
+    return mark_safe(u'<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
+                "samples.views.user_details.show_user", kwargs={"login_name": user.contact_person.username}), name))
 
 get_safe_operator_name.needs_autoescape = True
 
