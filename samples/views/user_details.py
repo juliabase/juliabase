@@ -117,7 +117,7 @@ def topics_and_permissions(request, login_name):
             request.user, _(u"You can't access the list of topics and permissions of another user."))
     return render_to_response(
         "samples/topics_and_permissions.html",
-        {"title": _(u"Topics and permissions for {user_name}").format(get_really_full_name(request.user)),
+        {"title": _(u"Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
          "topics": user.topics.all(), "permissions": permissions.get_user_permissions(user),
          "full_user_name": get_really_full_name(request.user)},
         context_instance=RequestContext(request))
