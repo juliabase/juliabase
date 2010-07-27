@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-07-26 18:18+0200\n"
-"PO-Revision-Date: 2010-07-26 18:19+0200\n"
+"PO-Revision-Date: 2010-07-27 22:28+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -101,7 +101,7 @@ msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
 #: models.py:101
 msgid "Can edit topics that he/she is a member of"
-msgstr "Darf Themen ähnern, in denen er/sie Mitglied ist"
+msgstr "Darf Themen ändern, in denen er/sie Mitglied ist"
 
 #: models.py:119
 msgid "topic #{number} (confidential)"
