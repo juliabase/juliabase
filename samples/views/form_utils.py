@@ -389,7 +389,7 @@ class TopicField(forms.ChoiceField):
         all_topics = Topic.objects.filter(members__is_active=True).distinct()
         user_topics = user.topics.all()
         topics = \
-            set(topic for topic in all_topics if not topic.restricted or topic in user_topics)
+            set(topic for topic in all_topics if not topic.confidential or topic in user_topics)
         if additional_topic:
             topics.add(additional_topic)
         topics = sorted(topics, key=lambda topic: topic.name)

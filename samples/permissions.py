@@ -208,7 +208,7 @@ def assert_can_fully_view_sample(user, sample):
     """
     if sample.topic and sample.topic not in user.topics.all() and sample.currently_responsible_person != user and \
             not user.is_superuser:
-        if sample.topic.restricted:
+        if sample.topic.confidential:
             description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             u"its currently responsible person.")
             raise PermissionError(user, description, new_topic_would_help=True)
@@ -506,7 +506,7 @@ def assert_can_view_external_operator(user, external_operator):
         external operator.
     """
     if external_operator.contact_person != user and not user.is_superuser:
-        if external_operator.restricted:
+        if external_operator.confidential:
             description = _(u"You are not allowed to view this external operator because you are not their "
                             u"current contact person.")
             raise PermissionError(user, description)
@@ -551,9 +551,9 @@ def assert_can_edit_topic(user, topic=None):
                                 u"you don't have the permission “{name}”.").format(
                     name=translate_permission("samples.can_edit_all_topics"))
                 raise PermissionError(user, description)
-            elif topic.restricted and not user.is_superuser:
-                description = _(u"You are not allowed to change this topic because it is restricted and you are not in this "
-                                u"topic.")
+            elif topic.confidential and not user.is_superuser:
+                description = _(u"You are not allowed to change this topic because it is confidential "
+                                u"and you are not in this topic.")
                 raise PermissionError(user, description)
 
 
