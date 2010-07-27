@@ -377,12 +377,13 @@ class SamplesAndProcesses(object):
         the template to generate the whole page.  Note that because no
         recursion is allowed in Django's template language, this generator
         method must flatten the nested structure, and it must return sample and
-        process at the same time, although one of them may be ``None``.  The
+        process at the same time, although the process may be ``None``.  The
         template must be able to cope with that fact.
 
-        If the sample is not ``None``, this means that a new section with a new
-        sample starts, and that all subsequent processes belong to that sample
-        – until the next sample.
+        Additionally, as the first value of the returned 3-tuples, a boolean is
+        given.  If it is ``True``, at a new section with a new sample starts,
+        and that all subsequent processes belong to that sample – until the
+        next sample.
 
         Note that both sample and process aren't model instances.  Instead,
         they are dictionaries containing everything the template needs.  In
@@ -391,20 +392,21 @@ class SamplesAndProcesses(object):
 
         :Return:
           Generator for iterating over all samples and processes.  It returns a
-          tuple with two values, ``sample`` and ``process``.  Either one or
-          none of them may be ``None``.
+          tuple with three values, ``sample_start``, ``sample`` and
+          ``process``.  Either one or none of ``sample`` and ``process`` may be
+          ``None``.
 
         :rtype: ``generator``
         """
         if self.process_contexts:
-            yield self.sample_context, self.process_contexts[0]
+            yield True, self.sample_context, self.process_contexts[0]
             for process_context in self.process_contexts[1:]:
-                yield None, process_context
+                yield False, self.sample_context, process_context
         else:
-            yield self.sample_context, None
+            yield True, self.sample_context, None
         for process_list in self.process_lists:
-            for sample_context, process_context in process_list:
-                yield sample_context, process_context
+            for sample_start, sample_context, process_context in process_list:
+                yield sample_start, sample_context, process_context
 
     def is_valid(self):
         u"""Checks whether all “is My Sample” forms of the “show sample” view
