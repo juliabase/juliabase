@@ -344,7 +344,7 @@ def send_email(subject, content, recipient, format_dict=None):
             send_mail(subject, content, settings.DEFAULT_FROM_EMAIL, [recipient.email])
         except SMTPException:
             cycles_left -= 1
-            time.wait(0.3)
+            time.sleep(0.3)
         else:
             break
     translation.activate(current_language)
