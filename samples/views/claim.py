@@ -30,7 +30,7 @@ class SamplesForm(forms.Form):
         super(SamplesForm, self).__init__(*args, **kwargs)
         self.fields["samples"].set_samples(
             user.my_samples.exclude(currently_responsible_person=user).
-            exclude(Q(topic__restricted=True) & ~Q(topic__members=request.user)), user)
+            exclude(Q(topic__restricted=True) & ~Q(topic__members=user)), user)
 
 
 class ReviewerForm(forms.Form):
