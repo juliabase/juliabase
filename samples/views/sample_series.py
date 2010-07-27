@@ -288,7 +288,7 @@ def new(request):
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
             full_name = u"{0}-{1}-{2}".format(
-                request.user.username, timestamp.stftime("%y"), sample_series_form.cleaned_data["short_name"])
+                request.user.username, timestamp.strftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
