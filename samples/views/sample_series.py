@@ -79,11 +79,11 @@ class SampleSeriesForm(forms.ModelForm):
         exclude = ("timestamp", "results", "name")
 
 
-def sample_series_timestamp(request, name):
-    u"""Check whether the sample series datasheet can be taken from the browser
-    cache.  For this, the timestamp of last modification of the sample series
-    is taken, and that of other things that influence the sample datasheet
-    (e.g. language).  The later timestamp is chosen and returned.
+def embed_timestamp(request, name):
+    u"""Put a timestamp field in the request object that is used by both
+    `sample_series_timestamp` and `sample_series_etag`.  It's really a pity
+    that you can't give *one* function for returning both with Django's API for
+    conditional view processing.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -288,7 +288,7 @@ def new(request):
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
             full_name = u"{0}-{1}-{2}".format(
-                request.user.username, timestamp.stftime("%y"), sample_series_form.cleaned_data["short_name"])
+                request.user.username, timestamp.strftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:

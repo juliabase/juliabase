@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-22 21:58+0200\n"
-"PO-Revision-Date: 2010-07-23 09:49+0200\n"
+"POT-Creation-Date: 2010-07-27 16:45+0200\n"
+"PO-Revision-Date: 2010-07-27 16:46+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -115,7 +115,7 @@ msgid "cache keys"
 msgstr "Cache-Schlüssel"
 
 #: models_common.py:131 models_feeds.py:163 models_feeds.py:186
-#: views/lab_notebook.py:197 views/sample.py:734
+#: views/lab_notebook.py:197 views/sample.py:746
 msgid "process"
 msgstr "Prozess"
 
@@ -271,7 +271,7 @@ msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translation hint: Of a sample
-#: models_common.py:834 views/sample.py:165
+#: models_common.py:834 views/sample.py:166
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
@@ -1456,7 +1456,7 @@ msgstr ""
 
 #: templates/samples/lab_notebook.html:19
 #: templates/samples/show_sample.html:29
-#: templates/samples/show_sample.html:110
+#: templates/samples/show_sample.html:116
 #: templates/samples/show_sample_series.html:17
 msgid "export as table"
 msgstr "als Tabelle exportieren"
@@ -1526,7 +1526,7 @@ msgstr "Meine Proben"
 #: templates/samples/main_menu.html:11
 #: templates/samples/show_external_operator.html:11
 #: templates/samples/show_sample.html:17
-#: templates/samples/show_sample.html:105
+#: templates/samples/show_sample.html:111
 #: templates/samples/show_sample_series.html:9
 #: templates/samples/show_sample_series.html:48
 msgid "edit"
@@ -1830,11 +1830,11 @@ msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien:"
 
-#: templates/samples/show_sample.html:107
+#: templates/samples/show_sample.html:113
 msgid "duplicate"
 msgstr "duplizieren"
 
-#: templates/samples/show_sample.html:113
+#: templates/samples/show_sample.html:119
 msgid "resplit"
 msgstr "weiterspalten"
 
@@ -1854,7 +1854,7 @@ msgstr "Diese Probenserie umfasst die folgenden Proben:"
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
-#: templates/samples/show_sample_series.html:36 views/sample.py:42
+#: templates/samples/show_sample_series.html:36 views/sample.py:43
 #: views/sample_series.py:37
 msgid "Topic"
 msgstr "Thema"
@@ -2036,17 +2036,21 @@ msgstr "besondere Berechtigungen, die Sie haben"
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
 
+#: templatetags/samples_extras.py:177
+msgid "Confidential operator #{number}"
+msgstr "Vertraulicher Operateur Nr. {number}"
+
 #. Translation hint: Only change the <sup>h</sup>!
-#: templatetags/samples_extras.py:191
+#: templatetags/samples_extras.py:209
 msgid "%Y-%m-%d %H<sup>h</sup>"
 msgstr "%Y-%m-%d %H<sup>h</sup>"
 
 #. Translation hint: Only change order and punctuation
-#: templatetags/samples_extras.py:194
+#: templatetags/samples_extras.py:212
 msgid "%b %Y"
 msgstr "%b %Y"
 
-#: templatetags/samples_extras.py:196
+#: templatetags/samples_extras.py:214
 msgid "date unknown"
 msgstr "Datum unbekannt"
 
@@ -2101,29 +2105,29 @@ msgstr "Proben erfolgreich umbenannt."
 msgid "Giving new-style names"
 msgstr "Probennamen nach „neuer Art“ vergeben"
 
-#: views/claim.py:35
+#: views/claim.py:27
 msgid "Claimed samples"
 msgstr "Beanspruchte Proben"
 
-#: views/claim.py:35
+#: views/claim.py:27
 msgid "“My Samples” are eligible."
 msgstr "„Meine Proben“ sind auswählbar."
 
-#: views/claim.py:46
+#: views/claim.py:38
 msgid "Requested reviewer"
 msgstr "Gewünschter Reviewer"
 
-#: views/claim.py:77
+#: views/claim.py:69
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: views/claim.py:86
+#: views/claim.py:78
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: views/claim.py:87
+#: views/claim.py:79
 msgid ""
 "Hello {reviewer},\n"
 "\n"
@@ -2151,47 +2155,47 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:105
+#: views/claim.py:97
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: views/claim.py:110
+#: views/claim.py:102
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: views/claim.py:120
+#: views/claim.py:130
 msgid "You are not allowed to see claims of another user."
 msgstr "Sie dürfen beine Probenansprüche anderer Benutzer sehen."
 
-#: views/claim.py:122
+#: views/claim.py:132
 msgid "Claims for {user}"
 msgstr "Ansprüche von {user}"
 
-#: views/claim.py:151
+#: views/claim.py:161
 msgid "You can't withdraw and approve at the same time."
 msgstr "Sie konnen nicht gleichzeitig zurückziehen und genehmigen."
 
-#: views/claim.py:155
+#: views/claim.py:165
 msgid "You must select exactly one option, or leave this page."
 msgstr "Sie müssen genau eine Option wählen, oder die Seite verlassen."
 
-#: views/claim.py:181
+#: views/claim.py:191
 msgid "You are neither the requester nor the reviewer of this claim."
 msgstr "Sie sind weder der Antragssteller noch der Reviewer dieses Anspruchs."
 
-#: views/claim.py:183 views/claim.py:220
+#: views/claim.py:193 views/claim.py:230
 msgid "withdraw claim"
 msgstr "Anspruch zurückziehen"
 
-#: views/claim.py:184 views/claim.py:221
+#: views/claim.py:194 views/claim.py:231
 msgid "approve claim"
 msgstr "Anspruch genehmigen"
 
-#: views/claim.py:198
+#: views/claim.py:208
 msgid "Sample request approved"
 msgstr "Probenanspruch genemigt"
 
-#: views/claim.py:199
+#: views/claim.py:209
 msgid ""
 "Hello {requester},\n"
 "\n"
@@ -2211,15 +2215,15 @@ msgstr ""
 "\n"
 "Chantal.\n"
 
-#: views/claim.py:211
+#: views/claim.py:221
 msgid "Sample claim {id_} was successfully approved."
 msgstr "Der Anspruch {id_} wurde erfolgreich genemigt."
 
-#: views/claim.py:217
+#: views/claim.py:227
 msgid "Sample claim {id_} was successfully withdrawn."
 msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 
-#: views/claim.py:222
+#: views/claim.py:232
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
 
@@ -2566,34 +2570,34 @@ msgstr "Ergebnis hinzufügen"
 msgid "Result “{title}”"
 msgstr "Ergebnis „{title}“"
 
-#: views/sample.py:32
+#: views/sample.py:33
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
-#: views/sample.py:41 views/sample_series.py:36
+#: views/sample.py:42 views/sample_series.py:36
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
-#: views/sample.py:81 views/sample_series.py:214
+#: views/sample.py:82 views/sample_series.py:214
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
 "Änderungen des Themas oder des Verantwortlichen müssen immer als „wichtig“ "
 "markiert werden."
 
-#: views/sample.py:121
+#: views/sample.py:122
 msgid "Sample {sample} was successfully changed in the database."
 msgstr "Die Probe {sample} wurde erfolgreich in der Datenbank geändert."
 
-#: views/sample.py:126
+#: views/sample.py:127
 msgid "Edit sample “{sample}”"
 msgstr "Ändern der Probe „{sample}“"
 
-#: views/sample.py:163
+#: views/sample.py:164
 msgid "split"
 msgstr "Spaltung"
 
-#: views/sample.py:173
+#: views/sample.py:174
 msgid ""
 "You are not allowed to add any processes to the sample {sample} because "
 "neither are you its currently responsible person, nor in its topic, nor do "
@@ -2603,35 +2607,35 @@ msgstr ""
 "aktueller Verantwortlicher sind, noch in ihrem Thema sind, noch spezielle "
 "Berechtigungen für physikalische Prozesse haben."
 
-#: views/sample.py:558
+#: views/sample.py:561
 msgid "Sample {samples} was added to My Samples."
 msgid_plural "Samples {samples} were added to My Samples."
 msgstr[0] "Probe {samples} wurde zu Meinen Proben hinzugefügt."
 msgstr[1] "Die Proben {samples} wurden zu Meinen Proben hinzugefügt."
 
-#: views/sample.py:566
+#: views/sample.py:569
 msgid "Sample {samples} was removed from My Samples."
 msgid_plural "Samples {samples} were removed from My Samples."
 msgstr[0] "Probe {samples} wurde von Meinen Proben entfernt."
 msgstr[1] "Die Proben {samples} wurden von Meinen Proben entfernt."
 
-#: views/sample.py:570
+#: views/sample.py:573
 msgid "Nothing was changed."
 msgstr "Es wurde nichts geändert."
 
-#: views/sample.py:577
+#: views/sample.py:580
 msgid "Sample “{sample}”"
 msgstr "Probe „{sample}“"
 
-#: views/sample.py:641
+#: views/sample.py:644
 msgid "Add process to sample “{sample}”"
 msgstr "Prozess zu Probe „{sample}“ hinzufügen"
 
-#: views/sample.py:651
+#: views/sample.py:654
 msgid "Name pattern"
 msgstr "Namensmuster"
 
-#: views/sample.py:708
+#: views/sample.py:720
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
