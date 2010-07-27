@@ -28,7 +28,9 @@ class SamplesForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super(SamplesForm, self).__init__(*args, **kwargs)
-        self.fields["samples"].set_samples(user.my_samples.exclude(currently_responsible_person=user), user)
+        self.fields["samples"].set_samples(
+            user.my_samples.exclude(currently_responsible_person=user).
+            exclude(Q(topic__restricted=True) & ~Q(topic__members=request.user)), user)
 
 
 class ReviewerForm(forms.Form):
