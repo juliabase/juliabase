@@ -1,24 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
+# This file is part of Chantal, the samples database.
 #
-# This file is part of Chantal.
+# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+#                    Marvin Goblet <m.goblet@fz-juelich.de>,
+#                    Torsten Bronger <t.bronger@fz-juelich.de>
 #
-#     Chantal is free software: you can redistribute it and/or
-#     modify it under the terms of the GNU Affero General Public
-#     License as published by the Free Software Foundation, either
-#     version 3 of the License, or (at your option) any later
-#     version.
-#
-#     Chantal is distributed in the hope that it will be useful, but
-#     WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General
-#     Public License along with Chantal.  If not, see
-#     <http://www.gnu.org/licenses/>.
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
 
 
 u"""Collection of tags and filters that I found useful for Chantal.
