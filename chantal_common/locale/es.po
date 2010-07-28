@@ -1,56 +1,57 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Spanish translation for chantal
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the chantal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: chantal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-28 14:15+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2010-07-28 14:17+0200\n"
+"PO-Revision-Date: 2010-07-20 06:02+0000\n"
+"Last-Translator: Paco Molinero <paco@byasl.com>\n"
+"Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2010-07-28 11:08+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
 
 #: context_processors.py:64
 msgid "German"
-msgstr ""
+msgstr "Aleman"
 
 #: context_processors.py:65
 msgid "English"
-msgstr ""
+msgstr "Inglés"
 
 #: context_processors.py:66
 msgid "Chinese"
-msgstr ""
+msgstr "Chino"
 
 #: context_processors.py:67
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ucraniano"
 
 #: context_processors.py:68
 msgid "Russian"
-msgstr ""
+msgstr "Ruso"
 
 #: context_processors.py:69
 msgid "French"
-msgstr ""
+msgstr "Francés"
 
 #: context_processors.py:70
 msgid "Dutch"
-msgstr ""
+msgstr "Holandés"
 
 #: models.py:39
 msgid "user"
-msgstr ""
+msgstr "usuario"
 
 #: models.py:41
 msgid "language"
-msgstr ""
+msgstr "idioma"
 
 #: models.py:42
 msgid "operating system"
@@ -58,15 +59,15 @@ msgstr ""
 
 #: models.py:45 models.py:46
 msgid "user details"
-msgstr ""
+msgstr "Detalles del usuario"
 
 #: models.py:82
 msgid "name"
-msgstr ""
+msgstr "nombre"
 
 #: models.py:83
 msgid "members"
-msgstr ""
+msgstr "miembros"
 
 #: models.py:85
 msgid "confidential"
@@ -98,7 +99,7 @@ msgstr ""
 
 #: views.py:31
 msgid "Sandbox"
-msgstr ""
+msgstr "Arenero"
 
 #: views.py:41
 msgid "MarkdownMarkup"
@@ -110,7 +111,7 @@ msgstr ""
 
 #: templates/404.html:26 templates/404.html.py:27
 msgid "Resource not found"
-msgstr ""
+msgstr "Recurso no encontrado"
 
 #: templates/404.html:30
 #, python-format
@@ -125,15 +126,15 @@ msgstr ""
 
 #: templates/500.html:26
 msgid "Internal Chantal error"
-msgstr ""
+msgstr "Error interno de Chantal"
 
 #: templates/500.html:34 templates/base_chantal.html:59
 msgid "Log in"
-msgstr ""
+msgstr "Iniciar Sesión"
 
 #: templates/500.html:46
 msgid "Internal server error"
-msgstr ""
+msgstr "Error interno del servidor"
 
 #: templates/500.html:47
 msgid ""
@@ -144,87 +145,95 @@ msgid ""
 "problem\n"
 "is tackled.\n"
 msgstr ""
+"\n"
+"Ha sufrido un error interno en el software del servidor Chantal. Los\n"
+"administradores ya están al corriente y harán cuanto puedan para \n"
+"eliminar el error. Se pondrán en contacto (normalmente) con usted\n"
+"tan pronto como el error sea resuelto.\n"
 
 #: templates/base_chantal.html:36
 #, python-format
 msgid "switch to %(language)s"
-msgstr ""
+msgstr "cambiar a %(language)s"
 
 #: templates/base_chantal.html:42
 msgid "Welcome,"
-msgstr ""
+msgstr "Bienvenido,"
 
 #: templates/base_chantal.html:46
 msgid "Main menu"
-msgstr ""
+msgstr "Menú Principal"
 
 #: templates/base_chantal.html:49
 msgid "Report feature wish or bug"
-msgstr ""
+msgstr "Informar de error o de deseo de mejora"
 
 #: templates/base_chantal.html:51 templates/base_chantal.html.py:56
 msgid "Help"
-msgstr ""
+msgstr "Ayuda"
 
 #: templates/base_chantal.html:53
 msgid "Log out"
-msgstr ""
+msgstr "Cerrar sesión"
 
 #: templates/chantal_common/change_password.html:18
 #: templates/chantal_common/change_password.html:19
 msgid "Password change"
-msgstr ""
+msgstr "Cambiar contraseña"
 
 #: templates/chantal_common/change_password.html:23
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
 msgstr ""
+"Por favor ingresa tu contraseña antigua, por razones de seguridad, y luego "
+"ingresa tu nueva contraseña dos veces para que podamos verificar que fueron "
+"ingresadas correctamente."
 
 #: templates/chantal_common/change_password.html:28
 msgid "Old password:"
-msgstr ""
+msgstr "Contraseña anterior:"
 
 #: templates/chantal_common/change_password.html:30
 msgid "New password:"
-msgstr ""
+msgstr "Nueva contraseña:"
 
 #: templates/chantal_common/change_password.html:32
 msgid "Confirm password:"
-msgstr ""
+msgstr "Confirmar contraseña:"
 
 #: templates/chantal_common/change_password.html:34
 msgid "Change my password"
-msgstr ""
+msgstr "Cambiar mi contraseña"
 
 #: templates/chantal_common/login.html:18
 #: templates/chantal_common/login.html:19
 msgid "Chantal login"
-msgstr ""
+msgstr "Inicio de sesión en Chantal"
 
 #: templates/chantal_common/login.html:23
 msgid "Your username and password didn't match. Please try again."
-msgstr ""
+msgstr "Su nombre de usuario y contraseña no concuerdan. Inténtelo de nuevo."
 
 #: templates/chantal_common/login.html:28
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: templates/chantal_common/login.html:29
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 #: templates/chantal_common/login.html:33
 msgid "login"
-msgstr ""
+msgstr "Iniciar sesión"
 
 #: templates/chantal_common/logout.html:20
 msgid "Thanks for spending some quality time with the Web site today."
-msgstr ""
+msgstr "Gracias por pasar un buen rato hoy con el sitio web."
 
 #: templates/chantal_common/logout.html:22
 msgid "Log in again"
-msgstr ""
+msgstr "Iniciar sesión de nuevo"
 
 #: templates/chantal_common/markdown_sandbox.html:29
 msgid ""
@@ -243,36 +252,52 @@ msgstr ""
 
 #: templates/chantal_common/markdown_sandbox.html:40
 msgid "Error in markup"
-msgstr ""
+msgstr "Error en marcaje"
 
 #: templates/chantal_common/markdown_sandbox.html:45
 msgid "input"
-msgstr ""
+msgstr "entrada"
 
 #: templates/chantal_common/markdown_sandbox.html:47
 msgid "result"
-msgstr ""
+msgstr "resultado"
 
 #: templates/chantal_common/markdown_sandbox.html:66
 msgid "Generate result"
-msgstr ""
+msgstr "Generar resultado"
 
 #: templates/chantal_common/password_changed.html:18
 msgid "Password change successful"
-msgstr ""
+msgstr "La contraseña fue cambiada con exito"
 
 #: templates/chantal_common/password_changed.html:24
 msgid "Your password was changed."
-msgstr ""
+msgstr "Su contraseña fue cambiada."
 
 #: templatetags/chantal.py:145
+#, fuzzy
 msgid "with {markdown_link} syntax"
-msgstr ""
+msgstr "con %(markdown_link)s sintaxis"
 
 #: templatetags/chantal.py:154
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: templatetags/chantal.py:154
 msgid "No"
-msgstr ""
+msgstr "No"
+
+#~ msgid "settings last modified"
+#~ msgstr "configuración modificada por última vez"
+
+#~ msgid "is an external user"
+#~ msgstr "es un usuario externo"
+
+#~ msgid "restricted"
+#~ msgstr "restringido"
+
+#~ msgid "project"
+#~ msgstr "projecto"
+
+#~ msgid "projects"
+#~ msgstr "proyectos"

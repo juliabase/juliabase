@@ -1,134 +1,125 @@
 # German translations of Chantal-common.
 #
-# Copyright © 2009 Torsten Bronger <bronger@physik.rwth-aachen.de>
+# This file is part of Chantal, the samples database.
 #
-# This file is part of Django-RefDB.
+# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+#                    Marvin Goblet <m.goblet@fz-juelich.de>,
+#                    Torsten Bronger <t.bronger@fz-juelich.de>
 #
-#     Django-RefDB is free software: you can redistribute it and/or
-#     modify it under the terms of the GNU Affero General Public
-#     License as published by the Free Software Foundation, either
-#     version 3 of the License, or (at your option) any later
-#     version.
-#
-#     Django-RefDB is distributed in the hope that it will be
-#     useful, but WITHOUT ANY WARRANTY; without even the implied
-#     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-#     PURPOSE.  See the GNU Affero General Public License for more
-#     details.
-#
-#     You should have received a copy of the GNU Affero General
-#     Public License along with Django-RefDB.  If not, see
-#     <http://www.gnu.org/licenses/>.
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-26 18:18+0200\n"
-"PO-Revision-Date: 2010-07-26 18:19+0200\n"
+"POT-Creation-Date: 2010-07-28 14:17+0200\n"
+"PO-Revision-Date: 2010-07-27 22:28+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: context_processors.py:73
+#: context_processors.py:64
 msgid "German"
 msgstr "Deutsch"
 
-#: context_processors.py:74
+#: context_processors.py:65
 msgid "English"
 msgstr "Englisch"
 
-#: context_processors.py:75
+#: context_processors.py:66
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: context_processors.py:76
+#: context_processors.py:67
 msgid "Ukrainian"
 msgstr "Ukrainisch"
 
-#: context_processors.py:77
+#: context_processors.py:68
 msgid "Russian"
 msgstr "Russisch"
 
-#: context_processors.py:78
+#: context_processors.py:69
 msgid "French"
 msgstr "Französisch"
 
-#: context_processors.py:79
+#: context_processors.py:70
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models.py:48
+#: models.py:39
 msgid "user"
 msgstr "Benutzer"
 
-#: models.py:50
+#: models.py:41
 msgid "language"
 msgstr "Sprache"
 
-#: models.py:51
+#: models.py:42
 msgid "operating system"
 msgstr "Betriebssystem"
 
-#: models.py:54 models.py:55
+#: models.py:45 models.py:46
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models.py:91
+#: models.py:82
 msgid "name"
 msgstr "Name"
 
-#: models.py:92
+#: models.py:83
 msgid "members"
 msgstr "Mitglieder"
 
-#: models.py:94
+#: models.py:85
 msgid "confidential"
 msgstr "vertraulich"
 
-#: models.py:97
+#: models.py:88
 msgid "topic"
 msgstr "Thema"
 
-#: models.py:98
+#: models.py:89
 msgid "topics"
 msgstr "Themen"
 
-#: models.py:100
+#: models.py:91
 msgid "Can edit all topics, and can add new topics"
 msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
-#: models.py:101
+#: models.py:92
 msgid "Can edit topics that he/she is a member of"
-msgstr "Darf Themen ähnern, in denen er/sie Mitglied ist"
+msgstr "Darf Themen ändern, in denen er/sie Mitglied ist"
 
-#: models.py:119
+#: models.py:110
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: utils.py:159
+#: utils.py:150
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: views.py:40
+#: views.py:31
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: views.py:50
+#: views.py:41
 msgid "MarkdownMarkup"
 msgstr "MarkdownMarkup"
 
-#: views.py:74
+#: views.py:65
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
 
-#: templates/404.html:33 templates/404.html.py:34
+#: templates/404.html:26 templates/404.html.py:27
 msgid "Resource not found"
 msgstr "Ressource nicht gefunden"
 
-#: templates/404.html:37
+#: templates/404.html:30
 #, python-format
 msgid ""
 "\n"
@@ -143,19 +134,19 @@ msgstr ""
 "Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
 "der angegebene Prozess, Zitation etc. schon in der Datenbank existiert.\n"
 
-#: templates/500.html:33
+#: templates/500.html:26
 msgid "Internal Chantal error"
 msgstr "Interner Chantal-Fehler"
 
-#: templates/500.html:41 templates/base_chantal.html:69
+#: templates/500.html:34 templates/base_chantal.html:59
 msgid "Log in"
 msgstr "Anmelden"
 
-#: templates/500.html:53
+#: templates/500.html:46
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: templates/500.html:54
+#: templates/500.html:47
 msgid ""
 "\n"
 "You experienced an internal error in the Chantal server software.  The\n"
@@ -170,37 +161,37 @@ msgstr ""
 "Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald "
 "der Fehler behoben ist.\n"
 
-#: templates/base_chantal.html:46
+#: templates/base_chantal.html:36
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: templates/base_chantal.html:52
+#: templates/base_chantal.html:42
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/base_chantal.html:56
+#: templates/base_chantal.html:46
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/base_chantal.html:59
+#: templates/base_chantal.html:49
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: templates/base_chantal.html:61 templates/base_chantal.html.py:66
+#: templates/base_chantal.html:51 templates/base_chantal.html.py:56
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/base_chantal.html:63
+#: templates/base_chantal.html:53
 msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/chantal_common/change_password.html:27
-#: templates/chantal_common/change_password.html:28
+#: templates/chantal_common/change_password.html:18
+#: templates/chantal_common/change_password.html:19
 msgid "Password change"
 msgstr "Passwort ändern"
 
-#: templates/chantal_common/change_password.html:32
+#: templates/chantal_common/change_password.html:23
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
@@ -209,54 +200,54 @@ msgstr ""
 "dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das "
 "neue Kennwort ein."
 
-#: templates/chantal_common/change_password.html:37
+#: templates/chantal_common/change_password.html:28
 msgid "Old password:"
 msgstr "Altes Passwort:"
 
-#: templates/chantal_common/change_password.html:39
+#: templates/chantal_common/change_password.html:30
 msgid "New password:"
 msgstr "Neues Passwort:"
 
-#: templates/chantal_common/change_password.html:41
+#: templates/chantal_common/change_password.html:32
 msgid "Confirm password:"
 msgstr "Passwort wiederholen:"
 
-#: templates/chantal_common/change_password.html:43
+#: templates/chantal_common/change_password.html:34
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
-#: templates/chantal_common/login.html:27
-#: templates/chantal_common/login.html:28
+#: templates/chantal_common/login.html:18
+#: templates/chantal_common/login.html:19
 msgid "Chantal login"
 msgstr "Chantal-Login"
 
-#: templates/chantal_common/login.html:32
+#: templates/chantal_common/login.html:23
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Ihr Benutzername und Ihr Passwort passen nicht zusammen. Bitte versuchen Sie "
 "es noch einmal."
 
-#: templates/chantal_common/login.html:37
+#: templates/chantal_common/login.html:28
 msgid "Username"
 msgstr "Benutzername"
 
-#: templates/chantal_common/login.html:38
+#: templates/chantal_common/login.html:29
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/chantal_common/login.html:42
+#: templates/chantal_common/login.html:33
 msgid "login"
 msgstr "Anmelden"
 
-#: templates/chantal_common/logout.html:29
+#: templates/chantal_common/logout.html:20
 msgid "Thanks for spending some quality time with the Web site today."
 msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 
-#: templates/chantal_common/logout.html:31
+#: templates/chantal_common/logout.html:22
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
-#: templates/chantal_common/markdown_sandbox.html:16
+#: templates/chantal_common/markdown_sandbox.html:29
 msgid ""
 "\n"
 "  <p>Chantal uses the lightweight markup language “Markdown” for comments.  "
@@ -280,39 +271,39 @@ msgstr ""
 "  <p>Hier können Sie die Syntax nach Belieben testen.  Nichts, was Sie hier "
 "eingeben, wird gespeichert.</p>\n"
 
-#: templates/chantal_common/markdown_sandbox.html:27
+#: templates/chantal_common/markdown_sandbox.html:40
 msgid "Error in markup"
 msgstr "Fehler im Markup"
 
-#: templates/chantal_common/markdown_sandbox.html:32
+#: templates/chantal_common/markdown_sandbox.html:45
 msgid "input"
 msgstr "Eingabe"
 
-#: templates/chantal_common/markdown_sandbox.html:34
+#: templates/chantal_common/markdown_sandbox.html:47
 msgid "result"
 msgstr "Ergebnis"
 
-#: templates/chantal_common/markdown_sandbox.html:53
+#: templates/chantal_common/markdown_sandbox.html:66
 msgid "Generate result"
 msgstr "Ergebnis erzeugen"
 
-#: templates/chantal_common/password_changed.html:27
+#: templates/chantal_common/password_changed.html:18
 msgid "Password change successful"
 msgstr "Das Passwort wurde erfolgreich geändert"
 
-#: templates/chantal_common/password_changed.html:33
+#: templates/chantal_common/password_changed.html:24
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templatetags/chantal.py:153
+#: templatetags/chantal.py:145
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: templatetags/chantal.py:162
+#: templatetags/chantal.py:154
 msgid "Yes"
 msgstr "Ja"
 
-#: templatetags/chantal.py:162
+#: templatetags/chantal.py:154
 msgid "No"
 msgstr "Nein"
 
