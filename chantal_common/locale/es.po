@@ -1,0 +1,280 @@
+# Spanish translation for chantal
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the chantal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: chantal\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2010-04-07 08:48+0200\n"
+"PO-Revision-Date: 2010-07-20 06:02+0000\n"
+"Last-Translator: Paco Molinero <paco@byasl.com>\n"
+"Language-Team: Spanish <es@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2010-07-28 11:08+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+#: context_processors.py:80
+msgid "German"
+msgstr "Aleman"
+
+#: context_processors.py:81
+msgid "English"
+msgstr "Inglés"
+
+#: context_processors.py:82
+msgid "Chinese"
+msgstr "Chino"
+
+#: context_processors.py:83
+msgid "Ukrainian"
+msgstr "Ucraniano"
+
+#: context_processors.py:84
+msgid "Russian"
+msgstr "Ruso"
+
+#: context_processors.py:85
+msgid "French"
+msgstr "Francés"
+
+#: context_processors.py:86
+msgid "Dutch"
+msgstr "Holandés"
+
+#: models.py:45
+msgid "user"
+msgstr "usuario"
+
+#: models.py:47
+msgid "language"
+msgstr "idioma"
+
+#: models.py:48
+msgid "settings last modified"
+msgstr "configuración modificada por última vez"
+
+#: models.py:49
+msgid "is an external user"
+msgstr "es un usuario externo"
+
+#: models.py:52 models.py:53
+msgid "user details"
+msgstr "Detalles del usuario"
+
+#: models.py:70
+msgid "name"
+msgstr "nombre"
+
+#: models.py:71
+msgid "members"
+msgstr "miembros"
+
+#: models.py:73
+msgid "restricted"
+msgstr "restringido"
+
+#: models.py:76
+msgid "project"
+msgstr "projecto"
+
+#: models.py:77
+msgid "projects"
+msgstr "proyectos"
+
+#: utils.py:152
+msgid "You mustn't use image and headings syntax in Markdown markup."
+msgstr ""
+
+#: views.py:40
+msgid "Sandbox"
+msgstr "Arenero"
+
+#: views.py:50
+msgid "MarkdownMarkup"
+msgstr ""
+
+#: views.py:74
+msgid "Markdown sandbox"
+msgstr ""
+
+#: templates/404.html:33 templates/404.html.py:34
+msgid "Resource not found"
+msgstr "Recurso no encontrado"
+
+#: templates/404.html:37
+#, python-format
+msgid ""
+"\n"
+"The resource » <em>%(request_path)s</em> « could not be found.  Please check "
+"that the URL\n"
+"is correct, and/or check that the denoted sample, process, reference etc is "
+"already in the\n"
+"database.\n"
+msgstr ""
+
+#: templates/500.html:33
+msgid "Internal Chantal error"
+msgstr "Error interno de Chantal"
+
+#: templates/500.html:41 templates/base_chantal.html:68
+msgid "Log in"
+msgstr "Iniciar Sesión"
+
+#: templates/500.html:53
+msgid "Internal server error"
+msgstr "Error interno del servidor"
+
+#: templates/500.html:54
+msgid ""
+"\n"
+"You experienced an internal error in the Chantal server software.  The\n"
+"administrators have been contacted already and will do their best in\n"
+"eliminating the bug.  Typically, they will contact you as soon as the "
+"problem\n"
+"is tackled.\n"
+msgstr ""
+"\n"
+"Ha sufrido un error interno en el software del servidor Chantal. Los\n"
+"administradores ya están al corriente y harán cuanto puedan para \n"
+"eliminar el error. Se pondrán en contacto (normalmente) con usted\n"
+"tan pronto como el error sea resuelto.\n"
+
+#: templates/base_chantal.html:45
+#, python-format
+msgid "switch to %(language)s"
+msgstr "cambiar a %(language)s"
+
+#: templates/base_chantal.html:51
+msgid "Welcome,"
+msgstr "Bienvenido,"
+
+#: templates/base_chantal.html:55
+msgid "Main menu"
+msgstr "Menú Principal"
+
+#: templates/base_chantal.html:58
+msgid "Report feature wish or bug"
+msgstr "Informar de error o de deseo de mejora"
+
+#: templates/base_chantal.html:60 templates/base_chantal.html.py:65
+msgid "Help"
+msgstr "Ayuda"
+
+#: templates/base_chantal.html:62
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: templates/chantal_common/change_password.html:27
+#: templates/chantal_common/change_password.html:28
+msgid "Password change"
+msgstr "Cambiar contraseña"
+
+#: templates/chantal_common/change_password.html:32
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Por favor ingresa tu contraseña antigua, por razones de seguridad, y luego "
+"ingresa tu nueva contraseña dos veces para que podamos verificar que fueron "
+"ingresadas correctamente."
+
+#: templates/chantal_common/change_password.html:37
+msgid "Old password:"
+msgstr "Contraseña anterior:"
+
+#: templates/chantal_common/change_password.html:39
+msgid "New password:"
+msgstr "Nueva contraseña:"
+
+#: templates/chantal_common/change_password.html:41
+msgid "Confirm password:"
+msgstr "Confirmar contraseña:"
+
+#: templates/chantal_common/change_password.html:43
+msgid "Change my password"
+msgstr "Cambiar mi contraseña"
+
+#: templates/chantal_common/login.html:27
+#: templates/chantal_common/login.html:28
+msgid "Chantal login"
+msgstr "Inicio de sesión en Chantal"
+
+#: templates/chantal_common/login.html:32
+msgid "Your username and password didn't match. Please try again."
+msgstr "Su nombre de usuario y contraseña no concuerdan. Inténtelo de nuevo."
+
+#: templates/chantal_common/login.html:37
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: templates/chantal_common/login.html:38
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/chantal_common/login.html:42
+msgid "login"
+msgstr "Iniciar sesión"
+
+#: templates/chantal_common/logout.html:29
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr "Gracias por pasar un buen rato hoy con el sitio web."
+
+#: templates/chantal_common/logout.html:31
+msgid "Log in again"
+msgstr "Iniciar sesión de nuevo"
+
+#: templates/chantal_common/markdown_sandbox.html:16
+msgid ""
+"\n"
+"  <p>Chantal uses the lightweight markup language “Markdown” for comments.  "
+"It\n"
+"  doesn't support images and headings though.  As compensation, it adds\n"
+"  implicit sample and sample series linking.  Follow the help link at the "
+"top\n"
+"  of the page for further information.</p>\n"
+"\n"
+"  <p>Here, you can test the markup as you like.  What you enter here is "
+"never\n"
+"  saved.</p>\n"
+msgstr ""
+
+#: templates/chantal_common/markdown_sandbox.html:27
+msgid "Error in markup"
+msgstr "Error en marcaje"
+
+#: templates/chantal_common/markdown_sandbox.html:32
+msgid "input"
+msgstr "entrada"
+
+#: templates/chantal_common/markdown_sandbox.html:34
+msgid "result"
+msgstr "resultado"
+
+#: templates/chantal_common/markdown_sandbox.html:53
+msgid "Generate result"
+msgstr "Generar resultado"
+
+#: templates/chantal_common/password_changed.html:27
+msgid "Password change successful"
+msgstr "La contraseña fue cambiada con exito"
+
+#: templates/chantal_common/password_changed.html:33
+msgid "Your password was changed."
+msgstr "Su contraseña fue cambiada."
+
+#: templatetags/chantal.py:103
+#, python-format
+msgid "with %(markdown_link)s syntax"
+msgstr "con %(markdown_link)s sintaxis"
+
+#: templatetags/chantal.py:112
+msgid "Yes"
+msgstr "Si"
+
+#: templatetags/chantal.py:112
+msgid "No"
+msgstr "No"
