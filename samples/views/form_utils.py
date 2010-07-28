@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# This file is part of Chantal, the samples database.
+#
+# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+#                    Marvin Goblet <m.goblet@fz-juelich.de>,
+#                    Torsten Bronger <t.bronger@fz-juelich.de>
+#
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
+
 
 u"""Helper classes and function which have something to do with form generation
 and validation.
@@ -446,21 +458,23 @@ class OperatorField(forms.ChoiceField):
     operator, and hide the field from display by ``style="display: none"`` in
     the HTML template.
 
-    If you want to use this field, do the following things:
+    If you want to use this field, do the following things::
 
-    1. This field must be made required
+        1. This field must be made required
 
-    2. If the user is not staff, make the possible choices of the external
-       operator field empty.
+        2. If the user is not staff, make the possible choices of the external
+           operator field empty.
 
-    3. Assure in your ``clean()`` method that non-staff doesn't submit an
-       external operator.  In the same method, say if the ``external_operator``
-       field was empty::
+        3. Assure in your ``clean()`` method that non-staff doesn't submit an
+           external operator.  In the same method, say if the
+           ``external_operator`` field was empty::
 
-           self.cleaned_data["external_operator"] = \
-               self.fields["operator"].external_operator
+               self.cleaned_data["external_operator"] = \
+                   self.fields["operator"].external_operator
 
-    4. In the template, show the external operator field only for staff.
+        4. In the template, show the external operator field only for staff.
+
+    A good example is in ``substrate.py`` of the IPV adaption of Chantal.
     """
 
     def set_choices(self, user, old_process):
