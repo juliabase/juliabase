@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# This file is part of Chantal, the samples database.
+#
+# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+#                    Marvin Goblet <m.goblet@fz-juelich.de>,
+#                    Torsten Bronger <t.bronger@fz-juelich.de>
+#
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
+
 
 u"""View for doing various this with selected samples from “My Samples”.  For
 example, copying them to the “My Samples” list of another user, or simply
