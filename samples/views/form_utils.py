@@ -313,7 +313,7 @@ class UserField(forms.ChoiceField):
         :type additional_user: ``django.contrib.auth.models.User``
         """
         self.choices = [(u"", 9*u"-")]
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True))
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True, is_staff=False))
         if additional_user:
             users.add(additional_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
@@ -332,8 +332,8 @@ class UserField(forms.ChoiceField):
         :type excluded_user: ``django.contrib.auth.models.User``
         """
         self.choices = [(u"", 9*u"-")]
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True))
-        users.remove(excluded_user)
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True, is_staff=False))
+        users.discard(excluded_user)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
@@ -361,7 +361,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
 
         :type additional_users: iterable of ``django.contrib.auth.models.User``
         """
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True))
+        users = set(django.contrib.auth.models.User.objects.filter(is_active=True, is_staff=False))
         users |= set(additional_users)
         users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
         self.choices = [(user.pk, get_really_full_name(user)) for user in users]

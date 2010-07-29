@@ -226,14 +226,17 @@ def next_deposition_number(request, letter):
     return utils.respond_to_remote_client(utils.get_next_deposition_number(letter))
 
 
-def get_next_quirky_name(sample_name):
+def get_next_quirky_name(sample_name, year_digits):
     u"""Returns the next sample name for legacy samples that don't fit into any
     known name scheme.
 
     :Parameters:
       - `sample_name`: the legacy sample name
+      - `year_digits`: the last two digits of the year of creation of the
+        sample
 
     :type sample_name: unicode
+    :type year_digits: str
 
     :Return:
       the Chantal legacy sample name
@@ -241,7 +244,7 @@ def get_next_quirky_name(sample_name):
     :rtype: unicode
     """
     prefixes = set()
-    legacy_prefix = "LGCY-"
+    legacy_prefix = year_digits + "-LGCY-"
     for name in models.Sample.objects.filter(name__startswith=legacy_prefix).values_list("name", flat=True):
         prefix, __, original_name = name[len(legacy_prefix):].partition("-")
         if original_name == sample_name:
@@ -293,7 +296,12 @@ def add_sample(request):
         return utils.respond_to_remote_client(False)
     is_legacy_name = request.GET.get("legacy") == u"True"
     if is_legacy_name:
-        name = get_next_quirky_name(name)
+        year_digits = request.GET.get("timestamp", "")[2:4]
+        try:
+            int(year_digits)
+        except ValueError:
+            return utils.respond_to_remote_client(False)
+        name = get_next_quirky_name(name, year_digits)
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
                                                          pk=utils.int_or_zero(currently_responsible_person))
