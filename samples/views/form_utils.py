@@ -461,6 +461,9 @@ class OperatorField(forms.ChoiceField):
     operator, and hide the field from display by ``style="display: none"`` in
     the HTML template.
 
+    FixMe: This is the new variant of `FixedOperatorField`.  It makes
+    `FixedOperatorField` obsolete.
+
     If you want to use this field, do the following things::
 
         1. This field must be made required

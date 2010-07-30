@@ -110,12 +110,15 @@ copyright holder, you must destroy it immediately and completely.
           <div class="process">
             <p class="operator_and_timestamp">
               {% spaceless %}
-                {% if sample.clearance %}
-                  {{ process.operator|get_safe_operator_name }}
-                {% else %}
-                  {{ process.operator|get_really_full_name }}
+                {% if process.operator|should_show %}
+                  {% if sample.clearance %}
+                    {{ process.operator|get_safe_operator_name }}
+                  {% else %}
+                    {{ process.operator|get_really_full_name }}
+                  {% endif %},
                 {% endif %}
-              {% endspaceless %}, {{ process|timestamp }}
+              {% endspaceless %}
+              {{ process|timestamp }}
             </p>
             {% spaceless %}
               <h2>
