@@ -66,18 +66,15 @@ def parse_year_and_month(year_and_month):
     :type year_and_month: unicode
 
     :Return:
-      year found in the URL, month found in the URL; if ``year_and_month`` was
-      empty, return the *current* year and month
+      year found in the URL, month found in the URL
 
     :rtype: int, int
 
     :Exceptions:
-      - `Http404`: if the year-and-month string has an invalid format, or month
-        and year refer to an invalid date, or the year precedes 1990.
+      - `Http404`: if the year-and-month string has an invalid format or was
+        empty, or month and year refer to an invalid date, or the year precedes
+        1990.
     """
-    if not year_and_month:
-        today = datetime.date.today()
-        return today.year, today.month
     match = year_and_month_pattern.match(year_and_month)
     if not match:
         raise Http404("Invalid year and/or month")
@@ -151,6 +148,9 @@ def show(request, process_name, year_and_month):
     """
     process_class = models.physical_process_models[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
+    if not year_and_month:
+        today = datetime.date.today()
+        return HttpResponseSeeOther("{0}/{1}".format(today.year, today.month))
     year, month = parse_year_and_month(year_and_month)
     if request.method == "POST":
         year_month_form = YearMonthForm(request.POST)
