@@ -398,7 +398,7 @@ class Process(PolymorphicModel):
         csv_node = CSVNode(self)
         csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
                           CSVItem(_(u"operator"), get_really_full_name(self.operator), "process"),
-                          CSVItem(_(u"comments"), self.comments, "process")]
+                          CSVItem(_(u"comments"), self.comments.strip(), "process")]
         return csv_node
 
     @classmethod
