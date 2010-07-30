@@ -326,7 +326,7 @@ def first_upper(value):
 @stringfilter
 def flatten_multiline_text(value):
     lines = [line.strip() for line in value.strip().split("\n")]
-    return u" ● ".join(comment_lines)
+    return u" ● ".join(lines)
 
 
 class ValueFieldNode(template.Node):
