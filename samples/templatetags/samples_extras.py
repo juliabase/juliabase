@@ -324,7 +324,11 @@ def first_upper(value):
 
 @register.filter
 @stringfilter
-def flatten_multiline_text(value, separator=u" • "):
+def flatten_multiline_text(value, separator=u" ● "):
+    u"""Converts a multiline string into a one-line string.  The lines are
+    separated by big bullets, however, you can change that with the optional
+    parameter.
+    """
     lines = [line.strip() for line in value.strip().split("\n")]
     return separator.join(lines)
 
