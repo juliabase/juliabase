@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.db import models
 import django.core.urlresolvers
 from chantal_common.models import Topic, PolymorphicModel
+from chantal_common.utils import get_really_full_name
 from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
 
 
@@ -262,7 +263,7 @@ class FeedCopiedMySamples(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"{name} copied samples to you").format(name=self.originator)
+        metadata["title"] = _(u"{name} copied samples to you").format(name=get_really_full_name(self.originator))
         metadata["category term"] = "copied samples"
         metadata["category label"] = "copied My Samples"
         return metadata
