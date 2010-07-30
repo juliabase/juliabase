@@ -693,7 +693,7 @@ def search(request):
     too_many_results = False
     base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
                                               Q(currently_responsible_person=request.user) |
-                                              Q(clearances__user=request.user) | ~Q(topic__isnull=True)).distinct()
+                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
     if request.method == "POST":
         search_samples_form = SearchSamplesForm(request.POST)
         if search_samples_form.is_valid():
