@@ -40,6 +40,9 @@ class UserDetails(models.Model):
                                 related_name="chantal_user_details")
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     browser_system = models.CharField(_(u"operating system"), max_length=10, default="windows")
+    is_administrative = models.BooleanField(_(u"is administrative"), default=False)
+    """``True`` if the account doesn't belong to an actual user, and thus
+    shouldn't be eligible for things like "currently_responsible_person"."""
 
     class Meta:
         verbose_name = _(u"user details")
