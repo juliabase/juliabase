@@ -312,6 +312,7 @@ def markdown_samples(value):
             break
     return markup.markdown(result)
 
+
 @register.filter
 @stringfilter
 def first_upper(value):
@@ -319,6 +320,14 @@ def first_upper(value):
     """
     if value:
         return samples.views.utils.capitalize_first_letter(value)
+
+
+@register.filter
+@stringfilter
+def flatten_multiline_text(value):
+    lines = [line.strip() for line in value.strip().split("\n")]
+    return u" ● ".join(comment_lines)
+
 
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
