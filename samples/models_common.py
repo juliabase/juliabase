@@ -386,15 +386,19 @@ class Process(PolymorphicModel):
         export.  See the `samples.views.csv_export` module for all the glory
         details.
 
+        Note that ``_`` must get ``ugettext`` in these methods because
+        otherwise, subsequent modifications in derived classes break.
+
         :Return:
           a node for building a CSV tree
 
         :rtype: `samples.csv_common.CSVNode`
         """
+        _ = ugettext
         csv_node = CSVNode(self)
         csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
                           CSVItem(_(u"operator"), get_really_full_name(self.operator), "process"),
-                          CSVItem(_(u"comments"), self.comments, "process")]
+                          CSVItem(_(u"comments"), self.comments.strip(), "process")]
         return csv_node
 
     @classmethod

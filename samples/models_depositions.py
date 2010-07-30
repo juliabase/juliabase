@@ -50,6 +50,9 @@ class Deposition(PhysicalProcess):
     of your deposition class.
     """
     number = models.CharField(_(u"deposition number"), max_length=15, unique=True, db_index=True)
+    sample_positions = models.TextField(_(u"sample positions"), blank=True)
+    """In JSON format, mapping sample IDs to positions.  Positions can be
+    numbers or strings."""
 
     class Meta:
         verbose_name = _(u"deposition")

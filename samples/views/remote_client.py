@@ -294,6 +294,8 @@ def add_sample(request):
         topic = request.POST.get("topic")
     except KeyError:
         return utils.respond_to_remote_client(False)
+    if len(name) > 30:
+        return utils.respond_to_remote_client(False)
     is_legacy_name = request.GET.get("legacy") == u"True"
     if is_legacy_name:
         year_digits = request.GET.get("timestamp", "")[2:4]
@@ -301,7 +303,7 @@ def add_sample(request):
             int(year_digits)
         except ValueError:
             return utils.respond_to_remote_client(False)
-        name = get_next_quirky_name(name, year_digits)
+        name = get_next_quirky_name(name, year_digits)[:30]
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
                                                          pk=utils.int_or_zero(currently_responsible_person))

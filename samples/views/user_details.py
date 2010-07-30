@@ -50,10 +50,11 @@ def show_user(request, login_name):
 
     :rtype: ``HttpResponse``
     """
-    user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
+    user = get_object_or_404(django.contrib.auth.models.User,
+                             username=login_name, chantal_user_details__is_administrative=False)
     userdetails = user.samples_user_details
     username = get_really_full_name(user)
-    return render_to_response("samples/show_user.html", {"title": username, "user": user, "userdetails": userdetails},
+    return render_to_response("samples/show_user.html", {"title": username, "shown_user": user, "userdetails": userdetails},
                               context_instance=RequestContext(request))
 
 

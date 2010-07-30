@@ -89,6 +89,15 @@ quantity.needs_autoescape = True
 
 
 @register.filter
+def should_show(operator):
+    u"""Filter to decide whether an operator should be shown.  The operator
+    should not be shown if it is an administrative account, i.e. an account
+    that should not be visible except for administrators.
+    """
+    return not isinstance(operator, django.contrib.auth.models.User) or not operator.chantal_user_details.is_administrative
+
+
+@register.filter
 def three_digits(number):
     u"""Filter for padding an integer with zeros so that it has at least three
     digits.
@@ -303,6 +312,7 @@ def markdown_samples(value):
             break
     return markup.markdown(result)
 
+
 @register.filter
 @stringfilter
 def first_upper(value):
@@ -310,6 +320,18 @@ def first_upper(value):
     """
     if value:
         return samples.views.utils.capitalize_first_letter(value)
+
+
+@register.filter
+@stringfilter
+def flatten_multiline_text(value, separator=u" ● "):
+    u"""Converts a multiline string into a one-line string.  The lines are
+    separated by big bullets, however, you can change that with the optional
+    parameter.
+    """
+    lines = [line.strip() for line in value.strip().split("\n")]
+    return separator.join(lines)
+
 
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
