@@ -29,7 +29,7 @@ copyright holder, you must destroy it immediately and completely.
                href="{% url samples.views.sample.edit sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                               ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
             {% if sample.id_for_rename %}<a class="edit-icon"
-               href="{% url samples.views.bulk_rename.bulk_rename %}?ids={{ sample.id_for_rename }}&next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               href="{% url samples.views.bulk_rename.bulk_rename %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                                 ><img src="{{ MEDIA_URL }}chantal/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
             {% endif %}
           {% endif %}

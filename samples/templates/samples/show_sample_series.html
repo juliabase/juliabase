@@ -22,7 +22,7 @@ copyright holder, you must destroy it immediately and completely.
            ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a
      >{% endif %}
   {% if can_add_result %}<a class="edit-icon"
-  href="{% url add_result %}?sample_series={{ sample_series.name|urlquote_plus }}&next={{ sample_series.get_absolute_url|urlquote_plus }}"
+  href="{% url add_result %}?sample_series={{ sample_series.name|urlquote_plus }}&amp;next={{ sample_series.get_absolute_url|urlquote_plus }}"
    ><img src="{{ MEDIA_URL }}chantal/icons/lightbulb_add.png" alt="add-result icon" title="{% trans 'add result' %}"/></a>{% endif %}
   <a class="edit-icon" 
   href="{% url samples.views.sample_series.export name=sample_series.name %}?next={{ sample_series.get_absolute_url|urlquote_plus }}"
