@@ -62,7 +62,8 @@ class ReviewerForm(forms.Form):
         super(ReviewerForm, self).__init__(*args, **kwargs)
         permission = django.contrib.auth.models.Permission.objects.get(codename="adopt_samples")
         self.fields["reviewer"].queryset = django.contrib.auth.models.User.objects.filter(
-            Q(groups__permissions=permission) | Q(user_permissions=permission)).distinct()
+            Q(groups__permissions=permission) | Q(user_permissions=permission)).distinct(). \
+            order_by("last_name", "first_name")
 
 
 @login_required
