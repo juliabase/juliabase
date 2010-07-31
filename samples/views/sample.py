@@ -674,7 +674,7 @@ class AddToMySamplesForm(forms.Form):
 max_results = 50
 @login_required
 def search(request):
-    u"""View for searching for samples.  The rule is: Everyonw can see the
+    u"""View for searching for samples.  The rule is: Everyone can see the
     *names* (not the data sheets) of all samples, unless they are in a
     confidential topic, unless the user is a member in that topic, its
     currently responsible person, or you have a clearance for the sample.
@@ -693,7 +693,7 @@ def search(request):
     too_many_results = False
     base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
                                               Q(currently_responsible_person=request.user) |
-                                              Q(clearances__user=request.user)).distinct()
+                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
     if request.method == "POST":
         search_samples_form = SearchSamplesForm(request.POST)
         if search_samples_form.is_valid():

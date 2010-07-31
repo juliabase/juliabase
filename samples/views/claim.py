@@ -45,16 +45,25 @@ class SamplesForm(forms.Form):
             exclude(Q(topic__confidential=True) & ~Q(topic__members=user)), user)
 
 
+class ReviewerChoiceField(forms.ModelChoiceField):
+    u"""Custom field class just to have pretty-printed names in the reviewer
+    selection.
+    """
+    def label_from_instance(self, user):
+        return get_really_full_name(user)
+
+
 class ReviewerForm(forms.Form):
     u"""Form giving the user who should approve the claim.
     """
     _ = ugettext_lazy
-    reviewer = forms.ModelChoiceField(label=_(u"Requested reviewer"), queryset=None)
+    reviewer = ReviewerChoiceField(label=_(u"Requested reviewer"), queryset=None)
     def __init__(self, *args, **kwargs):
         super(ReviewerForm, self).__init__(*args, **kwargs)
         permission = django.contrib.auth.models.Permission.objects.get(codename="adopt_samples")
         self.fields["reviewer"].queryset = django.contrib.auth.models.User.objects.filter(
-            Q(groups__permissions=permission) | Q(user_permissions=permission)).distinct()
+            Q(groups__permissions=permission) | Q(user_permissions=permission)).distinct(). \
+            order_by("last_name", "first_name")
 
 
 @login_required

@@ -317,7 +317,7 @@ class UserField(forms.ChoiceField):
                                                                    chantal_user_details__is_administrative=False))
         if additional_user:
             users.add(additional_user)
-        users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
+        users = sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
         self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
     def set_users_without(self, excluded_user):
@@ -336,7 +336,7 @@ class UserField(forms.ChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         users.discard(excluded_user)
-        users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
+        users = sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
         self.choices.extend((user.pk, get_really_full_name(user)) for user in users)
 
     def clean(self, value):
@@ -366,7 +366,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         users |= set(additional_users)
-        users = sorted(users, key=lambda user: user.last_name if user.last_name else user.username)
+        users = sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
         self.choices = [(user.pk, get_really_full_name(user)) for user in users]
         if not self.choices:
             self.choices = ((u"", 9*u"-"),)
@@ -407,7 +407,7 @@ class TopicField(forms.ChoiceField):
             set(topic for topic in all_topics if not topic.confidential or topic in user_topics)
         if additional_topic:
             topics.add(additional_topic)
-        topics = sorted(topics, key=lambda topic: topic.name)
+        topics = sorted(topics, key=lambda topic: topic.name.lower())
         self.choices.extend((topic.pk, unicode(topic)) for topic in topics)
 
     def clean(self, value):
