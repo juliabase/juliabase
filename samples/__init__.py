@@ -374,7 +374,8 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
                 user.samples_user_details.touch_display_settings()
     else:
         # `instance` is a user
-        instance.samples_user_details.touch_display_settings()
+        if action in ["pre_clear", "post_add", "post_remove"]:
+            instance.samples_user_details.touch_display_settings()
 
 signals.m2m_changed.connect(touch_display_settings_by_group_or_permission,
                             sender=django.contrib.auth.models.User.groups.through)
