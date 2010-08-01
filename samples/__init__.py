@@ -13,7 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""The samples database app.
+u"""The samples database app.  This module contains the signal listeners.  Most
+of them are for cache expiring, but `expire_feed_entries` cleans up the feed
+entries queue.
 
 
 Caching in Chantal-Samples
@@ -158,6 +160,7 @@ from django.db.models import signals
 import django.contrib.auth.models
 from . import models as samples_app
 from chantal_common import models as chantal_common_app
+from chantal_common.maintenance import maintain
 
 
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
@@ -377,3 +380,14 @@ signals.m2m_changed.connect(touch_display_settings_by_group_or_permission,
                             sender=django.contrib.auth.models.User.groups.through)
 signals.m2m_changed.connect(touch_display_settings_by_group_or_permission,
                             sender=django.contrib.auth.models.User.user_permissions.through)
+
+
+def expire_feed_entries(sender, **kwargs):
+    u"""Deletes all feed entries which are older than six weeks.
+    """
+    now = datetime.datetime.now()
+    six_weeks_ago = now - datetime.timedelta(weeks=6)
+    for entry in samples_app.FeedEntry.objects.filter(timestamp__lt=six_weeks_ago):
+        entry.delete()
+
+maintain.connect(expire_feed_entries, sender=None)
