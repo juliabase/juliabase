@@ -516,8 +516,9 @@ class PhysicalProcess(Process):
     class doesn't define anything.  Its main purpose is to bring structure to
     the class hierarchy by pooling all physical processes.
 
-    Such processes must have a permission of the form ``"add_edit_model_name"``
-    where the model name is in lowercase with underscores.
+    Such processes must have permissions of the form ``"add_model_name"`` and
+    ``"view_every_model_name"`` where the model name is in lowercase with
+    underscores.
     """
     class Meta:
         abstract = True
