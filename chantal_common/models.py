@@ -38,6 +38,7 @@ class UserDetails(models.Model):
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="chantal_user_details")
+    department = models.CharField(_(u"department"), max_length=30, blank=True)
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     browser_system = models.CharField(_(u"operating system"), max_length=10, default="windows")
     is_administrative = models.BooleanField(_(u"is administrative"), default=False)
