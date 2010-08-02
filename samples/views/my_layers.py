@@ -154,7 +154,7 @@ def save_to_database(my_layer_forms, user):
     """
     user_details = user.samples_user_details
     user_details.my_layers = \
-        u", ".join(["{0}: {0}".format(form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
+        u", ".join(["{0}: {1}".format(form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
                     for form in my_layer_forms])
     user_details.save()
 

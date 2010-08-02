@@ -133,12 +133,12 @@ Its ``Meta`` class should be::
         verbose_name = _(u"small cluster tool deposition")
         verbose_name_plural = _(u"small cluster tool depositions")
         _ = lambda x: x
-        permissions = (("add_edit_small_cluster_tool_deposition",
-                       _("Can create and edit small cluster tool depositions")),)
+        permissions = (("add_small_cluster_tool_deposition",
+                       _("Can add small cluster tool depositions")),)
 
 It is very important that it defines those permissions because it is derived
 from ``Process`` (albeit indirectly).  Note that the first string must match
-the pattern ``add_edit_process_name_with_underscores``.
+the pattern ``add_process_name_with_underscores``.
 
 Then, we need two methods to get URLs for a depositions::
 
@@ -170,7 +170,7 @@ also add the following method::
                 layer.type = "PECVD"
             layers.append(layer)
         result = {"layers": layers}
-        if permissions.has_permission_to_add_edit_physical_process(
+        if permissions.has_permission_to_add_physical_process(
                 process_context.user, self):
             result.update({"edit_url": django.core.urlresolvers.reverse(
                                    "edit_small_cluster_tool_deposition",

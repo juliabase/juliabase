@@ -161,7 +161,7 @@ def get_allowed_physical_processes(user):
     """
     allowed_physical_processes = []
     for physical_process_class in samples.models.physical_process_models.itervalues():
-        if has_permission_to_add_edit_physical_process(user, None, physical_process_class):
+        if has_permission_to_add_physical_process(user, physical_process_class):
             try:
                 url = physical_process_class.get_add_link()
             except NotImplementedError:
@@ -230,9 +230,64 @@ def assert_can_fully_view_sample(user, sample):
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
+def assert_can_add_physical_process(user, process_class):
+    u"""Tests whether the user can create a new physical process
+    (i.e. deposition, measurement, etching process, clean room work etc).
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `process_class`: the type of physical process that the user asks
+        permission for
+
+    :type user: ``django.contrib.auth.models.User``
+    :type process_class: ``class`` (derived from `models.Process`)
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to add a process.
+    """
+    permission = \
+        "{app_label}.add_{process_name}".format(
+        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
+    if not user.has_perm(permission):
+        description = _(u"You are not allowed to add {process_plural_name} because you don't have the "
+                        u"permission “{permission}”.").format(
+            process_plural_name=process_class._meta.verbose_name_plural, permission=translate_permission(permission))
+        raise PermissionError(user, description)
+
+
+def assert_can_edit_physical_process(user, process):
+    u"""Tests whether the user can edit a physical process (i.e. deposition,
+    measurement, etching process, clean room work etc).  For this, he must be
+    the operator of this process, *and* he must be allowed to add new processes
+    of this kind.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `process`: The concrete process to edit.
+
+    :type user: ``django.contrib.auth.models.User``
+    :type process: `models.Process`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit the
+        process.
+    """
+    process_class = process.__class__
+    permission = \
+        "{app_label}.add_{process_name}".format(
+        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
+    if (not user.has_perm(permission) or process.operator != user) and not user.is_superuser:
+        description = _(u"You are not allowed to edit the process “{process}” because you are not the operator "
+                        u"of this process.").format(process=process)
+        raise PermissionError(user, description)
+
+
 def assert_can_add_edit_physical_process(user, process, process_class=None):
     u"""Tests whether the user can create or edit a physical process
-    (i.e. deposition, measurement, etching process, clean room work etc).
+    (i.e. deposition, measurement, etching process, clean room work etc).  This
+    is a convenience function which combines `assert_can_add_physical_process`
+    and `assert_can_edit_physical_process`.  It is used in the combined
+    add/edit views of physical processes.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -250,24 +305,11 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
       - `PermissionError`: raised if the user is not allowed to create or edit
         the process.
     """
-    if not process_class:
-        process_class = process.__class__
-    elif process:
-        assert process_class == process.__class__
-    permission = \
-        "{app_label}.add_edit_{process_name}".format(
-        app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     if process:
-        if process.operator != user and not user.is_superuser:
-            description = _(u"You are not allowed to edit the process “{process}” because you are not the operator "
-                            u"of this process.").format(process=process)
-            raise PermissionError(user, description)
+        assert process_class == process.__class__
+        assert_can_edit_physical_process(user, process)
     else:
-        if not user.has_perm(permission):
-            description = _(u"You are not allowed to add {process_plural_name} because you don't have the "
-                            u"permission “{permission}”.").format(
-                process_plural_name=process_class._meta.verbose_name_plural, permission=translate_permission(permission))
-            raise PermissionError(user, description)
+        assert_can_add_physical_process(user, process_class)
 
 
 def assert_can_view_lab_notebook(user, process_class):
@@ -297,7 +339,10 @@ def assert_can_view_lab_notebook(user, process_class):
 
 def assert_can_view_physical_process(user, process):
     u"""Tests whether the user can view a physical process (i.e. deposition,
-    measurement, etching process, clean room work etc).
+    measurement, etching process, clean room work etc).  You can view a process
+    if you can view all such processes, if you can add such processes and you
+    are the operator of this process, if you have a clearance for this process,
+    or if you can see at least one of the processed samples.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -311,13 +356,13 @@ def assert_can_view_physical_process(user, process):
         process.
     """
     process_class = process.__class__
-    permission_to_edit = \
-        "{app_label}.add_edit_{process_name}".format(
+    permission_to_add = \
+        "{app_label}.add_{process_name}".format(
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
     permission_to_view_all = \
         "{app_label}.view_every_{process_name}".format(
         app_label=process_class._meta.app_label, process_name=shared_utils.camel_case_to_underscores(process_class.__name__))
-    if not user.has_perm(permission_to_edit) and not user.has_perm(permission_to_view_all):
+    if not user.has_perm(permission_to_view_all) and not (user.has_perm(permission_to_add) and process.operator == user):
         for sample in process.samples.all():
             if has_permission_to_fully_view_sample(user, sample):
                 break
@@ -326,7 +371,7 @@ def assert_can_view_physical_process(user, process):
                 description = _(u"You are not allowed to view the process “{process}” because neither you have the "
                                 u"permission “{permission}”, nor you are allowed to view one of the processed samples, "
                                 "nor is there a clearance for you for this process.").format(
-                    process=process, permission=translate_permission(permission))
+                    process=process, permission=translate_permission(permission_to_view_all))
                 raise PermissionError(user, description, new_topic_would_help=True)
 
 

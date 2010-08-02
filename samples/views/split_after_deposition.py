@@ -431,7 +431,7 @@ def split_and_rename_after_deposition(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number)
-    permissions.assert_can_add_edit_physical_process(request.user, deposition.actual_instance)
+    permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
     remote_client = utils.is_remote_client(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \
