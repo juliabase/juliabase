@@ -41,10 +41,9 @@ copyright holder, you must destroy it immediately and completely.
              ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon"
                    title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
 
-          <div class="screen-only" style="float: right">
-            <a href="http://chart.apis.google.com/chart?chs=116x116&amp;cht=qr&amp;chl={{ sample.sample.id }}&amp;chld=H"><img 
-                    alt="{% trans 'QR Code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a>
-          </div>
+          <div class="screen-only" style="float: right"><a 
+                  href="http://chart.apis.google.com/chart?chs=116x116&amp;cht=qr&amp;chl={{ sample.sample.id }}&amp;chld=H"><img
+                  alt="{% trans 'QR Code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a></div>
           {% if sample.clearance %}
             <p style="color: red">
               {% trans "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
