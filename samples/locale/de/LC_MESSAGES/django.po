@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-04 17:28+0200\n"
-"PO-Revision-Date: 2010-08-04 17:28+0200\n"
+"POT-Creation-Date: 2010-08-05 14:05+0200\n"
+"PO-Revision-Date: 2010-08-05 14:06+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -146,13 +146,13 @@ msgid "current location"
 msgstr "aktueller Probenort"
 
 #: models_common.py:548 models_common.py:1059
-#: templates/samples/show_claim.html:37
+#: templates/samples/show_claim.html:42
 #: templates/samples/show_sample_series.html:50
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
 #: models_common.py:549 models_feeds.py:125
-#: templates/samples/show_claim.html:38
+#: templates/samples/show_claim.html:43
 msgid "purpose"
 msgstr "Zweck"
 
@@ -172,12 +172,12 @@ msgstr "Split-Ursprung"
 
 #: models_common.py:556 models_common.py:1063 models_feeds.py:124
 #: models_feeds.py:151 models_feeds.py:347 models_feeds.py:372
-#: models_feeds.py:404 templates/samples/show_claim.html:39
+#: models_feeds.py:404 templates/samples/show_claim.html:44
 msgid "topic"
 msgstr "Thema"
 
 #: models_common.py:561 models_common.py:718 models_common.py:796
-#: templates/samples/show_claim.html:35 views/sample_series.py:353
+#: templates/samples/show_claim.html:40 views/sample_series.py:353
 msgid "sample"
 msgstr "Probe"
 
@@ -888,7 +888,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/edit_my_samples.html:22
 #: templates/samples/edit_result.html:23
 #: templates/samples/edit_sample_death.html:22
-#: templates/samples/show_claim.html:54 templates/samples/show_claim.html:55
+#: templates/samples/show_claim.html:59 templates/samples/show_claim.html:60
 #: templates/samples/split_and_rename.html:22
 msgid "General error"
 msgstr "Allgemeiner Fehler"
@@ -1469,7 +1469,7 @@ msgstr ""
 
 #: templates/samples/lab_notebook.html:32
 #: templates/samples/show_sample.html:42
-#: templates/samples/show_sample.html:136
+#: templates/samples/show_sample.html:135
 #: templates/samples/show_sample_series.html:30
 msgid "export as table"
 msgstr "als Tabelle exportieren"
@@ -1539,7 +1539,7 @@ msgstr "Meine Proben"
 #: templates/samples/main_menu.html:24
 #: templates/samples/show_external_operator.html:24
 #: templates/samples/show_sample.html:30
-#: templates/samples/show_sample.html:131
+#: templates/samples/show_sample.html:130
 #: templates/samples/show_sample_series.html:22
 #: templates/samples/show_sample_series.html:61
 msgid "edit"
@@ -1724,6 +1724,18 @@ msgstr "Antragssteller"
 msgid "Reviewer"
 msgstr "Reviewer"
 
+#: templates/samples/show_claim.html:34
+#, python-format
+msgid ""
+"\n"
+"      %(name)s wishes to become the new “responsible person” of the "
+"following samples:\n"
+"    "
+msgstr ""
+"\n"
+"      %(name)s möchte die neue “verantwortliche Person” für die folgenden Proben werden:\n"
+"    "
+
 #: templates/samples/show_external_operator.html:21
 #, python-format
 msgid "External operator “%(name)s”"
@@ -1814,7 +1826,7 @@ msgstr "Prozess hinzufügen"
 msgid "QR Code"
 msgstr "QR-Code"
 
-#: templates/samples/show_sample.html:50
+#: templates/samples/show_sample.html:49
 msgid ""
 "You can see this sample only due to a clearance.  Therefore, some fields and "
 "processes are hidden."
@@ -1822,12 +1834,12 @@ msgstr ""
 "Sie können diese Probe nur aufgrund einer Freigabe sehen.  Deshalb sind "
 "einige Angaben und Prozesse versteckt."
 
-#: templates/samples/show_sample.html:66
+#: templates/samples/show_sample.html:65
 msgid "Attention: Topicless samples may be viewed and edited by anyone."
 msgstr ""
 "Achtung: Themenlose Proben können von jedem eingesehen und geändert werden."
 
-#: templates/samples/show_sample.html:90
+#: templates/samples/show_sample.html:89
 #, python-format
 msgid ""
 "\n"
@@ -1847,11 +1859,11 @@ msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien:"
 
-#: templates/samples/show_sample.html:133
+#: templates/samples/show_sample.html:132
 msgid "duplicate"
 msgstr "duplizieren"
 
-#: templates/samples/show_sample.html:139
+#: templates/samples/show_sample.html:138
 msgid "resplit"
 msgstr "weiterspalten"
 
