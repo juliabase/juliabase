@@ -330,7 +330,7 @@ def send_email(subject, content, recipients, format_dict=None):
     # FixMe: This is only a precaution as long as Chantal isn't rolled-out
     if settings.DEBUG or True:
         import django.contrib.auth.models
-        recipients = [django.contrib.auth.models.User.get(username="t.bronger")]
+        recipients = [django.contrib.auth.models.User.objects.get(username="t.bronger")]
     for recipient in recipients:
         translation.activate(recipient.chantal_user_details.language)
         subject, content = ugettext(subject), ugettext(content)
