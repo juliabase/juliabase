@@ -42,7 +42,7 @@ class SamplesForm(forms.Form):
         super(SamplesForm, self).__init__(*args, **kwargs)
         self.fields["samples"].set_samples(
             user.my_samples.exclude(currently_responsible_person=user).
-            exclude(Q(topic__confidential=True) & ~Q(topic__members=user)), user)
+            filter(Q(topic__isnull=True) | Q(topic__confidential=False) | Q(topic__members=user)), user)
 
 
 class ReviewerChoiceField(forms.ModelChoiceField):
