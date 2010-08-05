@@ -20,6 +20,7 @@ from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
 import django.http
+import django.contrib.auth.models
 from django.conf import settings
 from django.utils.encoding import iri_to_uri
 from django.forms.util import ErrorList, ValidationError
@@ -327,10 +328,10 @@ def send_email(subject, content, recipients, format_dict=None):
     current_language = translation.get_language()
     if not isinstance(recipients, list):
         recipients = [recipients]
-    # FixMe: This is only a precaution as long as Chantal isn't rolled-out
+    # FixMe: This `` or True`` is only a precaution as long as Chantal isn't
+    # rolled-out
     if settings.DEBUG or True:
-        import django.contrib.auth.models
-        recipients = [django.contrib.auth.models.User.objects.get(username="t.bronger")]
+        recipients = list(django.contrib.auth.models.User.objects.filter(username=settings.DEBUG_EMAIL_REDIRECT_USERNAME))
     for recipient in recipients:
         translation.activate(recipient.chantal_user_details.language)
         subject, content = ugettext(subject), ugettext(content)
