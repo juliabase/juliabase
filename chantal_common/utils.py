@@ -293,7 +293,7 @@ def adjust_timezone_information(timestamp):
     return timestamp.replace(tzinfo=dateutil.tz.tzlocal())
 
 
-def send_email(subject, content, recipient, format_dict=None):
+def send_email(subject, content, recipients, format_dict=None):
     u"""Sends one email to a user.  Both subject and content are translated to
     the recipient's language.  To make this work, you must tag the original
     text with a dummy ``_`` function in the calling content, e.g.::
@@ -314,28 +314,32 @@ def send_email(subject, content, recipient, format_dict=None):
     :Parameters:
       - `subject`: the subject of the email
       - `content`: the content of the email; it may contain substitution tags
-      - `recipient`: the recipient of the email
+      - `recipients`: the recipients of the email
       - `format_dict`: the substitions used for the ``format`` string method
         for both the subject and the content
 
     :type subject: unicode
     :type content: unicode
-    :type recipient: ``django.contrib.auth.models.User``
+    :type recipient: ``django.contrib.auth.models.User`` or list of
+      ``django.contrib.auth.models.User``
     :type format_dict: dict mapping unicode to unicode
     """
     current_language = translation.get_language()
-    translation.activate(recipient.chantal_user_details.language)
-    subject, content = ugettext(subject), ugettext(content)
-    if format_dict is not None:
-        subject = subject.format(**format_dict)
-        content = content.format(**format_dict)
-    cycles_left = 3
-    while cycles_left:
-        try:
-            send_mail(subject, content, settings.DEFAULT_FROM_EMAIL, [recipient.email])
-        except SMTPException:
-            cycles_left -= 1
-            time.sleep(0.3)
-        else:
-            break
+    if not isinstance(recipients, list):
+        recipients = [recipients]
+    for recipient in recipients:
+        translation.activate(recipient.chantal_user_details.language)
+        subject, content = ugettext(subject), ugettext(content)
+        if format_dict is not None:
+            subject = subject.format(**format_dict)
+            content = content.format(**format_dict)
+        cycles_left = 3
+        while cycles_left:
+            try:
+                send_mail(subject, content, settings.DEFAULT_FROM_EMAIL, [recipient.email])
+            except SMTPException:
+                cycles_left -= 1
+                time.sleep(0.3)
+            else:
+                break
     translation.activate(current_language)
