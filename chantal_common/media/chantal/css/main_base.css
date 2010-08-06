@@ -49,6 +49,7 @@ div.inner-frame {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     background-color: #e6e6e6;
+    background-image: url("../checked.png")
     min-height: 0px;   /* IE7 quirk */
 }
 
