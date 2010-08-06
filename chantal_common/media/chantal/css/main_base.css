@@ -21,6 +21,7 @@ p.logo-text {
     font-size: 50px;
     color: #333333;
     font-weight: bold;
+    text-shadow: 1px 1px 1px white, -1px -1px 1px black;
 }
 
 div.main {
@@ -32,7 +33,9 @@ div.outer-frame {
     margin-top: 20px;
     border-color: #b2b2b2;
     border-width: thin;
+    border-radius: 12px;
     -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
     border-style: solid;
 }
 
@@ -42,8 +45,11 @@ div.inner-frame {
     border-color: black;
     border-width: thin;
     border-style: solid;
+    border-radius: 10px;
     -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
     background-color: #e6e6e6;
+    background-image: url("../checked.png");
     min-height: 0px;   /* IE7 quirk */
 }
 
@@ -66,7 +72,8 @@ div.debug-report { background-color: gainsboro; color: black }
 div.warning-report { background-color: coral }
 div.info-report { background-color: mediumpurple }
 
-h1 { margin-top: 0pt }
+h1 { margin-top: 0pt; text-shadow: 0.06em 0.06em 0.06em #a0a0a0 }
+h2, h3, h4, h5, h6 { text-shadow: 0.05em 0.05em 0.05em #a0a0a0 }
 
 p.operator_and_timestamp { float: right; font-size: small }
 a.edit-button, a.duplicate-button { font-size: small; white-space: nowrap }
