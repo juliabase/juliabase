@@ -115,7 +115,7 @@ Chantal.
                  "url": "http://" + settings.DOMAIN_NAME +
                  django.core.urlresolvers.reverse(show, kwargs={"claim_id": claim.pk})})
             _ = ugettext
-            claim.samples = samples=samples_form.cleaned_data["samples"]
+            claim.samples = samples_form.cleaned_data["samples"]
             return utils.successful_response(request,
                                              _(u"Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
                                              show, kwargs={"claim_id": claim.pk})

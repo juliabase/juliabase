@@ -25,7 +25,9 @@ copyright holder, you must destroy it immediately and completely.
       {% endfor %}
     </ul>
   {% endif %}
-  <p><a href="{% url samples.views.claim.add username=user.username %}">{% trans 'Assert a new claim to samples' %}</a></p>
+  {% block claim_links %}
+    <p><a href="{% url samples.views.claim.add username=user.username %}">{% trans 'Assert a new claim to samples' %}</a></p>
+  {% endblock %}
   {% if claims_as_reviewer %}
     <h2>{% trans 'Claims with you being the reviewer' %}</h2>
     <ul>
