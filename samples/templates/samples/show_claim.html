@@ -30,7 +30,12 @@ copyright holder, you must destroy it immediately and completely.
       <td>{{ claim.reviewer|get_really_full_name }}</td>
     </tr>
   </table>
-  <table border="1" cellpadding="10" style="margin-top: 4ex; margin-bottom: 4ex">
+  <p style="margin-top: 4ex">
+    {% blocktrans with claim.requester|get_really_full_name as name %}
+      {{ name }} wishes to become the new “responsible person” of the following samples:
+    {% endblocktrans %}
+  </p>
+  <table border="1" cellpadding="10" style="margin-bottom: 4ex">
     <tr>
       <th>{% trans "sample" %}</th>
       {% if is_reviewer %}
@@ -45,7 +50,7 @@ copyright holder, you must destroy it immediately and completely.
         {% if is_reviewer %}
           <td>{{ sample.currently_responsible_person|get_really_full_name }}</td>
           <td>{{ sample.purpose }}</td>
-          <td>{{ sample.topic }}</td>
+          <td>{{ sample.topic|default:"" }}</td>
         {% endif %}
       </tr>
     {% endfor %}
