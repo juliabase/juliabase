@@ -32,10 +32,57 @@ from samples.views import utils
 
 
 class PhysicalProcess(object):
+    u"""Class for holding the permissions status of a physical process class.
+
+    :ivar name: the verbose plural name of the process class
+
+    :ivar codename: the name of the process class
+
+    :ivar edit_permissions_permission: the permission instance for editing
+      permissions of this process
+
+    :ivar add_permission: the permission instance for adding such processes
+
+    :ivar view_all_permission: the permission instance for viewing all
+      processes of this processes class
+
+    :ivar permission_editors: All users who have the permission of change
+      permissions for this process class.  Note that this excludes superusers,
+      unless they have the distinctive permission.
+
+    :ivar adders: All users who have the permission to add such processes.
+      Note that this excludes superusers, unless they have the distinctive
+      permission.
+
+    :ivar full_viewers: All users who have the permission to view all processes
+      of this process class.  Note that this excludes superusers, unless they
+      have the distinctive permission.
+
+    :cvar topic_manager_permission: the permission instance for changing
+      memberships in own topics
+
+    :type name: unicode
+    :type codename: str
+    :type edit_permissions_permission: ``django.contrib.auth.models.Permission``
+    :type add_permission: ``django.contrib.auth.models.Permission``
+    :type view_all_permission: ``django.contrib.auth.models.Permission``
+    :type permission_editors: ``QuerySet``
+    :type adders: ``QuerySet``
+    :type full_viewers: ``QuerySet``
+    :type topic_manager_permission: ``django.contrib.auth.models.Permission``
+    """
 
     topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics")
 
     def __init__(self, physical_process_class):
+        u"""
+        :Parameters:
+          - `physical_process_class`: the physical process class to which this
+            instance belongs
+
+        :type physical_process_class: ``class`` (derived from
+          ``samples.models.PhysicalProcess``)
+        """
         self.name = physical_process_class._meta.verbose_name_plural
         self.codename = physical_process_class.__name__
         substitutions = {"process_name": utils.camel_case_to_underscores(physical_process_class.__name__)}
@@ -54,19 +101,59 @@ class PhysicalProcess(object):
         self.adders = sorted_users(adders)
         self.full_viewers = sorted_users(full_viewers)
 
+physical_processes = [PhysicalProcess(process) for process in models.physical_process_models.values()]
+u"""A list with all registered physical processes.  Their type is of
+`PhysicalProcess`, which means that they contain information about the users
+who have permissions for that process.  It can organise this in a global
+variable because it is never changed, and new processes can't be added to
+Chantal while the program is running.
+"""
 
 def sorted_users(users):
+    u"""Return a list of users sorted by family name.  In particular, it sorts
+    case-insensitively.
+
+    :Parameters:
+      - `users`: the users to be sorted; it may also be a ``QuerySet``
+
+    :type users: an iterable of ``django.contrib.auth.models.User``
+
+    :Return:
+      the sorted users
+
+    :rtype: list of ``django.contrib.auth.models.User``
+    """
+    # FixMe: This should be moved to shared_utils.py or something like this,
+    # and used also by form_utils.py.
     return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
-
-
-def get_physical_processes(user):
-    return [PhysicalProcess(process) for process in models.physical_process_models.values()]
 
 
 @login_required
 def list_(request):
+    u"""View for listing user permissions.  It shows who can add new processes
+    of all registered physical process classes.  It also shows who can change
+    permissions for them (usually the person responsible for the respective
+    apparatus).
+
+    It deliberately does not show who is able to see all runs of a particular
+    apparatus.  First, this information is of little value for other users.
+    And secondly, it may cause “why him and not me?” emails.
+
+    For the very same reason, only those you can create new topics (typically,
+    the team leaders of the institution), can see who's a “topic manager”
+    (i.e., someone who can change memberships in their topics).
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     user = request.user
-    physical_processes = get_physical_processes(user)
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
     if can_edit_permissions:
@@ -87,6 +174,9 @@ def list_(request):
 
 
 class PermissionsForm(forms.Form):
+    u"""Form class for setting the permission triplets of a single process
+    class and a single user.  See `edit` for further information.
+    """
     _ = ugettext_lazy
     can_add = forms.BooleanField(label=u"Can add", required=False)
     can_view_all = forms.BooleanField(label=u"Can view all", required=False)
@@ -94,18 +184,39 @@ class PermissionsForm(forms.Form):
 
 
 class IsTopicManagerForm(forms.Form):
+    u"""Form class for setting whether a particular user is a “topic manager”.
+    It is used in `edit` but see `list_` for an explanation of this term.
+    """
     _ = ugettext_lazy
     is_topic_manager = forms.BooleanField(label=_(u"Is topic manager"), required=False)
 
 
 @login_required
 def edit(request, username):
+    u"""View for editing user permissions.  You can change two kinds of user
+    permissions here: The “add”, “view all”, and “edit permissions”
+    permissions, as well as whether the user is a so-called “topic manager”.
+    See `list_` for further information.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `username`: the username of the user whose permissions should be
+        changed
+
+    :type request: ``HttpRequest``
+    :type username: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     edited_user = get_object_or_404(User, username=username)
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
     can_appoint_topic_managers = user.has_perm("chantal_common.can_edit_all_topics")
     permissions_list = []
-    for process in get_physical_processes(user):
+    for process in physical_processes:
         if user in process.permission_editors or has_global_edit_permission:
             if request.method == "POST":
                 permissions_list.append((process, PermissionsForm(request.POST, prefix=process.codename)))
