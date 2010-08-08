@@ -24,7 +24,7 @@ copyright holder, you must destroy it immediately and completely.
       <tr style="vertical-align: top">
         <td>{{ process.name }}</td>
         <td>
-          {% for user in process.adders %}
+          {% for user in process.all_users %}
             {% spaceless %}
               {% if user in process.permission_editors %}
                 <strong>{{ user|get_really_full_name:"plain" }}</strong>

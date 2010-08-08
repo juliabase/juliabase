@@ -77,6 +77,12 @@ class PhysicalProcess(object):
       of this process class.  Note that this excludes superusers, unless they
       have the distinctive permission.
 
+    :ivar all_users: All users who have the permission to add such processes,
+      plus those who can change permissions (because they can give them the
+      right to add processes anyway).  This is used to the overview table to
+      show all users of a process.  Note that this excludes superusers, unless
+      they have the distinctive permissions.
+
     :cvar topic_manager_permission: the permission instance for changing
       memberships in own topics
 
@@ -88,6 +94,7 @@ class PhysicalProcess(object):
     :type permission_editors: ``QuerySet``
     :type adders: ``QuerySet``
     :type full_viewers: ``QuerySet``
+    :type all_users: ``QuerySet``
     :type topic_manager_permission: ``django.contrib.auth.models.Permission``
     """
 
@@ -119,6 +126,7 @@ class PhysicalProcess(object):
         self.permission_editors = sorted_users(permission_editors)
         self.adders = sorted_users(adders)
         self.full_viewers = sorted_users(full_viewers)
+        self.all_users = sorted_users(set(adders) | set(permission_editors))
 
 physical_processes = [PhysicalProcess(process) for process in models.physical_process_models.values()]
 u"""A list with all registered physical processes.  Their type is of
