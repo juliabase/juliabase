@@ -1189,6 +1189,9 @@ class UserDetails(models.Model):
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
+        _ = lambda x: x
+        permissions = (("edit_permissions_for_all_physical_processes",
+                        _("Can edit permissions for all physical processes")),)
 
     def __unicode__(self):
         return unicode(self.user)

@@ -1,0 +1,61 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+
+{% block frame_content %}
+
+  <p>{% trans "People who can change permissions of users for the respective process are printed in bold." %}</p>
+  <table cellpadding="10" border="1">
+    {% for process in physical_processes %}
+      <tr style="vertical-align: top">
+        <td>{{ process.name }}</td>
+        <td>
+          {% for user in process.adders %}
+            {% spaceless %}
+              {% if user in process.permission_editors %}
+                <strong>{{ user|get_really_full_name:"plain" }}</strong>
+              {% else %}
+                <span>{{ user|get_really_full_name:"plain" }}</span>
+              {% endif %}
+              {% if not forloop.last %}<span>, </span>{% endif %}
+            {% endspaceless %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% if topic_managers %}
+    <p>{% trans "The current topic managers are:" %}
+      {% for user in topic_managers %}
+        {% spaceless %}
+          <span>{{ user|get_really_full_name:"plain" }}</span>
+          {% if not forloop.last %}<span>, </span>{% endif %}
+        {% endspaceless %}
+      {% endfor %}
+    </p>
+  {% endif %}
+  {% if user_list %}
+    <p>{% trans "Change the permissions of:" %}
+      {% for user in user_list %}
+        {% spaceless %}
+          <a href="{% url samples.views.permissions.edit username=user.username%}">{{ user|get_really_full_name:"plain" }}</a>
+          {% if not forloop.last %}<span>, </span>{% endif %}
+        {% endspaceless %}
+      {% endfor %}
+    </p>
+  {% endif %}
+{% endblock %}

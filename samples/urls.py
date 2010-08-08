@@ -107,6 +107,9 @@ urlpatterns = patterns("samples.views",
                        (r"^topics_and_permissions/(?P<login_name>.+)", "user_details.topics_and_permissions"),
                        (r"^my_layers/(?P<login_name>.+)", "my_layers.edit"),
 
+                       (r"^permissions/$", "permissions.list_"),
+                       (r"^permissions/(?P<username>.+)", "permissions.edit"),
+
                        (r"^topics/add/$", "topic.add"),
                        (r"^topics/$", "topic.list_"),
                        (r"^topics/(?P<name>.+)", "topic.edit"),
