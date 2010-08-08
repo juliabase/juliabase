@@ -88,9 +88,9 @@ def list_(request):
 
 class PermissionsForm(forms.Form):
     _ = ugettext_lazy
-    can_add = forms.BooleanField(label=_(u"Can add"), required=False)
-    can_view_all = forms.BooleanField(label=_(u"Can view all"), required=False)
-    can_edit_permissions = forms.BooleanField(label=_(u"Can edit permissions"), required=False)
+    can_add = forms.BooleanField(label=u"Can add", required=False)
+    can_view_all = forms.BooleanField(label=u"Can view all", required=False)
+    can_edit_permissions = forms.BooleanField(label=u"Can edit permissions", required=False)
 
 
 class IsTopicManagerForm(forms.Form):
