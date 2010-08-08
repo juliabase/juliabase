@@ -31,6 +31,25 @@ from samples import models
 from samples.views import utils
 
 
+def sorted_users(users):
+    u"""Return a list of users sorted by family name.  In particular, it sorts
+    case-insensitively.
+
+    :Parameters:
+      - `users`: the users to be sorted; it may also be a ``QuerySet``
+
+    :type users: an iterable of ``django.contrib.auth.models.User``
+
+    :Return:
+      the sorted users
+
+    :rtype: list of ``django.contrib.auth.models.User``
+    """
+    # FixMe: This should be moved to shared_utils.py or something like this,
+    # and used also by form_utils.py.
+    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
+
+
 class PhysicalProcess(object):
     u"""Class for holding the permissions status of a physical process class.
 
@@ -109,24 +128,6 @@ variable because it is never changed, and new processes can't be added to
 Chantal while the program is running.
 """
 
-def sorted_users(users):
-    u"""Return a list of users sorted by family name.  In particular, it sorts
-    case-insensitively.
-
-    :Parameters:
-      - `users`: the users to be sorted; it may also be a ``QuerySet``
-
-    :type users: an iterable of ``django.contrib.auth.models.User``
-
-    :Return:
-      the sorted users
-
-    :rtype: list of ``django.contrib.auth.models.User``
-    """
-    # FixMe: This should be moved to shared_utils.py or something like this,
-    # and used also by form_utils.py.
-    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
-
 
 @login_required
 def list_(request):
@@ -168,7 +169,7 @@ def list_(request):
         topic_managers = None
     return render_to_response(
         "samples/list_permissions.html",
-        {"title": _(u"Permissions for processes"), "physical_processes": physical_processes,
+        {"title": _(u"Permissions to processes"), "physical_processes": physical_processes,
          "user_list": user_list, "topic_managers": topic_managers},
         context_instance=RequestContext(request))
 
@@ -252,7 +253,7 @@ def edit(request, username):
             initial={"is_topic_manager": edited_user.has_perm("chantal_common.can_edit_their_topics")})
     return render_to_response(
         "samples/edit_permissions.html",
-        {"title": _(u"Change permissions for {name}").format(name=get_really_full_name(edited_user)),
+        {"title": _(u"Change permissions of {name}").format(name=get_really_full_name(edited_user)),
          "permissions_list": permissions_list,
          "is_topic_manager": is_topic_manager_form if can_appoint_topic_managers else None},
         context_instance=RequestContext(request))

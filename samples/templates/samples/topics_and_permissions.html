@@ -34,8 +34,6 @@ copyright holder, you must destroy it immediately and completely.
   {% endif %}
 </p>
 
-<p>{% trans 'The head of your institute group is allowed to add you to further Chantal topics.' %}
-
 
 <h2>{% trans 'Permissions' %}</h2>
 
@@ -54,7 +52,11 @@ copyright holder, you must destroy it immediately and completely.
 
 <h3>{% trans 'Special permissions' %}</h3>
 
-<p>{% trans 'Only the administrators can change the special permissions.' %}</p>
+<p>
+  {% blocktrans with permissions_url as url %}
+    Have also a look at the <a href="{{ url }}">permissions for processes</a> for further information about your permissions.
+  {% endblocktrans %}
+</p>
 
 <table border="1" cellpadding="5" width="100%">
   <thead>

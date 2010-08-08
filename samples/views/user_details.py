@@ -26,6 +26,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
+import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal_common.utils import get_really_full_name
 from samples import models, permissions
@@ -132,5 +133,6 @@ def topics_and_permissions(request, login_name):
         "samples/topics_and_permissions.html",
         {"title": _(u"Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
          "topics": user.topics.all(), "permissions": permissions.get_user_permissions(user),
-         "full_user_name": get_really_full_name(request.user)},
+         "full_user_name": get_really_full_name(request.user),
+         "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")},
         context_instance=RequestContext(request))
