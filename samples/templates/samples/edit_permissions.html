@@ -1,0 +1,50 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+
+{% block frame_content %}
+  <form method="post" action="">
+    {% if is_topic_manager %}
+      {{ is_topic_manager.as_p }}
+    {% endif %}
+    <table cellspacing="10">
+      <colgroup/>
+      <colgroup>
+        <col span="3" align="center"/>
+      </colgroup>
+      <thead>
+        <tr>
+          <th/>
+          <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can add" %}</th>
+          <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can view all" %}</th>
+          <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can change permissions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for process, permissions in permissions_list %}
+          <tr>
+            <td>{{ process.name }}</td>
+            <td align="center">{{ permissions.can_add }}</td>
+            <td align="center">{{ permissions.can_view_all }}</td>
+            <td align="center">{{ permissions.can_edit_permissions }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="submit-button" style="clear: both"><input type="submit"/></p>
+  </form>
+{% endblock %}

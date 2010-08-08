@@ -28,7 +28,6 @@ from django.utils.translation import ugettext as _
 from functools import update_wrapper
 from django.template import Context, RequestContext
 from django.shortcuts import render_to_response
-import django.core.urlresolvers
 import chantal_common.utils
 from samples import models, permissions
 from samples.views.shared_utils import *

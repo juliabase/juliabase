@@ -27,7 +27,6 @@ from django.http import Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
-import django.core.urlresolvers
 import django.contrib.auth.models
 from django.forms import Form
 from django import forms

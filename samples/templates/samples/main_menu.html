@@ -134,6 +134,9 @@ copyright holder, you must destroy it immediately and completely.
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/key.png")'>
       <a href="{% url samples.views.user_details.topics_and_permissions login_name=user.username %}"
          >{% trans 'My topics and permissions' %}</a></li>
+    <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/webcam.png")'>
+      <a href="{% url samples.views.permissions.list_ %}"
+         >{% trans "Permissions to processes" %}</a></li>
     <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/shape_square_edit.png")'>
       <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
     {% if user.has_usable_password %}

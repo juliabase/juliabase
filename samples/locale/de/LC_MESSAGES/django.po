@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-05 14:05+0200\n"
-"PO-Revision-Date: 2010-08-06 18:09+0200\n"
+"POT-Creation-Date: 2010-08-08 22:21+0200\n"
+"PO-Revision-Date: 2010-08-08 22:22+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -177,7 +177,7 @@ msgid "topic"
 msgstr "Thema"
 
 #: models_common.py:561 models_common.py:718 models_common.py:796
-#: templates/samples/show_claim.html:40 views/sample_series.py:353
+#: templates/samples/show_claim.html:40 views/sample_series.py:352
 msgid "sample"
 msgstr "Probe"
 
@@ -299,8 +299,8 @@ msgstr "Beendigung der Existenz von {sample}"
 msgid "cease of existence #{number}"
 msgstr "Beendigung der Existenz #{number}"
 
-#: models_common.py:865 templates/samples/topics_and_permissions.html:77
-#: templates/samples/topics_and_permissions.html:90
+#: models_common.py:865 templates/samples/topics_and_permissions.html:79
+#: templates/samples/topics_and_permissions.html:92
 msgid "none"
 msgstr "keine"
 
@@ -412,6 +412,10 @@ msgstr "identifizierender Daten-Hash"
 #: models_common.py:1190 models_common.py:1191
 msgid "user details"
 msgstr "Benutzerdetails"
+
+#: models_common.py:1194
+msgid "Can edit permissions for all physical processes"
+msgstr "Darf die Berechtigungen für alle physikalischen Prozesse ändern"
 
 #: models_depositions.py:52
 msgid "deposition number"
@@ -680,11 +684,11 @@ msgstr "Jetzt in Thema „{name}“"
 msgid "Not anymore in topic “{name}”"
 msgstr "Nicht mehr in Thema „{name}“"
 
-#: permissions.py:203
+#: permissions.py:204
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
 
-#: permissions.py:224
+#: permissions.py:225
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor are you its currently responsible person."
@@ -692,7 +696,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher sind."
 
-#: permissions.py:228
+#: permissions.py:229
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor are you its currently responsible person, nor can you view all "
@@ -701,7 +705,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher sind, noch alle Proben sehen dürfen."
 
-#: permissions.py:252
+#: permissions.py:253
 msgid ""
 "You are not allowed to add {process_plural_name} because you don't have the "
 "permission “{permission}”."
@@ -709,7 +713,7 @@ msgstr ""
 "Sie dürfen keine {process_plural_name} hinzufügen, weil Sie nicht die "
 "Berechtigung „{permission}“ haben."
 
-#: permissions.py:280
+#: permissions.py:281
 msgid ""
 "You are not allowed to edit the process “{process}” because you are not the "
 "operator of this process."
@@ -717,7 +721,7 @@ msgstr ""
 "Sie dürfen den Prozess „{process}“ nicht ändern, weil Sie nicht der "
 "Operateur dieses Prozesses sind."
 
-#: permissions.py:335
+#: permissions.py:336
 msgid ""
 "You are not allowed to view lab notebooks for {process_plural_name} because "
 "you don't have the permission “{permission}”."
@@ -725,7 +729,7 @@ msgstr ""
 "Sie dürfen keine Laborbücher für {process_plural_name} einsehen, weil Sie "
 "nicht die Berechtigung „{permission}“ haben."
 
-#: permissions.py:371
+#: permissions.py:372
 msgid ""
 "You are not allowed to view the process “{process}” because neither you have "
 "the permission “{permission}”, nor you are allowed to view one of the "
@@ -735,7 +739,7 @@ msgstr ""
 "Berechtigung „{permission}“ haben, noch eine der beteiligten Proben sehen "
 "dürfen, noch eine Freigabe für diesen Prozess haben."
 
-#: permissions.py:393
+#: permissions.py:394
 msgid ""
 "You are not allowed to edit the result “{result}” because you didn't create "
 "this result."
@@ -743,7 +747,7 @@ msgstr ""
 "Sie dürfen das Resultat „{result}“ nicht ändern, weil Sie dieses Resultat "
 "nicht selbst angelegt haben."
 
-#: permissions.py:417
+#: permissions.py:418
 msgid ""
 "You are not allowed to view the result “{result}” because neither did you "
 "create this result, nor are you allowed to view its connected samples or "
@@ -753,7 +757,7 @@ msgstr ""
 "Urheber dieses Ergebnisses sind, noch eine der beteiligten Proben oder "
 "Probenserien sehen dürfen, noch eine Freigabe für dieses Ergebnis haben."
 
-#: permissions.py:441
+#: permissions.py:442
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
 "are you the currently responsible person for this sample, nor are you a "
@@ -763,7 +767,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probe sind, noch ein Mitglied ihres "
 "Themas."
 
-#: permissions.py:445
+#: permissions.py:446
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
 "are you the currently responsible person for this sample series, nor are you "
@@ -773,7 +777,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probenserie sind, noch ein Mitglied "
 "ihres Themas."
 
-#: permissions.py:465
+#: permissions.py:466
 msgid ""
 "You are not allowed to edit the sample “{name}” (including splitting and "
 "declaring dead) because you are not the currently responsible person for "
@@ -782,7 +786,7 @@ msgstr ""
 "Sie dürfen die Probe „{name}“ nicht ändern (inklusive spalten und für tot "
 "erklären), weil Sie nicht ihr aktuell Verantwortlicher sind."
 
-#: permissions.py:486
+#: permissions.py:487
 msgid ""
 "You are not allowed to edit the sample series “{name}” because you are not "
 "the currently responsible person for this sample series."
@@ -790,7 +794,7 @@ msgstr ""
 "Sie dürfen die Probenserie „{name}“ nicht ändern, weil Sie nicht ihr aktuell "
 "Verantwortlicher sind."
 
-#: permissions.py:507
+#: permissions.py:508
 msgid ""
 "You are not allowed to view the sample series “{name}” because neither are "
 "you the currently responsible person for it, nor are you in its topic."
@@ -798,7 +802,7 @@ msgstr ""
 "Sie dürfen die Probenserie {name} nicht sehen, weil Sie weder der aktuell "
 "Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themas."
 
-#: permissions.py:526
+#: permissions.py:527
 msgid ""
 "You are not allowed to add an external operator because you don't have the "
 "permission “{name}”."
@@ -806,7 +810,7 @@ msgstr ""
 "Sie dürfen keinen neuen externen Operateur anlegen, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: permissions.py:546
+#: permissions.py:547
 msgid ""
 "You are not allowed to edit this external operator because you aren't their "
 "current contact person."
@@ -814,7 +818,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht ändern, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: permissions.py:567
+#: permissions.py:568
 msgid ""
 "You are not allowed to view this external operator because you are not their "
 "current contact person."
@@ -822,7 +826,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht einsehen, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: permissions.py:571
+#: permissions.py:572
 msgid ""
 "You are not allowed to view this external operator because neither are you "
 "their current contact person, nor can you view all external operators."
@@ -831,7 +835,7 @@ msgstr ""
 "aktuelle Kontaktperson für ihn sind, noch alle externen Operateure sehen "
 "dürfen."
 
-#: permissions.py:595
+#: permissions.py:596
 msgid ""
 "You are not allowed to add or list topics because you don't have the "
 "permission “{name}”."
@@ -839,7 +843,7 @@ msgstr ""
 "Sie dürfen Themen nicht neu anlegen oder auflisten, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: permissions.py:601
+#: permissions.py:602
 msgid ""
 "You are not allowed to change this topic because you don't have the "
 "permission “{0}” or “{1}”."
@@ -847,7 +851,7 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{0}“ fehlt."
 
-#: permissions.py:607
+#: permissions.py:608
 msgid ""
 "You are not allowed to change this topic because you don't have the "
 "permission “{name}”."
@@ -855,14 +859,14 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: permissions.py:612
+#: permissions.py:613
 msgid ""
 "You are not allowed to change this topic because it is confidential and you "
 "are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
 
-#: permissions.py:641
+#: permissions.py:642
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
@@ -871,7 +875,7 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
-#: permissions.py:645
+#: permissions.py:646
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
@@ -1014,6 +1018,18 @@ msgstr "Fehler in „Meinem Layer“"
 #: templates/samples/edit_my_samples.html:23
 msgid "Error in “My Samples”"
 msgstr "Fehler in „Meine Proben“"
+
+#: templates/samples/edit_permissions.html:32
+msgid "can add"
+msgstr "darf hinzufügen"
+
+#: templates/samples/edit_permissions.html:33
+msgid "can view all"
+msgstr "darf alle sehen"
+
+#: templates/samples/edit_permissions.html:34
+msgid "can change permissions"
+msgstr "darf Berechtigungen ändern"
 
 #: templates/samples/edit_preferences.html:22
 msgid "Error in preferences"
@@ -1490,13 +1506,29 @@ msgstr "nächster Monat"
 msgid "Claims with you being the requester"
 msgstr "Ansprüche, die Sie beantragt haben"
 
-#: templates/samples/list_claims.html:28
+#: templates/samples/list_claims.html:29
 msgid "Assert a new claim to samples"
 msgstr "Einen neuen Anspruch auf Proben einreichen"
 
-#: templates/samples/list_claims.html:30
+#: templates/samples/list_claims.html:32
 msgid "Claims with you being the reviewer"
 msgstr "Ansprüche, die Sie überprüfen sollen"
+
+#: templates/samples/list_permissions.html:21
+msgid ""
+"People who can change permissions of users for the respective process are "
+"printed in bold."
+msgstr ""
+"Leute, die die Berechtigungen für Benutzer des jeweiligen Prozesses ändern "
+"dürfen, sind fett gedruckt."
+
+#: templates/samples/list_permissions.html:42
+msgid "The current topic managers are:"
+msgstr "Die momentanten Themenmanager sind:"
+
+#: templates/samples/list_permissions.html:52
+msgid "Change the permissions of:"
+msgstr "Berechtigungen ändern von:"
 
 #: templates/samples/list_topics.html:31
 msgid "No topics available."
@@ -1557,11 +1589,11 @@ msgid "Add things"
 msgstr "Dinge hinzufügen"
 
 #: templates/samples/main_menu.html:72 templates/samples/main_menu.html:84
-#: views/form_utils.py:546 views/result.py:105 views/sample_series.py:50
+#: views/form_utils.py:546 views/result.py:105 views/sample_series.py:49
 msgid "Samples"
 msgstr "Proben"
 
-#: templates/samples/main_menu.html:74 views/split_and_rename.py:67
+#: templates/samples/main_menu.html:74 views/split_and_rename.py:66
 msgid "Sample series"
 msgstr "Probenserie"
 
@@ -1621,27 +1653,31 @@ msgstr "Einstellungen ändern"
 msgid "My topics and permissions"
 msgstr "Meine Themen und Berechtigungen"
 
-#: templates/samples/main_menu.html:138
+#: templates/samples/main_menu.html:139 views/permissions.py:172
+msgid "Permissions to processes"
+msgstr "Berechtigungen für Prozesse"
+
+#: templates/samples/main_menu.html:141
 msgid "Edit “My Layers”"
 msgstr "„Meine Schichten“ ändern"
 
-#: templates/samples/main_menu.html:141
+#: templates/samples/main_menu.html:144
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/samples/main_menu.html:144
+#: templates/samples/main_menu.html:147
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:146
+#: templates/samples/main_menu.html:149
 msgid "Sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: templates/samples/main_menu.html:149
+#: templates/samples/main_menu.html:152
 msgid "About Chantal"
 msgstr "Über Chantal"
 
-#: templates/samples/main_menu.html:151
+#: templates/samples/main_menu.html:154
 msgid "Server statistics"
 msgstr "Server-Statistik"
 
@@ -1733,7 +1769,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      %(name)s möchte die neue “verantwortliche Person” für die folgenden Proben werden:\n"
+"      %(name)s möchte die neue “verantwortliche Person” für die folgenden "
+"Proben werden:\n"
 "    "
 
 #: templates/samples/show_external_operator.html:21
@@ -1884,7 +1921,7 @@ msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
 #: templates/samples/show_sample_series.html:49 views/sample.py:55
-#: views/sample_series.py:49
+#: views/sample_series.py:48
 msgid "Topic"
 msgstr "Thema"
 
@@ -2006,30 +2043,23 @@ msgstr ""
 "\n"
 "%(full_user_name)s ist in keinem Thema Mitglied."
 
-#: templates/samples/topics_and_permissions.html:37
-msgid ""
-"The head of your institute group is allowed to add you to further Chantal "
-"topics."
-msgstr ""
-"Der Leiter Ihrer Institutsgruppe ist berechtigt, Sie zu Themen hinzuzufügen."
-
-#: templates/samples/topics_and_permissions.html:40
+#: templates/samples/topics_and_permissions.html:38
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: templates/samples/topics_and_permissions.html:42
+#: templates/samples/topics_and_permissions.html:40
 msgid "General permissions"
 msgstr "Allgemeine Berechtigungen"
 
-#: templates/samples/topics_and_permissions.html:44
+#: templates/samples/topics_and_permissions.html:42
 msgid "(This is only a rough summary.)"
 msgstr "(Dies ist nur eine grobe Auflistung.)"
 
-#: templates/samples/topics_and_permissions.html:47
+#: templates/samples/topics_and_permissions.html:45
 msgid "You can add new samples and sample series"
 msgstr "Sie dürfen neue Proben und Probenserien anlegen"
 
-#: templates/samples/topics_and_permissions.html:48
+#: templates/samples/topics_and_permissions.html:46
 msgid ""
 "You can edit all samples and sample series that you are the currently "
 "responsible person for"
@@ -2037,32 +2067,42 @@ msgstr ""
 "Sie dürfen alle Proben und Probenserien ändern, für die Sie der aktuell "
 "Verantwortliche sind"
 
-#: templates/samples/topics_and_permissions.html:49
+#: templates/samples/topics_and_permissions.html:47
 msgid "You can view all samples of your topics"
 msgstr "Sie dürfen alle Proben Ihrer Themen sehen"
 
-#: templates/samples/topics_and_permissions.html:50
+#: templates/samples/topics_and_permissions.html:48
 msgid "You can add results to all samples and sample series of your topics"
 msgstr ""
 "Sie dürfen Resultate zu allen Proben und Probenserien Ihrer Themen hinzufügen"
 
-#: templates/samples/topics_and_permissions.html:51
+#: templates/samples/topics_and_permissions.html:49
 msgid "You can edit processes that you added"
 msgstr "Sie dürfen Prozesse, die Sie hinzugefügt haben, ändern"
 
-#: templates/samples/topics_and_permissions.html:55
+#: templates/samples/topics_and_permissions.html:53
 msgid "Special permissions"
 msgstr "Besondere Berechtigungen"
 
-#: templates/samples/topics_and_permissions.html:57
-msgid "Only the administrators can change the special permissions."
-msgstr "Nur die Administratoren dürfen die besonderen Berechtigungen ändern."
+#: templates/samples/topics_and_permissions.html:56
+#, python-format
+msgid ""
+"\n"
+"    Have also a look at the <a href=\"%(url)s\">permissions for processes</"
+"a> for further information about your permissions.\n"
+"  "
+msgstr ""
+"\n"
+"    Werfen Sie außerdem einen Blick auf die <a href=\"%(url)s"
+"\">Berechtigungen für Prozesse</a>, um weitere Informationen über Ihre "
+"Berechtigungen zu erhalten.\n"
+"  "
 
-#: templates/samples/topics_and_permissions.html:62
+#: templates/samples/topics_and_permissions.html:64
 msgid "special permissions that you have"
 msgstr "besondere Berechtigungen, die Sie haben"
 
-#: templates/samples/topics_and_permissions.html:63
+#: templates/samples/topics_and_permissions.html:65
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
 
@@ -2088,7 +2128,7 @@ msgstr "Datum unbekannt"
 msgid "Prefix"
 msgstr "Präfix"
 
-#: views/bulk_rename.py:57 views/split_after_deposition.py:46
+#: views/bulk_rename.py:57 views/split_after_deposition.py:45
 msgid "New name"
 msgstr "Neuer Name"
 
@@ -2096,13 +2136,13 @@ msgstr "Neuer Name"
 msgid "New name must be a valid “new-style” name."
 msgstr "Der neue Name muss ein gültiger Name der „neuen Art“ sein."
 
-#: views/bulk_rename.py:77 views/split_after_deposition.py:64
-#: views/split_after_deposition.py:335
+#: views/bulk_rename.py:77 views/split_after_deposition.py:63
+#: views/split_after_deposition.py:334
 msgid "This sample name exists already."
 msgstr "Dieser Probenname ist schon vergeben."
 
-#: views/bulk_rename.py:111 views/split_after_deposition.py:301
-#: views/split_after_deposition.py:326
+#: views/bulk_rename.py:111 views/split_after_deposition.py:300
+#: views/split_after_deposition.py:325
 msgid "This sample name has been used already on this page."
 msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
@@ -2149,7 +2189,9 @@ msgstr "Gewünschter Reviewer"
 
 #: views/claim.py:92
 msgid "You are not allowed to add a claim in another user's name."
-msgstr "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers erheben."
+msgstr ""
+"Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
+"erheben."
 
 #: views/claim.py:101
 msgid "Sample request from {requester}"
@@ -2414,7 +2456,7 @@ msgstr "Schicht-Bezeichnung"
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
 
-#: views/my_layers.py:42 views/split_and_rename.py:41
+#: views/my_layers.py:42 views/split_and_rename.py:40
 msgid "Delete"
 msgstr "Löschen"
 
@@ -2455,7 +2497,7 @@ msgstr "Neuer aktuell Verantwortlicher"
 msgid "New Topic"
 msgstr "Thema hinzufügen"
 
-#: views/my_samples.py:52 views/split_after_deposition.py:124
+#: views/my_samples.py:52 views/split_after_deposition.py:123
 msgid "New current location"
 msgstr "Neuer Probenort"
 
@@ -2527,6 +2569,18 @@ msgstr "Erfolgreich „Meine Proben“ verarbeitet."
 #: views/my_samples.py:282
 msgid "Edit “My Samples” of {user_name}"
 msgstr "„Meine Proben“ von {user_name} ändern"
+
+#: views/permissions.py:192
+msgid "Is topic manager"
+msgstr "Ist ein Themenmanager"
+
+#: views/permissions.py:249
+msgid "The permissions of {name} were successfully changed."
+msgstr "Die Berechtigungen von {name} wurden erfolgreich geändert."
+
+#: views/permissions.py:256
+msgid "Change permissions of {name}"
+msgstr "Die Berechtigungen von {name} ändern"
 
 #: views/remote_client.py:147
 msgid "Only the administrator can access this resource."
@@ -2602,11 +2656,11 @@ msgstr "Ergebnis „{title}“"
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
-#: views/sample.py:54 views/sample_series.py:48
+#: views/sample.py:54 views/sample_series.py:47
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
-#: views/sample.py:94 views/sample_series.py:226
+#: views/sample.py:94 views/sample_series.py:225
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
@@ -2679,97 +2733,97 @@ msgstr "Probe „{sample}“ wurde getötet."
 msgid "Kill sample “{sample}”"
 msgstr "Töten der Probe „{sample}“"
 
-#: views/sample_series.py:47
+#: views/sample_series.py:46
 msgid "Name"
 msgstr "Name"
 
-#: views/sample_series.py:192
+#: views/sample_series.py:191
 msgid "Sample series “{name}”"
 msgstr "Probenserie „{name}“"
 
-#: views/sample_series.py:267
+#: views/sample_series.py:266
 msgid "Sample series {name} was successfully updated in the database."
 msgstr "Die Probenserie {name} wurde erfolgreich in der Datenbank geändert."
 
-#: views/sample_series.py:277
+#: views/sample_series.py:276
 msgid "Edit sample series “{name}”"
 msgstr "Ändern der Probenserie „{name}“"
 
-#: views/sample_series.py:305
+#: views/sample_series.py:304
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: views/sample_series.py:308
+#: views/sample_series.py:307
 msgid "The name is {number} letter too long."
 msgid_plural "The name is {number} letters too long."
 msgstr[0] "Der Name ist {number} Buchstaben zu lang."
 msgstr[1] "Der Name ist {number} Buchstaben zu lang."
 
-#: views/sample_series.py:319
+#: views/sample_series.py:318
 msgid "Sample series {name} was successfully added to the database."
 msgstr "Die Probenserie {name} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/sample_series.py:324
+#: views/sample_series.py:323
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
-#: views/split_after_deposition.py:44
+#: views/split_after_deposition.py:43
 msgid "Old sample name"
 msgstr "Alter Probenname"
 
-#: views/split_after_deposition.py:47
+#: views/split_after_deposition.py:46
 msgid "Pieces"
 msgstr "Stücke"
 
-#: views/split_after_deposition.py:66
+#: views/split_after_deposition.py:65
 msgid "You must get rid of the provisional sample name."
 msgstr "Sie müssen den provisorischen Probennamen aufgeben."
 
-#: views/split_after_deposition.py:73
+#: views/split_after_deposition.py:72
 msgid "No sample with this name found."
 msgstr "Keine Probe dieses Namens gefunden."
 
-#: views/split_after_deposition.py:75
+#: views/split_after_deposition.py:74
 msgid "Alias is not unique."
 msgstr "Der Alias ist nicht eindeutig."
 
-#: views/split_after_deposition.py:80
+#: views/split_after_deposition.py:79
 msgid "No sample with this ID found."
 msgstr "Keine Probe mit dieser ID gefunden."
 
-#: views/split_after_deposition.py:82
+#: views/split_after_deposition.py:81
 msgid "Invalid ID format."
 msgstr "Ungültiges ID-Format."
 
-#: views/split_after_deposition.py:87
+#: views/split_after_deposition.py:86
 msgid "Must be at least 1."
 msgstr "Muss mindestens 1 sein."
 
-#: views/split_after_deposition.py:97
+#: views/split_after_deposition.py:96
 msgid "The new name must begin with the old name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
 
-#: views/split_after_deposition.py:101
+#: views/split_after_deposition.py:100
 msgid "The new name must begin with the deposition number."
 msgstr "Der neue Name muss er mit der Depositionsnummer beginnen."
 
-#: views/split_after_deposition.py:110 views/split_and_rename.py:39
+#: views/split_after_deposition.py:109 views/split_and_rename.py:38
 msgid "New sample name"
 msgstr "Neuer Probenname"
 
-#: views/split_after_deposition.py:125
+#: views/split_after_deposition.py:124
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
 
-#: views/split_after_deposition.py:286
+#: views/split_after_deposition.py:285
 msgid "Sample {sample} occurs multiple times."
 msgstr "Probe {sample} kommt mehrfach vor."
 
-#: views/split_after_deposition.py:292
+#: views/split_after_deposition.py:291
 msgid "Sample {sample} doesn't belong to this deposition."
 msgstr "Probe {sample} gehört nicht zu dieser Deposition."
 
-#: views/split_after_deposition.py:305
+#: views/split_after_deposition.py:304
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
@@ -2777,16 +2831,16 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-#: views/split_after_deposition.py:311
+#: views/split_after_deposition.py:310
 msgid "At least one sample of the original deposition is missing."
 msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
 
-#: views/split_after_deposition.py:321
+#: views/split_after_deposition.py:320
 msgid "If you don't split, you can't rename the single piece."
 msgstr ""
 "Wenn Sie nicht spalten, dürfen Sie das einzelne Stück nicht umbenennen."
 
-#: views/split_after_deposition.py:331
+#: views/split_after_deposition.py:330
 msgid ""
 "If you choose a deposition-style name, it must begin with the parent's new "
 "name."
@@ -2794,63 +2848,63 @@ msgstr ""
 "Wenn Sie einen Depositions-Probennamen wählen, muss er mit dem neuen Namen "
 "der Mutterprobe beginnen."
 
-#: views/split_after_deposition.py:446
+#: views/split_after_deposition.py:445
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
-#: views/split_after_deposition.py:451
+#: views/split_after_deposition.py:450
 msgid "Bulk sample rename for {deposition}"
 msgstr "Probenumbenennung für {deposition}"
 
-#: views/split_and_rename.py:40
+#: views/split_and_rename.py:39
 msgid "New sample purpose"
 msgstr "Neuer Probenzweck"
 
-#: views/split_and_rename.py:51
+#: views/split_and_rename.py:50
 msgid "The sample name has an invalid format."
 msgstr "Dieser Probenname hat ein ungültiges Format."
 
-#: views/split_and_rename.py:54
+#: views/split_and_rename.py:53
 msgid "The new sample name must start with the parent sample's name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
 
-#: views/split_and_rename.py:56
+#: views/split_and_rename.py:55
 msgid "Name does already exist in database."
 msgstr "Name existiert schon in der Datenbank."
 
-#: views/split_and_rename.py:65
+#: views/split_and_rename.py:64
 msgid "All pieces completely entered"
 msgstr "Alle Stücke vollständig eingegeben"
 
-#: views/split_and_rename.py:66
+#: views/split_and_rename.py:65
 msgid "Sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
 
-#: views/split_and_rename.py:189
+#: views/split_and_rename.py:188
 msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
 
-#: views/split_and_rename.py:193
+#: views/split_and_rename.py:192
 msgid "You must split into at least two pieces if the split is complete."
 msgstr ""
 "Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig "
 "ist."
 
-#: views/split_and_rename.py:200
+#: views/split_and_rename.py:199
 msgid "Name is already given."
 msgstr "Dieser Name ist schon vergeben."
 
-#: views/split_and_rename.py:295
+#: views/split_and_rename.py:294
 msgid "This split is not the last one in the sample's process list."
 msgstr ""
 "Dieser Split ist nicht der letzte Prozess, der auf die Probe angewendet "
 "wurde."
 
-#: views/split_and_rename.py:307
+#: views/split_and_rename.py:306
 msgid "Sample “{sample}” was successfully split."
 msgstr "Die Probe „{sample}“ wurde erfolgreich gespalten."
 
-#: views/split_and_rename.py:314
+#: views/split_and_rename.py:313
 msgid "Split sample “{sample}”"
 msgstr "Spalten der Probe „{sample}“"
 
@@ -2893,44 +2947,67 @@ msgstr ""
 msgid "Change topic memberships of “%s”"
 msgstr "Mitglieder des Themas “%s” ändern"
 
-#: views/user_details.py:104
+#: views/user_details.py:105
 msgid "You can't access the preferences of another user."
 msgstr ""
 "Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
 
-#: views/user_details.py:113
+#: views/user_details.py:114
 msgid "The preferences were successfully updated."
 msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
 
-#: views/user_details.py:119
+#: views/user_details.py:120
 msgid "Change preferences for {user_name}"
 msgstr "Ändere Einstellungen für {user_name}"
 
-#: views/user_details.py:130
+#: views/user_details.py:131
 msgid "You can't access the list of topics and permissions of another user."
 msgstr ""
 "Sie können nicht auf die Themenliste und die Berechtigungen eines anderen "
 "Benutzers zugreifen."
 
-#: views/user_details.py:133
+#: views/user_details.py:134
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
-#: views/utils.py:208
+#: views/utils.py:207
 msgid "Sample {name} could not be found (neither as an alias)."
 msgstr "Probe {name} konnte nicht gefunden werden (nicht mal als Aliasname)."
 
-#: views/utils.py:572
+#: views/utils.py:571
 msgid ", "
 msgstr ", "
 
-#: views/utils.py:572
+#: views/utils.py:571
 msgid ", and "
 msgstr " und "
 
-#: views/utils.py:574
+#: views/utils.py:573
 msgid " and "
 msgstr " und "
+
+#~ msgid "Permissions for processes"
+#~ msgstr "Berechtigungen für Prozesse"
+
+#~ msgid ""
+#~ "The head of your institute group is allowed to add you to further Chantal "
+#~ "topics."
+#~ msgstr ""
+#~ "Der Leiter Ihrer Institutsgruppe ist berechtigt, Sie zu Themen "
+#~ "hinzuzufügen."
+
+#~ msgid "Only the administrators can change the special permissions."
+#~ msgstr ""
+#~ "Nur die Administratoren dürfen die besonderen Berechtigungen ändern."
+
+#~ msgid "Can add"
+#~ msgstr "Darf hinzufügen"
+
+#~ msgid "Can view all"
+#~ msgstr "Darf alle sehen"
+
+#~ msgid "Can edit permissions"
+#~ msgstr "Darf Berechtigungen ändern"
 
 #~ msgid "approver"
 #~ msgstr "genehmigende Person"
