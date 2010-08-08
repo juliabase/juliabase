@@ -31,7 +31,7 @@ copyright holder, you must destroy it immediately and completely.
               {% else %}
                 <span>{{ user|get_really_full_name:"plain" }}</span>
               {% endif %}
-              {% if not forloop.last %}<span>, </span>{% endif %}
+              {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
             {% endspaceless %}
           {% endfor %}
         </td>
@@ -43,7 +43,7 @@ copyright holder, you must destroy it immediately and completely.
       {% for user in topic_managers %}
         {% spaceless %}
           <span>{{ user|get_really_full_name:"plain" }}</span>
-          {% if not forloop.last %}<span>, </span>{% endif %}
+          {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
         {% endspaceless %}
       {% endfor %}
     </p>
@@ -53,7 +53,7 @@ copyright holder, you must destroy it immediately and completely.
       {% for user in user_list %}
         {% spaceless %}
           <a href="{% url samples.views.permissions.edit username=user.username%}">{{ user|get_really_full_name:"plain" }}</a>
-          {% if not forloop.last %}<span>, </span>{% endif %}
+          {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
         {% endspaceless %}
       {% endfor %}
     </p>
