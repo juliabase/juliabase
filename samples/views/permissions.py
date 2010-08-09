@@ -129,13 +129,18 @@ class PhysicalProcess(object):
         self.full_viewers = sorted_users(full_viewers)
         self.all_users = sorted_users(set(adders) | set(permission_editors))
 
-physical_processes = [PhysicalProcess(process) for process in models.physical_process_models.values()]
-u"""A list with all registered physical processes.  Their type is of
-`PhysicalProcess`, which means that they contain information about the users
-who have permissions for that process.  It can organise this in a global
-variable because it is never changed, and new processes can't be added to
-Chantal while the program is running.
-"""
+
+def get_physical_processes():
+    u"""Return a list with all registered physical processes.  Their type is of
+    `PhysicalProcess`, which means that they contain information about the
+    users who have permissions for that process.
+
+    :Return:
+      all physical processes
+
+    :rtype: list of `PhysicalProcess`
+    """
+    return [PhysicalProcess(process) for process in models.physical_process_models.values()]
 
 
 @login_required
@@ -163,6 +168,7 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
+    physical_processes = get_physical_processes()
     user = request.user
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
@@ -191,6 +197,11 @@ class PermissionsForm(forms.Form):
     can_add = forms.BooleanField(label=u"Can add", required=False)
     can_view_all = forms.BooleanField(label=u"Can view all", required=False)
     can_edit_permissions = forms.BooleanField(label=u"Can edit permissions", required=False)
+
+    def clean(self):
+        if self.cleaned_data["can_edit_permissions"]:
+            self.cleaned_data["can_add"] = self.cleaned_data["can_view_all"] = True
+        return self.cleaned_data
 
 
 class IsTopicManagerForm(forms.Form):
@@ -225,6 +236,7 @@ def edit(request, username):
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
     can_appoint_topic_managers = user.has_perm("chantal_common.can_edit_all_topics")
+    physical_processes = get_physical_processes()
     permissions_list = []
     for process in physical_processes:
         if user in process.permission_editors or has_global_edit_permission:
