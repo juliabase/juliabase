@@ -77,6 +77,12 @@ class PhysicalProcess(object):
       of this process class.  Note that this excludes superusers, unless they
       have the distinctive permission.
 
+    :ivar all_users: All users who have the permission to add such processes,
+      plus those who can change permissions (because they can give them the
+      right to add processes anyway).  This is used to the overview table to
+      show all users of a process.  Note that this excludes superusers, unless
+      they have the distinctive permissions.
+
     :cvar topic_manager_permission: the permission instance for changing
       memberships in own topics
 
@@ -88,10 +94,12 @@ class PhysicalProcess(object):
     :type permission_editors: ``QuerySet``
     :type adders: ``QuerySet``
     :type full_viewers: ``QuerySet``
+    :type all_users: ``QuerySet``
     :type topic_manager_permission: ``django.contrib.auth.models.Permission``
     """
 
     topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics")
+    add_external_operators_permission = Permission.objects.get(codename="add_external_operator")
 
     def __init__(self, physical_process_class):
         u"""
@@ -105,28 +113,46 @@ class PhysicalProcess(object):
         self.name = physical_process_class._meta.verbose_name_plural
         self.codename = physical_process_class.__name__
         substitutions = {"process_name": utils.camel_case_to_underscores(physical_process_class.__name__)}
-        self.edit_permissions_permission = \
-            Permission.objects.get(codename="edit_permissions_for_{process_name}".format(**substitutions))
-        self.add_permission = Permission.objects.get(codename="add_{process_name}".format(**substitutions))
-        self.view_all_permission = Permission.objects.get(codename="view_every_{process_name}".format(**substitutions))
+        try:
+            self.edit_permissions_permission = \
+                Permission.objects.get(codename="edit_permissions_for_{process_name}".format(**substitutions))
+        except Permission.DoesNotExist:
+            self.edit_permissions_permission = None
+        try:
+            self.add_permission = Permission.objects.get(codename="add_{process_name}".format(**substitutions))
+        except Permission.DoesNotExist:
+            self.add_permission = None
+        try:
+            self.view_all_permission = Permission.objects.get(codename="view_every_{process_name}".format(**substitutions))
+        except Permission.DoesNotExist:
+            self.view_all_permission = None
         base_query = User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
         permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
-                                               Q(user_permissions=self.edit_permissions_permission)).distinct()
+                                               Q(user_permissions=self.edit_permissions_permission)).distinct() \
+                                               if self.edit_permissions_permission else []
         adders = base_query.filter(Q(groups__permissions=self.add_permission) |
-                                   Q(user_permissions=self.add_permission)).distinct()
+                                   Q(user_permissions=self.add_permission)).distinct() \
+                                   if self.add_permission else []
         full_viewers = base_query.filter(Q(groups__permissions=self.view_all_permission) |
-                                         Q(user_permissions=self.view_all_permission)).distinct()
+                                         Q(user_permissions=self.view_all_permission)).distinct() \
+                                   if self.view_all_permission else []
         self.permission_editors = sorted_users(permission_editors)
         self.adders = sorted_users(adders)
         self.full_viewers = sorted_users(full_viewers)
+        self.all_users = sorted_users(set(adders) | set(permission_editors))
 
-physical_processes = [PhysicalProcess(process) for process in models.physical_process_models.values()]
-u"""A list with all registered physical processes.  Their type is of
-`PhysicalProcess`, which means that they contain information about the users
-who have permissions for that process.  It can organise this in a global
-variable because it is never changed, and new processes can't be added to
-Chantal while the program is running.
-"""
+
+def get_physical_processes():
+    u"""Return a list with all registered physical processes.  Their type is of
+    `PhysicalProcess`, which means that they contain information about the
+    users who have permissions for that process.
+
+    :Return:
+      all physical processes
+
+    :rtype: list of `PhysicalProcess`
+    """
+    return [PhysicalProcess(process) for process in models.physical_process_models.values()]
 
 
 @login_required
@@ -154,6 +180,7 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
+    physical_processes = get_physical_processes()
     user = request.user
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
@@ -182,6 +209,28 @@ class PermissionsForm(forms.Form):
     can_add = forms.BooleanField(label=u"Can add", required=False)
     can_view_all = forms.BooleanField(label=u"Can view all", required=False)
     can_edit_permissions = forms.BooleanField(label=u"Can edit permissions", required=False)
+
+    def __init__(self, edited_user, process, *args, **kwargs):
+        kwargs["initial"] = {"can_add": edited_user in process.adders,
+                             "can_view_all": edited_user in process.full_viewers,
+                             "can_edit_permissions": edited_user in process.permission_editors}
+        super(PermissionsForm, self).__init__(*args, **kwargs)
+        if not process.add_permission:
+            self.fields["can_add"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+        if not process.view_all_permission:
+            self.fields["can_view_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+        if not process.edit_permissions_permission:
+            self.fields["can_edit_permissions"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+
+    def clean(self):
+        u"""Note that I don't check whether disabled fields were set
+        nevertheless.  This means tampering but it is ignored in the view
+        function anyway.  Moreover, superfluous values in the POST request are
+        always ignored.
+        """
+        if self.cleaned_data["can_edit_permissions"]:
+            self.cleaned_data["can_add"] = self.cleaned_data["can_view_all"] = True
+        return self.cleaned_data
 
 
 class IsTopicManagerForm(forms.Form):
@@ -216,41 +265,43 @@ def edit(request, username):
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
     can_appoint_topic_managers = user.has_perm("chantal_common.can_edit_all_topics")
+    physical_processes = get_physical_processes()
     permissions_list = []
     for process in physical_processes:
-        if user in process.permission_editors or has_global_edit_permission:
-            if request.method == "POST":
-                permissions_list.append((process, PermissionsForm(request.POST, prefix=process.codename)))
-            else:
-                permissions_list.append((process, PermissionsForm(
-                            initial={"can_add": edited_user in process.adders,
-                                     "can_view_all": edited_user in process.full_viewers,
-                                     "can_edit_permissions": edited_user in process.permission_editors},
-                            prefix=process.codename)))
+        if process.add_permission or process.view_all_permission or process.edit_permissions_permission:
+            if user in process.permission_editors or has_global_edit_permission:
+                if request.method == "POST":
+                    permissions_list.append((process, PermissionsForm(edited_user, process, request.POST,
+                                                                      prefix=process.codename)))
+                else:
+                    permissions_list.append((process, PermissionsForm(edited_user, process, prefix=process.codename)))
     if request.method == "POST":
         is_topic_manager_form = IsTopicManagerForm(request.POST)
         if all(permission[1].is_valid() for permission in permissions_list) and is_topic_manager_form.is_valid():
             for process, permissions_form in permissions_list:
                 cleaned_data = permissions_form.cleaned_data
                 def process_permission(form_key, attribute_name, permission):
-                    if cleaned_data[form_key]:
-                        if edited_user not in getattr(process, attribute_name):
-                            edited_user.user_permissions.add(permission)
-                    else:
-                        if edited_user in getattr(process, attribute_name):
-                            edited_user.user_permissions.remove(permission)
+                    if permission:
+                        if cleaned_data[form_key]:
+                            if edited_user not in getattr(process, attribute_name):
+                                edited_user.user_permissions.add(permission)
+                        else:
+                            if edited_user in getattr(process, attribute_name):
+                                edited_user.user_permissions.remove(permission)
                 process_permission("can_add", "adders", process.add_permission)
                 process_permission("can_view_all", "full_viewers", process.view_all_permission)
                 process_permission("can_edit_permissions", "permission_editors", process.edit_permissions_permission)
             if is_topic_manager_form.cleaned_data["is_topic_manager"]:
                 edited_user.user_permissions.add(PhysicalProcess.topic_manager_permission)
+                edited_user.user_permissions.add(PhysicalProcess.add_external_operators_permission)
             else:
                 edited_user.user_permissions.remove(PhysicalProcess.topic_manager_permission)
+                edited_user.user_permissions.remove(PhysicalProcess.add_external_operators_permission)
             return utils.successful_response(request, _(u"The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
     else:
         is_topic_manager_form = IsTopicManagerForm(
-            initial={"is_topic_manager": edited_user.has_perm("chantal_common.can_edit_their_topics")})
+            initial={"is_topic_manager": PhysicalProcess.topic_manager_permission in edited_user.user_permissions.all()})
     return render_to_response(
         "samples/edit_permissions.html",
         {"title": _(u"Change permissions of {name}").format(name=get_really_full_name(edited_user)),

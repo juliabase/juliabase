@@ -21,21 +21,23 @@ copyright holder, you must destroy it immediately and completely.
   <p>{% trans "People who can change permissions of users for the respective process are printed in bold." %}</p>
   <table cellpadding="10" border="1">
     {% for process in physical_processes %}
-      <tr style="vertical-align: top">
-        <td>{{ process.name }}</td>
-        <td>
-          {% for user in process.adders %}
-            {% spaceless %}
-              {% if user in process.permission_editors %}
-                <strong>{{ user|get_really_full_name:"plain" }}</strong>
-              {% else %}
-                <span>{{ user|get_really_full_name:"plain" }}</span>
-              {% endif %}
-              {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
-            {% endspaceless %}
-          {% endfor %}
-        </td>
-      </tr>
+      {% if process.add_permission or process.edit_permissions_permission %}
+        <tr style="vertical-align: top">
+          <td>{{ process.name }}</td>
+          <td>
+            {% for user in process.all_users %}
+              {% spaceless %}
+                {% if user in process.permission_editors %}
+                  <strong>{{ user|get_really_full_name:"plain" }}</strong>
+                {% else %}
+                  <span>{{ user|get_really_full_name:"plain" }}</span>
+                {% endif %}
+                {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
+              {% endspaceless %}
+            {% endfor %}
+          </td>
+        </tr>
+      {% endif %}
     {% endfor %}
   </table>
   {% if topic_managers %}
