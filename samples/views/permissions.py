@@ -113,17 +113,29 @@ class PhysicalProcess(object):
         self.name = physical_process_class._meta.verbose_name_plural
         self.codename = physical_process_class.__name__
         substitutions = {"process_name": utils.camel_case_to_underscores(physical_process_class.__name__)}
-        self.edit_permissions_permission = \
-            Permission.objects.get(codename="edit_permissions_for_{process_name}".format(**substitutions))
-        self.add_permission = Permission.objects.get(codename="add_{process_name}".format(**substitutions))
-        self.view_all_permission = Permission.objects.get(codename="view_every_{process_name}".format(**substitutions))
+        try:
+            self.edit_permissions_permission = \
+                Permission.objects.get(codename="edit_permissions_for_{process_name}".format(**substitutions))
+        except Permission.DoesNotExist:
+            self.edit_permissions_permission = None
+        try:
+            self.add_permission = Permission.objects.get(codename="add_{process_name}".format(**substitutions))
+        except Permission.DoesNotExist:
+            self.add_permission = None
+        try:
+            self.view_all_permission = Permission.objects.get(codename="view_every_{process_name}".format(**substitutions))
+        except Permission.DoesNotExist:
+            self.view_all_permission = None
         base_query = User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
         permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
-                                               Q(user_permissions=self.edit_permissions_permission)).distinct()
+                                               Q(user_permissions=self.edit_permissions_permission)).distinct() \
+                                               if self.edit_permissions_permission else []
         adders = base_query.filter(Q(groups__permissions=self.add_permission) |
-                                   Q(user_permissions=self.add_permission)).distinct()
+                                   Q(user_permissions=self.add_permission)).distinct() \
+                                   if self.add_permission else []
         full_viewers = base_query.filter(Q(groups__permissions=self.view_all_permission) |
-                                         Q(user_permissions=self.view_all_permission)).distinct()
+                                         Q(user_permissions=self.view_all_permission)).distinct() \
+                                   if self.view_all_permission else []
         self.permission_editors = sorted_users(permission_editors)
         self.adders = sorted_users(adders)
         self.full_viewers = sorted_users(full_viewers)
@@ -198,7 +210,24 @@ class PermissionsForm(forms.Form):
     can_view_all = forms.BooleanField(label=u"Can view all", required=False)
     can_edit_permissions = forms.BooleanField(label=u"Can edit permissions", required=False)
 
+    def __init__(self, edited_user, process, *args, **kwargs):
+        kwargs["initial"] = {"can_add": edited_user in process.adders,
+                             "can_view_all": edited_user in process.full_viewers,
+                             "can_edit_permissions": edited_user in process.permission_editors}
+        super(PermissionsForm, self).__init__(*args, **kwargs)
+        if not process.add_permission:
+            self.fields["can_add"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+        if not process.view_all_permission:
+            self.fields["can_view_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+        if not process.edit_permissions_permission:
+            self.fields["can_edit_permissions"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+
     def clean(self):
+        u"""Note that I don't check whether disabled fields were set
+        nevertheless.  This means tampering but it is ignored in the view
+        function anyway.  Moreover, superfluous values in the POST request are
+        always ignored.
+        """
         if self.cleaned_data["can_edit_permissions"]:
             self.cleaned_data["can_add"] = self.cleaned_data["can_view_all"] = True
         return self.cleaned_data
@@ -239,27 +268,26 @@ def edit(request, username):
     physical_processes = get_physical_processes()
     permissions_list = []
     for process in physical_processes:
-        if user in process.permission_editors or has_global_edit_permission:
-            if request.method == "POST":
-                permissions_list.append((process, PermissionsForm(request.POST, prefix=process.codename)))
-            else:
-                permissions_list.append((process, PermissionsForm(
-                            initial={"can_add": edited_user in process.adders,
-                                     "can_view_all": edited_user in process.full_viewers,
-                                     "can_edit_permissions": edited_user in process.permission_editors},
-                            prefix=process.codename)))
+        if process.add_permission or process.view_all_permission or process.edit_permissions_permission:
+            if user in process.permission_editors or has_global_edit_permission:
+                if request.method == "POST":
+                    permissions_list.append((process, PermissionsForm(edited_user, process, request.POST,
+                                                                      prefix=process.codename)))
+                else:
+                    permissions_list.append((process, PermissionsForm(edited_user, process, prefix=process.codename)))
     if request.method == "POST":
         is_topic_manager_form = IsTopicManagerForm(request.POST)
         if all(permission[1].is_valid() for permission in permissions_list) and is_topic_manager_form.is_valid():
             for process, permissions_form in permissions_list:
                 cleaned_data = permissions_form.cleaned_data
                 def process_permission(form_key, attribute_name, permission):
-                    if cleaned_data[form_key]:
-                        if edited_user not in getattr(process, attribute_name):
-                            edited_user.user_permissions.add(permission)
-                    else:
-                        if edited_user in getattr(process, attribute_name):
-                            edited_user.user_permissions.remove(permission)
+                    if permission:
+                        if cleaned_data[form_key]:
+                            if edited_user not in getattr(process, attribute_name):
+                                edited_user.user_permissions.add(permission)
+                        else:
+                            if edited_user in getattr(process, attribute_name):
+                                edited_user.user_permissions.remove(permission)
                 process_permission("can_add", "adders", process.add_permission)
                 process_permission("can_view_all", "full_viewers", process.view_all_permission)
                 process_permission("can_edit_permissions", "permission_editors", process.edit_permissions_permission)
