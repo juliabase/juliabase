@@ -99,6 +99,7 @@ class PhysicalProcess(object):
     """
 
     topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics")
+    add_external_operators_permission = Permission.objects.get(codename="add_external_operator")
 
     def __init__(self, physical_process_class):
         u"""
@@ -252,13 +253,15 @@ def edit(request, username):
                 process_permission("can_edit_permissions", "permission_editors", process.edit_permissions_permission)
             if is_topic_manager_form.cleaned_data["is_topic_manager"]:
                 edited_user.user_permissions.add(PhysicalProcess.topic_manager_permission)
+                edited_user.user_permissions.add(PhysicalProcess.add_external_operators_permission)
             else:
                 edited_user.user_permissions.remove(PhysicalProcess.topic_manager_permission)
+                edited_user.user_permissions.remove(PhysicalProcess.add_external_operators_permission)
             return utils.successful_response(request, _(u"The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
     else:
         is_topic_manager_form = IsTopicManagerForm(
-            initial={"is_topic_manager": edited_user.has_perm("chantal_common.can_edit_their_topics")})
+            initial={"is_topic_manager": PhysicalProcess.topic_manager_permission in edited_user.user_permissions.all()})
     return render_to_response(
         "samples/edit_permissions.html",
         {"title": _(u"Change permissions of {name}").format(name=get_really_full_name(edited_user)),
