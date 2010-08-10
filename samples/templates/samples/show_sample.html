@@ -106,8 +106,9 @@ copyright holder, you must destroy it immediately and completely.
         {% endwith %}
       {% endwith %}
       <form method="post" action="">
-        {{ sample.is_my_sample_form.as_p }}
-        <p class="submit-button"><input type="submit"/></p>
+        <table>
+          <tr><td>{{ sample.is_my_sample_form.as_p }}</td><td><p class="submit-button"><input type="submit"/></p></td></tr>
+        </table>
       </form>
     {% endif %}
 
