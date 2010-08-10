@@ -279,7 +279,7 @@ def assert_can_edit_physical_process(user, process):
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     else:
-        has_permission = True
+        has_add_permission = True
     if (not has_add_permission or process.operator != user) and not user.is_superuser:
         description = _(u"You are not allowed to edit the process “{process}” because you are not the operator "
                         u"of this process.").format(process=process)
