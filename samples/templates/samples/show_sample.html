@@ -20,129 +20,129 @@ copyright holder, you must destroy it immediately and completely.
 {% block content_title %}{% endblock %}
 
 {% block frame_content %}
-  <form method="post" action="">
-      {% for sample_start, sample, process in samples_and_processes %}
-        {% if sample_start %}
-          {% spaceless %}<h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
-          {% for alias in sample.sample.aliases.all %}
-            alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
-               href="{% url samples.views.sample.edit sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                              ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
-            {% if sample.id_for_rename %}<a class="edit-icon"
-               href="{% url samples.views.bulk_rename.bulk_rename %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                                ><img src="{{ MEDIA_URL }}chantal/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
+  {% for sample_start, sample, process in samples_and_processes %}
+    {% if sample_start %}
+      {% spaceless %}<h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
+      {% for alias in sample.sample.aliases.all %}
+        alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
+           href="{% url samples.views.sample.edit sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+                          ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+        {% if sample.id_for_rename %}<a class="edit-icon"
+           href="{% url samples.views.bulk_rename.bulk_rename %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+                            ><img src="{{ MEDIA_URL }}chantal/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
+        {% endif %}
+      {% endif %}
+      {% if sample.can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.sample.name %}"
+                                 ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add-process icon"
+                                       title="{% trans 'add process' %}"/></a>{% endif %} 
+      {% if not sample.clearance %}<a class="edit-icon" 
+         href="{% url samples.views.sample.export sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+         ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon"
+               title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
+
+      <div class="screen-only" style="float: right"><a 
+              href="http://chart.apis.google.com/chart?chs=116x116&amp;cht=qr&amp;chl={{ sample.sample.id }}&amp;chld=H"><img
+              alt="{% trans 'QR Code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a></div>
+      {% if sample.clearance %}
+        <p style="color: red">
+          {% trans "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
+        </p>
+      {% endif %}
+      {% with sample.clearance as clearance %}
+        {% with sample.sample as sample %}
+          <table>
+            <tr>
+              {% value_field sample.currently_responsible_person "user" %}
+            </tr>
+            {% if not clearance %}
+              <tr>
+              {% if sample.topic %}
+                {% value_field sample.topic %}
+              {% else %}
+                <td class="label">{% verbose_name Sample.topic %}:</td>
+                <td class="value">— <span style="color: red; font-weight: normal; margin-left: 1em"
+                                          >({% trans 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
+              {% endif %}
+              </tr>
             {% endif %}
-          {% endif %}
-          {% if sample.can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.sample.name %}"
-                                     ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add-process icon"
-                                           title="{% trans 'add process' %}"/></a>{% endif %} 
-          {% if not sample.clearance %}<a class="edit-icon" 
-             href="{% url samples.views.sample.export sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-             ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon"
-                   title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
+            {% if sample.tags and not clearance %}
+              <tr>
+                {% value_field sample.tags %}
+              </tr>
+            {% endif %}
+            {% if sample.purpose and not clearance %}
+              <tr>
+                {% value_field sample.purpose %}
+              </tr>
+            {% endif %}
+            <tr>
+              {% value_field sample.current_location %}
+            </tr>
+          </table>
 
-          <div class="screen-only" style="float: right"><a 
-                  href="http://chart.apis.google.com/chart?chs=116x116&amp;cht=qr&amp;chl={{ sample.sample.id }}&amp;chld=H"><img
-                  alt="{% trans 'QR Code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a></div>
-          {% if sample.clearance %}
-            <p style="color: red">
-              {% trans "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
-            </p>
-          {% endif %}
-          {% with sample.clearance as clearance %}
-            {% with sample.sample as sample %}
-              <table>
-                <tr>
-                  {% value_field sample.currently_responsible_person "user" %}
-                </tr>
-                {% if not clearance %}
-                  <tr>
-                  {% if sample.topic %}
-                    {% value_field sample.topic %}
-                  {% else %}
-                    <td class="label">{% verbose_name Sample.topic %}:</td>
-                    <td class="value">— <span style="color: red; font-weight: normal; margin-left: 1em"
-                                              >({% trans 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
-                  {% endif %}
-                  </tr>
-                {% endif %}
-                {% if sample.tags and not clearance %}
-                  <tr>
-                    {% value_field sample.tags %}
-                  </tr>
-                {% endif %}
-                {% if sample.purpose and not clearance %}
-                  <tr>
-                    {% value_field sample.purpose %}
-                  </tr>
-                {% endif %}
-                <tr>
-                  {% value_field sample.current_location %}
-                </tr>
-              </table>
+          {% if not clearance %}
+            {% with sample.series.count as number_of_sample_series %}
+              {% with sample.series.all as sample_serieses %}
+                {% if number_of_sample_series %}
+                  <p>
+                    {% blocktrans count number_of_sample_series as counter and sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
+                      This sample is part of the sample series “<a href="{{ first_url }}">{{ first_series }}”</a>.
+                    {% plural %}
+                      This sample is part of the following sample series:  <!-- {{ first_url }}  {{ first_series }} -->
+                    {% endblocktrans %}
+                  </p>
 
-              {% if not clearance %}
-                {% with sample.series.count as number_of_sample_series %}
-                  {% with sample.series.all as sample_serieses %}
-                    {% if number_of_sample_series %}
-                      <p>
-                        {% blocktrans count number_of_sample_series as counter and sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
-                          This sample is part of the sample series “<a href="{{ first_url }}">{{ first_series }}”</a>.
-                        {% plural %}
-                          This sample is part of the following sample series:  <!-- {{ first_url }}  {{ first_series }} -->
-                        {% endblocktrans %}
-                      </p>
-
-                      {% ifnotequal number_of_sample_series 1 %}
-                        <ul class="sample-series-list">
-                          {% for sample_series in sample_serieses %}
-                            <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series }}</a></li>
-                          {% endfor %}
-                        </ul>
-                      {% endifnotequal %}
-                    {% endif %}
-                  {% endwith %}
-                {% endwith %}
-              {% endif %}
+                  {% ifnotequal number_of_sample_series 1 %}
+                    <ul class="sample-series-list">
+                      {% for sample_series in sample_serieses %}
+                        <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endifnotequal %}
+                {% endif %}
+              {% endwith %}
             {% endwith %}
-          {% endwith %}
-          {{ sample.is_my_sample_form.as_p }}
-        {% endif %}
+          {% endif %}
+        {% endwith %}
+      {% endwith %}
+      <form method="post" action="">
+        {{ sample.is_my_sample_form.as_p }}
+        <p class="submit-button"><input type="submit"/></p>
+      </form>
+    {% endif %}
 
-        {% if process %}
-          <div class="process">
-            <p class="operator_and_timestamp">
-              {% if process.operator|should_show %}
-                {% spaceless %}
-                  {% if sample.clearance %}
-                    {{ process.operator|get_safe_operator_name }}
-                  {% else %}
-                    {{ process.operator|get_really_full_name }}
-                  {% endif %}
-                {% endspaceless %},
-              {% endif %}
-              {{ process|timestamp }}
-            </p>
+    {% if process %}
+      <div class="process">
+        <p class="operator_and_timestamp">
+          {% if process.operator|should_show %}
             {% spaceless %}
-              <h2>
-                {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
-                                                 href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                   ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
-                {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
-                   ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"/></a>
-                {% endif %}{% if process.export_url %}<a class="edit-icon" 
-                        href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                   ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
-                {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
-                                              href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                   ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
-                {% endif %}
-              </h2>
-            {% endspaceless %}
-            {{ process.html_body }}
-          </div>
-        {% endif %}
-      {% endfor %}
-    <p class="submit-button" style="margin-top: 0pt"><input type="submit"/></p>
-  </form>
+              {% if sample.clearance %}
+                {{ process.operator|get_safe_operator_name }}
+              {% else %}
+                {{ process.operator|get_really_full_name }}
+              {% endif %}
+            {% endspaceless %},
+          {% endif %}
+          {{ process|timestamp }}
+        </p>
+        {% spaceless %}
+          <h2>
+            {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
+                                             href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+            {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"/></a>
+            {% endif %}{% if process.export_url %}<a class="edit-icon" 
+                    href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
+            {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
+                                          href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
+            {% endif %}
+          </h2>
+        {% endspaceless %}
+        {{ process.html_body }}
+      </div>
+    {% endif %}
+  {% endfor %}
 {% endblock %}
