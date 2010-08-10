@@ -328,9 +328,7 @@ def send_email(subject, content, recipients, format_dict=None):
     current_language = translation.get_language()
     if not isinstance(recipients, list):
         recipients = [recipients]
-    # FixMe: This `` or True`` is only a precaution as long as Chantal isn't
-    # rolled-out
-    if settings.DEBUG or True:
+    if settings.DEBUG:
         recipients = list(django.contrib.auth.models.User.objects.filter(username=settings.DEBUG_EMAIL_REDIRECT_USERNAME))
     for recipient in recipients:
         translation.activate(recipient.chantal_user_details.language)
