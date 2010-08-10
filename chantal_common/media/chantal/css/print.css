@@ -15,7 +15,7 @@ copyright holder, you must destroy it immediately and completely.
 
 table.headbar { display: none }
 
-.screen-only { display: none }
+.screen-only, .submit-button { display: none }
 
 div.main { margin: 0pt }
 div.outer-frame, div.inner-frame { border: none}
