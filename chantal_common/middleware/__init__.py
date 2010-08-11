@@ -99,9 +99,12 @@ class MessageMiddleware(object):
             if unstored_messages and settings.DEBUG:
                 raise ValueError('Not all temporary messages could be stored.')
             if request._messages.used:
-                add_never_cache_headers(response)
-#                response["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
-#                response["Pragma"] = "no-cache"
-#                response["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, private"
+                del response["ETag"]
+                del response["Last-Modified"]
+                response["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+                # FixMe: One should check whether the following settings are
+                # sensible.
+                response["Pragma"] = "no-cache"
+                response["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, private"
 
         return response
