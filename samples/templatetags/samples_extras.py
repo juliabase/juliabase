@@ -97,14 +97,6 @@ def should_show(operator):
     return not isinstance(operator, django.contrib.auth.models.User) or not operator.chantal_user_details.is_administrative
 
 
-@register.filter
-def three_digits(number):
-    u"""Filter for padding an integer with zeros so that it has at least three
-    digits.
-    """
-    return mark_safe(u"{0:03}".format(number))
-
-
 class VerboseNameNode(template.Node):
     u"""Helper class for the tag `verbose_name`.  While `verbose_name` does the
     parsing, this class does the actual processing.
@@ -202,26 +194,6 @@ def get_safe_operator_name(user, autoescape=False):
                 "samples.views.user_details.show_user", kwargs={"login_name": user.contact_person.username}), name))
 
 get_safe_operator_name.needs_autoescape = True
-
-
-@register.filter
-def calculate_silane_concentration(value):
-    u"""Filter for calculating the silane concentration for a large-area
-    deposition layer from the silane and hydrogen fluxes.
-    """
-    silane = float(value.sih4) * 0.6
-    hydrogen = float(value.h2)
-    if silane + hydrogen == 0:
-        return None
-    calculate_sc = lambda s: 100 * s / (s + hydrogen)
-    sc = calculate_sc(silane)
-    if not value.sih4_end:
-        # Cheap way to cut the digits
-        return float(u"{0:5.2f}".format(sc))
-    else:
-        silane_max = float(value.sih4_end) * 0.6
-        sc_max = calculate_sc(silane_max)
-        return float(u"{0:5.2f}".format(sc)), float(u"{0:5.2f}".format(sc_max))
 
 
 timestamp_formats = (u"%Y-%m-%d %H:%M:%S",

@@ -81,23 +81,6 @@ def camel_case_to_underscores(name):
     return "".join(result)
 
 
-def three_digits(number):
-    u"""
-    :Parameters:
-      - `number`: the number of the deposition (only the number after the
-        deposition system letter)
-
-    :type number: int
-
-    :Return:
-      The number filled with leading zeros so that it has at least three
-      digits.
-
-    :rtype: unicode
-    """
-    return u"{0:03}".format(number)
-
-
 quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
                                         ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 def normalize_legacy_sample_name(sample_name):
