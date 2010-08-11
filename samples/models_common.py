@@ -1021,7 +1021,7 @@ class Result(Process):
             context["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
         else:
-            context.pop("edit_url", None)
+            context["edit_url"] = None
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
