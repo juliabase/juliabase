@@ -339,7 +339,7 @@ class ValueFieldNode(template.Node):
         else:
             unit = self.unit
         return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
-            label=verbose_name, value=field if unit is None else quantity(field, unit))
+            label=verbose_name, value=escape(field) if unit is None else quantity(field, unit))
 
 
 @register.tag
