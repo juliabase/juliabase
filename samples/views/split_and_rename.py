@@ -291,7 +291,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         parent = old_split.parent
         permissions.assert_can_edit_sample(request.user, parent)
         if parent.last_process_if_split() != old_split:
-            raise Http404(_(u"This split is not the last one in the sample's process list."))
+            raise Http404(u"This split is not the last one in the sample's process list.")
     user_details = request.user.samples_user_details
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
     if request.method == "POST":

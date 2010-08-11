@@ -187,7 +187,7 @@ def list_(request):
     """
     external_operators = list(request.user.external_contacts.all())
     if not external_operators:
-        raise Http404(_("You have no external contacts."))
+        raise Http404("You have no external contacts.")
     return render_to_response("samples/list_external_operators.html",
                               {"title": _(u"All you external contacts"), "external_operators": external_operators},
                               context_instance=RequestContext(request))
