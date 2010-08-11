@@ -22,6 +22,7 @@ from __future__ import absolute_import
 
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 
@@ -71,4 +72,5 @@ def default(request):
                                        )
     else:
         result["translation_flags"] = ()
+    result["default_home_url"] = settings.LOGIN_REDIRECT_URL
     return result
