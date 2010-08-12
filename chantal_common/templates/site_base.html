@@ -21,7 +21,9 @@ copyright holder, you must destroy it immediately and completely.
 {% block css %}{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
-<body>
+<!-- FixMe: This Javascript slows down page loading at least in Firefox.  We
+must switch to a JQuery solution sometime. -->
+<body onload="x = document.getElementsByTagName('input')[0]; if (x.type == 'text') x.focus();">
   {% block content %}{% endblock %}
 </body>
 </html>
