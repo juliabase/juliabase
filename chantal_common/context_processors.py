@@ -22,6 +22,7 @@ from __future__ import absolute_import
 
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
+from django.conf import settings
 from django.utils.translation import ugettext as _
 
 
@@ -60,15 +61,16 @@ def default(request):
             url += "?lang={0}&next=".format(language_code)
             url += urlquote_plus(request.path + old_query_string)
             return url
-        rosetta_url = "https://translations.launchpad.net/chantal/trunk/+lang/{0}"
+        trac_url = "https://chantal.ipv.kfa-juelich.de/trac/wiki/TranslateChantal"
         result["translation_flags"] = (("de", _(u"German"), get_language_url("de")),
                                        ("en", _(u"English"), get_language_url("en")),
-                                       ("zh_CN", _(u"Chinese"), rosetta_url.format("zh_CN")),
-                                       ("uk", _(u"Ukrainian"), rosetta_url.format("uk")),
-                                       ("ru", _(u"Russian"), rosetta_url.format("ru")),
-                                       ("fr", _(u"French"), rosetta_url.format("fr")),
-                                       ("nl", _(u"Dutch"), rosetta_url.format("nl")),
+                                       ("zh_CN", _(u"Chinese"), trac_url),
+                                       ("uk", _(u"Ukrainian"), trac_url),
+                                       ("ru", _(u"Russian"), trac_url),
+                                       ("fr", _(u"French"), trac_url),
+                                       ("nl", _(u"Dutch"), trac_url),
                                        )
     else:
         result["translation_flags"] = ()
+    result["default_home_url"] = settings.LOGIN_REDIRECT_URL
     return result
