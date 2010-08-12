@@ -327,7 +327,7 @@ class ValueFieldNode(template.Node):
             field = chantal_common.templatetags.chantal.fancy_bool(field)
             unit = None
         elif self.unit == "user":
-            field = get_really_full_name(field)
+            field = get_really_full_name(field, autoescape=True)
             unit = None
         elif self.unit == "sccm_collapse":
             if not field:
@@ -339,7 +339,7 @@ class ValueFieldNode(template.Node):
         else:
             unit = self.unit
         return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
-            label=verbose_name, value=escape(field) if unit is None else quantity(field, unit))
+            label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
 
 @register.tag
