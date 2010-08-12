@@ -694,21 +694,21 @@ def search(request):
     base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
                                               Q(currently_responsible_person=request.user) |
                                               Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
+    search_samples_form = SearchSamplesForm(request.GET)
+    if search_samples_form.is_valid():
+        # FixMe: Currently, if you add samples to “My Samples”, the search
+        # results must not change because otherwise, only those are added
+        # that are also found by the new search (search and adding happens
+        # at the sample time).  Thus, instead of using the primary keys of
+        # all found samples to find the prefixes, the routine should
+        # collect all prefixes from ``request.POST``.  Then nothing can be
+        # missed.
+        found_samples = base_query.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
+        too_many_results = found_samples.count() > max_results
+        found_samples = found_samples[:max_results] if too_many_results else found_samples
+    else:
+        found_samples = []
     if request.method == "POST":
-        search_samples_form = SearchSamplesForm(request.POST)
-        if search_samples_form.is_valid():
-            # FixMe: Currently, if you add samples to “My Samples”, the search
-            # results must not change because otherwise, only those are added
-            # that are also found by the new search (search and adding happens
-            # at the sample time).  Thus, instead of using the primary keys of
-            # all found samples to find the prefixes, the routine should
-            # collect all prefixes from ``request.POST``.  Then nothing can be
-            # missed.
-            found_samples = base_query.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
-            too_many_results = found_samples.count() > max_results
-            found_samples = found_samples[:max_results] if too_many_results else found_samples
-        else:
-            found_samples = []
         my_samples = request.user.my_samples.all()
         add_to_my_samples_forms = [AddToMySamplesForm(request.POST, prefix=str(sample.pk))
                                    if sample not in my_samples else None for sample in found_samples]
@@ -726,7 +726,6 @@ def search(request):
                 new_forms.append(add_to_my_samples_form)
         add_to_my_samples_forms = new_forms
     else:
-        search_samples_form = SearchSamplesForm()
         add_to_my_samples_forms = [AddToMySamplesForm(sample, prefix=str(sample.pk)) if sample not in my_samples else None
                                    for sample in found_samples]
     return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),

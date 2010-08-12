@@ -17,11 +17,12 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="get" action="">
   <table>
     {{ search_samples }}
   </table>
-
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
   <p>
     {% if too_many_results %}
       {% blocktrans %}
@@ -30,6 +31,7 @@ copyright holder, you must destroy it immediately and completely.
     {% endif %}
   </p>
 
+<form method="post" action="">
   <ul class="sample-list">
     {% for sample, add_to_my_samples in found_samples %}
       <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
