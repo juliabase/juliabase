@@ -204,7 +204,7 @@ def lookup_sample(sample_name, user, with_clearance=False):
         sample_name = "*{0:05}".format(int(match.group("id")))
     sample = get_sample(sample_name)
     if not sample:
-        raise Http404(_(u"Sample {name} could not be found (neither as an alias).").format(name=sample_name))
+        raise Http404(u"Sample {name} could not be found (neither as an alias).".format(name=sample_name))
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
     if with_clearance:

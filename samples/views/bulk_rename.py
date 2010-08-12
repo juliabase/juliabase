@@ -150,11 +150,11 @@ def bulk_rename(request):
         ids = request.GET["ids"].split(",")
         samples = [get_object_or_404(models.Sample, pk=utils.int_or_zero(id_)) for id_ in ids]
         if not all(utils.sample_name_format(sample.name) in ["old", "provisional"] for sample in samples):
-            raise Http404(_(u"Some given samples not found amongst those with old-style names."))
+            raise Http404(u"Some given samples not found amongst those with old-style names.")
     else:
         samples = None
     if not samples:
-        raise Http404(_(u"No samples given."))
+        raise Http404(u"No samples given.")
     for sample in samples:
         permissions.assert_can_edit_sample(request.user, sample)
     for external_operator in request.user.external_contacts.all():

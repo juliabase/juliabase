@@ -22,7 +22,7 @@ import datetime, time
 import xml.etree.ElementTree as ElementTree
 import django.contrib.auth.models
 from django.template import Context, loader
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
