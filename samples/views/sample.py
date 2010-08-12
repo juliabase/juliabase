@@ -708,8 +708,8 @@ def search(request):
         found_samples = found_samples[:max_results] if too_many_results else found_samples
     else:
         found_samples = []
+    my_samples = request.user.my_samples.all()
     if request.method == "POST":
-        my_samples = request.user.my_samples.all()
         add_to_my_samples_forms = [AddToMySamplesForm(request.POST, prefix=str(sample.pk))
                                    if sample not in my_samples else None for sample in found_samples]
         new_forms = []
