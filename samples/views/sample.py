@@ -663,7 +663,7 @@ class SearchSamplesForm(forms.Form):
     substring for looking for samples.
     """
     _ = ugettext_lazy
-    name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30)
+    name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30, required=False)
 
 
 class AddToMySamplesForm(forms.Form):
@@ -695,39 +695,21 @@ def search(request):
                                               Q(currently_responsible_person=request.user) |
                                               Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
     search_samples_form = SearchSamplesForm(request.GET)
+    found_samples = []
     if search_samples_form.is_valid():
-        # FixMe: Currently, if you add samples to “My Samples”, the search
-        # results must not change because otherwise, only those are added
-        # that are also found by the new search (search and adding happens
-        # at the sample time).  Thus, instead of using the primary keys of
-        # all found samples to find the prefixes, the routine should
-        # collect all prefixes from ``request.POST``.  Then nothing can be
-        # missed.
-        found_samples = base_query.filter(name__icontains=search_samples_form.cleaned_data["name_pattern"])
-        too_many_results = found_samples.count() > max_results
-        found_samples = found_samples[:max_results] if too_many_results else found_samples
-    else:
-        found_samples = []
+        name_pattern = search_samples_form.cleaned_data["name_pattern"]
+        if name_pattern:
+            found_samples = base_query.filter(name__icontains=name_pattern)
+            too_many_results = found_samples.count() > max_results
+            found_samples = found_samples[:max_results] if too_many_results else found_samples
     my_samples = request.user.my_samples.all()
     if request.method == "POST":
-        add_to_my_samples_forms = [AddToMySamplesForm(request.POST, prefix=str(sample.pk))
-                                   if sample not in my_samples else None for sample in found_samples]
-        new_forms = []
-        for add_to_my_samples_form in add_to_my_samples_forms:
-            if add_to_my_samples_form and add_to_my_samples_form.is_valid() and \
-                    add_to_my_samples_form.cleaned_data["add_to_my_samples"]:
-                try:
-                    found_sample = base_query.filter(pk=int(add_to_my_samples_form.prefix))[0]
-                except IndexError:
-                    raise Http404("Sample not found.")
-                request.user.my_samples.add(found_sample)
-                new_forms.append(None)
-            else:
-                new_forms.append(add_to_my_samples_form)
-        add_to_my_samples_forms = new_forms
-    else:
-        add_to_my_samples_forms = [AddToMySamplesForm(sample, prefix=str(sample.pk)) if sample not in my_samples else None
-                                   for sample in found_samples]
+        sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
+                         if value == u"on")
+        samples = base_query.in_bulk(sample_ids)
+        request.user.my_samples.add(*samples.values())
+    add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
+                               for sample in found_samples]
     return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
                                                               "search_samples": search_samples_form,
                                                               "found_samples": zip(found_samples, add_to_my_samples_forms),
