@@ -136,7 +136,7 @@ class SearchDepositionsForm(forms.Form):
     the deposition number are matched.
     """
     _ = ugettext_lazy
-    number_pattern = forms.CharField(label=_(u"Deposition number pattern"), max_length=30)
+    number_pattern = forms.CharField(label=_(u"Deposition number pattern"), max_length=30, required=False)
 
 
 max_results = 50
@@ -149,7 +149,7 @@ def deposition_search(request):
     possibly with logical operators between the search criteria.
 
     Note this this view is used for both getting the search request from the
-    user *and* displaying the search results.
+    user *and* displaying the search results.  It supports only the GET method.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -163,16 +163,14 @@ def deposition_search(request):
     """
     found_depositions = []
     too_many_results = False
-    if request.method == "POST":
-        search_depositions_form = SearchDepositionsForm(request.POST)
-        if search_depositions_form.is_valid():
-            found_depositions = \
-                models.Deposition.objects.filter(number__icontains=search_depositions_form.cleaned_data["number_pattern"])
+    search_depositions_form = SearchDepositionsForm(request.GET)
+    if search_depositions_form.is_valid():
+        number_pattern = search_depositions_form.cleaned_data["number_pattern"]
+        if number_pattern:
+            found_depositions = models.Deposition.objects.filter(number__icontains=number_pattern)
             too_many_results = found_depositions.count() > max_results
             found_depositions = found_depositions[:max_results] if too_many_results else found_depositions
             found_depositions = [deposition.actual_instance for deposition in found_depositions]
-    else:
-        search_depositions_form = SearchDepositionsForm()
     return render_to_response("samples/search_depositions.html", {"title": _(u"Search for deposition"),
                                                                   "search_depositions": search_depositions_form,
                                                                   "found_depositions": found_depositions,
