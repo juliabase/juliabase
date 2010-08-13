@@ -165,11 +165,12 @@ def deposition_search(request):
     too_many_results = False
     search_depositions_form = SearchDepositionsForm(request.GET)
     if search_depositions_form.is_valid():
-        found_depositions = \
-            models.Deposition.objects.filter(number__icontains=search_depositions_form.cleaned_data["number_pattern"])
-        too_many_results = found_depositions.count() > max_results
-        found_depositions = found_depositions[:max_results] if too_many_results else found_depositions
-        found_depositions = [deposition.actual_instance for deposition in found_depositions]
+        number_pattern = search_depositions_form.cleaned_data["number_pattern"]
+        if number_pattern:
+            found_depositions = models.Deposition.objects.filter(number__icontains=number_pattern)
+            too_many_results = found_depositions.count() > max_results
+            found_depositions = found_depositions[:max_results] if too_many_results else found_depositions
+            found_depositions = [deposition.actual_instance for deposition in found_depositions]
     return render_to_response("samples/search_depositions.html", {"title": _(u"Search for deposition"),
                                                                   "search_depositions": search_depositions_form,
                                                                   "found_depositions": found_depositions,
