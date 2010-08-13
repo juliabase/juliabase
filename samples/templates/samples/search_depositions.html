@@ -16,11 +16,11 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="get" action="">
   <table>
     {{ search_depositions }}
   </table>
-  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+  <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
 </form>
 
 {% if too_many_results %}
@@ -31,10 +31,14 @@ copyright holder, you must destroy it immediately and completely.
   </p>
 {% endif %}
 
-<ul>
-  {% for deposition in found_depositions %}
-    <li><a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a></li>
-  {% endfor %}
-</ul>
+{% if found_depositions %}
+  <ul>
+    {% for deposition in found_depositions %}
+      <li><a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+   <p>{% trans 'Nothing found.' %}</p>
+{% endif %}
 
 {% endblock %}

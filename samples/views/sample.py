@@ -679,6 +679,11 @@ def search(request):
     confidential topic, unless the user is a member in that topic, its
     currently responsible person, or you have a clearance for the sample.
 
+    A POST request on this URL will add samples to the “My Samples” list.
+    *All* search parameters are in the query string, so if you just want to
+    search, this is a GET requets.  Therefore, this view has two submit
+    buttons.
+
     :Parameters:
       - `request`: the current HTTP Request object
 
