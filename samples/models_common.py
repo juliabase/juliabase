@@ -696,6 +696,9 @@ class Sample(models.Model):
         """
         _ = ugettext
         csv_node = CSVNode(self, unicode(self))
+        if self.split_origin:
+            ancestor_data = self.split_origin.parent.get_data()
+            csv_node.children.extend(ancestor_data.children)
         csv_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't

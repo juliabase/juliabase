@@ -319,14 +319,17 @@ class Column(object):
         :type row: dict mapping unicode to dict mapping unicode to unicode
 
         :Return:
-          the cell value of this column in the given row; the empty string if
-          the respective column group is not available for the given row
+          The cell value of this column in the given row; the empty string if
+          the respective column group is not available for the given row.  It
+          also returns the empty string if the column itself is not available
+          (this may happen for result processes which may contain different
+          columns).
 
         :rtype: unicode
         """
         for column_group_name in self.column_group_names:
             if column_group_name in row:
-                return row[column_group_name][self.key]
+                return row[column_group_name].get(self.key, u"")
         return u""
 
 
@@ -586,6 +589,9 @@ def export(request, data, label_column_heading, renaming_offset=1):
     export view.  This is not a view per se, however, it is called by views,
     which have to do almost nothing anymore by themselves.  See for example
     `sample.export`.
+
+    This function return the data in JSON format if this is requested by the
+    ``Accept`` header field in the HTTP request.
 
     :Parameters:
       - `request`: the current HTTP Request object
