@@ -107,8 +107,9 @@ strightforward).
 
 from __future__ import absolute_import
 
-import csv, cStringIO, codecs, copy
+import csv, cStringIO, codecs, copy, json
 from django.template import RequestContext
+import django.core.urlresolvers
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import django.forms as forms
@@ -117,7 +118,7 @@ from django.template import defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
 from samples.csv_common import CSVNode
-import django.core.urlresolvers
+from chantal_common import mimeparse
 
 
 class UnicodeWriter(object):
@@ -613,6 +614,7 @@ def export(request, data, label_column_heading, renaming_offset=1):
         root_without_children.descriptive_name = None
         data.children = [root_without_children]
     get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
+    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", ""))
     data.find_unambiguous_names(renaming_offset)
     column_groups, columns = build_column_group_list(data)
     single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
@@ -644,11 +646,16 @@ def export(request, data, label_column_heading, renaming_offset=1):
             if all_switch_row_forms_valid and \
                     previous_column_groups == selected_column_groups and previous_columns == selected_columns:
                 reduced_table = [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
-                response = HttpResponse(content_type="text/csv; charset=utf-8")
-                response['Content-Disposition'] = \
-                    "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
-                writer = UnicodeWriter(response)
-                writer.writerows(reduced_table)
+                if requested_mime_type == "application/json":
+                    response = HttpResponse(content_type="application/json; charset=ascii")
+                    json.dump([dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
+                               for row in reduced_table[1:]], response)
+                else:
+                    response = HttpResponse(content_type="text/csv; charset=utf-8")
+                    response['Content-Disposition'] = \
+                        "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
+                    writer = UnicodeWriter(response)
+                    writer.writerows(reduced_table)
                 return response
     if selected_column_groups != previous_column_groups:
         columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
