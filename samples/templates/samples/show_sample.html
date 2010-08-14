@@ -26,22 +26,25 @@ copyright holder, you must destroy it immediately and completely.
       {% for alias in sample.sample.aliases.all %}
         alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
            href="{% url samples.views.sample.edit sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                          ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+                          ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
+                                width="16" height="16"/></a>
         {% if sample.id_for_rename %}<a class="edit-icon"
            href="{% url samples.views.bulk_rename.bulk_rename %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                            ><img src="{{ MEDIA_URL }}chantal/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"/></a>
+    ><img src="{{ MEDIA_URL }}chantal/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"
+          width="16" height="16"/></a>
         {% endif %}
       {% endif %}
       {% if sample.can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.sample.name %}"
                                  ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add-process icon"
-                                       title="{% trans 'add process' %}"/></a>{% endif %} 
+                                       title="{% trans 'add process' %}" width="16" height="16"/></a>{% endif %} 
       {% if not sample.clearance %}<a class="edit-icon" 
          href="{% url samples.views.sample.export sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-         ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon"
+         ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" width="16" height="16"
                title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
 
       <div class="screen-only" style="float: right"><a 
-              href="http://chart.apis.google.com/chart?chs=116x116&amp;cht=qr&amp;chl={{ sample.sample.id }}&amp;chld=H"><img
+              href="http://chart.apis.google.com/chart?chs=116x116&amp;cht=qr&amp;chl={{ sample.sample.id }}&amp;chld=H"
+                                                       ><img width="40" height="40"
               alt="{% trans 'QR Code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a></div>
       {% if sample.clearance %}
         <p style="color: red">
@@ -135,15 +138,19 @@ copyright holder, you must destroy it immediately and completely.
           <h2>
             {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
                                              href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"/></a>
+               ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
+                     width="16" height="16"/></a>
             {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"/></a>
+               ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
+                     width="16" height="16"/></a>
             {% endif %}{% if process.export_url %}<a class="edit-icon" 
                     href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"/></a>
+               ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
+                     width="16" height="16"/></a>
             {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
-                                          href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"/></a>
+                     href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
+                     width="16" height="16"/></a>
             {% endif %}
           </h2>
         {% endspaceless %}

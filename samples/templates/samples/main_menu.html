@@ -21,7 +21,8 @@ copyright holder, you must destroy it immediately and completely.
     <div class="my-samples">
       <h2>{% trans 'My Samples' %}<a class="edit-icon" 
                              href="{% url samples.views.my_samples.edit username=user.username %}"
-                             ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"/></a></h2>
+                             ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
+                                   width="16" height="16"/></a></h2>
 
       {% if topicless_samples %}
         <ul class="sample-list">
@@ -33,7 +34,8 @@ copyright holder, you must destroy it immediately and completely.
       <div class="my-samples-topics">
         {% for topic in my_topics %}
 
-          <h3><img src="{{ MEDIA_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em"/>{{ topic.topic_name }}</h3>
+          <h3><img src="{{ MEDIA_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em"
+                   width="16" height="16"/>{{ topic.topic_name }}</h3>
 
           {% if topic.samples %}
             <ul class="sample-list">
@@ -46,7 +48,8 @@ copyright holder, you must destroy it immediately and completely.
           <div class="my-samples-series">
             {% for series in topic.sample_series %}
 
-              <h4><img src="{{ MEDIA_URL }}chantal/icons/chart_organisation.png" alt="sample series icon" style="margin-right: 0.5em"
+              <h4><img src="{{ MEDIA_URL }}chantal/icons/chart_organisation.png" alt="sample series icon"
+                       style="margin-right: 0.5em" width="16" height="16"
                        /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
 
               {% if not series.is_complete %}
