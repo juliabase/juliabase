@@ -82,11 +82,38 @@ class CSVNode(object):
         """
         names = [child.name for child in self.children]
         for i, child in enumerate(self.children):
-            if renaming_offset <= 0:
+            if renaming_offset < 1:
                 if names.count(child.name) > 1:
                     child.name += u" #{0}".format(names[:i].count(child.name) + 1)
-                child.name = self.name + ", " + child.name
+                if renaming_offset < 0:
+                    child.name = self.name + ", " + child.name
             child.find_unambiguous_names(renaming_offset - 1)
+
+    def complete_items_in_children(self):
+        u"""Assures that all direct children of the same kind also have the
+        same items.  This is interesting for kinds of nodes which don't have a
+        strict set of items.  An example are result processes: The user is
+        completely free which items he gives them.  This irritates
+        ``build_column_group_list``, however.  It takes the *first* node of a
+        certain ``name`` (for example ``"Nice result"``) and transforms its
+        items to table columns.
+
+        But what if the second ``"Nice result"`` for the same sample has other
+        items?  This shouldn't happen certainly, but it will.  Here, we add
+        the missing items (with empty strings as value).
+
+        This is not optimal for performance reasons.  But it is much easier
+        than to train ``build_column_group_list`` to handle it.
+        """
+        item_cache = {}
+        keys = {}
+        for child in self.children:
+            item_cache[child] = set((item.key, item.origin) for item in child.items)
+            keys[child.name] = keys.setdefault(child.name, set()).union(item_cache[child])
+        for child in self.children:
+            missing_items = keys[child.name] - item_cache[child]
+            for key, origin in missing_items:
+                child.items.append(CSVItem(key, u"", origin))
 
     def __repr__(self):
         return repr(self.name)
