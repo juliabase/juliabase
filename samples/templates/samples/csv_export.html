@@ -18,7 +18,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="get" action="">
 
   {% if column_groups %}
     <table style="float: left">
@@ -90,6 +90,9 @@ copyright holder, you must destroy it immediately and completely.
         </tr>
       {% endfor %}
     </table>
+  {% endif %}
+  {% if backlink %}
+    <input type="text" name="next" value="{{ backlink }}" style="display: none"/>
   {% endif %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

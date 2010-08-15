@@ -107,8 +107,9 @@ strightforward).
 
 from __future__ import absolute_import
 
-import csv, cStringIO, codecs, copy
+import csv, cStringIO, codecs, copy, json
 from django.template import RequestContext
+import django.core.urlresolvers
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import django.forms as forms
@@ -117,7 +118,7 @@ from django.template import defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
 from samples.csv_common import CSVNode
-import django.core.urlresolvers
+from chantal_common import mimeparse
 
 
 class UnicodeWriter(object):
@@ -580,25 +581,24 @@ class SwitchRowForm(forms.Form):
     active = forms.BooleanField(required=False)
 
 
-def export(request, data, label_column_heading, renaming_offset=1):
+def export(request, data, label_column_heading):
     u"""Helper function which does almost all work needed for a CSV table
     export view.  This is not a view per se, however, it is called by views,
     which have to do almost nothing anymore by themselves.  See for example
     `sample.export`.
+
+    This function return the data in JSON format if this is requested by the
+    ``Accept`` header field in the HTTP request.
 
     :Parameters:
       - `request`: the current HTTP Request object
       - `data`: the root node of the data tree
       - `label_column_heading`: Description of the very first column with the
         table row headings, see `generate_table_rows`.
-      - `renaming_offset`: number of the nesting levels in the tree still to be
-        stepped down from the root node before disambiguation of the node names
-        takes place.
 
     :type request: ``HttpRequest``
     :type data: `CSVNode`
     :type label_column_heading: unicode
-    :type renaming_offset: int
 
     :Returns:
       the HTTP response object
@@ -612,55 +612,58 @@ def export(request, data, label_column_heading, renaming_offset=1):
         # Remove the label column (the zeroth column)
         root_without_children.descriptive_name = None
         data.children = [root_without_children]
-    data.find_unambiguous_names(renaming_offset)
+    get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
+    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", ""))
+    data.find_unambiguous_names()
+    data.complete_items_in_children()
     column_groups, columns = build_column_group_list(data)
     single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
     table = None
     selected_column_groups = set(single_column_group)
     selected_columns = set()
-    if request.method == "POST":
-        column_groups_form = ColumnGroupsForm(column_groups, request.POST) if not single_column_group else None
-        previous_data_form = OldDataForm(request.POST)
-        if previous_data_form.is_valid():
-            previous_column_groups = previous_data_form.cleaned_data["column_groups"]
-            previous_columns = previous_data_form.cleaned_data["columns"]
-        else:
-            previous_column_groups = previous_columns = frozenset()
-        columns_form = ColumnsForm(column_groups, columns, previous_column_groups, request.POST)
-        if single_column_group or column_groups_form.is_valid():
-            selected_column_groups = single_column_group or column_groups_form.cleaned_data["column_groups"]
-            if columns_form.is_valid():
-                selected_columns = columns_form.cleaned_data["columns"]
-                label_column = [row.descriptive_name for row in data.children]
-                table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["columns"],
-                                            label_column, label_column_heading)
-                start_column_index = 1 if any(label_column) else 0
-                if not(previous_columns) and selected_columns:
-                    switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[start_column_index:])})
-                                        for i, row in enumerate(table)]
+    column_groups_form = ColumnGroupsForm(column_groups, get_data) if not single_column_group else None
+    previous_data_form = OldDataForm(get_data)
+    if previous_data_form.is_valid():
+        previous_column_groups = previous_data_form.cleaned_data["column_groups"]
+        previous_columns = previous_data_form.cleaned_data["columns"]
+    else:
+        previous_column_groups = previous_columns = frozenset()
+    columns_form = ColumnsForm(column_groups, columns, previous_column_groups, get_data)
+    if single_column_group or column_groups_form.is_valid():
+        selected_column_groups = single_column_group or column_groups_form.cleaned_data["column_groups"]
+        if columns_form.is_valid():
+            selected_columns = columns_form.cleaned_data["columns"]
+            label_column = [row.descriptive_name for row in data.children]
+            table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["columns"],
+                                        label_column, label_column_heading)
+            start_column_index = 1 if any(label_column) else 0
+            if not(previous_columns) and selected_columns:
+                switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[start_column_index:])})
+                                    for i, row in enumerate(table)]
+            else:
+                switch_row_forms = [SwitchRowForm(get_data, prefix=str(i)) for i in range(len(table))]
+            all_switch_row_forms_valid = all([switch_row_form.is_valid() for switch_row_form in switch_row_forms])
+            if all_switch_row_forms_valid and \
+                    previous_column_groups == selected_column_groups and previous_columns == selected_columns:
+                reduced_table = [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
+                if requested_mime_type == "application/json":
+                    response = HttpResponse(content_type="application/json; charset=ascii")
+                    json.dump([dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
+                               for row in reduced_table[1:]], response)
                 else:
-                    switch_row_forms = [SwitchRowForm(request.POST, prefix=str(i)) for i in range(len(table))]
-                all_switch_row_forms_valid = all([switch_row_form.is_valid() for switch_row_form in switch_row_forms])
-                if all_switch_row_forms_valid and \
-                        previous_column_groups == selected_column_groups and previous_columns == selected_columns:
-                    reduced_table = \
-                        [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \
                         "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
                     writer = UnicodeWriter(response)
                     writer.writerows(reduced_table)
-                    return response
-        if selected_column_groups != previous_column_groups:
-            columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
-    else:
-        column_groups_form = ColumnGroupsForm(column_groups) if not single_column_group else None
-        columns_form = ColumnsForm(column_groups, columns, single_column_group)
+                return response
+    if selected_column_groups != previous_column_groups:
+        columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
     return render_to_response("samples/csv_export.html", {"title": title, "column_groups": column_groups_form,
                                                           "columns": columns_form,
                                                           "rows": zip(table, switch_row_forms) if table else None,
                                                           "old_data": old_data_form,
-                                                          "backlink": utils.parse_query_string(request).get("next")},
+                                                          "backlink": request.GET.get("next", "")},
                               context_instance=RequestContext(request))

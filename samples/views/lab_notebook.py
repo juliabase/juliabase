@@ -206,4 +206,4 @@ def export(request, process_name, year_and_month):
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
     data = process_class.get_lab_notebook_data(year, month)
-    return csv_export.export(request, data, _(u"process"), renaming_offset=2)
+    return csv_export.export(request, data, _(u"process"))

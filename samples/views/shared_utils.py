@@ -29,8 +29,6 @@ its copy there.
 from __future__ import absolute_import
 
 import re, string, codecs, os, os.path
-import cPickle as pickle
-import base64
 
 
 def int_or_zero(number):
@@ -108,49 +106,6 @@ def normalize_legacy_sample_name(sample_name):
     parts["number"] = int(parts["number"])
     parts["letter"] = parts["letter"].upper()
     return u"{year}{letter}-{number:03}{suffix}".format(**parts)
-
-
-def ascii_pickle(python_object):
-    u"""Converts an arbitrary Python object to an ASCII-only string to be
-    written to the database.  Unfortunately, even protocol 0 of Python's
-    ``pickle`` module may emit non-ASCII characters, see
-    <http://bugs.python.org/issue2980>.  However, this is dangerous since the
-    database expects Unicode strings and can't decode such octet strings.
-    Therefore, this routine does another encoding step using base64.  This
-    makes debugging slightly more difficult, but there we go.
-
-    :Parameters:
-      - `python_object`: the object instance to be pickled
-
-    :type python_object: object
-
-    :Return:
-      the ASCII-only string representing the object instance
-
-    :rtype: str
-    """
-    # FixMe: Maybe instead of base64 another encoder should be used that keeps
-    # the string largely readable.
-    #
-    # Note that any change to this routine must be changed in
-    # ``chantal_remote.py``, too.
-    return base64.b64encode(pickle.dumps(python_object, protocol=2))
-
-
-def ascii_unpickle(string):
-    u"""This is the inverse function of `ascii_pickle`.
-
-    :Parameters:
-      - `string`: the ASCII-only database string to be unpickled
-
-    :type string: str
-
-    :Return:
-      the original Python object instance that was represented by the string
-
-    :rtype: object
-    """
-    return pickle.loads(base64.b64decode(string))
 
 
 class PlotError(Exception):
