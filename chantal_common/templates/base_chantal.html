@@ -34,7 +34,7 @@ copyright holder, you must destroy it immediately and completely.
           <a href="{{ translation_flag.2 }}"
              ><img src="{{ MEDIA_URL }}chantal/flags/{{ translation_flag.0 }}.png"
                    alt="{% blocktrans with translation_flag.1 as language %}switch to {{ language }}{% endblocktrans %}" 
-                   /></a>
+                   width="16" height="11"/></a>
         {% endfor %}
       </td>
       <td class="login-data">
@@ -43,20 +43,22 @@ copyright holder, you must destroy it immediately and completely.
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
           {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
           <a href="/"
-             ><img src="{{ MEDIA_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"/></a>
+             ><img src="{{ MEDIA_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
+                   width="16" height="16"/></a>
           <a href="/trac/newticket?reporter={{ user.email|urlquote_plus }}"
                ><img src="{{ MEDIA_URL }}chantal/icons/bug_add.png" alt="add-bug icon" 
-                     title="{% trans 'Report feature wish or bug' %}"/></a>
-          {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img 
+                     title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
+          {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
              src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
-          <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ MEDIA_URL }}chantal/icons/door_open.png" 
-                                                                    alt="log-out icon" title="{% trans 'Log out' %}"/></a>
+          <a href="{% url django.contrib.auth.views.logout %}"
+             ><img src="{{ MEDIA_URL }}chantal/icons/door_open.png" alt="log-out icon" title="{% trans 'Log out' %}"
+                   width="16" height="16"/></a>
         {% else %}
-          {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img 
+          {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
             src="{{ MEDIA_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
           {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
-          <a href="/"><img src="{{ MEDIA_URL }}chantal/icons/house.png" 
-                                                              alt="log-in icon" title="{% trans 'Log in' %}"/></a>
+          <a href="/"><img src="{{ MEDIA_URL }}chantal/icons/house.png" width="16" height="16"
+                           alt="log-in icon" title="{% trans 'Log in' %}"/></a>
         {% endif %}
       </td>
     </tr>
