@@ -319,17 +319,14 @@ class Column(object):
         :type row: dict mapping unicode to dict mapping unicode to unicode
 
         :Return:
-          The cell value of this column in the given row; the empty string if
-          the respective column group is not available for the given row.  It
-          also returns the empty string if the column itself is not available
-          (this may happen for result processes which may contain different
-          columns).
+          the cell value of this column in the given row; the empty string if
+          the respective column group is not available for the given row
 
         :rtype: unicode
         """
         for column_group_name in self.column_group_names:
             if column_group_name in row:
-                return row[column_group_name].get(self.key, u"")
+                return row[column_group_name][self.key]
         return u""
 
 

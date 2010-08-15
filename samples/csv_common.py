@@ -84,17 +84,19 @@ class CSVNode(object):
         for i, child in enumerate(self.children):
             if renaming_offset < 1:
                 if names.count(child.name) > 1:
-                    child.name += u" #{0}".format(names[:i].count(child.name) + 1)
+                    process_index = names[:i].count(child.name) + 1
+                    if process_index > 1:
+                        child.name += u" #{0}".format(process_index)
                 if renaming_offset < 0:
                     child.name = self.name + ", " + child.name
             child.find_unambiguous_names(renaming_offset - 1)
 
-    def complete_items_in_children(self):
-        u"""Assures that all direct children of the same kind also have the
-        same items.  This is interesting for kinds of nodes which don't have a
-        strict set of items.  An example are result processes: The user is
-        completely free which items he gives them.  This irritates
-        ``build_column_group_list``, however.  It takes the *first* node of a
+    def complete_items_in_children(self, key_sets=None, item_cache=None):
+        u"""Assures that all decendents of this node that have the same node
+        name also have the same item keys.  This is interesting for kinds of
+        nodes which don't have a strict set of items.  An example are result
+        processes: The user is completely free which items he gives them.  This
+        irritates ``build_column_group_list``: It takes the *first* node of a
         certain ``name`` (for example ``"Nice result"``) and transforms its
         items to table columns.
 
@@ -102,18 +104,51 @@ class CSVNode(object):
         items?  This shouldn't happen certainly, but it will.  Here, we add
         the missing items (with empty strings as value).
 
+        It must be called after `find_unambiguous_names` because the completion
+        of item keys is only necessary within one column group, and the column
+        groups base on the names created by ``find_unambiguous_names``.  In
+        other words, if ``Nice result`` and ``Nice result #2`` don't share the
+        same item keys, this is unimportant.  But if ``Nice result #2`` of two
+        samples in the exported series didn't share the same item keys, this
+        would result in a ``KeyError`` exception in
+        ``cvs_export.Column.get_value``.
+
         This is not optimal for performance reasons.  But it is much easier
         than to train ``build_column_group_list`` to handle it.
+
+        :Parameters:
+          - `key_sets`: The item keys for all node names.  It is only used in
+            the recursion.  If you call this method, you never give this
+            parameter.
+          - `item_cache`: The key names of the items for a given node.  Note
+            that in contrast to `key_sets`, the keys of this are the nodes
+            themselves rather than the disambiguated node names.  It is used
+            for performance's sake.  If you call this method, you never give
+            this parameter.
+
+        :type key_sets: dict mapping unicode to set of (unicode, str)
+        :type item_cache: dict mapping `CSVNode` to set of (unicode, str)
         """
-        item_cache = {}
-        keys = {}
+        if key_sets is None:
+            item_cache = {}
+            def collect_key_sets(node):
+                u"""Collect all item keys of this node and its decentends.
+                This is the first phase of the process.  It returns a mapping
+                of node names (*not* node kinds) to item key sets.  We set both
+                the ``key_sets`` and the ``item_cache`` here.
+                """
+                item_cache[node] = set((item.key, item.origin) for item in node.items)
+                key_sets = {node.name: item_cache[node]}
+                for child in node.children:
+                    for name, key_set in collect_key_sets(child).items():
+                        key_sets[name] = key_sets.setdefault(name, set()).union(key_set)
+                return key_sets
+            key_sets = collect_key_sets(self)
+        missing_items = key_sets[self.name] - item_cache[self]
+        for key, origin in missing_items:
+            self.items.append(CSVItem(key, u"", origin))
         for child in self.children:
-            item_cache[child] = set((item.key, item.origin) for item in child.items)
-            keys[child.name] = keys.setdefault(child.name, set()).union(item_cache[child])
-        for child in self.children:
-            missing_items = keys[child.name] - item_cache[child]
-            for key, origin in missing_items:
-                child.items.append(CSVItem(key, u"", origin))
+            child.complete_items_in_children(key_sets, item_cache)
 
     def __repr__(self):
         return repr(self.name)
