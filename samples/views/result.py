@@ -18,7 +18,7 @@ u"""Views for editing and creating results (aka result processes).
 
 from __future__ import absolute_import
 
-import datetime, os, os.path, re
+import datetime, os, os.path, re, json
 from django.template import RequestContext
 from django.http import HttpResponse
 import django.forms as forms
@@ -293,7 +293,7 @@ class FormSet(object):
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result)
         self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
         if self.result and self.result.quantities_and_values:
-            quantities, values = utils.ascii_unpickle(self.result.quantities_and_values)
+            quantities, values = json.loads(self.result.quantities_and_values)
         else:
             quantities, values = [], []
         self.dimensions_form = DimensionsForm(initial={"number_of_quantities": len(quantities),
@@ -427,13 +427,13 @@ class FormSet(object):
         further information.
 
         :Return:
-          the serialised result values table, as an ASCII-only string
+          the serialised result values table, as an ASCII-only JSON string
 
         :rtype: str
         """
         result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
             [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
-        return utils.ascii_pickle(result)
+        return json.dumps(result)
 
     def save_to_database(self, post_files):
         u"""Save the forms to the database.  One peculiarity here is that I

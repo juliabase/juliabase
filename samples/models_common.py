@@ -22,7 +22,7 @@ irresolvable cyclic imports.
 
 from __future__ import absolute_import, division
 
-import hashlib, os.path, shutil, subprocess, datetime
+import hashlib, os.path, shutil, subprocess, datetime, json
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import django.contrib.auth.models
@@ -893,16 +893,14 @@ class Result(Process):
     title = models.CharField(_(u"title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
         # Translation hint: Physical quantities are meant
-    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in Python pickle format"))
-    u"""This is a data structure, serialised in Python pickle format (protocol
-    2 plus a base64 encoding, because this is UTF-8 safe; you never know what
-    the database does with it).  If you un-pickle it, it is a tuple with two
-    items.  The first is a list of unicodes with all quantities (the table
-    headings).  The second is a list of lists with unicodes (the values; the
-    table cells).  The outer list is the set of rows, the inner the columns.
-    No Markdown is used here, just plain strings.  (The HTML entity
-    substitution in quantities has taken place already *before* anyting is
-    written here.)
+    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in JSON format"))
+    u"""This is a data structure, serialised in JSON.  If you de-serialise it,
+    it is a tuple with two items.  The first is a list of unicodes with all
+    quantities (the table headings).  The second is a list of lists with
+    unicodes (the values; the table cells).  The outer list is the set of rows,
+    the inner the columns.  No Markdown is used here, just plain strings.  (The
+    HTML entity substitution in quantities has taken place already *before*
+    anyting is written here.)
     """
 
     class Meta:
@@ -1015,7 +1013,7 @@ class Result(Process):
         context = old_context.copy()
         if self.quantities_and_values:
             if "quantities" not in context or "value_lists" not in context:
-                context["quantities"], context["value_lists"] = shared_utils.ascii_unpickle(self.quantities_and_values)
+                context["quantities"], context["value_lists"] = json.loads(self.quantities_and_values)
             context["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
@@ -1050,7 +1048,7 @@ class Result(Process):
         _ = ugettext
         csv_node = super(Result, self).get_data()
         csv_node.name = csv_node.descriptive_name = self.title
-        quantities, value_lists = shared_utils.ascii_unpickle(self.quantities_and_values)
+        quantities, value_lists = json.loads(self.quantities_and_values)
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translation hint: In a table
