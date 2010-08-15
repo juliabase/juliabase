@@ -129,7 +129,7 @@ class CSVItem(object):
           - `key`: the key name of the data item
           - `value`: the value of the data item
           - `origin`: an optional name of the class from where this data item
-            comes from.  See `CSVItem.origin` for more information.
+            comes from.
 
         :type key: unicode
         :type value: unicode
