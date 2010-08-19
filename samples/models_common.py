@@ -702,7 +702,7 @@ class Sample(models.Model):
         csv_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
-        # set ``cvs_note.items``.
+        # set ``cvs_node.items``.
         return csv_node
 
     def append_cache_key(self, cache_key):
