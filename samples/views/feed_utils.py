@@ -203,8 +203,9 @@ class Reporter(object):
             self.__connect_with_users(entry)
 
     def report_physical_process(self, process, edit_description=None):
-        u"""Generate a feed entry for a physical process (deposition, measurement,
-        etching etc) which was recently edited or created.
+        u"""Generate a feed entry for a physical process (deposition,
+        measurement, etching etc) which was recently edited or created.  If the
+        process is still unfinished, nothing is done.
 
         :Parameters:
           - `process`: the process which was added/edited recently
@@ -216,15 +217,16 @@ class Reporter(object):
         :type process: `models.Process`
         :type edit_description: dict mapping str to ``object``
         """
-        important = edit_description["important"] if edit_description else True
-        if edit_description:
-            entry = models.FeedEditedPhysicalProcess.objects.create(
-                originator=self.originator, process=process,
-                description=edit_description["description"], important=important)
-        else:
-            entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
-        self.__add_watchers(process, important)
-        self.__connect_with_users(entry)
+        if process.finished:
+            important = edit_description["important"] if edit_description else True
+            if edit_description:
+                entry = models.FeedEditedPhysicalProcess.objects.create(
+                    originator=self.originator, process=process,
+                    description=edit_description["description"], important=important)
+            else:
+                entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
+            self.__add_watchers(process, important)
+            self.__connect_with_users(entry)
 
     def report_result_process(self, result, edit_description=None):
         u"""Generate a feed entry for a result process which was recently

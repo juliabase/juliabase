@@ -40,6 +40,15 @@ class ProcessForm(ModelForm):
     syntax.
     """
 
+    def __init__(self, *args, **kwargs):
+        self.process = kwargs.get("instance")
+        self.unfinished = self.process and not self.process.finished
+        if self.unfinished:
+            kwargs.setdefault("initial", {}).update({"timestamp": datetime.datetime.now()})
+        super(ProcessForm, self).__init__(*args, **kwargs)
+        if not self.unfinished:
+            self.fields["finished"].widget.attrs["disabled"] = "disabled"
+
     def clean_comments(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
@@ -53,7 +62,16 @@ class ProcessForm(ModelForm):
         timestamp = self.cleaned_data["timestamp"]
         if timestamp > datetime.datetime.now():
             raise ValidationError(_(u"The timestamp must not be in the future."))
+        if self.unfinished and self.process.timestamp > timestamp:
+            self.data = self.data.copy()
+            self.data["timestamp"] = datetime.datetime.now()
+            raise ValidationError(_(u"The timestamp was older than the one in the database.  Probably someone else has "
+                                    u"edited the process by now.  If so, open the process in another tab and combine the "
+                                    u"changes."))
         return timestamp
+
+    def clean_finished(self):
+        return self.cleaned_data["finished"] if not self.process or not self.process.finished else True
 
 
 class DataModelForm(ModelForm):
@@ -550,22 +568,25 @@ class DepositionSamplesForm(forms.Form):
         between new and existing depositions.
         """
         samples = list(user.my_samples.all())
-        if deposition:
-            # If editing an existing deposition, always have an *unbound* form
-            # so that the samples are set although sample selection is
-            # "disabled" and thus never successful when submitting.  This is
-            # necessary for depositions because they can change the name of
-            # samples, and so changing the affected samples afterwards is a
-            # source of big trouble.
+        if deposition and deposition.finished:
+            # If editing a finished, existing deposition, always have an
+            # *unbound* form so that the samples are set although sample
+            # selection is "disabled" and thus never successful when
+            # submitting.  This is necessary for depositions because they can
+            # change the name of samples, and so changing the affected samples
+            # afterwards is a source of big trouble.
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
             super(DepositionSamplesForm, self).__init__(**kwargs)
             self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             samples.extend(deposition.samples.all())
         else:
             super(DepositionSamplesForm, self).__init__(data, **kwargs)
+            self.fields["sample_list"].initial = []
+            if deposition:
+                self.fields["sample_list"].initial.extend(deposition.samples.values_list("pk", flat=True))
             if preset_sample:
                 samples.append(preset_sample)
-                self.fields["sample_list"].initial = [preset_sample.pk]
+                self.fields["sample_list"].initial.append(preset_sample.pk)
         self.fields["sample_list"].set_samples(samples, user)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
