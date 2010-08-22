@@ -305,8 +305,8 @@ class SamplesAndProcesses(object):
             if local_context["clearance"]:
                 basic_query = local_context["clearance"].processes.filter(samples=local_context["sample"])
             else:
-                basic_query = models.Process.objects.filter(Q(samples=local_context["sample"]) |
-                                                            Q(result__sample_series__samples=local_context["sample"]))
+                basic_query = models.Process.objects.filter(finished=True). \
+                    filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"]))
             if local_context["cutoff_timestamp"] is None:
                 processes = basic_query.distinct()
             else:

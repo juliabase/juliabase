@@ -137,6 +137,15 @@ class Process(PolymorphicModel):
     # I don't use auto_now because then, `append_cache_key` wouldn't work.
     last_modified = models.DateTimeField(_(u"last modified"), editable=False)
     cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
+    finished = models.BooleanField(_(u"finished"), default=True)
+    u"""Whether the process is complete and can be displayed in sample data
+    sheets.  Not every process needs to implement it; you can as well leave it
+    ``True``.  However, depositions that are a work-in-progress, possibly by
+    more than one person, profit from it.  If ``finished`` is ``False``,
+    everyone who can add such a process can edit it; no edit descriptions must
+    be given; the process cannot be used in a clearance; the process doesn't
+    appear on data sheets but it does appear in the lab notebook.
+    """
 
     class Meta:
         ordering = ["timestamp"]
@@ -702,7 +711,7 @@ class Sample(models.Model):
         csv_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
-        # set ``cvs_note.items``.
+        # set ``cvs_node.items``.
         return csv_node
 
     def append_cache_key(self, cache_key):

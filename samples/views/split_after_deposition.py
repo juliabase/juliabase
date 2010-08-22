@@ -21,7 +21,7 @@ you can rename and/or split them.
 from __future__ import absolute_import
 
 import datetime
-from samples import models, permissions
+from django.http import Http404
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -31,6 +31,7 @@ from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
 from chantal_common.utils import append_error, HttpResponseSeeOther
+from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 
 
@@ -430,6 +431,8 @@ def split_and_rename_after_deposition(request, deposition_number):
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number)
     permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
+    if not deposition.finished:
+        raise Http404(u"This deposition is not finished yet.")
     remote_client = utils.is_remote_client(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \

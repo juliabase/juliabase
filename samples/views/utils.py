@@ -151,12 +151,8 @@ def get_next_deposition_number(letter):
     pattern_string = ur"^{0}[0-9]+".format(re.escape(prefix))
     deposition_numbers = \
         models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
-    try:
-        next_number = max(int(deposition_number[prefix_length:]) for deposition_number in deposition_numbers) + 1
-    except ValueError, e:
-        if e.message != "max() arg is an empty sequence":
-            raise
-        next_number = 1
+    numbers = [int(deposition_number[prefix_length:]) for deposition_number in deposition_numbers]
+    next_number = max(numbers) + 1 if numbers else 1
     return prefix + u"{0:03}".format(next_number)
 
 
