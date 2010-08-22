@@ -71,10 +71,11 @@ class ProcessForm(ModelForm):
         return timestamp
 
     def clean_finished(self):
-        u"""Assume ``True`` for ``finished`` if the process is an already
-        existing, finished process.
+        u"""Return ``True`` always.  If you want to implement the
+        “unfinished-process” functionality in your process class, you must
+        override this method.
         """
-        return self.cleaned_data["finished"] if not self.process or not self.process.finished else True
+        return True
 
 
 class DataModelForm(ModelForm):
