@@ -46,7 +46,7 @@ class ProcessForm(ModelForm):
         if self.unfinished:
             kwargs.setdefault("initial", {}).update({"timestamp": datetime.datetime.now()})
         super(ProcessForm, self).__init__(*args, **kwargs)
-        if not self.unfinished:
+        if self.process and self.process.finished:
             self.fields["finished"].widget.attrs["disabled"] = "disabled"
 
     def clean_comments(self):
@@ -597,7 +597,7 @@ class RemoveFromMySamplesForm(forms.Form):
     """
     _ = ugettext_lazy
     remove_from_my_samples = forms.BooleanField(label=_(u"Remove processed sample(s) from My Samples"),
-                                                          required=False, initial=False)
+                                                required=False, initial=False)
 
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
