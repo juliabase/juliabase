@@ -13,23 +13,17 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views for editing and creating results (aka result processes).
+u"""View for showing a plot as a PDF file.
 """
 
 from __future__ import absolute_import
 
-import datetime, os, os.path, re
-from django.template import RequestContext
-from django.http import Http404, HttpResponse
-import django.forms as forms
-from django.shortcuts import render_to_response, get_object_or_404
+import os.path
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
-from django.db.models import Q
-import chantal_common.utils
-from chantal_common.utils import append_error
 from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils, csv_export
+from samples.views import utils
 
 
 @login_required
