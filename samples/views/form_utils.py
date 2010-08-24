@@ -815,13 +815,14 @@ def normalize_prefixes(post_data):
             level0_index = int(match.group("level0_index"))
             level0_indices.add(level0_index)
             level1_indices.setdefault(level0_index, set())
-            digested_post_data[(level0_index, match.group("id"))] = post_data.getlist(key)
+            digested_post_data[level0_index, match.group("id")] = post_data.getlist(key)
         else:
             match = level1_pattern.match(key)
             if match:
                 level0_index, level1_index = int(match.group("level0_index")), int(match.group("level1_index"))
+                level0_indices.add(level0_index)
                 level1_indices.setdefault(level0_index, set()).add(level1_index)
-                digested_post_data[(level1_index, level0_index, match.group("id"))] = post_data.getlist(key)
+                digested_post_data[level1_index, level0_index, match.group("id")] = post_data.getlist(key)
             else:
                 digested_post_data[key] = post_data.getlist(key)
     level0_indices = sorted(level0_indices)
