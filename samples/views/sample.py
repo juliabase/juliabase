@@ -567,7 +567,7 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
-            if utils.is_remote_client(request):
+            if utils.is_json_requested(request):
                 return utils.respond_to_remote_client(True)
             if added:
                 success_message = ungettext(u"Sample {samples} was added to My Samples.",
@@ -616,7 +616,7 @@ def by_id(request, sample_id, path_suffix):
     :rtype: ``HttpResponse``
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
-    if utils.is_remote_client(request):
+    if utils.is_json_requested(request):
         # No redirect for the remote client.  This also makes a POST request
         # possible.
         return show(request, sample.name)

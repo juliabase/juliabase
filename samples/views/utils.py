@@ -29,6 +29,7 @@ from functools import update_wrapper
 from django.template import Context, RequestContext
 from django.shortcuts import render_to_response
 import chantal_common.utils
+from chantal_common import mimeparse
 from samples import models, permissions
 from samples.views.shared_utils import *
 
@@ -322,15 +323,16 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :rtype: ``HttpResponse``
     """
-    if is_remote_client(request):
+    if is_json_requested(request):
         return respond_to_remote_client(remote_client_response)
     return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 
 
-def is_remote_client(request):
-    u"""Tests whether the current request was not done by an ordinary browser
-    like Firefox or Google Chrome but by the Chantal Remote Client.
+def is_json_requested(request):
+    u"""Tests whether the current request should be answered in JSON format
+    instead of HTML.  Typically this means that the request was made by the
+    CHantal Remote Client or by JavaScript code.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -338,11 +340,13 @@ def is_remote_client(request):
     :type request: ``HttpRequest``
 
     :Returns:
-      whether the request was made with the Remote Client
+      whether the request should be answered in JSON
 
     :rtype: bool
     """
-    return request.META.get("HTTP_USER_AGENT", "").startswith("Chantal-Remote")
+    requested_mime_type = mimeparse.best_match(["text/html", "application/xhtml+xml", "application/json"],
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type == "application/json"
 
 
 def respond_to_remote_client(value):
@@ -351,7 +355,7 @@ def respond_to_remote_client(value):
     responses are Python objects, serialised in JSON notation.
 
     This views that should be accessed by both the Remote Client and the normal
-    users should distinguish between both by using `is_remote_client`.
+    users should distinguish between both by using `is_json_requested`.
 
     :Parameters:
       - `value`: the data to be sent back to the remote client.
