@@ -324,7 +324,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :rtype: ``HttpResponse``
     """
     if is_json_requested(request):
-        return respond_to_remote_client(json_response)
+        return respond_in_json(json_response)
     return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 
@@ -349,16 +349,17 @@ def is_json_requested(request):
     return requested_mime_type == "application/json"
 
 
-def respond_to_remote_client(value):
-    u"""The communication with the Chantal Remote Client should be done without
-    generating HTML pages in order to have better performance.  Thus, all
-    responses are Python objects, serialised in JSON notation.
+def respond_in_json(value):
+    u"""The communication with the Chantal Remote Client or to AJAX clients
+    should be done without generating HTML pages in order to have better
+    performance.  Thus, all responses are Python objects, serialised in JSON
+    notation.
 
-    This views that should be accessed by both the Remote Client and the normal
-    users should distinguish between both by using `is_json_requested`.
+    The views that can be accessed by the Remote Client/AJAX as well as normal
+    browsers should distinguish between both by using `is_json_requested`.
 
     :Parameters:
-      - `value`: the data to be sent back to the remote client.
+      - `value`: the data to be sent back to the client that requested JSON.
 
     :type value: ``object`` (an arbitrary Python object)
 

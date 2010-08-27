@@ -568,7 +568,7 @@ def show(request, sample_name):
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
             if utils.is_json_requested(request):
-                return utils.respond_to_remote_client(True)
+                return utils.respond_in_json(True)
             if added:
                 success_message = ungettext(u"Sample {samples} was added to My Samples.",
                                             u"Samples {samples} were added to My Samples.",

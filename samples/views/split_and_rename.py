@@ -339,4 +339,4 @@ def latest_split(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request.user)
     split = sample.last_process_if_split()
-    return utils.respond_to_remote_client(split.pk if split else None)
+    return utils.respond_in_json(split.pk if split else None)
