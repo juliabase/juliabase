@@ -279,7 +279,7 @@ def parse_query_string(request):
 
 
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
-                        remote_client_response=True):
+                        json_response=True):
     u"""After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
     add/edit request was started.
@@ -293,7 +293,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     redirection.  It always has HTTP status code 303 (“see other”).
 
     If the request came from the Chantal Remote Client, the response is a
-    pickled ``remote_client_response``.  (Normally, a simple ``True``.)
+    pickled ``json_response``.  (Normally, a simple ``True``.)
 
     :Parameters:
       - `request`: the current HTTP request
@@ -307,8 +307,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
       - `forced`: If ``True``, go to ``view`` even if a “next” URL is
         available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
         using this option to generate some sort of nested forwarding.
-      - `remote_client_response`: object which is to be sent as a pickled
-        response to the remote client; defaults to ``True``.
+      - `json_response`: object which is to be sent as a pickled response to
+        the remote client; defaults to ``True``.
 
     :type request: ``HttpRequest``
     :type success_report: unicode
@@ -316,7 +316,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
-    :type remote_client_response: ``object``
+    :type json_response: ``object``
 
     :Return:
       the HTTP response object to be returned to the view's caller
@@ -324,7 +324,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :rtype: ``HttpResponse``
     """
     if is_json_requested(request):
-        return respond_to_remote_client(remote_client_response)
+        return respond_to_remote_client(json_response)
     return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 

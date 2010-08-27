@@ -304,7 +304,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
                 request, _(u"Sample “{sample}” was successfully split.").format(sample=parent),
-                "show_sample_by_name", {"sample_name": parent.name}, remote_client_response=new_pieces)
+                "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
