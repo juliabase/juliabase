@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views that are intended only for the Remote Client.  While also users can
-visit these links with their browser directly, it is not really useful what
-they get there.  Note that the whole communication to the remote client happens
-in JSON format.
+u"""Views that are intended only for the Remote Client and AJAX code (called
+“JSON clients”).  While also users can visit these links with their browser
+directly, it is not really useful what they get there.  Note that the whole
+communication to the remote client happens in JSON format.
 """
 
 from __future__ import absolute_import
@@ -43,10 +43,10 @@ from samples import models, permissions
 def primary_keys(request):
     u"""Return the mappings of names of database objects to primary keys.
     While this can be used by everyone by entering the URL directly, this view
-    is intended to be used only by the remote client program to get primary
-    keys.  The reason for this is simple: In forms, you have to give primary
-    keys in POST data sent to the web server.  However, a priori, the remote
-    client doesn't know them.  Therefore, it can query this view to get them.
+    is intended to be used only by a JSON client program to get primary keys.
+    The reason for this is simple: In forms, you have to give primary keys in
+    POST data sent to the web server.  However, a priori, the JSON client
+    doesn't know them.  Therefore, it can query this view to get them.
 
     The syntax of the query string to be appended to the URL is very simple.
     If you say::
@@ -161,7 +161,8 @@ def available_items(request, model_name):
 @require_http_methods(["POST"])
 def login_remote_client(request):
     u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
-    method and expects ``username`` and ``password``.
+    method and expects ``username`` and ``password``.  AJAX code shouldn't need
+    this because it has the cookie already.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -208,7 +209,7 @@ def logout_remote_client(request):
 
 @require_http_methods(["GET"])
 def next_deposition_number(request, letter):
-    u"""Send the next free deposition number to the Chantal Remote Client.
+    u"""Send the next free deposition number to a JSON client.
 
     :Parameters:
       - `request`: the current HTTP Request object
