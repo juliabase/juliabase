@@ -27,7 +27,7 @@ import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import PhysicalProcess
-from samples.csv_common import CSVNode, CSVItem
+from samples.csv_common import DataNode, DataItem
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -70,7 +70,7 @@ class Deposition(PhysicalProcess):
         # See `Process.get_data` for the documentation.
         _ = ugettext
         csv_node = super(Deposition, self).get_data()
-        csv_node.items.append(CSVItem(_(u"number"), self.number, "deposition"))
+        csv_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
         csv_node.children = [layer.get_data() for layer in self.layers.all()]
         return csv_node
 
@@ -128,9 +128,9 @@ class Layer(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.DataNode`
         """
         _ = ugettext
-        csv_node = CSVNode(self, _(u"layer {number}").format(number=self.number))
-        csv_node.items = [CSVItem(_(u"number"), unicode(self.number), "layer")]
+        csv_node = DataNode(self, _(u"layer {number}").format(number=self.number))
+        csv_node.items = [DataItem(_(u"number"), unicode(self.number), "layer")]
         return csv_node

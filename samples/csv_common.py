@@ -18,7 +18,7 @@ they cannot be defined in a view because then you'd have cyclic imports.
 """
 
 
-class CSVNode(object):
+class DataNode(object):
     u"""Class for a node in a data tree intended for CSV export.
 
     :ivar name: name of this node; must be the same for node whose items carry
@@ -37,7 +37,7 @@ class CSVNode(object):
     :type name: unicode
     :type descriptive_name: unicode
     :type items: list of (unicode, unicode)
-    :type childen: list of `CSVNode`
+    :type childen: list of `DataNode`
     """
 
     def __init__(self, instance, descriptive_name=u""):
@@ -127,7 +127,7 @@ class CSVNode(object):
             this parameter.
 
         :type key_sets: dict mapping unicode to set of (unicode, str)
-        :type item_cache: dict mapping `CSVNode` to set of (unicode, str)
+        :type item_cache: dict mapping `DataNode` to set of (unicode, str)
         """
         if key_sets is None:
             item_cache = {}
@@ -146,7 +146,7 @@ class CSVNode(object):
             key_sets = collect_key_sets(self)
         missing_items = key_sets[self.name] - item_cache[self]
         for key, origin in missing_items:
-            self.items.append(CSVItem(key, u"", origin))
+            self.items.append(DataItem(key, u"", origin))
         for child in self.children:
             child.complete_items_in_children(key_sets, item_cache)
 
@@ -154,9 +154,9 @@ class CSVNode(object):
         return repr(self.name)
 
 
-class CSVItem(object):
+class DataItem(object):
     u"""This class represents a key–value pair, holding the actual data in a
-    `CSVNode` tree.
+    `DataNode` tree.
 
     :ivar key: the key name of the data item
 

@@ -36,7 +36,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
 from samples import models, permissions
 from samples.views import utils, csv_export
-from samples.csv_common import CSVNode
+from samples.csv_common import DataNode
 from chantal_common.utils import HttpResponseSeeOther
 
 

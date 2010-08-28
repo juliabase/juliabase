@@ -39,7 +39,7 @@ from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
-from samples.csv_common import CSVNode, CSVItem
+from samples.csv_common import DataNode, DataItem
 
 
 def get_user_settings_hash(user):
@@ -401,13 +401,13 @@ class Process(PolymorphicModel):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.DataNode`
         """
         _ = ugettext
-        csv_node = CSVNode(self)
-        csv_node.items = [CSVItem(_(u"timestamp"), self.timestamp, "process"),
-                          CSVItem(_(u"operator"), get_really_full_name(self.operator), "process"),
-                          CSVItem(_(u"comments"), self.comments.strip(), "process")]
+        csv_node = DataNode(self)
+        csv_node.items = [DataItem(_(u"timestamp"), self.timestamp, "process"),
+                          DataItem(_(u"operator"), get_really_full_name(self.operator), "process"),
+                          DataItem(_(u"comments"), self.comments.strip(), "process")]
         return csv_node
 
     @classmethod
@@ -701,10 +701,10 @@ class Sample(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.DataNode`
         """
         _ = ugettext
-        csv_node = CSVNode(self, unicode(self))
+        csv_node = DataNode(self, unicode(self))
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data()
             csv_node.children.extend(ancestor_data.children)
@@ -1052,7 +1052,7 @@ class Result(Process):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.DataNode`
         """
         _ = ugettext
         csv_node = super(Result, self).get_data()
@@ -1061,11 +1061,11 @@ class Result(Process):
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translation hint: In a table
-                child_node = CSVNode(_(u"row"), _(u"row #{number}").format(i + 1))
-                child_node.items = [CSVItem(quantities[j], value) for j, value in enumerate(value_list)]
+                child_node = DataNode(_(u"row"), _(u"row #{number}").format(i + 1))
+                child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
                 csv_node.children.append(child_node)
         elif len(value_lists) == 1:
-            csv_node.items.extend([CSVItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
+            csv_node.items.extend([DataItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
         return csv_node
 
 
@@ -1124,10 +1124,10 @@ class SampleSeries(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.CSVNode`
+        :rtype: `samples.csv_common.DataNode`
         """
         _ = ugettext
-        csv_node = CSVNode(self, unicode(self))
+        csv_node = DataNode(self, unicode(self))
         csv_node.children.extend(sample.get_data() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I
