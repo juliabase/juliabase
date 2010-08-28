@@ -70,12 +70,11 @@ def camel_case_to_underscores(name):
     """
     result = []
     for i, character in enumerate(name):
-        if i == 0:
-            result.append(character.lower())
-        elif character in string.ascii_uppercase and (i+1 < len(name) and name[i+1] not in string.ascii_uppercase):
-            result.extend(("_", character.lower()))
-        else:
-            result.append(character.lower())
+        if i > 0 and character in string.ascii_uppercase and (
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or 
+            (name[i - 1] not in string.ascii_uppercase)):
+            result.append("_")
+        result.append(character.lower())
     return "".join(result)
 
 
