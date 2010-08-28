@@ -616,6 +616,7 @@ def export(request, data, label_column_heading):
     requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
     data.find_unambiguous_names()
     data.complete_items_in_children()
+    data.remove_non_table_items()
     column_groups, columns = build_column_group_list(data)
     single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
     table = None

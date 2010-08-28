@@ -152,6 +152,20 @@ class DataNode(object):
         for child in self.children:
             child.complete_items_in_children(key_sets, item_cache)
 
+    def remove_non_table_items(self):
+        u"""Removes all items and decendant nodes which don't contribute to
+        table export.  In particular, items for which ``table_export`` is
+        ``False`` are removed, as well as nodes without items (even not in
+        their descendants).
+        """
+        self.items = [item for item in self.items if item.table_export]
+        non_empty_children = []
+        for child in self.children:
+            child.remove_non_table_items()
+            if child.children or child.items:
+                non_empty_children.append(child)
+        self.children = self.non_empty_children
+
     def __repr__(self):
         return repr(self.name)
 
@@ -181,12 +195,19 @@ class DataItem(object):
       non-``None`` ``origin`` parameter which just contains a symbol for the
       model class, e.g. ``"process"`` for ``models.Process``.
 
+    :ivar table_export: whether this item should be included into the table
+      export.  If it is ``False``, it is simply ignored for CSV or JSON-table
+      output.  However, if a ressource is retrieved directly (through its show
+      view) and mus be returned in serialised format, *all* data must be
+      included, also for which ``table_export = False``.
+
     :type key: unicode
     :type value: unicode
     :type origin: str or ``NoneType``
+    :type table_export: bool
     """
 
-    def __init__(self, key, value, origin=None):
+    def __init__(self, key, value, origin=None, table_export=True):
         u"""Class constructor.
 
         :Parameters:
@@ -194,9 +215,12 @@ class DataItem(object):
           - `value`: the value of the data item
           - `origin`: an optional name of the class from where this data item
             comes from.
+          - `table_export`: whether this item should be included into table
+            export
 
         :type key: unicode
         :type value: unicode
         :type origin: str or ``NoneType``
+        :type table_export: bool
         """
-        self.key, self.value, self.origin = unicode(key), unicode(value or u""), origin
+        self.key, self.value, self.origin, self.table_export = unicode(key), unicode(value or u""), origin, table_export
