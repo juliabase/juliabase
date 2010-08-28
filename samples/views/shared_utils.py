@@ -78,6 +78,31 @@ def camel_case_to_underscores(name):
     return "".join(result)
 
 
+def camel_case_to_human_text(name):
+    u"""Converts a CamelCase identifier to one intended to be read by humans.
+    For example, ``"MySamples"`` is converted to ``"my samples"``, and
+    ``"PDSMeasurement"`` to ``"PDS measurement"``.
+
+    :Parameters:
+      - `name`: the camel-cased identifier
+
+    :type name: str
+
+    :Return:
+      the pretty-printed identifier
+
+    :rtype: str
+    """
+    result = []
+    for i, character in enumerate(name):
+        if i > 0 and character in string.ascii_uppercase and (
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or 
+            (name[i - 1] not in string.ascii_uppercase)):
+            result.append(" ")
+        result.append(character if i + 1 >= len(name) or name[i + 1] in string.ascii_uppercase else character.lower())
+    return "".join(result)
+
+
 quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
                                         ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 def normalize_legacy_sample_name(sample_name):
