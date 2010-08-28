@@ -36,7 +36,7 @@ import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import chantal_common.utils
 from chantal_common.utils import append_error, adjust_timezone_information
-from samples.views import utils, form_utils, feed_utils, data_export
+from samples.views import utils, form_utils, feed_utils, table_export
 
 
 class SampleSeriesForm(forms.ModelForm):
@@ -349,4 +349,4 @@ def export(request, name):
     permissions.assert_can_view_sample_series(request.user, sample_series)
     for sample in sample_series.samples.all():
         permissions.assert_can_fully_view_sample(request.user, sample)
-    return data_export.export(request, sample_series.get_data(), _(u"sample"))
+    return table_export.export(request, sample_series.get_data(), _(u"sample"))

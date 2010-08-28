@@ -123,7 +123,7 @@ class Layer(models.Model):
     def get_data(self):
         u"""Extract the data of this layer as a data node with a list of
         key–value pairs, ready to be used for the data export.  See the
-        `samples.views.data_export` module for all the glory details.
+        `samples.views.table_export` module for all the glory details.
 
         :Return:
           a node for building a data tree

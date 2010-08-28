@@ -392,7 +392,7 @@ class Process(PolymorphicModel):
     def get_data(self):
         u"""Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the data
-        export.  See the `samples.views.data_export` module for all the glory
+        export.  See the `samples.views.table_export` module for all the glory
         details.
 
         Note that ``_`` must get ``ugettext`` in these methods because
@@ -696,7 +696,7 @@ class Sample(models.Model):
         u"""Extract the data of this sample as a tree of nodes with lists of
         key–value pairs, ready to be used for the data export.  Every child of
         the top-level node is a process of the sample.  See the
-        `samples.views.data_export` module for all the glory details.
+        `samples.views.table_export` module for all the glory details.
 
         :Return:
           a node for building a data tree
@@ -1037,7 +1037,7 @@ class Result(Process):
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for the
-        data export.  See the `samples.views.data_export` module for all the
+        data export.  See the `samples.views.table_export` module for all the
         glory details.
 
         However, I should point out the peculiarities of result processes in
@@ -1119,7 +1119,7 @@ class SampleSeries(models.Model):
         u"""Extract the data of this sample series as a tree of nodes with
         lists of key–value pairs, ready to be used for the data export.  Every
         child of the top-level node is a sample of the sample series.  See the
-        `samples.views.data_export` module for all the glory details.
+        `samples.views.table_export` module for all the glory details.
 
         :Return:
           a node for building a data tree

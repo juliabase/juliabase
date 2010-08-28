@@ -661,9 +661,9 @@ def export(request, data, label_column_heading):
         columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/data_export.html", {"title": title, "column_groups": column_groups_form,
-                                                           "columns": columns_form,
-                                                           "rows": zip(table, switch_row_forms) if table else None,
-                                                           "old_data": old_data_form,
-                                                           "backlink": request.GET.get("next", "")},
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
                               context_instance=RequestContext(request))
