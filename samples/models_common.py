@@ -406,9 +406,12 @@ class Process(PolymorphicModel):
         _ = ugettext
         data_node = DataNode(self)
         data_node.items = [DataItem(_(u"timestamp"), self.timestamp, "process"),
+                           DataItem(_(u"timestamp inaccuracy"), self.timestamp_inaccuracy, "process", table_export=False),
                            DataItem(_(u"operator"), get_really_full_name(self.operator), "process"),
+                           DataItem(_(u"external operator"), self.external_operator, "process", table_export=False),
+                           DataItem(_(u"finished"), self.finished, "process", table_export=False),
                            DataItem(_(u"comments"), self.comments.strip(), "process"),
-                           DataItem(_(u"sample IDs"), ",".join(str(sample.id) for sample in self.samples),
+                           DataItem(_(u"sample IDs"), ",".join(str(sample.id) for sample in self.samples), "process",
                                     table_export=False)]
         return data_node
 
