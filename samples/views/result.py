@@ -29,7 +29,7 @@ from django.db.models import Q
 import chantal_common.utils
 from chantal_common.utils import append_error
 from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils, csv_export
+from samples.views import utils, form_utils, feed_utils, data_export
 
 
 def save_image_file(image_data, result, related_data_form):
@@ -617,4 +617,4 @@ def export(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     # Translation hint: In a table
-    return csv_export.export(request, result.get_data(), _(u"row"))
+    return data_export.export(request, result.get_data(), _(u"row"))

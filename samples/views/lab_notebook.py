@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
 from samples import models, permissions
-from samples.views import utils, csv_export
+from samples.views import utils, data_export
 from samples.data_tree import DataNode
 from chantal_common.utils import HttpResponseSeeOther
 
@@ -206,4 +206,4 @@ def export(request, process_name, year_and_month):
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
     data = process_class.get_lab_notebook_data(year, month)
-    return csv_export.export(request, data, _(u"process"))
+    return data_export.export(request, data, _(u"process"))

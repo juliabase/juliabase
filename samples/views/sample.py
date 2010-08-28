@@ -33,7 +33,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information
-from samples.views import utils, form_utils, feed_utils, csv_export
+from samples.views import utils, form_utils, feed_utils, data_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 
 
@@ -741,4 +741,4 @@ def export(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request.user)
-    return csv_export.export(request, sample.get_data(), _(u"process"))
+    return data_export.export(request, sample.get_data(), _(u"process"))

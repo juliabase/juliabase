@@ -123,7 +123,7 @@ class Layer(models.Model):
     def get_data(self):
         u"""Extract the data of this layer as a CSV node with a list of
         key–value pairs, ready to be used for the CSV table export.  See the
-        `samples.views.csv_export` module for all the glory details.
+        `samples.views.data_export` module for all the glory details.
 
         :Return:
           a node for building a CSV tree
