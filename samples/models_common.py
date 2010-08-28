@@ -39,7 +39,7 @@ from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
-from samples.csv_common import DataNode, DataItem
+from samples.data_tree import DataNode, DataItem
 
 
 def get_user_settings_hash(user):
@@ -401,7 +401,7 @@ class Process(PolymorphicModel):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.DataNode`
+        :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
         csv_node = DataNode(self)
@@ -701,7 +701,7 @@ class Sample(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.DataNode`
+        :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
         csv_node = DataNode(self, unicode(self))
@@ -1052,7 +1052,7 @@ class Result(Process):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.DataNode`
+        :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
         csv_node = super(Result, self).get_data()
@@ -1124,7 +1124,7 @@ class SampleSeries(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.DataNode`
+        :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
         csv_node = DataNode(self, unicode(self))

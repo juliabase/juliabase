@@ -27,7 +27,7 @@ import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import PhysicalProcess
-from samples.csv_common import DataNode, DataItem
+from samples.data_tree import DataNode, DataItem
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -128,7 +128,7 @@ class Layer(models.Model):
         :Return:
           a node for building a CSV tree
 
-        :rtype: `samples.csv_common.DataNode`
+        :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
         csv_node = DataNode(self, _(u"layer {number}").format(number=self.number))

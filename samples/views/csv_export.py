@@ -99,7 +99,7 @@ In order to get a proper node tree, all involved model instances must have a
 ``get_data`` method.  This method must return a `DataNode`, which may in turn
 be the root of a whole ``DataNode`` subtree.  Additionally, it probably will
 append items to the ``items`` list with the values of the database instance's
-attributes.  See `DataNode` and `csv_common.DataItem` for further information.
+attributes.  See `DataNode` and `data_tree.DataItem` for further information.
 Additionally, the various instances of the ``get_data`` method in various
 database model classes will show you how to use it (they are all very
 strightforward).
@@ -117,7 +117,7 @@ from django.forms.util import ValidationError
 from django.template import defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
-from samples.csv_common import DataNode
+from samples.data_tree import DataNode
 from chantal_common import mimeparse
 
 
@@ -260,7 +260,7 @@ class Column(object):
       case of “shared columns”, this is not so simple anymore.  Then, the value
       is in exactly one of the shared columns, so we have to check all of them
       until we find something.  For more information about shared columns, see
-      `csv_common.DataItem.__init__`.
+      `data_tree.DataItem.__init__`.
 
     :ivar key: the pristine name of the key this column points to, i.e. it
       doesn't contain any affixes to make it unambiguous
@@ -291,7 +291,7 @@ class Column(object):
         method for each other column group which contains this shared key
         (instead of appending a new key to the ``columns`` list in
         `build_column_group_list`).  For more information about shared columns,
-        see `csv_common.DataItem.__init__`.
+        see `data_tree.DataItem.__init__`.
 
         :Parameters:
           - `column_group_name`: the name of the column group this column is
