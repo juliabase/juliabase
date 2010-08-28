@@ -66,6 +66,24 @@ class DataNode(object):
         self.items = []
         self.children = []
 
+    def to_dict(self):
+        u"""Converts the data which this node holds to a dictionary.  The
+        dictionary maps the keys to the valus of each contained `DataItem`.
+        Additionally, it maps node names of children to their dictionaries.  If
+        names of children collide with names of items – that's bad luck.
+
+        Call this method only after having called `find_unambiguous_names`.
+        Otherwise, you will have name collisions even among sibling nodes.
+
+        :Return:
+          data of this node in form of nested dictionaries
+
+        :rtype: dict mapping unicode to dict or unicode
+        """
+        data = dict((item.key, item.value) for item in self.items)
+        data.update((child.name, child.to_dict()) for child in self.children)
+        return data
+
     def find_unambiguous_names(self, renaming_offset=1):
         u"""Make all names in the whole tree of this node instance
         unambiguous.  This is done by two means:
