@@ -69,10 +69,10 @@ class Deposition(PhysicalProcess):
     def get_data(self):
         # See `Process.get_data` for the documentation.
         _ = ugettext
-        csv_node = super(Deposition, self).get_data()
-        csv_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
-        csv_node.children = [layer.get_data() for layer in self.layers.all()]
-        return csv_node
+        data_node = super(Deposition, self).get_data()
+        data_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
+        data_node.children = [layer.get_data() for layer in self.layers.all()]
+        return data_node
 
 
 class Layer(models.Model):
@@ -121,16 +121,16 @@ class Layer(models.Model):
         verbose_name_plural = _(u"layers")
 
     def get_data(self):
-        u"""Extract the data of this layer as a CSV node with a list of
-        key–value pairs, ready to be used for the CSV table export.  See the
+        u"""Extract the data of this layer as a data node with a list of
+        key–value pairs, ready to be used for the data export.  See the
         `samples.views.data_export` module for all the glory details.
 
         :Return:
-          a node for building a CSV tree
+          a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        csv_node = DataNode(self, _(u"layer {number}").format(number=self.number))
-        csv_node.items = [DataItem(_(u"number"), unicode(self.number), "layer")]
-        return csv_node
+        data_node = DataNode(self, _(u"layer {number}").format(number=self.number))
+        data_node.items = [DataItem(_(u"number"), unicode(self.number), "layer")]
+        return data_node

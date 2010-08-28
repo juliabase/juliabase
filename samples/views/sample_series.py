@@ -329,9 +329,9 @@ def new(request):
 
 @login_required
 def export(request, name):
-    u"""View for exporting a sample series to CSV data.  Thus, the return value
-    is not an HTML response but a text/csv response.  Note that you must also
-    be allowed to see all *samples* in this sample series for CSV table export.
+    u"""View for exporting sample series data in CSV or JSON format.  Thus, the
+    return value is not an HTML response.  Note that you must also be allowed
+    to see all *samples* in this sample series for the export.
 
     :Parameters:
       - `request`: the current HTTP Request object

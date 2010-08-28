@@ -725,8 +725,8 @@ def search(request):
 
 @login_required
 def export(request, sample_name):
-    u"""View for exporting a sample to CSV data.  Thus, the return value is not
-    an HTML response but a text/csv response.
+    u"""View for exporting sample data in CSV or JSON format.  Thus, the return
+    value is not an HTML response.
 
     :Parameters:
       - `request`: the current HTTP Request object

@@ -181,8 +181,8 @@ def show(request, process_name, year_and_month):
 
 @login_required
 def export(request, process_name, year_and_month):
-    u"""View for exporting a month of a lab notebook to CSV data.  Thus, the
-    return value is not an HTML response but a text/csv response.  In
+    u"""View for exporting the data of a month of a lab notebook.  Thus, the
+    return value is not an HTML response but a CSV or JSON response.  In
     ``urls.py``, you must give the entry for this view the name
     ``"export_lab_notebook_<process_name>"``.
     

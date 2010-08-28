@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Main routines and all views for the CSV table export.  Believe it or not,
-this is probably the most complicated thing in Chantal.  The problem is that
-data in Chantal has a tree-like structure, which is completely incompatible
-with the table structure needed for CSV export.
+u"""Main routines and all views for the data export.  Believe it or not, this
+is probably the most complicated thing in Chantal.  The problem is that data in
+Chantal has a tree-like structure, which is completely incompatible with the
+table structure needed for CSV export.
 
 The tree
 ........
@@ -92,8 +92,8 @@ This very simple data structure can be used directly to show a preview table in
 HTML, or to create the CSV data by sending it through an instance of
 `UnicodeWriter`.
 
-Making models fit for CSV export
-................................
+Making models fit for data export
+.................................
 
 In order to get a proper node tree, all involved model instances must have a
 ``get_data`` method.  This method must return a `DataNode`, which may in turn
@@ -613,7 +613,7 @@ def export(request, data, label_column_heading):
         root_without_children.descriptive_name = None
         data.children = [root_without_children]
     get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
-    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", ""))
+    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
     data.find_unambiguous_names()
     data.complete_items_in_children()
     column_groups, columns = build_column_group_list(data)

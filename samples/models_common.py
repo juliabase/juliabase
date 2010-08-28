@@ -391,7 +391,7 @@ class Process(PolymorphicModel):
 
     def get_data(self):
         u"""Extract the data of this process as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for the CSV table
+        node) with lists of key–value pairs, ready to be used for the data
         export.  See the `samples.views.data_export` module for all the glory
         details.
 
@@ -399,16 +399,16 @@ class Process(PolymorphicModel):
         otherwise, subsequent modifications in derived classes break.
 
         :Return:
-          a node for building a CSV tree
+          a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        csv_node = DataNode(self)
-        csv_node.items = [DataItem(_(u"timestamp"), self.timestamp, "process"),
+        data_node = DataNode(self)
+        data_node.items = [DataItem(_(u"timestamp"), self.timestamp, "process"),
                           DataItem(_(u"operator"), get_really_full_name(self.operator), "process"),
                           DataItem(_(u"comments"), self.comments.strip(), "process")]
-        return csv_node
+        return data_node
 
     @classmethod
     def get_lab_notebook_context(cls, year, month):
@@ -694,25 +694,25 @@ class Sample(models.Model):
 
     def get_data(self):
         u"""Extract the data of this sample as a tree of nodes with lists of
-        key–value pairs, ready to be used for the CSV table export.  Every
-        child of the top-level node is a process of the sample.  See the
+        key–value pairs, ready to be used for the data export.  Every child of
+        the top-level node is a process of the sample.  See the
         `samples.views.data_export` module for all the glory details.
 
         :Return:
-          a node for building a CSV tree
+          a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        csv_node = DataNode(self, unicode(self))
+        data_node = DataNode(self, unicode(self))
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data()
-            csv_node.children.extend(ancestor_data.children)
-        csv_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
+            data_node.children.extend(ancestor_data.children)
+        data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
         # set ``cvs_node.items``.
-        return csv_node
+        return data_node
 
     def append_cache_key(self, cache_key):
         u"""Append a new cache key to the list of cache keys for this sample.
@@ -1037,36 +1037,36 @@ class Result(Process):
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for the
-        CSV table export.  See the `samples.views.data_export` module for all
-        the glory details.
+        data export.  See the `samples.views.data_export` module for all the
+        glory details.
 
         However, I should point out the peculiarities of result processes in
         this respect.  Result comments are exported by the parent class, here
         just the table is exported.  If the table contains only one row (which
-        should be the case almost always), only one CSV tree node is returned,
+        should be the case almost always), only one data tree node is returned,
         with this row as the key–value list.
 
         If the result table has more than one row, for each row, a sub-node is
         generated, which contains the row columns in its key–value list.
 
         :Return:
-          a node for building a CSV tree
+          a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        csv_node = super(Result, self).get_data()
-        csv_node.name = csv_node.descriptive_name = self.title
+        data_node = super(Result, self).get_data()
+        data_node.name = data_node.descriptive_name = self.title
         quantities, value_lists = json.loads(self.quantities_and_values)
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translation hint: In a table
                 child_node = DataNode(_(u"row"), _(u"row #{number}").format(i + 1))
                 child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
-                csv_node.children.append(child_node)
+                data_node.children.append(child_node)
         elif len(value_lists) == 1:
-            csv_node.items.extend([DataItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
-        return csv_node
+            data_node.items.extend([DataItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
+        return data_node
 
 
 class SampleSeries(models.Model):
@@ -1117,22 +1117,22 @@ class SampleSeries(models.Model):
 
     def get_data(self):
         u"""Extract the data of this sample series as a tree of nodes with
-        lists of key–value pairs, ready to be used for the CSV table export.
-        Every child of the top-level node is a sample of the sample series.
-        See the `samples.views.data_export` module for all the glory details.
+        lists of key–value pairs, ready to be used for the data export.  Every
+        child of the top-level node is a sample of the sample series.  See the
+        `samples.views.data_export` module for all the glory details.
 
         :Return:
-          a node for building a CSV tree
+          a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        csv_node = DataNode(self, unicode(self))
-        csv_node.children.extend(sample.get_data() for sample in self.samples.all())
+        data_node = DataNode(self, unicode(self))
+        data_node.children.extend(sample.get_data() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I
         # don't set ``cvs_note.items``.
-        return csv_node
+        return data_node
 
     def touch_samples(self):
         u"""Touch all samples of this series for cache expiring.  This isn't

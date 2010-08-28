@@ -599,8 +599,8 @@ def show_image(request, process_id, image_filename):
 
 @login_required
 def export(request, process_id):
-    u"""View for exporting a result process to CSV data.  Thus, the return
-    value is not an HTML response but a text/csv response.
+    u"""View for exporting result process data in CSV or JSON format.  Thus,
+    the return value is not an HTML response.
 
     :Parameters:
       - `request`: the current HTTP Request object
