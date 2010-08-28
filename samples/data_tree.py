@@ -13,13 +13,14 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module with CSV-related classes that are needed in the models.  Therefore,
-they cannot be defined in a view because then you'd have cyclic imports.
+u"""Module with classes that are needed to build nested representations of the
+data contain in a certain model instance.  Such tree-like representations are
+used e.g. for the CSV export of model instances.
 """
 
 
 class DataNode(object):
-    u"""Class for a node in a data tree intended for CSV export.
+    u"""Class for a node in a data tree intended to hold instance data.
 
     :ivar name: name of this node; must be the same for node whose items carry
       the same semantics
@@ -32,7 +33,8 @@ class DataNode(object):
       same length and the sample key ordering.  Note that this is not a
       dictionary in order to preserve ordering.
 
-    :ivar children: the child nodes of this node in the three
+    :ivar children: the child nodes of this node in the three; for example,
+      they may be the samples of a sample series
 
     :type name: unicode
     :type descriptive_name: unicode
