@@ -741,4 +741,4 @@ def export(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request.user)
-    return table_export.export(request, sample.get_data(), _(u"process"))
+    return table_export.export(request, sample.get_data_for_table_export(), _(u"process"))

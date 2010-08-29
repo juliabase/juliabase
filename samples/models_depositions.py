@@ -68,10 +68,17 @@ class Deposition(PhysicalProcess):
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
-        _ = ugettext
         data_node = super(Deposition, self).get_data()
-        data_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
+        data_node.items.append(DataItem(u"number", self.number, "deposition"))
         data_node.children = [layer.get_data() for layer in self.layers.all()]
+        return data_node
+
+    def get_data_for_table_export(self):
+        # See `Process.get_data_for_table_export` for the documentation.
+        _ = ugettext
+        data_node = super(Deposition, self).get_data_for_table_export()
+        data_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
+        data_node.children = [layer.get_data_for_table_export() for layer in self.layers.all()]
         return data_node
 
 
@@ -121,16 +128,14 @@ class Layer(models.Model):
         verbose_name_plural = _(u"layers")
 
     def get_data(self):
-        u"""Extract the data of this layer as a data node with a list of
-        key–value pairs, ready to be used for the data export.  See the
-        `samples.views.table_export` module for all the glory details.
+        # See `Process.get_data` for the documentation.
+        data_node = DataNode(u"layer {number}")
+        data_node.items = [DataItem(u"number", self.number, "layer")]
+        return data_node
 
-        :Return:
-          a node for building a data tree
-
-        :rtype: `samples.data_tree.DataNode`
-        """
+    def get_data_for_table_export(self):
+        # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = DataNode(self, _(u"layer {number}").format(number=self.number))
-        data_node.items = [DataItem(_(u"number"), unicode(self.number), "layer")]
+        data_node.items = [DataItem(_(u"number"), self.number, "layer")]
         return data_node

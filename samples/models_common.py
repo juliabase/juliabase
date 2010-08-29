@@ -391,9 +391,38 @@ class Process(PolymorphicModel):
 
     def get_data(self):
         u"""Extract the data of this process as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for the data
-        export.  See the `samples.views.table_export` module for all the glory
-        details.
+        node) with lists of key–value pairs, ready to be used for general data
+        export.  In contrast to `get_data_for_table_export`, I export *all*
+        attributes that may be interesting for the user, and even some related
+        data.  Typically, this data is used if a non-browser client retrieves a
+        single resource (*not* its table export!) and expects JSON output.
+
+        Additionaly, nothing is translated here.  This is in order to have
+        stable keys and values.  Otherwise, interpretation of the extracted
+        data would be a nightmare.  This also means that you must pass a
+        unicode to ``DataNode`` instead of an instance because an instance gets
+        translated.
+
+        :Return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
+        data_node = DataNode(shared_utils.camel_case_to_human_text(self.__class__.__name__))
+        data_node.items = [DataItem(u"timestamp", self.timestamp, "process"),
+                           DataItem(u"timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
+                           DataItem(u"operator", get_really_full_name(self.operator), "process"),
+                           DataItem(u"external operator", self.external_operator, "process"),
+                           DataItem(u"finished", self.finished, "process"),
+                           DataItem(u"comments", self.comments.strip(), "process"),
+                           DataItem(u"sample IDs", ",".join(str(sample.id) for sample in self.samples), "process")]
+        return data_node
+
+    def get_data_for_table_export(self):
+        u"""Extract the data of this process as a tree of nodes (or a single
+        node) with lists of key–value pairs, ready to be used for the table
+        data export.  See the `samples.views.table_export` module for all the
+        glory details.
 
         Note that ``_`` must get ``ugettext`` in these methods because
         otherwise, subsequent modifications in derived classes break.
@@ -406,13 +435,8 @@ class Process(PolymorphicModel):
         _ = ugettext
         data_node = DataNode(self)
         data_node.items = [DataItem(_(u"timestamp"), self.timestamp, "process"),
-                           DataItem(_(u"timestamp inaccuracy"), self.timestamp_inaccuracy, "process", table_export=False),
                            DataItem(_(u"operator"), get_really_full_name(self.operator), "process"),
-                           DataItem(_(u"external operator"), self.external_operator, "process", table_export=False),
-                           DataItem(_(u"finished"), self.finished, "process", table_export=False),
-                           DataItem(_(u"comments"), self.comments.strip(), "process"),
-                           DataItem(_(u"sample IDs"), ",".join(str(sample.id) for sample in self.samples), "process",
-                                    table_export=False)]
+                           DataItem(_(u"comments"), self.comments.strip(), "process")]
         return data_node
 
     @classmethod
@@ -698,10 +722,47 @@ class Sample(models.Model):
         return None
 
     def get_data(self):
-        u"""Extract the data of this sample as a tree of nodes with lists of
-        key–value pairs, ready to be used for the data export.  Every child of
-        the top-level node is a process of the sample.  See the
-        `samples.views.table_export` module for all the glory details.
+        u"""Extract the data of this sample as a tree of nodes (or a single
+        node) with lists of key–value pairs, ready to be used for general data
+        export.  Every child of the top-level node is a process of the sample.
+        In contrast to `get_data_for_table_export`, I export *all* attributes
+        that may be interesting for the user, and even some related data.
+        Typically, this data is used if a non-browser client retrieves a single
+        resource (*not* its table export!) and expects JSON output.
+
+        Additionaly, nothing is translated here.  This is in order to have
+        stable keys and values.  Otherwise, interpretation of the extracted
+        data would be a nightmare.  This also means that you must pass a
+        unicode to ``DataNode`` instead of an instance because an instance gets
+        translated.
+
+        :Return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
+        data_node = DataNode(self.name)
+        if self.split_origin:
+            ancestor_data = self.split_origin.parent.get_data()
+            data_node.children.extend(ancestor_data.children)
+        data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
+        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person.username),
+                           DataItem(u"current location", self.current_location),
+                           DataItem(u"purpose", self.purpose),
+                           DataItem(u"tags", self.tags),
+                           DataItem(u"split origin", self.split_origin.id),
+                           DataItem(u"topic", self.topic)]
+        return data_node
+
+    def get_data_for_table_export(self):
+        u"""Extract the data of this sample as a tree of nodes (or a single
+        node) with lists of key–value pairs, ready to be used for the table
+        data export.  Every child of the top-level node is a process of the
+        sample.  See the `samples.views.table_export` module for all the glory
+        details.
+
+        Note that ``_`` must get ``ugettext`` in these methods because
+        otherwise, subsequent modifications in derived classes break.
 
         :Return:
           a node for building a data tree
@@ -711,12 +772,12 @@ class Sample(models.Model):
         _ = ugettext
         data_node = DataNode(self, unicode(self))
         if self.split_origin:
-            ancestor_data = self.split_origin.parent.get_data()
+            ancestor_data = self.split_origin.parent.get_data_for_table_export()
             data_node.children.extend(ancestor_data.children)
-        data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
+        data_node.children.extend(process.actual_instance.get_data_for_table_export() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
-        # set ``cvs_node.items``.
+        # set ``data_node.items``.
         return data_node
 
     def append_cache_key(self, cache_key):
@@ -1041,9 +1102,38 @@ class Result(Process):
 
     def get_data(self):
         u"""Extract the data of this result process as a tree of nodes (or a
+        single node) with lists of key–value pairs, ready to be used for
+        general data export.  In contrast to `get_data_for_table_export`, I
+        export *all* attributes that may be interesting for the user, and even
+        some related data.  Typically, this data is used if a non-browser
+        client retrieves a single resource (*not* its table export!) and
+        expects JSON output.
+
+        Additionaly, nothing is translated here.  This is in order to have
+        stable keys and values.  Otherwise, interpretation of the extracted
+        data would be a nightmare.  This also means that you must pass a
+        unicode to ``DataNode`` instead of an instance because an instance gets
+        translated.
+
+        :Return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
+        data_node = super(Result, self).get_data()
+        data_node.name = data_node.descriptive_name = self.title
+        quantities, value_lists = json.loads(self.quantities_and_values)
+        for i, value_list in enumerate(value_lists):
+            child_node = DataNode(u"row #{number}")
+            child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
+            data_node.children.append(child_node)
+        return data_node
+
+    def get_data_for_table_export(self):
+        u"""Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for the
-        data export.  See the `samples.views.table_export` module for all the
-        glory details.
+        table data export.  See the `samples.views.table_export` module for all
+        the glory details.
 
         However, I should point out the peculiarities of result processes in
         this respect.  Result comments are exported by the parent class, here
@@ -1060,7 +1150,7 @@ class Result(Process):
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        data_node = super(Result, self).get_data()
+        data_node = super(Result, self).get_data_for_table_export()
         data_node.name = data_node.descriptive_name = self.title
         quantities, value_lists = json.loads(self.quantities_and_values)
         if len(value_lists) > 1:
@@ -1122,6 +1212,34 @@ class SampleSeries(models.Model):
 
     def get_data(self):
         u"""Extract the data of this sample series as a tree of nodes with
+        lists of key–value pairs, ready to be used for general data export.
+        Every child of the top-level node is a sample of the sample series.  In
+        contrast to `get_data_for_table_export`, I export *all* attributes that
+        may be interesting for the user, and even some related data.
+        Typically, this data is used if a non-browser client retrieves a single
+        resource (*not* its table export!) and expects JSON output.
+
+        Additionaly, nothing is translated here.  This is in order to have
+        stable keys and values.  Otherwise, interpretation of the extracted
+        data would be a nightmare.  This also means that you must pass a
+        unicode to ``DataNode`` instead of an instance because an instance gets
+        translated.
+
+        :Return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
+        data_node = DataNode(self.name)
+        data_node.children.extend(sample.get_data() for sample in self.samples.all())
+        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person.username),
+                           DataItem(u"timestamp", self.timestamp),
+                           DataItem(u"description", self.description),
+                           DataItem(u"topic", self.topic)]
+        return data_node
+
+    def get_data_for_table_export(self):
+        u"""Extract the data of this sample series as a tree of nodes with
         lists of key–value pairs, ready to be used for the data export.  Every
         child of the top-level node is a sample of the sample series.  See the
         `samples.views.table_export` module for all the glory details.
@@ -1133,7 +1251,7 @@ class SampleSeries(models.Model):
         """
         _ = ugettext
         data_node = DataNode(self, unicode(self))
-        data_node.children.extend(sample.get_data() for sample in self.samples.all())
+        data_node.children.extend(sample.get_data_for_table_export() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I
         # don't set ``cvs_note.items``.
