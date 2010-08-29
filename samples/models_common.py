@@ -411,7 +411,7 @@ class Process(PolymorphicModel):
         data_node = DataNode(shared_utils.camel_case_to_human_text(self.__class__.__name__))
         data_node.items = [DataItem(u"timestamp", self.timestamp, "process"),
                            DataItem(u"timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
-                           DataItem(u"operator", get_really_full_name(self.operator), "process"),
+                           DataItem(u"operator", self.operator, "process"),
                            DataItem(u"external operator", self.external_operator, "process"),
                            DataItem(u"finished", self.finished, "process"),
                            DataItem(u"comments", self.comments.strip(), "process"),
