@@ -33,7 +33,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information
-from samples.views import utils, form_utils, feed_utils, csv_export
+from samples.views import utils, form_utils, feed_utils, table_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 
 
@@ -567,8 +567,8 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
-            if utils.is_remote_client(request):
-                return utils.respond_to_remote_client(True)
+            if utils.is_json_requested(request):
+                return utils.respond_in_json(True)
             if added:
                 success_message = ungettext(u"Sample {samples} was added to My Samples.",
                                             u"Samples {samples} were added to My Samples.",
@@ -616,7 +616,7 @@ def by_id(request, sample_id, path_suffix):
     :rtype: ``HttpResponse``
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
-    if utils.is_remote_client(request):
+    if utils.is_json_requested(request):
         # No redirect for the remote client.  This also makes a POST request
         # possible.
         return show(request, sample.name)
@@ -725,8 +725,8 @@ def search(request):
 
 @login_required
 def export(request, sample_name):
-    u"""View for exporting a sample to CSV data.  Thus, the return value is not
-    an HTML response but a text/csv response.
+    u"""View for exporting sample data in CSV or JSON format.  Thus, the return
+    value is not an HTML response.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -741,4 +741,4 @@ def export(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request.user)
-    return csv_export.export(request, sample.get_data(), _(u"process"))
+    return table_export.export(request, sample.get_data_for_table_export(), _(u"process"))

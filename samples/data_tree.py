@@ -13,13 +13,14 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module with CSV-related classes that are needed in the models.  Therefore,
-they cannot be defined in a view because then you'd have cyclic imports.
+u"""Module with classes that are needed to build nested representations of the
+data contain in a certain model instance.  Such tree-like representations are
+used e.g. for the CSV export of model instances.
 """
 
 
-class CSVNode(object):
-    u"""Class for a node in a data tree intended for CSV export.
+class DataNode(object):
+    u"""Class for a node in a data tree intended to hold instance data.
 
     :ivar name: name of this node; must be the same for node whose items carry
       the same semantics
@@ -32,12 +33,13 @@ class CSVNode(object):
       same length and the sample key ordering.  Note that this is not a
       dictionary in order to preserve ordering.
 
-    :ivar children: the child nodes of this node in the three
+    :ivar children: the child nodes of this node in the three; for example,
+      they may be the samples of a sample series
 
     :type name: unicode
     :type descriptive_name: unicode
     :type items: list of (unicode, unicode)
-    :type childen: list of `CSVNode`
+    :type childen: list of `DataNode`
     """
 
     def __init__(self, instance, descriptive_name=u""):
@@ -53,16 +55,34 @@ class CSVNode(object):
             for example, it is the sample's name.  By default, it is the type
             of the instance or the string you gave as ``instance``.
 
-        :type instance: ``models.Model`` or unicode
+        :type instance: ``models.Model`` or unicode or str
         :type descriptive_name: unicode
         """
-        if isinstance(instance, unicode):
+        if isinstance(instance, basestring):
             self.name = self.descriptive_name = instance
         else:
             self.name = unicode(instance._meta.verbose_name)
         self.descriptive_name = unicode(descriptive_name) or self.name
         self.items = []
         self.children = []
+
+    def to_dict(self):
+        u"""Converts the data which this node holds to a dictionary.  The
+        dictionary maps the keys to the valus of each contained `DataItem`.
+        Additionally, it maps node names of children to their dictionaries.  If
+        names of children collide with names of items – that's bad luck.
+
+        Call this method only after having called `find_unambiguous_names`.
+        Otherwise, you will have name collisions even among sibling nodes.
+
+        :Return:
+          data of this node in form of nested dictionaries
+
+        :rtype: dict mapping unicode to dict or unicode
+        """
+        data = dict((item.key, item.value) for item in self.items)
+        data.update((child.name, child.to_dict()) for child in self.children)
+        return data
 
     def find_unambiguous_names(self, renaming_offset=1):
         u"""Make all names in the whole tree of this node instance
@@ -127,7 +147,7 @@ class CSVNode(object):
             this parameter.
 
         :type key_sets: dict mapping unicode to set of (unicode, str)
-        :type item_cache: dict mapping `CSVNode` to set of (unicode, str)
+        :type item_cache: dict mapping `DataNode` to set of (unicode, str)
         """
         if key_sets is None:
             item_cache = {}
@@ -146,7 +166,7 @@ class CSVNode(object):
             key_sets = collect_key_sets(self)
         missing_items = key_sets[self.name] - item_cache[self]
         for key, origin in missing_items:
-            self.items.append(CSVItem(key, u"", origin))
+            self.items.append(DataItem(key, u"", origin))
         for child in self.children:
             child.complete_items_in_children(key_sets, item_cache)
 
@@ -154,9 +174,9 @@ class CSVNode(object):
         return repr(self.name)
 
 
-class CSVItem(object):
+class DataItem(object):
     u"""This class represents a key–value pair, holding the actual data in a
-    `CSVNode` tree.
+    `DataNode` tree.
 
     :ivar key: the key name of the data item
 

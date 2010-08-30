@@ -13,24 +13,24 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Main routines and all views for the CSV table export.  Believe it or not,
-this is probably the most complicated thing in Chantal.  The problem is that
-data in Chantal has a tree-like structure, which is completely incompatible
-with the table structure needed for CSV export.
+u"""Main routines and all views for the data export.  Believe it or not, this
+is probably the most complicated thing in Chantal.  The problem is that data in
+Chantal has a tree-like structure, which is completely incompatible with the
+table structure needed for CSV export.
 
 The tree
 ........
 
-The starting point is the `CSVNode` tree.  It is the result of a ``get_data``
+The starting point is the `DataNode` tree.  It is the result of a ``get_data``
 method call of a sample, sample series, or single process.  The root note of
 such a tree represents the instance whose ``get_data`` method was called.
 
 The direct children of the top node are called “row nodes” or “row trees”
 because they will form the rows of the table, by being flattened.
 
-Every `CSVNode` has not only children, but also key–value items containing the
+Every `DataNode` has not only children, but also key–value items containing the
 actual data.  Both key and value are unicodes.  Additionally, it has a ``name``
-which denotes the type or class of the `CSVNode`.  For example, the ``name`` of
+which denotes the type or class of the `DataNode`.  For example, the ``name`` of
 a process may be “PDS measurement” or “6-chamber deposition”.
 
 Making the node names unique
@@ -92,14 +92,14 @@ This very simple data structure can be used directly to show a preview table in
 HTML, or to create the CSV data by sending it through an instance of
 `UnicodeWriter`.
 
-Making models fit for CSV export
-................................
+Making models fit for data export
+.................................
 
 In order to get a proper node tree, all involved model instances must have a
-``get_data`` method.  This method must return a `CSVNode`, which may in turn be
-the root of a whole ``CSVNode`` subtree.  Additionally, it probably will append
-items to the ``items`` list with the values of the database instance's
-attributes.  See `CSVNode` and `csv_common.CSVItem` for further information.
+``get_data`` method.  This method must return a `DataNode`, which may in turn
+be the root of a whole ``DataNode`` subtree.  Additionally, it probably will
+append items to the ``items`` list with the values of the database instance's
+attributes.  See `DataNode` and `data_tree.DataItem` for further information.
 Additionally, the various instances of the ``get_data`` method in various
 database model classes will show you how to use it (they are all very
 strightforward).
@@ -117,7 +117,7 @@ from django.forms.util import ValidationError
 from django.template import defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
-from samples.csv_common import CSVNode
+from samples.data_tree import DataNode
 from chantal_common import mimeparse
 
 
@@ -203,7 +203,7 @@ class ColumnGroup(object):
     boxes in the HTML view for the user.
 
     :ivar name: name of the column group which directly corresponds to the name
-      of the respective `CSVNode`.  It must never contain a TAB character
+      of the respective `DataNode`.  It must never contain a TAB character
       because this is used as a separator in `OldDataForm`.
 
     :ivar key_indices: dictionary which maps key names to their index in the
@@ -218,7 +218,7 @@ class ColumnGroup(object):
         u"""Class constructor.
 
         :Parameters:
-          - `name`: the name of the `CSVNode` this column group represents
+          - `name`: the name of the `DataNode` this column group represents
 
         :type name: unicode
         """
@@ -260,7 +260,7 @@ class Column(object):
       case of “shared columns”, this is not so simple anymore.  Then, the value
       is in exactly one of the shared columns, so we have to check all of them
       until we find something.  For more information about shared columns, see
-      `csv_common.CSVItem.__init__`.
+      `data_tree.DataItem.__init__`.
 
     :ivar key: the pristine name of the key this column points to, i.e. it
       doesn't contain any affixes to make it unambiguous
@@ -291,7 +291,7 @@ class Column(object):
         method for each other column group which contains this shared key
         (instead of appending a new key to the ``columns`` list in
         `build_column_group_list`).  For more information about shared columns,
-        see `csv_common.CSVItem.__init__`.
+        see `data_tree.DataItem.__init__`.
 
         :Parameters:
           - `column_group_name`: the name of the column group this column is
@@ -337,12 +337,12 @@ def build_column_group_list(root):
     columns are used for any export, ODF, Excel, and CSV.
 
     :Parameters:
-      - `root`: The root node of the ``CSVNode`` tree.  It must be a complete
+      - `root`: The root node of the ``DataNode`` tree.  It must be a complete
         tree, i.e. the top-level children are considered the row tree.  The
         node names must have been made unambiguous within a row tree already
-        using `CSVNode.find_unambiguous_names`.
+        using `DataNode.find_unambiguous_names`.
 
-    :type root: `CSVNode`
+    :type root: `DataNode`
 
     :Return:
       the column groups, the column list
@@ -351,7 +351,7 @@ def build_column_group_list(root):
     """
 
     def walk_row_tree(node, top_level=True):
-        u"""Extract all node names from a ``CSVNode`` tree.  This routine calls
+        u"""Extract all node names from a ``DataNode`` tree.  This routine calls
         itself recursively to walk through the tree.  Note that the inner order
         of the nodes (e.g. the chronological order of processes) is preserved
         by this method.
@@ -359,7 +359,7 @@ def build_column_group_list(root):
         :Parameters:
           - `node`: the root node of the (sub-)tree to be analysed
 
-        :type node: `CSVNode`
+        :type node: `DataNode`
 
         :Return:
           all node names
@@ -431,17 +431,17 @@ def build_column_group_list(root):
 
 
 def flatten_tree(root):
-    u"""Walk through a ``CSVNode`` tree and convert it to a list of nested
+    u"""Walk through a ``DataNode`` tree and convert it to a list of nested
     dictionaries for easy cell value lookup.  The resulting data structure is
     used in `Column.get_value`.
 
     :Parameters:
-      - `root`: The root node of the ``CSVNode`` tree.  It must be a complete
+      - `root`: The root node of the ``DataNode`` tree.  It must be a complete
         tree, i.e. the top-level children are considered the row tree.  The
         node names must have been made unambiguous within a row tree already
-        using `CSVNode.find_unambiguous_names`.
+        using `DataNode.find_unambiguous_names`.
 
-    :type root: `CSVNode`
+    :type root: `DataNode`
 
     :Return:
       list of all rows containg a dictionary mapping node names (loosely
@@ -597,7 +597,7 @@ def export(request, data, label_column_heading):
         table row headings, see `generate_table_rows`.
 
     :type request: ``HttpRequest``
-    :type data: `CSVNode`
+    :type data: `DataNode`
     :type label_column_heading: unicode
 
     :Returns:
@@ -613,7 +613,7 @@ def export(request, data, label_column_heading):
         root_without_children.descriptive_name = None
         data.children = [root_without_children]
     get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
-    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", ""))
+    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
     data.find_unambiguous_names()
     data.complete_items_in_children()
     column_groups, columns = build_column_group_list(data)
@@ -661,9 +661,9 @@ def export(request, data, label_column_heading):
         columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/csv_export.html", {"title": title, "column_groups": column_groups_form,
-                                                          "columns": columns_form,
-                                                          "rows": zip(table, switch_row_forms) if table else None,
-                                                          "old_data": old_data_form,
-                                                          "backlink": request.GET.get("next", "")},
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
                               context_instance=RequestContext(request))

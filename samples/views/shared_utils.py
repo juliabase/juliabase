@@ -70,12 +70,36 @@ def camel_case_to_underscores(name):
     """
     result = []
     for i, character in enumerate(name):
-        if i == 0:
-            result.append(character.lower())
-        elif character in string.ascii_uppercase and (i+1 < len(name) and name[i+1] not in string.ascii_uppercase):
-            result.extend(("_", character.lower()))
-        else:
-            result.append(character.lower())
+        if i > 0 and character in string.ascii_uppercase and (
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or 
+            (name[i - 1] not in string.ascii_uppercase)):
+            result.append("_")
+        result.append(character.lower())
+    return "".join(result)
+
+
+def camel_case_to_human_text(name):
+    u"""Converts a CamelCase identifier to one intended to be read by humans.
+    For example, ``"MySamples"`` is converted to ``"my samples"``, and
+    ``"PDSMeasurement"`` to ``"PDS measurement"``.
+
+    :Parameters:
+      - `name`: the camel-cased identifier
+
+    :type name: str
+
+    :Return:
+      the pretty-printed identifier
+
+    :rtype: str
+    """
+    result = []
+    for i, character in enumerate(name):
+        if i > 0 and character in string.ascii_uppercase and (
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or 
+            (name[i - 1] not in string.ascii_uppercase)):
+            result.append(" ")
+        result.append(character if i + 1 >= len(name) or name[i + 1] in string.ascii_uppercase else character.lower())
     return "".join(result)
 
 

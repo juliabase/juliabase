@@ -29,6 +29,7 @@ from functools import update_wrapper
 from django.template import Context, RequestContext
 from django.shortcuts import render_to_response
 import chantal_common.utils
+from chantal_common import mimeparse
 from samples import models, permissions
 from samples.views.shared_utils import *
 
@@ -278,7 +279,7 @@ def parse_query_string(request):
 
 
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
-                        remote_client_response=True):
+                        json_response=True):
     u"""After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
     add/edit request was started.
@@ -292,7 +293,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     redirection.  It always has HTTP status code 303 (“see other”).
 
     If the request came from the Chantal Remote Client, the response is a
-    pickled ``remote_client_response``.  (Normally, a simple ``True``.)
+    pickled ``json_response``.  (Normally, a simple ``True``.)
 
     :Parameters:
       - `request`: the current HTTP request
@@ -306,8 +307,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
       - `forced`: If ``True``, go to ``view`` even if a “next” URL is
         available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
         using this option to generate some sort of nested forwarding.
-      - `remote_client_response`: object which is to be sent as a pickled
-        response to the remote client; defaults to ``True``.
+      - `json_response`: object which is to be sent as a pickled response to
+        the remote client; defaults to ``True``.
 
     :type request: ``HttpRequest``
     :type success_report: unicode
@@ -315,22 +316,23 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
-    :type remote_client_response: ``object``
+    :type json_response: ``object``
 
     :Return:
       the HTTP response object to be returned to the view's caller
 
     :rtype: ``HttpResponse``
     """
-    if is_remote_client(request):
-        return respond_to_remote_client(remote_client_response)
+    if is_json_requested(request):
+        return respond_in_json(json_response)
     return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 
 
-def is_remote_client(request):
-    u"""Tests whether the current request was not done by an ordinary browser
-    like Firefox or Google Chrome but by the Chantal Remote Client.
+def is_json_requested(request):
+    u"""Tests whether the current request should be answered in JSON format
+    instead of HTML.  Typically this means that the request was made by the
+    CHantal Remote Client or by JavaScript code.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -338,23 +340,26 @@ def is_remote_client(request):
     :type request: ``HttpRequest``
 
     :Returns:
-      whether the request was made with the Remote Client
+      whether the request should be answered in JSON
 
     :rtype: bool
     """
-    return request.META.get("HTTP_USER_AGENT", "").startswith("Chantal-Remote")
+    requested_mime_type = mimeparse.best_match(["text/html", "application/xhtml+xml", "application/json"],
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type == "application/json"
 
 
-def respond_to_remote_client(value):
-    u"""The communication with the Chantal Remote Client should be done without
-    generating HTML pages in order to have better performance.  Thus, all
-    responses are Python objects, serialised in JSON notation.
+def respond_in_json(value):
+    u"""The communication with the Chantal Remote Client or to AJAX clients
+    should be done without generating HTML pages in order to have better
+    performance.  Thus, all responses are Python objects, serialised in JSON
+    notation.
 
-    This views that should be accessed by both the Remote Client and the normal
-    users should distinguish between both by using `is_remote_client`.
+    The views that can be accessed by the Remote Client/AJAX as well as normal
+    browsers should distinguish between both by using `is_json_requested`.
 
     :Parameters:
-      - `value`: the data to be sent back to the remote client.
+      - `value`: the data to be sent back to the client that requested JSON.
 
     :type value: ``object`` (an arbitrary Python object)
 

@@ -46,8 +46,8 @@ class ExceptionsMiddleware(object):
 
     def process_exception(self, request, exception):
         if isinstance(exception, django.http.Http404):
-            if utils.is_remote_client(request):
-                return utils.respond_to_remote_client(False)
+            if utils.is_json_requested(request):
+                return utils.respond_in_json(False)
         elif isinstance(exception, PermissionError):
             return HttpResponseUnauthorized(
                 loader.render_to_string("samples/permission_error.html",

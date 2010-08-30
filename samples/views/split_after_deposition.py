@@ -433,7 +433,7 @@ def split_and_rename_after_deposition(request, deposition_number):
     permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
     if not deposition.finished:
         raise Http404(u"This deposition is not finished yet.")
-    remote_client = utils.is_remote_client(request)
+    remote_client = utils.is_json_requested(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \
             forms_from_post_data(request.POST, deposition, remote_client)
@@ -445,7 +445,7 @@ def split_and_rename_after_deposition(request, deposition_number):
             for sample_split in sample_splits:
                 feed_utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
             return utils.successful_response(request, _(u"Samples were successfully split and/or renamed."),
-                                             remote_client_response=True)
+                                             json_response=True)
     else:
         original_data_forms, new_name_form_lists, global_new_data_form = forms_from_database(deposition, remote_client)
     return render_to_response("samples/split_after_deposition.html",

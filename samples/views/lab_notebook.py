@@ -35,8 +35,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
 from samples import models, permissions
-from samples.views import utils, csv_export
-from samples.csv_common import CSVNode
+from samples.views import utils, table_export
+from samples.data_tree import DataNode
 from chantal_common.utils import HttpResponseSeeOther
 
 
@@ -181,8 +181,8 @@ def show(request, process_name, year_and_month):
 
 @login_required
 def export(request, process_name, year_and_month):
-    u"""View for exporting a month of a lab notebook to CSV data.  Thus, the
-    return value is not an HTML response but a text/csv response.  In
+    u"""View for exporting the data of a month of a lab notebook.  Thus, the
+    return value is not an HTML response but a CSV or JSON response.  In
     ``urls.py``, you must give the entry for this view the name
     ``"export_lab_notebook_<process_name>"``.
     
@@ -206,4 +206,4 @@ def export(request, process_name, year_and_month):
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
     data = process_class.get_lab_notebook_data(year, month)
-    return csv_export.export(request, data, _(u"process"))
+    return table_export.export(request, data, _(u"process"))

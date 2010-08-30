@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views that are intended only for the Remote Client.  While also users can
-visit these links with their browser directly, it is not really useful what
-they get there.  Note that the whole communication to the remote client happens
-in JSON format.
+u"""Views that are intended only for the Remote Client and AJAX code (called
+“JSON clients”).  While also users can visit these links with their browser
+directly, it is not really useful what they get there.  Note that the whole
+communication to the remote client happens in JSON format.
 """
 
 from __future__ import absolute_import
@@ -43,10 +43,10 @@ from samples import models, permissions
 def primary_keys(request):
     u"""Return the mappings of names of database objects to primary keys.
     While this can be used by everyone by entering the URL directly, this view
-    is intended to be used only by the remote client program to get primary
-    keys.  The reason for this is simple: In forms, you have to give primary
-    keys in POST data sent to the web server.  However, a priori, the remote
-    client doesn't know them.  Therefore, it can query this view to get them.
+    is intended to be used only by a JSON client program to get primary keys.
+    The reason for this is simple: In forms, you have to give primary keys in
+    POST data sent to the web server.  However, a priori, the JSON client
+    doesn't know them.  Therefore, it can query this view to get them.
 
     The syntax of the query string to be appended to the URL is very simple.
     If you say::
@@ -57,10 +57,10 @@ def primary_keys(request):
 
         {"samples": {"01B410": 5, "01B402": 42}}
 
-    The same works for ``"topics"`` and ``"users"``.  You can also mix all
-    tree in the query string.  If you pass ``"*"`` instead of a values list,
-    you get *all* primary keys.  For samples, however, this is limited to
-    “My Samples”.
+    The same works for ``"topics"``, ``"users"``, and ``"external_operators"``.
+    You can also mix all tree in the query string.  If you pass ``"*"`` instead
+    of a values list, you get *all* primary keys.  For samples, however, this
+    is limited to “My Samples”.
 
     The result is the JSON representation of the resulting nested dictionary.
 
@@ -117,8 +117,13 @@ def primary_keys(request):
                                      if external_operator.name in external_operator_names)
         result_dict["external_operators"] = dict((external_operator.name, external_operator.id)
                                                  for external_operator in external_operators)
-    return utils.respond_to_remote_client(result_dict)
+    return utils.respond_in_json(result_dict)
 
+
+# FixMe: This should be merged into `primary_keys`, and instead of the dict in
+# ``id_field``, the ``natural_key`` method as described in
+# http://docs.djangoproject.com/en/dev/topics/serialization/#serialization-of-natural-keys
+# should be used.
 
 @login_required
 @never_cache
@@ -155,13 +160,14 @@ def available_items(request, model_name):
         raise Http404("Model name not found.")
     # FixMe: Add all interesing models here.
     id_field = {"PDSMeasurement": "number"}.get(model_name, "id")
-    return utils.respond_to_remote_client(list(model.objects.values_list(id_field, flat=True)))
+    return utils.respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
 
 @require_http_methods(["POST"])
 def login_remote_client(request):
     u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
-    method and expects ``username`` and ``password``.
+    method and expects ``username`` and ``password``.  AJAX code shouldn't need
+    this because it has the cookie already.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -178,12 +184,12 @@ def login_remote_client(request):
         username = request.POST["username"]
         password = request.POST["password"]
     except KeyError:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     user = django.contrib.auth.authenticate(username=username, password=password)
     if user is not None and user.is_active:
         django.contrib.auth.login(request, user)
-        return utils.respond_to_remote_client(True)
-    return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(True)
+    return utils.respond_in_json(False)
 
 
 @require_http_methods(["GET"])
@@ -203,12 +209,12 @@ def logout_remote_client(request):
     :rtype: ``HttpResponse``
     """
     django.contrib.auth.logout(request)
-    return utils.respond_to_remote_client(True)
+    return utils.respond_in_json(True)
 
 
 @require_http_methods(["GET"])
 def next_deposition_number(request, letter):
-    u"""Send the next free deposition number to the Chantal Remote Client.
+    u"""Send the next free deposition number to a JSON client.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -223,7 +229,7 @@ def next_deposition_number(request, letter):
 
     :rtype: ``HttpResponse``
     """
-    return utils.respond_to_remote_client(utils.get_next_deposition_number(letter))
+    return utils.respond_in_json(utils.get_next_deposition_number(letter))
 
 
 def get_next_quirky_name(sample_name, year_digits):
@@ -284,7 +290,7 @@ def add_sample(request):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     try:
         name = request.POST["name"]
         current_location = request.POST.get("current_location", u"")
@@ -293,16 +299,16 @@ def add_sample(request):
         tags = request.POST.get("tags", u"")
         topic = request.POST.get("topic")
     except KeyError:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     if len(name) > 30:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     is_legacy_name = request.GET.get("legacy") == u"True"
     if is_legacy_name:
         year_digits = request.GET.get("timestamp", "")[2:4]
         try:
             int(year_digits)
         except ValueError:
-            return utils.respond_to_remote_client(False)
+            return utils.respond_in_json(False)
         name = get_next_quirky_name(name, year_digits)[:30]
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
@@ -323,9 +329,9 @@ def add_sample(request):
                 # automatically.
                 alias.delete()
     except IntegrityError:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     sample.watchers.add(request.user)
-    return utils.respond_to_remote_client(sample.pk)
+    return utils.respond_in_json(sample.pk)
 
 
 @login_required
@@ -347,16 +353,16 @@ def add_alias(request):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     try:
         sample_pk = request.POST["sample"]
         alias = request.POST["alias"]
     except KeyError:
-        return utils.respond_to_remote_client(False)
+        return utils.respond_in_json(False)
     sample = get_object_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
     try:
         models.models.SampleAlias.create(name=alias, sample=sample)
     except IntegrityError:
         # Alias already present
-        return utils.respond_to_remote_client(False)
-    return utils.respond_to_remote_client(True)
+        return utils.respond_in_json(False)
+    return utils.respond_in_json(True)

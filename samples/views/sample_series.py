@@ -36,7 +36,7 @@ import django.contrib.auth.models
 from django.utils.http import urlquote_plus
 import chantal_common.utils
 from chantal_common.utils import append_error, adjust_timezone_information
-from samples.views import utils, form_utils, feed_utils, csv_export
+from samples.views import utils, form_utils, feed_utils, table_export
 
 
 class SampleSeriesForm(forms.ModelForm):
@@ -329,9 +329,9 @@ def new(request):
 
 @login_required
 def export(request, name):
-    u"""View for exporting a sample series to CSV data.  Thus, the return value
-    is not an HTML response but a text/csv response.  Note that you must also
-    be allowed to see all *samples* in this sample series for CSV table export.
+    u"""View for exporting sample series data in CSV or JSON format.  Thus, the
+    return value is not an HTML response.  Note that you must also be allowed
+    to see all *samples* in this sample series for the export.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -349,4 +349,4 @@ def export(request, name):
     permissions.assert_can_view_sample_series(request.user, sample_series)
     for sample in sample_series.samples.all():
         permissions.assert_can_fully_view_sample(request.user, sample)
-    return csv_export.export(request, sample_series.get_data(), _(u"sample"))
+    return table_export.export(request, sample_series.get_data_for_table_export(), _(u"sample"))
