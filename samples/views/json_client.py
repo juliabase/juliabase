@@ -57,10 +57,10 @@ def primary_keys(request):
 
         {"samples": {"01B410": 5, "01B402": 42}}
 
-    The same works for ``"topics"`` and ``"users"``.  You can also mix all
-    tree in the query string.  If you pass ``"*"`` instead of a values list,
-    you get *all* primary keys.  For samples, however, this is limited to
-    “My Samples”.
+    The same works for ``"topics"``, ``"users"``, and ``"external_operators"``.
+    You can also mix all tree in the query string.  If you pass ``"*"`` instead
+    of a values list, you get *all* primary keys.  For samples, however, this
+    is limited to “My Samples”.
 
     The result is the JSON representation of the resulting nested dictionary.
 
@@ -119,6 +119,11 @@ def primary_keys(request):
                                                  for external_operator in external_operators)
     return utils.respond_in_json(result_dict)
 
+
+# FixMe: This should be merged into `primary_keys`, and instead of the dict in
+# ``id_field``, the ``natural_key`` method as described in
+# http://docs.djangoproject.com/en/dev/topics/serialization/#serialization-of-natural-keys
+# should be used.
 
 @login_required
 @never_cache
