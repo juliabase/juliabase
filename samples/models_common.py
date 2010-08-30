@@ -746,7 +746,7 @@ class Sample(models.Model):
             ancestor_data = self.split_origin.parent.get_data()
             data_node.children.extend(ancestor_data.children)
         data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
-        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person.username),
+        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person),
                            DataItem(u"current location", self.current_location),
                            DataItem(u"purpose", self.purpose),
                            DataItem(u"tags", self.tags),
@@ -1232,7 +1232,7 @@ class SampleSeries(models.Model):
         """
         data_node = DataNode(self.name)
         data_node.children.extend(sample.get_data() for sample in self.samples.all())
-        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person.username),
+        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person),
                            DataItem(u"timestamp", self.timestamp),
                            DataItem(u"description", self.description),
                            DataItem(u"topic", self.topic)]
