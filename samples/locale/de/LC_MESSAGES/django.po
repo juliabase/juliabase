@@ -15,15 +15,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-22 17:55+0200\n"
+"POT-Creation-Date: 2010-08-30 22:18+0200\n"
 "PO-Revision-Date: 2010-08-22 17:56+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models_common.py:76 models_common.py:565 models_common.py:743
-#: models_common.py:1078
+#: models_common.py:76 models_common.py:594 models_common.py:809
+#: models_common.py:1173
 msgid "name"
 msgstr "Name"
 
@@ -52,7 +52,7 @@ msgstr "Kontaktperson im Institut"
 msgid "confidential"
 msgstr "vertraulich"
 
-#: models_common.py:87 models_common.py:134 models_common.py:1163
+#: models_common.py:87 models_common.py:134 models_common.py:1286
 msgid "external operator"
 msgstr "externer Operateur"
 
@@ -97,7 +97,7 @@ msgstr "auf das Jahr genau"
 msgid "not even accurate to the year"
 msgstr "nicht einmal auf das Jahr genau"
 
-#: models_common.py:130 models_common.py:408 models_common.py:1081
+#: models_common.py:130 models_common.py:437 models_common.py:1176
 #: models_feeds.py:47
 msgid "timestamp"
 msgstr "Zeitstempel"
@@ -106,20 +106,20 @@ msgstr "Zeitstempel"
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: models_common.py:133 models_common.py:409
+#: models_common.py:133 models_common.py:438
 msgid "operator"
 msgstr "Operateur"
 
-#: models_common.py:136 models_common.py:410 models_feeds.py:257
+#: models_common.py:136 models_common.py:439 models_feeds.py:257
 msgid "comments"
 msgstr "Kommentare"
 
-#: models_common.py:138 models_common.py:580 models_common.py:824
-#: models_common.py:1088
+#: models_common.py:138 models_common.py:609 models_common.py:890
+#: models_common.py:1183
 msgid "last modified"
 msgstr "zuletzt geändert"
 
-#: models_common.py:139 models_common.py:581
+#: models_common.py:139 models_common.py:610
 msgid "cache keys"
 msgstr "Cache-Schlüssel"
 
@@ -132,7 +132,7 @@ msgstr "abgeschlossen"
 msgid "process"
 msgstr "Prozess"
 
-#: models_common.py:153 models_common.py:578 models_common.py:823
+#: models_common.py:153 models_common.py:607 models_common.py:889
 msgid "processes"
 msgstr "Prozesse"
 
@@ -140,284 +140,284 @@ msgstr "Prozesse"
 msgid "process #{0}"
 msgstr "Prozess #{0}"
 
-#: models_common.py:567
+#: models_common.py:596
 msgid "watchers"
 msgstr "Beobachter"
 
 #. Translation hint: location of a sample
-#: models_common.py:569
+#: models_common.py:598
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: models_common.py:571 models_common.py:1083
+#: models_common.py:600 models_common.py:1178
 #: templates/samples/show_claim.html:42
 #: templates/samples/show_sample_series.html:52
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
-#: models_common.py:572 models_feeds.py:125
+#: models_common.py:601 models_feeds.py:125
 #: templates/samples/show_claim.html:43
 msgid "purpose"
 msgstr "Zweck"
 
 #. Translation hint: keywords for samples
-#: models_common.py:574
+#: models_common.py:603
 msgid "tags"
 msgstr "Tags"
 
-#: models_common.py:574
+#: models_common.py:603
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
 #. Translation hint: ID of mother sample
-#: models_common.py:577
+#: models_common.py:606
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: models_common.py:579 models_common.py:1087 models_feeds.py:124
+#: models_common.py:608 models_common.py:1182 models_feeds.py:124
 #: models_feeds.py:151 models_feeds.py:347 models_feeds.py:372
 #: models_feeds.py:404 templates/samples/show_claim.html:44
 msgid "topic"
 msgstr "Thema"
 
-#: models_common.py:584 models_common.py:744 models_common.py:822
+#: models_common.py:613 models_common.py:810 models_common.py:888
 #: templates/samples/show_claim.html:40 views/sample_series.py:352
 msgid "sample"
 msgstr "Probe"
 
-#: models_common.py:585 models_common.py:841 models_common.py:1085
+#: models_common.py:614 models_common.py:907 models_common.py:1180
 #: models_feeds.py:123 models_feeds.py:150 models_feeds.py:256
 #: models_feeds.py:279
 msgid "samples"
 msgstr "Proben"
 
-#: models_common.py:588
+#: models_common.py:617
 msgid "Can view all samples"
 msgstr "Darf alle Proben sehen"
 
-#: models_common.py:589
+#: models_common.py:618
 msgid "Can adopt samples"
 msgstr "Darf Proben in Besitz nehmen"
 
-#: models_common.py:748
+#: models_common.py:814
 msgid "name alias"
 msgstr "Alternativname"
 
-#: models_common.py:749
+#: models_common.py:815
 msgid "name aliases"
 msgstr "Alternativnamen"
 
 #. Translation hint: parent of a sample
-#: models_common.py:768
+#: models_common.py:834
 msgid "parent"
 msgstr "Elter"
 
-#: models_common.py:774 models_feeds.py:302
+#: models_common.py:840 models_feeds.py:302
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: models_common.py:775
+#: models_common.py:841
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: models_common.py:779
+#: models_common.py:845
 msgid "split of {parent_name}"
 msgstr "Spaltung von {parent_name}"
 
-#: models_common.py:821 models_common.py:1161 models_common.py:1180
+#: models_common.py:887 models_common.py:1284 models_common.py:1303
 msgid "user"
 msgstr "Benutzer"
 
-#: models_common.py:828
+#: models_common.py:894
 msgid "clearance"
 msgstr "Freigabe"
 
-#: models_common.py:829
+#: models_common.py:895
 msgid "clearances"
 msgstr "Freigaben"
 
-#: models_common.py:833
+#: models_common.py:899
 msgid "clearance of {sample} for {user}"
 msgstr "Freigabe von {sample} für {user}"
 
 #. Translation hint: someone who assert a claim to samples
-#: models_common.py:838
+#: models_common.py:904
 msgid "requester"
 msgstr "Antragssteller"
 
-#: models_common.py:839
+#: models_common.py:905
 msgid "reviewer"
 msgstr "Reviewer"
 
 #. Translation hint: "closed" claim to samples
-#: models_common.py:843
+#: models_common.py:909
 msgid "closed"
 msgstr "geschlossen"
 
-#: models_common.py:846
+#: models_common.py:912
 msgid "sample claim"
 msgstr "Beanspruchung von Proben"
 
-#: models_common.py:847
+#: models_common.py:913
 msgid "sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: models_common.py:851
+#: models_common.py:917
 msgid "sample claim #{number}"
 msgstr "Probenanspruch Nr. {number}"
 
-#: models_common.py:859
+#: models_common.py:925
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: models_common.py:860
+#: models_common.py:926
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: models_common.py:861
+#: models_common.py:927
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
 #. Translation hint: Of a sample
-#: models_common.py:873
+#: models_common.py:939
 msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translation hint: Of a sample
-#: models_common.py:877 views/sample.py:178
+#: models_common.py:943 views/sample.py:178
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:879
+#: models_common.py:945
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #. Translation hint: Of a sample
-#: models_common.py:885
+#: models_common.py:951
 msgid "cease of existence of {sample}"
 msgstr "Beendigung der Existenz von {sample}"
 
 #. Translation hint: Of a sample
-#: models_common.py:888
+#: models_common.py:954
 msgid "cease of existence #{number}"
 msgstr "Beendigung der Existenz #{number}"
 
-#: models_common.py:891 templates/samples/topics_and_permissions.html:79
+#: models_common.py:957 templates/samples/topics_and_permissions.html:79
 #: templates/samples/topics_and_permissions.html:92
 msgid "none"
 msgstr "keine"
 
 #. Translation hint: Of a result
-#: models_common.py:902
+#: models_common.py:968
 msgid "title"
 msgstr "Überschrift"
 
-#: models_common.py:903
+#: models_common.py:969
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
 #. Translation hint: Physical quantities are meant
-#: models_common.py:905
+#: models_common.py:971
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
 
-#: models_common.py:905
+#: models_common.py:971
 msgid "in JSON format"
 msgstr "im JSON-Format"
 
 #. Translation hint: experimental result
-#: models_common.py:917 models_feeds.py:226
+#: models_common.py:983 models_feeds.py:226
 msgid "result"
 msgstr "Ergebnis"
 
 #. Translation hint: experimental results
-#: models_common.py:919 models_common.py:1086
+#: models_common.py:985 models_common.py:1181
 msgid "results"
 msgstr "Ergebnisse"
 
 #. Translation hint: experimental result
-#: models_common.py:935 models_common.py:939
+#: models_common.py:1001 models_common.py:1005
 msgid "result for {sample}"
 msgstr "Ergebnis für {sample}"
 
 #. Translation hint: experimental result
-#: models_common.py:942
+#: models_common.py:1008
 msgid "result #{number}"
 msgstr "Ergebnis Nr. {number}"
 
 #. Translation hint: In a table
-#: models_common.py:1064 views/result.py:620
+#: models_common.py:1159 views/result.py:620
 msgid "row"
 msgstr "Zeile"
 
-#: models_common.py:1064
+#: models_common.py:1159
 msgid "row #{number}"
 msgstr "Zeile Nr. {number}"
 
 #. Translation hint: The “Y” stands for “year”
-#: models_common.py:1080
+#: models_common.py:1175
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
-#: models_common.py:1084 models_feeds.py:154 models_feeds.py:200
+#: models_common.py:1179 models_feeds.py:154 models_feeds.py:200
 #: models_feeds.py:227 models_feeds.py:280 models_feeds.py:326
 #: models_feeds.py:375
 msgid "description"
 msgstr "Beschreibung"
 
-#: models_common.py:1091 models_feeds.py:325 models_feeds.py:346
+#: models_common.py:1186 models_feeds.py:325 models_feeds.py:346
 #: models_feeds.py:371
 msgid "sample series"
 msgstr "Probenserie"
 
-#: models_common.py:1092
+#: models_common.py:1187
 msgid "sample serieses"
 msgstr "Probenserien"
 
-#: models_common.py:1160 models_common.py:1167
+#: models_common.py:1283 models_common.py:1290
 msgid "initials"
 msgstr "Kürzel"
 
 #. Translation hint: Plural of “initials”
-#: models_common.py:1169
+#: models_common.py:1292
 msgid "initialses"
 msgstr "Kürzel"
 
-#: models_common.py:1183
+#: models_common.py:1306
 msgid "auto-addition topics"
 msgstr "Themen mit Auto-Hinzufügen"
 
-#: models_common.py:1184
+#: models_common.py:1307
 msgid "new samples in these topics are automatically added to “My Samples”"
 msgstr ""
 "neue Proben in diesen Themen werden automatisch zu „Meine Proben“ hinzugefügt"
 
-#: models_common.py:1185
+#: models_common.py:1308
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: models_common.py:1186
+#: models_common.py:1309
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: models_common.py:1193
+#: models_common.py:1316
 msgid "display settings last modified"
 msgstr "Anzeigeoptionen zuletzt geändert"
 
-#: models_common.py:1199
+#: models_common.py:1322
 msgid "My Samples last modified"
 msgstr "Meine Proben zuletzt geändert"
 
-#: models_common.py:1203
+#: models_common.py:1326
 msgid "identifying data hash"
 msgstr "identifizierender Daten-Hash"
 
-#: models_common.py:1214 models_common.py:1215
+#: models_common.py:1337 models_common.py:1338
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models_common.py:1218
+#: models_common.py:1341
 msgid "Can edit permissions for all physical processes"
 msgstr "Darf die Berechtigungen für alle physikalischen Prozesse ändern"
 
@@ -441,23 +441,23 @@ msgstr "Depositionen"
 msgid "deposition {number}"
 msgstr "Deposition {number}"
 
-#: models_depositions.py:73 models_depositions.py:135
+#: models_depositions.py:80 models_depositions.py:140
 msgid "number"
 msgstr "Nummer"
 
-#: models_depositions.py:115
+#: models_depositions.py:122
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: models_depositions.py:120
+#: models_depositions.py:127
 msgid "layer"
 msgstr "Schicht"
 
-#: models_depositions.py:121
+#: models_depositions.py:128
 msgid "layers"
 msgstr "Schichten"
 
-#: models_depositions.py:134
+#: models_depositions.py:139
 msgid "layer {number}"
 msgstr "Schicht {number}"
 
@@ -943,58 +943,6 @@ msgstr "Passwort wiederholen:"
 #: templates/samples/change_password.html:33
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
-
-#: templates/samples/csv_export.html:28
-msgid "Error in column groups"
-msgstr "Fehler in Spalten-Gruppen"
-
-#: templates/samples/csv_export.html:40
-msgid "Error in columns"
-msgstr "Fehler in Spalten"
-
-#: templates/samples/csv_export.html:49
-msgid ""
-"\n"
-"            <p>Below, you see a preview of the table.  If you export it by\n"
-"              clicking on the button, you get the table in CSV format.  "
-"This\n"
-"              should be importable by any table-processing program.  It has "
-"the\n"
-"              following properties, which you may have to specify when\n"
-"              importing the data:</p>\n"
-"\n"
-"            <ol>\n"
-"              <li>The columns are <em>tabulator</em>-separated (“TAB”).</"
-"li>\n"
-"              <li>The file is encoded in <em>UTF-8</em>.</li>\n"
-"            </ol>\n"
-"\n"
-"            <p>Note that depending on the MS Excel version number, it may "
-"be\n"
-"              easier to import the table into Excel by saving the file with "
-"the\n"
-"              extension <tt>\".txt\"</tt> before importing it.</p>\n"
-"          "
-msgstr ""
-"\n"
-"<p>Sie sehen unten eine Vorschau der Tabelle.  Wenn Sie sie exportieren, "
-"indem Sie auf die Schaltfläche drücken, erhalten Sie die Tabelle im CSV-"
-"Format.  Dieses sollte von jedem Tabellen-verarbeitenden Programm "
-"importierbar sein.  Es hat die folgenden Eigenschaften, die Sie u.U. beim "
-"Importieren der Daten angeben müssen:</p>\n"
-"\n"
-"<ol>\n"
-"  <li>Die Spalten sind durch <em>Tabulatoren</em> getrennt („TAB“).</li>\n"
-"  <li>Die Datei ist <em>UTF-8</em>-kodiert.</li>\n"
-"</ol>\n"
-"\n"
-"<p>Beachten Sie, dass, abhängig von der MS-Excel-Version, es möglicherweise "
-"einfacher ist, die Tabelle in eine Datei mit der Endung <tt>\".txt\"</tt> zu "
-"speichern, bevor Sie sie importieren.</p>"
-
-#: templates/samples/csv_export.html:102
-msgid "Go back"
-msgstr "Zurück"
 
 #: templates/samples/disambiguation.html:21
 #, python-format
@@ -1528,7 +1476,7 @@ msgstr ""
 
 #: templates/samples/list_permissions.html:35
 #: templates/samples/list_permissions.html:48
-#: templates/samples/list_permissions.html:58 views/utils.py:567
+#: templates/samples/list_permissions.html:58 views/utils.py:572
 msgid ", "
 msgstr ", "
 
@@ -2032,6 +1980,58 @@ msgstr ""
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
 
+#: templates/samples/table_export.html:28
+msgid "Error in column groups"
+msgstr "Fehler in Spalten-Gruppen"
+
+#: templates/samples/table_export.html:40
+msgid "Error in columns"
+msgstr "Fehler in Spalten"
+
+#: templates/samples/table_export.html:49
+msgid ""
+"\n"
+"            <p>Below, you see a preview of the table.  If you export it by\n"
+"              clicking on the button, you get the table in CSV format.  "
+"This\n"
+"              should be importable by any table-processing program.  It has "
+"the\n"
+"              following properties, which you may have to specify when\n"
+"              importing the data:</p>\n"
+"\n"
+"            <ol>\n"
+"              <li>The columns are <em>tabulator</em>-separated (“TAB”).</"
+"li>\n"
+"              <li>The file is encoded in <em>UTF-8</em>.</li>\n"
+"            </ol>\n"
+"\n"
+"            <p>Note that depending on the MS Excel version number, it may "
+"be\n"
+"              easier to import the table into Excel by saving the file with "
+"the\n"
+"              extension <tt>\".txt\"</tt> before importing it.</p>\n"
+"          "
+msgstr ""
+"\n"
+"<p>Sie sehen unten eine Vorschau der Tabelle.  Wenn Sie sie exportieren, "
+"indem Sie auf die Schaltfläche drücken, erhalten Sie die Tabelle im CSV-"
+"Format.  Dieses sollte von jedem Tabellen-verarbeitenden Programm "
+"importierbar sein.  Es hat die folgenden Eigenschaften, die Sie u.U. beim "
+"Importieren der Daten angeben müssen:</p>\n"
+"\n"
+"<ol>\n"
+"  <li>Die Spalten sind durch <em>Tabulatoren</em> getrennt („TAB“).</li>\n"
+"  <li>Die Datei ist <em>UTF-8</em>-kodiert.</li>\n"
+"</ol>\n"
+"\n"
+"<p>Beachten Sie, dass, abhängig von der MS-Excel-Version, es möglicherweise "
+"einfacher ist, die Tabelle in eine Datei mit der Endung <tt>\".txt\"</tt> zu "
+"speichern, bevor Sie sie importieren.</p>"
+
+#: templates/samples/table_export.html:102
+msgid "Go back"
+msgstr "Zurück"
+
 #: templates/samples/topics_and_permissions.html:19
 msgid "Topics"
 msgstr "Themen"
@@ -2307,18 +2307,6 @@ msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
 
-#: views/csv_export.py:518
-msgid "Column groups"
-msgstr "Spalten-Gruppen"
-
-#: views/csv_export.py:532
-msgid "Columns"
-msgstr "Spalten"
-
-#: views/csv_export.py:663
-msgid "Table export for “{name}”"
-msgstr "Tabellen-Export für „{name}“"
-
 #: views/external_operator.py:77
 msgid "The external operator “{operator}” was successfully added."
 msgstr "Der externe Operateur „{operator}“ wurde erfolgreich neu angelegt."
@@ -2356,7 +2344,11 @@ msgid ""
 "The timestamp was older than the one in the database.  Probably someone else "
 "has edited the process by now.  If so, open the process in another tab and "
 "combine the changes."
-msgstr "Der Zeitstempel war älter als der in der Datenbank.  Wahrscheinlich hat jemand anderes den Prozess in der Zwischnzeit editiert.  Wenn dem so ist, öffnet Sie den Prozess in einem anderen Tab und kombinieren Sie die Änderungen."
+msgstr ""
+"Der Zeitstempel war älter als der in der Datenbank.  Wahrscheinlich hat "
+"jemand anderes den Prozess in der Zwischnzeit editiert.  Wenn dem so ist, "
+"öffnet Sie den Prozess in einem anderen Tab und kombinieren Sie die "
+"Änderungen."
 
 #: views/form_utils.py:155
 msgid "Number of layers to be added"
@@ -2424,9 +2416,13 @@ msgstr ""
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Depositionsbuchstabe muss ein großes „{letter}“ sein."
 
-#: views/form_utils.py:888
+#: views/form_utils.py:889
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
+
+#: views/json_client.py:152
+msgid "Only the administrator can access this resource."
+msgstr "Nur die Administratoren dürfen auf diese Ressource zugreifen."
 
 #: views/lab_notebook.py:48
 msgid "year"
@@ -2594,10 +2590,6 @@ msgstr "Die Berechtigungen von {name} wurden erfolgreich geändert."
 #: views/permissions.py:307
 msgid "Change permissions of {name}"
 msgstr "Die Berechtigungen von {name} ändern"
-
-#: views/remote_client.py:147
-msgid "Only the administrator can access this resource."
-msgstr "Nur die Administratoren dürfen auf diese Ressource zugreifen."
 
 #: views/result.py:65
 msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
@@ -2911,6 +2903,18 @@ msgstr "Die Probe „{sample}“ wurde erfolgreich gespalten."
 msgid "Split sample “{sample}”"
 msgstr "Spalten der Probe „{sample}“"
 
+#: views/table_export.py:518
+msgid "Column groups"
+msgstr "Spalten-Gruppen"
+
+#: views/table_export.py:532
+msgid "Columns"
+msgstr "Spalten"
+
+#: views/table_export.py:663
+msgid "Table export for “{name}”"
+msgstr "Tabellen-Export für „{name}“"
+
 #: views/topic.py:42
 msgid "Name of new topic"
 msgstr "Name des neuen Themas"
@@ -2973,11 +2977,11 @@ msgstr ""
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
-#: views/utils.py:567
+#: views/utils.py:572
 msgid ", and "
 msgstr " und "
 
-#: views/utils.py:569
+#: views/utils.py:574
 msgid " and "
 msgstr " und "
 
