@@ -33,6 +33,7 @@ u"""Middleware for handling samples-database-specific exceptions.
 """
 
 import json
+from django.http import Http404
 
 
 class ExceptionsMiddleware(object):
