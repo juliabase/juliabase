@@ -388,8 +388,8 @@ def change_my_samples(request):
     :rtype: ``HttpResponse``
     """
     try:
-        sample_ids_to_remove = [int(id_) for id_ in request.POST.get("remove", "").split(",")]
-        sample_ids_to_add = [int(id_) for id_ in request.POST.get("add", "").split(",")]
+        sample_ids_to_remove = [int(id_) for id_ in request.POST.get("remove", "").split(",") if id_]
+        sample_ids_to_add = [int(id_) for id_ in request.POST.get("add", "").split(",") if id_]
     except ValueError:
         raise Http404("One or more of the sample IDs were invalid.")
     # taken from `samples.views.sample.search`.
