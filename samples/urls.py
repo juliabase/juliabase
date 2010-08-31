@@ -126,4 +126,5 @@ urlpatterns = patterns("samples.views",
                        (r"^logout_remote_client$", "json_client.logout_remote_client"),
                        (r"^add_sample$", "json_client.add_sample"),
                        (r"^add_alias$", "json_client.add_alias"),
+                       (r"^change_my_samples$", "json_client.change_my_samples"),
                        )
