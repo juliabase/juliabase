@@ -23,6 +23,7 @@ from __future__ import absolute_import
 
 import sys
 from django.db.utils import IntegrityError
+from django.db.models import Q
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _
@@ -365,4 +366,41 @@ def add_alias(request):
     except IntegrityError:
         # Alias already present
         return utils.respond_in_json(False)
+    return utils.respond_in_json(True)
+
+
+@login_required
+@require_http_methods(["POST"])
+def change_my_samples(request):
+    u"""Adds or remove samples from “My Samples”.
+
+    :Parameters:
+      - `request`: The current HTTP Request object.  It must contain the sample
+        IDs of the to-be-removed samples comma-separated list in ``"remove"``
+        and the to-be-added sample IDs in ``"add"``.  Both can be empty.
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      ``True`` if it worked, ``False`` if something went wrong.  It returns a
+      404 if one sample wasn't found.
+
+    :rtype: ``HttpResponse``
+    """
+    try:
+        sample_ids_to_remove = [int(id_) for id_ in request.POST.get("remove", "").split(",") if id_]
+        sample_ids_to_add = [int(id_) for id_ in request.POST.get("add", "").split(",") if id_]
+    except ValueError:
+        raise Http404("One or more of the sample IDs were invalid.")
+    # taken from `samples.views.sample.search`.
+    base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
+                                              Q(currently_responsible_person=request.user) |
+                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
+    try:
+        samples_to_remove = models.Sample.objects.in_bulk(sample_ids_to_remove)
+        samples_to_add = base_query.in_bulk(sample_ids_to_add)
+    except models.Sample.DoesNotExist:
+        raise Http404("One or more of the sample IDs could not be found.")
+    request.user.my_samples.remove(*samples_to_remove.values())
+    request.user.my_samples.add(*samples_to_add.values())
     return utils.respond_in_json(True)

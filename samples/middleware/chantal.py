@@ -32,6 +32,9 @@ from django.shortcuts import render_to_response
 u"""Middleware for handling samples-database-specific exceptions.
 """
 
+import json
+from django.http import Http404
+
 
 class ExceptionsMiddleware(object):
     u"""Middleware for catching all exceptions raised by views.  However, I
@@ -47,7 +50,7 @@ class ExceptionsMiddleware(object):
     def process_exception(self, request, exception):
         if isinstance(exception, django.http.Http404):
             if utils.is_json_requested(request):
-                return utils.respond_in_json(False)
+                raise Http404(json.dumps(exception.args[0]))
         elif isinstance(exception, PermissionError):
             return HttpResponseUnauthorized(
                 loader.render_to_string("samples/permission_error.html",
