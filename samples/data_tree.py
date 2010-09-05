@@ -217,4 +217,8 @@ class DataItem(object):
         :type value: unicode
         :type origin: str or ``NoneType``
         """
-        self.key, self.value, self.origin = unicode(key), unicode(value or u""), origin
+        if value is None:
+            value = u""
+        elif not isinstance(value, bool):
+            value = unicode(value) or u""
+        self.key, self.value, self.origin = unicode(key), value, origin
