@@ -160,7 +160,7 @@ def available_items(request, model_name):
     else:
         raise Http404("Model name not found.")
     # FixMe: Add all interesing models here.
-    id_field = {"PDSMeasurement": "number"}.get(model_name, "id")
+    id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number"}.get(model_name, "id")
     return utils.respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
 
