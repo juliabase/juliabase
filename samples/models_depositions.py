@@ -129,7 +129,7 @@ class Layer(models.Model):
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
-        data_node = DataNode(u"layer {number}")
+        data_node = DataNode(u"layer {0}".format(self.number))
         data_node.items = [DataItem(u"number", self.number, "layer")]
         return data_node
 

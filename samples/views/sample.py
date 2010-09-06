@@ -585,6 +585,9 @@ def show(request, sample_name):
                 success_message = _(u"Nothing was changed.")
             messages.success(request, success_message)
     else:
+        if utils.is_json_requested(request):
+            sample = utils.lookup_sample(sample_name, request.user)
+            return utils.respond_in_json(sample.get_data().to_dict())
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render_to_response(
@@ -619,7 +622,10 @@ def by_id(request, sample_id, path_suffix):
     if utils.is_json_requested(request):
         # No redirect for the remote client.  This also makes a POST request
         # possible.
-        return show(request, sample.name)
+        if path_suffix == "/edit/":
+            return edit(request, sample.name)
+        else:  # FixMe: More path_suffixes should be tested
+            return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
     try:
         permissions.assert_can_fully_view_sample(request.user, sample)

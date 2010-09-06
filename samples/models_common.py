@@ -408,8 +408,9 @@ class Process(PolymorphicModel):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        data_node = DataNode(shared_utils.camel_case_to_human_text(self.__class__.__name__))
-        data_node.items = [DataItem(u"timestamp", self.timestamp, "process"),
+        data_node = DataNode("process #{0}".format(self.pk))
+        data_node.items = [DataItem(u"type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
+                           DataItem(u"timestamp", self.timestamp, "process"),
                            DataItem(u"timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
                            DataItem(u"operator", self.operator, "process"),
                            DataItem(u"external operator", self.external_operator, "process"),
@@ -746,11 +747,13 @@ class Sample(models.Model):
             ancestor_data = self.split_origin.parent.get_data()
             data_node.children.extend(ancestor_data.children)
         data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
-        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person),
+        data_node.items = [DataItem(u"ID", self.pk),
+                           DataItem(u"name", self.name),
+                           DataItem(u"currently responsible person", self.currently_responsible_person),
                            DataItem(u"current location", self.current_location),
                            DataItem(u"purpose", self.purpose),
                            DataItem(u"tags", self.tags),
-                           DataItem(u"split origin", self.split_origin.id),
+                           DataItem(u"split origin", self.split_origin and self.split_origin.id),
                            DataItem(u"topic", self.topic)]
         return data_node
 
