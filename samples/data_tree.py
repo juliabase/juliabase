@@ -69,11 +69,13 @@ class DataNode(object):
     def to_dict(self):
         u"""Converts the data which this node holds to a dictionary.  The
         dictionary maps the keys to the valus of each contained `DataItem`.
-        Additionally, it maps node names of children to their dictionaries.  If
-        names of children collide with names of items – that's bad luck.
+        Additionally, it maps node names of children to their dictionaries.
 
-        Call this method only after having called `find_unambiguous_names`.
-        Otherwise, you will have name collisions even among sibling nodes.
+        If names of children collide with names of items – that's bad luck.
+        The sample applies to colliding names of sibling nodes.  This simply
+        must never happen.  You may call `find_unambiguous_names` before
+        calling this method but this may make names very cumbersome.  So simply
+        avoid it in the first place.
 
         :Return:
           data of this node in form of nested dictionaries
