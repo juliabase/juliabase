@@ -573,8 +573,11 @@ class PhysicalProcess(Process):
     If neiter ``"add_model_name"`` nor ``"edit_permissions_for_model_name"`` is
     included, the process won't show up on the permissions list page.
     """
-    class Meta:
+    class Meta(Process.Meta):
         abstract = True
+        # FixMe: The following line is necessary as long as
+        # http://code.djangoproject.com/ticket/11369 is not fixed.
+        ordering = ["timestamp"]
 
     @classmethod
     def get_add_link(cls):
@@ -839,7 +842,7 @@ class SampleSplit(Process):
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
 
-    class Meta:
+    class Meta(Process.Meta):
         verbose_name = _(u"sample split")
         verbose_name_plural = _(u"sample splits")
 
@@ -941,7 +944,7 @@ class SampleDeath(Process):
         # Translation hint: Of a sample
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
 
-    class Meta:
+    class Meta(Process.Meta):
             # Translation hint: Of a sample
         verbose_name = _(u"cease of existence")
             # Translation hint: Of a sample
@@ -981,7 +984,7 @@ class Result(Process):
     anyting is written here.)
     """
 
-    class Meta:
+    class Meta(Process.Meta):
             # Translation hint: experimental result
         verbose_name = _(u"result")
             # Translation hint: experimental results

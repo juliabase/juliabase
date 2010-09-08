@@ -31,6 +31,7 @@ copyright holder, you must destroy it immediately and completely.
           <th/>
           <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can add" %}</th>
           <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can view all" %}</th>
+          <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can edit all" %}</th>
           <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can change permissions" %}</th>
         </tr>
       </thead>
@@ -40,6 +41,7 @@ copyright holder, you must destroy it immediately and completely.
             <td>{{ process.name }}</td>
             <td align="center">{{ permissions.can_add }}</td>
             <td align="center">{{ permissions.can_view_all }}</td>
+            <td align="center">{{ permissions.can_edit_all }}</td>
             <td align="center">{{ permissions.can_edit_permissions }}</td>
           </tr>
         {% endfor %}

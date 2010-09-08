@@ -260,7 +260,8 @@ def assert_can_edit_physical_process(user, process):
     u"""Tests whether the user can edit a physical process (i.e. deposition,
     measurement, etching process, clean room work etc).  For this, he must be
     the operator of this process, *and* he must be allowed to add new processes
-    of this kind.
+    of this kind.  Alternatively, he must have the “edit all” permission for
+    the process class.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -274,6 +275,9 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.__class__
+    codename = "edit_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    has_edit_all_permission = \
+        user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
         has_add_permission = \
@@ -281,7 +285,7 @@ def assert_can_edit_physical_process(user, process):
     else:
         has_add_permission = True
     if (not has_add_permission or process.operator != user) and not (has_add_permission and not process.finished) and \
-            not user.is_superuser:
+            not has_edit_all_permission and not user.is_superuser:
         description = _(u"You are not allowed to edit the process “{process}” because you are not the operator "
                         u"of this process.").format(process=process)
         raise PermissionError(user, description)
