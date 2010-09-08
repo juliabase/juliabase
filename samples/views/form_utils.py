@@ -573,22 +573,23 @@ class DepositionSamplesForm(forms.Form):
         between new and existing depositions.
         """
         samples = list(user.my_samples.all())
-        if deposition and deposition.finished:
-            # If editing a finished, existing deposition, always have an
-            # *unbound* form so that the samples are set although sample
-            # selection is "disabled" and thus never successful when
-            # submitting.  This is necessary for depositions because they can
-            # change the name of samples, and so changing the affected samples
-            # afterwards is a source of big trouble.
+        if deposition:
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
-            super(DepositionSamplesForm, self).__init__(**kwargs)
-            self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+            if deposition.finished:
+                # If editing a finished, existing deposition, always have an
+                # *unbound* form so that the samples are set although sample
+                # selection is "disabled" and thus never successful when
+                # submitting.  This is necessary for depositions because they can
+                # change the name of samples, and so changing the affected samples
+                # afterwards is a source of big trouble.
+                super(DepositionSamplesForm, self).__init__(**kwargs)
+                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+            else:
+                super(DepositionSamplesForm, self).__init__(data, **kwargs)
             samples.extend(deposition.samples.all())
         else:
             super(DepositionSamplesForm, self).__init__(data, **kwargs)
             self.fields["sample_list"].initial = []
-            if deposition:
-                self.fields["sample_list"].initial.extend(deposition.samples.values_list("pk", flat=True))
             if preset_sample:
                 samples.append(preset_sample)
                 self.fields["sample_list"].initial.append(preset_sample.pk)
