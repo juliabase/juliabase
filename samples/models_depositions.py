@@ -54,7 +54,7 @@ class Deposition(PhysicalProcess):
     """In JSON format, mapping sample IDs to positions.  Positions can be
     numbers or strings."""
 
-    class Meta:
+    class Meta(PhysicalProcess.Meta):
         verbose_name = _(u"deposition")
         verbose_name_plural = _(u"depositions")
 

@@ -125,7 +125,7 @@ class FeedNewSamples(FeedEntry):
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         # FixMe: The labels are gramatically unfortunate.  “feed entry for new
         # samples” is better.
         verbose_name = _(u"new samples feed entry")
@@ -153,7 +153,7 @@ class FeedMovedSamples(FeedEntry):
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
     description = models.TextField(_(u"description"))
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"moved samples feed entry")
         verbose_name_plural = _(u"moved samples feed entries")
 
@@ -175,7 +175,7 @@ class FeedNewPhysicalProcess(FeedEntry):
     """
     process = models.OneToOneField(Process, verbose_name=_(u"process"))
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"new physical process feed entry")
         verbose_name_plural = _(u"new physical process feed entries")
 
@@ -199,7 +199,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
     process = models.ForeignKey(Process, verbose_name=_(u"process"))
     description = models.TextField(_(u"description"))
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"edited physical process feed entry")
         verbose_name_plural = _(u"edited physical process feed entries")
 
@@ -227,7 +227,7 @@ class FeedResult(FeedEntry):
     description = models.TextField(_(u"description"), blank=True)
     is_new = models.BooleanField(_(u"result is new"))
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"result feed entry")
         verbose_name_plural = _(u"result feed entries")
 
@@ -256,7 +256,7 @@ class FeedCopiedMySamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     comments = models.TextField(_(u"comments"))
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"copied My Samples feed entry")
         verbose_name_plural = _(u"copied My Samples feed entries")
 
@@ -280,7 +280,7 @@ class FeedEditedSamples(FeedEntry):
     description = models.TextField(_(u"description"))
     responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"edited samples feed entry")
         verbose_name_plural = _(u"edited samples feed entries")
 
@@ -302,7 +302,7 @@ class FeedSampleSplit(FeedEntry):
     sample_split = models.ForeignKey(SampleSplit, verbose_name=_(u"sample split"))
     sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
             # Translation hint: Feed entry for a split of a sample
         verbose_name = _(u"sample split feed entry")
             # Translation hint: Feed entries for splits of samples
@@ -326,7 +326,7 @@ class FeedEditedSampleSeries(FeedEntry):
     description = models.TextField(_(u"description"))
     responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"edited sample series feed entry")
         verbose_name_plural = _(u"edited sample series feed entries")
 
@@ -347,7 +347,7 @@ class FeedNewSampleSeries(FeedEntry):
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
     subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"subscribers"), blank=True)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"new sample series feed entry")
         verbose_name_plural = _(u"new sample series feed entries")
 
@@ -375,7 +375,7 @@ class FeedMovedSampleSeries(FeedEntry):
     description = models.TextField(_(u"description"))
     subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"subscribers"), blank=True)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"moved sample series feed entry")
         verbose_name_plural = _(u"moved sample series feed entries")
 
@@ -405,7 +405,7 @@ class FeedChangedTopic(FeedEntry):
         # Translation hint: Action is either addition or removal
     action = models.CharField(_("action"), max_length=7, choices=changed_topic_action_choices)
 
-    class Meta:
+    class Meta(FeedEntry.Meta):
         verbose_name = _(u"changed topic feed entry")
         verbose_name_plural = _(u"changed topic feed entries")
 
