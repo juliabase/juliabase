@@ -152,9 +152,13 @@ copyright holder, you must destroy it immediately and completely.
                ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}
+            {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
+                                                        >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
-        {{ process.html_body }}
+        <div{% if not process.process.finished %} style="color: gray"{% endif %}>
+          {{ process.html_body }}
+        </div>
       </div>
     {% endif %}
   {% endfor %}
