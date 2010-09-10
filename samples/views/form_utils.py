@@ -553,7 +553,7 @@ class OperatorField(forms.ChoiceField):
             return self.default_operator
         else:
             self.external_operator = None
-            return django.contrib.auth.models.User.objects.get(pk=int(value))
+            return value and django.contrib.auth.models.User.objects.get(pk=int(value)) or self.default_operator
 
 
 # FixMe: This should be moved to chantal_ipv, because this special case is only
