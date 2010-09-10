@@ -206,7 +206,7 @@ timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
                      u"%Y",
                      _(u"date unknown"))
 @register.filter
-def timestamp(value):
+def timestamp(value, minimal_inaccuracy=0):
     u"""Filter for formatting the timestamp of a process properly to reflect
     the inaccuracy connected with this timestamp.
 
@@ -226,7 +226,8 @@ def timestamp(value):
     else:
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
-    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
+    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_,
+                                                           timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
 
 
 # FixMe: This pattern should probably be moved to settings.py.
