@@ -183,8 +183,8 @@ def is_referentially_valid(withdraw_form, approve_form):
             (withdraw_form and withdraw_form.cleaned_data["close"]):
         append_error(withdraw_form, _(u"You can't withdraw and approve at the same time."))
         referencially_valid = False
-    if (approve_form and not approve_form.cleaned_data["close"]) and \
-            (withdraw_form and not withdraw_form.cleaned_data["close"]):
+    if (not approve_form or not approve_form.cleaned_data["close"]) and \
+            (not withdraw_form or not withdraw_form.cleaned_data["close"]):
         append_error(withdraw_form, _(u"You must select exactly one option, or leave this page."))
         referencially_valid = False
     return referencially_valid
