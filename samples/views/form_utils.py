@@ -525,21 +525,24 @@ class OperatorField(forms.ChoiceField):
         self.user = user
         if user.is_staff:
             self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
-            external_operators = list(models.ExternalOperator.objects.all())
+            external_operators = set(models.ExternalOperator.objects.all())
         else:
+            self.choices = []
             if old_process:
-                self.choices = [(old_process.operator.pk, old_process.operator.username)]
+                if old_process.operator.pk != user.pk:
+                    self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
+                external_operators = set([old_process.external_operator]) if old_process.external_operator else set()
             else:
-                self.choices = [(user.pk, user.username)]
-            external_operators = list(user.external_contacts.all())
-        self.initial = old_process.operator.pk if old_process else user.pk
-        self.default_operator = old_process.operator if old_process else user
-        if old_process and old_process.external_operator:
-            if not old_process.external_operator in external_operators:
-                external_operators.append(old_process.external_operator)
-            self.initial = "extern-" + str(old_process.external_operator.pk)
-        for external_operator in external_operators:
-            self.choices.append(("extern-" + str(external_operator.pk), external_operator.name))
+                external_operators = set()
+            self.choices.append((user.pk, get_really_full_name(user)))
+            external_operators |= set(user.external_contacts.all())
+        if old_process:
+            self.initial = "extern-{0}".format(old_process.external_operator.pk) if old_process.external_operator else \
+                old_process.operator.pk
+        else:
+            self.initial = user.pk
+        for external_operator in sorted(external_operators, key=lambda external_operator: external_operator.name):
+            self.choices.append(("extern-{0}".format(external_operator.pk), external_operator.name))
 
     def clean(self, value):
         u"""Return the selected operator.  Additionally, it sets the attribute
@@ -549,11 +552,10 @@ class OperatorField(forms.ChoiceField):
         """
         value = super(OperatorField, self).clean(value)
         if value.startswith("extern-"):
-            self.external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
-            return self.default_operator
+            external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
+            return None, external_operator
         else:
-            self.external_operator = None
-            return value and django.contrib.auth.models.User.objects.get(pk=int(value)) or self.default_operator
+            return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
 
 
 # FixMe: This should be moved to chantal_ipv, because this special case is only
