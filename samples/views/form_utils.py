@@ -479,31 +479,39 @@ class FixedOperatorField(forms.ChoiceField):
 class OperatorField(forms.ChoiceField):
     u"""Form field class for the selection of a single operator.  This is
     intended for edit-process views when the operator must be the currently
-    logged-in user, or the previous operator.  In other words, it must be
-    impossible to change it.  Then, you can use this form field for the
-    operator, and hide the field from display by ``style="display: none"`` in
-    the HTML template.
+    logged-in user, an external contact of that user, or the previous
+    (external) operator.  It can be used in model forms.
+
+    The result of this field (if there was no validation error) is a tuple of
+    two values, namely the operator and the external operator.  Exactly one of
+    both has a boolean value of ``False`` if the respective type of operator
+    was not given.
+
+    It is senseful to show this field only to non-staff, and staff gets the
+    usual operator/external operator fields.  In the IEF-5 implementations we
+    even allow all three fields for staff users as long as there no
+    contradicting values are given.
 
     FixMe: This is the new variant of `FixedOperatorField`.  It makes
     `FixedOperatorField` obsolete.
 
-    If you want to use this field, do the following things::
+    If you want to use this field for non-staff, do the following things::
 
         1. This field must be made required
 
-        2. If the user is not staff, make the possible choices of the external
-           operator field empty.
+        2. Make the possible choices of the operator and the external operator
+           fields empty.  Exclude those fields from the HTML.
 
         3. Assure in your ``clean()`` method that non-staff doesn't submit an
-           external operator.  In the same method, say if the
-           ``external_operator`` field was empty::
+           external operator.  Since the operator is required in
+           ``models.Process``, you must provide a senseful default for the
+           operator if none was returned (because an external operator was
+           selected).  I recommend to use the currently logged-in user in this
+           case.
 
-               self.cleaned_data["external_operator"] = \
-                   self.fields["operator"].external_operator
-
-        4. In the template, show the external operator field only for staff.
-
-    A good example is in ``substrate.py`` of the IPV adaption of Chantal.
+    Good examples are in ``substrate.py`` and ``cleaning_process.py`` of the
+    IPV adaption of Chantal.  There, you can also see how one can deal with
+    staff users (especially interesting for the remote client).
     """
 
     def set_choices(self, user, old_process):
@@ -525,35 +533,47 @@ class OperatorField(forms.ChoiceField):
         self.user = user
         if user.is_staff:
             self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
-            external_operators = list(models.ExternalOperator.objects.all())
+            external_operators = set(models.ExternalOperator.objects.all())
         else:
+            self.choices = []
             if old_process:
-                self.choices = [(old_process.operator.pk, old_process.operator.username)]
+                if old_process.operator.pk != user.pk:
+                    self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
+                external_operators = set([old_process.external_operator]) if old_process.external_operator else set()
             else:
-                self.choices = [(user.pk, user.username)]
-            external_operators = list(user.external_contacts.all())
-        self.initial = old_process.operator.pk if old_process else user.pk
-        self.default_operator = old_process.operator if old_process else user
-        if old_process and old_process.external_operator:
-            if not old_process.external_operator in external_operators:
-                external_operators.append(old_process.external_operator)
-            self.initial = "extern-" + str(old_process.external_operator.pk)
-        for external_operator in external_operators:
-            self.choices.append(("extern-" + str(external_operator.pk), external_operator.name))
+                external_operators = set()
+            self.choices.append((user.pk, get_really_full_name(user)))
+            external_operators |= set(user.external_contacts.all())
+        if old_process:
+            self.initial = "extern-{0}".format(old_process.external_operator.pk) if old_process.external_operator else \
+                old_process.operator.pk
+        else:
+            self.initial = user.pk
+        for external_operator in sorted(external_operators, key=lambda external_operator: external_operator.name):
+            self.choices.append(("extern-{0}".format(external_operator.pk), external_operator.name))
 
     def clean(self, value):
         u"""Return the selected operator.  Additionally, it sets the attribute
         `external_operator` if the user selected one (it sets it to ``None``
         otherwise).  If an external operator was selected, this routine returns
         the currently logged-in user.
+
+        If there was an error, this method returns ``("", None)`` (i.e., both
+        values evaluate to ``False``).  Otherwise, it returns a tupe with
+        exactly one non-``False`` value.
+
+        :Return:
+          the selected operator, the selected external operator
+
+        :rtype: ``django.contrib.auth.models.User``,
+          ``django.contrib.auth.models.User``
         """
         value = super(OperatorField, self).clean(value)
         if value.startswith("extern-"):
-            self.external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
-            return self.default_operator
+            external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
+            return None, external_operator
         else:
-            self.external_operator = None
-            return value and django.contrib.auth.models.User.objects.get(pk=int(value)) or self.default_operator
+            return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
 
 
 # FixMe: This should be moved to chantal_ipv, because this special case is only
