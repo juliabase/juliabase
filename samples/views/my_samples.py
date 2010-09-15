@@ -64,7 +64,7 @@ class ActionForm(forms.Form):
         :type user: ``django.contrib.auth.models.User``
         """
         super(ActionForm, self).__init__(*args, **kwargs)
-        self.fields["new_currently_responsible_person"].set_users_without(user)
+        self.fields["new_currently_responsible_person"].set_users(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
         self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
