@@ -66,12 +66,6 @@ class Deposition(PhysicalProcess):
         _ = ugettext
         return _(u"deposition {number}").format(number=self.number)
 
-    @classmethod
-    def get_lab_notebook_context(cls, year, month):
-        # I only change ordering here.
-        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).order_by("number").select_related()
-        return {"processes": processes}
-
     def get_data(self):
         # See `Process.get_data` for the documentation.
         data_node = super(Deposition, self).get_data()
