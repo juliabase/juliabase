@@ -670,6 +670,7 @@ class SearchSamplesForm(forms.Form):
     """
     _ = ugettext_lazy
     name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30, required=False)
+    aliases = forms.BooleanField(label=_(u"Include alias names"), required=False)
 
 
 class AddToMySamplesForm(forms.Form):
@@ -710,7 +711,10 @@ def search(request):
     if search_samples_form.is_valid():
         name_pattern = search_samples_form.cleaned_data["name_pattern"]
         if name_pattern:
-            found_samples = base_query.filter(name__icontains=name_pattern)
+            if search_samples_form.cleaned_data["aliases"]:
+                found_samples = base_query.filter(Q(name__icontains=name_pattern) | Q(aliases__name__icontains=name_pattern))
+            else:
+                found_samples = base_query.filter(name__icontains=name_pattern)
             too_many_results = found_samples.count() > max_results
             found_samples = found_samples[:max_results] if too_many_results else found_samples
     my_samples = request.user.my_samples.all()
