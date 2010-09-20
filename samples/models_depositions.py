@@ -101,17 +101,6 @@ class Layer(models.Model):
 
         six_chamber_deposition.layers.all()[0].six_chamber_layer.temperature
 
-    Note that the above is slightly untrue for cluster tool layers because they
-    must be polymorphic.  There, I need a *concret* base class for all layer
-    models, derived from this one.  However, I consider this a rim case.  But
-    this is debatable: Maybe it's cleaner to make this class concrete.  The
-    only drawback would be that in order to access the layer attributes, one
-    would have to visit the layer instance explicitly with e.g.
-
-    ::
-
-        six_chamber_deposition.layers.all()[0].six_chamber_layer.temperature
-
     Every class derived from this model must point to their deposition with
     ``related_name="layers"``.  See also `Deposition`.  Additionally, the
     ``Meta`` class should contain::
