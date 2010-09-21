@@ -189,7 +189,7 @@ def show(request, username, user_hash):
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
         if "link" in metadata:
-            ElementTree.SubElement(entry_element, "link", rel="alternate", href=metadata["link"])
+            ElementTree.SubElement(entry_element, "link", rel="alternate", href=url_prefix + metadata["link"])
         else:
             # Add bogus <link> tags for Thunderbird, see
             # https://bugzilla.mozilla.org/show_bug.cgi?id=297569
@@ -197,7 +197,7 @@ def show(request, username, user_hash):
             if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
                 ElementTree.SubElement(
                     entry_element, "link", rel="alternate",
-                    href=django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+                    href=url_prefix + django.core.urlresolvers.reverse("samples.views.main.main_menu"))
         template = loader.get_template("samples/" + utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
