@@ -15,7 +15,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.sample_series as sample_series and entry.sample_series.get_absolute_url as url %}
+  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.sample_series as sample_series and entry.sample_series.get_absolute_url|prepend_domain as url %}
     {{ originator }} has added the sample series “<a href="{{ url }}">{{ sample_series }}</a>” to the topic 
     “{{ topic }}”.
   {% endblocktrans %}

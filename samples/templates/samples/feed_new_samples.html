@@ -25,7 +25,7 @@ copyright holder, you must destroy it immediately and completely.
 
   <ul>
     {% for sample in entry.samples.all %}
-      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+      <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
     {% endfor %}
   </ul>
 
