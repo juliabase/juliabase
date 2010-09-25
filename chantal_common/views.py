@@ -16,7 +16,7 @@
 from __future__ import absolute_import
 
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
@@ -90,3 +90,22 @@ def switch_language(request):
         user_details.language = language
         user_details.save()
     return utils.successful_response(request)
+
+
+def show_error_page(request, hash_value):
+    u"""Shows an error page.  See `models.ErrorPage` for further information.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `hash_value`: the hash value (primary key) of the error page
+
+    :type request: ``HttpRequest``
+    :type hash_value: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    html = get_object_or_404(models.ErrorPage, hash_value=hash_value)
+    return HttpResponse(html)
