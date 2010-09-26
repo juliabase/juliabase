@@ -112,7 +112,7 @@ class MessageMiddleware(object):
         return response
 
 
-class HttpResponseUnprocessableEntity(HttpResponse):
+class HttpResponseUnprocessableEntity(django.http.HttpResponse):
     status_code = 422
 
 
