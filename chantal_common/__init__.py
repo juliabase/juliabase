@@ -15,6 +15,8 @@
 
 u"""Module for hooks into the ``User`` model.  They assure that every time a
 user is added, ``UserDetails`` are added.
+
+Additionally, there is a hook to purge too old error pages.
 """
 
 from __future__ import absolute_import
@@ -22,6 +24,7 @@ from __future__ import absolute_import
 import django.contrib.auth.models
 from django.db.models import signals
 from . import models as chantal_app
+from .maintenance import maintain
 
 
 def add_user_details(sender, instance, created=True, **kwargs):
@@ -43,3 +46,14 @@ def add_user_details(sender, instance, created=True, **kwargs):
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
+
+
+def expire_error_pages(sender, **kwargs):
+    u"""Deletes all error pages which are older than six weeks.
+    """
+    now = datetime.datetime.now()
+    six_weeks_ago = now - datetime.timedelta(weeks=6)
+    for error_page in chantal_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
+        error_page.delete()
+
+maintain.connect(expire_error_pages, sender=None)
