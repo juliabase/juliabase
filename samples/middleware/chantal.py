@@ -33,6 +33,8 @@ u"""Middleware for handling samples-database-specific exceptions.
 """
 
 
+# FixMe: A JSON client should see JSON responses.
+
 class ExceptionsMiddleware(object):
     u"""Middleware for catching Chantal-samples-specific exceptions raised by
     views.  I handle only `PermissionError` and `AmbiguityException` here.
