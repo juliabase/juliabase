@@ -15,13 +15,14 @@
 
 from __future__ import absolute_import
 
-import locale, re
+import locale, re, json
 from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
 from chantal_common.models import UserDetails
+from chantal_common.utils import is_json_requested
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -30,6 +31,7 @@ from django.shortcuts import render_to_response
 
 u"""Middleware for setting the current language to what can be found in
 `models.UserDetails` and for cache-disabling in presence of temporary messages.
+Additionally, I convert responses into JSON format if this was requested.
 """
 
 
@@ -108,3 +110,23 @@ class MessageMiddleware(object):
                 response["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, private"
 
         return response
+
+
+class JSONClientMiddleware(object):
+    u"""Middleware to convert responses to JSON if this was requested by the
+    client.
+
+    It is important that this class comes after non-Chantal middleware in
+    ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the above
+    mentioned exceptions may propagate to other middleware which treats them as
+    real errors.  It is recommended that it is even the very last entry.
+    """
+
+    def process_exception(self, request, exception):
+        u"""Convert a 404 to a JSONised 404.  This is, the body contains JSON,
+        and the content type is JSON.
+        """
+        if isinstance(exception, django.http.Http404):
+            if is_json_requested(request):
+                return django.http.HttpResponseNotFound(json.dumps((2, exception.args[0])),
+                                                        content_type="application/json; charset=ascii")
