@@ -23,7 +23,7 @@ from django.contrib.auth.models import SiteProfileNotAvailable
 from samples.models import UserDetails
 from samples.views import utils
 from samples.permissions import PermissionError
-from chantal_common.utils import HttpResponseUnauthorized
+from chantal_common.utils import HttpResponseUnauthorized, is_json_requested
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -49,7 +49,7 @@ class ExceptionsMiddleware(object):
 
     def process_exception(self, request, exception):
         if isinstance(exception, django.http.Http404):
-            if utils.is_json_requested(request):
+            if is_json_requested(request):
                 raise Http404(json.dumps(exception.args[0]))
         elif isinstance(exception, PermissionError):
             return HttpResponseUnauthorized(

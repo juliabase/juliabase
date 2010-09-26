@@ -30,7 +30,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from chantal_common.utils import append_error, HttpResponseSeeOther
+from chantal_common.utils import append_error, HttpResponseSeeOther, is_json_requested
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 
@@ -433,7 +433,7 @@ def split_and_rename_after_deposition(request, deposition_number):
     permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
     if not deposition.finished:
         raise Http404(u"This deposition is not finished yet.")
-    remote_client = utils.is_json_requested(request)
+    remote_client = is_json_requested(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \
             forms_from_post_data(request.POST, deposition, remote_client)

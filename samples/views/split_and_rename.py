@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from samples import models, permissions
-from chantal_common.utils import append_error
+from chantal_common.utils import append_error, respond_in_json
 from samples.views import utils, feed_utils
 
 
