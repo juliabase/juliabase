@@ -57,6 +57,21 @@ class HttpResponseSeeOther(django.http.HttpResponse):
         self["Location"] = iri_to_uri(redirect_to)
 
 
+class JSONRequestException(Exception):
+    u"""Exception which is raised if a JSON response was requested and an error
+    in the submitted data occured.  This will result in an HTTP 422 response in
+    Chantal-common's middleware.
+    """
+
+    def __init__(self, error_number, error_message):
+        super(JSONRequestException, self).__init__()
+        # If ``error_number`` equals 1, it is a 404.  If it equals 2, it is an
+        # error in a web form of a view which is used by woth the browser an
+        # the JSON client.
+        assert error_number > 2
+        self.error_number, self.error_message = error_number, error_message
+
+
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
     entities[line[:12].rstrip()] = line[12]

@@ -15,13 +15,14 @@
 
 from __future__ import absolute_import
 
-import locale, re, json
+import locale, re, json, hashlib, random
 from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
-from chantal_common.models import UserDetails
+import django.core.urlresolvers
+from chantal_common.models import UserDetails, ErrorPage
 from chantal_common.utils import is_json_requested
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -108,25 +109,50 @@ class MessageMiddleware(object):
                 # sensible.
                 response["Pragma"] = "no-cache"
                 response["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, private"
-
         return response
+
+
+class HttpResponseUnprocessableEntity(HttpResponse):
+    status_code = 422
 
 
 class JSONClientMiddleware(object):
     u"""Middleware to convert responses to JSON if this was requested by the
     client.
 
-    It is important that this class comes after non-Chantal middleware in
-    ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the above
-    mentioned exceptions may propagate to other middleware which treats them as
-    real errors.  It is recommended that it is even the very last entry.
+    It is important that this class comes after all non-Chantal middleware in
+    ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the
+    ``Http404`` exception may be already caught.  FixMe: Is this really the
+    case?
     """
 
+    def process_response(self, request, response):
+        u"""Return a HTTP 422 response if a JSON response was requested and an
+        HTML page with form errors is returned.
+        """
+        if getattr(request, "_chantal_form_error", False):
+            hash_ = hashlib.sha1()
+            hash_.update(str(random.random()))
+            hash_value = hash_.hexdigest()
+            user = request.user
+            if not user.is_authenticated():
+                user = None
+            ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
+                                     html=response.content)
+            return HttpResponseUnprocessableEntity(
+                json.dumps((1, django.core.urlresolvers.reverse("chantal_common.views.show_error_page",
+                                                                kwargs={"hash_value": hash_value}))),
+                content_type="application/json; charset=ascii")
+
+
     def process_exception(self, request, exception):
-        u"""Convert a 404 to a JSONised 404.  This is, the body contains JSON,
-        and the content type is JSON.
+        u"""Convert response to exceptions to JSONised version if the response
+        is requested to be JSON.
         """
         if isinstance(exception, django.http.Http404):
             if is_json_requested(request):
                 return django.http.HttpResponseNotFound(json.dumps((2, exception.args[0])),
                                                         content_type="application/json; charset=ascii")
+        elif isinstance(exception, utils.JSONRequestException):
+            return HttpResponseUnprocessableEntity(json.dumps((exception.error_number, exception.error_message)),
+                                                   content_type="application/json; charset=ascii")

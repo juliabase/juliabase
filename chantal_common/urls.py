@@ -42,4 +42,5 @@ urlpatterns = patterns("django.contrib.auth.views",
 urlpatterns += patterns("chantal_common.views",
                         (r"^markdown$", "markdown_sandbox"),
                         (r"^switch_language$", "switch_language"),
+                        (r"^error_pages/(?P<has_value>.+)", "show_error_page"),
                         )
