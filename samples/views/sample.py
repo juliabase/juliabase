@@ -663,6 +663,7 @@ def add_process(request, sample_name):
                                "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
 
+process_choices=((key, _(models.physical_process_models[key]._meta.verbose_name)) for key in models.physical_process_models)
 
 class SearchSamplesForm(forms.Form):
     u"""Form for searching for samples.  So far, you can only enter a name
@@ -671,6 +672,7 @@ class SearchSamplesForm(forms.Form):
     _ = ugettext_lazy
     name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30, required=False)
     aliases = forms.BooleanField(label=_(u"Include alias names"), required=False)
+    processes = forms.ChoiceField(label=_(u"Process"), choices=process_choices, required=False)
 
 
 class AddToMySamplesForm(forms.Form):
@@ -701,35 +703,52 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
+    from samples.views.sample_search import SearchField
+
     found_samples = []
+    found_processes = []
     too_many_results = False
-    base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
-                                              Q(currently_responsible_person=request.user) |
-                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
+    search_options_form = None
+    sample_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
+                                                Q(currently_responsible_person=request.user) |
+                                                Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
     search_samples_form = SearchSamplesForm(request.GET)
-    found_samples = []
-    if search_samples_form.is_valid():
+    if search_samples_form.is_valid() and search_samples_form.cleaned_data["processes"]:
+        process_class = models.physical_process_models[search_samples_form.cleaned_data["processes"]]
+        search_options_form = SearchField(request.GET, process_class.get_search_fields())
+    if search_samples_form.is_valid() and search_options_form and search_options_form.is_valid():
         name_pattern = search_samples_form.cleaned_data["name_pattern"]
-        if name_pattern:
-            if search_samples_form.cleaned_data["aliases"]:
-                found_samples = base_query.filter(Q(name__icontains=name_pattern) | Q(aliases__name__icontains=name_pattern))
-            else:
-                found_samples = base_query.filter(name__icontains=name_pattern)
-            too_many_results = found_samples.count() > max_results
-            found_samples = found_samples[:max_results] if too_many_results else found_samples
+        if search_options_form.cleaned_data["heating_temperature"] is not None:
+            temp_pattern = search_options_form.cleaned_data["heating_temperature"]
+            found_processes = process_class.objects.filter(layers__heating_temperature__gte=temp_pattern)
+        if found_processes:
+            for process in found_processes:
+                if name_pattern:
+                    if search_samples_form.cleaned_data["aliases"]:
+                        query = sample_query.filter(processes=process).filter(Q(name__icontains=name_pattern) |
+                                                                        Q(aliases__name__icontains=name_pattern))
+                    else:
+                        query = sample_query.filter(processes=process).filter(name__icontains=name_pattern)
+                else:
+                    query = sample_query.filter(processes=process)
+                found_samples.extend(query)
+        too_many_results = len(found_samples) > max_results
+        found_samples = found_samples[:max_results] if too_many_results else found_samples
     my_samples = request.user.my_samples.all()
     if request.method == "POST":
         sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
                          if value == u"on")
-        samples = base_query.in_bulk(sample_ids)
+        samples = sample_query.in_bulk(sample_ids)
         request.user.my_samples.add(*samples.values())
     add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
                                for sample in found_samples]
-    return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
-                                                              "search_samples": search_samples_form,
-                                                              "found_samples": zip(found_samples, add_to_my_samples_forms),
-                                                              "too_many_results": too_many_results,
-                                                              "max_results": max_results},
+    content_dict = {"title": _(u"Search for sample"),
+                    "search_samples": search_samples_form,
+                    "found_samples": zip(found_samples, add_to_my_samples_forms),
+                    "too_many_results": too_many_results,
+                    "max_results": max_results,
+                    "search_options": search_options_form,}
+    return render_to_response("samples/search_samples.html", content_dict,
                               context_instance=RequestContext(request))
 
 

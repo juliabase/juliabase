@@ -12,12 +12,10 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-class Searchable( object ):
-    u"""This abstract class is for all Models, which should be listed
+class Searchable(object):
+    u"""This abstract class is for all views, which should be listed
     in the search-view.
     """
-    __data_types = ("string", "digit")
-
     class Meta:
         abstract = True
 
@@ -25,24 +23,19 @@ class Searchable( object ):
         return True
 
     def get_search_fields(self):
-        u"""This Method returns all variables, which could be used in the
+        u"""This Method returns all fields, which could be used in the
         search-view.
-        The return object should be a dictionary with the names of the variables
-        as keys and the type of the data stored in the variables as values.
+        The return object should be a dictionary with the names of the fields
+        as keys and a view per data stored in the database as values.
 
         :Return:
-          a dictionary with the names of the variables as keys and data type as
+          a dictionary with the names of the fields as keys and views as
           values
 
-        :rtype: dict mapping str to ``sample.SearchView``
+        :rtype: dict mapping str to ``samples.views.sample_search.SearchField``
         """
         raise NotImplementedError("Should have implemented this")
 
     def append_query(self, query):
-        u"""Here i use a specialty from the Django QuerySet API. In Django each QuerySet
-        returns a new QuerySet which can be used as its own Object. So I can extend the
-        given QuerySet by just calling the Methods I need to access the database fields
-        from this Model.
-        """
         raise NotImplementedError("Should have implemented this")
 
