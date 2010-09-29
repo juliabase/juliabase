@@ -108,5 +108,5 @@ def show_error_page(request, hash_value):
 
     :rtype: ``HttpResponse``
     """
-    html = get_object_or_404(models.ErrorPage, hash_value=hash_value)
+    html = get_object_or_404(models.ErrorPage, hash_value=hash_value).html
     return HttpResponse(html)
