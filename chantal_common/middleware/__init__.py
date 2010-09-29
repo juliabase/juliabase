@@ -130,7 +130,7 @@ class JSONClientMiddleware(object):
         u"""Return a HTTP 422 response if a JSON response was requested and an
         HTML page with form errors is returned.
         """
-        if getattr(request, "_chantal_form_error", False):
+        if is_json_requested(request) and response._headers["content-type"][1].startswith("text/html"):
             hash_ = hashlib.sha1()
             hash_.update(str(random.random()))
             hash_value = hash_.hexdigest()
