@@ -23,7 +23,7 @@ from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
 import django.core.urlresolvers
 from chantal_common.models import UserDetails, ErrorPage
-from chantal_common.utils import is_json_requested
+from chantal_common.utils import is_json_requested, JSONRequestException
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -130,7 +130,7 @@ class JSONClientMiddleware(object):
         u"""Return a HTTP 422 response if a JSON response was requested and an
         HTML page with form errors is returned.
         """
-        if getattr(request, "_chantal_form_error", False):
+        if is_json_requested(request) and response._headers["content-type"][1].startswith("text/html"):
             hash_ = hashlib.sha1()
             hash_.update(str(random.random()))
             hash_value = hash_.hexdigest()
@@ -143,6 +143,7 @@ class JSONClientMiddleware(object):
                 json.dumps((1, django.core.urlresolvers.reverse("chantal_common.views.show_error_page",
                                                                 kwargs={"hash_value": hash_value}))),
                 content_type="application/json; charset=ascii")
+        return response
 
 
     def process_exception(self, request, exception):
@@ -153,6 +154,6 @@ class JSONClientMiddleware(object):
             if is_json_requested(request):
                 return django.http.HttpResponseNotFound(json.dumps((2, exception.args[0])),
                                                         content_type="application/json; charset=ascii")
-        elif isinstance(exception, utils.JSONRequestException):
+        elif isinstance(exception, JSONRequestException):
             return HttpResponseUnprocessableEntity(json.dumps((exception.error_number, exception.error_message)),
                                                    content_type="application/json; charset=ascii")
