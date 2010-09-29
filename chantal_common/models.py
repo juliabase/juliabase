@@ -141,3 +141,21 @@ class PolymorphicModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ErrorPage(models.Model):
+    u"""Model for storing HTML pages which contain error messages.  This is
+    intended for connections with non-browser agents which request for JSON
+    responses.  If the request fails, the resulting JSON contains a link to
+    view the full error page.  Such pages are expired after some time.
+    """
+    hash_value = models.CharField(_("hash value"), max_length=40, primary_key=True)
+    user = models.ForeignKey(django.contrib.auth.models.User, blank=True, verbose_name=_(u"user"),
+                             related_name="error pages")
+    requested_url = models.TextField(_("requested URL"), blank=True)
+    html = models.TextField("HTML")
+    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _(u"error page")
+        verbose_name_plural = _(u"error pages")

@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os.path, time
+import codecs, re, os.path, time, json
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -28,6 +28,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.translation import ugettext
+from . import mimeparse
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
@@ -54,6 +55,21 @@ class HttpResponseSeeOther(django.http.HttpResponse):
     def __init__(self, redirect_to):
         super(HttpResponseSeeOther, self).__init__()
         self["Location"] = iri_to_uri(redirect_to)
+
+
+class JSONRequestException(Exception):
+    u"""Exception which is raised if a JSON response was requested and an error
+    in the submitted data occured.  This will result in an HTTP 422 response in
+    Chantal-common's middleware.
+    """
+
+    def __init__(self, error_number, error_message):
+        super(JSONRequestException, self).__init__()
+        # If ``error_number`` equals 1, it is a 404.  If it equals 2, it is an
+        # error in a web form of a view which is used by woth the browser an
+        # the JSON client.
+        assert error_number > 2
+        self.error_number, self.error_message = error_number, error_message
 
 
 entities = {}
@@ -346,3 +362,45 @@ def send_email(subject, content, recipients, format_dict=None):
             else:
                 break
     translation.activate(current_language)
+
+
+def is_json_requested(request):
+    u"""Tests whether the current request should be answered in JSON format
+    instead of HTML.  Typically this means that the request was made by the
+    CHantal Remote Client or by JavaScript code.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      whether the request should be answered in JSON
+
+    :rtype: bool
+    """
+    requested_mime_type = mimeparse.best_match(["text/html", "application/xhtml+xml", "application/json"],
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type == "application/json"
+
+
+def respond_in_json(value):
+    u"""The communication with the Chantal Remote Client or to AJAX clients
+    should be done without generating HTML pages in order to have better
+    performance.  Thus, all responses are Python objects, serialised in JSON
+    notation.
+
+    The views that can be accessed by the Remote Client/AJAX as well as normal
+    browsers should distinguish between both by using `is_json_requested`.
+
+    :Parameters:
+      - `value`: the data to be sent back to the client that requested JSON.
+
+    :type value: ``object`` (an arbitrary Python object)
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    return django.http.HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
