@@ -32,7 +32,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
-from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information
+from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
+    respond_in_json
 from samples.views import utils, form_utils, feed_utils, table_export
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 
@@ -567,8 +568,8 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
-            if utils.is_json_requested(request):
-                return utils.respond_in_json(True)
+            if is_json_requested(request):
+                return respond_in_json(True)
             if added:
                 success_message = ungettext(u"Sample {samples} was added to My Samples.",
                                             u"Samples {samples} were added to My Samples.",
@@ -585,9 +586,9 @@ def show(request, sample_name):
                 success_message = _(u"Nothing was changed.")
             messages.success(request, success_message)
     else:
-        if utils.is_json_requested(request):
+        if is_json_requested(request):
             sample = utils.lookup_sample(sample_name, request.user)
-            return utils.respond_in_json(sample.get_data().to_dict())
+            return respond_in_json(sample.get_data().to_dict())
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render_to_response(
@@ -619,7 +620,7 @@ def by_id(request, sample_id, path_suffix):
     :rtype: ``HttpResponse``
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
-    if utils.is_json_requested(request):
+    if is_json_requested(request):
         # No redirect for the remote client.  This also makes a POST request
         # possible.
         if path_suffix == "/edit/":
