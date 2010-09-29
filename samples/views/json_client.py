@@ -166,6 +166,8 @@ def available_items(request, model_name):
     return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
 
+# FixMe: The following two functions must go to Chantal-common.
+
 @require_http_methods(["POST"])
 def login_remote_client(request):
     u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
