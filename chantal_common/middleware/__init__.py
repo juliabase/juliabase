@@ -143,6 +143,7 @@ class JSONClientMiddleware(object):
                 json.dumps((1, django.core.urlresolvers.reverse("chantal_common.views.show_error_page",
                                                                 kwargs={"hash_value": hash_value}))),
                 content_type="application/json; charset=ascii")
+        return response
 
 
     def process_exception(self, request, exception):
