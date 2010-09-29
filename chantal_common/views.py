@@ -16,6 +16,7 @@
 from __future__ import absolute_import
 
 from django.template import RequestContext
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
