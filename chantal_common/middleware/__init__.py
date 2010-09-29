@@ -23,7 +23,7 @@ from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
 import django.core.urlresolvers
 from chantal_common.models import UserDetails, ErrorPage
-from chantal_common.utils import is_json_requested
+from chantal_common.utils import is_json_requested, JSONRequestException
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -154,6 +154,6 @@ class JSONClientMiddleware(object):
             if is_json_requested(request):
                 return django.http.HttpResponseNotFound(json.dumps((2, exception.args[0])),
                                                         content_type="application/json; charset=ascii")
-        elif isinstance(exception, utils.JSONRequestException):
+        elif isinstance(exception, JSONRequestException):
             return HttpResponseUnprocessableEntity(json.dumps((exception.error_number, exception.error_message)),
                                                    content_type="application/json; charset=ascii")
