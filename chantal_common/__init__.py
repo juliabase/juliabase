@@ -17,6 +17,17 @@ u"""Module for hooks into the ``User`` model.  They assure that every time a
 user is added, ``UserDetails`` are added.
 
 Additionally, there is a hook to purge too old error pages.
+
+The error codes for a JSON client are the following:
+
+    ======= ===============================================
+    code    description
+    ======= ===============================================
+    1       Web form error
+    2       URL not found, i.e. HTTP 404
+    3       POST parameter missing
+    4       user could not be authenticated
+    ======= ===============================================
 """
 
 from __future__ import absolute_import
