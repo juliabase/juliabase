@@ -151,7 +151,7 @@ class ErrorPage(models.Model):
     """
     hash_value = models.CharField(_("hash value"), max_length=40, primary_key=True)
     user = models.ForeignKey(django.contrib.auth.models.User, null=True, blank=True, verbose_name=_(u"user"),
-                             related_name="error pages")
+                             related_name="error_pages")
     requested_url = models.TextField(_("requested URL"), blank=True)
     html = models.TextField("HTML")
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
