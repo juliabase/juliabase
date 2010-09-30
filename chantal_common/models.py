@@ -150,7 +150,7 @@ class ErrorPage(models.Model):
     view the full error page.  Such pages are expired after some time.
     """
     hash_value = models.CharField(_("hash value"), max_length=40, primary_key=True)
-    user = models.ForeignKey(django.contrib.auth.models.User, blank=True, verbose_name=_(u"user"),
+    user = models.ForeignKey(django.contrib.auth.models.User, null=True, blank=True, verbose_name=_(u"user"),
                              related_name="error pages")
     requested_url = models.TextField(_("requested URL"), blank=True)
     html = models.TextField("HTML")
