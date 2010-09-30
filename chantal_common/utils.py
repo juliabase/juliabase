@@ -61,12 +61,22 @@ class JSONRequestException(Exception):
     u"""Exception which is raised if a JSON response was requested and an error
     in the submitted data occured.  This will result in an HTTP 422 response in
     Chantal-common's middleware.
+
+    The ranges for the error codes are:
+
+    0–999: special codes, codes common to all applications, and Chantal-common
+    1000–1999: Chantal-samples
+    2000–2999: Chantal-ipv, or other institute-specific extension to
+      Chantal-samples
+
+    The complete table with the error codes is in the main ``__init__.py`` of
+    the respective app.
     """
 
     def __init__(self, error_number, error_message):
         super(JSONRequestException, self).__init__()
         # If ``error_number`` equals 1, it is a 404.  If it equals 2, it is an
-        # error in a web form of a view which is used by woth the browser an
+        # error in a web form of a view which is used by both the browser and
         # the JSON client.
         assert error_number > 2
         self.error_number, self.error_message = error_number, error_message
