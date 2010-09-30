@@ -34,7 +34,7 @@ import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
 from chantal_common.models import Topic
-from chantal_common.utils import respond_in_json
+from chantal_common.utils import respond_in_json, JSONRequestException
 from samples.views import utils
 from samples import models, permissions
 
@@ -189,12 +189,12 @@ def login_remote_client(request):
         username = request.POST["username"]
         password = request.POST["password"]
     except KeyError:
-        return respond_in_json(False)
+        raise JSONRequestException(3, '"username" and/or "password" missing')
     user = django.contrib.auth.authenticate(username=username, password=password)
     if user is not None and user.is_active:
         django.contrib.auth.login(request, user)
         return respond_in_json(True)
-    return respond_in_json(False)
+    raise JSONRequestException(4, "user could not be authenticated")
 
 
 @require_http_methods(["GET"])
