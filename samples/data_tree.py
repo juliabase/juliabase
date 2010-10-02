@@ -221,6 +221,8 @@ class DataItem(object):
         """
         if value is None:
             value = u""
+        # FixMe: Should we make this exception only for ``bool`` or also for
+        # ``int`` and ``float``?
         elif not isinstance(value, bool):
-            value = unicode(value) or u""
+            value = unicode(value)
         self.key, self.value, self.origin = unicode(key), value, origin
