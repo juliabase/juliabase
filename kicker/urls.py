@@ -11,3 +11,16 @@
 # distribute this software without explicit permission of the copyright holder.
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
+
+
+u"""Mapping URL patterns to function calls.  This is the local URL dispatch of
+the Django application “chantal_kicker”.
+"""
+
+from __future__ import absolute_import
+
+from django.conf.urls.defaults import *
+from django.conf import settings
+
+urlpatterns = patterns("samples.views",
+                       )
