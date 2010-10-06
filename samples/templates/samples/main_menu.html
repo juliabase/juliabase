@@ -27,7 +27,7 @@ copyright holder, you must destroy it immediately and completely.
       {% if topicless_samples %}
         <ul class="sample-list">
           {% for sample in topicless_samples %}
-            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample.tags_suffix }}</li>
           {% endfor %}
         </ul>
       {% endif %}
@@ -40,7 +40,7 @@ copyright holder, you must destroy it immediately and completely.
           {% if topic.samples %}
             <ul class="sample-list">
               {% for sample in topic.samples %}
-                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample.tags_suffix }}</li>
               {% endfor %}
             </ul>
           {% endif %}
@@ -57,7 +57,7 @@ copyright holder, you must destroy it immediately and completely.
               {% endif %}
               <ul class="sample-list">
                 {% for sample in series.samples %}
-                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample.tags_suffix }}</li>
                 {% endfor %}
               </ul>
             {% endfor %}

@@ -684,10 +684,18 @@ class Sample(models.Model):
         name = self.name
         if name.startswith("*"):
             name = u"*" + name.lstrip("*0")
+        return name
+
+    def tags_suffix(self):
+        u"""Returns the shortened tags of the sample in parenthesis with a
+        non-breaking space before, of the empty string if the sample doesn't
+        have tags.
+        """
         if self.tags:
             tags = self.tags if len(self.tags) <= 10 else self.tags[:10] + u"…"
-            name += u" ({0})".format(self.tags)
-        return name
+            return u" ({0})".format(tags)
+        else:
+            return u""
 
     @models.permalink
     def get_absolute_url(self):
