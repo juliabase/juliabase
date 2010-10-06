@@ -685,7 +685,7 @@ class Sample(models.Model):
         if name.startswith("*"):
             name = u"*" + name.lstrip("*0")
         if self.tags:
-            tags = self.tags if len(tags) <= 10 else self.tags[:10] + u"…"
+            tags = self.tags if len(self.tags) <= 10 else self.tags[:10] + u"…"
             name += u" ({0})".format(self.tags)
         return name
 
