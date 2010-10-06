@@ -316,6 +316,14 @@ def flatten_multiline_text(value, separator=u" ● "):
     return separator.join(lines)
 
 
+@register.filter
+def with_tags(sample, user):
+    u"""Shows the sample name with tags.  The tags are shortened.  Moreover,
+    they are suppressed if the user is not allowed to view them.
+    """
+    return sample.name_with_tags(user)
+
+
 class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
     """
