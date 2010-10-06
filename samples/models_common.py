@@ -673,9 +673,6 @@ class Sample(models.Model):
         five-digit numbers.  However, for the sake of readability, I remove the
         leading zeroes in this routine.
 
-        If tags are present, they are attached to the sample (at least, their
-        first 10 characters).
-
         Thus be careful how to access the sample name.  If you want to get a
         human-readable name, use ``unicode(sample)`` or simply ``{{ sample }}``
         in templates.  If you need the *real* sample name in the database
@@ -683,8 +680,9 @@ class Sample(models.Model):
         """
         name = self.name
         if name.startswith("*"):
-            name = u"*" + name.lstrip("*0")
-        return name
+            return u"*" + name.lstrip("*0")
+        else:
+            return name
 
     def tags_suffix(self):
         u"""Returns the shortened tags of the sample in parenthesis with a
@@ -693,11 +691,15 @@ class Sample(models.Model):
         """
         if self.tags:
             tags = self.tags if len(self.tags) <= 10 else self.tags[:10] + u"…"
-            return u" ({0})".format(tags)
+            return u" ({0})".format(tags)
         else:
             return u""
 
     def name_with_tags(self):
+        u"""Returns the sample's name with possible tags attached.  This is a
+        convenience method which simply combines `__unicode__` and
+        `tags_suffix`.
+        """
         return unicode(self) + self.tags_suffix()
 
     @models.permalink
