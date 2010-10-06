@@ -673,6 +673,9 @@ class Sample(models.Model):
         five-digit numbers.  However, for the sake of readability, I remove the
         leading zeroes in this routine.
 
+        If tags are present, they are attached to the sample (at least, their
+        first 10 characters).
+
         Thus be careful how to access the sample name.  If you want to get a
         human-readable name, use ``unicode(sample)`` or simply ``{{ sample }}``
         in templates.  If you need the *real* sample name in the database
@@ -680,9 +683,11 @@ class Sample(models.Model):
         """
         name = self.name
         if name.startswith("*"):
-            return u"*" + name.lstrip("*0")
-        else:
-            return name
+            name = u"*" + name.lstrip("*0")
+        if self.tags:
+            tags = self.tags if len(tags) <= 10 else self.tags[:10] + u"…"
+            name += u" ({0})".format(self.tags)
+        return name
 
     @models.permalink
     def get_absolute_url(self):
