@@ -279,12 +279,12 @@ class GeneralSampleField(object):
         :type user: ``django.contrib.auth.models.User``
         """
         topics, topicless_samples = utils.build_structured_sample_list(samples, user)
-        self.choices = [(sample.pk, sample.name_with_tags()) for sample in topicless_samples]
+        self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
         for topic in topics:
-            seriesless_samples = [(sample.pk, sample.name_with_tags()) for sample in topic.samples]
+            seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
             self.choices.append((topic.topic_name, seriesless_samples))
             for series in topic.sample_series:
-                samples = [(sample.pk, 4*u" " + sample.name_with_tags()) for sample in series.samples]
+                samples = [(sample.pk, 4*u" " + sample.name_with_tags(user)) for sample in series.samples]
                 self.choices.append((4*u" " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, (u"", 9*u"-"))
