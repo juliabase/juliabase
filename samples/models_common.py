@@ -697,6 +697,9 @@ class Sample(models.Model):
         else:
             return u""
 
+    def name_with_tags(self):
+        return unicode(self) + self.tags_suffix()
+
     @models.permalink
     def get_absolute_url(self):
         if self.name.startswith("*"):
