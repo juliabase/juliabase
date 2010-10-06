@@ -317,11 +317,11 @@ def flatten_multiline_text(value, separator=u" ● "):
 
 
 @register.filter
-def with_tags(sample, user):
-    u"""Shows the sample name with tags.  The tags are shortened.  Moreover,
-    they are suppressed if the user is not allowed to view them.
+def sample_tags(sample, user):
+    u"""Shows the sample's tags.  The tags are shortened.  Moreover, they are
+    suppressed if the user is not allowed to view them.
     """
-    return sample.name_with_tags(user)
+    return sample.tags_suffix(user)
 
 
 class ValueFieldNode(template.Node):
