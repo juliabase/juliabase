@@ -34,7 +34,7 @@ copyright holder, you must destroy it immediately and completely.
 <form method="post" action="">
   <ul class="sample-list">
     {% for sample, add_to_my_samples in found_samples %}
-      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
+      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}
         {% if add_to_my_samples %}
           {{ add_to_my_samples.add_to_my_samples }}
         {% endif %}
