@@ -30,32 +30,46 @@ class Match(models.Model):
     goals_a = models.PositiveSmallIntegerField(_("goals of team A"))
     goals_b = models.PositiveSmallIntegerField(_("goals of team B"))
     timestamp = models.DateTimeField(_(u"timestamp"))
+    finished = models.BooleanField(_(u"finished"), default=False)
 
     class Meta:
-        verbose_name = _(u"Match")
-        verbose_name_plural = _(u"Matches")
+        ordering = ["timestamp"]
+        verbose_name = _(u"match")
+        verbose_name_plural = _(u"matches")
 
 
 class Shares(models.Model):
-    owner = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"owner"), related_name="bought shares")
+    owner = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"owner"), related_name="bought_shares")
     bought_person = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"bought person"),
-                                      related_name="sold shares")
+                                      related_name="sold_shares")
     number = models.PositiveSmallIntegerField(_("number of shares"))
     timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _(u"Shares")
-        verbose_name_plural = _(u"Shareses")
+        verbose_name = _(u"shares")
+        verbose_name_plural = _(u"shareses")
 
 
-class PlotPointsSet(models.Model):
-    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
-    kicker_numbers = models.TextField(_("kicker numbers"), blank=True, help_text=_(u"in JSON format"))
-    stock_values = models.TextField(_("stock values"), blank=True, help_text=_(u"in JSON format"))
+class KickerNumber(models.Model):
+    player = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"player"), related_name="kicker_numbers")
+    number = models.FloatField(_("kicker number"))
+    timestamp = models.DateTimeField(_(u"timestamp"))
 
     class Meta:
-        verbose_name = _(u"Plot points set")
-        verbose_name_plural = _(u"Plot points sets")
+        ordering = ["timestamp"]
+        verbose_name = _(u"kicker number")
+        verbose_name_plural = _(u"kicker numbers")
+
+
+class StockValue(models.Model):
+    gambler = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"gambler"), related_name="stock_values")
+    value = models.FloatField(_("stock value"))
+    timestamp = models.DateTimeField(_(u"timestamp"))
+
+    class Meta:
+        ordering = ["timestamp"]
+        verbose_name = _(u"stock value")
+        verbose_name_plural = _(u"stock values")
 
 
 class UserDetails(models.Model):
@@ -65,9 +79,8 @@ class UserDetails(models.Model):
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="kicker_user_details")
-    kicker_number = models.FloatField(_("kicker number"), null=True, blank=True)
-    stock_value = models.FloatField(_("stock value"), null=True, blank=True)
-    number_of_matches = models.PositiveIntegerField(_("number of matches"), default=0)
+    nickname = models.CharField(_(u"nickname"), max_length=30, blank=True)
+    shortkey = models.CharField(_(u"shortkey"), max_length=1, blank=True)
 
     class Meta:
         verbose_name = _(u"user details")

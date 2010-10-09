@@ -12,7 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-from __future__ import divison, absolute_import
+from __future__ import division, absolute_import
 
 import datetime
 from . import models

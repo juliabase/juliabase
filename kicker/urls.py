@@ -22,5 +22,7 @@ from __future__ import absolute_import
 from django.conf.urls.defaults import *
 from django.conf import settings
 
-urlpatterns = patterns("samples.views",
+urlpatterns = patterns("kicker.views",
+                       (r"^matches/(?P<id_>\d+)/edit/$", "edit_match"),
+                       url(r"^matches/add/$", "edit_match", {"id_": None}),
                        )
