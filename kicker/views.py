@@ -38,7 +38,8 @@ def get_current_kicker_number(player):
         # FixMe: This part is very inefficient.  One should collect the matches
         # *before* one enters the while loop.  This way, one avoids unnecessary
         # doubling of many operations.  On the other hand, one needs a new data
-        # structure that holds the matches.
+        # structure that holds the matches.  Fortunately, this is only rarely
+        # needed.
         cycles_left = 50
         while cycles_left:
             cycles_left -= 1
@@ -84,6 +85,8 @@ def get_old_stock_value(player):
 
 @login_required
 def edit_match(request, id_=None):
+    if request.user.username != "kicker":
+        raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
     match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
     try:
         if not match:
@@ -170,3 +173,23 @@ def edit_match(request, id_=None):
             models.StockValue.objects.create(
                 gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_2, timestamp=now)
         return respond_in_json(True)
+
+
+@login_required
+def set_start_kicker_number(request, username):
+    if request.user.username != "kicker":
+        raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
+    try:
+        start_kicker_number = int(request.POST["start_kicker_number"])
+        timestamp = datetime.datetime.strptime("%Y-%m-%d %H-%M-%S", request.POST["timestamp"])
+    except KeyError:
+        raise JSONRequestException(3, u"At least the datafield \"{0}\" was missing".format(error.args[0]))
+    except ValueError as error:
+        raise JSONRequestException(5, error.args[0])
+    player, created = django.contrib.auth.models.User.objects.get_or_create(username=username)
+    if created:
+        player.set_unusable_password()
+    if models.KickerNumber.objects.filter(player=player).exists():
+        raise JSONRequestException(3006, u"There are already kicker numbers stored for this user.")
+    models.KickerNumber.objects.create(player=player, number=start_kicker_number, timestamp=timestamp)
+    return respond_in_json(True)
