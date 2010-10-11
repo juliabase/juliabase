@@ -211,7 +211,6 @@ def set_start_kicker_number(request, username):
 
 def get_eligible_players():
     two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
-    hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
     ids = list(models.KickerNumber.objects.filter(timestamp__gt=two_weeks_ago).values_list("player", flat=True))
     eligible_players = list(django.contrib.auth.models.User.objects.in_bulk(ids).values())
     result = [(get_current_kicker_number(player), player) for player in eligible_players]
@@ -225,6 +224,7 @@ def update_plot():
     axes = figure.add_subplot(111)
     axes.set_position((0.1, 0.5, 0.8, 0.45))
     eligible_players = [entry[0] for entry in get_eligible_players()]
+    hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
     for player in eligible_players:
         x_values, y_values = [], []
         latest_day = None
