@@ -243,6 +243,7 @@ def update_plot():
     axes.grid(True)
     axes.legend(loc="upper center", bbox_to_anchor=[0.5, -0.1], ncol=3, shadow=True)
     path = os.path.join(settings.MEDIA_ROOT, "kicker")
+    assert False, path
     if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
         return
     try:
