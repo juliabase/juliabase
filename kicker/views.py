@@ -18,6 +18,7 @@ import datetime, time, socket, os
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
+from django.conf import settings
 from django.template import RequestContext
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404
@@ -241,7 +242,7 @@ def update_plot():
     axes.xaxis.set_major_formatter(months_formatter)
     axes.grid(True)
     axes.legend(loc="upper center", bbox_to_anchor=[0.5, -0.1], ncol=3, shadow=True)
-    path = "/var/www/chantal/media/kicker"
+    path = os.path.join(settings.MEDIA_ROOT, "kicker")
     if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
         return
     try:
