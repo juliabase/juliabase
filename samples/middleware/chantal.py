@@ -32,26 +32,22 @@ from django.shortcuts import render_to_response
 u"""Middleware for handling samples-database-specific exceptions.
 """
 
-import json
-from django.http import Http404
 
+# FixMe: A JSON client should see JSON responses.
 
 class ExceptionsMiddleware(object):
-    u"""Middleware for catching all exceptions raised by views.  However, I
-    handle only `PermissionError` and `AmbiguityException` here.  These
-    exceptions mean a redirect in one way or another.  An HTTP 404 code is only
-    handled here if the client was the Remote Client.
+    u"""Middleware for catching Chantal-samples-specific exceptions raised by
+    views.  I handle only `PermissionError` and `AmbiguityException` here.
+    These exceptions mean a redirect in one way or another.
 
-    It is important that this class is the last one in ``MIDDLEWARE_CLASSES``
-    in the ``settings`` module, otherwise the above mentioned exceptions may
-    propagate to other middleware which treats them as real errors.
+    It is important that this class comes after non-Chantal middleware in
+    ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the above
+    mentioned exceptions may propagate to other middleware which treats them as
+    real errors.
     """
 
     def process_exception(self, request, exception):
-        if isinstance(exception, django.http.Http404):
-            if utils.is_json_requested(request):
-                raise Http404(json.dumps(exception.args[0]))
-        elif isinstance(exception, PermissionError):
+        if isinstance(exception, PermissionError):
             return HttpResponseUnauthorized(
                 loader.render_to_string("samples/permission_error.html",
                                         {"title": _(u"Access denied"), "exception": exception},

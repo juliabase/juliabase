@@ -34,6 +34,7 @@ import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
 from chantal_common.models import Topic
+from chantal_common.utils import respond_in_json, JSONRequestException
 from samples.views import utils
 from samples import models, permissions
 
@@ -118,7 +119,7 @@ def primary_keys(request):
                                      if external_operator.name in external_operator_names)
         result_dict["external_operators"] = dict((external_operator.name, external_operator.id)
                                                  for external_operator in external_operators)
-    return utils.respond_in_json(result_dict)
+    return respond_in_json(result_dict)
 
 
 # FixMe: This should be merged into `primary_keys`, and instead of the dict in
@@ -162,8 +163,10 @@ def available_items(request, model_name):
     # FixMe: Add all interesing models here.
     id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number",
                 "LargeAreaDeposition": "number"}.get(model_name, "id")
-    return utils.respond_in_json(list(model.objects.values_list(id_field, flat=True)))
+    return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
+
+# FixMe: The following two functions must go to Chantal-common.
 
 @require_http_methods(["POST"])
 def login_remote_client(request):
@@ -186,12 +189,12 @@ def login_remote_client(request):
         username = request.POST["username"]
         password = request.POST["password"]
     except KeyError:
-        return utils.respond_in_json(False)
+        raise JSONRequestException(3, '"username" and/or "password" missing')
     user = django.contrib.auth.authenticate(username=username, password=password)
     if user is not None and user.is_active:
         django.contrib.auth.login(request, user)
-        return utils.respond_in_json(True)
-    return utils.respond_in_json(False)
+        return respond_in_json(True)
+    raise JSONRequestException(4, "user could not be authenticated")
 
 
 @require_http_methods(["GET"])
@@ -211,7 +214,7 @@ def logout_remote_client(request):
     :rtype: ``HttpResponse``
     """
     django.contrib.auth.logout(request)
-    return utils.respond_in_json(True)
+    return respond_in_json(True)
 
 
 @require_http_methods(["GET"])
@@ -231,7 +234,7 @@ def next_deposition_number(request, letter):
 
     :rtype: ``HttpResponse``
     """
-    return utils.respond_in_json(utils.get_next_deposition_number(letter))
+    return respond_in_json(utils.get_next_deposition_number(letter))
 
 
 def get_next_quirky_name(sample_name, year_digits):
@@ -292,7 +295,7 @@ def add_sample(request):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        return utils.respond_in_json(False)
+        return respond_in_json(False)
     try:
         name = request.POST["name"]
         current_location = request.POST.get("current_location", u"")
@@ -301,16 +304,16 @@ def add_sample(request):
         tags = request.POST.get("tags", u"")
         topic = request.POST.get("topic")
     except KeyError:
-        return utils.respond_in_json(False)
+        return respond_in_json(False)
     if len(name) > 30:
-        return utils.respond_in_json(False)
+        return respond_in_json(False)
     is_legacy_name = request.GET.get("legacy") == u"True"
     if is_legacy_name:
         year_digits = request.GET.get("timestamp", "")[2:4]
         try:
             int(year_digits)
         except ValueError:
-            return utils.respond_in_json(False)
+            return respond_in_json(False)
         name = get_next_quirky_name(name, year_digits)[:30]
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
@@ -331,9 +334,9 @@ def add_sample(request):
                 # automatically.
                 alias.delete()
     except IntegrityError:
-        return utils.respond_in_json(False)
+        return respond_in_json(False)
     sample.watchers.add(request.user)
-    return utils.respond_in_json(sample.pk)
+    return respond_in_json(sample.pk)
 
 
 @login_required
@@ -355,19 +358,19 @@ def add_alias(request):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        return utils.respond_in_json(False)
+        return respond_in_json(False)
     try:
         sample_pk = request.POST["sample"]
         alias = request.POST["alias"]
     except KeyError:
-        return utils.respond_in_json(False)
+        return respond_in_json(False)
     sample = get_object_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
     try:
         models.models.SampleAlias.create(name=alias, sample=sample)
     except IntegrityError:
         # Alias already present
-        return utils.respond_in_json(False)
-    return utils.respond_in_json(True)
+        return respond_in_json(False)
+    return respond_in_json(True)
 
 
 @login_required
@@ -404,4 +407,4 @@ def change_my_samples(request):
         raise Http404("One or more of the sample IDs could not be found.")
     request.user.my_samples.remove(*samples_to_remove.values())
     request.user.my_samples.add(*samples_to_add.values())
-    return utils.respond_in_json(True)
+    return respond_in_json(True)

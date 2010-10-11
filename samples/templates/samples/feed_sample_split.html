@@ -15,7 +15,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans count entry.sample_split.pieces.count as counter and entry.sample_split.parent as parent and entry.sample_split.parent.get_absolute_url as url %}
+  {% blocktrans count entry.sample_split.pieces.count as counter and entry.sample_split.parent as parent and entry.sample_split.parent.get_absolute_url|prepend_domain as url %}
     From the sample <a href="{{ url }}">{{ parent }}</a>, the following piece was split:
   {% plural %}
     The sample <a href="{{ url }}">{{ parent }}</a> was split in the following pieces:
@@ -24,7 +24,7 @@ copyright holder, you must destroy it immediately and completely.
 
 <ul>
   {% for sample in entry.sample_split.pieces.all %}
-    <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
+    <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a>
       {% if sample.purpose %}
         ({% trans 'purpose:' %} {{ sample.purpose }})
       {% endif %}

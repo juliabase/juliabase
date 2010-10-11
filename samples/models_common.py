@@ -684,6 +684,48 @@ class Sample(models.Model):
         else:
             return name
 
+    def tags_suffix(self, user):
+        u"""Returns the shortened tags of the sample in parenthesis with a
+        non-breaking space before, of the empty string if the sample doesn't
+        have tags.
+
+        :Parameters:
+          - `user`: The user for which the tags should be displayed.  If the
+            user is not allowed to view the sample fully, no tags are
+            returned.
+
+        :type user: ``django.contrib.auth.models.User``
+
+        :Return:
+          the shortened tags in parentheses
+
+        :rtype: unicode
+        """
+        if self.tags and permissions.has_permission_to_fully_view_sample(user, self):
+            tags = self.tags if len(self.tags) <= 10 else self.tags[:10] + u"…"
+            return u" ({0})".format(tags)
+        else:
+            return u""
+
+    def name_with_tags(self, user):
+        u"""Returns the sample's name with possible tags attached.  This is a
+        convenience method which simply combines `__unicode__` and
+        `tags_suffix`.
+
+        :Parameters:
+          - `user`: The user for which the tags should be displayed.  If the
+            user is not allowed to view the sample fully, no tags are
+            returned.
+
+        :type user: ``django.contrib.auth.models.User``
+
+        :Return:
+          the name of the sample, possibly with shortened tags
+
+        :rtype: unicode
+        """
+        return unicode(self) + self.tags_suffix(user)
+
     @models.permalink
     def get_absolute_url(self):
         if self.name.startswith("*"):

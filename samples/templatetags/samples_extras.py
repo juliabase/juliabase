@@ -288,6 +288,16 @@ def markdown_samples(value):
 
 @register.filter
 @stringfilter
+def prepend_domain(value):
+    u"""Prepend the domain to an absolute URL without domain.
+    """
+    assert value[0] == "/"
+    prefix = "http://" + settings.DOMAIN_NAME
+    return prefix + value
+
+
+@register.filter
+@stringfilter
 def first_upper(value):
     u"""Filter for formatting the value to set the first character to uppercase.
     """
@@ -304,6 +314,14 @@ def flatten_multiline_text(value, separator=u" ● "):
     """
     lines = [line.strip() for line in value.strip().split("\n")]
     return separator.join(lines)
+
+
+@register.filter
+def sample_tags(sample, user):
+    u"""Shows the sample's tags.  The tags are shortened.  Moreover, they are
+    suppressed if the user is not allowed to view them.
+    """
+    return sample.tags_suffix(user)
 
 
 class ValueFieldNode(template.Node):

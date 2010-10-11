@@ -20,8 +20,8 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import
 
-import re, string, datetime, json
-from django.http import Http404, HttpResponse
+import re, string, datetime
+from django.http import Http404
 from django.core.cache import cache
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
@@ -29,7 +29,6 @@ from functools import update_wrapper
 from django.template import Context, RequestContext
 from django.shortcuts import render_to_response
 import chantal_common.utils
-from chantal_common import mimeparse
 from samples import models, permissions
 from samples.views.shared_utils import *
 
@@ -323,52 +322,10 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :rtype: ``HttpResponse``
     """
-    if is_json_requested(request):
-        return respond_in_json(json_response)
+    if chantal_common.utils.is_json_requested(request):
+        return chantal_common.utils.respond_in_json(json_response)
     return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
-
-
-def is_json_requested(request):
-    u"""Tests whether the current request should be answered in JSON format
-    instead of HTML.  Typically this means that the request was made by the
-    CHantal Remote Client or by JavaScript code.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-
-    :type request: ``HttpRequest``
-
-    :Returns:
-      whether the request should be answered in JSON
-
-    :rtype: bool
-    """
-    requested_mime_type = mimeparse.best_match(["text/html", "application/xhtml+xml", "application/json"],
-                                               request.META.get("HTTP_ACCEPT", "text/html"))
-    return requested_mime_type == "application/json"
-
-
-def respond_in_json(value):
-    u"""The communication with the Chantal Remote Client or to AJAX clients
-    should be done without generating HTML pages in order to have better
-    performance.  Thus, all responses are Python objects, serialised in JSON
-    notation.
-
-    The views that can be accessed by the Remote Client/AJAX as well as normal
-    browsers should distinguish between both by using `is_json_requested`.
-
-    :Parameters:
-      - `value`: the data to be sent back to the client that requested JSON.
-
-    :type value: ``object`` (an arbitrary Python object)
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    return HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
 
 
 def remove_samples_from_my_samples(samples, user):
