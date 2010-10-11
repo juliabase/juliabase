@@ -27,11 +27,13 @@ The error codes for a JSON client are the following:
     2       URL not found, i.e. HTTP 404
     3       POST parameter missing
     4       user could not be authenticated
+    5       POST parameter invalid
     ======= ===============================================
 """
 
 from __future__ import absolute_import
 
+import datetime
 import django.contrib.auth.models
 from django.db.models import signals
 from . import models as chantal_app

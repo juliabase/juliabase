@@ -68,6 +68,7 @@ class JSONRequestException(Exception):
     1000–1999: Chantal-samples
     2000–2999: Chantal-ipv, or other institute-specific extension to
       Chantal-samples
+    3000–3999: Chantal-kicker
 
     The complete table with the error codes is in the main ``__init__.py`` of
     the respective app.
