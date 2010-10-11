@@ -245,7 +245,6 @@ def update_plot():
                 y_values.append(kicker_number.number)
             latest_day = current_day
         plot_data.append((x_values, y_values, player.username))
-
     figure = Figure(frameon=False, figsize=(8, 12))
     canvas = FigureCanvasAgg(figure)
     axes = figure.add_subplot(111)
@@ -257,6 +256,17 @@ def update_plot():
     except:
         pass
     canvas.print_figure(os.path.join(path, "kicker.png"))
+    figure.clf()
+    figure = Figure(frameon=False, figsize=(10, 7))
+    canvas = FigureCanvasAgg(figure)
+    axes = figure.add_subplot(111)
+    axes.set_position((0.1, 0.5, 0.8, 0.45))
+    plot_commands(axes, plot_data)
+    axes.legend(loc="left center", bbox_to_anchor=[0.5, -0.1], shadow=True)
+    try:
+        os.makedirs(path)
+    except:
+        pass
     canvas.print_figure(os.path.join(path, "kicker.pdf"))
     figure.clf()
     hostname = socket.gethostname()
