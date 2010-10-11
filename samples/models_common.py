@@ -687,7 +687,7 @@ class Sample(models.Model):
     def tags_suffix(self, user):
         u"""Returns the shortened tags of the sample in parenthesis with a
         non-breaking space before, of the empty string if the sample doesn't
-        have tags.
+        have tags.  The tags are pruned to 10 characters if necessary.
 
         :Parameters:
           - `user`: The user for which the tags should be displayed.  If the
@@ -702,7 +702,7 @@ class Sample(models.Model):
         :rtype: unicode
         """
         if self.tags and permissions.has_permission_to_fully_view_sample(user, self):
-            tags = self.tags if len(self.tags) <= 10 else self.tags[:10] + u"…"
+            tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + u"…"
             return u" ({0})".format(tags)
         else:
             return u""
