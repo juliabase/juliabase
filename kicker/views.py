@@ -219,13 +219,22 @@ def get_eligible_players():
     return [(entry[1], int(round(entry[0]))) for entry in result]
 
 
+def plot_commands(axes, plot_data):
+    for line in plot_data:
+        axes.plot(line[0], line[1], label=line[2])
+    months_locator = matplotlib.dates.MonthLocator()
+    axes.xaxis.set_major_locator(months_locator)
+    months_formatter = matplotlib.dates.DateFormatter('%b')
+    axes.xaxis.set_major_formatter(months_formatter)
+    axes.grid(True)
+    
 def update_plot():
-    figure = Figure(frameon=False, figsize=(8, 12))
-    canvas = FigureCanvasAgg(figure)
-    axes = figure.add_subplot(111)
-    axes.set_position((0.1, 0.5, 0.8, 0.45))
+    path = os.path.join(settings.MEDIA_ROOT, "kicker")
+#    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
+#        return
     eligible_players = [entry[0] for entry in get_eligible_players()]
     hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
+    plot_data = []
     for player in eligible_players:
         x_values, y_values = [], []
         latest_day = None
@@ -235,22 +244,20 @@ def update_plot():
                 x_values.append(kicker_number.timestamp)
                 y_values.append(kicker_number.number)
             latest_day = current_day
-        axes.plot(x_values, y_values, label=player.username)
-    months_locator = matplotlib.dates.MonthLocator()
-    axes.xaxis.set_major_locator(months_locator)
-    months_formatter = matplotlib.dates.DateFormatter('%b')
-    axes.xaxis.set_major_formatter(months_formatter)
-    axes.grid(True)
+        plot_data.append((x_values, y_values, player.username))
+
+    figure = Figure(frameon=False, figsize=(8, 12))
+    canvas = FigureCanvasAgg(figure)
+    axes = figure.add_subplot(111)
+    axes.set_position((0.1, 0.5, 0.8, 0.45))
+    plot_commands(axes, plot_data)
     axes.legend(loc="upper center", bbox_to_anchor=[0.5, -0.1], ncol=3, shadow=True)
-    path = os.path.join(settings.MEDIA_ROOT, "kicker")
-    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
-        return
     try:
         os.makedirs(path)
     except:
         pass
-    canvas.print_figure(os.path.join(path, "kicker.pdf"))
     canvas.print_figure(os.path.join(path, "kicker.png"))
+    canvas.print_figure(os.path.join(path, "kicker.pdf"))
     figure.clf()
     hostname = socket.gethostname()
     if hostname == "olga":
