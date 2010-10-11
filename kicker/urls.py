@@ -25,4 +25,6 @@ from django.conf import settings
 urlpatterns = patterns("kicker.views",
                        (r"^matches/(?P<id_>\d+)/edit/$", "edit_match"),
                        url(r"^matches/add/$", "edit_match", {"id_": None}),
+                       (r"^starting_numbers/(?P<username>.+)/add/$", "set_start_kicker_number"),
+                       (r"^$", "summary"),
                        )

@@ -14,14 +14,20 @@
 
 from __future__ import division, absolute_import
 
-import datetime
-from . import models
+import datetime, time, socket, os
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.figure import Figure
+import matplotlib.dates
+from django.template import RequestContext
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
+from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 from chantal_common.utils import respond_in_json, JSONRequestException
 from samples.views import utils
+from . import models
 
 
 class NoKickerNumber(Exception):
@@ -57,7 +63,7 @@ def get_current_kicker_number(player):
                         else preliminary_kicker_number
                 except NoKickerNumber:
                     continue
-                S = 1/2 + 180/7 * (match.goals_a - match.goals_b) / seconds
+                S = 1/2 + 90/7 * (match.goals_a - match.goals_b) / seconds
                 E = 1 / (1 + 10**((number_player_a_1 + number_player_a_2 - number_player_b_1 - number_player_b_2) / 800))
                 delta = S - E
                 delta_player = 40 * delta
@@ -73,7 +79,7 @@ def get_current_kicker_number(player):
 
 
 def get_k(player):
-    return 32 if models.KickerNumber.objects.filter(player=player).count() > 30 else 40
+    return 24 if models.KickerNumber.objects.filter(player=player).count() > 30 else 30
 
 
 def get_old_stock_value(player):
@@ -98,9 +104,9 @@ def edit_match(request, id_=None):
         goals_b = int(request.POST["goals_b"])
         seconds = float(request.POST["seconds"])
         finished = request.POST.get("finished") == "on"
-        timestamp = datetime.datetime.strptime("%Y-%m-%d %H-%M-%S", request.POST["timestamp"])
+        timestamp = datetime.datetime.strptime(request.POST["timestamp"], "%Y-%m-%d %H:%M:%S")
     except KeyError as error:
-        raise JSONRequestException(3, u"At least the datafield \"{0}\" was missing".format(error.args[0]))
+        raise JSONRequestException(3, error.args[0])
     except ValueError as error:
         raise JSONRequestException(5, error.args[0])
     if seconds <= 0:
@@ -140,7 +146,6 @@ def edit_match(request, id_=None):
             player_a_1=player_a_1, player_a_2=player_a_2, player_b_1=player_b_1, player_b_2=player_b_2,
             goals_a=goals_a, goals_b=goals_b, timestamp=timestamp, finished=finished, seconds=seconds)
     if match.finished:
-        now = datetime.datetime.now()
         try:
             number_player_a_1 = get_current_kicker_number(player_a_1)
             number_player_a_2 = get_current_kicker_number(player_a_2)
@@ -149,30 +154,39 @@ def edit_match(request, id_=None):
         except NoKickerNumber:
             pass
         else:
-            S = 1/2 + 180/7 * (goals_a - goals_b) / seconds
-            E = 1 / (1 + 10**((number_player_a_1 + number_player_a_2 - number_player_b_1 - number_player_b_2) / 800))
+            S = 1/2 + 90/7 * (goals_a - goals_b) / seconds
+            S = goals_a / 7
+            E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
             delta = S - E
             delta_a_1 = get_k(player_a_1) * delta
             delta_a_2 = get_k(player_a_2) * delta
             delta_b_1 = - get_k(player_b_1) * delta
             delta_b_2 = - get_k(player_b_2) * delta
-            models.KickerNumber.objects.create(player=player_a_1, number=number_player_a_1 + delta_a_1, timestamp=now)
-            models.KickerNumber.objects.create(player=player_a_2, number=number_player_a_2 + delta_a_2, timestamp=now)
-            models.KickerNumber.objects.create(player=player_b_1, number=number_player_b_1 + delta_b_1, timestamp=now)
-            models.KickerNumber.objects.create(player=player_b_2, number=number_player_b_2 + delta_b_2, timestamp=now)
+            models.KickerNumber.objects.create(player=player_a_1, number=number_player_a_1 + delta_a_1,
+                                               timestamp=match.timestamp)
+            models.KickerNumber.objects.create(player=player_a_2, number=number_player_a_2 + delta_a_2,
+                                               timestamp=match.timestamp)
+            models.KickerNumber.objects.create(player=player_b_1, number=number_player_b_1 + delta_b_1,
+                                               timestamp=match.timestamp)
+            models.KickerNumber.objects.create(player=player_b_2, number=number_player_b_2 + delta_b_2,
+                                               timestamp=match.timestamp)
         for shares in player_a_1.sold_shares.all():
             models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_a_1, timestamp=now)
+                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_a_1,
+                timestamp=match.timestamp)
         for shares in player_a_2.sold_shares.all():
             models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_a_2, timestamp=now)
+                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_a_2,
+                timestamp=match.timestamp)
         for shares in player_b_1.sold_shares.all():
             models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_1, timestamp=now)
+                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_1,
+                timestamp=match.timestamp)
         for shares in player_b_2.sold_shares.all():
             models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_2, timestamp=now)
-        return respond_in_json(True)
+                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_2,
+                timestamp=match.timestamp)
+    return respond_in_json(match.pk)
 
 
 @login_required
@@ -181,9 +195,9 @@ def set_start_kicker_number(request, username):
         raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
     try:
         start_kicker_number = int(request.POST["start_kicker_number"])
-        timestamp = datetime.datetime.strptime("%Y-%m-%d %H-%M-%S", request.POST["timestamp"])
+        timestamp = datetime.datetime.strptime(request.POST["timestamp"], "%Y-%m-%d %H:%M:%S")
     except KeyError:
-        raise JSONRequestException(3, u"At least the datafield \"{0}\" was missing".format(error.args[0]))
+        raise JSONRequestException(3, error.args[0])
     except ValueError as error:
         raise JSONRequestException(5, error.args[0])
     player, created = django.contrib.auth.models.User.objects.get_or_create(username=username)
@@ -193,3 +207,65 @@ def set_start_kicker_number(request, username):
         raise JSONRequestException(3006, u"There are already kicker numbers stored for this user.")
     models.KickerNumber.objects.create(player=player, number=start_kicker_number, timestamp=timestamp)
     return respond_in_json(True)
+
+
+def get_eligible_players():
+    two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
+    hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
+    ids = list(models.KickerNumber.objects.filter(timestamp__gt=two_weeks_ago).values_list("player", flat=True))
+    eligible_players = list(django.contrib.auth.models.User.objects.in_bulk(ids).values())
+    result = [(get_current_kicker_number(player), player) for player in eligible_players]
+    result.sort(reverse=True)
+    return [(entry[1], int(round(entry[0]))) for entry in result]
+
+
+def update_plot():
+    figure = Figure(frameon=False, figsize=(8, 12))
+    canvas = FigureCanvasAgg(figure)
+    axes = figure.add_subplot(111)
+    axes.set_position((0.1, 0.5, 0.8, 0.45))
+    eligible_players = [entry[0] for entry in get_eligible_players()]
+    for player in eligible_players:
+        x_values, y_values = [], []
+        latest_day = None
+        for i, kicker_number in enumerate(models.KickerNumber.objects.filter(player=player, timestamp__gt=hundred_days_ago)):
+            current_day = kicker_number.timestamp.toordinal()
+            if current_day != latest_day:
+                x_values.append(kicker_number.timestamp)
+                y_values.append(kicker_number.number)
+            latest_day = current_day
+        axes.plot(x_values, y_values, label=player.username)
+    months_locator = matplotlib.dates.MonthLocator()
+    axes.xaxis.set_major_locator(months_locator)
+    months_formatter = matplotlib.dates.DateFormatter('%b')
+    axes.xaxis.set_major_formatter(months_formatter)
+    axes.grid(True)
+    axes.legend(loc="upper center", bbox_to_anchor=[0.5, -0.1], ncol=3, shadow=True)
+    path = "/var/www/chantal/media/kicker"
+    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
+        return
+    try:
+        os.makedirs(path)
+    except:
+        pass
+    canvas.print_figure(os.path.join(path, "kicker.pdf"))
+    canvas.print_figure(os.path.join(path, "kicker.png"))
+    figure.clf()
+    hostname = socket.gethostname()
+    if hostname == "olga":
+        other_node = "mandy"
+    elif hostname == "mandy":
+        other_node = "olga"
+    else:
+        return
+    subprocess.call(["rsync", "-auz", path, other_node + ":" + path])
+
+
+@login_required
+def summary(request):
+    update_plot()
+    eligible_players = get_eligible_players()
+    return render_to_response("kicker/summary.html", {
+        "title": _(u"Kicker summary"),
+        "kicker_numbers": eligible_players},
+        context_instance=RequestContext(request))

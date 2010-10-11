@@ -29,6 +29,7 @@ class Match(models.Model):
                                    related_name="match_player_b_2")
     goals_a = models.PositiveSmallIntegerField(_("goals of team A"))
     goals_b = models.PositiveSmallIntegerField(_("goals of team B"))
+    seconds = models.FloatField(_("seconds"), help_text=_(u"duration of the match"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     finished = models.BooleanField(_(u"finished"), default=False)
 
