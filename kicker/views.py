@@ -260,7 +260,7 @@ def update_plot():
     figure = Figure(frameon=False, figsize=(10, 7))
     canvas = FigureCanvasAgg(figure)
     axes = figure.add_subplot(111)
-    axes.set_position((0.1, 0.1, 0.5, 0.8))
+    axes.set_position((0.1, 0.1, 0.6, 0.8))
     plot_commands(axes, plot_data)
     axes.legend(loc="right center", bbox_to_anchor=[1, 1], shadow=True)
     try:
