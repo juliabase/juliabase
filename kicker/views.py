@@ -204,6 +204,7 @@ def set_start_kicker_number(request, username):
     player, created = django.contrib.auth.models.User.objects.get_or_create(username=username)
     if created:
         player.set_unusable_password()
+        player.save()
     if models.KickerNumber.objects.filter(player=player).exists():
         raise JSONRequestException(3006, u"There are already kicker numbers stored for this user.")
     models.KickerNumber.objects.create(player=player, number=start_kicker_number, timestamp=timestamp)
