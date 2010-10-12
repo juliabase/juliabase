@@ -229,7 +229,7 @@ def plot_commands(axes, plot_data):
     axes.grid(True)
     
 def update_plot():
-    path = os.path.join(settings.MEDIA_ROOT, "kicker")
+    path = os.path.join(settings.MEDIA_ROOT, "kicker/")
 #    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
 #        return
     eligible_players = [entry[0] for entry in get_eligible_players()]
@@ -263,10 +263,6 @@ def update_plot():
     axes.set_position((0.1, 0.1, 0.6, 0.8))
     plot_commands(axes, plot_data)
     axes.legend(loc="right center", bbox_to_anchor=[1, 1], shadow=True)
-    try:
-        os.makedirs(path)
-    except:
-        pass
     canvas.print_figure(os.path.join(path, "kicker.pdf"))
     figure.clf()
     hostname = socket.gethostname()
