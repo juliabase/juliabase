@@ -26,7 +26,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
-from chantal_common.utils import respond_in_json, JSONRequestException
+from chantal_common.utils import respond_in_json, JSONRequestException, get_really_full_name
 from samples.views import utils
 from . import models
 
@@ -215,7 +215,8 @@ def get_eligible_players():
     two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
     ids = list(models.KickerNumber.objects.filter(timestamp__gt=two_weeks_ago).values_list("player", flat=True))
     eligible_players = list(django.contrib.auth.models.User.objects.in_bulk(ids).values())
-    result = [(get_current_kicker_number(player), player) for player in eligible_players]
+    result = [(get_current_kicker_number(player), player.kicker_user_details.nickname or get_really_full_name(player))
+              for player in eligible_players]
     result.sort(reverse=True)
     return [(entry[1], int(round(entry[0]))) for entry in result]
 
