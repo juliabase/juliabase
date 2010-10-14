@@ -263,7 +263,7 @@ def update_plot():
     axes = figure.add_subplot(111)
     axes.set_position((0.1, 0.1, 0.6, 0.8))
     plot_commands(axes, plot_data)
-    axes.legend(bbox_to_anchor=[1, 1], shadow=True)
+    axes.legend(loc="best", bbox_to_anchor=[1, 1], shadow=True)
     canvas.print_figure(os.path.join(path, "kicker.pdf"))
     figure.clf()
     hostname = socket.gethostname()
