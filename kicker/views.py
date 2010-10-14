@@ -245,7 +245,7 @@ def update_plot():
                 x_values.append(kicker_number.timestamp)
                 y_values.append(kicker_number.number)
             latest_day = current_day
-        plot_data.append((x_values, y_values, player.username))
+        plot_data.append((x_values, y_values, player.kicker_user_details.nickname or player.username))
     figure = Figure(frameon=False, figsize=(8, 12))
     canvas = FigureCanvasAgg(figure)
     axes = figure.add_subplot(111)
