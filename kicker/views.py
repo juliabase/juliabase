@@ -215,8 +215,7 @@ def get_eligible_players():
     two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
     ids = list(models.KickerNumber.objects.filter(timestamp__gt=two_weeks_ago).values_list("player", flat=True))
     eligible_players = list(django.contrib.auth.models.User.objects.in_bulk(ids).values())
-    result = [(get_current_kicker_number(player), player.kicker_user_details.nickname or get_really_full_name(player))
-              for player in eligible_players]
+    result = [(get_current_kicker_number(player), player) for player in eligible_players]
     result.sort(reverse=True)
     return [(entry[1], int(round(entry[0]))) for entry in result]
 
@@ -283,5 +282,6 @@ def summary(request):
     eligible_players = get_eligible_players()
     return render_to_response("kicker/summary.html", {
         "title": _(u"Kicker summary"),
-        "kicker_numbers": eligible_players},
+        "kicker_numbers": [(entry[0], entry[1].kicker_user_details.nickname or get_really_full_name(player))
+                           for entry in eligible_players]},
         context_instance=RequestContext(request))
