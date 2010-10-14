@@ -263,7 +263,7 @@ def update_plot():
     axes = figure.add_subplot(111)
     axes.set_position((0.1, 0.1, 0.6, 0.8))
     plot_commands(axes, plot_data)
-    axes.legend(loc="right center", bbox_to_anchor=[1, 1], shadow=True)
+    axes.legend(bbox_to_anchor=[1, 1], shadow=True)
     canvas.print_figure(os.path.join(path, "kicker.pdf"))
     figure.clf()
     hostname = socket.gethostname()
@@ -280,8 +280,9 @@ def update_plot():
 def summary(request):
     update_plot()
     eligible_players = get_eligible_players()
+    print eligible_players
     return render_to_response("kicker/summary.html", {
         "title": _(u"Kicker summary"),
-        "kicker_numbers": [(entry[0], entry[1].kicker_user_details.nickname or get_really_full_name(player))
+        "kicker_numbers": [(entry[0].kicker_user_details.nickname or get_really_full_name(entry[0]), entry[1])
                            for entry in eligible_players]},
         context_instance=RequestContext(request))
