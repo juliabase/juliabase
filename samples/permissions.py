@@ -607,22 +607,23 @@ def assert_can_edit_topic(user, topic=None):
         or to add new topics.
     """
     if not topic:
-        if not user.has_perm("samples.can_edit_all_topics"):
+        if not user.has_perm("chantal_common.can_edit_all_topics"):
             description = _(u"You are not allowed to add or list topics because you don't have the permission “{name}”.") \
-                .format(name=translate_permission("samples.can_edit_all_topics"))
+                .format(name=translate_permission("chantal_common.can_edit_all_topics"))
             raise PermissionError(user, description)
     else:
         if user in topic.members.all():
-            if not user.has_perm("samples.can_edit_all_topics") and not user.has_perm("samples.can_edit_their_topics"):
+            if not user.has_perm("chantal_common.can_edit_all_topics") and \
+                    not user.has_perm("chantal_common.can_edit_their_topics"):
                 description = _(u"You are not allowed to change this topic because you don't have the permission "
-                                u"“{0}” or “{1}”.").format(translate_permission("samples.can_edit_all_topics"),
-                                                           translate_permission("samples.can_edit_their_topics"))
+                                u"“{0}” or “{1}”.").format(translate_permission("chantal_common.can_edit_all_topics"),
+                                                           translate_permission("chantal_common.can_edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("samples.can_edit_all_topics"):
+            if not user.has_perm("chantal_common.can_edit_all_topics"):
                 description = _(u"You are not allowed to change this topic because "
                                 u"you don't have the permission “{name}”.").format(
-                    name=translate_permission("samples.can_edit_all_topics"))
+                    name=translate_permission("chantal_common.can_edit_all_topics"))
                 raise PermissionError(user, description)
             elif topic.confidential and not user.is_superuser:
                 description = _(u"You are not allowed to change this topic because it is confidential "
