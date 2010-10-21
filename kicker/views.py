@@ -239,9 +239,10 @@ def update_plot():
     for player in eligible_players:
         x_values, y_values = [], []
         latest_day = None
-        for i, kicker_number in enumerate(models.KickerNumber.objects.filter(player=player, timestamp__gt=hundred_days_ago)):
+        kicker_numbers = list(models.KickerNumber.objects.filter(player=player, timestamp__gt=hundred_days_ago))
+        for i, kicker_number in enumerate(kicker_numbers):
             current_day = kicker_number.timestamp.toordinal()
-            if current_day != latest_day:
+            if current_day != latest_day or i == len(kicker_numbers) - 1:
                 x_values.append(kicker_number.timestamp)
                 y_values.append(kicker_number.number)
             latest_day = current_day
