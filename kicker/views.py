@@ -222,7 +222,10 @@ def get_eligible_players():
 
 def plot_commands(axes, plot_data):
     for line in plot_data:
-        axes.plot(line[0], line[1], label=line[2], linewidth=2)
+        if len(line[0]) > 1:
+            axes.plot(line[0], line[1], label=line[2], linewidth=2)
+        else:
+            axes.plot(line[0], line[1], "o", label=line[2], linewidth=2)
     months_locator = matplotlib.dates.MonthLocator()
     axes.xaxis.set_major_locator(months_locator)
     months_formatter = matplotlib.dates.DateFormatter('%b')
