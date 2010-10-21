@@ -241,11 +241,10 @@ def update_plot():
         latest_day = None
         kicker_numbers = list(models.KickerNumber.objects.filter(player=player, timestamp__gt=hundred_days_ago))
         for i, kicker_number in enumerate(kicker_numbers):
-            current_day = kicker_number.timestamp.toordinal()
-            if current_day != latest_day or i == len(kicker_numbers) - 1:
+            if i == len(kicker_numbers) - 1 or \
+                    kicker_numbers[i + 1].timestamp.toordinal() != kicker_number.timestamp.toordinal():
                 x_values.append(kicker_number.timestamp)
                 y_values.append(kicker_number.number)
-            latest_day = current_day
         plot_data.append((x_values, y_values, player.kicker_user_details.nickname or player.username))
     figure = Figure(frameon=False, figsize=(8, 12))
     canvas = FigureCanvasAgg(figure)
