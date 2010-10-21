@@ -223,7 +223,7 @@ def get_eligible_players():
 def plot_commands(axes, plot_data):
     for line in plot_data:
         if len(line[0]) == 1:
-            line[0].append(line[0][0])
+            line[0].append(line[0][0] + datetime.timedelta(seconds=60))
             line[1].append(line[1][0])
         axes.plot(line[0], line[1], label=line[2], linewidth=2)
     months_locator = matplotlib.dates.MonthLocator()
