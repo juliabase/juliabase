@@ -335,12 +335,14 @@ class ValueFieldNode(template.Node):
 
     def render(self, context):
         field = self.field.resolve(context)
+        print 1
         if "." not in self.field_name:
             verbose_name = unicode(context[self.field_name]._meta.verbose_name)
         else:
             instance, field_name = self.field_name.rsplit(".", 1)
             model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
+            print model._meta.get_field(field_name).__dict__.keys()
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = chantal_common.templatetags.chantal.fancy_bool(field)
