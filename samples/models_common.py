@@ -39,6 +39,7 @@ from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
+from samples.views.sample_search import *
 from samples.data_tree import DataNode, DataItem
 
 
@@ -842,6 +843,10 @@ class Sample(models.Model):
         else:
             self.cache_keys = cache_key
         super(Sample, self).save()
+
+    def get_model_field(self, data, prefix):
+        attributes = [OptionTextField(self._meta.get_field("name"), data, prefix=prefix)]
+        #sample_search.ModelField
 
 
 class SampleAlias(models.Model):
