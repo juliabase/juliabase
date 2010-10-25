@@ -20,9 +20,19 @@ copyright holder, you must destroy it immediately and completely.
 <form method="get" action="">
   <table>
     {{ search_samples }}
-    {% if search_options %}
-        {{ search_options }}
-    {% endif %}
+
+    {% for process in search_processes %}
+        {{ process }}
+        {% for layer in process.layers %}
+            {{ layer }}
+            {% if process.layers %}
+               {% for options in layer.get_search_options%}
+                   {{ options }}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
   </table>
   <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
 </form>
