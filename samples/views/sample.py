@@ -693,74 +693,26 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
-    found_samples = []
-#    found_processes = []
-    search_process_forms = []
-#    process_classes = []
-    too_many_results = False
-    prefix = 1
-#    search_samples_form = SearchSamplesForm(request.GET)
-#    search_process_forms.append(SearchProcessForm(data=request.GET, prefix=prefix))
+    model_list = [models.Sample]
+    model_tree = None
+    result = None
 
-#    if search_samples_form.is_valid():
-#        sample_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
-#                                            Q(currently_responsible_person=request.user) |
-#                                            Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
-#        if search_samples_form.cleaned_data["name_pattern"]:
-#            name_pattern = search_samples_form.cleaned_data["name_pattern"]
-#            if search_samples_form.cleaned_data["aliases"]:
-#                sample_query = sample_query.filter(Q(name__icontains=name_pattern) |
-#                                               Q(aliases__name__icontains=name_pattern))
-#            else:
-#                sample_query = sample_query.filter(name__icontains=name_pattern)
-#            found_samples = sample_query
+    root_form = sample_search.SearchModelForm(model_list, request.GET)
+    if root_form.is_valid():
+        model_tree = sample_search.get_model(root_form.cleaned_data["_model"]).get_model_field(request.GET, "")
+        if root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]:
+            model_tree.parse_data(request.GET, "")
+        if model_tree.is_valid():
+            result = model_tree.get_search_results()
 
-#        for process_form in search_process_forms:
-#            if process_form.is_valid() and process_form.cleaned_data["processes"]:
-#                process_form.set_process_class(models.physical_process_models[process_form.cleaned_data["processes"]])
-#                prefix += 1
-#                search_process_forms.append(SearchProcessForm(data=request.GET, prefix=prefix))
-#                process_form.append_layer(request.GET)
-#                for index, layer in enumerate(process_form.layers):
-#                    if layer.is_valid() and layer.cleaned_data["layer_number"]:
-#                        process_form.append_search_options(request.GET, index)
-#                        process_form.append_layer(request.GET)
-
-#        for options_form in search_options_forms:
-#            if options_form and all(form.is_valid() for form in options_form):
-#                found_samples = []
-#                index = search_options_forms.index(options_form)
-#                found_processes = process_classes[index].objects.all()
-#                for form in options_form:
-#                    found_processes = process_classes[index].search_query(found_processes, form.cleaned_data)
-#                if found_processes:
-#                    for process in found_processes:
-#                        query = sample_query.filter(processes=process)
-#                        found_samples.extend(query)
-
-#        too_many_results = len(found_samples) > max_results
-#        found_samples = found_samples[:max_results] if too_many_results else found_samples
-
-
-
-
-
-#    my_samples = request.user.my_samples.all()
-#    if request.method == "POST":
-#        sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
-#                         if value == u"on")
-#        samples = sample_query.in_bulk(sample_ids)
-#        request.user.my_samples.add(*samples.values())
-#    add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
-#                               for sample in found_samples]
-#    content_dict = {"title": _(u"Search for sample"),
-#                    "search_samples": search_samples_form,
-#                    "search_processes": search_process_forms,
-#                    "found_samples": zip(found_samples, add_to_my_samples_forms),
-#                    "too_many_results": too_many_results,
-#                    "max_results": max_results,}
-#    return render_to_response("samples/search_samples.html", content_dict,
-#                              context_instance=RequestContext(request))
+    content_dict = {"title": _(u"Search for sample"),
+                    "search_root": root_form,
+                    "model_tree": model_tree,
+                    "results": result,}
+                    #"too_many_results": too_many_results,
+                    #"max_results": max_results,}
+    return render_to_response("samples/search_samples.html", content_dict,
+                              context_instance=RequestContext(request))
 
 
 @login_required

@@ -19,20 +19,10 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
 <form method="get" action="">
   <table>
-    {{ search_samples }}
-
-    {% for process in search_processes %}
-        {{ process }}
-        {% for layer in process.layers %}
-            {{ layer }}
-            {% if process.layers %}
-               {% for options in layer.get_search_options%}
-                   {{ options }}
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
-
+    {{ search_root }}
+    {% if model_tree %}
+        {% display_search_tree model_tree %}
+    {% endif %}
   </table>
   <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
 </form>

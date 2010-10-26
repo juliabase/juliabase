@@ -31,22 +31,22 @@ class OptionField(forms.Form):
 class OptionTextField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionTextField, self).__init__(data, **kwargs)
-        self.fields[field.name] = forms.CharField(label=field.verbose_name, required=False)
+        self.fields[field.name] = forms.CharField(label=field.name, required=False)
 
 class OptionIntField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionIntField, self).__init__(data, **kwargs)
-        self.fields[field.name] = forms.IntegerField(label=_(field.verbose_name).replace("_", " "), required=False)
+        self.fields[field.name] = forms.IntegerField(label=field.name, required=False)
 
 class OptionTimeField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionTimeField, self).__init__(data, **kwargs)
-        self.fields[field.name] = forms.DateTimeField(label=_(field.verbose_name).replace("_", " "), required=False)
+        self.fields[field.name] = forms.DateTimeField(label=field.name, required=False)
 
 class OptionGasField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionGasField, self).__init__(data, **kwargs)
-        self.fields[field.name] = forms.CharField(label=_(field.verbose_name).replace("_", " "), required=False)
+        self.fields[field.name] = forms.CharField(label=field.name, required=False)
         self.fields["flow_rate"] = forms.DecimalField(label=_(u"flow rate"), required=False)
 
     def get_values(self):
@@ -56,46 +56,48 @@ class OptionGasField(OptionField):
 
 class SearchModelForm(forms.Form):
     _model = forms.ChoiceField()
-    _old_model = forms.ChoiceField()
+    _old_model = forms.ChoiceField(required=False)
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
         self.fields["_model"].choices = [("", u"---------")] + [(model.__name__, model._meta.verbose_name) for model in models]
 
 
-class SearchSamplesForm(forms.Form):
-    u"""Form for searching for samples.  So far, you can only enter a name
-    substring for looking for samples.
-    """
-    name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30, required=False)
-    aliases = forms.BooleanField(label=_(u"Include alias names"), required=False)
 
-
-class ModelField:
-    def __init__(self, model_class, related_models, attributes, data, **kwargs):
-        self.related_models
-        self.model_class = model_class
-        self.children = []
-        self.attributes = attributes
-        prefix = kwargs.get("prefix", "")
-        depth = prefix.count("-") +1
-        keys = [key for key in data if key.count("-") == depth]
+all_models = None
+def get_model(model_name):
+    global all_models
+    if all_models is None:
         all_models = {}
         for app in [get_app('chantal_ipv'), get_app('samples')]:
             all_models.update((model.__name__, model) for model in get_models(app))
+    return all_models[model_name]
+
+
+class ModelField:
+    def __init__(self, model_class, related_models, attributes):
+        self.related_models = related_models
+        self.model_class = model_class
+        self.children = []
+        self.attributes = attributes
+
+    def parse_data(self, data, prefix):
+        depth = prefix.count("-") +1
+        keys = [key for key in data if key.count("-") == depth]
         i = 1
         while True:
             new_prefix = prefix + str(i)  + "-"
             if new_prefix + "_model" not in keys:
                 break
             model_name = data[new_prefix + "_model"]
-            search_model_form = SearchModelForm(related_models.values(), data, prefix=new_prefix)
+            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
             parse_model = search_model_form.is_valid() and \
               search_model_form.changed_data["_model"] == search_model_form.changed_data["_old_model"]
-            self.children.append((search_model_form,
-                                  all_models[model_name].get_model_field(data if parse_model else None, new_prefix)))
+            model_field = get_models(model_name).get_model_field(data if parse_model else None, new_prefix)
+            model_field.parse_data(data, new_prefix)
+            self.children.append((search_model_form, model_field))
             i += 1
-        self.children.append((SearchModelForm(related_models.values(), prefix=new_prefix), None))
+        self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
 
     def get_search_results(self):
@@ -106,12 +108,21 @@ class ModelField:
         result = self.model_class.objects.filter(**kwargs)
         kwargs = {}
         for child in self.children:
-            name = self.related_models[child[1].model_class] + "__id__in"
-            kwargs[name] = child[1].get_search_results()
+            if child[1]:
+                name = self.related_models[child[1].model_class] + "__id__in"
+                kwargs[name] = child[1].get_search_results()
         result = result.filter(**kwargs)
         return result.values("id")
 
-
+    def is_valid(self):
+        is_all_valid = True
+        for attr in self.attributes:
+            is_all_valid = is_all_valid and attr.is_valid()
+        if self.children:
+            for child in self.children:
+                if child[1]:
+                    is_all_valid = is_all_valid and child[0].is_valid() and child[1].is_valid()
+        return is_all_valid
 
 
 
