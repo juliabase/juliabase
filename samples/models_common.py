@@ -844,9 +844,17 @@ class Sample(models.Model):
             self.cache_keys = cache_key
         super(Sample, self).save()
 
-    def get_model_field(self, data, prefix):
-        attributes = [OptionTextField(self._meta.get_field("name"), data, prefix=prefix)]
-        #sample_search.ModelField
+    @staticmethod
+    def get_model_field(data, prefix):
+        u"""Generades a
+        """
+        attributes = [OptionTextField(Sample._meta.get_field("name"), data, prefix=prefix),
+                      OptionTextField(Sample._meta.get_field("current_location"), data, prefix=prefix),
+                      OptionTextField(Sample._meta.get_field("purpose"), data, prefix=prefix),
+                      OptionTextField(Sample._meta.get_field("tags"), data, prefix=prefix)]
+        related_models = {Process: "processes",
+                          Topic: "topic"}
+        return ModelField(Sample, related_models, attributes)
 
 
 class SampleAlias(models.Model):

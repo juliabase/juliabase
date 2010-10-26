@@ -342,7 +342,6 @@ class ValueFieldNode(template.Node):
             instance, field_name = self.field_name.rsplit(".", 1)
             model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
-            print model._meta.get_field(field_name).__dict__.keys()
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = chantal_common.templatetags.chantal.fancy_bool(field)
@@ -482,3 +481,22 @@ def value_split_field(parser, token):
     else:
         raise template.TemplateSyntaxError, "value_split_field requires three, four or five arguments"
     return ValueSplitFieldNode(field1, field2, unit, separator)
+
+
+
+@register.simple_tag
+def display_search_tree(tree):
+    result = ""
+    for attribute in tree.attributes:
+        for field in attribute:
+            result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>
+            <td class="input">{field}</td></tr>""".format(label=field.label, html_name=field.html_name, field=field)
+
+    if tree.children:
+        for child in tree.children:
+            result += child[0].__unicode__()
+            if child[1]:
+                result += display_search_tree(child[1])
+    return result
+
+
