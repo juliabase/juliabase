@@ -125,7 +125,6 @@ class ModelField:
         is_all_valid = True
         for attr in self.attributes:
             is_all_valid = is_all_valid and attr.is_valid()
-            print attr.fields , attr.is_valid() , attr.is_bound
         if self.children:
             for child in self.children:
                 if child[1]:

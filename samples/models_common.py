@@ -848,8 +848,6 @@ class Sample(models.Model):
     def get_model_field(data, prefix):
         u"""
         """
-        a = OptionTextField(Sample._meta.get_field("name"), data, prefix=prefix)
-        print "=>",  a.is_bound
         attributes = [OptionTextField(Sample._meta.get_field("name"), data, prefix=prefix),
                       OptionTextField(Sample._meta.get_field("current_location"), data, prefix=prefix),
                       OptionTextField(Sample._meta.get_field("purpose"), data, prefix=prefix),
