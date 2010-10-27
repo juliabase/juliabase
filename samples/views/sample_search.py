@@ -24,28 +24,32 @@ class OptionField(forms.Form):
         self.field = field
 
     def get_values(self):
-        if self.is_valid() and self.changed_data[self.field.name]:
-            return {self.field.name: self.changed_data[self.field.name]}
+        if self.is_valid() and self.cleaned_data[self.field.name]:
+            return {self.field.name: self.cleaned_data[self.field.name]}
 
 
 class OptionTextField(OptionField):
     def __init__(self, field, data=None, **kwargs):
-        super(OptionTextField, self).__init__(data, **kwargs)
+        super(OptionTextField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.CharField(label=field.name, required=False)
+
+    def get_values(self):
+        if self.is_valid() and self.cleaned_data[self.field.name]:
+            return {self.field.name + "__icontains": self.cleaned_data[self.field.name]}
 
 class OptionIntField(OptionField):
     def __init__(self, field, data=None, **kwargs):
-        super(OptionIntField, self).__init__(data, **kwargs)
+        super(OptionIntField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.IntegerField(label=field.name, required=False)
 
 class OptionTimeField(OptionField):
     def __init__(self, field, data=None, **kwargs):
-        super(OptionTimeField, self).__init__(data, **kwargs)
+        super(OptionTimeField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.DateTimeField(label=field.name, required=False)
 
 class OptionGasField(OptionField):
     def __init__(self, field, data=None, **kwargs):
-        super(OptionGasField, self).__init__(data, **kwargs)
+        super(OptionGasField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.CharField(label=field.name, required=False)
         self.fields["flow_rate"] = forms.DecimalField(label=_(u"flow rate"), required=False)
 
@@ -55,7 +59,7 @@ class OptionGasField(OptionField):
                     "channels__flow_rate": self.changed_data["flow_rate"]}
 
 class SearchModelForm(forms.Form):
-    _model = forms.ChoiceField()
+    _model = forms.ChoiceField(required=False)
     _old_model = forms.CharField(required=False)
 
     def __init__(self, models, data=None, **kwargs):
@@ -70,7 +74,6 @@ def get_model(model_name):
         all_models = {}
         for app in [get_app('chantal_ipv'), get_app('samples')]:
             all_models.update((model.__name__, model) for model in get_models(app))
-    print repr(model_name), all_models.keys()
     return all_models[model_name]
 
 
@@ -104,7 +107,7 @@ class ModelField:
         self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix[:-1]), None))
 
 
-    def get_search_results(self):
+    def get_search_results(self, top_level=True):
         kwargs = {}
         for attribute in self.attributes:
             if attribute.get_values():
@@ -114,9 +117,12 @@ class ModelField:
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__id__in"
-                kwargs[name] = child[1].get_search_results()
+                kwargs[name] = child[1].get_search_results(False)
         result = result.filter(**kwargs)
-        return result.values("id")
+        if top_level:
+            return self.model_class.objects.in_bulk(list(result.values_list("id", flat=True))).values()
+        else:
+            return result.values("id")
 
     def is_valid(self):
         is_all_valid = True
