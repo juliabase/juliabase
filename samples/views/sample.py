@@ -695,26 +695,18 @@ def search(request):
     """
     model_list = [models.Sample]
     model_tree = None
-    result = None
-
+    results = []
     root_form = sample_search.SearchModelForm(model_list, request.GET)
-    if root_form.is_valid():
+    if root_form.is_valid() and root_form.cleaned_data["_model"]:
         model_tree = sample_search.get_model(root_form.cleaned_data["_model"]).get_model_field(request.GET, "")
-        if root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]:
-            model_tree.parse_data(request.GET, "")
+        model_tree.parse_data(request.GET, "")
         if model_tree.is_valid():
             results = model_tree.get_search_results()
         root_form = sample_search.SearchModelForm(model_list, initial={"_old_model": root_form.cleaned_data["_model"],
                                                                        "_model": root_form.cleaned_data["_model"]})
     else:
         root_form = sample_search.SearchModelForm(model_list)
-
-    content_dict = {"title": _(u"Search for sample"),
-                    "search_root": root_form,
-                    "model_tree": model_tree,
-                    "results": results,}
-                    #"too_many_results": too_many_results,
-                    #"max_results": max_results,}
+    content_dict = {"title": _(u"Search for sample"), "search_root": root_form, "model_tree": model_tree, "results": results}
     return render_to_response("samples/search_samples.html", content_dict,
                               context_instance=RequestContext(request))
 

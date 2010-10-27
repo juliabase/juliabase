@@ -31,7 +31,7 @@ class OptionField(forms.Form):
 class OptionTextField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionTextField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.CharField(label=field.name, required=False)
+        self.fields[field.name] = forms.CharField(label=unicode(field.verbose_name), required=False)
 
     def get_values(self):
         if self.is_valid() and self.cleaned_data[self.field.name]:
@@ -40,12 +40,12 @@ class OptionTextField(OptionField):
 class OptionIntField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionIntField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.IntegerField(label=field.name, required=False)
+        self.fields[field.name] = forms.IntegerField(label=unicode(field.name), required=False)
 
 class OptionTimeField(OptionField):
     def __init__(self, field, data=None, **kwargs):
         super(OptionTimeField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.DateTimeField(label=field.name, required=False)
+        self.fields[field.name] = forms.DateTimeField(label=unicode(field.name), required=False)
 
 class OptionGasField(OptionField):
     def __init__(self, field, data=None, **kwargs):
@@ -64,7 +64,8 @@ class SearchModelForm(forms.Form):
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
-        self.fields["_model"].choices = [("", u"---------")] + [(model.__name__, model._meta.verbose_name) for model in models]
+        self.fields["_model"].choices = [("", u"---------")] + \
+            [(model.__name__, model._meta.verbose_name) for model in models]
 
 
 all_models = None
@@ -72,7 +73,7 @@ def get_model(model_name):
     global all_models
     if all_models is None:
         all_models = {}
-        for app in [get_app('chantal_ipv'), get_app('samples')]:
+        for app in [get_app("chantal_ipv"), get_app("samples")]:
             all_models.update((model.__name__, model) for model in get_models(app))
     return all_models[model_name]
 
@@ -85,7 +86,7 @@ class ModelField:
         self.attributes = attributes
 
     def parse_data(self, data, prefix):
-        depth = prefix.count("-") +1
+        depth = prefix.count("-") + 1
         keys = [key for key in data if key.count("-") == depth]
         i = 1
         while True:
