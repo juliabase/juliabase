@@ -56,12 +56,11 @@ class OptionGasField(OptionField):
 
 class SearchModelForm(forms.Form):
     _model = forms.ChoiceField()
-    _old_model = forms.ChoiceField(required=False)
+    _old_model = forms.CharField(required=False)
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
         self.fields["_model"].choices = [("", u"---------")] + [(model.__name__, model._meta.verbose_name) for model in models]
-
 
 
 all_models = None
@@ -71,6 +70,7 @@ def get_model(model_name):
         all_models = {}
         for app in [get_app('chantal_ipv'), get_app('samples')]:
             all_models.update((model.__name__, model) for model in get_models(app))
+    print repr(model_name), all_models.keys()
     return all_models[model_name]
 
 
@@ -86,18 +86,22 @@ class ModelField:
         keys = [key for key in data if key.count("-") == depth]
         i = 1
         while True:
-            new_prefix = prefix + str(i)  + "-"
-            if new_prefix + "_model" not in keys:
+            new_prefix = prefix + str(i) + "-"
+            if not data.get(new_prefix + "_model"):
                 break
             model_name = data[new_prefix + "_model"]
-            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
+            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix[:-1])
             parse_model = search_model_form.is_valid() and \
-              search_model_form.changed_data["_model"] == search_model_form.changed_data["_old_model"]
-            model_field = get_models(model_name).get_model_field(data if parse_model else None, new_prefix)
+              search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
+            model_field = get_model(model_name).get_model_field(data if parse_model else None, new_prefix[:-1])
             model_field.parse_data(data, new_prefix)
+            search_model_form = SearchModelForm(self.related_models.keys(),
+                                                initial={"_old_model": search_model_form.cleaned_data["_model"],
+                                                         "_model": search_model_form.cleaned_data["_model"]},
+                                                prefix=new_prefix[:-1])
             self.children.append((search_model_form, model_field))
             i += 1
-        self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
+        self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix[:-1]), None))
 
 
     def get_search_results(self):
