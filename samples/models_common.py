@@ -846,7 +846,7 @@ class Sample(models.Model):
 
     @staticmethod
     def get_model_field(data, prefix):
-        u"""Generades a
+        u"""
         """
         attributes = [OptionTextField(Sample._meta.get_field("name"), data, prefix=prefix),
                       OptionTextField(Sample._meta.get_field("current_location"), data, prefix=prefix),
