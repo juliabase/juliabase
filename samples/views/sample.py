@@ -703,6 +703,7 @@ def search(request):
         if root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]:
             model_tree.parse_data(request.GET, "")
         if model_tree.is_valid():
+            print 1
             result = model_tree.get_search_results()
         root_form = sample_search.SearchModelForm(model_list, initial={"_old_model": root_form.cleaned_data["_model"],
                                                                        "_model": root_form.cleaned_data["_model"]})

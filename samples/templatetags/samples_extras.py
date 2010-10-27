@@ -491,7 +491,6 @@ def display_search_tree(tree):
         for field in attribute:
             result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>
             <td class="input">{field}</td></tr>""".format(label=field.label, html_name=field.html_name, field=field)
-
     if tree.children:
         for child in tree.children:
             result += child[0].__unicode__()
