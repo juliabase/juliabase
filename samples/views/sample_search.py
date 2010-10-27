@@ -70,7 +70,6 @@ def get_model(model_name):
         all_models = {}
         for app in [get_app('chantal_ipv'), get_app('samples')]:
             all_models.update((model.__name__, model) for model in get_models(app))
-    print repr(model_name), all_models.keys()
     return all_models[model_name]
 
 
