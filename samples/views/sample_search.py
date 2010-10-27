@@ -107,7 +107,7 @@ class ModelField:
         self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix[:-1]), None))
 
 
-    def get_search_results(self):
+    def get_search_results(self, top_level=True):
         kwargs = {}
         for attribute in self.attributes:
             if attribute.get_values():
@@ -117,9 +117,12 @@ class ModelField:
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__id__in"
-                kwargs[name] = child[1].get_search_results()
+                kwargs[name] = child[1].get_search_results(False)
         result = result.filter(**kwargs)
-        return result.values("id")
+        if top_level:
+            return self.model_class.objects.in_bulk(list(result.values_list("id", flat=True))).values()
+        else:
+            return result.values("id")
 
     def is_valid(self):
         is_all_valid = True

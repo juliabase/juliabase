@@ -703,15 +703,16 @@ def search(request):
         if root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]:
             model_tree.parse_data(request.GET, "")
         if model_tree.is_valid():
-            result = model_tree.get_search_results()
+            results = model_tree.get_search_results()
         root_form = sample_search.SearchModelForm(model_list, initial={"_old_model": root_form.cleaned_data["_model"],
                                                                        "_model": root_form.cleaned_data["_model"]})
     else:
         root_form = sample_search.SearchModelForm(model_list)
+
     content_dict = {"title": _(u"Search for sample"),
                     "search_root": root_form,
                     "model_tree": model_tree,
-                    "results": result,}
+                    "results": results,}
                     #"too_many_results": too_many_results,
                     #"max_results": max_results,}
     return render_to_response("samples/search_samples.html", content_dict,
