@@ -844,17 +844,17 @@ class Sample(models.Model):
             self.cache_keys = cache_key
         super(Sample, self).save()
 
-    @staticmethod
-    def get_model_field(data, prefix):
+    @classmethod
+    def get_model_field(cls, data, prefix):
         u"""
         """
-        attributes = [OptionTextField(Sample._meta.get_field("name"), data, prefix=prefix),
-                      OptionTextField(Sample._meta.get_field("current_location"), data, prefix=prefix),
-                      OptionTextField(Sample._meta.get_field("purpose"), data, prefix=prefix),
-                      OptionTextField(Sample._meta.get_field("tags"), data, prefix=prefix)]
+        attributes = [OptionTextField(cls._meta.get_field("name"), data, prefix=prefix),
+                      OptionTextField(cls._meta.get_field("current_location"), data, prefix=prefix),
+                      OptionTextField(cls._meta.get_field("purpose"), data, prefix=prefix),
+                      OptionTextField(cls._meta.get_field("tags"), data, prefix=prefix)]
         related_models = {Process: "processes",
                           Topic: "topic"}
-        return ModelField(Sample, related_models, attributes)
+        return ModelField(cls, related_models, attributes)
 
 
 class SampleAlias(models.Model):
