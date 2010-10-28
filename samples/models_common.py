@@ -845,13 +845,11 @@ class Sample(models.Model):
         super(Sample, self).save()
 
     @classmethod
-    def get_model_field(cls, data, prefix):
+    def get_model_field(cls):
         u"""
         """
-        attributes = [OptionTextField(cls._meta.get_field("name"), data, prefix=prefix),
-                      OptionTextField(cls._meta.get_field("current_location"), data, prefix=prefix),
-                      OptionTextField(cls._meta.get_field("purpose"), data, prefix=prefix),
-                      OptionTextField(cls._meta.get_field("tags"), data, prefix=prefix)]
+        attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "current_location"),
+                      OptionTextField(cls, "purpose"), OptionTextField(cls, "tags")]
         related_models = {Process: "processes", Topic: "topic"}
         return ModelField(cls, related_models, attributes)
 

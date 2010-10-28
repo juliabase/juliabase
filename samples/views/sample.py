@@ -698,7 +698,7 @@ def search(request):
     results = []
     root_form = sample_search.SearchModelForm(model_list, request.GET)
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
-        model_tree = sample_search.get_model(root_form.cleaned_data["_model"]).get_model_field(request.GET, "")
+        model_tree = sample_search.get_model(root_form.cleaned_data["_model"]).get_model_field()
         model_tree.parse_data(request.GET, "")
         if model_tree.is_valid():
             results = model_tree.get_search_results()

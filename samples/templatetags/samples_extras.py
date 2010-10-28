@@ -488,7 +488,7 @@ def value_split_field(parser, token):
 def display_search_tree(tree):
     result = ""
     for attribute in tree.attributes:
-        for field in attribute:
+        for field in attribute.form:
             result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>
             <td class="input">{field}</td></tr>""".format(label=field.label, html_name=field.html_name, field=field)
     if tree.children:

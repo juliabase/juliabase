@@ -18,40 +18,43 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import get_models, get_app
 
 
-class OptionField(forms.Form):
-    
-    def __init__(self, field, data=None, **kwargs):
-        super(OptionField, self).__init__(data, **kwargs)
-        self.field = field
+class OptionField(object):
+
+    def __init__(self, cls, field_name):
+        self.field = cls._meta.get_field(field_name)
+
+    def parse_data(self, data, prefix):
+        raise NotImplementedError
 
     def get_values(self):
-        if self.is_valid() and self.cleaned_data[self.field.name]:
-            return {self.field.name: self.cleaned_data[self.field.name]}
+        return {self.field.name: self.form.cleaned_data[self.field.name]}
+
+    def is_valid(self):
+        return self.form.is_valid()
 
 
 class OptionTextField(OptionField):
-    
-    def __init__(self, field, data=None, **kwargs):
-        super(OptionTextField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.CharField(label=unicode(field.verbose_name), required=False)
+
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name] = forms.CharField(label=unicode(self.field.verbose_name), required=False)
 
     def get_values(self):
-        if self.is_valid() and self.cleaned_data[self.field.name]:
-            return {self.field.name + "__icontains": self.cleaned_data[self.field.name]}
+        return {self.field.name + "__icontains": self.form.cleaned_data[self.field.name]}
 
 
 class OptionIntField(OptionField):
     
-    def __init__(self, field, data=None, **kwargs):
-        super(OptionIntField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.IntegerField(label=unicode(field.name), required=False)
-
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name] = forms.IntegerField(label=unicode(self.field.verbose_name), required=False)
+    
 
 class OptionTimeField(OptionField):
 
-    def __init__(self, field, data=None, **kwargs):
-        super(OptionTimeField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.DateTimeField(label=unicode(field.name), required=False)
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name] = forms.DateTimeField(label=unicode(self.field.verbose_name), required=False)
 
 
 class OptionGasField(OptionField):
@@ -62,9 +65,8 @@ class OptionGasField(OptionField):
         self.fields["flow_rate"] = forms.DecimalField(label=_(u"flow rate"), required=False)
 
     def get_values(self):
-        if self.is_valid() and self.changed_data[self.field.name] and self.changed_data["flow_rate"]:
-            return {"channels__gas": self.changed_data[self.field.name],
-                    "channels__flow_rate": self.changed_data["flow_rate"]}
+        return {"channels__gas": self.changed_data[self.field.name],
+                "channels__flow_rate": self.changed_data["flow_rate"]}
 
 
 class SearchModelForm(forms.Form):
@@ -87,7 +89,7 @@ def get_model(model_name):
     return all_models[model_name]
 
 
-class ModelField:
+class ModelField(object):
 
     def __init__(self, model_class, related_models, attributes):
         self.related_models = related_models
@@ -96,26 +98,28 @@ class ModelField:
         self.attributes = attributes
 
     def parse_data(self, data, prefix):
-        depth = prefix.count("-") + 1
+        for attribute in self.attributes:
+            attribute.parse_data(data, prefix)
+        depth = prefix.count("-") + (2 if prefix else 1)
         keys = [key for key in data if key.count("-") == depth]
         i = 1
         while True:
-            new_prefix = prefix + str(i) + "-"
+            new_prefix = prefix + ("-" if prefix else "") + str(i)
             if not data.get(new_prefix + "_model"):
                 break
             model_name = data[new_prefix + "_model"]
-            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix[:-1])
+            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
+            model_field = get_model(model_name).get_model_field()
             parse_model = search_model_form.is_valid() and \
               search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
-            model_field = get_model(model_name).get_model_field(data if parse_model else None, new_prefix[:-1])
-            model_field.parse_data(data, new_prefix)
+            model_field.parse_data(data if parse_model else None, new_prefix)
             search_model_form = SearchModelForm(self.related_models.keys(),
                                                 initial={"_old_model": search_model_form.cleaned_data["_model"],
                                                          "_model": search_model_form.cleaned_data["_model"]},
-                                                prefix=new_prefix[:-1])
+                                                prefix=new_prefix)
             self.children.append((search_model_form, model_field))
             i += 1
-        self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix[:-1]), None))
+        self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
     def get_search_results(self, top_level=True):
         kwargs = {}
