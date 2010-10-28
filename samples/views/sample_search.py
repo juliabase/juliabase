@@ -19,6 +19,7 @@ from django.db.models import get_models, get_app
 
 
 class OptionField(forms.Form):
+    
     def __init__(self, field, data=None, **kwargs):
         super(OptionField, self).__init__(data, **kwargs)
         self.field = field
@@ -29,6 +30,7 @@ class OptionField(forms.Form):
 
 
 class OptionTextField(OptionField):
+    
     def __init__(self, field, data=None, **kwargs):
         super(OptionTextField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.CharField(label=unicode(field.verbose_name), required=False)
@@ -37,17 +39,23 @@ class OptionTextField(OptionField):
         if self.is_valid() and self.cleaned_data[self.field.name]:
             return {self.field.name + "__icontains": self.cleaned_data[self.field.name]}
 
+
 class OptionIntField(OptionField):
+    
     def __init__(self, field, data=None, **kwargs):
         super(OptionIntField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.IntegerField(label=unicode(field.name), required=False)
 
+
 class OptionTimeField(OptionField):
+
     def __init__(self, field, data=None, **kwargs):
         super(OptionTimeField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.DateTimeField(label=unicode(field.name), required=False)
 
+
 class OptionGasField(OptionField):
+
     def __init__(self, field, data=None, **kwargs):
         super(OptionGasField, self).__init__(field, data, **kwargs)
         self.fields[field.name] = forms.CharField(label=field.name, required=False)
@@ -57,6 +65,7 @@ class OptionGasField(OptionField):
         if self.is_valid() and self.changed_data[self.field.name] and self.changed_data["flow_rate"]:
             return {"channels__gas": self.changed_data[self.field.name],
                     "channels__flow_rate": self.changed_data["flow_rate"]}
+
 
 class SearchModelForm(forms.Form):
     _model = forms.ChoiceField(required=False)
@@ -79,6 +88,7 @@ def get_model(model_name):
 
 
 class ModelField:
+
     def __init__(self, model_class, related_models, attributes):
         self.related_models = related_models
         self.model_class = model_class
@@ -107,7 +117,6 @@ class ModelField:
             i += 1
         self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix[:-1]), None))
 
-
     def get_search_results(self, top_level=True):
         kwargs = {}
         for attribute in self.attributes:
@@ -127,8 +136,8 @@ class ModelField:
 
     def is_valid(self):
         is_all_valid = True
-        for attr in self.attributes:
-            is_all_valid = is_all_valid and attr.is_valid()
+        for attribute in self.attributes:
+            is_all_valid = is_all_valid and attribute.is_valid()
         if self.children:
             for child in self.children:
                 if child[1]:

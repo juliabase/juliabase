@@ -852,8 +852,7 @@ class Sample(models.Model):
                       OptionTextField(cls._meta.get_field("current_location"), data, prefix=prefix),
                       OptionTextField(cls._meta.get_field("purpose"), data, prefix=prefix),
                       OptionTextField(cls._meta.get_field("tags"), data, prefix=prefix)]
-        related_models = {Process: "processes",
-                          Topic: "topic"}
+        related_models = {Process: "processes", Topic: "topic"}
         return ModelField(cls, related_models, attributes)
 
 
