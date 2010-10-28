@@ -846,8 +846,6 @@ class Sample(models.Model):
 
     @classmethod
     def get_model_field(cls):
-        u"""
-        """
         attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "current_location"),
                       OptionTextField(cls, "purpose"), OptionTextField(cls, "tags")]
         related_models = {Process: "processes", Topic: "topic"}

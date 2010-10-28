@@ -100,26 +100,29 @@ class ModelField(object):
     def parse_data(self, data, prefix):
         for attribute in self.attributes:
             attribute.parse_data(data, prefix)
-        depth = prefix.count("-") + (2 if prefix else 1)
-        keys = [key for key in data if key.count("-") == depth]
-        i = 1
-        while True:
-            new_prefix = prefix + ("-" if prefix else "") + str(i)
-            if not data.get(new_prefix + "_model"):
-                break
-            model_name = data[new_prefix + "_model"]
-            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
-            model_field = get_model(model_name).get_model_field()
-            parse_model = search_model_form.is_valid() and \
-              search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
-            model_field.parse_data(data if parse_model else None, new_prefix)
-            search_model_form = SearchModelForm(self.related_models.keys(),
-                                                initial={"_old_model": search_model_form.cleaned_data["_model"],
-                                                         "_model": search_model_form.cleaned_data["_model"]},
-                                                prefix=new_prefix)
-            self.children.append((search_model_form, model_field))
-            i += 1
-        self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
+        if data is not None:
+            depth = prefix.count("-") + (2 if prefix else 1)
+            keys = [key for key in data if key.count("-") == depth]
+            i = 1
+            while True:
+                new_prefix = prefix + ("-" if prefix else "") + str(i)
+                if not data.get(new_prefix + "-_model"):
+                    break
+                search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
+                if not search_model_form.is_valid():
+                    break
+                model_name = data[new_prefix + "-_model"]
+                model_field = get_model(model_name).get_model_field()
+                parse_model = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
+                model_field.parse_data(data if parse_model else None, new_prefix)
+                search_model_form = SearchModelForm(self.related_models.keys(),
+                                                    initial={"_old_model": search_model_form.cleaned_data["_model"],
+                                                             "_model": search_model_form.cleaned_data["_model"]},
+                                                    prefix=new_prefix)
+                self.children.append((search_model_form, model_field))
+                i += 1
+        if self.related_models:
+            self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
     def get_search_results(self, top_level=True):
         kwargs = {}
@@ -145,7 +148,7 @@ class ModelField(object):
         if self.children:
             for child in self.children:
                 if child[1]:
-                    is_all_valid = is_all_valid and child[0].is_valid() and child[1].is_valid()
+                    is_all_valid = is_all_valid and child[1].is_valid()
         return is_all_valid
 
 
