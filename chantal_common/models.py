@@ -16,12 +16,14 @@
 u"""Models in the relational database for Chantal-Common.
 """
 
+from __future__ import absolute_import
 import hashlib
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+import chantal_common.search
 
 
 languages = (
@@ -97,6 +99,12 @@ class Topic(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    @classmethod
+    def get_model_field(cls):
+        attributes = [chantal_common.search.OptionTextField(cls, "name")]
+        related_models = {}
+        return chantal_common.search.ModelField(cls, related_models, attributes)
 
     def get_name_for_user(self, user):
         u"""Determine the topic's name that can be shown to a certain user.  If
