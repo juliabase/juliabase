@@ -47,9 +47,11 @@ copyright holder, you must destroy it immediately and completely.
 
   {% if results %}
     <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
-    {% for result in results %}
-      <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
-    {% endfor %}
+    <ul>
+      {% for result in results %}
+        <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
+      {% endfor %}
+    </ul>
   {% else %}
     <p>{% trans 'Nothing found.' %}</p>
   {% endif %}
