@@ -39,7 +39,7 @@ from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
-from samples.views.sample_search import *
+from chantal_common.search import *
 from samples.data_tree import DataNode, DataItem
 
 
