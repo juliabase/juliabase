@@ -76,7 +76,7 @@ class OptionIntervalField(OptionRangeField):
         self.form.fields[self.field.name + "_max"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False)
 
 
-class OptionSelectionField(OptionField):
+class OptionChoiceField(OptionField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -112,8 +112,8 @@ class OptionGasField(OptionField):
 
 
 class SearchModelForm(forms.Form):
-    _model = forms.ChoiceField(required=False)
-    _old_model = forms.CharField(required=False)
+    _model = forms.ChoiceField(label=_(u"containing"), required=False)
+    _old_model = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
@@ -142,27 +142,27 @@ class ModelField(object):
     def parse_data(self, data, prefix):
         for attribute in self.attributes:
             attribute.parse_data(data, prefix)
-        if data is not None:
-            depth = prefix.count("-") + (2 if prefix else 1)
-            keys = [key for key in data if key.count("-") == depth]
-            i = 1
-            while True:
-                new_prefix = prefix + ("-" if prefix else "") + str(i)
-                if not data.get(new_prefix + "-_model"):
-                    break
-                search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
-                if not search_model_form.is_valid():
-                    break
-                model_name = data[new_prefix + "-_model"]
-                model_field = get_model(model_name).get_model_field()
-                parse_model = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
-                model_field.parse_data(data if parse_model else None, new_prefix)
-                search_model_form = SearchModelForm(self.related_models.keys(),
-                                                    initial={"_old_model": search_model_form.cleaned_data["_model"],
-                                                             "_model": search_model_form.cleaned_data["_model"]},
-                                                    prefix=new_prefix)
-                self.children.append((search_model_form, model_field))
-                i += 1
+        data = data or {}
+        depth = prefix.count("-") + (2 if prefix else 1)
+        keys = [key for key in data if key.count("-") == depth]
+        i = 1
+        while True:
+            new_prefix = prefix + ("-" if prefix else "") + str(i)
+            if not data.get(new_prefix + "-_model"):
+                break
+            search_model_form = SearchModelForm(self.related_models.keys(), data, prefix=new_prefix)
+            if not search_model_form.is_valid():
+                break
+            model_name = data[new_prefix + "-_model"]
+            model_field = get_model(model_name).get_model_field()
+            parse_model = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
+            model_field.parse_data(data if parse_model else None, new_prefix)
+            search_model_form = SearchModelForm(self.related_models.keys(),
+                                                initial={"_old_model": search_model_form.cleaned_data["_model"],
+                                                         "_model": search_model_form.cleaned_data["_model"]},
+                                                prefix=new_prefix)
+            self.children.append((search_model_form, model_field))
+            i += 1
         if self.related_models:
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
@@ -171,13 +171,16 @@ class ModelField(object):
         for attribute in self.attributes:
             if attribute.get_values():
                 kwargs.update(attribute.get_values())
-        result = self.model_class.objects.filter(**kwargs)
+        result = self.model_class.objects
+        if kwargs:
+            result = result.filter(**kwargs)
         kwargs = {}
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__id__in"
                 kwargs[name] = child[1].get_search_results(False)
-        result = result.filter(**kwargs)
+        if kwargs:
+            result = result.filter(**kwargs)
         if top_level:
             return self.model_class.objects.in_bulk(list(result.values_list("id", flat=True))).values()
         else:
