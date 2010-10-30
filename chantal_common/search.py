@@ -14,6 +14,8 @@
 
 from __future__ import absolute_import
 from django import forms
+from django.utils.safestring import mark_safe
+from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models import get_models, get_app
@@ -21,15 +23,19 @@ from django.db.models import get_models, get_app
 
 class OptionField(object):
 
-    def __init__(self, cls, field_name):
-        self.field = cls._meta.get_field(field_name)
+    def __init__(self, cls, field_or_field_name, additional_query_path=""):
+        self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, basestring) \
+            else field_or_field_name
+        self.query_path = self.field.name
+        if additional_query_path:
+            self.query_path += "__" + additional_query_path
 
     def parse_data(self, data, prefix):
         raise NotImplementedError
 
     def get_values(self):
         result = self.form.cleaned_data[self.field.name]
-        return {self.field.name: result} if result is not None else {}
+        return {self.query_path: result} if result is not None else {}
 
     def is_valid(self):
         return self.form.is_valid()
@@ -42,11 +48,11 @@ class OptionRangeField(OptionField):
         min_value = self.form.cleaned_data[self.field.name + "_min"]
         max_value = self.form.cleaned_data[self.field.name + "_max"]
         if min_value is not None and max_value is not None:
-            result[self.field.name + "__range"] = (min_value, max_value)
+            result[self.query_path + "__range"] = (min_value, max_value)
         elif min_value is not None:
-            result[self.field.name + "__gte"] = min_value
+            result[self.query_path + "__gte"] = min_value
         elif max_value is not None:
-            result[self.field.name + "__lte"] = max_value
+            result[self.query_path + "__lte"] = max_value
         return result
 
 
@@ -58,7 +64,7 @@ class OptionTextField(OptionField):
 
     def get_values(self):
         result = self.form.cleaned_data[self.field.name]
-        return {self.field.name + "__icontains": result} if result else {}
+        return {self.query_path + "__icontains": result} if result else {}
 
 
 class OptionIntField(OptionField):
@@ -86,7 +92,7 @@ class OptionChoiceField(OptionField):
 
     def get_values(self):
         result = self.form.cleaned_data[self.field.name]
-        return {self.field.name: result} if result else {}
+        return {self.query_path: result} if result else {}
 
 
 class OptionDateTimeField(OptionRangeField):
@@ -99,16 +105,23 @@ class OptionDateTimeField(OptionRangeField):
                                                                          required=False)
 
 
-class OptionGasField(OptionField):
+class OptionBoolField(OptionField):
 
-    def __init__(self, field, data=None, **kwargs):
-        super(OptionGasField, self).__init__(field, data, **kwargs)
-        self.fields[field.name] = forms.CharField(label=field.name, required=False)
-        self.fields["flow_rate"] = forms.DecimalField(label=_(u"flow rate"), required=False)
+    class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
+        def render(self):
+            return mark_safe(u"""<ul class="radio-select">\n{0}\n</ul>""".format(u"\n".join(
+                        u"<li>{0}</li>".format(force_unicode(w)) for w in self)))
+
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name] = forms.ChoiceField(
+            label=unicode(self.field.verbose_name), required=False,
+            choices=(("", _(u"doesn't matter")), ("yes", _(u"yes")), ("no", _(u"no"))),
+            widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer))
 
     def get_values(self):
-        return {"channels__gas": self.changed_data[self.field.name],
-                "channels__flow_rate": self.changed_data["flow_rate"]}
+        result = self.form.cleaned_data[self.field.name]
+        return {self.query_path: result == "yes"} if result else {}
 
 
 class SearchModelForm(forms.Form):
