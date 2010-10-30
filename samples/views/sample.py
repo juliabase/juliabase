@@ -707,6 +707,7 @@ def search(request):
             model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"]})
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
+    root_form.fields["_model"].label = u""
     content_dict = {"title": _(u"Search for sample"), "search_root": root_form, "model_tree": model_tree, "results": results}
     return render_to_response("samples/search_samples.html", content_dict,
                               context_instance=RequestContext(request))

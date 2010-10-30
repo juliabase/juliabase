@@ -31,6 +31,7 @@ from django.conf import settings
 import chantal_common.utils
 import chantal_common.templatetags.chantal
 import samples.views.utils
+import chantal_common.search
 
 register = template.Library()
 
@@ -486,16 +487,27 @@ def value_split_field(parser, token):
 
 @register.simple_tag
 def display_search_tree(tree):
-    result = ""
+    result = u"""<table style="border: 2px solid black; padding-left: 3em">"""
     for attribute in tree.attributes:
-        for field in attribute.form:
-            result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>
-            <td class="input">{field}</td></tr>""".format(label=field.label, html_name=field.html_name, field=field)
+        if isinstance(attribute, chantal_common.search.OptionRangeField):
+            field_min = [field for field in attribute.form if field.name.endswith("_min")][0]
+            field_max = [field for field in attribute.form if field.name.endswith("_max")][0]
+            result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                u"""<td class="input">{field_min} – {field_max}</td></tr>""".format(
+                label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max)
+        else:
+            for field in attribute.form:
+                result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                    u"""<td class="input">{field}</td></tr>""".format(
+                    label=field.label, html_name=field.html_name, field=field)
     if tree.children:
-        for child in tree.children:
-            result += child[0].__unicode__()
+        result += u"""<tr><td colspan="2">"""
+        for i, child in enumerate(tree.children):
+            result += unicode(child[0].as_p())
             if child[1]:
                 result += display_search_tree(child[1])
+            if i < len(tree.children) - 1:
+                result += u"""</td></tr><tr><td colspan="2">"""
+        result += u"</td></tr>"
+    result += u"</table>"
     return result
-
-

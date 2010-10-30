@@ -18,12 +18,10 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 <form method="get" action="">
-  <table>
-    {{ search_root }}
-    {% if model_tree %}
-        {% display_search_tree model_tree %}
-    {% endif %}
-  </table>
+  {{ search_root.as_p }}
+  {% if model_tree %}
+    {% display_search_tree model_tree %}
+  {% endif %}
   <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
 </form>
   <p>
@@ -35,16 +33,6 @@ copyright holder, you must destroy it immediately and completely.
   </p>
 
 <form method="post" action="">
-  <ul class="sample-list">
-    {% for sample, add_to_my_samples in found_samples %}
-      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}
-        {% if add_to_my_samples %}
-          {{ add_to_my_samples.add_to_my_samples }}
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-
   {% if results %}
     <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
     <ul>

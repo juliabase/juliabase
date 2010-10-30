@@ -549,6 +549,20 @@ class Process(PolymorphicModel):
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
         return context
 
+    @classmethod
+    def get_model_field(cls):
+        attributes = []
+        for field in cls._meta.fields:
+            if field.name not in ["timestamp_inaccuracy", "cache_keys", "last_modified"]:
+                if type(field) in [models.CharField, models.TextField]:
+                    attributes.append(OptionTextField(cls, field.name))
+                elif type(field) in [models.IntegerField, models.FloatField, models.DecimalField]:
+                    attributes.append(OptionIntervalField(cls, field.name))
+                elif type(field) == models.DateTimeField:
+                    attributes.append(OptionDateTimeField(cls, field.name))
+        related_models = {Sample: "samples"}
+        return ModelField(cls, related_models, attributes)
+
 
 class PhysicalProcess(Process):
     u"""Abstract class for physical processes.  These processes are “real”
@@ -848,7 +862,8 @@ class Sample(models.Model):
     def get_model_field(cls):
         attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "current_location"),
                       OptionTextField(cls, "purpose"), OptionTextField(cls, "tags")]
-        related_models = {Process: "processes", Topic: "topic"}
+        from samples.models import physical_process_models
+        related_models = dict((model, "processes") for model in physical_process_models.itervalues())
         return ModelField(cls, related_models, attributes)
 
 
