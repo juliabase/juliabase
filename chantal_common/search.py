@@ -171,16 +171,13 @@ class ModelField(object):
         for attribute in self.attributes:
             if attribute.get_values():
                 kwargs.update(attribute.get_values())
-        result = self.model_class.objects
-        if kwargs:
-            result = result.filter(**kwargs)
+        result = self.model_class.objects.filter(**kwargs)
         kwargs = {}
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__id__in"
                 kwargs[name] = child[1].get_search_results(False)
-        if kwargs:
-            result = result.filter(**kwargs)
+        result = result.filter(**kwargs)
         if top_level:
             return self.model_class.objects.in_bulk(list(result.values_list("id", flat=True))).values()
         else:
