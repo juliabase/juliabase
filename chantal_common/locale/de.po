@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-30 22:25+0200\n"
-"PO-Revision-Date: 2010-08-31 10:00+0200\n"
+"POT-Creation-Date: 2010-10-30 16:28+0200\n"
+"PO-Revision-Date: 2010-10-30 16:29+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,76 +50,104 @@ msgstr "Französisch"
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models.py:39
+#: models.py:41 models.py:161
 msgid "user"
 msgstr "Benutzer"
 
-#: models.py:41
+#: models.py:43
 msgid "department"
 msgstr "Abteilung"
 
-#: models.py:42
+#: models.py:44
 msgid "language"
 msgstr "Sprache"
 
-#: models.py:43
+#: models.py:45
 msgid "operating system"
 msgstr "Betriebssystem"
 
-#: models.py:44
+#: models.py:46
 msgid "is administrative"
 msgstr "ist administrativ"
 
-#: models.py:49 models.py:50
+#: models.py:51 models.py:52
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models.py:86
+#: models.py:88
 msgid "name"
 msgstr "Name"
 
-#: models.py:87
+#: models.py:89
 msgid "members"
 msgstr "Mitglieder"
 
-#: models.py:89
+#: models.py:91
 msgid "confidential"
 msgstr "vertraulich"
 
-#: models.py:92
+#: models.py:94
 msgid "topic"
 msgstr "Thema"
 
-#: models.py:93
+#: models.py:95
 msgid "topics"
 msgstr "Themen"
 
-#: models.py:95
+#: models.py:97
 msgid "Can edit all topics, and can add new topics"
 msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
-#: models.py:96
+#: models.py:98
 msgid "Can edit topics that he/she is a member of"
 msgstr "Darf Themen ändern, in denen er/sie Mitglied ist"
 
-#: models.py:114
+#: models.py:122
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: utils.py:151
+#: models.py:160
+msgid "hash value"
+msgstr "Hashwert"
+
+#: models.py:163
+msgid "requested URL"
+msgstr "angeforderte URL"
+
+#: models.py:165
+msgid "timestamp"
+msgstr "Zeitstempel"
+
+#: models.py:168
+msgid "error page"
+msgstr "Fehlerseite"
+
+#: models.py:169
+msgid "error pages"
+msgstr "Fehlerseiten"
+
+#: search.py:107
+msgid "flow rate"
+msgstr "Flussrate"
+
+#: search.py:115
+msgid "containing"
+msgstr "enthaltend"
+
+#: utils.py:178
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: views.py:31
+#: views.py:32
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: views.py:41
+#: views.py:42
 msgid "MarkdownMarkup"
 msgstr "MarkdownMarkup"
 
-#: views.py:65
+#: views.py:66
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
 
