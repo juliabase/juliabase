@@ -81,7 +81,7 @@ class OptionChoiceField(OptionField):
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         field = forms.ChoiceField(label=unicode(self.field.verbose_name), required=False)
-        field.choices = [("", u"---------")] + self.field.choices
+        field.choices = [("", u"---------")] + list(self.field.choices)
         self.form.fields[self.field.name] = field
 
     def get_values(self):
