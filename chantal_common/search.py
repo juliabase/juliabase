@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.db.models import get_models, get_app
 
 
@@ -27,10 +28,26 @@ class OptionField(object):
         raise NotImplementedError
 
     def get_values(self):
-        return {self.field.name: self.form.cleaned_data[self.field.name]}
+        result = self.form.cleaned_data[self.field.name]
+        return {self.field.name: result} if result is not None else {}
 
     def is_valid(self):
         return self.form.is_valid()
+
+
+class OptionRangeField(OptionField):
+    
+    def get_values(self):
+        result = {}
+        min_value = self.form.cleaned_data[self.field.name + "_min"]
+        max_value = self.form.cleaned_data[self.field.name + "_max"]
+        if min_value is not None and max_value is not None:
+            result[self.field.name + "__range"] = (min_value, max_value)
+        elif min_value is not None:
+            result[self.field.name + "__gte"] = min_value
+        elif max_value is not None:
+            result[self.field.name + "__lte"] = max_value
+        return result
 
 
 class OptionTextField(OptionField):
@@ -40,7 +57,8 @@ class OptionTextField(OptionField):
         self.form.fields[self.field.name] = forms.CharField(label=unicode(self.field.verbose_name), required=False)
 
     def get_values(self):
-        return {self.field.name + "__icontains": self.form.cleaned_data[self.field.name]}
+        result = self.form.cleaned_data[self.field.name]
+        return {self.field.name + "__icontains": result} if result else {}
 
 
 class OptionIntField(OptionField):
@@ -48,13 +66,37 @@ class OptionIntField(OptionField):
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name] = forms.IntegerField(label=unicode(self.field.verbose_name), required=False)
-    
 
-class OptionTimeField(OptionField):
+
+class OptionIntervalField(OptionRangeField):
+    
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name + "_min"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False)
+        self.form.fields[self.field.name + "_max"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False)
+
+
+class OptionSelectionField(OptionField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.DateTimeField(label=unicode(self.field.verbose_name), required=False)
+        field = forms.ChoiceField(label=unicode(self.field.verbose_name), required=False)
+        field.choices = [("", u"---------")] + self.field.choices
+        self.form.fields[self.field.name] = field
+
+    def get_values(self):
+        result = self.form.cleaned_data[self.field.name]
+        return {self.field.name: result} if result else {}
+
+
+class OptionTimeField(OptionRangeField):
+
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name + "_min"] = forms.DateTimeField(label=unicode(self.field.verbose_name),
+                                                                         required=False)
+        self.form.fields[self.field.name + "_max"] = forms.DateTimeField(label=unicode(self.field.verbose_name),
+                                                                         required=False)
 
 
 class OptionGasField(OptionField):
@@ -84,9 +126,7 @@ def get_model(model_name):
     global all_models
     if all_models is None:
         all_models = {}
-        # FixMe: Must be expanded to all apps, or the set of apps used here
-        # must be taken from the settings.
-        for app in [get_app("chantal_ipv"), get_app("samples"), get_app("chantal_common")]:
+        for app in [get_app(app.rpartition(".")[2]) for app in settings.INSTALLED_APPS]:
             all_models.update((model.__name__, model) for model in get_models(app))
     return all_models[model_name]
 
@@ -152,6 +192,3 @@ class ModelField(object):
                 if child[1]:
                     is_all_valid = is_all_valid and child[1].is_valid()
         return is_all_valid
-
-
-
