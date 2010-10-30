@@ -40,6 +40,7 @@ from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
 from chantal_common.search import *
+from samples.search import *
 from samples.data_tree import DataNode, DataItem
 
 
@@ -551,19 +552,21 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_model_field(cls):
-        attributes = []
+        attributes = [OptionTextField(cls, "operator", "username"), OptionTextField(cls, "external_operator", "name")]
         for field in cls._meta.fields:
             if field.name not in ["id", "actual_object_id", "timestamp_inaccuracy", "cache_keys", "last_modified"]:
                 if field.choices:
-                    attributes.append(OptionChoiceField(cls, field.name))
+                    attributes.append(OptionChoiceField(cls, field))
                 elif type(field) in [models.CharField, models.TextField]:
-                    attributes.append(OptionTextField(cls, field.name))
+                    attributes.append(OptionTextField(cls, field))
                 elif type(field) in [models.AutoField, models.BigIntegerField, models.IntegerField, models.FloatField,
                                      models.DecimalField, models.PositiveIntegerField, models.PositiveSmallIntegerField,
                                      models.SmallIntegerField]:
-                    attributes.append(OptionIntervalField(cls, field.name))
+                    attributes.append(OptionIntervalField(cls, field))
                 elif type(field) == models.DateTimeField:
-                    attributes.append(OptionDateTimeField(cls, field.name))
+                    attributes.append(OptionDateTimeField(cls, field))
+                elif type(field) == models.BooleanField:
+                    attributes.append(OptionBoolField(cls, field))
         related_models = {Sample: "samples"}
         related_models.update(
             (related_object.model, related_object.field.name) for related_object in cls._meta.get_all_related_objects()
