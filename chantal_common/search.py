@@ -89,7 +89,7 @@ class OptionChoiceField(OptionField):
         return {self.field.name: result} if result else {}
 
 
-class OptionTimeField(OptionRangeField):
+class OptionDateTimeField(OptionRangeField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
