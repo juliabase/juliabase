@@ -554,7 +554,9 @@ class Process(PolymorphicModel):
         attributes = []
         for field in cls._meta.fields:
             if field.name not in ["timestamp_inaccuracy", "cache_keys", "last_modified"]:
-                if type(field) in [models.CharField, models.TextField]:
+                if field.choices:
+                    attributes.append(OptionChoiceField(cls, field.name))
+                elif type(field) in [models.CharField, models.TextField]:
                     attributes.append(OptionTextField(cls, field.name))
                 elif type(field) in [models.IntegerField, models.FloatField, models.DecimalField]:
                     attributes.append(OptionIntervalField(cls, field.name))
