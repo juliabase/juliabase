@@ -24,27 +24,24 @@ copyright holder, you must destroy it immediately and completely.
   {% endif %}
   <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
 </form>
-  <p>
-    {% if too_many_results %}
-      {% blocktrans %}
-        Too many matches were found.  I show only {{ max_results }} of them.
-      {% endblocktrans %}
+
+{% if search_performed %}
+  <form method="post" action="">
+    {% if results %}
+      <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
+      <ul>
+        {% for result in results %}
+          <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>{% trans 'Nothing found.' %}</p>
     {% endif %}
-  </p>
 
-<form method="post" action="">
-  {% if results %}
-    <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
-    <ul>
-      {% for result in results %}
-        <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>{% trans 'Nothing found.' %}</p>
-  {% endif %}
-
-  <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'add samples' %}"/></p>
-</form>
+    <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'add samples' %}"/></p>
+  </form>
+{% else %}
+  <p>{% trans 'No search was performed yet.' %}</p>
+{% endif %}
 
 {% endblock %}

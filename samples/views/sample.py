@@ -698,18 +698,21 @@ def search(request):
     model_tree = None
     results = []
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
+    search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
         model_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_model_field()
         parse_model = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
         model_tree.parse_data(request.GET if parse_model else None, "")
         if model_tree.is_valid():
             results = model_tree.get_search_results()
+            search_performed = True
         root_form = chantal_common.search.SearchModelForm(
             model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"]})
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
-    content_dict = {"title": _(u"Search for sample"), "search_root": root_form, "model_tree": model_tree, "results": results}
+    content_dict = {"title": _(u"Search for sample"), "search_root": root_form, "model_tree": model_tree, "results": results,
+                    "search_performed": search_performed}
     return render_to_response("samples/search_samples.html", content_dict,
                               context_instance=RequestContext(request))
 
