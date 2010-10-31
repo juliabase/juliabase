@@ -80,7 +80,8 @@ class OptionTextField(OptionField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.CharField(label=unicode(self.field.verbose_name), required=False)
+        self.form.fields[self.field.name] = forms.CharField(label=unicode(self.field.verbose_name), required=False,
+                                                            help_text=self.field.help_text)
 
     def get_values(self):
         result = self.form.cleaned_data[self.field.name]
@@ -91,22 +92,25 @@ class OptionIntField(OptionField):
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.IntegerField(label=unicode(self.field.verbose_name), required=False)
+        self.form.fields[self.field.name] = forms.IntegerField(label=unicode(self.field.verbose_name), required=False,
+                                                               help_text=self.field.help_text)
 
 
 class OptionIntervalField(OptionRangeField):
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False)
-        self.form.fields[self.field.name + "_max"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False)
+        self.form.fields[self.field.name + "_min"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False,
+                                                                      help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_max"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False,
+                                                                      help_text=self.field.help_text)
 
 
 class OptionChoiceField(OptionField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        field = forms.ChoiceField(label=unicode(self.field.verbose_name), required=False)
+        field = forms.ChoiceField(label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
         field.choices = [("", u"---------")] + list(self.field.choices)
         self.form.fields[self.field.name] = field
 
@@ -120,9 +124,9 @@ class OptionDateTimeField(OptionRangeField):
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name + "_min"] = forms.DateTimeField(label=unicode(self.field.verbose_name),
-                                                                         required=False)
+                                                                         required=False, help_text=self.field.help_text)
         self.form.fields[self.field.name + "_max"] = forms.DateTimeField(label=unicode(self.field.verbose_name),
-                                                                         required=False)
+                                                                         required=False, help_text=self.field.help_text)
 
 
 class OptionBoolField(OptionField):
@@ -137,7 +141,7 @@ class OptionBoolField(OptionField):
         self.form.fields[self.field.name] = forms.ChoiceField(
             label=unicode(self.field.verbose_name), required=False,
             choices=(("", _(u"doesn't matter")), ("yes", _(u"yes")), ("no", _(u"no"))),
-            widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer))
+            widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer), help_text=self.field.help_text)
 
     def get_values(self):
         result = self.form.cleaned_data[self.field.name]
