@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-31 18:38+0100\n"
-"PO-Revision-Date: 2010-10-31 18:39+0100\n"
+"POT-Creation-Date: 2010-10-31 19:20+0100\n"
+"PO-Revision-Date: 2010-10-31 19:21+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -128,7 +128,7 @@ msgid "finished"
 msgstr "abgeschlossen"
 
 #: models_common.py:153 models_feeds.py:176 models_feeds.py:199
-#: views/lab_notebook.py:209 views/sample.py:738
+#: views/lab_notebook.py:209 views/sample.py:800
 msgid "process"
 msgstr "Prozess"
 
@@ -906,6 +906,32 @@ msgstr "Allgemeiner Fehler"
 msgid "New topic"
 msgstr "Thema hinzufügen"
 
+#: templates/samples/advanced_search.html:25
+#: templates/samples/search_depositions.html:23
+#: templates/samples/search_samples.html:24
+msgid "search"
+msgstr "suchen"
+
+#: templates/samples/advanced_search.html:31
+#: templates/samples/search_samples.html:46
+msgid "Mark samples to add them to “My Samples”."
+msgstr "Markieren Sie Proben, um sie zu „Meine Proben“ hinzuzufügen."
+
+#: templates/samples/advanced_search.html:38
+#: templates/samples/search_depositions.html:41
+#: templates/samples/search_samples.html:48
+msgid "Nothing found."
+msgstr "Nichts gefunden."
+
+#: templates/samples/advanced_search.html:41
+#: templates/samples/search_samples.html:51
+msgid "add samples"
+msgstr "Proben hinzufügen"
+
+#: templates/samples/advanced_search.html:44
+msgid "No search was performed yet."
+msgstr "Es ist noch keine Suche durchgeführt worden."
+
 #: templates/samples/bulk_rename.html:36
 msgid "Error in prefixes"
 msgstr "Fehler in Präfixen"
@@ -1551,8 +1577,8 @@ msgstr ""
 msgid "Add things"
 msgstr "Dinge hinzufügen"
 
-#: templates/samples/main_menu.html:75 templates/samples/main_menu.html:87
-#: views/form_utils.py:589 views/result.py:105 views/sample_series.py:49
+#: templates/samples/main_menu.html:75 views/form_utils.py:589
+#: views/result.py:105 views/sample_series.py:49
 msgid "Samples"
 msgstr "Proben"
 
@@ -1568,79 +1594,87 @@ msgstr "Ergebnis"
 msgid "Search for things"
 msgstr "Nach Dingen suchen"
 
-#: templates/samples/main_menu.html:88
-msgid "Depositions"
-msgstr "Depositionen"
+#: templates/samples/main_menu.html:87 views/sample.py:777
+msgid "Advanced search"
+msgstr "Erweiterte Suche"
 
-#: templates/samples/main_menu.html:92
+#: templates/samples/main_menu.html:88
+msgid "Samples by name"
+msgstr "Proben nach ihren Namen"
+
+#: templates/samples/main_menu.html:89
+msgid "Depositions by number"
+msgstr "Depositionen nach Nummer"
+
+#: templates/samples/main_menu.html:93
 msgid "Lab notebooks"
 msgstr "Laborbücher"
 
-#: templates/samples/main_menu.html:102
+#: templates/samples/main_menu.html:103
 msgid "Edit topics"
 msgstr "Themen ändern"
 
-#: templates/samples/main_menu.html:107 views/topic.py:85
+#: templates/samples/main_menu.html:108 views/topic.py:85
 msgid "Add new topic"
 msgstr "Neues Thema hinzufügen"
 
-#: templates/samples/main_menu.html:111
+#: templates/samples/main_menu.html:112
 msgid "Change topic memberships"
 msgstr "Mitglieder von Themen ändern"
 
-#: templates/samples/main_menu.html:117
+#: templates/samples/main_menu.html:118
 msgid "External operators"
 msgstr "Externe Operateure"
 
-#: templates/samples/main_menu.html:121 views/external_operator.py:80
+#: templates/samples/main_menu.html:122 views/external_operator.py:80
 msgid "Add external operator"
 msgstr "Neuen externen Operateur anlegen"
 
-#: templates/samples/main_menu.html:124
+#: templates/samples/main_menu.html:125
 msgid "Edit external operator"
 msgstr "Externen Operateur ändern"
 
-#: templates/samples/main_menu.html:129
+#: templates/samples/main_menu.html:130
 msgid "Miscellaneous"
 msgstr "Sonstiges"
 
-#: templates/samples/main_menu.html:132
+#: templates/samples/main_menu.html:133
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/samples/main_menu.html:136
+#: templates/samples/main_menu.html:137
 msgid "Edit preferences"
 msgstr "Einstellungen ändern"
 
-#: templates/samples/main_menu.html:139
+#: templates/samples/main_menu.html:140
 msgid "My topics and permissions"
 msgstr "Meine Themen und Berechtigungen"
 
-#: templates/samples/main_menu.html:142 views/permissions.py:212
+#: templates/samples/main_menu.html:143 views/permissions.py:212
 msgid "Permissions to processes"
 msgstr "Berechtigungen für Prozesse"
 
-#: templates/samples/main_menu.html:144
+#: templates/samples/main_menu.html:145
 msgid "Edit “My Layers”"
 msgstr "„Meine Schichten“ ändern"
 
-#: templates/samples/main_menu.html:147
+#: templates/samples/main_menu.html:148
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/samples/main_menu.html:150
+#: templates/samples/main_menu.html:151
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:152
+#: templates/samples/main_menu.html:153
 msgid "Sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: templates/samples/main_menu.html:155
+#: templates/samples/main_menu.html:156
 msgid "About Chantal"
 msgstr "Über Chantal"
 
-#: templates/samples/main_menu.html:157
+#: templates/samples/main_menu.html:158
 msgid "Server statistics"
 msgstr "Server-Statistik"
 
@@ -1683,11 +1717,6 @@ msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 "Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
 
-#: templates/samples/search_depositions.html:23
-#: templates/samples/search_samples.html:25
-msgid "search"
-msgstr "suchen"
-
 #: templates/samples/search_depositions.html:28
 #, python-format
 msgid ""
@@ -1698,22 +1727,15 @@ msgstr ""
 "\n"
 "Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
 
-#: templates/samples/search_depositions.html:41
-#: templates/samples/search_samples.html:38
-msgid "Nothing found."
-msgstr "Nichts gefunden."
-
-#: templates/samples/search_samples.html:31
-msgid "Mark samples to add them to “My Samples”."
-msgstr "Markieren Sie Proben, um sie zu „Meine Proben“ hinzuzufügen."
-
-#: templates/samples/search_samples.html:41
-msgid "add samples"
-msgstr "Proben hinzufügen"
-
-#: templates/samples/search_samples.html:44
-msgid "No search was performed yet."
-msgstr "Es ist noch keine Suche durchgeführt worden."
+#: templates/samples/search_samples.html:28
+#, python-format
+msgid ""
+"\n"
+"        Too many matches were found.  I show only %(max_results)s of them.\n"
+"      "
+msgstr ""
+"\n"
+"Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
 
 #: templates/samples/show_claim.html:21
 msgid "This claim was either approved or withdrawn."
@@ -2717,7 +2739,15 @@ msgstr "Probe „{sample}“"
 msgid "Add process to sample “{sample}”"
 msgstr "Prozess zu Probe „{sample}“ hinzufügen"
 
-#: views/sample.py:714
+#: views/sample.py:674
+msgid "Name pattern"
+msgstr "Namensmuster"
+
+#: views/sample.py:675
+msgid "Include alias names"
+msgstr "Alternativnamen einbeziehen"
+
+#: views/sample.py:730
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
@@ -2984,17 +3014,8 @@ msgstr " und "
 msgid " and "
 msgstr " und "
 
-#~ msgid ""
-#~ "\n"
-#~ "        Too many matches were found.  I show only %(max_results)s of "
-#~ "them.\n"
-#~ "      "
-#~ msgstr ""
-#~ "\n"
-#~ "Zu viele Proben gefunden.  Ich zeige nur %(max_results)s davon."
-
-#~ msgid "Name pattern"
-#~ msgstr "Namensmuster"
+#~ msgid "Depositions"
+#~ msgstr "Depositionen"
 
 #~ msgid "in Python pickle format"
 #~ msgstr "im Python-Pickle-Format"
