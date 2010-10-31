@@ -694,7 +694,7 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
-    model_list = [models.Sample]
+    model_list = [models.Sample, models.SampleSeries] + models.physical_process_models.values()
     model_tree = None
     results = []
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
