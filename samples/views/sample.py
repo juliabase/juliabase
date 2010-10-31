@@ -666,6 +666,15 @@ def add_process(request, sample_name):
                               context_instance=RequestContext(request))
 
 
+class SearchSamplesForm(forms.Form):
+    u"""Form for searching for samples.  So far, you can only enter a name
+    substring for looking for samples.
+    """
+    _ = ugettext_lazy
+    name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30, required=False)
+    aliases = forms.BooleanField(label=_(u"Include alias names"), required=False)
+
+
 class AddToMySamplesForm(forms.Form):
     _ = ugettext_lazy
     add_to_my_samples = forms.BooleanField(required=False)
@@ -678,6 +687,60 @@ def search(request):
     *names* (not the data sheets) of all samples, unless they are in a
     confidential topic, unless the user is a member in that topic, its
     currently responsible person, or you have a clearance for the sample.
+
+    A POST request on this URL will add samples to the “My Samples” list.
+    *All* search parameters are in the query string, so if you just want to
+    search, this is a GET requets.  Therefore, this view has two submit
+    buttons.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    found_samples = []
+    too_many_results = False
+    base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
+                                              Q(currently_responsible_person=request.user) |
+                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
+    search_samples_form = SearchSamplesForm(request.GET)
+    found_samples = []
+    if search_samples_form.is_valid():
+        name_pattern = search_samples_form.cleaned_data["name_pattern"]
+        if name_pattern:
+            if search_samples_form.cleaned_data["aliases"]:
+                found_samples = base_query.filter(Q(name__icontains=name_pattern) | Q(aliases__name__icontains=name_pattern))
+            else:
+                found_samples = base_query.filter(name__icontains=name_pattern)
+            too_many_results = found_samples.count() > max_results
+            found_samples = found_samples[:max_results] if too_many_results else found_samples
+    my_samples = request.user.my_samples.all()
+    if request.method == "POST":
+        sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
+                         if value == u"on")
+        samples = base_query.in_bulk(sample_ids)
+        request.user.my_samples.add(*samples.values())
+    add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
+                               for sample in found_samples]
+    return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
+                                                              "search_samples": search_samples_form,
+                                                              "found_samples": zip(found_samples, add_to_my_samples_forms),
+                                                              "too_many_results": too_many_results,
+                                                              "max_results": max_results},
+                              context_instance=RequestContext(request))
+
+
+@login_required
+def advanced_search(request):
+    u"""View for searching for samples, sample series, physical processes, and
+    results.  The visibility rules of the search results are the same as for
+    the sample search.  Additionally, you can only see sample series you are
+    the currently responsible person of or that are in one of your topics.
 
     A POST request on this URL will add samples to the “My Samples” list.
     *All* search parameters are in the query string, so if you just want to
@@ -711,10 +774,9 @@ def search(request):
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
-    content_dict = {"title": _(u"Search for sample"), "search_root": root_form, "model_tree": model_tree, "results": results,
+    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree, "results": results,
                     "search_performed": search_performed}
-    return render_to_response("samples/search_samples.html", content_dict,
-                              context_instance=RequestContext(request))
+    return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 
 @login_required

@@ -71,6 +71,7 @@ urlpatterns = patterns("samples.views",
                        url(r"^samples/by_id/(?P<sample_id>\d+)(?P<path_suffix>.*)", "sample.by_id",
                            name="show_sample_by_id"),
                        (r"^samples/$", "sample.search"),
+                       (r"^advanced_search$", "sample.advanced_search"),
                        # FixMe: Must be regenerated with a minimal add-sample form
 #                       (r"^samples/add/$", "sample.add"),
                        (r"^samples/(?P<parent_name>.+)/split/$", "split_and_rename.split_and_rename"),
