@@ -20,6 +20,7 @@ from __future__ import division
 import string, re, sys
 from django.template.defaultfilters import stringfilter
 from django import template
+from django.template.loader import render_to_string
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 import django.utils.http
@@ -488,6 +489,8 @@ def value_split_field(parser, token):
 def display_search_tree(tree):
     result = u"""<table style="border: 2px solid black; padding-left: 3em">"""
     for attribute in tree.attributes:
+        error_context = {"form": attribute.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}
+        result += render_to_string("error_list.html", context_instance=template.Context(error_context))
         if isinstance(attribute, chantal_common.search.OptionRangeField):
             field_min = [field for field in attribute.form if field.name.endswith("_min")][0]
             field_max = [field for field in attribute.form if field.name.endswith("_max")][0]
