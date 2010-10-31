@@ -19,6 +19,26 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models import get_models, get_app
+from django.db import models
+
+
+def convert_fields_to_attributes(cls, excluded_fieldnames=[]):
+    attributes = []
+    for field in cls._meta.fields:
+        if field.name not in excluded_fieldnames + ["id", "actual_object_id"]:
+            if field.choices:
+                attributes.append(OptionChoiceField(cls, field))
+            elif type(field) in [models.CharField, models.TextField]:
+                attributes.append(OptionTextField(cls, field))
+            elif type(field) in [models.AutoField, models.BigIntegerField, models.IntegerField, models.FloatField,
+                                 models.DecimalField, models.PositiveIntegerField, models.PositiveSmallIntegerField,
+                                 models.SmallIntegerField]:
+                attributes.append(OptionIntervalField(cls, field))
+            elif type(field) == models.DateTimeField:
+                attributes.append(OptionDateTimeField(cls, field))
+            elif type(field) == models.BooleanField:
+                attributes.append(OptionBoolField(cls, field))
+    return attributes
 
 
 class OptionField(object):
