@@ -28,6 +28,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import PhysicalProcess
 from samples.data_tree import DataNode, DataItem
+from chantal_common.search import *
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -135,3 +136,8 @@ class Layer(models.Model):
         data_node = DataNode(self, _(u"layer {number}").format(number=self.number))
         data_node.items = [DataItem(_(u"number"), self.number, "layer")]
         return data_node
+
+    @classmethod
+    def get_model_field(cls):
+        attributes = convert_fields_to_attributes(cls)
+        return ModelField(cls, {}, attributes)
