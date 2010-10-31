@@ -1333,6 +1333,14 @@ class SampleSeries(models.Model):
         for sample in self.samples.all():
             sample.save(with_relations=False)
 
+    @classmethod
+    def get_model_field(cls):
+        attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
+                      OptionDateTimeField(cls, "timestamp"), OptionTextField(cls, "description"),
+                      OptionTextField(cls, "topic", "name")]
+        related_models = {Sample: "samples", Result: "results"}
+        return ModelField(cls, related_models, attributes)
+
 
 class Initials(models.Model):
     u"""Model for initials of people or external operators.  They are used to
