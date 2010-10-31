@@ -855,8 +855,9 @@ class Sample(models.Model):
 
     @classmethod
     def get_model_field(cls):
-        attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "current_location"),
-                      OptionTextField(cls, "purpose"), OptionTextField(cls, "tags")]
+        attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
+                      OptionTextField(cls, "current_location"), OptionTextField(cls, "purpose"),
+                      OptionTextField(cls, "tags"), OptionTextField(cls, "topic", "name")]
         from samples.models import physical_process_models
         related_models = dict((model, "processes") for model in physical_process_models.itervalues())
         return ModelField(cls, related_models, attributes)
