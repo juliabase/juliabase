@@ -212,13 +212,13 @@ class ModelField(object):
         kwargs = {}
         for child in self.children:
             if child[1]:
-                name = self.related_models[child[1].model_class] + "__id__in"
+                name = self.related_models[child[1].model_class] + "__pk__in"
                 kwargs[name] = child[1].get_search_results(False)
         result = result.filter(**kwargs)
         if top_level:
-            return self.model_class.objects.in_bulk(list(result.values_list("id", flat=True))).values()
+            return self.model_class.objects.in_bulk(list(result.values_list("pk", flat=True))).values()
         else:
-            return result.values("id")
+            return result.values("pk")
 
     def is_valid(self):
         is_all_valid = True
