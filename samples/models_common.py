@@ -197,8 +197,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return ("samples.views.main.main_menu", (), {})
-#        return ("samples.views.main.show_process", [str(self.pk)])
+        return ("samples.views.main.show_process", [str(self.pk)])
 
     def calculate_plot_locations(self, number):
         u"""Get the location of a plot in the local filesystem as well as on

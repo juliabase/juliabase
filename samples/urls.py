@@ -83,6 +83,8 @@ urlpatterns = patterns("samples.views",
 
                        (r"^resplit/(?P<old_split_id>.+)", "split_and_rename.split_and_rename"),
 
+                       (r"^processes/(?P<process_id>.+)", "main.show_process"),
+
                        (r"^sample_series/add/$", "sample_series.new"),
                        (r"^sample_series/(?P<name>.+)/edit/$", "sample_series.edit"),
                        (r"^sample_series/(?P<name>.+)/export/$", "sample_series.export"),
