@@ -336,7 +336,6 @@ class ValueFieldNode(template.Node):
 
     def render(self, context):
         field = self.field.resolve(context)
-        print 1
         if "." not in self.field_name:
             verbose_name = unicode(context[self.field_name]._meta.verbose_name)
         else:
@@ -492,7 +491,6 @@ def display_search_tree(tree):
         if isinstance(attribute, chantal_common.search.OptionRangeField):
             field_min = [field for field in attribute.form if field.name.endswith("_min")][0]
             field_max = [field for field in attribute.form if field.name.endswith("_max")][0]
-            print field_min.__dict__
             help_text = u""" <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else u""
             result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
                 u"""<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
