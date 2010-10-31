@@ -492,14 +492,18 @@ def display_search_tree(tree):
         if isinstance(attribute, chantal_common.search.OptionRangeField):
             field_min = [field for field in attribute.form if field.name.endswith("_min")][0]
             field_max = [field for field in attribute.form if field.name.endswith("_max")][0]
+            print field_min.__dict__
+            help_text = u""" <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else u""
             result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
-                u"""<td class="input">{field_min} – {field_max}</td></tr>""".format(
-                label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max)
+                u"""<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
+                label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
+                help_text=help_text)
         else:
             for field in attribute.form:
+                help_text = u""" <span class="help">({0})</span>""".format(field.help_text) if field.help_text else u""
                 result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
-                    u"""<td class="input">{field}</td></tr>""".format(
-                    label=field.label, html_name=field.html_name, field=field)
+                    u"""<td class="input">{field}{help_text}</td></tr>""".format(
+                    label=field.label, html_name=field.html_name, field=field, help_text=help_text)
     if tree.children:
         result += u"""<tr><td colspan="2">"""
         for i, child in enumerate(tree.children):
