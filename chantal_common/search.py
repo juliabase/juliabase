@@ -17,7 +17,7 @@ u"""Functions and classes for the advanced search.
 """
 
 from __future__ import absolute_import
-import re, datetime
+import re, datetime, calendar
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
@@ -268,6 +268,7 @@ class DateTimeField(forms.Field):
                                   r"(?:\s+(?P<hour>\d{1,2})(?::(?P<minute>\d{1,2})(?::(?P<second>\d{1,2})?)?)?)?)?)?$")
 
     def __init__(self, *args, **kwargs):
+        self.start = kwargs.pop("start")
         super(DateTimeField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -277,8 +278,16 @@ class DateTimeField(forms.Field):
         if not match:
             raise forms.ValidationError(_(u"The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."))
         year, month, day, hour, minute, second = match.groups()
-        year, month, day, hour, minute, second = \
-            int(year), int(month or "1"), int(day or "1"), int(hour or "0"), int(minute or "0"), int(second or "0")
+        if self.start:
+            year, month, day, hour, minute, second = \
+                int(year), int(month or "1"), int(day or "1"), int(hour or "0"), int(minute or "0"), int(second or "0")
+        else:
+            year, month, day, hour, minute, second = \
+                int(year), int(month or "12"), int(day or "0"), int(hour or "23"), int(minute or "59"), int(second or "59")
+            if not day:
+                day = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
+            if not day:
+                day = 29 if calendar.isleap(year) else 28
         return datetime.datetime(year, month, day, hour, minute, second)
 
 
@@ -289,10 +298,10 @@ class DateTimeSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = DateTimeField(label=unicode(self.field.verbose_name),
-                                                                   required=False, help_text=self.field.help_text)
-        self.form.fields[self.field.name + "_max"] = DateTimeField(label=unicode(self.field.verbose_name),
-                                                                   required=False, help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_min"] = DateTimeField(label=unicode(self.field.verbose_name), required=False,
+                                                                   help_text=self.field.help_text, start=True)
+        self.form.fields[self.field.name + "_max"] = DateTimeField(label=unicode(self.field.verbose_name), required=False,
+                                                                   help_text=self.field.help_text, start=False)
 
 
 class BooleanSearchField(SearchField):
@@ -359,6 +368,14 @@ def get_model(model_name):
             all_models.update((model.__name__, model) for model in get_models(app))
     return all_models[model_name]
 
+
+def get_search_results(search_tree, max_results, base_query=None):
+    results = search_tree.get_query_set(base_query)
+    too_many_results = results.count() > max_results
+    if too_many_results:
+        results = results[:max_results]
+    return search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values(), too_many_results
+    
 
 class SearchTreeNode(object):
     u"""Class which represents one node in the seach tree.  It is associated
@@ -458,39 +475,35 @@ class SearchTreeNode(object):
         if self.related_models:
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
-    def get_search_results(self, top_level=True, base_query=None):
+    def get_query_set(self, base_query=None):
         u"""Returns all model instances matching the search.
 
         :Parameters:
-          - `top_level`: whether this is the top-level node of the tree
           - `base_query`: the query set to be used as the starting point of the
-            query; it is only given if ``top_level==True``, and even then, it
-            is optional; it is used to restrict the found items to what the
-            user is allowed to see
+            query; it is only given at top level, and even then, it is
+            optional; it is used to restrict the found items to what the user
+            is allowed to see
 
-        :type top_level: bool
         :type base_query: ``QuerySet``
 
         :Return:
           the search results
 
-        :rtype: list of ``Model``
+        :rtype: ``QuerySet``
         """
+        result = base_query if base_query is not None else self.model_class.objects
         kwargs = {}
         for search_field in self.search_fields:
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
-        result = base_query if base_query is not None else self.model_class.objects.filter(**kwargs)
+        result = result.filter(**kwargs)
         kwargs = {}
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__pk__in"
-                kwargs[name] = child[1].get_search_results(False)
+                kwargs[name] = child[1].get_query_set()
         result = result.filter(**kwargs)
-        if top_level:
-            return self.model_class.objects.in_bulk(list(result.values_list("pk", flat=True))).values()
-        else:
-            return result.values("pk")
+        return result.values("pk")
 
     def is_valid(self):
         u"""Returns whether the whole tree contains only bound and valid
