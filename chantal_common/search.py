@@ -23,22 +23,22 @@ from django.db import models
 
 
 def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
-    attributes = []
+    search_fields = []
     for field in cls._meta.fields:
         if field.name not in excluded_fieldnames + ["id", "actual_object_id"]:
             if field.choices:
-                attributes.append(OptionChoiceField(cls, field))
+                search_fields.append(OptionChoiceField(cls, field))
             elif type(field) in [models.CharField, models.TextField]:
-                attributes.append(OptionTextField(cls, field))
+                search_fields.append(OptionTextField(cls, field))
             elif type(field) in [models.AutoField, models.BigIntegerField, models.IntegerField, models.FloatField,
                                  models.DecimalField, models.PositiveIntegerField, models.PositiveSmallIntegerField,
                                  models.SmallIntegerField]:
-                attributes.append(OptionIntervalField(cls, field))
+                search_fields.append(OptionIntervalField(cls, field))
             elif type(field) == models.DateTimeField:
-                attributes.append(OptionDateTimeField(cls, field))
+                search_fields.append(OptionDateTimeField(cls, field))
             elif type(field) == models.BooleanField:
-                attributes.append(OptionBoolField(cls, field))
-    return attributes
+                search_fields.append(OptionBoolField(cls, field))
+    return search_fields
 
 
 class OptionField(object):
@@ -170,15 +170,15 @@ def get_model(model_name):
 
 class SearchTreeNode(object):
 
-    def __init__(self, model_class, related_models, attributes):
+    def __init__(self, model_class, related_models, search_fields):
         self.related_models = related_models
         self.model_class = model_class
         self.children = []
-        self.attributes = attributes
+        self.search_fields = search_fields
 
     def parse_data(self, data, prefix):
-        for attribute in self.attributes:
-            attribute.parse_data(data, prefix)
+        for search_field in self.search_fields:
+            search_field.parse_data(data, prefix)
         data = data or {}
         depth = prefix.count("-") + (2 if prefix else 1)
         keys = [key for key in data if key.count("-") == depth]
@@ -205,9 +205,9 @@ class SearchTreeNode(object):
 
     def get_search_results(self, top_level=True):
         kwargs = {}
-        for attribute in self.attributes:
-            if attribute.get_values():
-                kwargs.update(attribute.get_values())
+        for search_field in self.search_fields:
+            if search_field.get_values():
+                kwargs.update(search_field.get_values())
         result = self.model_class.objects.filter(**kwargs)
         kwargs = {}
         for child in self.children:
@@ -222,8 +222,8 @@ class SearchTreeNode(object):
 
     def is_valid(self):
         is_all_valid = True
-        for attribute in self.attributes:
-            is_all_valid = is_all_valid and attribute.is_valid()
+        for search_field in self.search_fields:
+            is_all_valid = is_all_valid and search_field.is_valid()
         if self.children:
             for child in self.children:
                 if child[1]:

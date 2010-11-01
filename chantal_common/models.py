@@ -102,9 +102,9 @@ class Topic(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        attributes = [chantal_common.search.OptionTextField(cls, "name")]
+        search_fields = [chantal_common.search.OptionTextField(cls, "name")]
         related_models = {}
-        return chantal_common.search.SearchTreeNode(cls, related_models, attributes)
+        return chantal_common.search.SearchTreeNode(cls, related_models, search_fields)
 
     def get_name_for_user(self, user):
         u"""Determine the topic's name that can be shown to a certain user.  If
