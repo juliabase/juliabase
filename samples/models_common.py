@@ -556,7 +556,7 @@ class Process(PolymorphicModel):
         related_models.update(
             (related_object.model, related_object.get_accessor_name()) for related_object
             in cls._meta.get_all_related_objects() if not related_object.model.__name__.startswith("Feed"))
-        return ModelField(cls, related_models, attributes)
+        return SearchTreeNode(cls, related_models, attributes)
 
 
 class PhysicalProcess(Process):
@@ -860,7 +860,7 @@ class Sample(models.Model):
                       OptionTextField(cls, "tags"), OptionTextField(cls, "topic", "name")]
         from samples.models import physical_process_models
         related_models = dict((model, "processes") for model in physical_process_models.itervalues())
-        return ModelField(cls, related_models, attributes)
+        return SearchTreeNode(cls, related_models, attributes)
 
 
 class SampleAlias(models.Model):
@@ -1339,7 +1339,7 @@ class SampleSeries(models.Model):
                       OptionDateTimeField(cls, "timestamp"), OptionTextField(cls, "description"),
                       OptionTextField(cls, "topic", "name")]
         related_models = {Sample: "samples", Result: "results"}
-        return ModelField(cls, related_models, attributes)
+        return SearchTreeNode(cls, related_models, attributes)
 
 
 class Initials(models.Model):

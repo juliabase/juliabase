@@ -140,4 +140,4 @@ class Layer(models.Model):
     @classmethod
     def get_model_field(cls):
         attributes = convert_fields_to_attributes(cls)
-        return ModelField(cls, {}, attributes)
+        return SearchTreeNode(cls, {}, attributes)
