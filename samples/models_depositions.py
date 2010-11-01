@@ -139,5 +139,13 @@ class Layer(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)

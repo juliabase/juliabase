@@ -407,6 +407,7 @@ def split_field(field1, field2, separator=""):
         field1=field1, field2=field2, help_text=help_text, separator=separator)
     return result
 
+
 class ValueSplitFieldNode(template.Node):
     u"""Helper class to realise the `value_split_field` tag.
     """
@@ -484,9 +485,12 @@ def value_split_field(parser, token):
     return ValueSplitFieldNode(field1, field2, unit, separator)
 
 
-
 @register.simple_tag
 def display_search_tree(tree):
+    u"""Tag for displaying the forms tree for the advanced search.  This tag is
+    used only in the advanced search.  It walks through the search node tree
+    and displays the seach fields.
+    """
     result = u"""<table style="border: 2px solid black; padding-left: 3em">"""
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}

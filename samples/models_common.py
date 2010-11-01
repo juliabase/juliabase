@@ -550,6 +550,15 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.  This particular method is an example for generating this
+        node automatically for this and all derived models.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
         search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name")]
         search_fields.extend(
@@ -857,6 +866,14 @@ class Sample(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
                          search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
@@ -1338,6 +1355,14 @@ class SampleSeries(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
                          search.DateTimeSearchField(cls, "timestamp"), search.TextSearchField(cls, "description"),
