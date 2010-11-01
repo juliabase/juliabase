@@ -188,6 +188,36 @@ class TextSearchField(SearchField):
         return {self.query_path + "__icontains": result} if result else {}
 
 
+class TextNullSearchField(SearchField):
+    u"""Class for search fields containing text.  The match is
+    case-insensitive, and partial matches are allowed, too.  Additionally, you
+    may search for explicitly empty fields.
+    """
+
+    class TextNullForm(forms.Form):
+        def clean(self):
+            text = [value for key, value in self.cleaned_data.iteritems() if key.endswith("_main")][0]
+            explicitly_empty = [value for key, value in self.cleaned_data.iteritems() if key.endswith("_null")][0]
+            if explicitly_empty and text:
+                raise forms.ValidationError(_(u"You can't search for empty values while giving a non-empty value."))
+            return self.cleaned_data
+
+    def parse_data(self, data, prefix):
+        self.form = self.TextNullForm(data, prefix=prefix)
+        self.form.fields[self.field.name + "_main"] = forms.CharField(label=unicode(self.field.verbose_name), required=False,
+                                                                      help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_(u"explicitly empty"), required=False)
+
+    def get_values(self):
+        result = self.form.cleaned_data[self.field.name + "_main"]
+        if result:
+            return {self.query_path + "__icontains": result}
+        elif self.form.cleaned_data[self.field.name + "_null"]:
+            return {self.field.name + "__isnull": True}
+        else:
+            return {}
+
+
 class IntegerSearchField(SearchField):
     u"""Class for search fields containing integer values for which from–to
     ranges don't make sense.
