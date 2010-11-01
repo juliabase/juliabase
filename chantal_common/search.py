@@ -12,6 +12,10 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+
+u"""Functions and classes for the advanced search.
+"""
+
 from __future__ import absolute_import
 from django import forms
 from django.utils.safestring import mark_safe
@@ -23,6 +27,29 @@ from django.db import models
 
 
 def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
+    u"""Generates search fields for (almost) all fields of the given model
+    class.  This is to be used in a ``get_search_tree_node`` method.  It can
+    only convert character/text fields, numerical fields, boolean fields, and
+    fields with choices.
+
+    Consider this routine a quick-and-dirty helper.  Sometimes it may be
+    enough, sometimes you may have to refine its result afterwards.
+
+    :Parameters:
+      - `cls`: model class the fields of which should be converted to search
+        field objects
+      - `excluded_fieldnames`: fields with these names are not included into
+        the list of search fields; ``"id"`` and ``"actual_object_id"`` are
+        implicitly excluded
+
+    :type cls: class (decendant of ``Model``)
+    :type excluded_fieldnames: list of str
+
+    :Return:
+      the resulting search fields
+
+    :rtype: list of `SearchField`
+    """
     search_fields = []
     for field in cls._meta.fields:
         if field.name not in excluded_fieldnames + ["id", "actual_object_id"]:
@@ -42,8 +69,46 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
 
 
 class SearchField(object):
+    u"""Class representing one field in the advanced search.  This is an
+    abstract base class for such fields.  It is instantiated in the
+    ``get_search_tree_node`` methods in the models.
+
+    Instances of this class contain a form usually containing only one field.
+    This is shown on the web page of the advanced search as one searchable
+    field.  It should not be required.
+
+    :ivar form: The form containing the search field.  In some cases, it may
+      contain more than one field, see `RangeSearchField` as an example.  This
+      attribute is set only after `parse_data` was called.
+
+    :ivar field: the original model field this search field bases upon
+
+    :ivar query_path: the keyword parameter for Django's ``filter`` method of
+      QuerySets for retrieving the field that this instance represents
+
+    :type form: ``forms.Form``
+    :type field: ``models.Field``
+    :type query_path: str
+    """
 
     def __init__(self, cls, field_or_field_name, additional_query_path=""):
+        u"""Class constructor.
+
+        :Parameters:
+          - `cls`: model class to which the original model field belongs to;
+            actually, it is only needed if `field_or_field_name` is a field
+            name
+          - `field_or_field_name`: the field to be represented as this seach
+            field; you can call it by name, or pass the field itself
+          - `additional_query_path`: if the model field is a related model,
+            this parameter denotes the field within that model to be queried;
+            for example, the currently responsible person for a sample needs
+            ``"username"`` here
+
+        :type cls: class (decendant of ``Model``)
+        :type field_or_field_name: ``models.Field`` or str
+        :type additional_query_path: str
+        """
         self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, basestring) \
             else field_or_field_name
         self.query_path = self.field.name
@@ -51,17 +116,48 @@ class SearchField(object):
             self.query_path += "__" + additional_query_path
 
     def parse_data(self, data, prefix):
+        u"""Create the web form representing this search field.  If ``data`` is
+        not ``None``, it will be a bound form.
+
+        :Parameters:
+          - `data`: the GET parameters of the HTTP request; may be ``None`` if
+            the form of this instance should be unbound
+          - `prefix`: the prefix for the form
+
+        :type data: ``QueryDict``
+        :type prefix: str
+        """
         raise NotImplementedError
 
     def get_values(self):
+        u"""Returns keyword arguments for a ``filter`` call on a ``QuerySet``.
+        Note that this implies that all keyword arguments returned here are
+        “anded”.
+
+        :Return:
+          the keyword argument(s) for the ``filter`` call
+
+        :rtype: dict mapping str to object
+        """
         result = self.form.cleaned_data[self.field.name]
         return {self.query_path: result} if result is not None else {}
 
     def is_valid(self):
+        u"""Retuns whethe the form within this search field is bound and valid.
+
+        :Return:
+          whether the form is valid
+
+        :rtype: bool
+        """
         return self.form.is_valid()
 
 
 class RangeSearchField(SearchField):
+    u"""Class for search fields with a from–to structure.  This is used for
+    timestamps and numerical fields.  It is an abstract class.  At the same
+    time, it is an example of a search field with more than one form field.
+    """
     
     def get_values(self):
         result = {}
@@ -77,6 +173,9 @@ class RangeSearchField(SearchField):
 
 
 class TextSearchField(SearchField):
+    u"""Class for search fields containing text.  The match is case-insensitive,
+    and partial matches are allowed, too.
+    """
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -89,6 +188,9 @@ class TextSearchField(SearchField):
 
 
 class IntegerSearchField(SearchField):
+    u"""Class for search fields containing integer values for which from–to
+    ranges don't make sense.
+    """
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -97,6 +199,10 @@ class IntegerSearchField(SearchField):
 
 
 class IntervalSearchField(RangeSearchField):
+    u"""Class for search fields containing numerical values (integer, decimal,
+    float).  Its peculiarity is that it exposes a minimal and a maximal value.
+    The user can fill out one of them, or both, or none.
+    """
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -107,6 +213,8 @@ class IntervalSearchField(RangeSearchField):
 
 
 class ChoiceSearchField(SearchField):
+    u"""Class for search fields containing character/text fields with choices.
+    """
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -120,6 +228,9 @@ class ChoiceSearchField(SearchField):
 
 
 class DateTimeSearchField(RangeSearchField):
+    u"""Class for search fields containing timestamps.  It also exposes two
+    fields for the user to give a range of dates.
+    """
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -130,6 +241,10 @@ class DateTimeSearchField(RangeSearchField):
 
 
 class BooleanSearchField(SearchField):
+    u"""Class for search fields containing boolean values.  The peculiarity of
+    this field is that it gives the user three choices: yes, no, and “doesn't
+    matter”.
+    """
 
     class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
         def render(self):
@@ -149,6 +264,16 @@ class BooleanSearchField(SearchField):
 
 
 class SearchModelForm(forms.Form):
+    u"""Form for selecting the model which is contained in the current model.
+    For example, you may select a process class which is connected with a
+    sample.  Every node is associated with such a form, although it is kept
+    with the node in a tuple by the parent node instead of in an attribute of
+    the node itself.
+
+    We also store the previously selected model here in order to know whether
+    the following form fields (in the GET parameters) can be parsed into a
+    bound form or whether we have to create an unbound new one.
+    """
     _model = forms.ChoiceField(label=_(u"containing"), required=False)
     _old_model = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -160,6 +285,18 @@ class SearchModelForm(forms.Form):
 
 all_models = None
 def get_model(model_name):
+    u"""Returns the model class of the given class name.
+
+    :Parameters:
+      - `model_name`: name of the model to be looked for
+
+    :type model_name: str
+
+    :Return:
+      the model class
+
+    :rtype: class (decendant of ``Model``)
+    """
     global all_models
     if all_models is None:
         all_models = {}
@@ -169,14 +306,77 @@ def get_model(model_name):
 
 
 class SearchTreeNode(object):
+    u"""Class which represents one node in the seach tree.  It is associated
+    with a model class.
+
+    :ivar related_models: All model classes which are offered as candidates for
+      the “containing” selection field.  These are models to which the current
+      model has a relation to, whether reverse or not doesn't matter.
+
+      The dictionary maps model classes to their field names.  The field name
+      is the name by which the related model can be accessed in ``filter``
+      calls.
+
+    :ivar model_class: the model class this tree node represents
+
+    :ivar children: The child nodes of this node.  These are the related models
+      which the user actually has selected.  They are stored together with the
+      form (a `SearchModelForm`) on which they were selected.  The last entry
+      in this list doesn't contain a tree node but only a form: it is the form
+      with which the user can select a new child.
+
+    :ivar search_fields: the search fields for this node, generated for the
+      fields of the associated model class
+
+    :type related_models: dict mapping class (decendant of ``Model``) to str
+    :type model_class: class (decendant of ``Model``)
+    :type children: list of (`SearchModelForm`, `SearchTreeNode`)
+    :type search_fields: list of `SearchField`
+    """
 
     def __init__(self, model_class, related_models, search_fields):
+        u"""Class constructor.
+
+        :Parameters:
+          - `model_class`: the model class associated with this node
+          - `related_models`: see the description of the instance variable of
+            the same name
+          - `search_fields`: see the description of the instance variable of
+            the same name; they don't contain a form because their `parse_data`
+            method has not been called yes
+
+        :type model_class: class (decendant of ``Model``)
+        :type related_models: dict mapping class (decendant of ``Model``) to
+          str
+        :type search_fields: list of `SearchField`
+        """
         self.related_models = related_models
         self.model_class = model_class
         self.children = []
         self.search_fields = search_fields
 
     def parse_data(self, data, prefix):
+        u"""Create all forms associated with this node (all the seach fields,
+        and the `SearchModelForm` for all children), and create recursively the
+        tree by creating the children.
+
+        :Parameters:
+          - `data`: the GET dictionary of the request; may be ``None`` if the
+            forms of this node are supposed to be unbound (because it was newly
+            created and there's nothing to be parsed into them)
+          - `prefix`: The prefix for the forms.  Note that the form to select a
+            model does not belong to the model to be selected but to its parent
+            model.  This is also true for the prefixes: The top-level selection
+            form (called ``root_form`` in
+            ``samples.view.sample.advanced_search``) doesn't have a prefix,
+            neither have the top-level search fields.  The children of a node
+            have the next nesting depth of the prefix, including the
+            `SearchModelForm` in which they were selected.  The starting number
+            of prefixes is 1, and the nesting levels are separated by dashs.
+
+        :type data: ``QueryDict`` or ``NoneType``
+        :type prefix: str
+        """
         for search_field in self.search_fields:
             search_field.parse_data(data, prefix)
         data = data or {}
@@ -204,6 +404,18 @@ class SearchTreeNode(object):
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
     def get_search_results(self, top_level=True):
+        u"""Returns all model instances matching the search.
+
+        :Parameters:
+          - `top_level`: whether this is the top-level node of the tree
+
+        :type top_level: bool
+
+        :Return:
+          the search results
+
+        :rtype: list of ``Model``
+        """
         kwargs = {}
         for search_field in self.search_fields:
             if search_field.get_values():
@@ -221,6 +433,16 @@ class SearchTreeNode(object):
             return result.values("pk")
 
     def is_valid(self):
+        u"""Returns whether the whole tree contains only bound and valid
+        forms.  Note that the last children of each node – or, more precisely,
+        the one without a `SearchTreeNode` in the tuple – is excluded from the
+        test because it is always unbound.
+
+        :Return:
+          whether the whole tree contains only valid forms
+
+        :rtype: bool
+        """
         is_all_valid = True
         for search_field in self.search_fields:
             is_all_valid = is_all_valid and search_field.is_valid()

@@ -102,6 +102,14 @@ class Topic(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
         search_fields = [chantal_common.search.TextSearchField(cls, "name")]
         related_models = {}
         return chantal_common.search.SearchTreeNode(cls, related_models, search_fields)
