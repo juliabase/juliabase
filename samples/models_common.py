@@ -877,7 +877,7 @@ class Sample(models.Model):
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
                          search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
-                         search.TextSearchField(cls, "tags"), search.TextSearchField(cls, "topic", "name")]
+                         search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
         from samples.models import physical_process_models
         related_models = dict((model, "processes") for model in physical_process_models.itervalues())
         related_models[Result] = "processes"

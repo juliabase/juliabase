@@ -503,6 +503,16 @@ def display_search_tree(tree):
                 u"""<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
                 help_text=help_text)
+        elif isinstance(search_field, chantal_common.search.TextNullSearchField):
+            field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
+            field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
+            help_text = u""" <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else u""
+            result += u"""<tr><td class="label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
+                u"""<td class="input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
+                u"""{field_null}{help_text}</td></tr>""".format(
+                label_main=field_main.label, label_null=field_null.label,
+                html_name_main=field_main.html_name, html_name_null=field_null.html_name,
+                field_main=field_main, field_null=field_null, help_text=help_text)
         else:
             for field in search_field.form:
                 help_text = u""" <span class="help">({0})</span>""".format(field.help_text) if field.help_text else u""
