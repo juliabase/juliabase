@@ -27,21 +27,21 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
     for field in cls._meta.fields:
         if field.name not in excluded_fieldnames + ["id", "actual_object_id"]:
             if field.choices:
-                search_fields.append(OptionChoiceField(cls, field))
+                search_fields.append(ChoiceSearchField(cls, field))
             elif type(field) in [models.CharField, models.TextField]:
-                search_fields.append(OptionTextField(cls, field))
+                search_fields.append(TextSearchField(cls, field))
             elif type(field) in [models.AutoField, models.BigIntegerField, models.IntegerField, models.FloatField,
                                  models.DecimalField, models.PositiveIntegerField, models.PositiveSmallIntegerField,
                                  models.SmallIntegerField]:
-                search_fields.append(OptionIntervalField(cls, field))
+                search_fields.append(IntervalSearchField(cls, field))
             elif type(field) == models.DateTimeField:
-                search_fields.append(OptionDateTimeField(cls, field))
+                search_fields.append(DateTimeSearchField(cls, field))
             elif type(field) == models.BooleanField:
-                search_fields.append(OptionBoolField(cls, field))
+                search_fields.append(BooleanSearchField(cls, field))
     return search_fields
 
 
-class OptionField(object):
+class SearchField(object):
 
     def __init__(self, cls, field_or_field_name, additional_query_path=""):
         self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, basestring) \
@@ -61,7 +61,7 @@ class OptionField(object):
         return self.form.is_valid()
 
 
-class OptionRangeField(OptionField):
+class RangeSearchField(SearchField):
     
     def get_values(self):
         result = {}
@@ -76,7 +76,7 @@ class OptionRangeField(OptionField):
         return result
 
 
-class OptionTextField(OptionField):
+class TextSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -88,7 +88,7 @@ class OptionTextField(OptionField):
         return {self.query_path + "__icontains": result} if result else {}
 
 
-class OptionIntField(OptionField):
+class IntegerSearchField(SearchField):
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -96,7 +96,7 @@ class OptionIntField(OptionField):
                                                                help_text=self.field.help_text)
 
 
-class OptionIntervalField(OptionRangeField):
+class IntervalSearchField(RangeSearchField):
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -106,7 +106,7 @@ class OptionIntervalField(OptionRangeField):
                                                                       help_text=self.field.help_text)
 
 
-class OptionChoiceField(OptionField):
+class ChoiceSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -119,7 +119,7 @@ class OptionChoiceField(OptionField):
         return {self.query_path: result} if result else {}
 
 
-class OptionDateTimeField(OptionRangeField):
+class DateTimeSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
@@ -129,7 +129,7 @@ class OptionDateTimeField(OptionRangeField):
                                                                          required=False, help_text=self.field.help_text)
 
 
-class OptionBoolField(OptionField):
+class BooleanSearchField(SearchField):
 
     class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
         def render(self):

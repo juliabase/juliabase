@@ -102,7 +102,7 @@ class Topic(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        search_fields = [chantal_common.search.OptionTextField(cls, "name")]
+        search_fields = [chantal_common.search.TextSearchField(cls, "name")]
         related_models = {}
         return chantal_common.search.SearchTreeNode(cls, related_models, search_fields)
 
