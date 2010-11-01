@@ -763,7 +763,7 @@ def advanced_search(request):
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
-        model_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_model_field()
+        model_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_search_tree_node()
         parse_model = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
         model_tree.parse_data(request.GET if parse_model else None, "")
         if model_tree.is_valid():

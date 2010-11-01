@@ -549,7 +549,7 @@ class Process(PolymorphicModel):
         return context
 
     @classmethod
-    def get_model_field(cls):
+    def get_search_tree_node(cls):
         attributes = [OptionTextField(cls, "operator", "username"), OptionTextField(cls, "external_operator", "name")]
         attributes.extend(convert_fields_to_attributes(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
         related_models = {Sample: "samples"}
@@ -854,7 +854,7 @@ class Sample(models.Model):
         super(Sample, self).save()
 
     @classmethod
-    def get_model_field(cls):
+    def get_search_tree_node(cls):
         attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
                       OptionTextField(cls, "current_location"), OptionTextField(cls, "purpose"),
                       OptionTextField(cls, "tags"), OptionTextField(cls, "topic", "name")]
@@ -1334,7 +1334,7 @@ class SampleSeries(models.Model):
             sample.save(with_relations=False)
 
     @classmethod
-    def get_model_field(cls):
+    def get_search_tree_node(cls):
         attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
                       OptionDateTimeField(cls, "timestamp"), OptionTextField(cls, "description"),
                       OptionTextField(cls, "topic", "name")]
