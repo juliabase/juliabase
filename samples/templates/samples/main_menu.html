@@ -84,8 +84,9 @@ copyright holder, you must destroy it immediately and completely.
 
   <h2>{% trans 'Search for things' %}</h2>
   <ul style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/find.png")'>
-    <li><a href="{% url samples.views.sample.search %}">{% trans 'Samples' %}</a></li>
-    <li><a href="{% url samples.views.main.deposition_search %}">{% trans 'Depositions' %}</a></li>
+    <li><a href="{% url samples.views.sample.advanced_search %}">{% trans 'Advanced search' %}</a></li>
+    <li><a href="{% url samples.views.sample.search %}">{% trans 'Samples by name' %}</a></li>
+    <li><a href="{% url samples.views.main.deposition_search %}">{% trans 'Depositions by number' %}</a></li>
   </ul>
 
   {% if lab_notebooks %}

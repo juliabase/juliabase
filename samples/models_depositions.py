@@ -28,6 +28,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import PhysicalProcess
 from samples.data_tree import DataNode, DataItem
+from chantal_common import search
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -108,17 +109,6 @@ class Layer(models.Model):
 
         six_chamber_deposition.layers.all()[0].six_chamber_layer.temperature
 
-    Note that the above is slightly untrue for cluster tool layers because they
-    must be polymorphic.  There, I need a *concret* base class for all layer
-    models, derived from this one.  However, I consider this a rim case.  But
-    this is debatable: Maybe it's cleaner to make this class concrete.  The
-    only drawback would be that in order to access the layer attributes, one
-    would have to visit the layer instance explicitly with e.g.
-
-    ::
-
-        six_chamber_deposition.layers.all()[0].six_chamber_layer.temperature
-
     Every class derived from this model must point to their deposition with
     ``related_name="layers"``.  See also `Deposition`.  Additionally, the
     ``Meta`` class should contain::
@@ -146,3 +136,16 @@ class Layer(models.Model):
         data_node = DataNode(self, _(u"layer {number}").format(number=self.number))
         data_node.items = [DataItem(_(u"number"), self.number, "layer")]
         return data_node
+
+    @classmethod
+    def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
+        search_fields = search.convert_fields_to_search_fields(cls)
+        return search.SearchTreeNode(cls, {}, search_fields)

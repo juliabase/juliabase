@@ -39,6 +39,7 @@ from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
+from chantal_common import search
 from samples.data_tree import DataNode, DataItem
 
 
@@ -196,8 +197,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return ("samples.views.main.main_menu", (), {})
-#        return ("samples.views.main.show_process", [str(self.pk)])
+        return ("samples.views.main.show_process", [str(self.pk)])
 
     def calculate_plot_locations(self, number):
         u"""Get the location of a plot in the local filesystem as well as on
@@ -548,6 +548,27 @@ class Process(PolymorphicModel):
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
         return context
 
+    @classmethod
+    def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.  This particular method is an example for generating this
+        node automatically for this and all derived models.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
+        search_fields = [search.TextSearchField(cls, "operator", "username"),
+                         search.TextSearchField(cls, "external_operator", "name")]
+        search_fields.extend(
+            search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
+        related_models = {Sample: "samples"}
+        related_models.update(
+            (related_object.model, related_object.get_accessor_name()) for related_object
+            in cls._meta.get_all_related_objects() if not related_object.model.__name__.startswith("Feed"))
+        return search.SearchTreeNode(cls, related_models, search_fields)
+
 
 class PhysicalProcess(Process):
     u"""Abstract class for physical processes.  These processes are “real”
@@ -842,6 +863,25 @@ class Sample(models.Model):
         else:
             self.cache_keys = cache_key
         super(Sample, self).save()
+
+    @classmethod
+    def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
+        search_fields = [search.TextSearchField(cls, "name"),
+                         search.TextSearchField(cls, "currently_responsible_person", "username"),
+                         search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
+                         search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
+        from samples.models import physical_process_models
+        related_models = dict((model, "processes") for model in physical_process_models.itervalues())
+        related_models[Result] = "processes"
+        return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class SampleAlias(models.Model):
@@ -1313,6 +1353,23 @@ class SampleSeries(models.Model):
         """
         for sample in self.samples.all():
             sample.save(with_relations=False)
+
+    @classmethod
+    def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
+        search_fields = [search.TextSearchField(cls, "name"),
+                         search.TextSearchField(cls, "currently_responsible_person", "username"),
+                         search.DateTimeSearchField(cls, "timestamp"), search.TextSearchField(cls, "description"),
+                         search.TextSearchField(cls, "topic", "name")]
+        related_models = {Sample: "samples", Result: "results"}
+        return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class Initials(models.Model):

@@ -20,6 +20,7 @@ from __future__ import division
 import string, re, sys
 from django.template.defaultfilters import stringfilter
 from django import template
+from django.template.loader import render_to_string
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 import django.utils.http
@@ -31,6 +32,7 @@ from django.conf import settings
 import chantal_common.utils
 import chantal_common.templatetags.chantal
 import samples.views.utils
+import chantal_common.search
 
 register = template.Library()
 
@@ -405,6 +407,7 @@ def split_field(field1, field2, separator=""):
         field1=field1, field2=field2, help_text=help_text, separator=separator)
     return result
 
+
 class ValueSplitFieldNode(template.Node):
     u"""Helper class to realise the `value_split_field` tag.
     """
@@ -480,3 +483,50 @@ def value_split_field(parser, token):
     else:
         raise template.TemplateSyntaxError, "value_split_field requires three, four or five arguments"
     return ValueSplitFieldNode(field1, field2, unit, separator)
+
+
+@register.simple_tag
+def display_search_tree(tree):
+    u"""Tag for displaying the forms tree for the advanced search.  This tag is
+    used only in the advanced search.  It walks through the search node tree
+    and displays the seach fields.
+    """
+    result = u"""<table style="border: 2px solid black; padding-left: 3em">"""
+    for search_field in tree.search_fields:
+        error_context = {"form": search_field.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}
+        result += render_to_string("error_list.html", context_instance=template.Context(error_context))
+        if isinstance(search_field, chantal_common.search.RangeSearchField):
+            field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
+            field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
+            help_text = u""" <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else u""
+            result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                u"""<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
+                label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
+                help_text=help_text)
+        elif isinstance(search_field, chantal_common.search.TextNullSearchField):
+            field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
+            field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
+            help_text = u""" <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else u""
+            result += u"""<tr><td class="label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
+                u"""<td class="input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
+                u"""{field_null}{help_text}</td></tr>""".format(
+                label_main=field_main.label, label_null=field_null.label,
+                html_name_main=field_main.html_name, html_name_null=field_null.html_name,
+                field_main=field_main, field_null=field_null, help_text=help_text)
+        else:
+            for field in search_field.form:
+                help_text = u""" <span class="help">({0})</span>""".format(field.help_text) if field.help_text else u""
+                result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                    u"""<td class="input">{field}{help_text}</td></tr>""".format(
+                    label=field.label, html_name=field.html_name, field=field, help_text=help_text)
+    if tree.children:
+        result += u"""<tr><td colspan="2">"""
+        for i, child in enumerate(tree.children):
+            result += unicode(child[0].as_p())
+            if child[1]:
+                result += display_search_tree(child[1])
+            if i < len(tree.children) - 1:
+                result += u"""</td></tr><tr><td colspan="2">"""
+        result += u"</td></tr>"
+    result += u"</table>"
+    return result

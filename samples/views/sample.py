@@ -35,6 +35,7 @@ import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
     respond_in_json
 from samples.views import utils, form_utils, feed_utils, table_export
+import chantal_common.search
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 
 
@@ -679,6 +680,17 @@ class AddToMySamplesForm(forms.Form):
     add_to_my_samples = forms.BooleanField(required=False)
 
 
+def restricted_samples_query(user):
+    u"""Returns a ``QuerySet`` which is restricted to samples the names of
+    which the given user is allowed to see.  Note that this doesn't mean that
+    the user is allowed to see all of the samples themselves necessary.  It is
+    only about the names.  See the `search` view for further information.
+    """
+    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
+                                        Q(currently_responsible_person=user) | Q(clearances__user=user) |
+                                        Q(topic__isnull=True)).distinct()
+
+
 max_results = 50
 @login_required
 def search(request):
@@ -704,9 +716,7 @@ def search(request):
     """
     found_samples = []
     too_many_results = False
-    base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
-                                              Q(currently_responsible_person=request.user) |
-                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
+    base_query = restricted_samples_query(request.user)
     search_samples_form = SearchSamplesForm(request.GET)
     found_samples = []
     if search_samples_form.is_valid():
@@ -722,8 +732,8 @@ def search(request):
     if request.method == "POST":
         sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
                          if value == u"on")
-        samples = base_query.in_bulk(sample_ids)
-        request.user.my_samples.add(*samples.values())
+        samples = base_query.in_bulk(sample_ids).values()
+        request.user.my_samples.add(*samples)
     add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
                                for sample in found_samples]
     return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
@@ -732,6 +742,70 @@ def search(request):
                                                               "too_many_results": too_many_results,
                                                               "max_results": max_results},
                               context_instance=RequestContext(request))
+
+
+@login_required
+def advanced_search(request):
+    u"""View for searching for samples, sample series, physical processes, and
+    results.  The visibility rules of the search results are the same as for
+    the sample search.  Additionally, you can only see sample series you are
+    the currently responsible person of or that are in one of your topics.
+
+    A POST request on this URL will add samples to the “My Samples” list.
+    *All* search parameters are in the query string, so if you just want to
+    search, this is a GET requets.  Therefore, this view has two submit
+    buttons.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    model_list = [models.Sample, models.SampleSeries, models.Result] + models.physical_process_models.values()
+    model_tree = None
+    results, add_forms = [], []
+    root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
+    search_performed = False
+    if root_form.is_valid() and root_form.cleaned_data["_model"]:
+        model_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_search_tree_node()
+        parse_model = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
+        model_tree.parse_data(request.GET if parse_model else None, "")
+        if model_tree.is_valid():
+            if model_tree.model_class == models.Sample:
+                base_query = restricted_samples_query(request.user)
+            elif model_tree.model_class == models.SampleSeries:
+                base_query = models.SampleSeries.objects.filter(
+                    Q(topic__confidential=False) | Q(topic__members=request.user) |
+                    Q(currently_responsible_person=request.user)).distinct()
+            else:
+                base_query = None
+            results = model_tree.get_search_results(base_query=base_query)
+            if model_tree.model_class == models.Sample:
+                if request.method == "POST":
+                    sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
+                                     if value == u"on")
+                    samples = base_query.in_bulk(sample_ids).values()
+                    request.user.my_samples.add(*samples)
+                my_samples = request.user.my_samples.all()
+                add_forms = [AddToMySamplesForm(prefix="0-" + str(sample.pk)) if sample not in my_samples else None
+                             for sample in results]
+            else:
+                add_forms = len(results) * [None]
+            search_performed = True
+        root_form = chantal_common.search.SearchModelForm(
+            model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"]})
+    else:
+        root_form = chantal_common.search.SearchModelForm(model_list)
+    root_form.fields["_model"].label = u""
+    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree,
+                    "results": zip(results, add_forms), "search_performed": search_performed,
+                    "something_to_add": any(add_forms)}
+    return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 
 @login_required

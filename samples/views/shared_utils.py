@@ -71,7 +71,7 @@ def camel_case_to_underscores(name):
     result = []
     for i, character in enumerate(name):
         if i > 0 and character in string.ascii_uppercase and (
-            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or 
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or
             (name[i - 1] not in string.ascii_uppercase)):
             result.append("_")
         result.append(character.lower())
@@ -96,7 +96,7 @@ def camel_case_to_human_text(name):
     result = []
     for i, character in enumerate(name):
         if i > 0 and character in string.ascii_uppercase and (
-            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or 
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or
             (name[i - 1] not in string.ascii_uppercase)):
             result.append(" ")
         result.append(character if i + 1 >= len(name) or name[i + 1] in string.ascii_uppercase else character.lower())
@@ -163,6 +163,7 @@ def read_techplot_file(filename, columns=(0, 1)):
     """
     start_values = False
     try:
+        print filename
         datafile = codecs.open(filename, encoding="cp1252")
     except IOError:
         raise PlotError("datafile could not be opened")

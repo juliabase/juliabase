@@ -23,14 +23,14 @@ from __future__ import division
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from samples import models, permissions
-from django.http import HttpResponsePermanentRedirect
+from django.http import HttpResponsePermanentRedirect, Http404
 import django.core.urlresolvers
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from samples.views import utils
-from chantal_common.utils import help_link
+from chantal_common.utils import help_link, is_json_requested, respond_in_json
 from chantal_common.models import Topic
 
 
@@ -201,3 +201,31 @@ def show_deposition(request, deposition_number):
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).actual_instance
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
+
+
+@login_required
+def show_process(request, process_id):
+    u"""Show an existing physical process.  This is some sort of fallback view
+    in case a process doesn't provide its own show view.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the ID or the process
+
+    :type request: ``HttpRequest``
+    :type process_id: unicode
+
+    :Return:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    process = get_object_or_404(models.Process, id=utils.convert_id_to_int(process_id)).actual_instance
+    if not isinstance(process, models.PhysicalProcess):
+        raise Http404(u"No physical process with that ID was found.")
+    permissions.assert_can_view_physical_process(request.user, process)
+    if is_json_requested(request):
+        return respond_in_json(process.get_data().to_dict())
+    template_context = {"title": unicode(process), "samples": process.samples.all(), "process": process}
+    template_context.update(utils.digest_process(process, request.user))
+    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
