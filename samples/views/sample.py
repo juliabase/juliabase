@@ -732,8 +732,8 @@ def search(request):
     if request.method == "POST":
         sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
                          if value == u"on")
-        samples = base_query.in_bulk(sample_ids)
-        request.user.my_samples.add(*samples.values())
+        samples = base_query.in_bulk(sample_ids).values()
+        request.user.my_samples.add(*samples)
     add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
                                for sample in found_samples]
     return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
@@ -789,7 +789,7 @@ def advanced_search(request):
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
                                      if value == u"on")
-                    samples = [sample for sample in base_query.in_bulk(sample_ids).values() if sample in results]
+                    samples = base_query.in_bulk(sample_ids).values()
                     request.user.my_samples.add(*samples)
                 my_samples = request.user.my_samples.all()
                 add_forms = [AddToMySamplesForm(prefix="0-" + str(sample.pk)) if sample not in my_samples else None
