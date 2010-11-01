@@ -550,13 +550,13 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_search_tree_node(cls):
-        attributes = [OptionTextField(cls, "operator", "username"), OptionTextField(cls, "external_operator", "name")]
-        attributes.extend(convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
+        search_fields = [OptionTextField(cls, "operator", "username"), OptionTextField(cls, "external_operator", "name")]
+        search_fields.extend(convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
         related_models = {Sample: "samples"}
         related_models.update(
             (related_object.model, related_object.get_accessor_name()) for related_object
             in cls._meta.get_all_related_objects() if not related_object.model.__name__.startswith("Feed"))
-        return SearchTreeNode(cls, related_models, attributes)
+        return SearchTreeNode(cls, related_models, search_fields)
 
 
 class PhysicalProcess(Process):
@@ -855,12 +855,12 @@ class Sample(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
-                      OptionTextField(cls, "current_location"), OptionTextField(cls, "purpose"),
-                      OptionTextField(cls, "tags"), OptionTextField(cls, "topic", "name")]
+        search_fields = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
+                         OptionTextField(cls, "current_location"), OptionTextField(cls, "purpose"),
+                         OptionTextField(cls, "tags"), OptionTextField(cls, "topic", "name")]
         from samples.models import physical_process_models
         related_models = dict((model, "processes") for model in physical_process_models.itervalues())
-        return SearchTreeNode(cls, related_models, attributes)
+        return SearchTreeNode(cls, related_models, search_fields)
 
 
 class SampleAlias(models.Model):
@@ -1335,11 +1335,11 @@ class SampleSeries(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        attributes = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
-                      OptionDateTimeField(cls, "timestamp"), OptionTextField(cls, "description"),
-                      OptionTextField(cls, "topic", "name")]
+        search_fields = [OptionTextField(cls, "name"), OptionTextField(cls, "currently_responsible_person", "username"),
+                         OptionDateTimeField(cls, "timestamp"), OptionTextField(cls, "description"),
+                         OptionTextField(cls, "topic", "name")]
         related_models = {Sample: "samples", Result: "results"}
-        return SearchTreeNode(cls, related_models, attributes)
+        return SearchTreeNode(cls, related_models, search_fields)
 
 
 class Initials(models.Model):

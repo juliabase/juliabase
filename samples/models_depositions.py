@@ -139,5 +139,5 @@ class Layer(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        attributes = convert_fields_to_search_fields(cls)
-        return SearchTreeNode(cls, {}, attributes)
+        search_fields = convert_fields_to_search_fields(cls)
+        return SearchTreeNode(cls, {}, search_fields)
