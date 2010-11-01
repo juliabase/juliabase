@@ -28,7 +28,9 @@ copyright holder, you must destroy it immediately and completely.
 {% if search_performed %}
   <form method="post" action="">
     {% if results %}
-      <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
+      {% if something_to_add %}
+        <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
+      {% endif %}
       <ul>
         {% for result, add_form in results %}
           <li><a href="{{ result.get_absolute_url }}">{{ result }}</a>

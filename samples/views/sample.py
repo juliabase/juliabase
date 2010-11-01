@@ -803,7 +803,8 @@ def advanced_search(request):
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
     content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree,
-                    "results": zip(results, add_forms), "search_performed": search_performed}
+                    "results": zip(results, add_forms), "search_performed": search_performed,
+                    "something_to_add": any(add_forms)}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 
