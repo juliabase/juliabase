@@ -784,7 +784,7 @@ def advanced_search(request):
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
-            results = model_tree.get_search_results()
+            results = model_tree.get_search_results(base_query=base_query)
             if model_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
