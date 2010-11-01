@@ -16,12 +16,14 @@
 u"""Models in the relational database for Chantal-Common.
 """
 
+from __future__ import absolute_import
 import hashlib
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+import chantal_common.search
 
 
 languages = (
@@ -97,6 +99,20 @@ class Topic(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    @classmethod
+    def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
+        search_fields = [chantal_common.search.TextSearchField(cls, "name")]
+        related_models = {}
+        return chantal_common.search.SearchTreeNode(cls, related_models, search_fields)
 
     def get_name_for_user(self, user):
         u"""Determine the topic's name that can be shown to a certain user.  If
