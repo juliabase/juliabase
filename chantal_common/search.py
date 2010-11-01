@@ -495,7 +495,6 @@ class SearchTreeNode(object):
         for search_field in self.search_fields:
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
-        print base_query is not None
         result = base_query if base_query is not None else self.model_class.objects.filter(**kwargs)
         kwargs = {}
         for child in self.children:
