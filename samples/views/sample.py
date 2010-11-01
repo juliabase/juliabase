@@ -785,7 +785,7 @@ def advanced_search(request):
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
-            results, too_many_results = chantal_common.search.get_search_results(model_tree, base_query)
+            results, too_many_results = chantal_common.search.get_search_results(model_tree, max_results, base_query)
             if model_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
