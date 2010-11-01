@@ -369,6 +369,14 @@ def get_model(model_name):
     return all_models[model_name]
 
 
+def get_search_results(search_tree, max_results, base_query=None):
+    results = search_tree.get_query_set(base_query)
+    too_many_results = results.count() > max_results
+    if too_many_results:
+        resuls = results[:max_results]
+    return search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values(), too_many_results
+    
+
 class SearchTreeNode(object):
     u"""Class which represents one node in the seach tree.  It is associated
     with a model class.
@@ -467,23 +475,21 @@ class SearchTreeNode(object):
         if self.related_models:
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
-    def get_search_results(self, top_level=True, base_query=None):
+    def get_query_set(self, base_query=None):
         u"""Returns all model instances matching the search.
 
         :Parameters:
-          - `top_level`: whether this is the top-level node of the tree
           - `base_query`: the query set to be used as the starting point of the
-            query; it is only given if ``top_level==True``, and even then, it
-            is optional; it is used to restrict the found items to what the
-            user is allowed to see
+            query; it is only given at top level, and even then, it is
+            optional; it is used to restrict the found items to what the user
+            is allowed to see
 
-        :type top_level: bool
         :type base_query: ``QuerySet``
 
         :Return:
           the search results
 
-        :rtype: list of ``Model``
+        :rtype: ``QuerySet``
         """
         kwargs = {}
         for search_field in self.search_fields:
@@ -494,12 +500,9 @@ class SearchTreeNode(object):
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__pk__in"
-                kwargs[name] = child[1].get_search_results(False)
+                kwargs[name] = child[1].get_query_set()
         result = result.filter(**kwargs)
-        if top_level:
-            return self.model_class.objects.in_bulk(list(result.values_list("pk", flat=True))).values()
-        else:
-            return result.values("pk")
+        return result.values("pk")
 
     def is_valid(self):
         u"""Returns whether the whole tree contains only bound and valid
