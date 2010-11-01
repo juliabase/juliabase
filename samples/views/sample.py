@@ -769,6 +769,7 @@ def advanced_search(request):
     model_list = [models.Sample, models.SampleSeries, models.Result] + models.physical_process_models.values()
     model_tree = None
     results, add_forms = [], []
+    too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
@@ -784,7 +785,7 @@ def advanced_search(request):
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
-            results = model_tree.get_search_results(base_query=base_query)
+            results, too_many_results = chantal_common.search.get_search_results(model_tree, max_results, base_query)
             if model_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
@@ -804,7 +805,7 @@ def advanced_search(request):
     root_form.fields["_model"].label = u""
     content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree,
                     "results": zip(results, add_forms), "search_performed": search_performed,
-                    "something_to_add": any(add_forms)}
+                    "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 
