@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-30 16:28+0200\n"
-"PO-Revision-Date: 2010-10-30 16:29+0200\n"
+"POT-Creation-Date: 2010-10-31 16:51+0100\n"
+"PO-Revision-Date: 2010-10-31 16:52+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -126,11 +126,19 @@ msgstr "Fehlerseite"
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: search.py:107
-msgid "flow rate"
-msgstr "Flussrate"
+#: search.py:143
+msgid "doesn't matter"
+msgstr "egal"
 
-#: search.py:115
+#: search.py:143
+msgid "yes"
+msgstr "ja"
+
+#: search.py:143
+msgid "no"
+msgstr "nein"
+
+#: search.py:152
 msgid "containing"
 msgstr "enthaltend"
 
@@ -342,6 +350,9 @@ msgstr "Ja"
 #: templatetags/chantal.py:154
 msgid "No"
 msgstr "Nein"
+
+#~ msgid "flow rate"
+#~ msgstr "Flussrate"
 
 #~ msgid "settings last modified"
 #~ msgstr "letzte Änderung der Einstellungen"

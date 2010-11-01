@@ -168,7 +168,7 @@ def get_model(model_name):
     return all_models[model_name]
 
 
-class ModelField(object):
+class SearchTreeNode(object):
 
     def __init__(self, model_class, related_models, attributes):
         self.related_models = related_models
