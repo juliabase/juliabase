@@ -373,7 +373,7 @@ def get_search_results(search_tree, max_results, base_query=None):
     results = search_tree.get_query_set(base_query)
     too_many_results = results.count() > max_results
     if too_many_results:
-        resuls = results[:max_results]
+        results = results[:max_results]
     return search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values(), too_many_results
     
 
@@ -495,6 +495,7 @@ class SearchTreeNode(object):
         for search_field in self.search_fields:
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
+        print base_query is not None
         result = base_query if base_query is not None else self.model_class.objects.filter(**kwargs)
         kwargs = {}
         for child in self.children:
