@@ -768,7 +768,7 @@ def advanced_search(request):
     """
     model_list = [models.Sample, models.SampleSeries] + models.physical_process_models.values()
     model_tree = None
-    results = []
+    results, add_forms = [], []
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
@@ -785,14 +785,25 @@ def advanced_search(request):
             else:
                 base_query = None
             results = model_tree.get_search_results()
+            if model_tree.model_class == models.Sample:
+                if request.method == "POST":
+                    sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
+                                     if value == u"on")
+                    samples = [sample for sample in base_query.in_bulk(sample_ids).values() if sample in results]
+                    request.user.my_samples.add(*samples)
+                my_samples = request.user.my_samples.all()
+                add_forms = [AddToMySamplesForm(prefix="0-" + str(sample.pk)) if sample not in my_samples else None
+                             for sample in results]
+            else:
+                add_forms = len(results) * [None]
             search_performed = True
         root_form = chantal_common.search.SearchModelForm(
             model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"]})
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
-    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree, "results": results,
-                    "search_performed": search_performed}
+    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree,
+                    "results": zip(results, add_forms), "search_performed": search_performed}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 

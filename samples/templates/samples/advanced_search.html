@@ -30,8 +30,12 @@ copyright holder, you must destroy it immediately and completely.
     {% if results %}
       <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
       <ul>
-        {% for result in results %}
-          <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
+        {% for result, add_form in results %}
+          <li><a href="{{ result.get_absolute_url }}">{{ result }}</a>
+            {% if add_form %}
+              {{ add_form.add_to_my_samples }}
+            {% endif %}
+          </li>
         {% endfor %}
       </ul>
     {% else %}
