@@ -403,13 +403,18 @@ class SearchTreeNode(object):
         if self.related_models:
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
-    def get_search_results(self, top_level=True):
+    def get_search_results(self, top_level=True, base_query=None):
         u"""Returns all model instances matching the search.
 
         :Parameters:
           - `top_level`: whether this is the top-level node of the tree
+          - `base_query`: the query set to be used as the starting point of the
+            query; it is only given if ``top_level==True``, and even then, it
+            is optional; it is used to restrict the found items to what the
+            user is allowed to see
 
         :type top_level: bool
+        :type base_query: ``QuerySet``
 
         :Return:
           the search results
@@ -420,7 +425,7 @@ class SearchTreeNode(object):
         for search_field in self.search_fields:
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
-        result = self.model_class.objects.filter(**kwargs)
+        result = base_query if base_query is not None else self.model_class.objects.filter(**kwargs)
         kwargs = {}
         for child in self.children:
             if child[1]:
