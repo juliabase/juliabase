@@ -39,7 +39,7 @@ from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
-from chantal_common.search import *
+from chantal_common import search
 from samples.data_tree import DataNode, DataItem
 
 
@@ -550,13 +550,15 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_search_tree_node(cls):
-        search_fields = [TextSearchField(cls, "operator", "username"), TextSearchField(cls, "external_operator", "name")]
-        search_fields.extend(convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
+        search_fields = [search.TextSearchField(cls, "operator", "username"),
+                         search.TextSearchField(cls, "external_operator", "name")]
+        search_fields.extend(
+            search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
         related_models = {Sample: "samples"}
         related_models.update(
             (related_object.model, related_object.get_accessor_name()) for related_object
             in cls._meta.get_all_related_objects() if not related_object.model.__name__.startswith("Feed"))
-        return SearchTreeNode(cls, related_models, search_fields)
+        return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class PhysicalProcess(Process):
@@ -855,12 +857,13 @@ class Sample(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        search_fields = [TextSearchField(cls, "name"), TextSearchField(cls, "currently_responsible_person", "username"),
-                         TextSearchField(cls, "current_location"), TextSearchField(cls, "purpose"),
-                         TextSearchField(cls, "tags"), TextSearchField(cls, "topic", "name")]
+        search_fields = [search.TextSearchField(cls, "name"),
+                         search.TextSearchField(cls, "currently_responsible_person", "username"),
+                         search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
+                         search.TextSearchField(cls, "tags"), search.TextSearchField(cls, "topic", "name")]
         from samples.models import physical_process_models
         related_models = dict((model, "processes") for model in physical_process_models.itervalues())
-        return SearchTreeNode(cls, related_models, search_fields)
+        return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class SampleAlias(models.Model):
@@ -1335,11 +1338,12 @@ class SampleSeries(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        search_fields = [TextSearchField(cls, "name"), TextSearchField(cls, "currently_responsible_person", "username"),
-                         DateTimeSearchField(cls, "timestamp"), TextSearchField(cls, "description"),
-                         TextSearchField(cls, "topic", "name")]
+        search_fields = [search.TextSearchField(cls, "name"),
+                         search.TextSearchField(cls, "currently_responsible_person", "username"),
+                         search.DateTimeSearchField(cls, "timestamp"), search.TextSearchField(cls, "description"),
+                         search.TextSearchField(cls, "topic", "name")]
         related_models = {Sample: "samples", Result: "results"}
-        return SearchTreeNode(cls, related_models, search_fields)
+        return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class Initials(models.Model):

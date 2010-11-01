@@ -28,7 +28,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import PhysicalProcess
 from samples.data_tree import DataNode, DataItem
-from chantal_common.search import *
+from chantal_common import search
 
 default_location_of_deposited_samples = {}
 u"""Dictionary mapping process classes to strings which contain the default
@@ -139,5 +139,5 @@ class Layer(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        search_fields = convert_fields_to_search_fields(cls)
-        return SearchTreeNode(cls, {}, search_fields)
+        search_fields = search.convert_fields_to_search_fields(cls)
+        return search.SearchTreeNode(cls, {}, search_fields)
