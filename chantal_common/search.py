@@ -22,7 +22,7 @@ from django.db.models import get_models, get_app
 from django.db import models
 
 
-def convert_fields_to_attributes(cls, excluded_fieldnames=[]):
+def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
     attributes = []
     for field in cls._meta.fields:
         if field.name not in excluded_fieldnames + ["id", "actual_object_id"]:
