@@ -551,7 +551,7 @@ class Process(PolymorphicModel):
     @classmethod
     def get_search_tree_node(cls):
         attributes = [OptionTextField(cls, "operator", "username"), OptionTextField(cls, "external_operator", "name")]
-        attributes.extend(convert_fields_to_attributes(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
+        attributes.extend(convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
         related_models = {Sample: "samples"}
         related_models.update(
             (related_object.model, related_object.get_accessor_name()) for related_object
