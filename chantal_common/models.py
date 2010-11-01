@@ -101,7 +101,7 @@ class Topic(models.Model):
         return unicode(self.name)
 
     @classmethod
-    def get_model_field(cls):
+    def get_search_tree_node(cls):
         attributes = [chantal_common.search.OptionTextField(cls, "name")]
         related_models = {}
         return chantal_common.search.SearchTreeNode(cls, related_models, attributes)

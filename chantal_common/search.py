@@ -191,7 +191,7 @@ class SearchTreeNode(object):
             if not search_model_form.is_valid():
                 break
             model_name = data[new_prefix + "-_model"]
-            model_field = get_model(model_name).get_model_field()
+            model_field = get_model(model_name).get_search_tree_node()
             parse_model = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
             model_field.parse_data(data if parse_model else None, new_prefix)
             search_model_form = SearchModelForm(self.related_models.keys(),
