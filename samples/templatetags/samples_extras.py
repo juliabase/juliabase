@@ -488,19 +488,19 @@ def value_split_field(parser, token):
 @register.simple_tag
 def display_search_tree(tree):
     result = u"""<table style="border: 2px solid black; padding-left: 3em">"""
-    for attribute in tree.attributes:
-        error_context = {"form": attribute.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}
+    for search_field in tree.search_fields:
+        error_context = {"form": search_field.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", context_instance=template.Context(error_context))
-        if isinstance(attribute, chantal_common.search.OptionRangeField):
-            field_min = [field for field in attribute.form if field.name.endswith("_min")][0]
-            field_max = [field for field in attribute.form if field.name.endswith("_max")][0]
+        if isinstance(search_field, chantal_common.search.RangeSearchField):
+            field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
+            field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
             help_text = u""" <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else u""
             result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
                 u"""<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
                 help_text=help_text)
         else:
-            for field in attribute.form:
+            for field in search_field.form:
                 help_text = u""" <span class="help">({0})</span>""".format(field.help_text) if field.help_text else u""
                 result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
                     u"""<td class="input">{field}{help_text}</td></tr>""".format(
