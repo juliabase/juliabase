@@ -237,10 +237,10 @@ class IntervalSearchField(RangeSearchField):
     
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False,
-                                                                      help_text=self.field.help_text)
-        self.form.fields[self.field.name + "_max"] = forms.FloatField(label=unicode(self.field.verbose_name), required=False,
-                                                                      help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_min"] = forms.DecimalField(
+            label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_max"] = forms.DecimalField(
+            label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
 
 
 class ChoiceSearchField(SearchField):
