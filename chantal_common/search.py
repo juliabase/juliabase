@@ -491,20 +491,16 @@ class SearchTreeNode(object):
 
         :rtype: ``QuerySet``
         """
-        base_query = None
         result = base_query if base_query is not None else self.model_class.objects
         kwargs = {}
         for search_field in self.search_fields:
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
         result = result.filter(**kwargs)
-        kwargs = {}
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__pk__in"
-                kwargs[name] = child[1].get_query_set()
-        for key, value in kwargs.iteritems():
-            result = result.filter(**{key: value})
+                result = result.filter(**{name, child[1].get_query_set()})
         return result.values("pk")
 
     def is_valid(self):
