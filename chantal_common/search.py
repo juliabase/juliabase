@@ -491,6 +491,7 @@ class SearchTreeNode(object):
 
         :rtype: ``QuerySet``
         """
+        base_query = None
         result = base_query if base_query is not None else self.model_class.objects
         kwargs = {}
         for search_field in self.search_fields:
