@@ -767,26 +767,26 @@ def advanced_search(request):
     :rtype: ``HttpResponse``
     """
     model_list = [models.Sample, models.SampleSeries, models.Result] + models.physical_process_models.values()
-    model_tree = None
+    search_tree = None
     results, add_forms = [], []
     too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
-        model_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_search_tree_node()
-        parse_model = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
-        model_tree.parse_data(request.GET if parse_model else None, "")
-        if model_tree.is_valid():
-            if model_tree.model_class == models.Sample:
+        search_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_search_tree_node()
+        parse_tree = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
+        search_tree.parse_data(request.GET if parse_tree else None, "")
+        if search_tree.is_valid():
+            if search_tree.model_class == models.Sample:
                 base_query = restricted_samples_query(request.user)
-            elif model_tree.model_class == models.SampleSeries:
+            elif search_tree.model_class == models.SampleSeries:
                 base_query = models.SampleSeries.objects.filter(
                     Q(topic__confidential=False) | Q(topic__members=request.user) |
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
-            results, too_many_results = chantal_common.search.get_search_results(model_tree, max_results, base_query)
-            if model_tree.model_class == models.Sample:
+            results, too_many_results = chantal_common.search.get_search_results(search_tree, max_results, base_query)
+            if search_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
                                      if value == u"on")
@@ -803,7 +803,7 @@ def advanced_search(request):
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
-    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "model_tree": model_tree,
+    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "search_tree": search_tree,
                     "results": zip(results, add_forms), "search_performed": search_performed,
                     "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
