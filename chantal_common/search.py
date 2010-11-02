@@ -502,7 +502,8 @@ class SearchTreeNode(object):
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__pk__in"
                 kwargs[name] = child[1].get_query_set()
-        result = result.filter(**kwargs)
+        for key, value in kwargs.iteritems():
+            result = result.filter(**{key: value})
         return result.values("pk")
 
     def is_valid(self):
