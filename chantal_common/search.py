@@ -463,14 +463,14 @@ class SearchTreeNode(object):
             if not search_model_form.is_valid():
                 break
             model_name = data[new_prefix + "-_model"]
-            model_field = get_model(model_name).get_search_tree_node()
-            parse_model = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
-            model_field.parse_data(data if parse_model else None, new_prefix)
+            node = get_model(model_name).get_search_tree_node()
+            parse_node = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
+            node.parse_data(data if parse_node else None, new_prefix)
             search_model_form = SearchModelForm(self.related_models.keys(),
                                                 initial={"_old_model": search_model_form.cleaned_data["_model"],
                                                          "_model": search_model_form.cleaned_data["_model"]},
                                                 prefix=new_prefix)
-            self.children.append((search_model_form, model_field))
+            self.children.append((search_model_form, node))
             i += 1
         if self.related_models:
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
@@ -497,10 +497,10 @@ class SearchTreeNode(object):
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
         result = result.filter(**kwargs)
-        for child in self.children:
-            if child[1]:
-                name = self.related_models[child[1].model_class] + "__pk__in"
-                result = result.filter(**{name: child[1].get_query_set()})
+        for __, node in self.children:
+            if node:
+                name = self.related_models[node.model_class] + "__pk__in"
+                result = result.filter(**{name: node.get_query_set()})
         return result.values("pk")
 
     def is_valid(self):
@@ -518,7 +518,7 @@ class SearchTreeNode(object):
         for search_field in self.search_fields:
             is_all_valid = is_all_valid and search_field.is_valid()
         if self.children:
-            for child in self.children:
-                if child[1]:
-                    is_all_valid = is_all_valid and child[1].is_valid()
+            for __, node in self.children:
+                if node:
+                    is_all_valid = is_all_valid and node.is_valid()
         return is_all_valid
