@@ -497,12 +497,10 @@ class SearchTreeNode(object):
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
         result = result.filter(**kwargs)
-        kwargs = {}
         for child in self.children:
             if child[1]:
                 name = self.related_models[child[1].model_class] + "__pk__in"
-                kwargs[name] = child[1].get_query_set()
-        result = result.filter(**kwargs)
+                result = result.filter(**{name: child[1].get_query_set()})
         return result.values("pk")
 
     def is_valid(self):
