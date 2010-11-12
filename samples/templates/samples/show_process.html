@@ -14,9 +14,34 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
+{% load chantal %}
 {% load samples_extras %}
 
+{% block content_title %}{% endblock %}
+
 {% block frame_content %}
+        {% spaceless %}
+          <h1>
+            {{ title }}{% if edit_url %}<a class="edit-icon" 
+                                             href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
+                     width="16" height="16"/></a>
+            {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
+                     width="16" height="16"/></a>
+            {% endif %}{% if export_url %}<a class="edit-icon" 
+                    href="{{ export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
+                     width="16" height="16"/></a>
+            {% endif %}{% if resplit_url %}<a class="edit-icon" 
+                     href="{{ resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+               ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
+                     width="16" height="16"/></a>
+            {% endif %}
+            {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
+                                                        >{% trans "(not finished)" %}</span>{% endif %}
+          </h1>
+        {% endspaceless %}
   <div class="process">
     <p class="operator_and_timestamp">
       {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
@@ -56,11 +81,5 @@ copyright holder, you must destroy it immediately and completely.
     {% endif %}
               
     {{ html_body }}
-
-    {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% trans 'Edit this process' %}</a></p>{% endif %}
-    {% if export_url %}<p><a class="edit-button" href="{{ export_url }}"
-                             >{% trans 'Export this process' %}</a></p>{% endif %}
-    {% if duplicate_url %}<p><a class="duplicate-button" href="{{ duplicate_url }}"
-                                >{% trans 'Duplicate this process' %}</a></p>{% endif %}
   </div>
 {% endblock %}
