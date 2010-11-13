@@ -828,3 +828,25 @@ def export(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request.user)
     return table_export.export(request, sample.get_data_for_table_export(), _(u"process"))
+
+
+def qr_code(request):
+    u"""Generates the QR representation of the given data.  The data is given
+    in the ``data`` query string parameter.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    try:
+        data = request.GET["data"]
+    except KeyError:
+        raise Http404('GET parameter "data" missing.')
+    return render_to_response("samples/qr_code.html", {"title": _(u"QR code"), "data": data},
+                              context_instance=RequestContext(request))
