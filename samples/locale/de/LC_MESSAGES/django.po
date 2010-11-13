@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-01 16:18+0100\n"
-"PO-Revision-Date: 2010-11-01 18:28+0100\n"
+"POT-Creation-Date: 2010-11-13 10:36+0100\n"
+"PO-Revision-Date: 2010-11-13 10:36+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -128,7 +128,7 @@ msgid "finished"
 msgstr "abgeschlossen"
 
 #: models_common.py:153 models_feeds.py:176 models_feeds.py:199
-#: views/lab_notebook.py:209 views/sample.py:829
+#: views/lab_notebook.py:209 views/sample.py:830
 msgid "process"
 msgstr "Prozess"
 
@@ -847,7 +847,7 @@ msgstr ""
 "Sie dürfen Themen nicht neu anlegen oder auflisten, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: permissions.py:617
+#: permissions.py:618
 msgid ""
 "You are not allowed to change this topic because you don't have the "
 "permission “{0}” or “{1}”."
@@ -855,7 +855,7 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{0}“ fehlt."
 
-#: permissions.py:623
+#: permissions.py:624
 msgid ""
 "You are not allowed to change this topic because you don't have the "
 "permission “{name}”."
@@ -863,14 +863,14 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: permissions.py:628
+#: permissions.py:629
 msgid ""
 "You are not allowed to change this topic because it is confidential and you "
 "are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
 
-#: permissions.py:657
+#: permissions.py:658
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
@@ -879,7 +879,7 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
-#: permissions.py:661
+#: permissions.py:662
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
@@ -912,23 +912,34 @@ msgstr "Thema hinzufügen"
 msgid "search"
 msgstr "suchen"
 
-#: templates/samples/advanced_search.html:32
+#: templates/samples/advanced_search.html:31
+#: templates/samples/search_samples.html:28
+#, python-format
+msgid ""
+"\n"
+"        Too many matches were found.  I show only %(max_results)s of them.\n"
+"      "
+msgstr ""
+"\n"
+"Zu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
+
+#: templates/samples/advanced_search.html:39
 #: templates/samples/search_samples.html:46
 msgid "Mark samples to add them to “My Samples”."
 msgstr "Markieren Sie Proben, um sie zu „Meine Proben“ hinzuzufügen."
 
-#: templates/samples/advanced_search.html:44
+#: templates/samples/advanced_search.html:51
 #: templates/samples/search_depositions.html:41
 #: templates/samples/search_samples.html:48
 msgid "Nothing found."
 msgstr "Nichts gefunden."
 
-#: templates/samples/advanced_search.html:47
+#: templates/samples/advanced_search.html:54
 #: templates/samples/search_samples.html:51
 msgid "add samples"
 msgstr "Proben hinzufügen"
 
-#: templates/samples/advanced_search.html:50
+#: templates/samples/advanced_search.html:57
 msgid "No search was performed yet."
 msgstr "Es ist noch keine Suche durchgeführt worden."
 
@@ -1467,6 +1478,7 @@ msgstr ""
 "Probe übrig.  Die Eltern-Probe wurde daher von „Meine Proben“ entfernt."
 
 #: templates/samples/lab_notebook.html:32
+#: templates/samples/show_process.html:34
 #: templates/samples/show_sample.html:43
 #: templates/samples/show_sample.html:148
 #: templates/samples/show_sample_series.html:33
@@ -1559,6 +1571,7 @@ msgstr "Meine Proben"
 
 #: templates/samples/main_menu.html:24
 #: templates/samples/show_external_operator.html:24
+#: templates/samples/show_process.html:27
 #: templates/samples/show_sample.html:29
 #: templates/samples/show_sample.html:141
 #: templates/samples/show_sample_series.html:23
@@ -1594,7 +1607,7 @@ msgstr "Ergebnis"
 msgid "Search for things"
 msgstr "Nach Dingen suchen"
 
-#: templates/samples/main_menu.html:87 views/sample.py:805
+#: templates/samples/main_menu.html:87 views/sample.py:806
 msgid "Advanced search"
 msgstr "Erweiterte Suche"
 
@@ -1717,21 +1730,19 @@ msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 "Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
 
+#: templates/samples/qr_code.html:21 views/sample.py:851
+msgid "QR code"
+msgstr "QR-Code"
+
 #: templates/samples/search_depositions.html:28
 #, python-format
 msgid ""
 "\n"
 "      Too many matches were found.  I show only %(max_results)s of them.\n"
 "    "
-msgstr "\nZu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
-
-#: templates/samples/search_samples.html:28
-#, python-format
-msgid ""
+msgstr ""
 "\n"
-"        Too many matches were found.  I show only %(max_results)s of them.\n"
-"      "
-msgstr "\nZu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
+"Zu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
 
 #: templates/samples/show_claim.html:21
 msgid "This claim was either approved or withdrawn."
@@ -1774,7 +1785,22 @@ msgstr ""
 "Dieser externe Kontakt ist <em>vertraulich</em>, was bedeutet, daß nur die "
 "aktuelle Kontaktperson seine Daten einsehen kann.\n"
 
-#: templates/samples/show_process.html:27
+#: templates/samples/show_process.html:30
+#: templates/samples/show_sample.html:144
+msgid "duplicate"
+msgstr "duplizieren"
+
+#: templates/samples/show_process.html:38
+#: templates/samples/show_sample.html:152
+msgid "resplit"
+msgstr "weiterspalten"
+
+#: templates/samples/show_process.html:42
+#: templates/samples/show_sample.html:156
+msgid "(not finished)"
+msgstr "(nicht abgeschlossen)"
+
+#: templates/samples/show_process.html:52
 #, python-format
 msgid ""
 "\n"
@@ -1795,7 +1821,7 @@ msgstr[1] ""
 "Dieser Prozess wurde auf die folgenden Proben angewandt: <!-- %(link)s"
 "%(name)s -->"
 
-#: templates/samples/show_process.html:41
+#: templates/samples/show_process.html:66
 #, python-format
 msgid ""
 "\n"
@@ -1815,18 +1841,6 @@ msgstr[1] ""
 "\n"
 "Dieser Prozess wurde auf die folgenden Probenserien angewandt: <!-- %(link)s"
 "%(name)s -->"
-
-#: templates/samples/show_process.html:60
-msgid "Edit this process"
-msgstr "Diesen Prozess editieren"
-
-#: templates/samples/show_process.html:62
-msgid "Export this process"
-msgstr "Diesen Prozess in eine Tabelle exportieren"
-
-#: templates/samples/show_process.html:64
-msgid "Duplicate this process"
-msgstr "Diesen Prozess duplizieren"
 
 #: templates/samples/show_sample.html:25
 msgid "Sample “"
@@ -1880,18 +1894,6 @@ msgstr[0] ""
 msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien:"
-
-#: templates/samples/show_sample.html:144
-msgid "duplicate"
-msgstr "duplizieren"
-
-#: templates/samples/show_sample.html:152
-msgid "resplit"
-msgstr "weiterspalten"
-
-#: templates/samples/show_sample.html:156
-msgid "(not finished)"
-msgstr "(nicht abgeschlossen)"
 
 #: templates/samples/show_sample_death.html:19
 msgid "The sample ceased their existence.  Reason:"
@@ -3009,6 +3011,15 @@ msgstr " und "
 #: views/utils.py:531
 msgid " and "
 msgstr " und "
+
+#~ msgid "Edit this process"
+#~ msgstr "Diesen Prozess editieren"
+
+#~ msgid "Export this process"
+#~ msgstr "Diesen Prozess in eine Tabelle exportieren"
+
+#~ msgid "Duplicate this process"
+#~ msgstr "Diesen Prozess duplizieren"
 
 #~ msgid "Depositions"
 #~ msgstr "Depositionen"
