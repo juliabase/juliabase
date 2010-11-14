@@ -140,7 +140,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 append_error(action_form, _(u"If you copy samples over to another person who cannot fully view one of the "
                                             u"samples, you must select a clearance option."), "clearance")
                 referentially_valid = False
-        if action_data["clearance"]:
+        if action_data["clearance"] is not None:
             failed_samples = []
             for sample in my_samples_form.cleaned_data["samples"]:
                 try:
