@@ -64,7 +64,10 @@ def translate_permission(permission_codename):
     :rtype: unicode
     """
     permission_codename = permission_codename.partition(".")[2]
-    return ugettext(django.contrib.auth.models.Permission.objects.get(codename=permission_codename).name)
+    try:
+        return ugettext(django.contrib.auth.models.Permission.objects.get(codename=permission_codename).name)
+    except django.contrib.auth.models.Permission.DoesNotExist:
+        return _(u"[not available]")
 
 
 def get_user_permissions(user):
