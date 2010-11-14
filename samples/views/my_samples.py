@@ -140,13 +140,25 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 append_error(action_form, _(u"If you copy samples over to another person who cannot fully view one of the "
                                             u"samples, you must select a clearance option."), "clearance")
                 referentially_valid = False
+        if action_data["clearance"] is not None:
+            failed_samples = []
+            for sample in my_samples_form.cleaned_data["samples"]:
+                try:
+                    permissions.get_sample_clearance(current_user, sample)
+                except permissions.PermissionError:
+                    failed_samples.append(sample)
+            if failed_samples:
+                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples:") + u" " +
+                             utils.format_enumeration(failed_samples), "samples")
+                referentially_valid = False
     return referentially_valid
 
 
-def enforce_clearance(clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
+def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
     u"""Unblocks specified processes of a sample for a given user.
 
     :Parameters:
+      - `user`: the user who unblocks the processes
       - `clearance_processes`: all process classes that the destination user
         should be able to see; ``"all"`` means all processes
       - `destination_user`: the user for whom the sample should be unblocked
@@ -160,6 +172,7 @@ def enforce_clearance(clearance_processes, destination_user, sample, clearance=N
         upwards.  It is a similar algorithm as the one used in
         `samples.views.sample.SamplesAndProcesses`.
 
+    :type user: ``django.contrib.auth.models.User``
     :type clearance_processes: tuple of `models.Process`, or str
     :type destination_user: ``django.contrib.auth.models.User``
     :type sample: `models.Sample`
@@ -171,11 +184,17 @@ def enforce_clearance(clearance_processes, destination_user, sample, clearance=N
     base_query = sample.processes.filter(finished=True)
     processes = base_query if not cutoff_timestamp else base_query.filter(timestamp__lte=cutoff_timestamp)
     for process in processes:
-        if clearance_processes == "all" or process.content_type.model_class() in clearance_processes:
+        class_ = process.content_type.model_class()
+        if issubclass(class_, models.Result) and permissions.has_permission_to_view_result_process(user, process):
             clearance.processes.add(process)
+        elif issubclass(class_, models.PhysicalProcess) and \
+                permissions.has_permission_to_view_physical_process(user, process):
+            if clearance_processes == "all" or class_ in clearance_processes:
+                clearance.processes.add(process)
     split_origin = sample.split_origin
     if split_origin:
-        enforce_clearance(clearance_processes, destination_user, split_origin.parent, clearance, split_origin.timestamp)
+        enforce_clearance(user, clearance_processes, destination_user, split_origin.parent, clearance,
+                          split_origin.timestamp)
 
 
 def save_to_database(user, my_samples_form, action_form):
@@ -223,7 +242,7 @@ def save_to_database(user, my_samples_form, action_form):
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
             if action_data["clearance"] is not None:
-                enforce_clearance(action_data["clearance"], action_data["copy_to_user"], sample)
+                enforce_clearance(user, action_data["clearance"], action_data["copy_to_user"], sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
     feed_reporter = feed_utils.Reporter(user)

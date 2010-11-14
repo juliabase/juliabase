@@ -204,14 +204,7 @@ def lookup_sample(sample_name, user, with_clearance=False):
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
     if with_clearance:
-        clearance = None
-        try:
-            permissions.assert_can_fully_view_sample(user, sample)
-        except permissions.PermissionError as error:
-            try:
-                clearance = models.Clearance.objects.get(user=user, sample=sample)
-            except models.Clearance.DoesNotExist:
-                raise error
+        clearance = permissions.get_sample_clearance(user, sample)
         return sample, clearance
     else:
         permissions.assert_can_fully_view_sample(user, sample)
