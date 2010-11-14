@@ -209,7 +209,8 @@ class PermissionError(Exception):
 
 
 def assert_can_fully_view_sample(user, sample):
-    u"""Tests whether the user can view the sample.
+    u"""Tests whether the user can view the sample fully, i.e. without needing
+    a clearance.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -219,7 +220,7 @@ def assert_can_fully_view_sample(user, sample):
     :type sample: `models.Sample`
 
     :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view the
+      - `PermissionError`: raised if the user is not allowed to fully view the
         sample.
     """
     if sample.topic and sample.topic not in user.topics.all() and sample.currently_responsible_person != user and \
@@ -232,6 +233,38 @@ def assert_can_fully_view_sample(user, sample):
             description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             u"its currently responsible person, nor can you view all samples.")
             raise PermissionError(user, description, new_topic_would_help=True)
+
+
+def get_sample_clearance(user, sample):
+    u"""Retuns the clearance a user needs to visit a sample, if he needs one at
+    all.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `sample`: the sample to be shown
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample: `models.Sample`
+
+    :Return:
+      the clearance for the user and sample, or ``None`` if the user doesn't
+      need a clearance to visit the sample
+
+    :rtype: `samples.models.Clearance` or ``NoneType``
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to view the
+        sample.
+    """
+    clearance = None
+    try:
+        assert_can_fully_view_sample(user, sample)
+    except PermissionError as error:
+        try:
+            clearance = samples.models.Clearance.objects.get(user=user, sample=sample)
+        except samples.models.Clearance.DoesNotExist:
+            raise error
+    return clearance
 
 
 def assert_can_add_physical_process(user, process_class):

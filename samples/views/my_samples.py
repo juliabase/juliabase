@@ -140,6 +140,17 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 append_error(action_form, _(u"If you copy samples over to another person who cannot fully view one of the "
                                             u"samples, you must select a clearance option."), "clearance")
                 referentially_valid = False
+        if action_data["clearance"]:
+            failed_samples = []
+            for sample in my_samples_form.cleaned_data["samples"]:
+                try:
+                    permissions.get_sample_clearance(current_user, sample)
+                except permissions.PermissionError:
+                    failed_samples.append(sample)
+            if failed_samples:
+                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples: ") +
+                             utils.format_enumeration(failed_samples), "samples")
+                referentially_valid = False
     return referentially_valid
 
 
