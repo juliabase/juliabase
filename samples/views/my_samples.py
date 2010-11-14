@@ -148,7 +148,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 except permissions.PermissionError:
                     failed_samples.append(sample)
             if failed_samples:
-                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples: ") +
+                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples:") + u" " +
                              utils.format_enumeration(failed_samples), "samples")
                 referentially_valid = False
     return referentially_valid
