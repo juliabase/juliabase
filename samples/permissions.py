@@ -368,7 +368,7 @@ def assert_can_view_physical_process(user, process):
       - `PermissionError`: raised if the user is not allowed to view the
         process.
     """
-    process_class = process.__class__
+    process_class = process.content_type.model_class()
     codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
         has_add_permission = user.has_perm("{app_label}.{codename}".format(
