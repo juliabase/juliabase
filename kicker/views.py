@@ -18,15 +18,16 @@ import datetime, time, socket, os, subprocess
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
+from django import forms
 from django.conf import settings
 from django.template import RequestContext
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext as _
-from chantal_common.utils import respond_in_json, JSONRequestException, get_really_full_name
+from chantal_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response
 from samples.views import utils
 from . import models
 
@@ -283,9 +284,35 @@ def update_plot():
 def summary(request):
     update_plot()
     eligible_players = get_eligible_players()
-    print eligible_players
     return render_to_response("kicker/summary.html", {
         "title": _(u"Kicker summary"),
         "kicker_numbers": [(entry[0].kicker_user_details.nickname or get_really_full_name(entry[0]), entry[1])
                            for entry in eligible_players]},
         context_instance=RequestContext(request))
+
+
+class UserDetailsForm(forms.ModelForm):
+    u"""Model form for user preferences.  I exhibit only two fields here,
+    namely the nickname and the shortkey.
+    """
+    class Meta:
+        model = models.UserDetails
+        fields = ("nickname", "shortkey")
+
+
+@login_required
+def edit_user_details(request, username):
+    user = get_object_or_404(django.contrib.auth.models.User, username=username)
+    if not request.user.is_staff and request.user != user:
+        raise Http404(u"You can't access the user details of another user.")
+    user_details = user.kicker_user_details
+    if request.method == "POST":
+        user_details_form = UserDetailsForm(request.POST, instance=user_details)
+        if user_details_form.is_valid():
+            user_details_form.save()
+            return successful_response(request, _(u"The preferences were successfully updated."))
+    else:
+        user_details_form = UserDetailsForm(instance=user_details)
+    return render_to_response("kicker/user_details.html", {
+            "title": _(u"Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
+            "user_details": user_details_form}, context_instance=RequestContext(request))
