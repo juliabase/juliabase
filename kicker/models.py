@@ -80,8 +80,8 @@ class UserDetails(models.Model):
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
                                 related_name="kicker_user_details")
-    nickname = models.CharField(_(u"nickname"), max_length=30, blank=True, unique=True)
-    shortkey = models.CharField(_(u"shortkey"), max_length=1, blank=True, unique=True)
+    nickname = models.CharField(_(u"nickname"), max_length=30, blank=True)
+    shortkey = models.CharField(_(u"shortkey"), max_length=1, blank=True)
 
     class Meta:
         verbose_name = _(u"user details")
