@@ -296,13 +296,13 @@ class UserDetailsForm(forms.ModelForm):
     namely the nickname and the shortkey.
     """
 
-    def clean_nickname(self, value):
+    def clean_nickname(self):
         nickname = self.cleaned_data["nickname"]
         if nickname and models.UserDetails.filter(nickname=nickname).exists():
             raise ValidationError(_(u"This nickname is already given."))
         return nickname
 
-    def clean_shortkey(self, value):
+    def clean_shortkey(self):
         shortkey = self.cleaned_data["shortkey"]
         if shortkey and models.UserDetails.filter(shortkey=shortkey).exists():
             raise ValidationError(_(u"This shortkey is already given."))
