@@ -296,16 +296,19 @@ class UserDetailsForm(forms.ModelForm):
     u"""Model form for user preferences.  I exhibit only two fields here,
     namely the nickname and the shortkey.
     """
+    def __init__(self, user, *args, **kwargs):
+        super(UserDetailsForm, self).__init__(*args, **kwargs)
+        self.user = user
 
     def clean_nickname(self):
         nickname = self.cleaned_data["nickname"]
-        if nickname and models.UserDetails.objects.filter(nickname=nickname).exists():
+        if nickname and models.UserDetails.objects.exclude(user=self.user).filter(nickname=nickname).exists():
             raise ValidationError(_(u"This nickname is already given."))
         return nickname
 
     def clean_shortkey(self):
         shortkey = self.cleaned_data["shortkey"]
-        if shortkey and models.UserDetails.objects.filter(shortkey=shortkey).exists():
+        if shortkey and models.UserDetails.objects.exclude(user=self.user).filter(shortkey=shortkey).exists():
             raise ValidationError(_(u"This shortkey is already given."))
         return shortkey
 
