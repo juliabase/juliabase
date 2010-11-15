@@ -19,6 +19,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
 from django import forms
+from django.forms.util import ValidationError
 from django.conf import settings
 from django.template import RequestContext
 from django.db.models import Q
@@ -298,13 +299,13 @@ class UserDetailsForm(forms.ModelForm):
 
     def clean_nickname(self):
         nickname = self.cleaned_data["nickname"]
-        if nickname and models.UserDetails.filter(nickname=nickname).exists():
+        if nickname and models.UserDetails.objects.filter(nickname=nickname).exists():
             raise ValidationError(_(u"This nickname is already given."))
         return nickname
 
     def clean_shortkey(self):
         shortkey = self.cleaned_data["shortkey"]
-        if shortkey and models.UserDetails.filter(shortkey=shortkey).exists():
+        if shortkey and models.UserDetails.objects.filter(shortkey=shortkey).exists():
             raise ValidationError(_(u"This shortkey is already given."))
         return shortkey
 
