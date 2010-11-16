@@ -290,7 +290,7 @@ class Process(PolymorphicModel):
                     figure = Figure(frameon=False, figsize=(4, 3))
                     canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
-                    axes.set_position((0.15, 0.15, 0.8, 0.8))
+                    axes.set_position((0.17, 0.17, 0.8, 0.8))
                     axes.grid(True)
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
