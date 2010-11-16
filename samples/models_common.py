@@ -300,7 +300,7 @@ class Process(PolymorphicModel):
                     canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
                     axes.grid(True)
-                    axes.set_title(unicode(self))
+#                    axes.set_title(unicode(self))
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                     shared_utils.mkdirs(plot_locations["plot_file"])
                     canvas.print_figure(plot_locations["plot_file"], format="pdf")
