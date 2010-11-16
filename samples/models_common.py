@@ -280,17 +280,17 @@ class Process(PolymorphicModel):
             return None, None
         plot_locations = self.calculate_plot_locations(number)
         thumbnail_necessary = not os.path.exists(plot_locations["thumbnail_file"]) or \
-            any(os.stat(plot_locations["thumbnail_file"]).st_mtime < os.stat(filename).st_mtime
+            any(os.path.getmtime(plot_locations["thumbnail_file"]) < os.path.getmtime(filename)
                 for filename in datafile_names)
         figure_necessary = not os.path.exists(plot_locations["plot_file"]) or \
-            any(os.stat(plot_locations["plot_file"]).st_mtime < os.stat(filename).st_mtime for filename in datafile_names)
+            any(os.path.getmtime(plot_locations["plot_file"]) < os.path.getmtime(filename) for filename in datafile_names)
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
                     figure = Figure(frameon=False, figsize=(4, 3))
                     canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
-                    axes.set_position((0.15, 0.15, 0.8, 0.8))
+                    axes.set_position((0.17, 0.16, 0.78, 0.78))
                     axes.grid(True)
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
@@ -300,8 +300,8 @@ class Process(PolymorphicModel):
                     canvas = FigureCanvasAgg(figure)
                     axes = figure.add_subplot(111)
                     axes.grid(True)
-                    self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                     axes.set_title(unicode(self))
+                    self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                     shared_utils.mkdirs(plot_locations["plot_file"])
                     canvas.print_figure(plot_locations["plot_file"], format="pdf")
             except (IOError, shared_utils.PlotError):
@@ -602,8 +602,10 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        u"""Return the URL to the “add” view for this process.  This must be
-        implemented in derived model classes which is actually instantiated.
+        u"""Return the URL to the “add” view for this process.  This should be
+        implemented in derived model classes which is actually instantiated
+        unless this process class should not be explicitly added by users (but
+        is created by the program somehow).
 
         :Return:
           the full URL to the add page for this process
