@@ -602,8 +602,10 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        u"""Return the URL to the “add” view for this process.  This must be
-        implemented in derived model classes which is actually instantiated.
+        u"""Return the URL to the “add” view for this process.  This should be
+        implemented in derived model classes which is actually instantiated
+        unless this process class should not be explicitly added by users (but
+        is created by the program somehow).
 
         :Return:
           the full URL to the add page for this process
