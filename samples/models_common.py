@@ -602,7 +602,7 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        u"""Return the URL to the “add” view for this process.  This should be
+        u"""Returns the URL to the “add” view for this process.  This should be
         implemented in derived model classes which is actually instantiated
         unless this process class should not be explicitly added by users (but
         is created by the program somehow).
@@ -613,6 +613,17 @@ class PhysicalProcess(Process):
         :rtype: str
         """
         raise NotImplementedError
+
+    @classmethod
+    def get_lab_notebook_data(cls, year, month):
+        u"""Returns the data tree for all processes in the given month.  This
+        is a default implementation which may be overridden in derived classes,
+        in particular in classes with sub-objects.
+        """
+        measurements = cls.get_lab_notebook_context(year, month)["processes"]
+        data = DataNode(_(u"lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
+        data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
+        return data
 
 
 class Sample(models.Model):
