@@ -163,7 +163,6 @@ def read_techplot_file(filename, columns=(0, 1)):
     """
     start_values = False
     try:
-        print filename
         datafile = codecs.open(filename, encoding="cp1252")
     except IOError:
         raise PlotError("datafile could not be opened")
