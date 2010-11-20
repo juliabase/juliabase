@@ -181,7 +181,7 @@ def read_techplot_file(filename, columns=(0, 1)):
                 except ValueError:
                     value = float("nan")
                 result_array.append(value)
-        elif line.loser().startswith("begin"):
+        elif line.lower().startswith("begin"):
             start_values = True
     datafile.close()
     return result
