@@ -172,7 +172,7 @@ def show(request, process_name, year_and_month):
         export_url = None
     return render_to_response(
         "samples/lab_notebook.html",
-        {"title": _(u"Lab notebook for {name}").format(name=process_class._meta.verbose_name_plural),
+        {"title": _(u"Lab notebook for {process_name}").format(process_name=process_class._meta.verbose_name_plural),
          "year": year, "month": month, "year_month": year_month_form,
          "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
          "export_url": export_url},
