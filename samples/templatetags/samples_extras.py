@@ -17,7 +17,7 @@ u"""Collection of tags and filters that I found useful for Chantal.
 """
 
 from __future__ import division
-import string, re, sys
+import string, re, sys, decimal
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.template.loader import render_to_string
@@ -56,7 +56,12 @@ def quantity(value, unit=None, autoescape=False):
         u"""Pretty-print a single value.  For the from–to notation, this
         function is called twice.
         """
-        value_string = u"{0:g}".format(number) if isinstance(number, float) else unicode(number)
+        if isinstance(number, float):
+            value_string = u"{0:g}".format(number)
+        elif isinstance(number, decimal.Decimal):
+            value_string = u"{0:g}".format(float(number))
+        else:
+            value_string = unicode(number)
         if autoescape:
             value_string = conditional_escape(value_string)
         result = u""
