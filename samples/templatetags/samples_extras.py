@@ -315,7 +315,7 @@ def flatten_multiline_text(value, separator=u" ● "):
     parameter.
     """
     lines = [line.strip() for line in value.strip().split("\n")]
-    return separator.join(lines)
+    return separator.join(line for line in lines if line)
 
 
 @register.filter
