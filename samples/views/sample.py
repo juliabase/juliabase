@@ -19,11 +19,14 @@ u"""All views and helper routines directly connected with samples themselves
 
 from __future__ import absolute_import
 
-import time, copy, hashlib
+import time, copy, hashlib, urllib, os.path
+from cStringIO import StringIO
+import PIL, PIL.ImageOps
 from django.views.decorators.http import condition
 from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.conf import settings
 from django.http import Http404
 import django.forms as forms
 from django.core.cache import cache
@@ -849,4 +852,39 @@ def qr_code(request):
     except KeyError:
         raise Http404('GET parameter "data" missing.')
     return render_to_response("samples/qr_code.html", {"title": _(u"QR code"), "data": data},
+                              context_instance=RequestContext(request))
+
+
+def data_matrix_code(request):
+    u"""Generates the Data Matrix representation of the given data.  The data
+    is given in the ``data`` query string parameter.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    try:
+        data = request.GET["data"]
+    except KeyError:
+        raise Http404('GET parameter "data" missing.')
+    hash_ = hashlib.sha1()
+    hash_.update(data.encode("utf-8"))
+    filename = hash_.hexdigest() + ".png"
+    filepath = os.path.join(settings.MEDIA_ROOT, "data_matrix", filename)
+    url = os.path.join(settings.MEDIA_URL, "data_matrix", filename)
+    if not os.path.exists(filepath):
+        utils.mkdirs(filepath)
+        image = PIL.Image.open(StringIO(urllib.urlopen(
+                    "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
+                    u"MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
+        image = image.crop((38, 3, 118, 83))
+        image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
+        image.save(filepath)
+    return render_to_response("samples/data_matrix_code.html", {"title": _(u"Data Matrix code"), "url": url},
                               context_instance=RequestContext(request))

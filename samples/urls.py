@@ -132,4 +132,5 @@ urlpatterns = patterns("samples.views",
                        (r"^change_my_samples$", "json_client.change_my_samples"),
 
                        (r"^qr_code$", "sample.qr_code"),
+                       (r"^data_matrix_code$", "sample.data_matrix_code"),
                        )
