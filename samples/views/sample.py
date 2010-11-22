@@ -769,14 +769,14 @@ def advanced_search(request):
 
     :rtype: ``HttpResponse``
     """
-    model_list = [models.Sample, models.SampleSeries, models.Result] + models.physical_process_models.values()
+    model_list = chantal_common.search.get_all_searchable_models()
     search_tree = None
     results, add_forms = [], []
     too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
-        search_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_search_tree_node()
+        search_tree = chantal_common.search.get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
         parse_tree = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
         search_tree.parse_data(request.GET if parse_tree else None, "")
         if search_tree.is_valid():

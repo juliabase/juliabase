@@ -626,6 +626,23 @@ class PhysicalProcess(Process):
         return data
 
 
+all_searchable_physical_processes = None
+def get_all_searchable_physical_processes():
+    u"""Returns all physical processes which have a ``get_search_tree_node``
+    method.
+
+    :Return:
+      all physical process classes that are searchable
+
+    :rtype: list of ``class``
+    """
+    global all_searchable_physical_processes
+    if all_searchable_physical_processes is None:
+        all_searchable_physical_processes = [cls for cls in search.get_all_searchable_models()
+                                             if issubclass(process_class, PhysicalProcess)]
+    return all_searchable_physical_processes
+
+
 class Sample(models.Model):
     u"""The model for samples.
     """
@@ -891,8 +908,7 @@ class Sample(models.Model):
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
                          search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
                          search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
-        from samples.models import physical_process_models
-        related_models = dict((model, "processes") for model in physical_process_models.itervalues())
+        related_models = dict((model, "processes") for model in get_all_searchable_physical_processes())
         related_models[Result] = "processes"
         return search.SearchTreeNode(cls, related_models, search_fields)
 
