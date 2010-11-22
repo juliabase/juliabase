@@ -21,6 +21,7 @@ from functools import update_wrapper
 import dateutil.tz
 import django.http
 import django.contrib.auth.models
+from django.db.models import get_models, get_app
 from django.conf import settings
 from django.utils.encoding import iri_to_uri
 from django.forms.util import ErrorList, ValidationError
@@ -415,3 +416,25 @@ def respond_in_json(value):
     :rtype: ``HttpResponse``
     """
     return django.http.HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
+
+
+all_models = None
+def get_all_models():
+    u"""Returns all model classes of all apps.  The resulting data structure is
+    a dictionary which maps the class names to the model classes.  Note that
+    every app must have a ``models.py`` module, otherwise, this function raises
+    an exception.  The ``models.py`` may be empty, though.
+
+    FixMe: Are also abstract model classes returned?
+
+    :Return:
+      all models of all apps
+
+    :rtype: dict mapping str to ``class``
+    """
+    global all_models
+    if all_models is None:
+        all_models = {}
+        for app in [get_app(app.rpartition(".")[2]) for app in settings.INSTALLED_APPS]:
+            all_models.update((model.__name__, model) for model in get_models(app))
+    return all_models
