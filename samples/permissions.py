@@ -169,7 +169,11 @@ def get_allowed_physical_processes(user):
     if all_addable_physical_process_models is None:
         all_addable_physical_process_models = []
         for process_class in chantal_common_utils.get_all_models().itervalues():
-            if issubclass(process_class, samples.models.PhysicalProcess) and hasattr(process_class, "get_add_link"):
+            if issubclass(process_class, samples.models.PhysicalProcess):
+                try:
+                    url = process_class.get_add_link()
+                except NotImplementedError, AttributeError:
+                    continue
                 all_addable_physical_process_models.append(
                     (process_class, {"url": process_class.get_add_link(),
                                      "label": process_class._meta.verbose_name,
