@@ -168,7 +168,7 @@ def get_physical_processes():
     """
     global all_physical_processes
     if all_physical_processes is None:
-        all_physical_processes = [PhysicalProcess(process) for process in get_all_models()
+        all_physical_processes = [PhysicalProcess(process) for process in get_all_models().itervalues()
                                   if issubclass(process, models.PhysicalProcess)]
     return all_physical_processes
 
