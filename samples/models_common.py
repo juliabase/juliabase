@@ -35,7 +35,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name
+from chantal_common.utils import get_really_full_name, set_mtime
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
@@ -295,6 +295,7 @@ class Process(PolymorphicModel):
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
                     canvas.print_figure(plot_locations["thumbnail_file"], dpi=settings.THUMBNAIL_WIDTH / 4)
+                    adjust_mtime(datafile_names, plot_locations["thumbnail_file"])
                 if figure_necessary:
                     figure = Figure()
                     canvas = FigureCanvasAgg(figure)
@@ -304,6 +305,7 @@ class Process(PolymorphicModel):
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                     shared_utils.mkdirs(plot_locations["plot_file"])
                     canvas.print_figure(plot_locations["plot_file"], format="pdf")
+                    adjust_mtime(datafile_names, plot_locations["plot_file"])
             except (IOError, shared_utils.PlotError):
                 return None, None
         return plot_locations["thumbnail_url"], plot_locations["plot_url"]
