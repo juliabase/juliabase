@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os.path, time, json
+import codecs, re, os, os.path, time, json
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -438,3 +438,23 @@ def get_all_models():
         for app in [get_app(app.rpartition(".")[2]) for app in settings.INSTALLED_APPS]:
             all_models.update((model.__name__, model) for model in get_models(app))
     return all_models
+
+
+def adjust_mtime(sources, destination):
+    u"""Sets the mtime of the destination file to the most recent mtime of all
+    source files.  This is used for plots that must have the same mtime as
+    their source data files in order to assure re-generation if other source
+    data files should be used suddenly (e.g. because raw data was evaluated).
+    Otherwise, the plots may remain the same because their timestamps may be
+    newer than those of the new source data files.
+
+    :Parameters:
+      - `sources`: all source files that are used to generate the destination
+        file; it must contain at least one element
+      - `destination`: the file whose mtime should be changed
+
+    :type sources: list of unicode
+    :type destination: unicode
+    """
+    sources_mtime = max(os.path.getmtime(source) for source in sources)
+    os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
