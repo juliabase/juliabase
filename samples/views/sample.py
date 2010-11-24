@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json
+    respond_in_json, get_all_models
 from samples.views import utils, form_utils, feed_utils, table_export
 import chantal_common.search
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
@@ -776,7 +776,7 @@ def advanced_search(request):
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
-        search_tree = chantal_common.search.get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
+        search_tree = get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
         parse_tree = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
         search_tree.parse_data(request.GET if parse_tree else None, "")
         if search_tree.is_valid():
