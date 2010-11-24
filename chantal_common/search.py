@@ -479,7 +479,7 @@ class SearchTreeNode(object):
             if not search_model_form.is_valid():
                 break
             model_name = data[new_prefix + "-_model"]
-            node = get_all_models()[model_name].get_search_tree_node()
+            node = utils.get_all_models()[model_name].get_search_tree_node()
             parse_node = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
             node.parse_data(data if parse_node else None, new_prefix)
             search_model_form = SearchModelForm(self.related_models.keys(),
