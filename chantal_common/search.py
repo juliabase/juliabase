@@ -23,8 +23,8 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.db.models import get_models, get_app
 from django.db import models
+from . import utils
 
 
 def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
@@ -347,29 +347,45 @@ class SearchModelForm(forms.Form):
             [(model.__name__, model._meta.verbose_name) for model in models]
 
 
-all_models = None
-def get_model(model_name):
-    u"""Returns the model class of the given class name.
-
-    :Parameters:
-      - `model_name`: name of the model to be looked for
-
-    :type model_name: str
+all_searchable_models = None
+def get_all_searchable_models():
+    u"""Returns all model classes which have a ``get_search_tree_node`` method.
 
     :Return:
-      the model class
+      all searchable model classes
 
-    :rtype: class (decendant of ``Model``)
+    :rtype: list of ``class``
     """
-    global all_models
-    if all_models is None:
-        all_models = {}
-        for app in [get_app(app.rpartition(".")[2]) for app in settings.INSTALLED_APPS]:
-            all_models.update((model.__name__, model) for model in get_models(app))
-    return all_models[model_name]
+    global all_searchable_models
+    if all_searchable_models is None:
+        all_searchable_models = [model for model in utils.get_all_models().itervalues()
+                                 if hasattr(model, "get_search_tree_node")]
+    return all_searchable_models
 
 
 def get_search_results(search_tree, max_results, base_query=None):
+    u"""Returns all found model instances for the given search.  It is a
+    wrapper around the ``get_query_set`` method of the top-level node in the
+    search tree, and it serves two purposes: First, it limits the number of
+    found instances, and secondly, it converts the result query into a list of
+    actual model instances.
+
+    :Parameters:
+      - `search_tree`: the complete search tree of the search
+      - `max_results`: the maximal number of results to be returned
+      - `base_query`: the query set to be used as the starting point of the
+        query; it is used to restrict the found items to what the user is
+        allowed to see
+
+    :type search_tree: `SearchTreeNode`
+    :type max_results: int
+    :type base_query: ``QuerySet``
+
+    :Return:
+      the found objects, whether more than `max_results` were found
+
+    :rtype: list of model instances, bool
+    """
     results = search_tree.get_query_set(base_query)
     too_many_results = results.count() > max_results
     if too_many_results:
@@ -463,14 +479,14 @@ class SearchTreeNode(object):
             if not search_model_form.is_valid():
                 break
             model_name = data[new_prefix + "-_model"]
-            model_field = get_model(model_name).get_search_tree_node()
-            parse_model = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
-            model_field.parse_data(data if parse_model else None, new_prefix)
+            node = get_all_models()[model_name].get_search_tree_node()
+            parse_node = search_model_form.cleaned_data["_model"] == search_model_form.cleaned_data["_old_model"]
+            node.parse_data(data if parse_node else None, new_prefix)
             search_model_form = SearchModelForm(self.related_models.keys(),
                                                 initial={"_old_model": search_model_form.cleaned_data["_model"],
                                                          "_model": search_model_form.cleaned_data["_model"]},
                                                 prefix=new_prefix)
-            self.children.append((search_model_form, model_field))
+            self.children.append((search_model_form, node))
             i += 1
         if self.related_models:
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
@@ -497,10 +513,10 @@ class SearchTreeNode(object):
             if search_field.get_values():
                 kwargs.update(search_field.get_values())
         result = result.filter(**kwargs)
-        for child in self.children:
-            if child[1]:
-                name = self.related_models[child[1].model_class] + "__pk__in"
-                result = result.filter(**{name: child[1].get_query_set()})
+        for __, node in self.children:
+            if node:
+                name = self.related_models[node.model_class] + "__pk__in"
+                result = result.filter(**{name: node.get_query_set()})
         return result.values("pk")
 
     def is_valid(self):
@@ -516,9 +532,9 @@ class SearchTreeNode(object):
         """
         is_all_valid = True
         for search_field in self.search_fields:
-            is_all_valid = is_all_valid and search_field.is_valid()
+            is_all_valid = search_field.is_valid() and is_all_valid
         if self.children:
-            for child in self.children:
-                if child[1]:
-                    is_all_valid = is_all_valid and child[1].is_valid()
+            for __, node in self.children:
+                if node:
+                    is_all_valid = node.is_valid() and is_all_valid
         return is_all_valid
