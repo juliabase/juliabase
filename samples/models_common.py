@@ -641,7 +641,7 @@ def get_all_searchable_physical_processes():
     global all_searchable_physical_processes
     if all_searchable_physical_processes is None:
         all_searchable_physical_processes = [cls for cls in search.get_all_searchable_models()
-                                             if issubclass(process_class, PhysicalProcess)]
+                                             if issubclass(cls, PhysicalProcess)]
     return all_searchable_physical_processes
 
 
