@@ -907,4 +907,4 @@ def test_for_datafile(filename, root_dir):
         try:
             open(os.path.join(root_dir, filename))
         except IOError:
-            raise ValidationError(_(u"Couldn't open {filename}.".format(filename=filename)))
+            raise ValidationError(_(u"Couldn't open {filename}.").format(filename=filename))

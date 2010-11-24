@@ -19,11 +19,14 @@ u"""All views and helper routines directly connected with samples themselves
 
 from __future__ import absolute_import
 
-import time, copy, hashlib
+import time, copy, hashlib, urllib, os.path
+from cStringIO import StringIO
+import PIL, PIL.ImageOps
 from django.views.decorators.http import condition
 from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.conf import settings
 from django.http import Http404
 import django.forms as forms
 from django.core.cache import cache
@@ -766,14 +769,14 @@ def advanced_search(request):
 
     :rtype: ``HttpResponse``
     """
-    model_list = [models.Sample, models.SampleSeries, models.Result] + models.physical_process_models.values()
+    model_list = chantal_common.search.get_all_searchable_models()
     search_tree = None
     results, add_forms = [], []
     too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
-        search_tree = chantal_common.search.get_model(root_form.cleaned_data["_model"]).get_search_tree_node()
+        search_tree = chantal_common.search.get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
         parse_tree = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
         search_tree.parse_data(request.GET if parse_tree else None, "")
         if search_tree.is_valid():
@@ -849,4 +852,40 @@ def qr_code(request):
     except KeyError:
         raise Http404('GET parameter "data" missing.')
     return render_to_response("samples/qr_code.html", {"title": _(u"QR code"), "data": data},
+                              context_instance=RequestContext(request))
+
+
+def data_matrix_code(request):
+    u"""Generates the Data Matrix representation of the given data.  The data
+    is given in the ``data`` query string parameter.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    try:
+        data = request.GET["data"]
+    except KeyError:
+        raise Http404('GET parameter "data" missing.')
+    hash_ = hashlib.sha1()
+    hash_.update(data.encode("utf-8"))
+    filename = hash_.hexdigest() + ".png"
+    filepath = os.path.join(settings.MEDIA_ROOT, "data_matrix", filename)
+    url = os.path.join(settings.MEDIA_URL, "data_matrix", filename)
+    if not os.path.exists(filepath):
+        utils.mkdirs(filepath)
+        image = PIL.Image.open(StringIO(urllib.urlopen(
+                    "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
+                    u"MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
+        image = image.crop((38, 3, 118, 83))
+        image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
+        image.save(filepath)
+    return render_to_response("samples/data_matrix_code.html", {"title": _(u"Data Matrix code"), "url": url,
+                                                                "data": data},
                               context_instance=RequestContext(request))

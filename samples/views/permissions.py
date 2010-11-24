@@ -26,7 +26,7 @@ from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal_common.utils import get_really_full_name
+from chantal_common.utils import get_really_full_name, get_all_models
 from samples import models
 from samples.views import utils
 
@@ -155,6 +155,7 @@ class PhysicalProcess(object):
         self.all_users = sorted_users(set(adders) | set(permission_editors))
 
 
+all_physical_processes = None
 def get_physical_processes():
     u"""Return a list with all registered physical processes.  Their type is of
     `PhysicalProcess`, which means that they contain information about the
@@ -165,7 +166,11 @@ def get_physical_processes():
 
     :rtype: list of `PhysicalProcess`
     """
-    return [PhysicalProcess(process) for process in models.physical_process_models.values()]
+    global all_physical_processes
+    if all_physical_processes is None:
+        all_physical_processes = [PhysicalProcess(process) for process in get_all_models().itervalues()
+                                  if issubclass(process, models.PhysicalProcess)]
+    return all_physical_processes
 
 
 @login_required

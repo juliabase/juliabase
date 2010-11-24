@@ -37,7 +37,7 @@ from django.utils.http import urlquote_plus
 from samples import models, permissions
 from samples.views import utils, table_export
 from samples.data_tree import DataNode
-from chantal_common.utils import HttpResponseSeeOther
+from chantal_common.utils import HttpResponseSeeOther, get_all_models
 
 
 class YearMonthForm(forms.Form):
@@ -146,7 +146,7 @@ def show(request, process_name, year_and_month):
 
     :rtype: ``HttpResponse``
     """
-    process_class = models.physical_process_models[process_name]
+    process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     if not year_and_month:
         today = datetime.date.today()
@@ -172,7 +172,8 @@ def show(request, process_name, year_and_month):
         export_url = None
     return render_to_response(
         "samples/lab_notebook.html",
-        {"title": _(u"Lab notebook for {name}").format(name=process_class._meta.verbose_name_plural),
+        {"title": utils.capitalize_first_letter(_(u"lab notebook for {process_name}")
+                                                .format(process_name=process_class._meta.verbose_name_plural)),
          "year": year, "month": month, "year_month": year_month_form,
          "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
          "export_url": export_url},
@@ -202,7 +203,7 @@ def export(request, process_name, year_and_month):
 
     :rtype: ``HttpResponse``
     """
-    process_class = models.physical_process_models[process_name]
+    process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
     data = process_class.get_lab_notebook_data(year, month)

@@ -35,12 +35,6 @@ Therefore, we have a few model modules, all starting with ``models_...`` and
 residing in this directory.  With ``from samples.models_... import *``
 I can give the rest of Chantal's modules the illusion that all models are
 actually here.
-
-:var physical_process_models: dictionary of all models that denote physical
-  processes (i.e. depositions, measurements, etching processes etc).  It maps
-  the name to the model class itself.
-
-:type physical_process_models: dict mapping ``str`` to ``class``.
 """
 
 from __future__ import absolute_import
@@ -64,9 +58,3 @@ u"""
 
 
 clearance_sets = {}
-
-
-# FixMe: In Python 3, this could be achieved with class decorators, I think.
-physical_process_models = {}
-def register_physical_process(cls):
-    physical_process_models[cls.__name__] = cls

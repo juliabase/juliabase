@@ -44,6 +44,7 @@ if not WITH_EPYDOC:
     # Attention! This is a cyclic import.  Don't use models in top-level code.
     import samples.models
 from chantal_common.models import Topic
+from chantal_common import utils as chantal_common_utils
 from samples.views import shared_utils
 
 
@@ -142,6 +143,7 @@ def get_editable_sample_series(user):
     return samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
 
 
+all_addable_physical_process_models = None
 def get_allowed_physical_processes(user):
     u"""Get a list with all pysical process classes (depositions, measurements;
     no sample splits) that the user is allowed to add or edit.  This routine is
@@ -163,17 +165,24 @@ def get_allowed_physical_processes(user):
 
     :rtype: list of dict mapping str to unicode
     """
+    global all_addable_physical_process_models
+    if all_addable_physical_process_models is None:
+        all_addable_physical_process_models = []
+        for process_class in chantal_common_utils.get_all_models().itervalues():
+            if issubclass(process_class, samples.models.PhysicalProcess):
+                try:
+                    url = process_class.get_add_link()
+                except NotImplementedError, AttributeError:
+                    continue
+                all_addable_physical_process_models.append(
+                    (process_class, {"url": process_class.get_add_link(),
+                                     "label": process_class._meta.verbose_name,
+                                     "label_plural": process_class._meta.verbose_name_plural,
+                                     "type": process_class.__name__}))
     allowed_physical_processes = []
-    for physical_process_class in samples.models.physical_process_models.itervalues():
+    for physical_process_class, add_data in all_addable_physical_process_models:
         if has_permission_to_add_physical_process(user, physical_process_class):
-            try:
-                url = physical_process_class.get_add_link()
-            except NotImplementedError:
-                continue
-            allowed_physical_processes.append({"url": url,
-                                               "label": physical_process_class._meta.verbose_name,
-                                               "label_plural": physical_process_class._meta.verbose_name_plural,
-                                               "type": physical_process_class.__name__})
+            allowed_physical_processes.append(add_data)
     return allowed_physical_processes
 
 

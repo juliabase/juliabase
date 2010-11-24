@@ -35,7 +35,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name
+from chantal_common.utils import get_really_full_name, adjust_mtime
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
@@ -295,6 +295,7 @@ class Process(PolymorphicModel):
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
                     canvas.print_figure(plot_locations["thumbnail_file"], dpi=settings.THUMBNAIL_WIDTH / 4)
+                    adjust_mtime(datafile_names, plot_locations["thumbnail_file"])
                 if figure_necessary:
                     figure = Figure()
                     canvas = FigureCanvasAgg(figure)
@@ -304,6 +305,7 @@ class Process(PolymorphicModel):
                     self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                     shared_utils.mkdirs(plot_locations["plot_file"])
                     canvas.print_figure(plot_locations["plot_file"], format="pdf")
+                    adjust_mtime(datafile_names, plot_locations["plot_file"])
             except (IOError, shared_utils.PlotError):
                 return None, None
         return plot_locations["thumbnail_url"], plot_locations["plot_url"]
@@ -602,7 +604,7 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        u"""Return the URL to the “add” view for this process.  This should be
+        u"""Returns the URL to the “add” view for this process.  This should be
         implemented in derived model classes which is actually instantiated
         unless this process class should not be explicitly added by users (but
         is created by the program somehow).
@@ -613,6 +615,34 @@ class PhysicalProcess(Process):
         :rtype: str
         """
         raise NotImplementedError
+
+    @classmethod
+    def get_lab_notebook_data(cls, year, month):
+        u"""Returns the data tree for all processes in the given month.  This
+        is a default implementation which may be overridden in derived classes,
+        in particular in classes with sub-objects.
+        """
+        measurements = cls.get_lab_notebook_context(year, month)["processes"]
+        data = DataNode(_(u"lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
+        data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
+        return data
+
+
+all_searchable_physical_processes = None
+def get_all_searchable_physical_processes():
+    u"""Returns all physical processes which have a ``get_search_tree_node``
+    method.
+
+    :Return:
+      all physical process classes that are searchable
+
+    :rtype: list of ``class``
+    """
+    global all_searchable_physical_processes
+    if all_searchable_physical_processes is None:
+        all_searchable_physical_processes = [cls for cls in search.get_all_searchable_models()
+                                             if issubclass(process_class, PhysicalProcess)]
+    return all_searchable_physical_processes
 
 
 class Sample(models.Model):
@@ -880,8 +910,7 @@ class Sample(models.Model):
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
                          search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
                          search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
-        from samples.models import physical_process_models
-        related_models = dict((model, "processes") for model in physical_process_models.itervalues())
+        related_models = dict((model, "processes") for model in get_all_searchable_physical_processes())
         related_models[Result] = "processes"
         return search.SearchTreeNode(cls, related_models, search_fields)
 

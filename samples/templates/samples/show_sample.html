@@ -43,9 +43,9 @@ copyright holder, you must destroy it immediately and completely.
                title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
 
       <div class="screen-only" style="float: right"><a
-              href="{% url samples.views.sample.qr_code %}?data={{ sample.sample.id|urlquote_plus }}"
+              href="{% url samples.views.sample.data_matrix_code %}?data={{ sample.sample.id|urlquote_plus }}"
                                                        ><img width="40" height="40" style="display: block"
-              alt="{% trans 'QR Code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a></div>
+              alt="{% trans 'Data Matrix code' %}" src="{{ MEDIA_URL }}samples/qrcode.png"/></a></div>
       {% if sample.clearance %}
         <p style="color: red">
           {% trans "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
