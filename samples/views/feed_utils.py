@@ -147,7 +147,9 @@ class Reporter(object):
 
     def __add_topic_members(self, topic):
         u"""Add all members of the given topic to the set of users connected
-        with the next generated feed entry by `__connect_with_users`.
+        with the next generated feed entry by `__connect_with_users`.  However,
+        only those members are added who wish to receive also non-important
+        news.
 
         :Parameters:
           - `topic`: the topic whose members should be informed with the next
@@ -155,7 +157,8 @@ class Reporter(object):
 
         :type topic: ``chantal_common.models.Topic``
         """
-        self.interested_users.update(topic.members.all())
+        self.interested_users.update(user for user in topic.members.all()
+                                     if not user.samples_user_details.only_important_news)
 
     def __get_subscribers(self, sample_series):
         u"""
