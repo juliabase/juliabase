@@ -594,7 +594,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
                 selected_derivatives = self.derivatives
         Q_expression = None
         for node in selected_derivatives:
-            current_Q = Q("pk__in"=node.get_query_set())
+            current_Q = Q(pk__in=node.get_query_set())
             if Q_expression:
                 Q_expression |= current_Q
             else:
