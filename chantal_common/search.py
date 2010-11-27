@@ -17,13 +17,14 @@ u"""Functions and classes for the advanced search.
 """
 
 from __future__ import absolute_import
-import re, datetime, calendar
+import re, datetime, calendar, copy
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from . import utils
 
 
@@ -366,9 +367,14 @@ def get_all_searchable_models():
 def get_search_results(search_tree, max_results, base_query=None):
     u"""Returns all found model instances for the given search.  It is a
     wrapper around the ``get_query_set`` method of the top-level node in the
-    search tree, and it serves two purposes: First, it limits the number of
-    found instances, and secondly, it converts the result query into a list of
-    actual model instances.
+    search tree, and it serves three purposes:
+
+        1. It limits the number of found instances
+
+        2. It converts the result query into a list of model instances.
+
+        3. If the top-level node is abstract, it finds the actual instance for
+           each found object.
 
     :Parameters:
       - `search_tree`: the complete search tree of the search
@@ -390,7 +396,10 @@ def get_search_results(search_tree, max_results, base_query=None):
     too_many_results = results.count() > max_results
     if too_many_results:
         results = results[:max_results]
-    return search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values(), too_many_results
+    results = search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values()
+    if isinstance(search_tree, AbstractSearchTreeNode):
+        results = [result.actual_instance for result in results]
+    return results, too_many_results
     
 
 class SearchTreeNode(object):
@@ -538,3 +547,58 @@ class SearchTreeNode(object):
                 if node:
                     is_all_valid = node.is_valid() and is_all_valid
         return is_all_valid
+
+
+class AbstractSearchTreeNode(SearchTreeNode):
+
+    class ChoiceSearchField(SearchField):
+        u"""Class for search fields containing character/text fields with
+        choices."""
+
+        def __init__(self, field_label, derivatives, help_text):
+            self.field_label = field_label
+            self.help_text = help_text
+            self.choices = [(derivative.__name__, derivative._meta.verbose_name) for derivative in derivatives]
+
+        def parse_data(self, data, prefix):
+            self.form = forms.Form(data, prefix=prefix)
+            field = forms.ChoiceField(label=self.field_label, required=False, help_text=self.help_text)
+            field.choices = [("", u"---------")] + self.choices
+            self.form.fields["derivative"] = field
+
+        def get_values(self):
+            return {}
+
+
+    def __init__(self, common_base_class, related_models, search_fields, derivatives,
+                 choice_field_label=None, choice_field_help_text=None):
+        super(AbstractSearchTreeNode, self).__init__(common_base_class, related_models, search_fields)
+        self.derivatives = []
+        for derivative in derivatives:
+            node = SearchTreeNode(derivative, related_models, copy.copy(search_fields))
+            node.children = self.children
+            self.derivatives.append(node)
+        self.derivative_choice = \
+            self.ChoiceSearchField(choice_field_label or _(u"restrict to"), derivatives, choice_field_help_text)
+        self.search_fields.append(self.derivative_choice)
+
+    def get_query_set(self, base_query=None):
+        result = base_query if base_query is not None else self.model_class.objects
+        selected_derivative = self.derivative_choice.cleaned_data["derivative"]
+        if not selected_derivative:
+            selected_derivatives = self.derivatives
+        else:
+            try:
+                selected_derivatives = [utils.get_all_models()[selected_derivative]]
+            except KeyError:
+                selected_derivatives = self.derivatives
+        Q_expression = None
+        for node in selected_derivatives:
+            current_Q = Q("pk__in"=node.get_query_set())
+            if Q_expression:
+                Q_expression |= current_Q
+            else:
+                Q_expression = current_Q
+        if Q_expression:
+            result = result.filter(Q_expression).distinct()
+        return result.values("pk")
