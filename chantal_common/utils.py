@@ -473,6 +473,13 @@ def adjust_mtime(sources, destination):
     os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
 
 
-@allow_lazy(unicode)
 def format_lazy(string, *args, **kwargs):
+    u"""Implements a lazy variant of the ``format`` string method.  For
+    example, you might say::
+
+        verbose_name = format_lazy(_(u"Raman {0} measurement"), 1)
+    """
     return string.format(*args, **kwargs)
+# Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
+# whatever reason.
+format_lazy = allow_lazy(format_lazy, unicode)
