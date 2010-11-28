@@ -29,6 +29,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.translation import ugettext
+from django.utils.functional import allow_lazy
 from . import mimeparse
 
 
@@ -470,3 +471,8 @@ def adjust_mtime(sources, destination):
     """
     sources_mtime = max(os.path.getmtime(source) for source in sources)
     os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
+
+
+@allow_lazy(unicode):
+def format_lazy(string, *args, **kwargs):
+    return string.format(*args, **kwargs)
