@@ -563,6 +563,8 @@ class Process(PolymorphicModel):
 
         :rtype: ``chantal_common.search.SearchTreeNode``
         """
+        if cls == Process:
+            raise NotImplementedError
         search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name")]
         search_fields.extend(
