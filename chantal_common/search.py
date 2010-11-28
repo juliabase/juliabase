@@ -360,8 +360,15 @@ def get_all_searchable_models():
     """
     global all_searchable_models
     if all_searchable_models is None:
-        all_searchable_models = [model for model in utils.get_all_models().itervalues()
-                                 if hasattr(model, "get_search_tree_node")]
+        all_searchable_models = []
+        for model in utils.get_all_models().itervalues():
+            if hasattr(model, "get_search_tree_node"):
+                try:
+                    model.get_search_tree_node()
+                except NotImplementedError:
+                    pass
+                else:
+                    all_searchable_models.append(model)
     return all_searchable_models
 
 
