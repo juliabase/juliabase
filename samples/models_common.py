@@ -994,6 +994,8 @@ class SampleSplit(Process):
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
 
+del SampleSplit.get_search_tree_node
+
 
 class Clearance(models.Model):
     u"""Model for clearances for specific samples to specific users.  Apart
