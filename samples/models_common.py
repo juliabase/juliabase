@@ -554,7 +554,9 @@ class Process(PolymorphicModel):
     def get_search_tree_node(cls):
         u"""Class method for generating the search tree node for this model
         instance.  This particular method is an example for generating this
-        node automatically for this and all derived models.
+        node automatically for this and all derived models.  If it raises a
+        `NotImplementedError` or if the method doesn't exist at all, the
+        respective model cannot be searched for.
 
         :Return:
           the tree node for this model instance
@@ -994,7 +996,9 @@ class SampleSplit(Process):
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
 
-del SampleSplit.get_search_tree_node
+    @classmethod
+    def get_search_tree_node(cls):
+        raise NotImplementedError
 
 
 class Clearance(models.Model):
