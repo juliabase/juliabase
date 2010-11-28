@@ -473,6 +473,6 @@ def adjust_mtime(sources, destination):
     os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
 
 
-@allow_lazy(unicode):
+@allow_lazy(unicode)
 def format_lazy(string, *args, **kwargs):
     return string.format(*args, **kwargs)
