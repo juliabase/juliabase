@@ -420,24 +420,36 @@ def respond_in_json(value):
 
 all_models = None
 def get_all_models():
-    u"""Returns all model classes of all apps.  The resulting data structure is
-    a dictionary which maps the class names to the model classes.  Note that
-    every app must have a ``models.py`` module, otherwise, this function raises
-    an exception.  The ``models.py`` may be empty, though.
-
-    FixMe: Are also abstract model classes returned?
+    u"""Returns all model classes of all apps, including registered abstract
+    ones.  The resulting data structure is a dictionary which maps the class
+    names to the model classes.  Note that every app must have a ``models.py``
+    module.  This ``models.py`` may be empty, though.
 
     :Return:
       all models of all apps
 
     :rtype: dict mapping str to ``class``
     """
-    global all_models
+    global all_models, abstract_models
     if all_models is None:
-        all_models = {}
-        for app in [get_app(app.rpartition(".")[2]) for app in settings.INSTALLED_APPS]:
-            all_models.update((model.__name__, model) for model in get_models(app))
+        abstract_models = frozenset(abstract_models)
+        all_models = dict((model.__name__, model) for model in get_models())
+        all_models.update((model.__name__, model) for model in abstract_models)
     return all_models
+
+
+abstract_models = set()
+def register_abstract_model(abstract_model):
+    u"""Register an abstract model class.  This way, it is returned by
+    `get_all_models`.  In particular, it means that the model can be search for
+    in the advanced search.
+
+    :Parameters:
+      - `abstract_model`: the abstract model class to be registered
+
+    :type abstract_model: ``class```
+    """
+    abstract_models.add(abstract_model)
 
 
 def adjust_mtime(sources, destination):
