@@ -344,8 +344,9 @@ class SearchModelForm(forms.Form):
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
-        self.fields["_model"].choices = [("", u"---------")] + \
-            [(model.__name__, model._meta.verbose_name) for model in models]
+        choices = [(model.__name__, model._meta.verbose_name) for model in models]
+        choices.sort(key=lambda choice: unicode(choice[1]))
+        self.fields["_model"].choices = [("", u"---------")] + choices
 
 
 all_searchable_models = None
