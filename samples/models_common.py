@@ -1078,6 +1078,10 @@ class SampleDeath(Process):
             # Translation hint: Of a sample
             return _(u"cease of existence #{number}").format(number=self.pk)
 
+    @classmethod
+    def get_search_tree_node(cls):
+        raise NotImplementedError
+
 
 image_type_choices=(("none", _(u"none")),
                     ("pdf", "PDF"),
