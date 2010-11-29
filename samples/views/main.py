@@ -105,7 +105,6 @@ def main_menu(request):
     """
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user.my_samples.all(), request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
-    allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     lab_notebooks = []
     for process in allowed_physical_processes:
         try:
