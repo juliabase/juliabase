@@ -592,7 +592,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
 
     def get_query_set(self, base_query=None):
         result = base_query if base_query is not None else self.model_class.objects
-        selected_derivative = self.derivative_choice.cleaned_data["derivative"]
+        selected_derivative = self.derivative_choice.form.cleaned_data["derivative"]
         if not selected_derivative:
             selected_derivatives = self.derivatives
         else:
