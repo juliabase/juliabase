@@ -593,13 +593,11 @@ class AbstractSearchTreeNode(SearchTreeNode):
     def get_query_set(self, base_query=None):
         result = base_query if base_query is not None else self.model_class.objects
         selected_derivative = self.derivative_choice.form.cleaned_data["derivative"]
-        if not selected_derivative:
-            selected_derivatives = self.derivatives
+        if selected_derivative:
+            selected_derivatives = [derivative for derivative in self.derivatives
+                                    if derivative.model_class.__name__ == selected_derivative]
         else:
-            try:
-                selected_derivatives = [utils.get_all_models()[selected_derivative]]
-            except KeyError:
-                selected_derivatives = self.derivatives
+            selected_derivatives = self.derivatives
         Q_expression = None
         for node in selected_derivatives:
             current_Q = Q(pk__in=node.get_query_set())
