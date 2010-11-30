@@ -554,13 +554,17 @@ class Process(PolymorphicModel):
     def get_search_tree_node(cls):
         u"""Class method for generating the search tree node for this model
         instance.  This particular method is an example for generating this
-        node automatically for this and all derived models.
+        node automatically for this and all derived models.  If it raises a
+        `NotImplementedError` or if the method doesn't exist at all, the
+        respective model cannot be searched for.
 
         :Return:
           the tree node for this model instance
 
         :rtype: ``chantal_common.search.SearchTreeNode``
         """
+        if cls == Process:
+            raise NotImplementedError
         search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name")]
         search_fields.extend(
@@ -994,6 +998,10 @@ class SampleSplit(Process):
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
 
+    @classmethod
+    def get_search_tree_node(cls):
+        raise NotImplementedError
+
 
 class Clearance(models.Model):
     u"""Model for clearances for specific samples to specific users.  Apart
@@ -1071,6 +1079,10 @@ class SampleDeath(Process):
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             # Translation hint: Of a sample
             return _(u"cease of existence #{number}").format(number=self.pk)
+
+    @classmethod
+    def get_search_tree_node(cls):
+        raise NotImplementedError
 
 
 image_type_choices=(("none", _(u"none")),

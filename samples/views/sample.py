@@ -769,7 +769,7 @@ def advanced_search(request):
 
     :rtype: ``HttpResponse``
     """
-    model_list = chantal_common.search.get_all_searchable_models()
+    model_list = [model for model in chantal_common.search.get_all_searchable_models() if hasattr(model, "get_absolute_url")]
     search_tree = None
     results, add_forms = [], []
     too_many_results = False

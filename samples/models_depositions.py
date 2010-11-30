@@ -26,7 +26,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
-from samples.models_common import PhysicalProcess
+from samples.models_common import PhysicalProcess, Sample
 from samples.data_tree import DataNode, DataItem
 from chantal_common import search
 
@@ -88,6 +88,20 @@ class Deposition(PhysicalProcess):
         data_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
         data_node.children = [layer.get_data_for_table_export() for layer in self.layers.all()]
         return data_node
+
+    @classmethod
+    def get_search_tree_node(cls):
+        u"""Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``chantal_common.search.SearchTreeNode``
+        """
+        model_field = super(Deposition, cls).get_search_tree_node()
+        model_field.related_models = {Sample: "samples"}
+        return model_field
 
 
 class Layer(models.Model):
