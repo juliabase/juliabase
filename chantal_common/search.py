@@ -246,6 +246,8 @@ class IntervalSearchField(RangeSearchField):
 
 class ChoiceSearchField(SearchField):
     u"""Class for search fields containing character/text fields with choices.
+
+    FixMe: This could be changed to a ``MultipleChoiceField`` sometime.
     """
 
     def parse_data(self, data, prefix):
@@ -448,7 +450,7 @@ class SearchTreeNode(object):
             the same name
           - `search_fields`: see the description of the instance variable of
             the same name; they don't contain a form because their `parse_data`
-            method has not been called yes
+            method has not been called yet
 
         :type model_class: class (decendant of ``Model``)
         :type related_models: dict mapping class (decendant of ``Model``) to
@@ -558,10 +560,32 @@ class SearchTreeNode(object):
 
 
 class AbstractSearchTreeNode(SearchTreeNode):
+    u"""Class representing a search tree node which is not connected with a
+    particular model.  This way, similar models can be combined to one
+    selection in the advanced search.
+
+    An abstract node has a list of *derivatives*.  Derivatives are ordinary
+    search tree nodes, typically representing non-abstrict model classes, to
+    which the search fields are passed.  This means that an abstract node
+    doesn't search in the search fields itself.  Instead, it lets the
+    derivatives search and combines the results with the “or” operator.  Thus,
+    it *any* of the derivatives returns a match, it is included into the search
+    results (which may be filtered further, of course).
+
+    For example, we have three Raman apparatuses in IEK-5.  All three share
+    exactly the same model fields.  Therefore, there is an abstract model class
+    that all three concrete models are derived from.  However, if you look for
+    a certain Raman measurement, you don't know a priori in which if the three
+    apparatuses it was measured.  Hence, there is only *one* Raman selection in
+    the advanced view, which looks for results in all three models.  Note that
+    it is still possible to focus a search to one particular Raman model.
+    """
 
     class ChoiceSearchField(SearchField):
-        u"""Class for search fields containing character/text fields with
-        choices."""
+        u"""Class for a special search field for selecting a derivative.
+
+        FixMe: This could be changed to a ``MultipleChoiceField`` sometime.
+        """
 
         def __init__(self, field_label, derivatives, help_text):
             self.field_label = field_label
@@ -575,11 +599,38 @@ class AbstractSearchTreeNode(SearchTreeNode):
             self.form.fields["derivative"] = field
 
         def get_values(self):
+            # Should never be called anyway because this search field is not
+            # passed to the derivatives.
             return {}
 
 
     def __init__(self, common_base_class, related_models, search_fields, derivatives,
                  choice_field_label=None, choice_field_help_text=None):
+        u"""Class constructor.
+
+        :Parameters:
+          - `common_base_class`: the model which is a common base class for all
+            derivatives; this is necessary so that the returned pk values in
+            `get_query_set` refer to one particular database table
+          - `related_models`: see the description of the instance variable of
+            the same name in `SearchTreeNode`
+          - `search_fields`: see the description of the instance variable of
+            the same name in `SearchTreeNode`; they don't contain a form
+            because their `parse_data` method has not been called yet
+          - `derivatives`: the ordinary tree nodes that are combined in this
+            abstract node
+          - `choice_field_label`: Label for the choice form field for selecting
+            a derivative.  By default, the label reads “restricted to”.
+          - `choice_field_help_text`: help text for the form field for
+            selecting a derivative
+
+        :type common_base_class: class (decendant of ``Model``)
+        :type related_models: dict mapping class (decendant of ``Model``) to
+          str
+        :type search_fields: list of `SearchField`
+        :type choice_field_label: unicode
+        :type choice_field_help_text: unicode
+        """
         super(AbstractSearchTreeNode, self).__init__(common_base_class, related_models, search_fields)
         self.derivatives = []
         for derivative in derivatives:
@@ -591,6 +642,21 @@ class AbstractSearchTreeNode(SearchTreeNode):
         self.search_fields.append(self.derivative_choice)
 
     def get_query_set(self, base_query=None):
+        u"""Returns all model instances matching the search.  This is heavily
+        changed from `SearchTreeNode.get_query_set`.  By and large it only
+        “or”s the returned search results from the derivatives.
+
+        :Parameters:
+          - `base_query`: the query set to be used as the starting point of the
+            query, see `SearchTreeNode.get_query_set`
+
+        :type base_query: ``QuerySet``
+
+        :Return:
+          the search results
+
+        :rtype: ``QuerySet``
+        """
         result = base_query if base_query is not None else self.model_class.objects
         selected_derivative = self.derivative_choice.form.cleaned_data["derivative"]
         if selected_derivative:
@@ -598,6 +664,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
                                     if derivative.model_class.__name__ == selected_derivative]
         else:
             selected_derivatives = self.derivatives
+        assert selected_derivatives
         Q_expression = None
         for node in selected_derivatives:
             current_Q = Q(pk__in=node.get_query_set())
@@ -605,6 +672,5 @@ class AbstractSearchTreeNode(SearchTreeNode):
                 Q_expression |= current_Q
             else:
                 Q_expression = current_Q
-        if Q_expression:
-            result = result.filter(Q_expression).distinct()
+        result = result.filter(Q_expression).distinct()
         return result.values("pk")
