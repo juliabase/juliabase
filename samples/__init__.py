@@ -161,6 +161,7 @@ import django.contrib.auth.models
 from . import models as samples_app
 from chantal_common import models as chantal_common_app
 from chantal_common.maintenance import maintain
+import samples.views.permissions
 
 
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
@@ -392,3 +393,15 @@ def expire_feed_entries(sender, **kwargs):
         entry.delete()
 
 maintain.connect(expire_feed_entries, sender=None)
+
+
+def touch_user_permissions_for_physical_processes(sender, instance, action, reverse, model, pk_set, **kwargs):
+    u"""Touches the cache variable for user permissions for physical processes.
+    This is not a real caching action because it has (yet) nothing to do with
+    Django's cache facility.  I just set the variable to ``None`` so that it
+    needs to be re-populated next time.
+    """
+    samples.views.permissions.all_physical_processes = None
+
+signals.m2m_changed.connect(touch_user_permissions_for_physical_processes,
+                            sender=django.contrib.auth.models.User.user_permissions.through)
