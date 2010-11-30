@@ -29,6 +29,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.translation import ugettext
+from django.utils.functional import allow_lazy
 from . import mimeparse
 
 
@@ -420,24 +421,36 @@ def respond_in_json(value):
 
 all_models = None
 def get_all_models():
-    u"""Returns all model classes of all apps.  The resulting data structure is
-    a dictionary which maps the class names to the model classes.  Note that
-    every app must have a ``models.py`` module, otherwise, this function raises
-    an exception.  The ``models.py`` may be empty, though.
-
-    FixMe: Are also abstract model classes returned?
+    u"""Returns all model classes of all apps, including registered abstract
+    ones.  The resulting data structure is a dictionary which maps the class
+    names to the model classes.  Note that every app must have a ``models.py``
+    module.  This ``models.py`` may be empty, though.
 
     :Return:
       all models of all apps
 
     :rtype: dict mapping str to ``class``
     """
-    global all_models
+    global all_models, abstract_models
     if all_models is None:
-        all_models = {}
-        for app in [get_app(app.rpartition(".")[2]) for app in settings.INSTALLED_APPS]:
-            all_models.update((model.__name__, model) for model in get_models(app))
+        abstract_models = frozenset(abstract_models)
+        all_models = dict((model.__name__, model) for model in get_models())
+        all_models.update((model.__name__, model) for model in abstract_models)
     return all_models
+
+
+abstract_models = set()
+def register_abstract_model(abstract_model):
+    u"""Register an abstract model class.  This way, it is returned by
+    `get_all_models`.  In particular, it means that the model can be search for
+    in the advanced search.
+
+    :Parameters:
+      - `abstract_model`: the abstract model class to be registered
+
+    :type abstract_model: ``class```
+    """
+    abstract_models.add(abstract_model)
 
 
 def adjust_mtime(sources, destination):
@@ -458,3 +471,15 @@ def adjust_mtime(sources, destination):
     """
     sources_mtime = max(os.path.getmtime(source) for source in sources)
     os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
+
+
+def format_lazy(string, *args, **kwargs):
+    u"""Implements a lazy variant of the ``format`` string method.  For
+    example, you might say::
+
+        verbose_name = format_lazy(_(u"Raman {0} measurement"), 1)
+    """
+    return string.format(*args, **kwargs)
+# Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
+# whatever reason.
+format_lazy = allow_lazy(format_lazy, unicode)

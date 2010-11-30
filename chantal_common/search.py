@@ -17,13 +17,14 @@ u"""Functions and classes for the advanced search.
 """
 
 from __future__ import absolute_import
-import re, datetime, calendar
+import re, datetime, calendar, copy
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from . import utils
 
 
@@ -245,6 +246,8 @@ class IntervalSearchField(RangeSearchField):
 
 class ChoiceSearchField(SearchField):
     u"""Class for search fields containing character/text fields with choices.
+
+    FixMe: This could be changed to a ``MultipleChoiceField`` sometime.
     """
 
     def parse_data(self, data, prefix):
@@ -343,8 +346,9 @@ class SearchModelForm(forms.Form):
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
-        self.fields["_model"].choices = [("", u"---------")] + \
-            [(model.__name__, model._meta.verbose_name) for model in models]
+        choices = [(model.__name__, model._meta.verbose_name) for model in models]
+        choices.sort(key=lambda choice: unicode(choice[1]).lower())
+        self.fields["_model"].choices = [("", u"---------")] + choices
 
 
 all_searchable_models = None
@@ -358,17 +362,29 @@ def get_all_searchable_models():
     """
     global all_searchable_models
     if all_searchable_models is None:
-        all_searchable_models = [model for model in utils.get_all_models().itervalues()
-                                 if hasattr(model, "get_search_tree_node")]
+        all_searchable_models = []
+        for model in utils.get_all_models().itervalues():
+            if hasattr(model, "get_search_tree_node"):
+                try:
+                    model.get_search_tree_node()
+                except NotImplementedError:
+                    pass
+                else:
+                    all_searchable_models.append(model)
     return all_searchable_models
 
 
 def get_search_results(search_tree, max_results, base_query=None):
     u"""Returns all found model instances for the given search.  It is a
     wrapper around the ``get_query_set`` method of the top-level node in the
-    search tree, and it serves two purposes: First, it limits the number of
-    found instances, and secondly, it converts the result query into a list of
-    actual model instances.
+    search tree, and it serves three purposes:
+
+        1. It limits the number of found instances
+
+        2. It converts the result query into a list of model instances.
+
+        3. If the top-level node is abstract, it finds the actual instance for
+           each found object.
 
     :Parameters:
       - `search_tree`: the complete search tree of the search
@@ -390,7 +406,10 @@ def get_search_results(search_tree, max_results, base_query=None):
     too_many_results = results.count() > max_results
     if too_many_results:
         results = results[:max_results]
-    return search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values(), too_many_results
+    results = search_tree.model_class.objects.in_bulk(list(results.values_list("pk", flat=True))).values()
+    if isinstance(search_tree, AbstractSearchTreeNode):
+        results = [result.actual_instance for result in results]
+    return results, too_many_results
     
 
 class SearchTreeNode(object):
@@ -431,7 +450,7 @@ class SearchTreeNode(object):
             the same name
           - `search_fields`: see the description of the instance variable of
             the same name; they don't contain a form because their `parse_data`
-            method has not been called yes
+            method has not been called yet
 
         :type model_class: class (decendant of ``Model``)
         :type related_models: dict mapping class (decendant of ``Model``) to
@@ -538,3 +557,127 @@ class SearchTreeNode(object):
                 if node:
                     is_all_valid = node.is_valid() and is_all_valid
         return is_all_valid
+
+
+class AbstractSearchTreeNode(SearchTreeNode):
+    u"""Class representing a search tree node which is not connected with a
+    particular model.  This way, similar models can be combined to one
+    selection in the advanced search.
+
+    An abstract node has a list of *derivatives*.  Derivatives are ordinary
+    search tree nodes, typically representing non-abstrict model classes, to
+    which the search fields are passed.  This means that an abstract node
+    doesn't search in the search fields itself.  Instead, it lets the
+    derivatives search and combines the results with the “or” operator.  Thus,
+    it *any* of the derivatives returns a match, it is included into the search
+    results (which may be filtered further, of course).
+
+    For example, we have three Raman apparatuses in IEK-5.  All three share
+    exactly the same model fields.  Therefore, there is an abstract model class
+    that all three concrete models are derived from.  However, if you look for
+    a certain Raman measurement, you don't know a priori in which if the three
+    apparatuses it was measured.  Hence, there is only *one* Raman selection in
+    the advanced view, which looks for results in all three models.  Note that
+    it is still possible to focus a search to one particular Raman model.
+
+    In case of Raman, the non-abstract models doesn't occur in the search form.
+    However, it is also possible to have both the abstract node and all
+    derivatives in the search form.  For this, you just have to give working
+    ``get_search_tree_node`` methods in the derivative model classes as well.
+    """
+
+    class ChoiceSearchField(SearchField):
+        u"""Class for a special search field for selecting a derivative.
+
+        FixMe: This could be changed to a ``MultipleChoiceField`` sometime.
+        """
+
+        def __init__(self, field_label, derivatives, help_text):
+            self.field_label = field_label
+            self.help_text = help_text
+            self.choices = [(derivative.__name__, derivative._meta.verbose_name) for derivative in derivatives]
+
+        def parse_data(self, data, prefix):
+            self.form = forms.Form(data, prefix=prefix)
+            field = forms.ChoiceField(label=self.field_label, required=False, help_text=self.help_text)
+            field.choices = [("", u"---------")] + self.choices
+            self.form.fields["derivative"] = field
+
+        def get_values(self):
+            # Should never be called anyway because this search field is not
+            # passed to the derivatives.
+            return {}
+
+
+    def __init__(self, common_base_class, related_models, search_fields, derivatives,
+                 choice_field_label=None, choice_field_help_text=None):
+        u"""Class constructor.
+
+        :Parameters:
+          - `common_base_class`: the model which is a common base class for all
+            derivatives; this is necessary so that the returned pk values in
+            `get_query_set` refer to one particular database table
+          - `related_models`: see the description of the instance variable of
+            the same name in `SearchTreeNode`
+          - `search_fields`: see the description of the instance variable of
+            the same name in `SearchTreeNode`; they don't contain a form
+            because their `parse_data` method has not been called yet
+          - `derivatives`: the ordinary tree nodes that are combined in this
+            abstract node
+          - `choice_field_label`: Label for the choice form field for selecting
+            a derivative.  By default, the label reads “restricted to”.
+          - `choice_field_help_text`: help text for the form field for
+            selecting a derivative
+
+        :type common_base_class: class (decendant of ``Model``)
+        :type related_models: dict mapping class (decendant of ``Model``) to
+          str
+        :type search_fields: list of `SearchField`
+        :type choice_field_label: unicode
+        :type choice_field_help_text: unicode
+        """
+        super(AbstractSearchTreeNode, self).__init__(common_base_class, related_models, search_fields)
+        self.derivatives = []
+        for derivative in derivatives:
+            node = SearchTreeNode(derivative, related_models, copy.copy(search_fields))
+            node.children = self.children
+            self.derivatives.append(node)
+        self.derivative_choice = \
+            self.ChoiceSearchField(choice_field_label or _(u"restrict to"), derivatives, choice_field_help_text)
+        # Note that this is not appended to the ``search_fields`` of the
+        # derivatives because they have copies of ``self.search_fields``.
+        self.search_fields.append(self.derivative_choice)
+
+    def get_query_set(self, base_query=None):
+        u"""Returns all model instances matching the search.  This is heavily
+        changed from `SearchTreeNode.get_query_set`.  By and large it only
+        “or”s the returned search results from the derivatives.
+
+        :Parameters:
+          - `base_query`: the query set to be used as the starting point of the
+            query, see `SearchTreeNode.get_query_set`
+
+        :type base_query: ``QuerySet``
+
+        :Return:
+          the search results
+
+        :rtype: ``QuerySet``
+        """
+        result = base_query if base_query is not None else self.model_class.objects
+        selected_derivative = self.derivative_choice.form.cleaned_data["derivative"]
+        if selected_derivative:
+            selected_derivatives = [derivative for derivative in self.derivatives
+                                    if derivative.model_class.__name__ == selected_derivative]
+        else:
+            selected_derivatives = self.derivatives
+        assert selected_derivatives
+        Q_expression = None
+        for node in selected_derivatives:
+            current_Q = Q(pk__in=node.get_query_set())
+            if Q_expression:
+                Q_expression |= current_Q
+            else:
+                Q_expression = current_Q
+        result = result.filter(Q_expression).distinct()
+        return result.values("pk")
