@@ -579,6 +579,11 @@ class AbstractSearchTreeNode(SearchTreeNode):
     apparatuses it was measured.  Hence, there is only *one* Raman selection in
     the advanced view, which looks for results in all three models.  Note that
     it is still possible to focus a search to one particular Raman model.
+
+    In case of Raman, the non-abstract models doesn't occur in the search form.
+    However, it is also possible to have both the abstract node and all
+    derivatives in the search form.  For this, you just have to give working
+    ``get_search_tree_node`` methods in the derivative model classes as well.
     """
 
     class ChoiceSearchField(SearchField):
@@ -639,6 +644,8 @@ class AbstractSearchTreeNode(SearchTreeNode):
             self.derivatives.append(node)
         self.derivative_choice = \
             self.ChoiceSearchField(choice_field_label or _(u"restrict to"), derivatives, choice_field_help_text)
+        # Note that this is not appended to the ``search_fields`` of the
+        # derivatives because they have copies of ``self.search_fields``.
         self.search_fields.append(self.derivative_choice)
 
     def get_query_set(self, base_query=None):
