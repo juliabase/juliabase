@@ -155,7 +155,6 @@ class PhysicalProcess(object):
         self.all_users = sorted_users(set(adders) | set(permission_editors))
 
 
-all_physical_processes = None
 def get_physical_processes():
     u"""Return a list with all registered physical processes.  Their type is of
     `PhysicalProcess`, which means that they contain information about the
@@ -166,11 +165,9 @@ def get_physical_processes():
 
     :rtype: list of `PhysicalProcess`
     """
-    global all_physical_processes
-    if all_physical_processes is None:
-        all_physical_processes = [PhysicalProcess(process) for process in get_all_models().itervalues()
-                                  if issubclass(process, models.PhysicalProcess)]
-        all_physical_processes.sort(key=lambda process: process.name.lower())
+    all_physical_processes = [PhysicalProcess(process) for process in get_all_models().itervalues()
+                              if issubclass(process, models.PhysicalProcess)]
+    all_physical_processes.sort(key=lambda process: process.name.lower())
     return all_physical_processes
 
 
