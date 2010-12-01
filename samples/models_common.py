@@ -1287,7 +1287,7 @@ class Result(Process):
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translation hint: In a table
-                child_node = DataNode(_(u"row"), _(u"row #{number}").format(i + 1))
+                child_node = DataNode(_(u"row"), _(u"row #{number}").format(number=i + 1))
                 child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
                 data_node.children.append(child_node)
         elif len(value_lists) == 1:
