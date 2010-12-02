@@ -15,10 +15,18 @@
 
 from __future__ import absolute_import
 
-import unittest
+from django.test import TestCase
+from django.test.client import Client
 
 
-class AdvancedSearchTest(unittest.TestCase):
+class AdvancedSearchTest(TestCase):
+    fixtures = ["test_samples"]
+    urls = "samples.tests.urls"
+
+    def setUp(self):
+        self.client = Client()
+        assert self.client.login(username="testuser", password="12345")
 
     def test_sample_search(self):
-        pass
+        response = self.client.get("/advanced_search")
+        self.assertEqual(response.status_code, 200)
