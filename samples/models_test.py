@@ -52,7 +52,7 @@ class TestPhysicalProcess(PhysicalProcess):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"Test measurement of {sample}").format(sample=self.samples.get())
+        return _(u"Test measurement #{number}").format(number=self.number)
 
     def draw_plot(self, axes, number, filename, for_thumbnail):
         _ = ugettext
