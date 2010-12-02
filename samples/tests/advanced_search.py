@@ -27,6 +27,12 @@ class AdvancedSearchTest(TestCase):
         self.client = Client()
         assert self.client.login(username="testuser", password="12345")
 
-    def test_sample_search(self):
+    def test_empty_search(self):
         response = self.client.get("/advanced_search")
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, u"No search was performed yet.", status_code=200)
+        response = self.client.get("/advanced_search",
+                                   {"_model": "Sample", "_old_model": "Sample", "name": "",
+                                    "currently_responsible_person": "", "current_location": "", "purpose": "",
+                                    "tags": "", "topic_main": "", "1-_model": "TestPhysicalProcess",
+                                    "1-_old_model": ""})
+        self.assertContains(response, u"No search was performed yet.", status_code=200)
