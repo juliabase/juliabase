@@ -176,7 +176,7 @@
   pk: 1
 - fields:
     current_location: Torsten's office
-    currently_responsible_person: 3
+    currently_responsible_person: 4
     last_modified: 2010-12-02 11:00:55.423795
     name: 10-TB-second
     processes: [3]
@@ -184,7 +184,7 @@
     split_origin: null
     tags: ''
     topic: 3
-    watchers: [3]
+    watchers: [4]
   model: samples.sample
   pk: 2
 - fields:
