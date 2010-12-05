@@ -76,6 +76,8 @@
 
 # samples
 
+# Processes
+
 - fields:
     actual_object_id: 1
     content_type: [samples, testphysicalprocess]
@@ -104,12 +106,67 @@
     raw_datafile: test.dat
   model: samples.testphysicalprocess
   pk: 1
+
+- fields:
+    actual_object_id: 2
+    content_type: [samples, abstractmeasurementone]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-03 11:07:36
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 2
+- fields:
+    actual_object_id: 2
+    content_type: [samples, abstractmeasurementone]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-03 11:07:36
+    timestamp_inaccuracy: 0
+    number: 1
+  model: samples.abstractmeasurementone
+  pk: 2
+
+- fields:
+    actual_object_id: 3
+    content_type: [samples, abstractmeasurementtwo]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-03 11:07:36
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 3
+- fields:
+    actual_object_id: 3
+    content_type: [samples, abstractmeasurementtwo]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-03 11:07:36
+    timestamp_inaccuracy: 0
+    number: 1
+  model: samples.abstractmeasurementtwo
+  pk: 3
+
+# Samples
+
 - fields:
     current_location: Torsten's office
     currently_responsible_person: 3
     last_modified: 2010-12-02 11:09:34.883238
     name: 10-TB-first
-    processes: [1]
+    processes: [1,2]
     purpose: ''
     split_origin: null
     tags: ''
@@ -122,7 +179,7 @@
     currently_responsible_person: 3
     last_modified: 2010-12-02 11:00:55.423795
     name: 10-TB-second
-    processes: []
+    processes: [3]
     purpose: ''
     split_origin: null
     tags: ''

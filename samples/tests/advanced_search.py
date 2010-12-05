@@ -80,3 +80,31 @@ class AdvancedSearchWithReducedPermissionsTest(TestCase):
         self.assertContains(response, u"10-TB-first", status_code=200)
         self.assertNotContains(response, u"10-TB-third")
         self.assertNotContains(response, u"10-TB-second")
+
+
+class AdvancedSearchForAbstractModelTest(TestCase):
+    fixtures = ["test_samples"]
+    urls = "samples.tests.urls"
+
+    def setUp(self):
+        self.client = Client()
+        assert self.client.login(username="testuser", password="12345")
+
+    def test_search(self):
+        get_data = {"_model": "Sample", "_old_model": "Sample", "name": "", "currently_responsible_person": "",
+                    "current_location": "", "purpose": "", "tags": "", "topic_main": "", "1-_model": "AbstractMeasurement",
+                    "1-_old_model": "AbstractMeasurement", "1-operator": "", "1-external_operator": "",
+                    "1-timestamp_min": "", "1-timestamp_max": "", "1-comments": "", "1-finished": "", "1-number_min": "",
+                    "1-number_max": "", "1-1-_model": "", "1-1-_old_model": "", "2-_model": "", "2-_old_model": ""}
+        get_data["1-derivative"] = ""
+        response = self.client.get("/advanced_search", get_data)
+        self.assertContains(response, u"10-TB-first", status_code=200)
+        self.assertContains(response, u"10-TB-second")
+        get_data["1-derivative"] = "AbstractMeasurementOne"
+        response = self.client.get("/advanced_search", get_data)
+        self.assertContains(response, u"10-TB-first", status_code=200)
+        self.assertNotContains(response, u"10-TB-second")
+        get_data["1-derivative"] = "AbstractMeasurementTwo"
+        response = self.client.get("/advanced_search", get_data)
+        self.assertNotContains(response, u"10-TB-first", status_code=200)
+        self.assertContains(response, u"10-TB-second")
