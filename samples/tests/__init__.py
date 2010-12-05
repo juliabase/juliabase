@@ -16,8 +16,8 @@
 from __future__ import absolute_import
 
 from django.conf import settings
-from .shared_utils import SharedUtilsTest
-from .advanced_search import AdvancedSearchTest
+from .shared_utils import *
+from .advanced_search import *
 
 
 assert settings.TESTING
