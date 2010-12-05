@@ -51,6 +51,21 @@ class AdvancedSearchTest(TestCase):
         self.assertContains(response, u"10-TB-third")
         self.assertNotContains(response, u"10-TB-second")
 
+    def test_search_for_process(self):
+        get_data = {"_model": "TestPhysicalProcess", "_old_model": "TestPhysicalProcess", "operator": "",
+                    "external_operator": "", "timestamp_min": "", "timestamp_max": "", "comments": "", "finished": "",
+                    "number_min": "", "number_max": "", "raw_datafile": "", "evaluated_datafile": "", "apparatus": "",
+                    "1-_model": "Sample", "1-_old_model": "Sample", "1-currently_responsible_person": "",
+                    "1-current_location": "", "1-purpose": "", "1-tags": "", "1-topic_main": "", "1-1-_model": "",
+                    "1-1-_old_model": "", "2-_model": "", "2-_old_model": ""}
+        get_data["1-name"] = "first"
+        response = self.client.get("/advanced_search", get_data)
+        self.assertContains(response, u"Test measurement #1", status_code=200)
+        get_data["1-name"] = "second"
+        response = self.client.get("/advanced_search", get_data)
+        self.assertContains(response, u"Nothing found.", status_code=200)
+        self.assertNotContains(response, u"Test measurement #", status_code=200)
+
 
 class AdvancedSearchWithReducedPermissionsTest(TestCase):
     fixtures = ["test_samples"]
