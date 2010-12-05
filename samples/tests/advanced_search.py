@@ -19,6 +19,14 @@ from django.test import TestCase
 from django.test.client import Client
 
 
+simple_search_data = {"_model": "Sample", "_old_model": "Sample", "name": "", "currently_responsible_person": "",
+                      "current_location": "", "purpose": "", "tags": "", "topic_main": "", "1-_model": "TestPhysicalProcess",
+                      "1-_old_model": "TestPhysicalProcess", "1-operator": "", "1-external_operator": "",
+                      "1-timestamp_min": "", "1-timestamp_max": "", "1-comments": "", "1-finished": "", "1-number_min": "",
+                      "1-number_max": "", "1-raw_datafile": "", "1-evaluated_datafile": "", "1-apparatus": "",
+                      "1-1-_model": "", "1-1-_old_model": "", "2-_model": "", "2-_old_model": ""}
+
+
 class AdvancedSearchTest(TestCase):
     fixtures = ["test_samples"]
     urls = "samples.tests.urls"
@@ -38,14 +46,7 @@ class AdvancedSearchTest(TestCase):
         self.assertContains(response, u"No search was performed yet.", status_code=200)
 
     def test_simple_search(self):
-        response = self.client.get(
-            "/advanced_search",
-            {"_model": "Sample", "_old_model": "Sample", "name": "", "currently_responsible_person": "",
-             "current_location": "", "purpose": "", "tags": "", "topic_main": "", "1-_model": "TestPhysicalProcess",
-             "1-_old_model": "TestPhysicalProcess", "1-operator": "", "1-external_operator": "", "1-timestamp_min": "",
-             "1-timestamp_max": "", "1-comments": "", "1-finished": "", "1-number_min": "", "1-number_max": "",
-             "1-raw_datafile": "", "1-evaluated_datafile": "", "1-apparatus": "", "1-1-_model": "", "1-1-_old_model": "",
-             "2-_model": "", "2-_old_model": ""})
+        response = self.client.get("/advanced_search", simple_search_data)
         self.assertContains(response, u"10-TB-first", status_code=200)
         self.assertContains(response, u"10-TB-third")
         self.assertNotContains(response, u"10-TB-second")
@@ -60,14 +61,7 @@ class AdvancedSearchWithReducedPermissionsTest(TestCase):
         assert self.client.login(username="testuser2", password="12345")
 
     def test_simple_search(self):
-        response = self.client.get(
-            "/advanced_search",
-            {"_model": "Sample", "_old_model": "Sample", "name": "", "currently_responsible_person": "",
-             "current_location": "", "purpose": "", "tags": "", "topic_main": "", "1-_model": "TestPhysicalProcess",
-             "1-_old_model": "TestPhysicalProcess", "1-operator": "", "1-external_operator": "", "1-timestamp_min": "",
-             "1-timestamp_max": "", "1-comments": "", "1-finished": "", "1-number_min": "", "1-number_max": "",
-             "1-raw_datafile": "", "1-evaluated_datafile": "", "1-apparatus": "", "1-1-_model": "", "1-1-_old_model": "",
-             "2-_model": "", "2-_old_model": ""})
+        response = self.client.get("/advanced_search", simple_search_data)
         self.assertContains(response, u"10-TB-first", status_code=200)
         self.assertNotContains(response, u"10-TB-third")
         self.assertNotContains(response, u"10-TB-second")
