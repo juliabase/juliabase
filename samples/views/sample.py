@@ -886,6 +886,5 @@ def data_matrix_code(request):
         image = image.crop((38, 3, 118, 83))
         image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
         image.save(filepath)
-    return render_to_response("samples/data_matrix_code.html", {"title": _(u"Data Matrix code"), "url": url,
-                                                                "data": data},
+    return render_to_response("samples/data_matrix_code.html", {"title": _(u"Data Matrix code"), "url": url, "data": data},
                               context_instance=RequestContext(request))
