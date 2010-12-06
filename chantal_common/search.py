@@ -351,7 +351,7 @@ class SearchModelForm(forms.Form):
         self.fields["_model"].choices = [("", u"---------")] + choices
 
 
-class SetAccessError(Exception):
+class SetLockedException(Exception):
     u"""Exception class raised when `all_searchable_models` is accessed
     although it is not completely built yet.  This is only an internal
     exception class.  This way, I can call the ``get_search_tree_node`` method
@@ -364,6 +364,7 @@ class SetAccessError(Exception):
     """
     pass
 
+all_searchable_models_locked = False
 all_searchable_models = None
 def get_all_searchable_models():
     u"""Returns all model classes which have a ``get_search_tree_node`` method.
@@ -373,18 +374,19 @@ def get_all_searchable_models():
 
     :rtype: frozenset of ``class``
     """
-    global all_searchable_models
-    if isinstance(all_searchable_models, set):
-        raise SetAccessError
-    if all_searchable_models is None:
+    global all_searchable_models, all_searchable_models_locked
+    if not isinstance(all_searchable_models, frozenset):
+        if all_searchable_models_locked:
+            raise SetLockedException
+        all_searchable_models_locked = True
         all_searchable_models = set()
-        for model in utils.get_all_models().itervalues():
+        for model in utils.get_all_models("samples" if settings.TESTING else None).itervalues():
             if hasattr(model, "get_search_tree_node"):
                 try:
                     model.get_search_tree_node()
                 except NotImplementedError:
                     pass
-                except SetAccessError:
+                except SetLockedException:
                     all_searchable_models.add(model)
                 else:
                     all_searchable_models.add(model)
