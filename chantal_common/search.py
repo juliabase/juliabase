@@ -364,7 +364,6 @@ class SetLockedException(Exception):
     """
     pass
 
-all_searchable_models_locked = False
 all_searchable_models = None
 def get_all_searchable_models():
     u"""Returns all model classes which have a ``get_search_tree_node`` method.
@@ -374,11 +373,10 @@ def get_all_searchable_models():
 
     :rtype: frozenset of ``class``
     """
-    global all_searchable_models, all_searchable_models_locked
+    global all_searchable_models
     if not isinstance(all_searchable_models, frozenset):
-        if all_searchable_models_locked:
+        if isinstance(all_searchable_models, set):
             raise SetLockedException
-        all_searchable_models_locked = True
         all_searchable_models = set()
         for model in utils.get_all_models("samples" if settings.TESTING else None).itervalues():
             if hasattr(model, "get_search_tree_node"):
