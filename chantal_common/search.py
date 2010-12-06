@@ -145,7 +145,8 @@ class SearchField(object):
         return {self.query_path: result} if result is not None else {}
 
     def is_valid(self):
-        u"""Retuns whethe the form within this search field is bound and valid.
+        u"""Retuns whether the form within this search field is bound and
+        valid.
 
         :Return:
           whether the form is valid
@@ -153,6 +154,13 @@ class SearchField(object):
         :rtype: bool
         """
         return self.form.is_valid()
+
+    def __unicode__(self):
+        u"""Returns a unicode representation of this search field.  It is only
+        useful for debugging purposes.  Note that if a derived class doesn't
+        store a model field in ``self.field``, this must be overridden.
+        """
+        return u'"{0}"'.format(unicode(self.field.verbose_name))
 
 
 class RangeSearchField(SearchField):
@@ -575,6 +583,16 @@ class SearchTreeNode(object):
                 if node:
                     is_all_valid = node.is_valid() and is_all_valid
         return is_all_valid
+
+    def __unicode__(self):
+        u"""Returns a unicode representation of this node and its subtree.  It
+        is only useful for debugging purposes.
+        """
+        return u"({0}[{1}]: {2};{3})".format(
+            self.model_class.__name__,
+            u",".join(choice[0] for choice in self.children[-1][0].fields["_model"].choices if choice[0]),
+            u",".join(unicode(search_field) for search_field in self.search_fields),
+            u",".join(unicode(child[1]) for child in self.children if child[1]))
 
 
 class AbstractSearchTreeNode(SearchTreeNode):
