@@ -1225,7 +1225,7 @@ class Result(Process):
             context["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
-            context.update(self.result.get_image())
+            context.update(self.get_image())
         if permissions.has_permission_to_edit_result_process(user, self):
             context["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
