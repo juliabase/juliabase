@@ -18,7 +18,7 @@ from __future__ import absolute_import
 from django.db.models import signals
 import django.contrib.auth.models
 from . import models as kicker_app
-from chantal_common.maintenance import maintain
+from chantal_common.signals import maintain
 
 
 def add_user_details(sender, instance, created, **kwargs):
