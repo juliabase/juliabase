@@ -13,22 +13,29 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module for providing the maintenance signal.  This is sent in regular time
-intervals (e.g., every night), so that various subsystems can use it for
-maintenance work.  You can use this signal in your code like this::
+u"""Module for providing the Chantal signals.
 
-    from chantal_common.maintenance import maintain
+:ivar maintain: This is sent in regular time intervals (e.g., every night), so
+  that various subsystems can use it for maintenance work.  You can use this
+  signal in your code like this::
 
-    def my_handler(sender, **kwargs):
-        ...
+      from chantal_common.signals import maintain
 
-    maintain.connect(my_handler, sender=None)
+      def my_handler(sender, **kwargs):
+          ...
+
+      maintain.connect(my_handler, sender=None)
+
+:ivar storage_changed: This is sent if the files on harddisk were changed.  In
+  the reference deployment at IEK-5, this signal is used for triggering
+  sychronisation of both nodes.
 """
 
 from __future__ import absolute_import
 
 import django.dispatch
-import chantal_common
 
 
 maintain = django.dispatch.Signal()
+
+storage_changed = django.dispatch.Signal()

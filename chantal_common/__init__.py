@@ -37,7 +37,7 @@ import datetime
 import django.contrib.auth.models
 from django.db.models import signals
 from . import models as chantal_app
-from .maintenance import maintain
+from .signals import maintain
 
 
 def add_user_details(sender, instance, created=True, **kwargs):
