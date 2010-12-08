@@ -1207,14 +1207,13 @@ class Result(Process):
         if self.image_type == "none":
             return {"thumbnail_url": None, "image_url": None}
         image_locations = self.get_image_locations()
-        if not os.path.exists(image_locations["thumbnail_file"]):
-            shared_utils.mkdirs(image_locations["thumbnail_file"])
-            if not os.path.exists(image_locations["thumbnail_file"]) or \
-                    os.path.getmtime(image_locations["thumbnail_file"]) < os.path.getmtime(image_locations["image_file"]):
-                subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
-                                 "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
-                                 image_locations["thumbnail_file"]])
-                adjust_mtime([image_locations["image_file"]], image_locations["thumbnail_file"])
+        shared_utils.mkdirs(image_locations["thumbnail_file"])
+        if not os.path.exists(image_locations["thumbnail_file"]) or \
+                os.path.getmtime(image_locations["thumbnail_file"]) < os.path.getmtime(image_locations["image_file"]):
+            subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
+                             "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
+                             image_locations["thumbnail_file"]])
+            adjust_mtime([image_locations["image_file"]], image_locations["thumbnail_file"])
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
 
     def get_context_for_user(self, user, old_context):
