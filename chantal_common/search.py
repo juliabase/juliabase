@@ -145,7 +145,8 @@ class SearchField(object):
         return {self.query_path: result} if result is not None else {}
 
     def is_valid(self):
-        u"""Retuns whethe the form within this search field is bound and valid.
+        u"""Retuns whether the form within this search field is bound and
+        valid.
 
         :Return:
           whether the form is valid
@@ -153,6 +154,13 @@ class SearchField(object):
         :rtype: bool
         """
         return self.form.is_valid()
+
+    def __unicode__(self):
+        u"""Returns a unicode representation of this search field.  It is only
+        useful for debugging purposes.  Note that if a derived class doesn't
+        store a model field in ``self.field``, this must be overridden.
+        """
+        return u'"{0}"'.format(unicode(self.field.verbose_name))
 
 
 class RangeSearchField(SearchField):
@@ -351,6 +359,19 @@ class SearchModelForm(forms.Form):
         self.fields["_model"].choices = [("", u"---------")] + choices
 
 
+class SetLockedException(Exception):
+    u"""Exception class raised when `all_searchable_models` is accessed
+    although it is not completely built yet.  This is only an internal
+    exception class.  This way, I can call the ``get_search_tree_node`` method
+    in `get_all_searchable_models` in order to detect whether a model is
+    searchable.  Note that ``get_search_tree_node`` in turn calls
+    `get_all_searchable_models`.
+
+    Otherwise, I would have to define another method just to detect whether a
+    model is searchable.
+    """
+    pass
+
 all_searchable_models = None
 def get_all_searchable_models():
     u"""Returns all model classes which have a ``get_search_tree_node`` method.
@@ -358,19 +379,24 @@ def get_all_searchable_models():
     :Return:
       all searchable model classes
 
-    :rtype: list of ``class``
+    :rtype: frozenset of ``class``
     """
     global all_searchable_models
-    if all_searchable_models is None:
-        all_searchable_models = []
-        for model in utils.get_all_models().itervalues():
+    if not isinstance(all_searchable_models, frozenset):
+        if isinstance(all_searchable_models, set):
+            raise SetLockedException
+        all_searchable_models = set()
+        for model in utils.get_all_models("samples" if settings.TESTING else None).itervalues():
             if hasattr(model, "get_search_tree_node"):
                 try:
                     model.get_search_tree_node()
                 except NotImplementedError:
                     pass
+                except SetLockedException:
+                    all_searchable_models.add(model)
                 else:
-                    all_searchable_models.append(model)
+                    all_searchable_models.add(model)
+    all_searchable_models = frozenset(all_searchable_models)
     return all_searchable_models
 
 
@@ -557,6 +583,16 @@ class SearchTreeNode(object):
                 if node:
                     is_all_valid = node.is_valid() and is_all_valid
         return is_all_valid
+
+    def __unicode__(self):
+        u"""Returns a unicode representation of this node and its subtree.  It
+        is only useful for debugging purposes.
+        """
+        return u"({0}[{1}]: {2};{3})".format(
+            self.model_class.__name__,
+            u",".join(choice[0] for choice in self.children[-1][0].fields["_model"].choices if choice[0]),
+            u",".join(unicode(search_field) for search_field in self.search_fields),
+            u",".join(unicode(child[1]) for child in self.children if child[1]))
 
 
 class AbstractSearchTreeNode(SearchTreeNode):

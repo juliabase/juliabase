@@ -420,11 +420,16 @@ def respond_in_json(value):
 
 
 all_models = None
-def get_all_models():
+def get_all_models(app_label=None):
     u"""Returns all model classes of all apps, including registered abstract
     ones.  The resulting data structure is a dictionary which maps the class
     names to the model classes.  Note that every app must have a ``models.py``
     module.  This ``models.py`` may be empty, though.
+
+    :Parameters:
+      - `app_label`: the name of the app whose models should be returned
+
+    :type app_label: unicode
 
     :Return:
       all models of all apps
@@ -436,6 +441,10 @@ def get_all_models():
         abstract_models = frozenset(abstract_models)
         all_models = dict((model.__name__, model) for model in get_models())
         all_models.update((model.__name__, model) for model in abstract_models)
+    if app_label:
+        result = dict((model.__name__, model) for model in get_models(get_app(app_label)))
+        result.update((model.__name__, model) for model in abstract_models if model._meta.app_label == app_label)
+        return result
     return all_models
 
 
