@@ -160,7 +160,7 @@ from django.db.models import signals
 import django.contrib.auth.models
 from . import models as samples_app
 from chantal_common import models as chantal_common_app
-from chantal_common.maintenance import maintain
+from chantal_common.signals import maintain
 
 
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
