@@ -40,10 +40,12 @@ actually here.
 from __future__ import absolute_import
 
 import copy, inspect
-from django.db import models
+from django.conf import settings
 from samples.models_common import *
 from samples.models_depositions import *
 from samples.models_feeds import *
+if settings.TESTING:
+    from samples.models_test import *
 
 u"""
 

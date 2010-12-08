@@ -16,6 +16,7 @@
 from __future__ import absolute_import
 
 from django.contrib import admin
+from django.conf import settings
 from samples.models_common import ExternalOperator, Sample, SampleAlias, SampleSplit, SampleDeath, Result, \
     SampleSeries, Initials, UserDetails, Process, Clearance, SampleClaim
 from samples.models_feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysicalProcess, FeedEditedPhysicalProcess, \
@@ -47,3 +48,8 @@ admin.site.register(FeedEditedSampleSeries)
 admin.site.register(FeedNewSampleSeries)
 admin.site.register(FeedMovedSampleSeries)
 admin.site.register(FeedChangedTopic)
+
+
+if settings.TESTING:
+    from samples.models_test import TestPhysicalProcess
+    admin.site.register(TestPhysicalProcess)
