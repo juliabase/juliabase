@@ -28,6 +28,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 import chantal_common.utils
 from chantal_common.utils import append_error
+from chantal_common.signals import storage_changed
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils, table_export
 
@@ -73,6 +74,7 @@ def save_image_file(image_data, result, related_data_form):
             destination = open(image_path, "wb+")
         destination.write(chunk)
     destination.close()
+    storage_changed.send(models.Result)
     result.save()
 
 
