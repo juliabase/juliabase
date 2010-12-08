@@ -37,6 +37,7 @@ from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
     respond_in_json, get_all_models
+from chantal_common.signals import storage_changed
 from samples.views import utils, form_utils, feed_utils, table_export
 import chantal_common.search
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
@@ -886,6 +887,7 @@ def data_matrix_code(request):
         image = image.crop((38, 3, 118, 83))
         image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
         image.save(filepath)
+        storage_changed.send(data_matrix_code)
     return render_to_response("samples/data_matrix_code.html", {"title": _(u"Data Matrix code"), "url": url,
                                                                 "data": data},
                               context_instance=RequestContext(request))

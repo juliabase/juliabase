@@ -37,6 +37,7 @@ from django.db import models
 from django.core.cache import cache
 from chantal_common.utils import get_really_full_name, adjust_mtime
 from chantal_common.models import Topic, PolymorphicModel
+from chantal_common.signals import storage_changed
 from samples import permissions
 from samples.views import shared_utils
 from chantal_common import search
@@ -296,6 +297,7 @@ class Process(PolymorphicModel):
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
                     canvas.print_figure(plot_locations["thumbnail_file"], dpi=settings.THUMBNAIL_WIDTH / 4)
                     adjust_mtime(datafile_names, plot_locations["thumbnail_file"])
+                    storage_changed.send(Process)
                 if figure_necessary:
                     figure = Figure()
                     canvas = FigureCanvasAgg(figure)
@@ -306,6 +308,7 @@ class Process(PolymorphicModel):
                     shared_utils.mkdirs(plot_locations["plot_file"])
                     canvas.print_figure(plot_locations["plot_file"], format="pdf")
                     adjust_mtime(datafile_names, plot_locations["plot_file"])
+                    storage_changed.send(Process)
             except (IOError, shared_utils.PlotError):
                 return None, None
         return plot_locations["thumbnail_url"], plot_locations["plot_url"]
@@ -1214,6 +1217,7 @@ class Result(Process):
                              "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
                              image_locations["thumbnail_file"]])
             adjust_mtime([image_locations["image_file"]], image_locations["thumbnail_file"])
+            storage_changed.send(Result)
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
 
     def get_context_for_user(self, user, old_context):
