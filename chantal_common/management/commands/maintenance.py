@@ -22,7 +22,7 @@ nightly as a cronjob.  For example, one line in the crontab may read::
 from __future__ import absolute_import
 
 from django.core.management.base import BaseCommand
-from chantal_common.maintenance import maintain
+from chantal_common.signals import maintain
 
 
 class Command(BaseCommand):

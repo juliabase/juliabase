@@ -35,9 +35,9 @@ from __future__ import absolute_import
 
 import datetime
 import django.contrib.auth.models
-from django.db.models import signals
+from django.db.models import signals as django_signals
 from . import models as chantal_app
-from .maintenance import maintain
+from .signals import maintain
 
 
 def add_user_details(sender, instance, created=True, **kwargs):
@@ -58,7 +58,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
         chantal_app.UserDetails.objects.get_or_create(user=instance)
 
 # It must be "post_save", otherwise, the ID may be ``None``.
-signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
+django_signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
 
 def expire_error_pages(sender, **kwargs):
