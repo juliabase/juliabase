@@ -515,6 +515,7 @@ class ColumnGroupsForm(forms.Form):
     u"""Form for the columns choice.  It has only one field, ``column_groups``,
     the result of which is a set with the selected column group names.
     """
+    _ = ugettext_lazy
     column_groups = forms.MultipleChoiceField(label=_(u"Column groups"))
 
     def __init__(self, column_groups, *args, **kwargs):
@@ -529,6 +530,7 @@ class ColumnsForm(forms.Form):
     u"""Form for the columns choice.  It has only one field, ``columns``, the
     result of which is a set with the selected column indices as ints.
     """
+    _ = ugettext_lazy
     columns = forms.MultipleChoiceField(label=_(u"Columns"))
 
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
