@@ -164,7 +164,7 @@ def append_error(form, error_message, fieldname="__all__"):
     form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
 
-dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r][-=]")
+dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r](-+|=+)\s*$")
 def check_markdown(text):
     u"""Checks whether the Markdown input by the user contains only permitted
     syntax elements.  I forbid images and headings so far.
