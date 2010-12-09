@@ -28,7 +28,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext
 from django.utils.functional import allow_lazy
 from . import mimeparse
 
@@ -177,7 +177,7 @@ def check_markdown(text):
         elements.
     """
     if dangerous_markup_pattern.search(text):
-        raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
+        raise ValidationError(ugettext(u"You mustn't use image and headings syntax in Markdown markup."))
 
 
 class _AddHelpLink(object):
