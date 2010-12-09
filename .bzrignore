@@ -4,3 +4,4 @@ chantal_common/locale/fr.mo
 chantal_common/locale/de/LC_MESSAGES/django.mo
 chantal_common/locale/es/LC_MESSAGES/django.mo
 chantal_common/locale/fr/LC_MESSAGES/django.mo
+chantal_common/migrations
