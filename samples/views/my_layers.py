@@ -19,7 +19,7 @@ u"""View for editing the “My Layers” structure.  See
 
 from __future__ import absolute_import
 
-import re
+import re, json
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -43,7 +43,7 @@ class MyLayerForm(forms.Form):
 
     def clean_deposition_and_layer(self):
         u"""Convert the notation ``<deposition number>-<layer number>`` to
-        ``<deposition ID>-<layer number>``.  Additionaly, do some validity
+        ``(deposition ID, layer number)``.  Additionaly, do some validity
         tests.
         """
         if "-" not in self.cleaned_data["deposition_and_layer"]:
@@ -60,7 +60,7 @@ class MyLayerForm(forms.Form):
         # FixMe: Handle the case when there is no "layers" attribute
         if not deposition.layers.filter(number=layer_number).exists():
             raise ValidationError(_(u"This layer does not exist in this deposition."))
-        return u"{0}-{1}".format(deposition.id, layer_number)
+        return deposition.id, layer_number
 
 
 layer_item_pattern = re.compile(ur"\s*(?P<nickname>.+?)\s*:\s*(?P<raw_layer_identifier>.+?)\s*(?:,\s*|\Z)")
@@ -80,17 +80,12 @@ def forms_from_database(user):
     :rtype: list of `MyLayerForm`
     """
     my_layer_forms = []
-    my_layers_serialized = user.samples_user_details.my_layers
-    while my_layers_serialized:
-        next_match = layer_item_pattern.match(my_layers_serialized)
-        nickname, raw_layer_identifier = next_match.group("nickname"), next_match.group("raw_layer_identifier")
-        process_id, layer_number = raw_layer_identifier.rsplit("-", 1)
-        process_id, layer_number = int(process_id), int(layer_number)
-        deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
-        deposition_and_layer = u"{0}-{1}".format(deposition_number, layer_number)
-        my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
-                                          prefix=str(len(my_layer_forms))))
-        my_layers_serialized = my_layers_serialized[next_match.end():]
+    if user.samples_user_details.my_layers:
+        for nickname, process_id, layer_number in json.loads(user.samples_user_details.my_layers):
+            deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
+            deposition_and_layer = u"{0}-{1}".format(deposition_number, layer_number)
+            my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
+                                              prefix=str(len(my_layer_forms))))
     return my_layer_forms
 
 
@@ -153,9 +148,8 @@ def save_to_database(my_layer_forms, user):
     u"""Save the new “My Layers” into the database.
     """
     user_details = user.samples_user_details
-    user_details.my_layers = \
-        u", ".join([u"{0}: {1}".format(form.cleaned_data["nickname"], form.cleaned_data["deposition_and_layer"])
-                    for form in my_layer_forms])
+    user_details.my_layers = json.dumps(
+        (form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms)
     user_details.save()
 
 
