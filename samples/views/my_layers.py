@@ -149,7 +149,7 @@ def save_to_database(my_layer_forms, user):
     """
     user_details = user.samples_user_details
     user_details.my_layers = json.dumps(
-        (form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms)
+        [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms])
     user_details.save()
 
 
