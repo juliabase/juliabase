@@ -129,7 +129,7 @@ def get_my_layers(user_details, deposition_model):
     """
     if not user_details.my_layers:
         return [(u"", u"---------")]
-    choices = []
+    choices = [(u"", u"---------")]
     for nickname, process_id, layer_number in json.loads(user_details.my_layers):
         try:
             deposition = deposition_model.objects.get(pk=process_id)
