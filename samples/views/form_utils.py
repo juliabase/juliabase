@@ -129,6 +129,7 @@ def get_my_layers(user_details, deposition_model):
     """
     if not user_details.my_layers:
         return [(u"", u"---------")]
+    choices = []
     for nickname, process_id, layer_number in json.loads(user_details.my_layers):
         try:
             deposition = deposition_model.objects.get(pk=process_id)
@@ -142,8 +143,8 @@ def get_my_layers(user_details, deposition_model):
         # and layer number, so that change_structure() doesn't have to re-parse
         # it.  In other words: Maybe the first element of the tuples can be of
         # any type and needn't be strings.
-        fitting_items.append((u"{0}-{1}".format(process_id, layer_number), nickname))
-    return fitting_items
+        choices.append((u"{0}-{1}".format(process_id, layer_number), nickname))
+    return choices
 
 
 class AddLayersForm(forms.Form):
