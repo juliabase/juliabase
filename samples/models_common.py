@@ -571,7 +571,7 @@ class Process(PolymorphicModel):
         search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name")]
         search_fields.extend(
-            search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified"]))
+            search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified", "finished"]))
         related_models = {Sample: "samples"}
         related_models.update(
             (related_object.model, related_object.get_accessor_name()) for related_object
