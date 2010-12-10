@@ -99,6 +99,10 @@ class Deposition(PhysicalProcess):
 
         :rtype: ``chantal_common.search.SearchTreeNode``
         """
+        if cls == Deposition:
+            # So that only derived classes get included into the searchable
+            # models in the advanced search
+            raise NotImplementedError
         model_field = super(Deposition, cls).get_search_tree_node()
         model_field.related_models = {Sample: "samples"}
         return model_field
