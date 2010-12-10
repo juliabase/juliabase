@@ -127,23 +127,22 @@ def get_my_layers(user_details, deposition_model):
 
     :rtype: list of (MyLayer-ID, nickname)
     """
-    if not user_details.my_layers:
-        return [(u"", u"---------")]
     choices = [(u"", u"---------")]
-    for nickname, process_id, layer_number in json.loads(user_details.my_layers):
-        try:
-            deposition = deposition_model.objects.get(pk=process_id)
-        except deposition_model.DoesNotExist:
-            continue
-        try:
-            layer = deposition.layers.get(number=layer_number)
-        except:
-            continue
-        # FixMe: Maybe it is possible to avoid serialising the deposition ID
-        # and layer number, so that change_structure() doesn't have to re-parse
-        # it.  In other words: Maybe the first element of the tuples can be of
-        # any type and needn't be strings.
-        choices.append((u"{0}-{1}".format(process_id, layer_number), nickname))
+    if user_details.my_layers:
+        for nickname, process_id, layer_number in json.loads(user_details.my_layers):
+            try:
+                deposition = deposition_model.objects.get(pk=process_id)
+            except deposition_model.DoesNotExist:
+                continue
+            try:
+                layer = deposition.layers.get(number=layer_number)
+            except:
+                continue
+            # FixMe: Maybe it is possible to avoid serialising the deposition ID
+            # and layer number, so that change_structure() doesn't have to re-parse
+            # it.  In other words: Maybe the first element of the tuples can be of
+            # any type and needn't be strings.
+            choices.append((u"{0}-{1}".format(process_id, layer_number), nickname))
     return choices
 
 
