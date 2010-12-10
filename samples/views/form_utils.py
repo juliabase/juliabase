@@ -19,7 +19,7 @@ and validation.
 
 from __future__ import absolute_import
 
-import re, os.path, datetime
+import re, os.path, datetime, json
 from django.forms.util import ErrorList, ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -127,27 +127,23 @@ def get_my_layers(user_details, deposition_model):
 
     :rtype: list of (MyLayer-ID, nickname)
     """
-    if not user_details.my_layers:
-        return [(u"", u"---------")]
-    items = [item.split(":", 1) for item in user_details.my_layers.split(",")]
-    items = [(item[0].strip(),) + tuple(item[1].rsplit("-", 1)) for item in items]
-    items = [(item[0], int(item[1]), int(item[2])) for item in items]
-    fitting_items = [(u"", u"---------")]
-    for nickname, deposition_id, layer_number in items:
-        try:
-            deposition = deposition_model.objects.get(pk=deposition_id)
-        except deposition_model.DoesNotExist:
-            continue
-        try:
-            layer = deposition.layers.get(number=layer_number)
-        except:
-            continue
-        # FixMe: Maybe it is possible to avoid serialising the deposition ID
-        # and layer number, so that change_structure() doesn't have to re-parse
-        # it.  In other words: Maybe the first element of the tuples can be of
-        # any type and needn't be strings.
-        fitting_items.append((u"{0}-{1}".format(deposition_id, layer_number), nickname))
-    return fitting_items
+    choices = [(u"", u"---------")]
+    if user_details.my_layers:
+        for nickname, process_id, layer_number in json.loads(user_details.my_layers):
+            try:
+                deposition = deposition_model.objects.get(pk=process_id)
+            except deposition_model.DoesNotExist:
+                continue
+            try:
+                layer = deposition.layers.get(number=layer_number)
+            except:
+                continue
+            # FixMe: Maybe it is possible to avoid serialising the deposition ID
+            # and layer number, so that change_structure() doesn't have to re-parse
+            # it.  In other words: Maybe the first element of the tuples can be of
+            # any type and needn't be strings.
+            choices.append((u"{0}-{1}".format(process_id, layer_number), nickname))
+    return choices
 
 
 class AddLayersForm(forms.Form):
@@ -167,10 +163,10 @@ class AddLayersForm(forms.Form):
     def clean_my_layer_to_be_added(self):
         nickname = self.cleaned_data["my_layer_to_be_added"]
         if nickname and "-" in nickname:
-            deposition_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
-            deposition_id, layer_number = int(deposition_id), int(layer_number)
+            process_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
+            process_id, layer_number = int(process_id), int(layer_number)
             try:
-                deposition = self.model.objects.get(pk=deposition_id)
+                deposition = self.model.objects.get(pk=process_id)
             except self.model.DoesNotExist:
                 pass
             else:

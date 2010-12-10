@@ -1460,12 +1460,12 @@ class UserDetails(models.Model):
         Topic, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition topics"),
         help_text=_(u"new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_(u"get only important news"), default=False)
-    my_layers = models.TextField(_(u"my layers"), blank=True)
-    u"""This string is of the form ``"nickname1: deposition1-layer1, nickname2:
-    deposition2-layer2, ..."``, where “nickname” can be chosen freely except
-    that it mustn't contain “:” or “,” or whitespace.  “deposition” is the
-    *process id* (``Process.pk``, not the deposition number!) of the
-    deposition, and “layer” is the layer number (`models_depositions.Layer.number`).
+    my_layers = models.TextField(_(u"my layers"), blank=True, help_text=_(u"in JSON format"))
+    u"""This string is the JSON serialisation of the list with contains
+    3-tuples of the the form ``(nickname, deposition, layer)``, where
+    “deposition” is the *process id* (``Process.pk``, not the deposition
+    number!) of the deposition, and “layer” is the layer number
+    (`models_depositions.Layer.number`).
     """
     display_settings_timestamp = models.DateTimeField(_(u"display settings last modified"), auto_now_add=True)
     u"""This timestamp denotes when anything changed which influences the
