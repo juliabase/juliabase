@@ -487,7 +487,7 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
     sources.  It bases of the timestamps of last file modification.
 
     :Parameters:
-      - `sources`: the paths of the source files
+      - `sources`: the paths of the source files; it may also be a simple path
       - `destination`: the path to the destination file
       - `additional_inaccuracy`: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
@@ -496,7 +496,7 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
         this.  Note that usually, Chantal *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
-    :type source: list of unicode
+    :type source: unicode or list of unicode
     :type destination: unicode
     :type additional_inaccuracy: int or float
 
@@ -504,7 +504,12 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
       whether the destination files needs to be updated
 
     :rtype: bool
+
+    :Exceptions:
+      - `OSError`: raised if one of the source paths is not found
     """
+    if isinstance(sources, basestring):
+        sources = [sources]
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
     return not os.path.exists(destination) or \
