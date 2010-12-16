@@ -35,7 +35,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name, adjust_mtime
+from chantal_common.utils import get_really_full_name, adjust_mtime, is_update_necessary
 from chantal_common.models import Topic, PolymorphicModel
 from chantal_common.signals import storage_changed
 from samples import permissions
@@ -280,11 +280,8 @@ class Process(PolymorphicModel):
         if not all(os.path.exists(filename) for filename in datafile_names):
             return None, None
         plot_locations = self.calculate_plot_locations(number)
-        thumbnail_necessary = not os.path.exists(plot_locations["thumbnail_file"]) or \
-            any(os.path.getmtime(plot_locations["thumbnail_file"]) < os.path.getmtime(filename)
-                for filename in datafile_names)
-        figure_necessary = not os.path.exists(plot_locations["plot_file"]) or \
-            any(os.path.getmtime(plot_locations["plot_file"]) < os.path.getmtime(filename) for filename in datafile_names)
+        thumbnail_necessary = is_update_necessary(datafile_names, plot_locations["thumbnail_file"])
+        figure_necessary = is_update_necessary(datafile_names, plot_locations["plot_file"])
         if thumbnail_necessary or figure_necessary:
             try:
                 if thumbnail_necessary:
@@ -1211,8 +1208,7 @@ class Result(Process):
         if self.image_type == "none":
             return {"thumbnail_url": None, "image_url": None}
         image_locations = self.get_image_locations()
-        if not os.path.exists(image_locations["thumbnail_file"]) or \
-                os.path.getmtime(image_locations["thumbnail_file"]) < os.path.getmtime(image_locations["image_file"]):
+        if is_update_necessary(image_locations["image_file"], image_locations["thumbnail_file"]):
             shared_utils.mkdirs(image_locations["thumbnail_file"])
             subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
                              "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
