@@ -445,7 +445,7 @@ def get_all_models(app_label=None):
         result = dict((model.__name__, model) for model in get_models(get_app(app_label)))
         result.update((model.__name__, model) for model in abstract_models if model._meta.app_label == app_label)
         return result
-    return all_models
+    return all_models.copy()
 
 
 abstract_models = set()
