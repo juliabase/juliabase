@@ -92,30 +92,34 @@ def forms_from_post_data(post_data, parent, user_details):
 
     :Return:
       The list of the pieces forms, the global data form, and whether the
-      structure was changed by the user
+      structure was changed by the user, the prefix suitable for the
+      “add-new-name” form
 
-    :rtype: list of `NewNameForm`, `GlobalDataForm`, bool
+    :rtype: list of `NewNameForm`, `GlobalDataForm`, bool, str
     """
+    try:
+        indices = [int(key.partition("-")[0]) for key in post_data if key.endswith("-new_name")]
+    except ValueError:
+        indices = []
+    indices.sort()
+    next_prefix = str(indices[-1] + 1 if indices else 0)
+    last_name = None
     new_name_forms = []
     structure_changed = False
-    index = 0
-    last_deleted = False
-    while True:
-        if "{0}-new_name".format(index) not in post_data:
-            break
+    for index in indices:
         if "{0}-delete".format(index) in post_data:
             structure_changed = True
-            last_deleted = True
+            last_name = None
         else:
             new_name_forms.append(NewNameForm(parent.name, post_data, prefix=str(index)))
-            last_deleted = False
-        index += 1
-    if not last_deleted and post_data.get("{0}-new_name".format(index - 1), parent.name) == parent.name:
-        del new_name_forms[-1]
-    else:
-        structure_changed = True
+            last_name = post_data["{0}-new_name".format(index)]
+    if new_name_forms:
+        if last_name == parent.name:
+            del new_name_forms[-1]
+        else:
+            structure_changed = True
     global_data_form = GlobalDataForm(parent, user_details, post_data)
-    return new_name_forms, global_data_form, structure_changed
+    return new_name_forms, global_data_form, structure_changed, next_prefix
 
 
 def forms_from_database(parent, user_details):
@@ -295,7 +299,8 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     user_details = request.user.samples_user_details
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
     if request.method == "POST":
-        new_name_forms, global_data_form, structure_changed = forms_from_post_data(request.POST, parent, user_details)
+        new_name_forms, global_data_form, structure_changed, next_prefix = \
+            forms_from_post_data(request.POST, parent, user_details)
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
         if all_valid and referentially_valid and not structure_changed:
@@ -307,8 +312,9 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                 "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
+        next_prefix = "0"
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
-                                      prefix=str(len(new_name_forms))))
+                                      prefix=next_prefix))
     return render_to_response("samples/split_and_rename.html",
                               {"title": _(u"Split sample “{sample}”").format(sample=parent),
                                "new_names": zip(range(number_of_old_pieces+1,
