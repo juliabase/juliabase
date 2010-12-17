@@ -48,9 +48,9 @@ class AdvancedSearchTest(TestCase):
     def test_simple_search(self):
         response = self.client.get("/advanced_search", simple_search_data)
         self.assertEqual(
-            unicode(response.context["search_tree"]), u"""(Sample[AbstractMeasurement,Deposition,Process,Result,"""
+            unicode(response.context["search_tree"]), u"""(Sample[AbstractMeasurement,Process,Result,"""
             u"""TestPhysicalProcess]: "name","currently responsible person","current location","purpose","tags","topic";"""
-            u"""(TestPhysicalProcess[Sample]: "operator","external operator","timestamp","comments","finished","""
+            u"""(TestPhysicalProcess[Sample]: "operator","external operator","timestamp","comments","""
             u""""measurement number","raw data file","evaluated data file","apparatus";))""")
         self.assertContains(response, u"10-TB-first", status_code=200)
         self.assertContains(response, u"10-TB-third")
