@@ -182,7 +182,7 @@ def get_allowed_physical_processes(user):
     allowed_physical_processes = []
     for physical_process_class, add_data in all_addable_physical_process_models:
         if has_permission_to_add_physical_process(user, physical_process_class):
-            allowed_physical_processes.append(add_data)
+            allowed_physical_processes.append(add_data.copy())
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     return allowed_physical_processes
 

@@ -640,12 +640,12 @@ def get_all_searchable_physical_processes():
     :Return:
       all physical process classes that are searchable
 
-    :rtype: list of ``class``
+    :rtype: tuple of ``class``
     """
     global all_searchable_physical_processes
     if all_searchable_physical_processes is None:
-        all_searchable_physical_processes = [cls for cls in search.get_all_searchable_models()
-                                             if issubclass(cls, PhysicalProcess)]
+        all_searchable_physical_processes = tuple(cls for cls in search.get_all_searchable_models()
+                                                  if issubclass(cls, PhysicalProcess))
     return all_searchable_physical_processes
 
 
