@@ -27,5 +27,6 @@ urlpatterns = patterns("kicker.views",
                        url(r"^matches/add/$", "edit_match", {"id_": None}),
                        (r"^starting_numbers/(?P<username>.+)/add/$", "set_start_kicker_number"),
                        (r"^details/(?P<username>.+)", "edit_user_details"),
+                       (r"^player", "get_player"),
                        (r"^$", "summary"),
                        )

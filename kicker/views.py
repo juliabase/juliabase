@@ -333,3 +333,13 @@ def edit_user_details(request, username):
     return render_to_response("kicker/user_details.html", {
             "title": _(u"Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
             "user_details": user_details_form}, context_instance=RequestContext(request))
+
+
+@login_required
+def get_player(request):
+    try:
+        user_details = get_object_or_404(models.UserDetails, shortkey=request.GET.get("shortkey", u""))
+    except models.UserDetails.MultipleObjectsReturned:
+        raise Http404(u"User not found.")
+    return respond_in_json(
+        (user_details.user.username, user_details.nickname or user_details.user.first_name or user_details.user.username))
