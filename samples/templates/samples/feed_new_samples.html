@@ -16,7 +16,7 @@ copyright holder, you must destroy it immediately and completely.
 
 {% with entry.samples.all as samples %}
   <p>
-    {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
+    {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
       {{ originator }} has added the following sample in the topic “{{ topic }}” to the database:
     {% plural %}
       {{ originator }} has added the following samples in the topic “{{ topic }}” to the database:

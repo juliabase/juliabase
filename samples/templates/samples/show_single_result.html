@@ -24,7 +24,7 @@ copyright holder, you must destroy it immediately and completely.
     {% if samples or sample_series %}
       <p>
         {% if samples %}
-          {% blocktrans count samples|length as counter and samples.0.get_absolute_url as link and samples.0.name as name %}
+          {% blocktrans count samples|length as counter with samples.0.get_absolute_url as link and samples.0.name as name %}
             This result belongs to the sample <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
             This result belongs to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
@@ -38,7 +38,7 @@ copyright holder, you must destroy it immediately and completely.
           {% endif %}
         {% endif %}
         {% if sample_series %}
-          {% blocktrans count sample_series|length as counter and sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
+          {% blocktrans count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
             This result belongs to the sample series <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
             This result belongs to the following sample_series:  

@@ -88,7 +88,7 @@ copyright holder, you must destroy it immediately and completely.
               {% with sample.series.all as sample_serieses %}
                 {% if number_of_sample_series %}
                   <p>
-                    {% blocktrans count number_of_sample_series as counter and sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
+                    {% blocktrans count number_of_sample_series as counter with sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
                       This sample is part of the sample series “<a href="{{ first_url }}">{{ first_series }}</a>”.
                     {% plural %}
                       This sample is part of the following sample series:  <!-- {{ first_url }}  {{ first_series }} -->

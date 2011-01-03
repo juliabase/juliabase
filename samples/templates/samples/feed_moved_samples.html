@@ -17,13 +17,13 @@ copyright holder, you must destroy it immediately and completely.
 {% with entry.samples.all as samples %}
   <p>
     {% if entry.old_topic %}
-      {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.old_topic as old_topic %}
+      {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.old_topic as old_topic %}
 	{{ originator }} has moved the following sample from topic “{{ old_topic }}” to the topic “{{ topic }}”:
       {% plural %}
 	{{ originator }} has added the following samples from topic “{{ old_topic }}” to the topic “{{ topic }}”:
       {% endblocktrans %}
     {% else %}
-      {% blocktrans count samples|length as counter and entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
+      {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
 	{{ originator }} has moved the following formerly topic-less sample to the topic “{{ topic }}”:
       {% plural %}
 	{{ originator }} has added the following formerly topic-less samples to the topic “{{ topic }}”:
