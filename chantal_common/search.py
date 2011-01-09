@@ -658,8 +658,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
           - `search_fields`: see the description of the instance variable of
             the same name in `SearchTreeNode`; they don't contain a form
             because their `parse_data` method has not been called yet
-          - `derivatives`: the ordinary tree nodes that are combined in this
-            abstract node
+          - `derivatives`: the models that are combined in this abstract node
           - `choice_field_label`: Label for the choice form field for selecting
             a derivative.  By default, the label reads “restricted to”.
           - `choice_field_help_text`: help text for the form field for
@@ -669,6 +668,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
         :type related_models: dict mapping class (decendant of ``Model``) to
           str
         :type search_fields: list of `SearchField`
+        :type derivatives: list of class (decendant of ``Model``)
         :type choice_field_label: unicode
         :type choice_field_help_text: unicode
         """
