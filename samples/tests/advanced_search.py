@@ -106,7 +106,7 @@ class AdvancedSearchForAbstractModelTest(TestCase):
     def test_search(self):
         get_data = {"_model": "Sample", "_old_model": "Sample", "name": "", "currently_responsible_person": "",
                     "current_location": "", "purpose": "", "tags": "", "topic_main": "", "1-_model": "AbstractMeasurement",
-                    "1-_old_model": "AbstractMeasurement", "1-operator": "", "1-external_operator": "",
+                    "1-_old_model": "AbstractMeasurement", "1-operator": "testuser", "1-external_operator": "",
                     "1-timestamp_min": "", "1-timestamp_max": "", "1-comments": "", "1-finished": "", "1-number_min": "",
                     "1-number_max": "", "1-1-_model": "", "1-1-_old_model": "", "2-_model": "", "2-_old_model": ""}
         get_data["1-derivative"] = ""
