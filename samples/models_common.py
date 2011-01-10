@@ -500,7 +500,7 @@ class Process(PolymorphicModel):
         ``html_body``, ``name``, ``operator``, ``timestamp``, and
         ``timestamp_inaccuracy``.  Optional standard fields are ``edit_url``,
         ``export_url``, and ``duplicate_url``.  It may also have further
-        fields, which must be iterpreted by the respective ``"show_…"``
+        fields, which must be interpreted by the respective ``"show_…"``
         template.
 
         It is very important to see that ``html_body`` (the result of the
