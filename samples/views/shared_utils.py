@@ -171,6 +171,8 @@ def read_techplot_file(filename, columns=(0, 1)):
         if start_values:
             if line.lower().startswith("end"):
                 break
+            if not line.strip():
+                continue
             cells = line.split()
             for column, result_array in zip(columns, result):
                 try:
