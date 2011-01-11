@@ -86,7 +86,9 @@ class SearchField(object):
     :ivar field: the original model field this search field bases upon
 
     :ivar query_path: the keyword parameter for Django's ``filter`` method of
-      QuerySets for retrieving the field that this instance represents
+      QuerySets for retrieving the field that this instance represents; if
+      ``None``, the field name is used instead, but see the ``query_paths``
+      parameter in `get_values`.
 
     :type form: ``forms.Form``
     :type field: ``models.Field``
@@ -113,9 +115,10 @@ class SearchField(object):
         """
         self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, basestring) \
             else field_or_field_name
-        self.query_path = self.field.name
         if additional_query_path:
-            self.query_path += "__" + additional_query_path
+            self.query_path += self.field.name + "__" + additional_query_path
+        else:
+            self.query_path = None
 
     def parse_data(self, data, prefix):
         u"""Create the web form representing this search field.  If ``data`` is
@@ -131,10 +134,43 @@ class SearchField(object):
         """
         raise NotImplementedError
 
-    def get_values(self):
+    def get_query_path(self, query_paths):
+        u"""Returns the query path for the ``filter`` method call of a
+        ``QuerySet`` for the model field of this `SearchField`.  Normally, the
+        query path is simply the field name, possibly extended by the
+        ``additional_query_path`` parameter of ``__init__``.  However, if the
+        `query_path` parameter contains the fieldname as a key, the
+        corresponding value is used instead.
+
+        :Parameters:
+          - `query_paths`: dictionary mapping field names to query paths ready
+            to be used in a ``filter`` method call of a ``QuerySet``.
+
+        :type: dict mapping str to str
+
+        :Return:
+          the query path snippet
+
+        :rtype: str
+        """
+        return query_paths.get(self.field.name) or self.query_path or self.field.name
+
+    def get_values(self, query_paths={}):
         u"""Returns keyword arguments for a ``filter`` call on a ``QuerySet``.
         Note that this implies that all keyword arguments returned here are
         “anded”.
+
+        :Parameters:
+          - `query_paths`: dictionary mapping field names to query paths ready
+            to be used in a ``filter`` method call of a ``QuerySet``.
+
+            This parameter is not used in Chantal-samples but it may be
+            interesting for institute-specific code if some models should be
+            combined into one search tree node.  Then, a derivative of
+            `SearchTreeNode` may use this parameter in order to trigger
+            different searches from the same ``SearchField``.
+
+        :type: dict mapping str to str
 
         :Return:
           the keyword argument(s) for the ``filter`` call
@@ -142,7 +178,7 @@ class SearchField(object):
         :rtype: dict mapping str to object
         """
         result = self.form.cleaned_data[self.field.name]
-        return {self.query_path: result} if result is not None else {}
+        return {self.get_query_path(query_paths): result} if result is not None else {}
 
     def is_valid(self):
         u"""Retuns whether the form within this search field is bound and
@@ -169,16 +205,17 @@ class RangeSearchField(SearchField):
     time, it is an example of a search field with more than one form field.
     """
     
-    def get_values(self):
+    def get_values(self, query_paths={}):
         result = {}
         min_value = self.form.cleaned_data[self.field.name + "_min"]
         max_value = self.form.cleaned_data[self.field.name + "_max"]
+        query_path = self.get_query_path(query_paths)
         if min_value is not None and max_value is not None:
-            result[self.query_path + "__range"] = (min_value, max_value)
+            result[query_path + "__range"] = (min_value, max_value)
         elif min_value is not None:
-            result[self.query_path + "__gte"] = min_value
+            result[query_path + "__gte"] = min_value
         elif max_value is not None:
-            result[self.query_path + "__lte"] = max_value
+            result[query_path + "__lte"] = max_value
         return result
 
 
@@ -192,9 +229,9 @@ class TextSearchField(SearchField):
         self.form.fields[self.field.name] = forms.CharField(label=unicode(self.field.verbose_name), required=False,
                                                             help_text=self.field.help_text)
 
-    def get_values(self):
+    def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
-        return {self.query_path + "__icontains": result} if result else {}
+        return {self.get_query_path(query_paths) + "__icontains": result} if result else {}
 
 
 class TextNullSearchField(SearchField):
@@ -217,12 +254,13 @@ class TextNullSearchField(SearchField):
                                                                       help_text=self.field.help_text)
         self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_(u"explicitly empty"), required=False)
 
-    def get_values(self):
+    def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name + "_main"]
+        query_path = self.get_query_path(query_paths)
         if result:
-            return {self.query_path + "__icontains": result}
+            return {query_path + "__icontains": result}
         elif self.form.cleaned_data[self.field.name + "_null"]:
-            return {self.field.name + "__isnull": True}
+            return {query_path + "__isnull": True}
         else:
             return {}
 
@@ -264,9 +302,9 @@ class ChoiceSearchField(SearchField):
         field.choices = [("", u"---------")] + list(self.field.choices)
         self.form.fields[self.field.name] = field
 
-    def get_values(self):
+    def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
-        return {self.query_path: result} if result else {}
+        return {self.get_query_path(query_paths): result} if result else {}
 
 
 class DateTimeField(forms.Field):
@@ -296,7 +334,7 @@ class DateTimeField(forms.Field):
             year, month, day, hour, minute, second = \
                 int(year), int(month or "12"), int(day or "0"), int(hour or "23"), int(minute or "59"), int(second or "59")
             if not day:
-                day = [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
+                day = [31, None, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
             if not day:
                 day = 29 if calendar.isleap(year) else 28
         return datetime.datetime(year, month, day, hour, minute, second)
@@ -333,9 +371,9 @@ class BooleanSearchField(SearchField):
             choices=(("", _(u"doesn't matter")), ("yes", _(u"yes")), ("no", _(u"no"))),
             widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer), help_text=self.field.help_text)
 
-    def get_values(self):
+    def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
-        return {self.query_path: result == "yes"} if result else {}
+        return {self.get_query_path(query_paths): result == "yes"} if result else {}
 
 
 class SearchModelForm(forms.Form):
@@ -555,8 +593,9 @@ class SearchTreeNode(object):
         result = base_query if base_query is not None else self.model_class.objects
         kwargs = {}
         for search_field in self.search_fields:
-            if search_field.get_values():
-                kwargs.update(search_field.get_values())
+            values = search_field.get_values()
+            if values:
+                kwargs.update(values)
         result = result.filter(**kwargs)
         for __, node in self.children:
             if node:
@@ -598,7 +637,11 @@ class SearchTreeNode(object):
 class AbstractSearchTreeNode(SearchTreeNode):
     u"""Class representing a search tree node which is not connected with a
     particular model.  This way, similar models can be combined to one
-    selection in the advanced search.
+    selection in the advanced search.  They must share a common set of fields
+    though, and these fields must have the same names in the models.  If you
+    need more flexibility, you can make your own derived class from
+    `SearchTreeNode`.  See the ``query_paths`` parameter of
+    `SearchField.get_values` for more information.
 
     An abstract node has a list of *derivatives*.  Derivatives are ordinary
     search tree nodes, typically representing non-abstrict model classes, to
@@ -639,7 +682,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
             field.choices = [("", u"---------")] + self.choices
             self.form.fields["derivative"] = field
 
-        def get_values(self):
+        def get_values(self, query_paths={}):
             # Should never be called anyway because this search field is not
             # passed to the derivatives.
             return {}
@@ -658,8 +701,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
           - `search_fields`: see the description of the instance variable of
             the same name in `SearchTreeNode`; they don't contain a form
             because their `parse_data` method has not been called yet
-          - `derivatives`: the ordinary tree nodes that are combined in this
-            abstract node
+          - `derivatives`: the models that are combined in this abstract node
           - `choice_field_label`: Label for the choice form field for selecting
             a derivative.  By default, the label reads “restricted to”.
           - `choice_field_help_text`: help text for the form field for
@@ -669,6 +711,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
         :type related_models: dict mapping class (decendant of ``Model``) to
           str
         :type search_fields: list of `SearchField`
+        :type derivatives: list of class (decendant of ``Model``)
         :type choice_field_label: unicode
         :type choice_field_help_text: unicode
         """
