@@ -116,7 +116,7 @@ class SearchField(object):
         self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, basestring) \
             else field_or_field_name
         if additional_query_path:
-            self.query_path += self.field.name + "__" + additional_query_path
+            self.query_path = self.field.name + "__" + additional_query_path
         else:
             self.query_path = None
 
