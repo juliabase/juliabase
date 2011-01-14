@@ -80,7 +80,7 @@ class DataNode(object):
         :Return:
           data of this node in form of nested dictionaries
 
-        :rtype: dict mapping unicode to dict or unicode
+        :rtype: dict mapping unicode to dict or object
         """
         data = dict((item.key, item.value) for item in self.items)
         data.update((child.name, child.to_dict()) for child in self.children)
@@ -202,7 +202,7 @@ class DataItem(object):
       model class, e.g. ``"process"`` for ``models.Process``.
 
     :type key: unicode
-    :type value: unicode
+    :type value: object
     :type origin: str or ``NoneType``
     """
 
@@ -216,13 +216,8 @@ class DataItem(object):
             comes from.
 
         :type key: unicode
-        :type value: unicode
+        :type value: object
         :type origin: str or ``NoneType``
         """
-        if value is None:
-            value = u""
-        # FixMe: Should we make this exception only for ``bool`` or also for
-        # ``int`` and ``float``?
-        elif not isinstance(value, bool):
-            value = unicode(value)
-        self.key, self.value, self.origin = unicode(key), value, origin
+        assert isinstance(key, basestring)
+        self.key, self.value, self.origin = key, value, origin
