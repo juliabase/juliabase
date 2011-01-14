@@ -24,6 +24,7 @@ copyright holder, you must destroy it immediately and completely.
   <!-- FixMe: We have no favicon yet. -->
   <link rel="shortcut icon" href="{{ MEDIA_URL }}chantal/favicon.ico" type="image/x-icon"/>
   <script type="text/javascript" src="{{ MEDIA_URL }}chantal/js/jquery-1.4.2.min.js"></script>
+  {% block local_scripts %}{% endblock %}
 {% endblock %}
 
 {% block content %}
