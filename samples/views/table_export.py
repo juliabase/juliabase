@@ -158,7 +158,13 @@ class UnicodeWriter(object):
 
         :type row: list of object
         """
-        self.writer.writerow([unicode(s).encode("utf-8") for s in row])
+        output_row = []
+        for s in row:
+            if s is None:
+                output_row.append(u"")
+            else:
+                output_row.append(unicode(s).encode("utf-8"))
+        self.writer.writerow(output_row)
         data = self.queue.getvalue()
         data = data.decode("utf-8")
         data = self.encoder.encode(data)
