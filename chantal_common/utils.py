@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os, os.path, time, json
+import codecs, re, os, os.path, time, json, decimal
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -416,7 +416,16 @@ def respond_in_json(value):
 
     :rtype: ``HttpResponse``
     """
-    return django.http.HttpResponse(json.dumps(value), content_type="application/json; charset=ascii")
+    def default(x):
+        try:
+            return float(x)
+        except (ValueError, TypeError):
+            try:
+                return list(x)
+            except (ValueError, TypeError):
+                return unicode(x)
+
+    return django.http.HttpResponse(json.dumps(value, default=default), content_type="application/json; charset=ascii")
 
 
 all_models = None

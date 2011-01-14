@@ -44,3 +44,7 @@ urlpatterns += patterns("chantal_common.views",
                         (r"^switch_language$", "switch_language"),
                         (r"^error_pages/(?P<hash_value>.+)", "show_error_page"),
                         )
+
+urlpatterns += patterns("",
+                        (r"^jsi18n/$", "django.views.i18n.javascript_catalog", {"packages": settings.JAVASCRIPT_I18N_APPS}),
+                        )
