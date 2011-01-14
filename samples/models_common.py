@@ -418,7 +418,7 @@ class Process(PolymorphicModel):
                            DataItem(u"external operator", self.external_operator, "process"),
                            DataItem(u"finished", self.finished, "process"),
                            DataItem(u"comments", self.comments.strip(), "process"),
-                           DataItem(u"sample IDs", ",".join(str(sample.id) for sample in self.samples.all()), "process")]
+                           DataItem(u"sample IDs", self.samples.values_list("id", flat=True), "process")]
         return data_node
 
     def get_data_for_table_export(self):

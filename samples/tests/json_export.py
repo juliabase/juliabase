@@ -33,13 +33,13 @@ class SampleExportTest(TestCase):
         self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
         self.assertEqual(
             json.loads(response.content),
-            {"currently responsible person": "testuser", "name": "10-TB-first", "tags": "", "topic": "", "purpose": "",
-             "current location": "Torsten's office", "split origin": "", "ID": "1",
-             "process #1": {"sample IDs": "1,3", "apparatus": "setup1", "timestamp inaccuracy": "0",
-                            "timestamp": "2010-12-02 11:07:36", "number": "1", "external operator": "", "finished": True,
+            {"currently responsible person": "testuser", "name": "10-TB-first", "tags": "", "topic": None, "purpose": "",
+             "current location": "Torsten's office", "split origin": None, "ID": 1,
+             "process #1": {"sample IDs": [1, 3], "apparatus": "setup1", "timestamp inaccuracy": 0,
+                            "timestamp": "2010-12-02 11:07:36", "number": 1, "external operator": None, "finished": True,
                             "comments": "", "evaluated data file": "", "operator": "testuser",
                             "type": "test physical process", "raw data file": "test.dat"},
-             "process #2": {"sample IDs": "1", "timestamp inaccuracy": "0", "timestamp": "2010-12-03 11:07:36",
-                            "number": "1", "external operator": "", "finished": True, "comments": "", "operator": "testuser",
+             "process #2": {"sample IDs": [1], "timestamp inaccuracy": 0, "timestamp": "2010-12-03 11:07:36",
+                            "number": 1, "external operator": None, "finished": True, "comments": "", "operator": "testuser",
                             "type": "abstract measurement one"}
              })
