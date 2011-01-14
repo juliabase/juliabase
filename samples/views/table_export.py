@@ -29,10 +29,9 @@ The direct children of the top node are called “row nodes” or “row trees�
 because they will form the rows of the table, by being flattened.
 
 Every `DataNode` has not only children, but also key–value items containing the
-actual data.  key is unicode, value is a JSON-serialisable Python object.
-Additionally, it has a ``name`` which denotes the type or class of the
-`DataNode`.  For example, the ``name`` of a process may be “PDS measurement” or
-“6-chamber deposition”.
+actual data.  key is unicode, value is a Python object.  Additionally, it has a
+``name`` which denotes the type or class of the `DataNode`.  For example, the
+``name`` of a process may be “PDS measurement” or “6-chamber deposition”.
 
 Making the node names unique
 ............................
@@ -84,9 +83,9 @@ using the ``columns`` list, which contains a `Column` instance, which is able
 to retrieve the final table cell value through the `Column.get_value` method.
 
 This way, the table is represented by a list of rows, and each row a list of
-cells.  Every cell item is a JSON-serialisable Python object.  The zeroth row
-contains the headings (unicodes), the zeroth column the labels for the column
-(e.g., in case of exporting a sample series, the sample names, also unicodes).
+cells.  Every cell item is a Python object.  The zeroth row contains the
+headings (unicodes), the zeroth column the labels for the column (e.g., in case
+of exporting a sample series, the sample names, also unicodes).
 
 This very simple data structure can be used directly to show a preview table in
 HTML, or to create the CSV data by sending it through an instance of
@@ -119,6 +118,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
 from samples.data_tree import DataNode
 from chantal_common import mimeparse
+import chantal_common.utils
 
 
 class UnicodeWriter(object):
@@ -649,9 +649,9 @@ def export(request, data, label_column_heading):
                     previous_column_groups == selected_column_groups and previous_columns == selected_columns:
                 reduced_table = [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
                 if requested_mime_type == "application/json":
-                    response = HttpResponse(content_type="application/json; charset=ascii")
-                    json.dump([dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
-                               for row in reduced_table[1:]], response)
+                    data = [dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
+                            for row in reduced_table[1:]]
+                    return chantal_common.utils.respond_in_json(data)
                 else:
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \
