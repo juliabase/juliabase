@@ -18,6 +18,7 @@ from __future__ import absolute_import
 from django.conf import settings
 from .shared_utils import *
 from .advanced_search import *
+from .json_export import *
 
 
 assert settings.TESTING
