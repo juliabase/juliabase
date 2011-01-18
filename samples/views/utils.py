@@ -568,7 +568,7 @@ def get_physical_processes():
 
     :rtype: sorted list of `models.PhysicalProcess`
     """
-    all_physical_processes = [process for process in get_all_models().itervalues()
+    all_physical_processes = [process for process in chantal_common.utils.get_all_models().itervalues()
                               if issubclass(process, models.PhysicalProcess)]
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
     return all_physical_processes
