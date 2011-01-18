@@ -558,3 +558,19 @@ def digest_process(process, user, local_context={}):
         cached_context.update(local_context)
         process_context = process.get_context_for_user(user, cached_context)
     return process_context
+
+
+def get_physical_processes():
+    u"""Return a list with all registered physical processes.  Their type is of
+    `PhysicalProcess`, which means that they contain information about the
+    users who have permissions for that process.
+
+    :Return:
+      all physical processes
+
+    :rtype: list of `PhysicalProcess`
+    """
+    all_physical_processes = [PhysicalProcess(process) for process in get_all_models().itervalues()
+                              if issubclass(process, models.PhysicalProcess)]
+    all_physical_processes.sort(key=lambda process: process.name.lower())
+    return all_physical_processes
