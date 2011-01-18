@@ -165,8 +165,7 @@ def get_physical_processes():
 
     :rtype: list of `PhysicalProcess`
     """
-    all_physical_processes = [PhysicalProcess(process) for process in utils.get_physical_processes()
-                              if issubclass(process, models.PhysicalProcess)]
+    all_physical_processes = [PhysicalProcess(process) for process in utils.get_physical_processes()]
     return all_physical_processes
 
 @login_required
