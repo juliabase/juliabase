@@ -155,6 +155,20 @@ class PhysicalProcess(object):
         self.all_users = sorted_users(set(adders) | set(permission_editors))
 
 
+def get_physical_processes():
+    u"""Return a list with all registered physical processes.  Their type is of
+    `PhysicalProcess`, which means that they contain information about the
+    users who have permissions for that process.
+
+    :Return:
+      all physical processes
+
+    :rtype: list of `PhysicalProcess`
+    """
+    all_physical_processes = [PhysicalProcess(process) for process in utils.get_physical_processes()
+                              if issubclass(process, models.PhysicalProcess)]
+    return all_physical_processes
+
 @login_required
 def list_(request):
     u"""View for listing user permissions.  It shows who can add new processes
@@ -180,7 +194,7 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
-    physical_processes = utils.get_physical_processes()
+    physical_processes = get_physical_processes()
     user = request.user
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
@@ -269,7 +283,7 @@ def edit(request, username):
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
     can_appoint_topic_managers = user.has_perm("chantal_common.can_edit_all_topics")
-    physical_processes = utils.get_physical_processes()
+    physical_processes = get_physical_processes()
     permissions_list = []
     for process in physical_processes:
         if process.add_permission or process.view_all_permission or process.edit_all_permission or \
