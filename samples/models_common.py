@@ -537,7 +537,7 @@ class Process(PolymorphicModel):
             context["process"] = self
         if "name" not in context:
             name = unicode(self._meta.verbose_name) if not isinstance(self, Result) else self.title
-            context["name"] = name[:1].upper()+name[1:]
+            context["name"] = name[:1].upper() + name[1:]
         if "html_body" not in context:
             context["html_body"] = render_to_string(
                 "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
