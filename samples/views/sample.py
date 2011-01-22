@@ -364,6 +364,9 @@ class SamplesAndProcesses(object):
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
             self.sample_context["id_for_rename"] = None
+        sample_details = utils.get_sample_details(sample)
+        if sample_details:
+            self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
 
     def personalize(self, user, clearance, post_data):
         u"""Change the ``SamplesAndProcesses`` object so that it is suitable
