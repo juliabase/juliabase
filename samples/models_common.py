@@ -294,7 +294,6 @@ class Process(PolymorphicModel):
                     shared_utils.mkdirs(plot_locations["thumbnail_file"])
                     canvas.print_figure(plot_locations["thumbnail_file"], dpi=settings.THUMBNAIL_WIDTH / 4)
                     adjust_mtime(datafile_names, plot_locations["thumbnail_file"])
-                    storage_changed.send(Process)
                 if figure_necessary:
                     figure = Figure()
                     canvas = FigureCanvasAgg(figure)
@@ -305,7 +304,7 @@ class Process(PolymorphicModel):
                     shared_utils.mkdirs(plot_locations["plot_file"])
                     canvas.print_figure(plot_locations["plot_file"], format="pdf")
                     adjust_mtime(datafile_names, plot_locations["plot_file"])
-                    storage_changed.send(Process)
+                storage_changed.send(Process)
             except (IOError, shared_utils.PlotError):
                 return None, None
         return plot_locations["thumbnail_url"], plot_locations["plot_url"]
