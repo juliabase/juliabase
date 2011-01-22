@@ -526,8 +526,8 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
         sources_timestamp = datetime.datetime.fromtimestamp(max(os.path.getmtime(filename) for filename in sources))
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
-    sources_timestamp -= datetime.timedelta(additional_inaccuracy + 1)
-    return not os.path.exists(destination) or os.path.getmtime(destination) < sources_timestamp
+    destination_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1)
+    return not os.path.exists(destination) or destination_timestamp < sources_timestamp
 
 def format_lazy(string, *args, **kwargs):
     u"""Implements a lazy variant of the ``format`` string method.  For
