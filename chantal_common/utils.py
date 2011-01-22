@@ -521,12 +521,13 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
     if isinstance(sources, datetime.datetime):
         sources_timestamp = sources
     elif isinstance(sources, basestring):
-        sources_timestamp = os.path.getmtime(sources)
+        sources_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(sources))
     else:
-        sources_timestamp = max(os.path.getmtime(filename) for filename in sources)
+        sources_timestamp = datetime.datetime.fromtimestamp(max(os.path.getmtime(filename) for filename in sources))
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
-    return not os.path.exists(destination) or os.path.getmtime(destination) + 1 + additional_inaccuracy < sources_timestamp
+    sources_timestamp -= datetime.timedelta(additional_inaccuracy + 1)
+    return not os.path.exists(destination) or os.path.getmtime(destination) < sources_timestamp
 
 def format_lazy(string, *args, **kwargs):
     u"""Implements a lazy variant of the ``format`` string method.  For
