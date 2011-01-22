@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os, os.path, time, json, decimal
+import codecs, re, os, os.path, time, json, decimal, datetime
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -496,7 +496,8 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
     sources.  It bases of the timestamps of last file modification.
 
     :Parameters:
-      - `sources`: the paths of the source files; it may also be a simple path
+      - `sources`: the paths of the source files; it must never be an empty
+        list; it may also be a single path or a timestamp
       - `destination`: the path to the destination file
       - `additional_inaccuracy`: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
@@ -505,7 +506,7 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
         this.  Note that usually, Chantal *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
-    :type source: unicode or list of unicode
+    :type source: unicode or ``datetime.datetime`` or list of unicode
     :type destination: unicode
     :type additional_inaccuracy: int or float
 
@@ -517,13 +518,15 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
     :Exceptions:
       - `OSError`: raised if one of the source paths is not found
     """
-    if isinstance(sources, basestring):
-        sources = [sources]
+    if isinstance(sources, datetime.datetime):
+        sources_timestamp = sources
+    elif isinstance(sources, basestring):
+        sources_timestamp = os.path.getmtime(sources)
+    else:
+        sources_timestamp = max(os.path.getmtime(filename) for filename in sources)
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
-    return not os.path.exists(destination) or \
-        any(os.path.getmtime(destination) + 1 + additional_inaccuracy < os.path.getmtime(filename) for filename in sources)
-
+    return not os.path.exists(destination) or os.path.getmtime(destination) + 1 + additional_inaccuracy < sources_timestamp
 
 def format_lazy(string, *args, **kwargs):
     u"""Implements a lazy variant of the ``format`` string method.  For
