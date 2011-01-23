@@ -103,7 +103,8 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
 
 @login_required
 def edit(request, sample_name):
-    u"""View for editing existing samples.
+    u"""View for editing existing samples.  You can't use it to add new
+    samples.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -121,12 +122,21 @@ def edit(request, sample_name):
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = request.user.samples_user_details
+    sample_details = utils.get_sample_details(sample)
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
+        sample_details_form = sample_details and sample_details.get_form(request.user, request.POST, instance=sample_details)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        all_valid = all([sample_form.is_valid(), edit_description_form.is_valid()])
         referentially_valid = is_referentially_valid(sample, sample_form, edit_description_form)
-        if all([sample_form.is_valid(), edit_description_form.is_valid()]) and referentially_valid:
+        if sample_details_form:
+            all_valid = sample_details_form.is_valid() and all_valid
+            referentially_valid = sample_details_form.is_referentially_valid(sample, sample_form, edit_description_form) \
+                and referentially_valid
+        if all_valid and referentially_valid:
             sample = sample_form.save()
+            if sample_details_form:
+                sample_details_form.save()
             feed_reporter = feed_utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.my_samples.add(sample)
@@ -141,9 +151,11 @@ def edit(request, sample_name):
                 sample.get_absolute_url())
     else:
         sample_form = SampleForm(request.user, instance=sample)
+        sample_details_form = sample_details and sample_details.get_form(request.user, instance=sample_details)
         edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("samples/edit_sample.html", {"title": _(u"Edit sample “{sample}”").format(sample=sample),
                                                            "sample": sample_form,
+                                                           "sample_details": sample_details_form,
                                                            "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
 
