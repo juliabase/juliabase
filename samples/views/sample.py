@@ -137,7 +137,7 @@ def edit(request, sample_name):
         if all_valid and referentially_valid:
             sample = sample_form.save()
             if sample_details:
-                sample_details.save_form_data()
+                sample_details.save_form_data(sample_details_context)
             feed_reporter = feed_utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.my_samples.add(sample)
