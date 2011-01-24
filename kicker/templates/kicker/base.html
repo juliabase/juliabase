@@ -16,6 +16,6 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 
 {% block app_title %}<a style="color: inherit; text-decoration: inherit" href="{% url samples.views.main.main_menu %}"
-                        >Chantal</a><img class="logo-ief-5" src="{{ MEDIA_URL }}ipv/sonne.png"
+                        >Chantal</a><img class="logo-ief-5" src="{{ STATIC_URL }}ipv/sonne.png"
                                          alt="{% trans 'IEF-5 logo' %}" width="48" height="48"/>{% endblock %}
 {% block app_subtitle %}{% trans "The Kicker server" %}{% endblock %}

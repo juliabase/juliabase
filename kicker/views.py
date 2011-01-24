@@ -235,7 +235,7 @@ def plot_commands(axes, plot_data):
     axes.grid(True)
     
 def update_plot():
-    path = os.path.join(settings.MEDIA_ROOT, "kicker/")
+    path = os.path.join(settings.STATIC_ROOT, "kicker/")
 #    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
 #        return
     eligible_players = [entry[0] for entry in get_eligible_players()]
