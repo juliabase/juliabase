@@ -1207,9 +1207,9 @@ class Result(Process):
         image_locations = self.get_image_locations()
         if is_update_necessary(image_locations["image_file"], image_locations["thumbnail_file"]):
             shared_utils.mkdirs(image_locations["thumbnail_file"])
-            subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
-                             "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
-                             image_locations["thumbnail_file"]])
+            subprocess.check_call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
+                                   "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
+                                   image_locations["thumbnail_file"]])
             adjust_mtime([image_locations["image_file"]], image_locations["thumbnail_file"])
             storage_changed.send(Result)
         return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
