@@ -892,8 +892,8 @@ def data_matrix_code(request):
     hash_ = hashlib.sha1()
     hash_.update(data.encode("utf-8"))
     filename = hash_.hexdigest() + ".png"
-    filepath = os.path.join(settings.MEDIA_ROOT, "data_matrix", filename)
-    url = os.path.join(settings.MEDIA_URL, "data_matrix", filename)
+    filepath = os.path.join(settings.STATIC_ROOT, "data_matrix", filename)
+    url = os.path.join(settings.STATIC_URL, "data_matrix", filename)
     if not os.path.exists(filepath):
         utils.mkdirs(filepath)
         image = PIL.Image.open(StringIO(urllib.urlopen(

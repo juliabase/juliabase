@@ -240,13 +240,16 @@ class Process(PolymorphicModel):
         if number == 0:
             # We give this a nicer URL because this case is so common
             plot_url = django.core.urlresolvers.reverse("default_plot", kwargs={"process_id": str(self.pk)})
+            thumbnail_url = django.core.urlresolvers.reverse("default_thumbnail", kwargs={"process_id": str(self.pk)})
         else:
             plot_url = django.core.urlresolvers.reverse("samples.views.plots.show_plot",
                                                         kwargs={"process_id": str(self.pk), "number": str(number)})
+            thumbnail_url = django.core.urlresolvers.reverse("samples.views.plots.show_thumbnail",
+                                                             kwargs={"process_id": str(self.pk), "number": str(number)})
         return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
                 "plot_url": plot_url,
                 "thumbnail_file": os.path.join(settings.MEDIA_ROOT, "plots", hashname + ".png"),
-                "thumbnail_url": os.path.join(settings.MEDIA_URL, "plots", hashname + ".png")}
+                "thumbnail_url": thumbnail_url}
 
     def generate_plot_files(self, number=0):
         u"""The central plot-generating method which shouldn't be overridden by
