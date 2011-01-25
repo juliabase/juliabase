@@ -529,6 +529,7 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
     return not os.path.exists(destination) or \
         datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1) < sources_timestamp
 
+
 def format_lazy(string, *args, **kwargs):
     u"""Implements a lazy variant of the ``format`` string method.  For
     example, you might say::
@@ -539,3 +540,29 @@ def format_lazy(string, *args, **kwargs):
 # Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
 # whatever reason.
 format_lazy = allow_lazy(format_lazy, unicode)
+
+
+def static_file_response(filepath, served_filename=None):
+    u"""Serves a file of the local file system.
+
+    :Parameters:
+      - `filepath`: the absolute path to the file to be served
+      - `served_filename`: the filename the should be transmitted; if given,
+        the response will be an "attachment"
+
+    :Return:
+      the HTTP response with the static file
+
+    :rype: ``django.http.HttpResponse``
+    """
+    response = django.http.HttpResponse()
+    if not settings.USE_X_SENDFILE:
+        response.write(open(filepath).read())
+    response["X-Sendfile"] = filepath
+    response["Content-Type"] = \
+        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}. \
+        get(os.path.splitext(filepath)[1], "application/octet-stream")
+    response["Content-Length"] = os.path.getsize(filepath)
+    if served_filename:
+        response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
+    return response
