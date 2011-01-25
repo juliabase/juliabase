@@ -1147,7 +1147,7 @@ class Result(Process):
         as on the webpage.
 
         Every image exist twice on the local filesystem.  First, it is in
-        ``settings.UPLOADS_ROOT/results``.  (Typically, ``UPLOADS_ROOT`` is
+        ``settings.MEDIA_ROOT/results``.  (Typically, ``MEDIA_ROOT`` is
         ``/var/www/chantal/uploads/`` and should be backuped.)  This is the
         original file, uploaded by the user.  Its filename is ``"0"`` plus the
         respective file extension (jpeg, png, or pdf).  The sub-directory is
@@ -1155,9 +1155,7 @@ class Result(Process):
         per result in upcoming Chantal versions.)
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
-        on the original file type, and stored in ``settings.MEDIA_ROOT``.  The
-        thumbnails are served by Lighty without permissions-checking.
-        Therefore, their path is protected by a salted hash.
+        on the original file type, and stored in ``settings.MEDIA_ROOT``.
 
         :Return:
           a dictionary containing the following keys:
@@ -1175,20 +1173,17 @@ class Result(Process):
         :rtype: dict mapping str to str
         """
         assert self.image_type != "none"
-        hash_ = hashlib.sha1()
-        hash_.update(settings.SECRET_KEY)
-        hash_.update(repr(self.pk))
-        hashname = str(self.pk) + "-" + hash_.hexdigest()
-        sluggified_filename = defaultfilters.slugify(self.title)
         original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
-        relative_thumbnail_path = os.path.join("results", hashname + thumbnail_extension)
-        return {"image_file": os.path.join(settings.UPLOADS_ROOT, "results", str(self.pk), "0" + original_extension),
+        sluggified_filename = defaultfilters.slugify(self.title) + original_extension
+        return {"image_file": os.path.join(settings.MEDIA_ROOT, "results", str(self.pk), "0" + original_extension),
                 "image_url": django.core.urlresolvers.reverse(
-                "samples.views.result.show_image", kwargs={"process_id": str(self.pk),
-                                                           "image_filename": sluggified_filename + original_extension}),
-                "thumbnail_file": os.path.join(settings.MEDIA_ROOT, relative_thumbnail_path),
-                "thumbnail_url": os.path.join(settings.MEDIA_URL, relative_thumbnail_path)}
+                    "samples.views.result.show_image", kwargs={"process_id": str(self.pk)}),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "results_thumbnails", str(self.pk),
+                                               "0" + thumbnail_extension),
+                "thumbnail_url": django.core.urlresolvers.reverse(
+                    "samples.views.result.show_thumbnail", kwargs={"process_id": str(self.pk)}),
+                "sluggified_filename": sluggified_filename}
 
     def get_image(self):
         u"""Assures that the image thumbnail of this result process is

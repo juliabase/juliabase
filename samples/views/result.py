@@ -20,14 +20,13 @@ from __future__ import absolute_import
 
 import datetime, os, os.path, re, json
 from django.template import RequestContext
-from django.http import HttpResponse
 import django.forms as forms
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.db.models import Q
 import chantal_common.utils
-from chantal_common.utils import append_error
+from chantal_common.utils import append_error, static_file_response
 from chantal_common.signals import storage_changed
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils, table_export
@@ -35,8 +34,8 @@ from samples.views import utils, form_utils, feed_utils, table_export
 
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
-    `settings.UPLOADS_ROOT`.  If the given result has already an image
-    connected with it, it is removed first.
+    `settings.MEDIA_ROOT`.  If the given result has already an image connected
+    with it, it is removed first.
 
     :Parameters:
       - `image_data`: the file-like object which contains the uploaded data
@@ -566,21 +565,17 @@ def show(request, process_id):
 
 
 @login_required
-def show_image(request, process_id, image_filename):
-    u"""Shows a particular result image.  Although its response is a bitmap
+def show_image(request, process_id):
+    u"""Shows a particular result image.  Although its response is an image
     rather than an HTML file, it is served by Django in order to enforce user
     permissions.
 
     :Parameters:
       - `request`: the current HTTP Request object
       - `process_id`: the database ID of the result to show
-      - `image_filename`: the full filename of the image including extension.
-        So far, this is redundant since there is at most one image per result
-        but this may change in future Python versions.
 
     :type request: ``HttpRequest``
     :type process_id: unicode
-    :type image_filename: unicode
 
     :Returns:
       the HTTP response object with the image
@@ -590,13 +585,34 @@ def show_image(request, process_id, image_filename):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    response = HttpResponse()
-    response["X-Sendfile"] = image_locations["image_file"]
-    response["Content-Type"] = \
-        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}[os.path.splitext(image_filename)[1]]
-    response["Content-Length"] = os.path.getsize(image_locations["image_file"])
-    response["Content-Disposition"] = 'attachment; filename="{0}"'.format(image_filename)
-    return response
+    image_file = image_locations["image_file"]
+    sluggified_filename = image_locations["sluggified_filename"]
+    return static_file_response(image_file, sluggified_filename)
+
+
+@login_required
+def show_thumbnail(request, process_id):
+    u"""Shows the thumnail of a particular result image.  Although its response
+    is an image rather than an HTML file, it is served by Django in order to
+    enforce user permissions.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `process_id`: the database ID of the result to show
+
+    :type request: ``HttpRequest``
+    :type process_id: unicode
+
+    :Returns:
+      the HTTP response object with the thumbnail image
+
+    :rtype: ``HttpResponse``
+    """
+    result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
+    permissions.assert_can_view_result_process(request.user, result)
+    image_locations = result.get_image_locations()
+    thumbnail_file = image_locations["thumbnail_file"]
+    return static_file_response(thumbnail_file)
 
 
 @login_required

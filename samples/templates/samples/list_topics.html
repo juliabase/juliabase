@@ -22,7 +22,7 @@ copyright holder, you must destroy it immediately and completely.
   <ul>
     {% for topic in topics %}
       {% with topic.name|urlquote as normalized_topicname %}
-        <li style='list-style-image: url("{{ MEDIA_URL }}chantal/icons/group.png")'
+        <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/group.png")'
             ><a href="{% url samples.views.topic.edit name=normalized_topicname %}">{{ topic.name }}</a></li>
       {% endwith %}
     {% endfor %}
