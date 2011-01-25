@@ -248,7 +248,7 @@ class Process(PolymorphicModel):
                                                              kwargs={"process_id": str(self.pk), "number": str(number)})
         return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.MEDIA_ROOT, "plots", hashname + ".png"),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".png"),
                 "thumbnail_url": thumbnail_url}
 
     def generate_plot_files(self, number=0):
