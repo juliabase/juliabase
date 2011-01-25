@@ -133,4 +133,7 @@ urlpatterns = patterns("samples.views",
 
                        (r"^qr_code$", "sample.qr_code"),
                        (r"^data_matrix_code$", "sample.data_matrix_code"),
+
+                       (r"^status/add/$", "status.add"),
+                       (r"^status/$", "status.show"),
                        )

@@ -1,0 +1,63 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+    {% error_list status _("General error") %}
+
+<form method="post" action="">
+<table cellpadding="5">
+    <tr>
+        <td style="text-align: right">
+            <label for="id_{{ status.timestamp.html_name }}">
+                {{ status.timestamp.label }}:
+            </label>
+        </td>
+        <td>
+            {{ status.timestamp }}
+        </td>
+        <td rowspan="4" style="padding-left: 2em">
+            <label for="id_{{ stauts.processes.html_name }}" style="margin-right: 0.5em; vertical-align: top">
+                {{ status.processes.label }}:
+            </label>
+                {{ status.processes }}
+        </td>
+    </tr>
+    <tr>
+        {% input_field status.begin %}
+    </tr>
+    <tr>
+        {% input_field status.end %}
+    </tr>
+    <tr>
+        {% input_field status.status_level %}
+    </tr>
+    <tr style="display: none">
+        {% input_field status.operator %}
+        {% input_field status.begin_inaccuracy %}
+        {% input_field status.end_inaccuracy %}
+    </tr>
+    <tr>
+         <td class="label"><label for="id_{{ status.message.html_name }}">
+            {{ status.message.label }}:</label><br/>{% markdown_hint %}</td>
+         <td class="input" colspan="3">{{ status.message }}</td>
+     </tr>
+</table>
+     <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+{% endblock %}

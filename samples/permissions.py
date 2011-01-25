@@ -144,8 +144,37 @@ def get_editable_sample_series(user):
 
 
 all_addable_physical_process_models = None
+def get_all_addable_physical_process_models():
+    u"""Get a list with all physical process classes (depositions, measurements;
+    no sample splits) that one can add or edit.
+
+    :Return:
+      Dictionary mapping all physical processes one can to add.  Every process
+      class is mapped to a dictionary with three keys, namely ``"url"`` with
+      the url to the “add” view for the process, ``"label"`` with the name of
+      the process (starting lowercase), and ``"type"`` with the process'
+      class name.
+
+    :rtype: dict mapping class to dict mapping str to unicode
+    """
+    global all_addable_physical_process_models
+    if all_addable_physical_process_models is None:
+        all_addable_physical_process_models = {}
+        for process_class in chantal_common_utils.get_all_models().itervalues():
+            if issubclass(process_class, samples.models.PhysicalProcess):
+                try:
+                    url = process_class.get_add_link()
+                except NotImplementedError, AttributeError:
+                    continue
+                all_addable_physical_process_models[process_class] = {"url": process_class.get_add_link(),
+                                                                      "label": process_class._meta.verbose_name,
+                                                                      "label_plural": process_class._meta.verbose_name_plural,
+                                                                      "type": process_class.__name__}
+    return all_addable_physical_process_models
+
+
 def get_allowed_physical_processes(user):
-    u"""Get a list with all pysical process classes (depositions, measurements;
+    u"""Get a list with all physical process classes (depositions, measurements;
     no sample splits) that the user is allowed to add or edit.  This routine is
     typically used where a list of all processes that the user is allowed to
     *add* is to be build, on the main menu page and the “add process to sample”
@@ -165,22 +194,8 @@ def get_allowed_physical_processes(user):
 
     :rtype: list of dict mapping str to unicode
     """
-    global all_addable_physical_process_models
-    if all_addable_physical_process_models is None:
-        all_addable_physical_process_models = []
-        for process_class in chantal_common_utils.get_all_models().itervalues():
-            if issubclass(process_class, samples.models.PhysicalProcess):
-                try:
-                    url = process_class.get_add_link()
-                except NotImplementedError, AttributeError:
-                    continue
-                all_addable_physical_process_models.append(
-                    (process_class, {"url": process_class.get_add_link(),
-                                     "label": process_class._meta.verbose_name,
-                                     "label_plural": process_class._meta.verbose_name_plural,
-                                     "type": process_class.__name__}))
     allowed_physical_processes = []
-    for physical_process_class, add_data in all_addable_physical_process_models:
+    for physical_process_class, add_data in get_all_addable_physical_process_models().iteritems():
         if has_permission_to_add_physical_process(user, physical_process_class):
             allowed_physical_processes.append(add_data.copy())
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
