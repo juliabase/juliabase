@@ -240,9 +240,9 @@ class Process(PolymorphicModel):
                                                         kwargs={"process_id": str(self.pk), "number": str(number)})
             thumbnail_url = django.core.urlresolvers.reverse("samples.views.plots.show_thumbnail",
                                                              kwargs={"process_id": str(self.pk), "number": str(number)})
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, self.number)),
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, number)),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, self.number)),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, number)),
                 "thumbnail_url": thumbnail_url}
 
     def generate_plot_files(self, number=0):
