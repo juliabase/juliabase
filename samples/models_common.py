@@ -231,12 +231,6 @@ class Process(PolymorphicModel):
 
         :rtype: dict mapping str to str
         """
-        hash_ = hashlib.sha1()
-        hash_.update(settings.SECRET_KEY)
-        hash_.update(translation.get_language())
-        hash_.update(repr(self.pk))
-        hash_.update(repr(number))
-        hashname = str(self.pk) + "-" + hash_.hexdigest()
         if number == 0:
             # We give this a nicer URL because this case is so common
             plot_url = django.core.urlresolvers.reverse("default_plot", kwargs={"process_id": str(self.pk)})
@@ -246,9 +240,9 @@ class Process(PolymorphicModel):
                                                         kwargs={"process_id": str(self.pk), "number": str(number)})
             thumbnail_url = django.core.urlresolvers.reverse("samples.views.plots.show_thumbnail",
                                                              kwargs={"process_id": str(self.pk), "number": str(number)})
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, self.number),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".png"),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, self.number)),
                 "thumbnail_url": thumbnail_url}
 
     def generate_plot_files(self, number=0):
