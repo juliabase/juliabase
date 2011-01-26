@@ -22,7 +22,7 @@ irresolvable cyclic imports.
 
 from __future__ import absolute_import, division
 
-import hashlib, os.path, shutil, subprocess, datetime, json
+import hashlib, os.path, datetime, json
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -33,9 +33,8 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name, adjust_mtime, is_update_necessary
+from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
-from chantal_common.signals import storage_changed
 from samples import permissions
 from samples.views import shared_utils
 from chantal_common import search
@@ -1120,32 +1119,6 @@ class Result(Process):
                     "samples.views.result.show_thumbnail", kwargs={"process_id": str(self.pk)}),
                 "sluggified_filename": sluggified_filename}
 
-    def get_image(self):
-        u"""Assures that the image thumbnail of this result process is
-        generated and returns the URLs of thumbnail and original.
-
-        :Return:
-          The full relative URL (i.e. without the domain, but with the leading
-          ``/``) to the thumbnail, and the full relative URL to the “real”
-          image.  Both strings are ``None`` if there is no image connected with
-          this result, or the original image couldn't be found.  They are
-          returned in a dictionary with the keys ``"thumbnail_url"`` and
-          ``"image_url"``, respectively.
-
-        :rtype: dict mapping str to (str or ``NoneType``)
-        """
-        if self.image_type == "none":
-            return {"thumbnail_url": None, "image_url": None}
-        image_locations = self.get_image_locations()
-        if is_update_necessary(image_locations["thumbnail_file"], [image_locations["image_file"]]):
-            shared_utils.mkdirs(image_locations["thumbnail_file"])
-            subprocess.check_call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
-                                   "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
-                                   image_locations["thumbnail_file"]])
-            adjust_mtime([image_locations["image_file"]], image_locations["thumbnail_file"])
-            storage_changed.send(Result)
-        return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
-
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if self.quantities_and_values:
@@ -1154,7 +1127,12 @@ class Result(Process):
             context["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
-            context.update(self.get_image())
+            if self.image_type != "none":
+                image_locations = self.get_image_locations()
+                context.update({"thumbnail_url": image_locations["thumbnail_url"],
+                                "image_url": image_locations["image_url"]})
+            else:
+                context["thumbnail_url"] = context["image_url"] = None
         if permissions.has_permission_to_edit_result_process(user, self):
             context["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})

@@ -18,15 +18,16 @@ u"""Views for editing and creating results (aka result processes).
 
 from __future__ import absolute_import
 
-import datetime, os, os.path, re, json
+import datetime, os, os.path, re, json, subprocess
 from django.template import RequestContext
 import django.forms as forms
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.conf import settings
 from django.db.models import Q
 import chantal_common.utils
-from chantal_common.utils import append_error, static_file_response
+from chantal_common.utils import append_error, static_file_response, is_update_necessary
 from chantal_common.signals import storage_changed
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils, table_export
@@ -585,9 +586,7 @@ def show_image(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    image_file = image_locations["image_file"]
-    sluggified_filename = image_locations["sluggified_filename"]
-    return static_file_response(image_file, sluggified_filename)
+    return static_file_response(image_locations["image_file"], image_locations["sluggified_filename"])
 
 
 @login_required
@@ -611,7 +610,13 @@ def show_thumbnail(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    thumbnail_file = image_locations["thumbnail_file"]
+    image_file = image_file
+    thumbnail_file = thumbnail_file
+    if is_update_necessary(thumbnail_file, [image_file]):
+        utils.mkdirs(thumbnail_file)
+        subprocess.check_call(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
+                               "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), thumbnail_file])
+        storage_changed.send(Result)
     return static_file_response(thumbnail_file)
 
 
