@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os, os.path, time, json, decimal
+import codecs, re, os, os.path, time, json, decimal, datetime, copy
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -471,33 +471,16 @@ def register_abstract_model(abstract_model):
     abstract_models.add(abstract_model)
 
 
-def adjust_mtime(sources, destination):
-    u"""Sets the mtime of the destination file to the most recent mtime of all
-    source files.  This is used for plots that must have the same mtime as
-    their source data files in order to assure re-generation if other source
-    data files should be used suddenly (e.g. because raw data was evaluated).
-    Otherwise, the plots may remain the same because their timestamps may be
-    newer than those of the new source data files.
-
-    :Parameters:
-      - `sources`: all source files that are used to generate the destination
-        file; it must contain at least one element
-      - `destination`: the file whose mtime should be changed
-
-    :type sources: list of unicode
-    :type destination: unicode
-    """
-    sources_mtime = max(os.path.getmtime(source) for source in sources)
-    os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
-
-
-def is_update_necessary(sources, destination, additional_inaccuracy=0):
+def is_update_necessary(destination, source_files=[], timestamps=[], additional_inaccuracy=0):
     u"""Returns whether the destination file needs to be re-created from the
-    sources.  It bases of the timestamps of last file modification.
+    sources.  It bases of the timestamps of last file modification.  If the
+    union of `source_files` and `timestamps` is empty, the function returns
+    ``False``.
 
     :Parameters:
-      - `sources`: the paths of the source files; it may also be a simple path
       - `destination`: the path to the destination file
+      - `source_files`: the paths of the source files
+      - `timestamps`: timestamps of non-file source objects
       - `additional_inaccuracy`: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
         where the modification timestamps have an accuracy of only 2 seconds
@@ -505,24 +488,27 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
         this.  Note that usually, Chantal *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
-    :type source: unicode or list of unicode
     :type destination: unicode
+    :type source_files: list of unicode
+    :type timestamps: list of ``datetime.datetime``
     :type additional_inaccuracy: int or float
 
     :Return:
-      whether the destination files needs to be updated
+      whether the destination file needs to be updated
 
     :rtype: bool
 
     :Exceptions:
       - `OSError`: raised if one of the source paths is not found
     """
-    if isinstance(sources, basestring):
-        sources = [sources]
+    all_timestamps = copy.copy(timestamps)
+    all_timestamps.extend(datetime.datetime.fromtimestamp(os.path.getmtime(filename)) for filename in source_files)
+    if not all_timestamps:
+        return False
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
     return not os.path.exists(destination) or \
-        any(os.path.getmtime(destination) + 1 + additional_inaccuracy < os.path.getmtime(filename) for filename in sources)
+        datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1) < max(all_timestamps)
 
 
 def format_lazy(string, *args, **kwargs):
@@ -535,3 +521,29 @@ def format_lazy(string, *args, **kwargs):
 # Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
 # whatever reason.
 format_lazy = allow_lazy(format_lazy, unicode)
+
+
+def static_file_response(filepath, served_filename=None):
+    u"""Serves a file of the local file system.
+
+    :Parameters:
+      - `filepath`: the absolute path to the file to be served
+      - `served_filename`: the filename the should be transmitted; if given,
+        the response will be an "attachment"
+
+    :Return:
+      the HTTP response with the static file
+
+    :rype: ``django.http.HttpResponse``
+    """
+    response = django.http.HttpResponse()
+    if not settings.USE_X_SENDFILE:
+        response.write(open(filepath).read())
+    response["X-Sendfile"] = filepath
+    response["Content-Type"] = \
+        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}. \
+        get(os.path.splitext(filepath)[1], "application/octet-stream")
+    response["Content-Length"] = os.path.getsize(filepath)
+    if served_filename:
+        response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
+    return response
