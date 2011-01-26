@@ -243,67 +243,6 @@ class Process(PolymorphicModel):
                 "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, number)),
                 "thumbnail_url": thumbnail_url}
 
-    def generate_plot_files(self, number=0):
-        u"""The central plot-generating method which shouldn't be overridden by
-        a derived class.  This method tests whether it is necessary to generate
-        new plots from the original datafile (by checking existence and file
-        timestamps), and does it if necessary.
-
-        Note that plots can only be generated for *physical* processes,
-        i.e. depositions, measurements, etc.
-
-        The thumbnail image is a PNG, the figure image is a PDF.
-
-        :Parameters:
-          - `number`: the number of the plot to be generated.  It defaults to
-            ``0`` because most models will have at most one plot anyway.
-
-        :type number: int
-
-        :Return:
-          the full relative URL to the thumbnail image (i.e., without domain
-          but with file extension), and the full relative URL to the figure
-          image (which usually is linked with the thumbnail).  If the
-          generation fails, it returns ``None, None``.
-
-        :rtype: str, str; or ``NoneType``, ``NoneType``
-        """
-        datafile_name = self.get_datafile_name(number)
-        if not datafile_name:
-            return None, None
-        datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
-        if not all(os.path.exists(filename) for filename in datafile_names):
-            return None, None
-        plot_locations = self.calculate_plot_locations(number)
-        thumbnail_necessary = is_update_necessary(datafile_names, plot_locations["thumbnail_file"])
-        figure_necessary = is_update_necessary(datafile_names, plot_locations["plot_file"])
-        if thumbnail_necessary or figure_necessary:
-            try:
-                if thumbnail_necessary:
-                    figure = Figure(frameon=False, figsize=(4, 3))
-                    canvas = FigureCanvasAgg(figure)
-                    axes = figure.add_subplot(111)
-                    axes.set_position((0.17, 0.16, 0.78, 0.78))
-                    axes.grid(True)
-                    self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
-                    shared_utils.mkdirs(plot_locations["thumbnail_file"])
-                    canvas.print_figure(plot_locations["thumbnail_file"], dpi=settings.THUMBNAIL_WIDTH / 4)
-                    adjust_mtime(datafile_names, plot_locations["thumbnail_file"])
-                if figure_necessary:
-                    figure = Figure()
-                    canvas = FigureCanvasAgg(figure)
-                    axes = figure.add_subplot(111)
-                    axes.grid(True)
-                    axes.set_title(unicode(self))
-                    self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
-                    shared_utils.mkdirs(plot_locations["plot_file"])
-                    canvas.print_figure(plot_locations["plot_file"], format="pdf")
-                    adjust_mtime(datafile_names, plot_locations["plot_file"])
-                storage_changed.send(Process)
-            except (IOError, shared_utils.PlotError):
-                return None, None
-        return plot_locations["thumbnail_url"], plot_locations["plot_url"]
-
     def draw_plot(self, axes, number, filename, for_thumbnail):
         u"""Generate a plot using Matplotlib commands.  You may do whatever you
         want here – but eventually, there must be a savable Matplotlib plot in
