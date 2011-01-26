@@ -24,6 +24,7 @@ from matplotlib.figure import Figure
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from samples import models, permissions
 from samples.views import utils
 import chantal_common.utils
