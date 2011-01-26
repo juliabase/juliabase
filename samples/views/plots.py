@@ -19,6 +19,8 @@ u"""View for showing a plot as a PDF file.
 from __future__ import absolute_import
 
 import os.path
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.figure import Figure
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required

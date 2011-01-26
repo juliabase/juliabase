@@ -23,8 +23,6 @@ irresolvable cyclic imports.
 from __future__ import absolute_import, division
 
 import hashlib, os.path, shutil, subprocess, datetime, json
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.figure import Figure
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
