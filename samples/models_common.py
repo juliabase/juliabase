@@ -200,7 +200,7 @@ class Process(PolymorphicModel):
         """
         return ("samples.views.main.show_process", [str(self.pk)])
 
-    def calculate_plot_locations(self, number):
+    def calculate_plot_locations(self, number=0):
         u"""Get the location of a plot in the local filesystem as well as on
         the webpage.
 
@@ -355,8 +355,9 @@ class Process(PolymorphicModel):
 
         :Return:
           The absolute path of the file(s) with the original data for this plot
-          in the local filesystem.  It's ``None`` if there is no plottable
-          datafile for this process.
+          in the local filesystem.  It's ``None`` if there is no plot available
+          for this process.  If there are no raw datafile but you want to draw
+          a plot nevertheless (e.g. from process data), return an empty list.
 
         :rtype: list of str, str, or ``NoneType``
         """
