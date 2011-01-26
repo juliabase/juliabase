@@ -28,6 +28,7 @@ from django.conf import settings
 from samples import models, permissions
 from samples.views import utils
 import chantal_common.utils
+from chantal_common.signals import storage_changed
 
 
 @login_required
@@ -83,12 +84,12 @@ def show_plot(request, process_id, number, thumbnail):
                 canvas = FigureCanvasAgg(figure)
                 axes = figure.add_subplot(111)
                 axes.grid(True)
-                axes.set_title(unicode(self))
+                axes.set_title(unicode(process))
                 process.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                 utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
-            adjust_mtime(datafile_names, plot_filepath)
-            storage_changed.send(Process)
+            chantal_common.utils.adjust_mtime(datafile_names, plot_filepath)
+            storage_changed.send(models.Process)
         except utils.PlotError:
             raise Http404(u"Plot could not be generated.")
     return chantal_common.utils.static_file_response(plot_filepath,
