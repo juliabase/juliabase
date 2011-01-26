@@ -73,7 +73,7 @@ def show_plot(request, process_id, number, thumbnail):
                 axes.set_position((0.17, 0.16, 0.78, 0.78))
                 axes.grid(True)
                 process.draw_plot(axes, number, datafile_name, for_thumbnail=True)
-                shared_utils.mkdirs(plot_filepath)
+                utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, dpi=settings.THUMBNAIL_WIDTH / 4)
             else:
                 figure = Figure()
@@ -82,11 +82,11 @@ def show_plot(request, process_id, number, thumbnail):
                 axes.grid(True)
                 axes.set_title(unicode(self))
                 process.draw_plot(axes, number, datafile_name, for_thumbnail=False)
-                shared_utils.mkdirs(plot_filepath)
+                utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             adjust_mtime(datafile_names, plot_filepath)
             storage_changed.send(Process)
-        except shared_utils.PlotError:
+        except utils.PlotError:
             raise Http404(u"Plot could not be generated.")
     return chantal_common.utils.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(number) + ".pdf")
