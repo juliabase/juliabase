@@ -103,7 +103,8 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
 
 @login_required
 def edit(request, sample_name):
-    u"""View for editing existing samples.
+    u"""View for editing existing samples.  You can't use it to add new
+    samples.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -121,12 +122,22 @@ def edit(request, sample_name):
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = request.user.samples_user_details
+    sample_details = utils.get_sample_details(sample)
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        all_valid = all([sample_form.is_valid(), edit_description_form.is_valid()])
         referentially_valid = is_referentially_valid(sample, sample_form, edit_description_form)
-        if all([sample_form.is_valid(), edit_description_form.is_valid()]) and referentially_valid:
+        if sample_details:
+            sample_details_context, sample_details_valid = \
+                sample_details.process_post(request.user, request.POST, sample_form, edit_description_form)
+            all_valid = all_valid and sample_details_valid
+        else:
+            sample_details_context = {}
+        if all_valid and referentially_valid:
             sample = sample_form.save()
+            if sample_details:
+                sample_details.save_form_data(sample_details_context)
             feed_reporter = feed_utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.my_samples.add(sample)
@@ -142,10 +153,11 @@ def edit(request, sample_name):
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("samples/edit_sample.html", {"title": _(u"Edit sample “{sample}”").format(sample=sample),
-                                                           "sample": sample_form,
-                                                           "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+        sample_details_context = sample_details.process_get(request.user) if sample_details else {}
+    context = {"title": _(u"Edit sample “{sample}”").format(sample=sample), "sample": sample_form,
+               "edit_description": edit_description_form}
+    context.update(sample_details_context)
+    return render_to_response("samples/edit_sample.html", context, context_instance=RequestContext(request))
 
 
 def get_allowed_processes(user, sample):
@@ -364,6 +376,9 @@ class SamplesAndProcesses(object):
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
             self.sample_context["id_for_rename"] = None
+        sample_details = utils.get_sample_details(sample)
+        if sample_details:
+            self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
 
     def personalize(self, user, clearance, post_data):
         u"""Change the ``SamplesAndProcesses`` object so that it is suitable
@@ -877,8 +892,8 @@ def data_matrix_code(request):
     hash_ = hashlib.sha1()
     hash_.update(data.encode("utf-8"))
     filename = hash_.hexdigest() + ".png"
-    filepath = os.path.join(settings.MEDIA_ROOT, "data_matrix", filename)
-    url = os.path.join(settings.MEDIA_URL, "data_matrix", filename)
+    filepath = os.path.join(settings.STATIC_ROOT, "data_matrix", filename)
+    url = os.path.join(settings.STATIC_URL, "data_matrix", filename)
     if not os.path.exists(filepath):
         utils.mkdirs(filepath)
         image = PIL.Image.open(StringIO(urllib.urlopen(

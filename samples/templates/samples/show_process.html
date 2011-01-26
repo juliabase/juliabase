@@ -24,18 +24,18 @@ copyright holder, you must destroy it immediately and completely.
           <h1>
             {{ title }}{% if edit_url %}<a class="edit-icon" 
                                              href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
+               ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
+               ><img src="{{ STATIC_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if export_url %}<a class="edit-icon" 
                     href="{{ export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
+               ><img src="{{ STATIC_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if resplit_url %}<a class="edit-icon" 
                      href="{{ resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ MEDIA_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
+               ><img src="{{ STATIC_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"

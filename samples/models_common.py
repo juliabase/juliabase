@@ -22,9 +22,7 @@ irresolvable cyclic imports.
 
 from __future__ import absolute_import, division
 
-import hashlib, os.path, shutil, subprocess, datetime, json
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.figure import Figure
+import hashlib, os.path, datetime, json
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils import translation
@@ -35,9 +33,8 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name, adjust_mtime, is_update_necessary
+from chantal_common.utils import get_really_full_name
 from chantal_common.models import Topic, PolymorphicModel
-from chantal_common.signals import storage_changed
 from samples import permissions
 from samples.views import shared_utils
 from chantal_common import search
@@ -200,7 +197,7 @@ class Process(PolymorphicModel):
         """
         return ("samples.views.main.show_process", [str(self.pk)])
 
-    def calculate_plot_locations(self, number):
+    def calculate_plot_locations(self, number=0):
         u"""Get the location of a plot in the local filesystem as well as on
         the webpage.
 
@@ -231,84 +228,19 @@ class Process(PolymorphicModel):
 
         :rtype: dict mapping str to str
         """
-        hash_ = hashlib.sha1()
-        hash_.update(settings.SECRET_KEY)
-        hash_.update(translation.get_language())
-        hash_.update(repr(self.pk))
-        hash_.update(repr(number))
-        hashname = str(self.pk) + "-" + hash_.hexdigest()
         if number == 0:
             # We give this a nicer URL because this case is so common
             plot_url = django.core.urlresolvers.reverse("default_plot", kwargs={"process_id": str(self.pk)})
+            thumbnail_url = django.core.urlresolvers.reverse("default_thumbnail", kwargs={"process_id": str(self.pk)})
         else:
             plot_url = django.core.urlresolvers.reverse("samples.views.plots.show_plot",
                                                         kwargs={"process_id": str(self.pk), "number": str(number)})
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", hashname + ".pdf"),
+            thumbnail_url = django.core.urlresolvers.reverse("samples.views.plots.show_thumbnail",
+                                                             kwargs={"process_id": str(self.pk), "number": str(number)})
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, number)),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.MEDIA_ROOT, "plots", hashname + ".png"),
-                "thumbnail_url": os.path.join(settings.MEDIA_URL, "plots", hashname + ".png")}
-
-    def generate_plot_files(self, number=0):
-        u"""The central plot-generating method which shouldn't be overridden by
-        a derived class.  This method tests whether it is necessary to generate
-        new plots from the original datafile (by checking existence and file
-        timestamps), and does it if necessary.
-
-        Note that plots can only be generated for *physical* processes,
-        i.e. depositions, measurements, etc.
-
-        The thumbnail image is a PNG, the figure image is a PDF.
-
-        :Parameters:
-          - `number`: the number of the plot to be generated.  It defaults to
-            ``0`` because most models will have at most one plot anyway.
-
-        :type number: int
-
-        :Return:
-          the full relative URL to the thumbnail image (i.e., without domain
-          but with file extension), and the full relative URL to the figure
-          image (which usually is linked with the thumbnail).  If the
-          generation fails, it returns ``None, None``.
-
-        :rtype: str, str; or ``NoneType``, ``NoneType``
-        """
-        datafile_name = self.get_datafile_name(number)
-        if not datafile_name:
-            return None, None
-        datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
-        if not all(os.path.exists(filename) for filename in datafile_names):
-            return None, None
-        plot_locations = self.calculate_plot_locations(number)
-        thumbnail_necessary = is_update_necessary(datafile_names, plot_locations["thumbnail_file"])
-        figure_necessary = is_update_necessary(datafile_names, plot_locations["plot_file"])
-        if thumbnail_necessary or figure_necessary:
-            try:
-                if thumbnail_necessary:
-                    figure = Figure(frameon=False, figsize=(4, 3))
-                    canvas = FigureCanvasAgg(figure)
-                    axes = figure.add_subplot(111)
-                    axes.set_position((0.17, 0.16, 0.78, 0.78))
-                    axes.grid(True)
-                    self.draw_plot(axes, number, datafile_name, for_thumbnail=True)
-                    shared_utils.mkdirs(plot_locations["thumbnail_file"])
-                    canvas.print_figure(plot_locations["thumbnail_file"], dpi=settings.THUMBNAIL_WIDTH / 4)
-                    adjust_mtime(datafile_names, plot_locations["thumbnail_file"])
-                    storage_changed.send(Process)
-                if figure_necessary:
-                    figure = Figure()
-                    canvas = FigureCanvasAgg(figure)
-                    axes = figure.add_subplot(111)
-                    axes.grid(True)
-                    axes.set_title(unicode(self))
-                    self.draw_plot(axes, number, datafile_name, for_thumbnail=False)
-                    shared_utils.mkdirs(plot_locations["plot_file"])
-                    canvas.print_figure(plot_locations["plot_file"], format="pdf")
-                    adjust_mtime(datafile_names, plot_locations["plot_file"])
-                    storage_changed.send(Process)
-            except (IOError, shared_utils.PlotError):
-                return None, None
-        return plot_locations["thumbnail_url"], plot_locations["plot_url"]
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, number)),
+                "thumbnail_url": thumbnail_url}
 
     def draw_plot(self, axes, number, filename, for_thumbnail):
         u"""Generate a plot using Matplotlib commands.  You may do whatever you
@@ -359,8 +291,9 @@ class Process(PolymorphicModel):
 
         :Return:
           The absolute path of the file(s) with the original data for this plot
-          in the local filesystem.  It's ``None`` if there is no plottable
-          datafile for this process.
+          in the local filesystem.  It's ``None`` if there is no plot available
+          for this process.  If there are no raw datafile but you want to draw
+          a plot nevertheless (e.g. from process data), return an empty list.
 
         :rtype: list of str, str, or ``NoneType``
         """
@@ -537,7 +470,7 @@ class Process(PolymorphicModel):
             context["process"] = self
         if "name" not in context:
             name = unicode(self._meta.verbose_name) if not isinstance(self, Result) else self.title
-            context["name"] = name[:1].upper()+name[1:]
+            context["name"] = name[:1].upper() + name[1:]
         if "html_body" not in context:
             context["html_body"] = render_to_string(
                 "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
@@ -1148,7 +1081,7 @@ class Result(Process):
         as on the webpage.
 
         Every image exist twice on the local filesystem.  First, it is in
-        ``settings.UPLOADS_ROOT/results``.  (Typically, ``UPLOADS_ROOT`` is
+        ``settings.MEDIA_ROOT/results``.  (Typically, ``MEDIA_ROOT`` is
         ``/var/www/chantal/uploads/`` and should be backuped.)  This is the
         original file, uploaded by the user.  Its filename is ``"0"`` plus the
         respective file extension (jpeg, png, or pdf).  The sub-directory is
@@ -1156,9 +1089,7 @@ class Result(Process):
         per result in upcoming Chantal versions.)
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
-        on the original file type, and stored in ``settings.MEDIA_ROOT``.  The
-        thumbnails are served by Lighty without permissions-checking.
-        Therefore, their path is protected by a salted hash.
+        on the original file type, and stored in ``settings.MEDIA_ROOT``.
 
         :Return:
           a dictionary containing the following keys:
@@ -1176,46 +1107,17 @@ class Result(Process):
         :rtype: dict mapping str to str
         """
         assert self.image_type != "none"
-        hash_ = hashlib.sha1()
-        hash_.update(settings.SECRET_KEY)
-        hash_.update(repr(self.pk))
-        hashname = str(self.pk) + "-" + hash_.hexdigest()
-        sluggified_filename = defaultfilters.slugify(self.title)
         original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
-        relative_thumbnail_path = os.path.join("results", hashname + thumbnail_extension)
-        return {"image_file": os.path.join(settings.UPLOADS_ROOT, "results", str(self.pk), "0" + original_extension),
+        sluggified_filename = defaultfilters.slugify(self.title) + original_extension
+        return {"image_file": os.path.join(settings.MEDIA_ROOT, "results", str(self.pk), "0" + original_extension),
                 "image_url": django.core.urlresolvers.reverse(
-                "samples.views.result.show_image", kwargs={"process_id": str(self.pk),
-                                                           "image_filename": sluggified_filename + original_extension}),
-                "thumbnail_file": os.path.join(settings.MEDIA_ROOT, relative_thumbnail_path),
-                "thumbnail_url": os.path.join(settings.MEDIA_URL, relative_thumbnail_path)}
-
-    def get_image(self):
-        u"""Assures that the image thumbnail of this result process is
-        generated and returns the URLs of thumbnail and original.
-
-        :Return:
-          The full relative URL (i.e. without the domain, but with the leading
-          ``/``) to the thumbnail, and the full relative URL to the “real”
-          image.  Both strings are ``None`` if there is no image connected with
-          this result, or the original image couldn't be found.  They are
-          returned in a dictionary with the keys ``"thumbnail_url"`` and
-          ``"image_url"``, respectively.
-
-        :rtype: dict mapping str to (str or ``NoneType``)
-        """
-        if self.image_type == "none":
-            return {"thumbnail_url": None, "image_url": None}
-        image_locations = self.get_image_locations()
-        if is_update_necessary(image_locations["image_file"], image_locations["thumbnail_file"]):
-            shared_utils.mkdirs(image_locations["thumbnail_file"])
-            subprocess.call(["convert", image_locations["image_file"] + ("[0]" if self.image_type == "pdf" else ""),
-                             "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH),
-                             image_locations["thumbnail_file"]])
-            adjust_mtime([image_locations["image_file"]], image_locations["thumbnail_file"])
-            storage_changed.send(Result)
-        return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
+                    "samples.views.result.show_image", kwargs={"process_id": str(self.pk)}),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "results_thumbnails", str(self.pk),
+                                               "0" + thumbnail_extension),
+                "thumbnail_url": django.core.urlresolvers.reverse(
+                    "samples.views.result.show_thumbnail", kwargs={"process_id": str(self.pk)}),
+                "sluggified_filename": sluggified_filename}
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -1225,7 +1127,12 @@ class Result(Process):
             context["export_url"] = \
                 django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
-            context.update(self.get_image())
+            if self.image_type != "none":
+                image_locations = self.get_image_locations()
+                context.update({"thumbnail_url": image_locations["thumbnail_url"],
+                                "image_url": image_locations["image_url"]})
+            else:
+                context["thumbnail_url"] = context["image_url"] = None
         if permissions.has_permission_to_edit_result_process(user, self):
             context["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})

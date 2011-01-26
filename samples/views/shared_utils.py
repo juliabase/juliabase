@@ -205,6 +205,27 @@ def mkdirs(path):
         pass
 
 
+def remove_file(path):
+    u"""Removes the file.  If the file didn't exist, this is a no-op.
+
+    :Parameters:
+      - `path`: absolute path to the file to be removed
+
+    :type path: str
+
+    :Return:
+      whether the file was removed; if ``False``, it hadn't existed
+
+    :rtype: bool
+    """
+    try:
+        os.remove(path)
+    except OSError:
+        return False
+    else:
+        return True
+
+
 def capitalize_first_letter(text):
     u"""Capitalise the first letter of the given string.
 

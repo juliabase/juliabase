@@ -22,6 +22,7 @@ from __future__ import absolute_import
 
 import re, string, datetime
 from django.http import Http404
+from django.db.models import ObjectDoesNotExist
 from django.core.cache import cache
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
@@ -37,7 +38,7 @@ old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-
 new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})|  # initials of a user
                                          [A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4})             # external operator
                                          -[-A-Za-z_/0-9#]+$""", re.VERBOSE)
-provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)")
+provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)$")
 def sample_name_format(name):
     u"""Determines which sample name format the given name has.  It doesn't
     test whether the sample name is existing, nor if the initials are valid.
@@ -558,6 +559,37 @@ def digest_process(process, user, local_context={}):
         cached_context.update(local_context)
         process_context = process.get_context_for_user(user, cached_context)
     return process_context
+
+
+def get_sample_details(sample):
+    u"""Retreive the sample details of a sample.  Sample details are an
+    optional feature that doesn't exist in chantal_samples itself.  It can be
+    provided by an app built on top of it.
+
+    If you do so, the sample details must have a O2O relationship to ``Sample``
+    with the related name ``sample_details``.  Furthermore, it must have a
+    ``get_context_for_user`` method which takes the ``user`` and the
+    ``sample_context`` as a parameter, and returns the populated sample context
+    dict.
+
+    This in turn can then be used in the overriden ``show_sample.html``
+    template in the ``sample_details`` block.
+
+    :Parameters:
+      - `sample`: the sample object whose details should be retreived
+
+    :type sample: `models.Sample`
+
+    :Return:
+      the sample details object, or ``None`` if there aren't any (because there
+      is no model at all or no particular details for *this* sample)
+
+    :rtype: ``SampleDetails`` or ``NoneType``
+    """
+    try:
+        return sample.sample_details
+    except (AttributeError, ObjectDoesNotExist):
+        return None
 
 
 def get_physical_processes():

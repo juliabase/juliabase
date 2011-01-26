@@ -21,7 +21,7 @@ copyright holder, you must destroy it immediately and completely.
     >{% blocktrans with external_operator.name as name %}External operator “{{ name }}”{% endblocktrans %}
   {% if can_edit %}<a class="edit-icon"
        href="{{ external_operator.get_absolute_url }}/edit/?next={{ external_operator.get_absolute_url|urlquote_plus }}"
-     ><img src="{{ MEDIA_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
+     ><img src="{{ STATIC_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
            width="16" height="16"/></a>{% endif %}</h1>{% endblock %}
 
 {% block frame_content %}
