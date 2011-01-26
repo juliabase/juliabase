@@ -471,26 +471,6 @@ def register_abstract_model(abstract_model):
     abstract_models.add(abstract_model)
 
 
-def adjust_mtime(sources, destination):
-    u"""Sets the mtime of the destination file to the most recent mtime of all
-    source files.  This is used for plots that must have the same mtime as
-    their source data files in order to assure re-generation if other source
-    data files should be used suddenly (e.g. because raw data was evaluated).
-    Otherwise, the plots may remain the same because their timestamps may be
-    newer than those of the new source data files.
-
-    :Parameters:
-      - `sources`: all source files that are used to generate the destination
-        file; it must contain at least one element
-      - `destination`: the file whose mtime should be changed
-
-    :type sources: list of unicode
-    :type destination: unicode
-    """
-    sources_mtime = max(os.path.getmtime(source) for source in sources)
-    os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
-
-
 def is_update_necessary(destination, source_files=[], timestamps=[], additional_inaccuracy=0):
     u"""Returns whether the destination file needs to be re-created from the
     sources.  It bases of the timestamps of last file modification.  If the
