@@ -610,8 +610,8 @@ def show_thumbnail(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    image_file = image_file
-    thumbnail_file = thumbnail_file
+    image_file = image_locations["image_file"]
+    thumbnail_file = image_locations["thumbnail_file"]
     if is_update_necessary(thumbnail_file, [image_file]):
         utils.mkdirs(thumbnail_file)
         subprocess.check_call(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
