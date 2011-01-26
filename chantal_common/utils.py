@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os, os.path, time, json, decimal, datetime
+import codecs, re, os, os.path, time, json, decimal, datetime, copy
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -491,14 +491,16 @@ def adjust_mtime(sources, destination):
     os.utime(destination, (os.stat(destination).st_atime, sources_mtime))
 
 
-def is_update_necessary(sources, destination, additional_inaccuracy=0):
+def is_update_necessary(destination, source_files=[], timestamps=[], additional_inaccuracy=0):
     u"""Returns whether the destination file needs to be re-created from the
-    sources.  It bases of the timestamps of last file modification.
+    sources.  It bases of the timestamps of last file modification.  If the
+    union of `source_files` and `timestamps` is empty, the function returns
+    ``False``.
 
     :Parameters:
-      - `sources`: the paths of the source files; it must never be an empty
-        list; it may also be a single path or a timestamp
       - `destination`: the path to the destination file
+      - `source_files`: the paths of the source files
+      - `timestamps`: timestamps of non-file source objects
       - `additional_inaccuracy`: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
         where the modification timestamps have an accuracy of only 2 seconds
@@ -506,28 +508,27 @@ def is_update_necessary(sources, destination, additional_inaccuracy=0):
         this.  Note that usually, Chantal *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
-    :type source: unicode or ``datetime.datetime`` or list of unicode
     :type destination: unicode
+    :type source_files: list of unicode
+    :type timestamps: list of ``datetime.datetime``
     :type additional_inaccuracy: int or float
 
     :Return:
-      whether the destination files needs to be updated
+      whether the destination file needs to be updated
 
     :rtype: bool
 
     :Exceptions:
       - `OSError`: raised if one of the source paths is not found
     """
-    if isinstance(sources, datetime.datetime):
-        sources_timestamp = sources
-    elif isinstance(sources, basestring):
-        sources_timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(sources))
-    else:
-        sources_timestamp = datetime.datetime.fromtimestamp(max(os.path.getmtime(filename) for filename in sources))
+    all_timestamps = copy.copy(timestamps)
+    all_timestamps.extend(datetime.datetime.fromtimestamp(os.path.getmtime(filename)) for filename in source_files)
+    if not all_timestamps:
+        return False
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
     return not os.path.exists(destination) or \
-        datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1) < sources_timestamp
+        datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1) < max(all_timestamps)
 
 
 def format_lazy(string, *args, **kwargs):
