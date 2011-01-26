@@ -616,7 +616,7 @@ def show_thumbnail(request, process_id):
         utils.mkdirs(thumbnail_file)
         subprocess.check_call(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
                                "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), thumbnail_file])
-        storage_changed.send(Result)
+        storage_changed.send(models.Result)
     return static_file_response(thumbnail_file)
 
 
