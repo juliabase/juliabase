@@ -61,13 +61,15 @@ def show_plot(request, process_id, number, thumbnail):
     datafile_name = process.get_datafile_name(number)
     if datafile_name is None:
         raise Http404(u"No such plot available.")
+    timestamps = [] if thumbnail else [sample.last_modified for sample in process.samples.all()]
+    timestamps.append(process.last_modified)
     if datafile_name:
         datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
         if not all(os.path.exists(filename) for filename in datafile_names):
             raise Http404(u"One of the raw datafiles was not found.")
-        update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, datafile_names)
+        update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, datafile_names, timestamps)
     else:
-        update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, timestamps=[process.last_modified])
+        update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, timestamps=timestamps)
     if update_necessary:
         try:
             if thumbnail:
@@ -88,7 +90,6 @@ def show_plot(request, process_id, number, thumbnail):
                 process.draw_plot(axes, number, datafile_name, for_thumbnail=False)
                 utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
-            chantal_common.utils.adjust_mtime(datafile_names, plot_filepath)
             storage_changed.send(models.Process)
         except utils.PlotError:
             raise Http404(u"Plot could not be generated.")
