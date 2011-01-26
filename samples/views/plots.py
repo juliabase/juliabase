@@ -61,9 +61,9 @@ def show_plot(request, process_id, number, thumbnail):
         datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
         if not all(os.path.exists(filename) for filename in datafile_names):
             raise Http404(u"One of the raw datafiles was not found.")
-        update_necessary = is_update_necessary(datafile_names, plot_filepath)
+        update_necessary = chantal_common.utils.is_update_necessary(datafile_names, plot_filepath)
     else:
-        update_necessary = is_update_necessary(process.last_modified, plot_filepath)
+        update_necessary = chantal_common.utils.is_update_necessary(process.last_modified, plot_filepath)
     if update_necessary:
         try:
             if thumbnail:
