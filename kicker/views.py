@@ -28,7 +28,8 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext as _
-from chantal_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response
+from chantal_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs
+from chantal_common.signals import storage_changed
 from samples.views import utils
 from . import models
 
@@ -257,10 +258,7 @@ def update_plot():
     axes.set_position((0.1, 0.5, 0.8, 0.45))
     plot_commands(axes, plot_data)
     axes.legend(loc="upper center", bbox_to_anchor=[0.5, -0.1], ncol=3, shadow=True)
-    try:
-        os.makedirs(path)
-    except:
-        pass
+    mkdirs(path)
     canvas.print_figure(os.path.join(path, "kicker.png"))
     figure.clf()
     figure = Figure(frameon=False, figsize=(10, 7))
@@ -271,14 +269,7 @@ def update_plot():
     axes.legend(loc="best", bbox_to_anchor=[1, 1], shadow=True)
     canvas.print_figure(os.path.join(path, "kicker.pdf"))
     figure.clf()
-    hostname = socket.gethostname()
-    if hostname == "olga":
-        other_node = "mandy"
-    elif hostname == "mandy":
-        other_node = "olga"
-    else:
-        return
-    subprocess.call(["rsync", "-auz", path, other_node + ":" + path])
+    storage_changed.send(models.KickerNumber)
 
 
 @login_required
