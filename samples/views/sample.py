@@ -149,7 +149,7 @@ def edit(request, sample_name):
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
             return utils.successful_response(
                 request, _(u"Sample {sample} was successfully changed in the database.").format(sample=sample),
-                sample.get_absolute_url())
+                by_id, {"sample_id": sample.id, "path_suffix": u""})
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
