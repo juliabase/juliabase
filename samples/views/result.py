@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.conf import settings
 from django.db.models import Q
 import chantal_common.utils
-from chantal_common.utils import append_error, static_file_response, is_update_necessary
+from chantal_common.utils import append_error, static_file_response, is_update_necessary, mkdirs
 from chantal_common.signals import storage_changed
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils, table_export
@@ -70,7 +70,7 @@ def save_image_file(image_data, result, related_data_form):
                 os.remove(result.get_image_locations()["image_file"])
             result.image_type = new_image_type
             image_path = result.get_image_locations()["image_file"]
-            utils.mkdirs(image_path)
+            mkdirs(image_path)
             destination = open(image_path, "wb+")
         destination.write(chunk)
     destination.close()
@@ -613,7 +613,7 @@ def show_thumbnail(request, process_id):
     image_file = image_locations["image_file"]
     thumbnail_file = image_locations["thumbnail_file"]
     if is_update_necessary(thumbnail_file, [image_file]):
-        utils.mkdirs(thumbnail_file)
+        mkdirs(thumbnail_file)
         subprocess.check_call(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
                                "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), thumbnail_file])
         storage_changed.send(models.Result)

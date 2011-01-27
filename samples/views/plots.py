@@ -79,7 +79,7 @@ def show_plot(request, process_id, number, thumbnail):
                 axes.set_position((0.17, 0.16, 0.78, 0.78))
                 axes.grid(True)
                 process.draw_plot(axes, number, datafile_name, for_thumbnail=True)
-                utils.mkdirs(plot_filepath)
+                chantal_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, dpi=settings.THUMBNAIL_WIDTH / 4)
             else:
                 figure = Figure()
@@ -88,7 +88,7 @@ def show_plot(request, process_id, number, thumbnail):
                 axes.grid(True)
                 axes.set_title(unicode(process))
                 process.draw_plot(axes, number, datafile_name, for_thumbnail=False)
-                utils.mkdirs(plot_filepath)
+                chantal_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
         except utils.PlotError:

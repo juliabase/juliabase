@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json, get_all_models
+    respond_in_json, get_all_models, mkdirs
 from chantal_common.signals import storage_changed
 from samples.views import utils, form_utils, feed_utils, table_export
 import chantal_common.search
@@ -895,7 +895,7 @@ def data_matrix_code(request):
     filepath = os.path.join(settings.STATIC_ROOT, "data_matrix", filename)
     url = os.path.join(settings.STATIC_URL, "data_matrix", filename)
     if not os.path.exists(filepath):
-        utils.mkdirs(filepath)
+        mkdirs(filepath)
         image = PIL.Image.open(StringIO(urllib.urlopen(
                     "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
                     u"MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
