@@ -246,7 +246,11 @@ class FeedResult(FeedEntry):
         return metadata
 
     def get_additional_template_context(self, user):
-        return self.result.get_image()
+        if self.image_type != "none":
+            image_locations = self.result.get_image_locations()
+            return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
+        else:
+            return {"thumbnail_url": None, "image_url": None}
 
 
 class FeedCopiedMySamples(FeedEntry):
