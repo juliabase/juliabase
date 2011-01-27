@@ -246,7 +246,7 @@ class FeedResult(FeedEntry):
         return metadata
 
     def get_additional_template_context(self, user):
-        if self.image_type != "none":
+        if self.result.image_type != "none":
             image_locations = self.result.get_image_locations()
             return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
         else:
