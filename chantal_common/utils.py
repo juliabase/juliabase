@@ -547,3 +547,20 @@ def static_file_response(filepath, served_filename=None):
     if served_filename:
         response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
     return response
+
+
+def mkdirs(path):
+    u"""Creates a directory and all of its parents if necessary.  If the given
+    path doesn't end with a slash, it's interpreted as a filename and removed.
+    If the directory already exists, nothing is done.  (In particular, no
+    exception is raised.)
+
+    :Parameters:
+      - `path`: absolute path which should be created
+
+    :type path: str
+    """
+    try:
+        os.makedirs(os.path.dirname(path))
+    except OSError:
+        pass
