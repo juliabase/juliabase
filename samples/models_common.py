@@ -230,12 +230,13 @@ class Process(PolymorphicModel):
         """
         if number == 0:
             # We give this a nicer URL because this case is so common
-            plot_url = django.core.urlresolvers.reverse("default_plot", kwargs={"process_id": str(self.pk)})
-            thumbnail_url = django.core.urlresolvers.reverse("default_thumbnail", kwargs={"process_id": str(self.pk)})
+            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.pk)})
+            thumbnail_url = django.core.urlresolvers.reverse("default_process_thumbnail",
+                                                             kwargs={"process_id": str(self.pk)})
         else:
-            plot_url = django.core.urlresolvers.reverse("samples.views.plots.show_plot",
+            plot_url = django.core.urlresolvers.reverse("process_plot",
                                                         kwargs={"process_id": str(self.pk), "number": str(number)})
-            thumbnail_url = django.core.urlresolvers.reverse("samples.views.plots.show_thumbnail",
+            thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.pk), "number": str(number)})
         return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, number)),
                 "plot_url": plot_url,
