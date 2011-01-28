@@ -231,7 +231,7 @@ class Process(PolymorphicModel):
         if number == 0:
             # We give this a nicer URL because this case is so common
             plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.pk)})
-            thumbnail_url = django.core.urlresolvers.reverse("default_process_thumbnail",
+            thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.pk)})
         else:
             plot_url = django.core.urlresolvers.reverse("process_plot",
