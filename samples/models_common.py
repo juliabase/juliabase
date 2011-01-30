@@ -850,8 +850,13 @@ class Sample(models.Model):
                          search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
         related_models = dict((model, "processes") for model in get_all_searchable_physical_processes())
         related_models[Result] = "processes"
+        # FixMe: The following line must be removed but not before possible
+        # problems are tackled.
         related_models[Process] = "processes"
-        return search.DetailsSearchTreeNode(cls, related_models, search_fields, "sample_details")
+        if hasattr(cls, "sample_details"):
+            return search.DetailsSearchTreeNode(cls, related_models, search_fields, "sample_details")
+        else:
+            return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class SampleAlias(models.Model):
