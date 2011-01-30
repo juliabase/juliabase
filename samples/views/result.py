@@ -23,7 +23,7 @@ from django.template import RequestContext
 import django.forms as forms
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, pgettext_lazy
 from django.conf import settings
 from django.db.models import Q
 import chantal_common.utils
@@ -105,7 +105,8 @@ class RelatedDataForm(forms.Form):
     """
     _ = ugettext_lazy
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
-    sample_series = forms.ModelMultipleChoiceField(label=_(u"Sample serieses"), queryset=None, required=False)
+    sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", u"Sample serieses"), queryset=None,
+                                                   required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
 
     def __init__(self, user, query_string_dict, old_result, data=None, files=None, **kwargs):

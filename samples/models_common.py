@@ -24,7 +24,7 @@ from __future__ import absolute_import, division
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy
 from django.utils import translation
 from django.template import defaultfilters, Context
 from django.template.loader import render_to_string
@@ -1281,7 +1281,7 @@ class SampleSeries(models.Model):
 
     class Meta:
         verbose_name = _(u"sample series")
-        verbose_name_plural = _(u"sample serieses")
+        verbose_name_plural = pgettext_lazy("plural", u"sample series")
 
     def save(self, *args, **kwargs):
         u"""Saves the instance.
@@ -1402,8 +1402,7 @@ class Initials(models.Model):
 
     class Meta:
         verbose_name = _(u"initials")
-            # Translation hint: Plural of “initials”
-        verbose_name_plural = _(u"initialses")
+        verbose_name_plural = pgettext_lazy("plural", u"initialses")
 
     def __unicode__(self):
         return self.initials
