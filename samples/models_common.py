@@ -758,7 +758,32 @@ class Sample(models.Model):
                 break
         return None
 
-    def get_data(self):
+    def get_sample_details(self):
+        u"""Retreive the sample details of a sample.  Sample details are an
+        optional feature that doesn't exist in chantal_samples itself.  It can
+        be provided by an app built on top of it.
+
+        If you do so, the sample details must have a O2O relationship to
+        ``Sample`` with the related name ``sample_details``.  Furthermore, it
+        must have a ``get_context_for_user`` method which takes the ``user``
+        and the ``sample_context`` as a parameter, and returns the populated
+        sample context dict.
+
+        This in turn can then be used in the overriden ``show_sample.html``
+        template in the ``sample_details`` block.
+
+        :Return:
+          the sample details object, or ``None`` if there aren't any (because
+          there is no model at all or no particular details for *this* sample)
+
+        :rtype: ``SampleDetails`` or ``NoneType``
+        """
+        try:
+            return self.sample_details
+        except (AttributeError, models.ObjectDoesNotExist):
+            return None
+
+    def get_data(self, only_processes=False):
         u"""Extract the data of this sample as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for general data
         export.  Every child of the top-level node is a process of the sample.
@@ -773,14 +798,26 @@ class Sample(models.Model):
         unicode to ``DataNode`` instead of an instance because an instance gets
         translated.
 
+        :Parameters:
+          - `only_processes`: Whether only processes should be included.  It is
+            not part of the official `get_data` API.  I use it only to avoid
+            having a special inner function in this method.
+
+        :type only_processes: bool
+
         :Return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         data_node = DataNode(self.name)
+        if not only_processes:
+            sample_details = self.get_sample_details()
+            if sample_details:
+                sample_details_data = sample_details.get_data()
+                data_node.children = sample_details_data.children
         if self.split_origin:
-            ancestor_data = self.split_origin.parent.get_data()
+            ancestor_data = self.split_origin.parent.get_data(only_processes=True)
             data_node.children.extend(ancestor_data.children)
         data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         data_node.items = [DataItem(u"ID", self.pk),
@@ -791,9 +828,11 @@ class Sample(models.Model):
                            DataItem(u"tags", self.tags),
                            DataItem(u"split origin", self.split_origin and self.split_origin.id),
                            DataItem(u"topic", self.topic)]
+        if not only_processes and sample_details:
+            data_node.items.extend(sample_details_data.items)
         return data_node
 
-    def get_data_for_table_export(self):
+    def get_data_for_table_export(self, only_processes=False):
         u"""Extract the data of this sample as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
         data export.  Every child of the top-level node is a process of the
@@ -803,6 +842,13 @@ class Sample(models.Model):
         Note that ``_`` must get ``ugettext`` in these methods because
         otherwise, subsequent modifications in derived classes break.
 
+        :Parameters:
+          - `only_processes`: Whether only processes should be included.  It is
+            not part of the official `get_data` API.  I use it only to avoid
+            having a special inner function in this method.
+
+        :type only_processes: bool
+
         :Return:
           a node for building a data tree
 
@@ -810,9 +856,14 @@ class Sample(models.Model):
         """
         _ = ugettext
         data_node = DataNode(self, unicode(self))
+        if not only_processes:
+            sample_details = self.get_sample_details()
+            if sample_details:
+                sample_details_data = sample_details.get_data_for_table_export()
+                data_node.children = sample_details_data.children
         if self.split_origin:
-            ancestor_data = self.split_origin.parent.get_data_for_table_export()
-            data_node.children.extend(ancestor_data.children)
+            ancestor_data = self.split_origin.parent.get_data_for_table_export(only_processes=True)
+            data_node.children.extend(ancestor_data.children[1 if sample_details else 0:])
         data_node.children.extend(process.actual_instance.get_data_for_table_export() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't

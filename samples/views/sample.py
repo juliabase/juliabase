@@ -122,7 +122,7 @@ def edit(request, sample_name):
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = request.user.samples_user_details
-    sample_details = utils.get_sample_details(sample)
+    sample_details = sample.get_sample_details()
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
@@ -376,7 +376,7 @@ class SamplesAndProcesses(object):
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
             self.sample_context["id_for_rename"] = None
-        sample_details = utils.get_sample_details(sample)
+        sample_details = sample.get_sample_details()
         if sample_details:
             self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
 
