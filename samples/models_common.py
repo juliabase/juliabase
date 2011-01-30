@@ -851,7 +851,7 @@ class Sample(models.Model):
         related_models = dict((model, "processes") for model in get_all_searchable_physical_processes())
         related_models[Result] = "processes"
         related_models[Process] = "processes"
-        return search.SearchTreeNode(cls, related_models, search_fields)
+        return search.DetailsSearchTreeNode(cls, related_models, search_fields, "sample_details")
 
 
 class SampleAlias(models.Model):
