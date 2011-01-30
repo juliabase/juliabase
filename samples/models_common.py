@@ -79,7 +79,7 @@ class ExternalOperator(models.Model):
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
-        # Translation hint: Topic which is not open to senior members
+        # Translators: Topic which is not open to senior members
     confidential = models.BooleanField(_(u"confidential"), default=False)
 
     class Meta:
@@ -103,7 +103,7 @@ class ExternalOperator(models.Model):
 
 
 timestamp_inaccuracy_choices = (
-        # Translation hint: It's about timestamps
+        # Translators: It's about timestamps
     (0, _(u"totally accurate")),
     (1, _(u"accurate to the minute")),
     (2, _(u"accurate to the hour")),
@@ -589,15 +589,15 @@ class Sample(models.Model):
     name = models.CharField(_(u"name"), max_length=30, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_(u"watchers"))
-        # Translation hint: location of a sample
+        # Translators: location of a sample
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
-        # Translation hint: keywords for samples
+        # Translators: keywords for samples
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
-                                     # Translation hint: ID of mother sample
+                                     # Translators: ID of mother sample
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
@@ -944,7 +944,7 @@ class SampleSplit(Process):
     through `Sample.split_origin`.  This way one can walk through the path of
     relationship in both directions.
     """
-        # Translation hint: parent of a sample
+        # Translators: parent of a sample
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
     u"""This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
@@ -1018,12 +1018,12 @@ class Clearance(models.Model):
 
 
 class SampleClaim(models.Model):
-        # Translation hint: someone who assert a claim to samples
+        # Translators: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"requester"), related_name="claims")
     reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"reviewer"),
                                  related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_(u"samples"))
-        # Translation hint: "closed" claim to samples
+        # Translators: "closed" claim to samples
     closed = models.BooleanField(_(u"closed"), default=False)
 
     class Meta:
@@ -1053,22 +1053,22 @@ class SampleDeath(Process):
     processes to a sample if it has a `SampleDeath` process, and its timestamp
     must be the last.
     """
-        # Translation hint: Of a sample
+        # Translators: Of a sample
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
 
     class Meta(Process.Meta):
-            # Translation hint: Of a sample
+            # Translators: Of a sample
         verbose_name = _(u"cease of existence")
-            # Translation hint: Of a sample
+            # Translators: Of a sample
         verbose_name_plural = _(u"ceases of existence")
 
     def __unicode__(self):
         _ = ugettext
         try:
-            # Translation hint: Of a sample
+            # Translators: Of a sample
             return _(u"cease of existence of {sample}").format(sample=self.samples.get())
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            # Translation hint: Of a sample
+            # Translators: Of a sample
             return _(u"cease of existence #{number}").format(number=self.pk)
 
     @classmethod
@@ -1086,10 +1086,10 @@ class Result(Process):
     u"""Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
-        # Translation hint: Of a result
+        # Translators: Of a result
     title = models.CharField(_(u"title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
-        # Translation hint: Physical quantities are meant
+        # Translators: Physical quantities are meant
     quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in JSON format"))
     u"""This is a data structure, serialised in JSON.  If you de-serialise it,
     it is a tuple with two items.  The first is a list of unicodes with all
@@ -1101,9 +1101,9 @@ class Result(Process):
     """
 
     class Meta(Process.Meta):
-            # Translation hint: experimental result
+            # Translators: experimental result
         verbose_name = _(u"result")
-            # Translation hint: experimental results
+            # Translators: experimental results
         verbose_name_plural = _(u"results")
 
     def save(self, *args, **kwargs):
@@ -1119,14 +1119,14 @@ class Result(Process):
     def __unicode__(self):
         _ = ugettext
         try:
-            # Translation hint: experimental result
+            # Translators: experimental result
             return _(u"result for {sample}").format(sample=self.samples.get())
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             try:
-                # Translation hint: experimental result
+                # Translators: experimental result
                 return _(u"result for {sample}").format(sample=self.sample_series.get())
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
-                # Translation hint: experimental result
+                # Translators: experimental result
                 return _(u"result #{number}").format(number=self.pk)
 
     @models.permalink
@@ -1252,7 +1252,7 @@ class Result(Process):
         quantities, value_lists = json.loads(self.quantities_and_values)
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
-                # Translation hint: In a table
+                # Translators: In a table
                 child_node = DataNode(_(u"row"), _(u"row #{number}").format(number=i + 1))
                 child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
                 data_node.children.append(child_node)
@@ -1268,7 +1268,7 @@ class SampleSeries(models.Model):
     after it has been created.
     """
     name = models.CharField(_(u"name"), max_length=50, primary_key=True,
-                            # Translation hint: The “Y” stands for “year”
+                            # Translators: The “Y” stands for “year”
                             help_text=_(u"must be of the form “originator-YY-name”"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-31 00:00+0100\n"
+"POT-Creation-Date: 2011-01-31 00:15+0100\n"
 "PO-Revision-Date: 2011-01-31 00:00+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -47,6 +47,7 @@ msgstr "Telefon"
 msgid "contact person in the institute"
 msgstr "Kontaktperson im Institut"
 
+#. Translators: Topic which is not open to senior members
 #: models_common.py:83 views/topic.py:44 views/topic.py:121
 msgid "confidential"
 msgstr "vertraulich"
@@ -67,6 +68,7 @@ msgstr "Darf externen Operateur anlegen"
 msgid "Can view all external operators"
 msgstr "Darf alle externen Operateure sehen"
 
+#. Translators: It's about timestamps
 #: models_common.py:107
 msgid "totally accurate"
 msgstr "vollständig genau"
@@ -146,6 +148,7 @@ msgstr "Laborbuch für {process_name}"
 msgid "watchers"
 msgstr "Beobachter"
 
+#. Translators: location of a sample
 #: models_common.py:593
 msgid "current location"
 msgstr "aktueller Probenort"
@@ -161,6 +164,7 @@ msgstr "aktuell Verantwortlicher"
 msgid "purpose"
 msgstr "Zweck"
 
+#. Translators: keywords for samples
 #: models_common.py:598
 msgid "tags"
 msgstr "Tags"
@@ -169,6 +173,7 @@ msgstr "Tags"
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
+#. Translators: ID of mother sample
 #: models_common.py:601
 msgid "split origin"
 msgstr "Split-Ursprung"
@@ -206,6 +211,7 @@ msgstr "Alternativname"
 msgid "name aliases"
 msgstr "Alternativnamen"
 
+#. Translators: parent of a sample
 #: models_common.py:948
 msgid "parent"
 msgstr "Elter"
@@ -238,6 +244,7 @@ msgstr "Freigaben"
 msgid "clearance of {sample} for {user}"
 msgstr "Freigabe von {sample} für {user}"
 
+#. Translators: someone who assert a claim to samples
 #: models_common.py:1022
 msgid "requester"
 msgstr "Antragssteller"
@@ -246,6 +253,7 @@ msgstr "Antragssteller"
 msgid "reviewer"
 msgstr "Reviewer"
 
+#. Translators: "closed" claim to samples
 #: models_common.py:1027
 msgid "closed"
 msgstr "geschlossen"
@@ -274,22 +282,27 @@ msgstr "unauffindbar verlorengegangen"
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
+#. Translators: Of a sample
 #: models_common.py:1057
 msgid "cause of death"
 msgstr "Todesursache"
 
+#. Translators: Of a sample
 #: models_common.py:1061 views/sample.py:196
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
+#. Translators: Of a sample
 #: models_common.py:1063
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
+#. Translators: Of a sample
 #: models_common.py:1069
 msgid "cease of existence of {sample}"
 msgstr "Beendigung der Existenz von {sample}"
 
+#. Translators: Of a sample
 #: models_common.py:1072
 msgid "cease of existence #{number}"
 msgstr "Beendigung der Existenz #{number}"
@@ -299,6 +312,7 @@ msgstr "Beendigung der Existenz #{number}"
 msgid "none"
 msgstr "keine"
 
+#. Translators: Of a result
 #: models_common.py:1090
 msgid "title"
 msgstr "Überschrift"
@@ -307,6 +321,7 @@ msgstr "Überschrift"
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
+#. Translators: Physical quantities are meant
 #: models_common.py:1093
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
@@ -315,22 +330,27 @@ msgstr "Messgrößen und Werte"
 msgid "in JSON format"
 msgstr "im JSON-Format"
 
+#. Translators: experimental result
 #: models_common.py:1105 models_feeds.py:226
 msgid "result"
 msgstr "Ergebnis"
 
+#. Translators: experimental results
 #: models_common.py:1107 models_common.py:1278
 msgid "results"
 msgstr "Ergebnisse"
 
+#. Translators: experimental result
 #: models_common.py:1123 models_common.py:1127
 msgid "result for {sample}"
 msgstr "Ergebnis für {sample}"
 
+#. Translators: experimental result
 #: models_common.py:1130
 msgid "result #{number}"
 msgstr "Ergebnis Nr. {number}"
 
+#. Translators: In a table
 #: models_common.py:1256 views/result.py:644
 msgid "row"
 msgstr "Zeile"
@@ -339,6 +359,7 @@ msgstr "Zeile"
 msgid "row #{number}"
 msgstr "Zeile Nr. {number}"
 
+#. Translators: The “Y” stands for “year”
 #: models_common.py:1272
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
@@ -589,10 +610,12 @@ msgstr "Proben wurden geändert"
 msgid "sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
 
+#. Translators: Feed entry for a split of a sample
 #: models_feeds.py:311
 msgid "sample split feed entry"
 msgstr "Feed-Eintrag für gespaltene Probe"
 
+#. Translators: Feed entries for splits of samples
 #: models_feeds.py:313
 msgid "sample split feed entries"
 msgstr "Feed-Einträge für gespaltene Probe"
@@ -649,6 +672,7 @@ msgstr "hinzugefügt"
 msgid "removed"
 msgstr "entfernt"
 
+#. Translators: Action is either addition or removal
 #: models_feeds.py:410
 msgid "action"
 msgstr "Aktion"
@@ -2139,10 +2163,12 @@ msgstr "besondere Berechtigungen, die Sie nicht haben"
 msgid "Confidential operator #{number}"
 msgstr "Vertraulicher Operateur Nr. {number}"
 
+#. Translators: Only change the <sup>h</sup>!
 #: templatetags/samples_extras.py:209
 msgid "%Y-%m-%d %H<sup>h</sup>"
 msgstr "%Y-%m-%d %H<sup>h</sup>"
 
+#. Translators: Only change order and punctuation
 #: templatetags/samples_extras.py:212
 msgid "%b %Y"
 msgstr "%b %Y"
@@ -2413,6 +2439,7 @@ msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 msgid "The unit is invalid.  Valid units are: {units}"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: {units}"
 
+#. Translators: “YY” is year, “L” is letter, and “NNN” is number
 #: views/form_utils.py:752
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr ""
@@ -2438,6 +2465,7 @@ msgstr "Jahr"
 msgid "month"
 msgstr "Monat"
 
+#. Translators: This is a page name in the Chantal wiki
 #: views/main.py:89
 msgid "MainMenu"
 msgstr "MainMenu"

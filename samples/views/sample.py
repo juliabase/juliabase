@@ -192,7 +192,7 @@ def get_allowed_processes(user, sample):
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
         sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "/split/", "type": "split"})
-        # Translation hint: Of a sample
+        # Translators: Of a sample
         sample_processes.append({"label": _(u"cease of existence"), "url": sample.get_absolute_url() + "/kill/",
                                  "type": "death"})
     general_processes = []
