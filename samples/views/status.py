@@ -41,7 +41,7 @@ class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
 
 
 class StatusForm(forms.ModelForm):
-    u"""
+    u"""The status message model form class.
     """
     _ = ugettext_lazy
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
@@ -115,12 +115,25 @@ class Status:
 
 @login_required
 def add(request):
+    u"""With this function, the messages are stored into the database.
+    It also gets the information for displaying the 'add_status_message' template.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     if request.method == "POST":
         status_form = StatusForm(request.user, request.POST)
         if status_form.is_valid():
-            status_form.save()
-
-
+            status = status_form.save()
+            for physical_process in status.processes.all():
+                feed_utils.Reporter(request.user).report_status_message(physical_process, status)
             return utils.successful_response(request,
                     _(u"The status message was successfully added to the database."))
     else:
@@ -133,7 +146,17 @@ def add(request):
 
 @login_required
 def show(request):
-    u"""
+    u"""This function shows the current status messages for the physical processes.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
     """
     status_list_for_context = []
     process_list = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models() \
@@ -144,17 +167,17 @@ def show(request):
                            .filter(begin__lt=datetime.datetime.today()) \
                            .filter(end__gt=datetime.datetime.today()).values())
         if status_list:
-            status_list.sort(key=lambda status_dict: status_dict.get("begin"))
-            min_index = 0
+            status_list.sort(key=lambda status_dict: status_dict.get("begin"), reverse=True)
+            max_index = 0
             if len(status_list) >1:
                 for index, status in enumerate(status_list):
-                    if status_list[min_index]["begin"] == status["begin"] and \
-                       status["timestamp"] <= status_list[min_index]["timestamp"]:
-                        min_index = index
+                    if status_list[max_index]["begin"] == status["begin"]:
+                        if status_list[max_index]["timestamp"] < status["timestamp"]:
+                            max_index = index
                     else:
                         break
-            user = User.objects.get(id=status_list[min_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[min_index],process.name,
+            user = User.objects.get(id=status_list[max_index]["operator_id"])
+            status_list_for_context.append(Status(status_list[max_index],process.name,
                                                   u"{0} {1}".format(user.first_name, user.last_name)))
         else:
             continue

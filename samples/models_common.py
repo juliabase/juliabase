@@ -1484,6 +1484,11 @@ class UserDetails(models.Model):
     be done.  In order to be able to distinguish between the two cases, we save
     the old data here, for comparison.
     """
+    subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_user", verbose_name=_(u"subscribed newsfeeds"),
+                                              blank=True,)
+                                              #default=ContentType.objects.filter(id__in=[ContentType.objects.get(name="sample").id,
+                                               #                                          ContentType.objects.get(name="sample series").id,
+                                                #                                         ContentType.objects.get(name="topic").id]))
 
     class Meta:
         verbose_name = _(u"user details")
