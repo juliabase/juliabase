@@ -31,7 +31,9 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils
-
+from samples.permissions import get_all_addable_physical_process_models
+from django.contrib.contenttypes.models import ContentType
+import settings
 
 @login_required
 def show_user(request, login_name):
@@ -60,17 +62,22 @@ def show_user(request, login_name):
 
 
 class UserDetailsForm(forms.ModelForm):
-    u"""Model form for user preferences.  I exhibit only two field here, namely
-    the auto-addition topics and the switch whether a user wants to get only
-    important news or all.
+    u"""Model form for user preferences.
     """
     _ = ugettext_lazy
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
+        list = [ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models() \
+                   if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
+        list.extend([ContentType.objects.get(name="sample").id, ContentType.objects.get(name="sample series").id,
+                     ContentType.objects.get(name="topic").id])
+        self.fields["subscribed_feeds"].queryset = ContentType.objects.filter(id__in=list)
+
+
     class Meta:
         model = models.UserDetails
-        fields = ("auto_addition_topics", "only_important_news")
+        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds")
 
 
 @login_required

@@ -39,6 +39,8 @@ from samples import permissions
 from samples.views import shared_utils
 from chantal_common import search
 from samples.data_tree import DataNode, DataItem
+from django.contrib.contenttypes.models import ContentType
+
 
 
 def get_user_settings_hash(user):
@@ -1389,6 +1391,11 @@ class UserDetails(models.Model):
     be done.  In order to be able to distinguish between the two cases, we save
     the old data here, for comparison.
     """
+    subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_user", verbose_name=_(u"subscribed newsfeeds"),
+                                              blank=True,)
+                                              #default=ContentType.objects.filter(id__in=[ContentType.objects.get(name="sample").id,
+                                               #                                          ContentType.objects.get(name="sample series").id,
+                                                #                                         ContentType.objects.get(name="topic").id]))
 
     class Meta:
         verbose_name = _(u"user details")
@@ -1408,3 +1415,36 @@ class UserDetails(models.Model):
         """
         self.display_settings_timestamp = datetime.datetime.now()
         self.save()
+
+
+status_level_choices=(
+    ("undefined", _(u"undefined")),
+    ("red", _(u"red")),
+    ("yellow", _(u"yellow")),
+    ("green", _(u"green"))
+)
+class StatusMessages(models.Model):
+    u"""This class is for the current status of the processes.
+    The class discusses whether the process is available, or is currently out of service.
+    It provides a many to many relationship between the status messages and the processes.
+    """
+    processes = models.ManyToManyField(ContentType, related_name="status", verbose_name=_(u"Processes"))
+    timestamp = models.DateTimeField(_(u"timestamp"))
+    begin = models.DateTimeField(_(u"begin"), blank=True, null=True, help_text=(u"YYYY-MM-DD HH:MM:SS"))
+    end = models.DateTimeField(_(u"end"), blank=True, null=True, help_text=(u"YYYY-MM-DD HH:MM:SS"))
+    begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
+                                                            default=0)
+    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices,
+                                                            default=0)
+    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status",
+                                       verbose_name=_(u"reporter of the message"))
+    message = models.TextField(_(u"status message"))
+    status_level = models.CharField(_(u"status level"), choices=status_level_choices, default="undefined", max_length=10)
+
+    class Meta:
+        verbose_name = _(u"status message")
+        verbose_name_plural = _(u"status messages")
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"status message #{number}").format(number=self.pk)

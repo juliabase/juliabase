@@ -22,9 +22,6 @@ copyright holder, you must destroy it immediately and completely.
   {% error_list user_details _("Error in preferences") %}
   {% error_list initials _("Error in initials") %}
   <table cellspacing="10">
-    <tr>
-      {% input_field user_details.only_important_news %}
-    </tr>
     {% if has_topics %}
       <tr>
         <td class="label">
@@ -45,6 +42,24 @@ copyright holder, you must destroy it immediately and completely.
           {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
       </td>
       <td class="input">{{ initials.initials }}</td>
+    </tr>
+    <tr>
+      {% input_field user_details.only_important_news %}
+    </tr>
+    <tr>
+      <td class="label">
+        <label for="id_{{ user_details.subscribed_feeds.html_name }}" style="margin-right: 0.5em; vertical-align: top">
+          {{ user_details.subscribed_feeds.label }}:
+        </label>
+        <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
+          {% blocktrans %}(Choose the themes of the news feeds to which you are interested.
+                            For example: If you select “sample” you will be informed about everything that happens to your samples.
+                            If you have selected “Get only important news” above you will only get the important news of course.)
+          {% endblocktrans %}</div>
+      </td>
+      <td class="input">
+        {{ user_details.subscribed_feeds }}
+      </td>
     </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

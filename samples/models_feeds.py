@@ -32,7 +32,8 @@ from django.db import models
 import django.core.urlresolvers
 from chantal_common.models import Topic, PolymorphicModel
 from chantal_common.utils import get_really_full_name
-from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries
+from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries, StatusMessages
+from django.contrib.contenttypes.models import ContentType
 
 
 class FeedEntry(PolymorphicModel):
@@ -423,3 +424,21 @@ class FeedChangedTopic(FeedEntry):
         metadata["category term"] = "changed topic membership"
         metadata["category label"] = "changed topic membership"
         return metadata
+
+class FeedStatusMessage(FeedEntry):
+    u"""Model for feed entries for new status messages from physical processes.
+    """
+    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    status = models.ForeignKey(StatusMessages, verbose_name=_(u"Status message"), related_name="news feed")
+
+    class Meta(FeedEntry.Meta):
+        verbose_name = _(u"status message feed entry")
+        verbose_name_plural = _(u"status message feed entries")
+
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"New status message for {process} was reported").format(process=self.process)
+        metadata["category term"] = metadata["category label"] = "new status message"
+        return metadata
+
