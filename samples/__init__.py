@@ -161,6 +161,7 @@ import django.contrib.auth.models
 from . import models as samples_app
 from chantal_common import models as chantal_common_app
 from chantal_common.signals import maintain
+from django.contrib.contenttypes.models import ContentType
 
 
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
@@ -240,8 +241,11 @@ def add_user_details(sender, instance, created, **kwargs):
     u"""Create ``UserDetails`` for every newly created user.
     """
     if created:
-        samples_app.UserDetails.objects.get_or_create(user=instance,
+        user_details, _ = samples_app.UserDetails.objects.get_or_create(user=instance,
                                                       idenfifying_data_hash=get_identifying_data_hash(instance))
+        user_details.subscribed_feeds = ContentType.objects.filter(id__in=[ContentType.objects.get(name="sample").id,
+                                                                           ContentType.objects.get(name="sample series").id,
+                                                                           ContentType.objects.get(name="topic").id])
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
