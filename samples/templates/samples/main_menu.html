@@ -133,6 +133,9 @@ copyright holder, you must destroy it immediately and completely.
     {% if user.is_staff %}
       <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
     {% endif %}
+    <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/table.png")'>
+     <a href="{% url samples.views.status.show %}"
+         >{% trans 'Show status messages' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_edit.png")'>
       <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
          >{% trans 'Edit preferences' %}</a></li>
