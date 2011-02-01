@@ -233,7 +233,7 @@ class Reporter(object):
             else:
                 entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
             subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(model=process.__class__.__name__.lower()).subscribed_user.all())
+                                   .get(model=process.__class__.__name__.lower()).subscribed_users.all())
             self.__add_watchers(process, important)
             self.__connect_with_users(entry, subscribed_users)
 
@@ -280,7 +280,7 @@ class Reporter(object):
         entry.samples = samples
         self.interested_users.add(recipient)
         subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(name="sample").subscribed_user.all())
+                                   .get(name="sample").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_new_responsible_person_samples(self, samples, edit_description):
@@ -307,7 +307,7 @@ class Reporter(object):
         entry.samples = samples
         self.interested_users.add(samples[0].currently_responsible_person)
         subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(name="sample").subscribed_user.all())
+                                   .get(name="sample").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_changed_sample_topic(self, samples, old_topic, edit_description):
@@ -339,7 +339,7 @@ class Reporter(object):
         if old_topic:
             self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_edited_samples(self, samples, edit_description):
@@ -361,7 +361,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"], important=important)
         entry.samples = samples
         self.__add_interested_users(samples, important)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_sample_split(self, sample_split, sample_completely_split):
@@ -380,7 +380,7 @@ class Reporter(object):
         # I can't use the parent sample for this because if it was completely
         # split, it is already removed from “My Samples”.
         self.__add_interested_users([sample_split.pieces.all()[0]])
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_edited_sample_series(self, sample_series, edit_description):
@@ -402,7 +402,7 @@ class Reporter(object):
             originator=self.originator, sample_series=sample_series, description=edit_description["description"],
             important=important)
         self.__add_watchers(sample_series, important)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_new_responsible_person_sample_series(self, sample_series, edit_description):
@@ -428,7 +428,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True, sample_series=sample_series)
         self.interested_users.add(sample_series.currently_responsible_person)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_changed_sample_series_topic(self, sample_series, old_topic, edit_description):
@@ -459,7 +459,7 @@ class Reporter(object):
         entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_new_sample_series(self, sample_series):
@@ -475,7 +475,7 @@ class Reporter(object):
             originator=self.originator, sample_series=sample_series, topic=topic)
         entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_topic_members(topic)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_changed_topic_membership(self, users, topic, action):
@@ -494,7 +494,7 @@ class Reporter(object):
         """
         entry = models.FeedChangedTopic.objects.create(originator=self.originator, topic=topic, action=action)
         self.interested_users = set(users)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_users.all())
         self.__connect_with_users(entry, subscribed_users)
 
     def report_status_message(self, physical_process_content_type, status_message):
@@ -508,6 +508,6 @@ class Reporter(object):
         :type status_message: ``samples.models_common.StatusMessages``
         """
         entry = models.FeedStatusMessage.objects.create(originator=self.originator, process=physical_process_content_type, status=status_message)
-        subscribed_users = set(user_details.user for user_details in physical_process_content_type.subscribed_user.all())
+        subscribed_users = set(user_details.user for user_details in physical_process_content_type.subscribed_users.all())
         self.interested_users = subscribed_users
         self.__connect_with_users(entry, subscribed_users)
