@@ -242,7 +242,7 @@ def add_user_details(sender, instance, created, **kwargs):
     """
     if created:
         user_details, _ = samples_app.UserDetails.objects.get_or_create(user=instance,
-                                                      idenfifying_data_hash=get_identifying_data_hash(instance))
+                                                                        idenfifying_data_hash=get_identifying_data_hash(instance))
         user_details.subscribed_feeds = ContentType.objects.filter(id__in=[ContentType.objects.get(name="sample").id,
                                                                            ContentType.objects.get(name="sample series").id,
                                                                            ContentType.objects.get(name="topic").id])
