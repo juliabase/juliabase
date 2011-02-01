@@ -233,7 +233,7 @@ class Reporter(object):
             else:
                 entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
             subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(name=process._meta.verbose_name).subscribed_user.all())
+                                   .get(model=process.__class__.__name__.lower()).subscribed_user.all())
             self.__add_watchers(process, important)
             self.__connect_with_users(entry, subscribed_users)
 
