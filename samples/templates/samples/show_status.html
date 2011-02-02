@@ -1,0 +1,53 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<table cellpadding="3" border="1">
+     <tr style="vertical-align: top; font-weight:bold">
+        <td>{% trans 'Process' %}</td>
+        <td>{% trans 'Status message' %}</td>
+        <td>{% trans 'Status level' %}</td>
+        <td>{% trans 'Starting time' %}</td>
+        <td>{% trans 'End time' %}</td>
+        <td>{% trans 'Reporter' %}</td>
+        <td>{% trans 'posted at' %}</td>
+     </tr>
+    {% for status_message in status_messages %}
+         <tr style="vertical-align: top">
+            <td>{{ status_message.process_name|first_upper }}</td>
+            <td>{{ status_message.status_message }}</td>
+            <td style="text-align: center; vertical-align: middle">
+                {% if status_message.status_level == "undefined" %}
+                    <img src="{{ STATIC_URL }}chantal/icons/grey.png" alt="undefined"/>
+                {% else %}{% if status_message.status_level == "red" %}
+                    <img src="{{ STATIC_URL }}chantal/icons/red.png" alt="red"/>
+                {% else %}{% if status_message.status_level == "yellow" %}
+                    <img src="{{ STATIC_URL }}chantal/icons/yellow.png" alt="yellow"/>
+                {% else %}{% if status_message.status_level == "green" %}
+                    <img src="{{ STATIC_URL }}chantal/icons/green.png" alt="green"/>
+                {% endif %}{% endif %}{% endif %}{% endif %}
+            </td>
+            <td>{{ status_message.starting_time }}</td>
+            <td>{{ status_message.end_time }}</td>
+            <td>{{ status_message.user }}</td>
+            <td>{{ status_message.timestamp }}</td>
+         </tr>
+    {% endfor %}
+</table>
+{% endblock %}

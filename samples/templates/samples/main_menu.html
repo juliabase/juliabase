@@ -19,7 +19,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
   {% if topicless_samples or my_topics %}
     <div class="my-samples">
-      <h2>{% trans 'My Samples' %}<a class="edit-icon" 
+      <h2>{% trans 'My Samples' %}<a class="edit-icon"
                              href="{% url samples.views.my_samples.edit username=user.username %}"
                              ><img src="{{ STATIC_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
                                    width="16" height="16"/></a></h2>
@@ -80,6 +80,7 @@ copyright holder, you must destroy it immediately and completely.
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
+    <li><a href="{% url samples.views.status.add %}">{% trans 'Add status message' %}
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>
@@ -111,8 +112,8 @@ copyright holder, you must destroy it immediately and completely.
         <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/group_gear.png")'>
           <a href="{% url samples.views.topic.list_ %}">{% trans 'Change topic memberships' %}</a></li>
       {% endif %}
-    </ul>  
-  {% endif %}  
+    </ul>
+  {% endif %}
 
   {% if can_add_external_operator or has_external_contacts %}
     <h2>{% trans 'External operators' %}</h2>
@@ -120,18 +121,21 @@ copyright holder, you must destroy it immediately and completely.
     <ul style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_gray.png")'>
       {% if can_add_external_operator %}
         <li><a href="{% url samples.views.external_operator.new %}">{% trans 'Add external operator' %}</a></li>
-      {% endif %}  
+      {% endif %}
       {% if has_external_contacts %}
         <li><a href="{% url samples.views.external_operator.list_ %}">{% trans 'Edit external operator' %}</a></li>
-      {% endif %}  
+      {% endif %}
     </ul>
-  {% endif %}  
+  {% endif %}
 
   <h2>{% trans 'Miscellaneous' %}</h2>
   <ul>
     {% if user.is_staff %}
       <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
     {% endif %}
+    <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/table.png")'>
+     <a href="{% url samples.views.status.show %}"
+         >{% trans 'Show status messages' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_edit.png")'>
       <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
          >{% trans 'Edit preferences' %}</a></li>
