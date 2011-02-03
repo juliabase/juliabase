@@ -61,7 +61,7 @@ class StatusForm(forms.ModelForm):
         list = [ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models() \
                    if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
         self.fields["processes"].queryset = ContentType.objects.filter(id__in=list)
-        self.fields["processes"].widget.attrs["size"] = 30
+        self.fields["processes"].widget.attrs["size"] = 26
 
     def clean_message(self):
         u"""Forbid image and headings syntax in Markdown markup.
