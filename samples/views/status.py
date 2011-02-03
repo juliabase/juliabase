@@ -14,11 +14,15 @@
 
 u"""Add and show status messages for the physical processes
 """
+
+
 from __future__ import absolute_import
+
 from chantal_common.utils import check_markdown
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 from django.forms import widgets
 from django.forms.util import ValidationError
 from django.shortcuts import render_to_response
@@ -26,12 +30,12 @@ from django.template import RequestContext
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.text import capfirst
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models
 from samples.views import form_utils, feed_utils, utils
 import datetime
 import django.forms as forms
-import settings
 
 
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
@@ -44,9 +48,10 @@ class StatusForm(forms.ModelForm):
     u"""The status message model form class.
     """
     _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=_(u"Operator"))
-    status_level =  forms.ChoiceField(widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer),
-                                          choices=models.status_level_choices)
+    operator = form_utils.FixedOperatorField(label=capfirst(_(u"operator")))
+    status_level = forms.ChoiceField(label=capfirst(_(u"status level")), choices=models.status_level_choices,
+                                     widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+    processes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
 
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
@@ -54,10 +59,12 @@ class StatusForm(forms.ModelForm):
         self.fields["operator"].set_operator(user, user.is_staff)
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
-        #FixMe: this list should be global but something don't work correctly
-        list = [ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models() \
-                   if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
-        self.fields["processes"].queryset = ContentType.objects.filter(id__in=list)
+        choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name)
+                   for cls in get_all_addable_physical_process_models()
+                   if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
+        choices.sort(key=lambda item: item[1].lower())
+        self.fields["processes"].choices = choices
+        self.fields["processes"].widget.attrs["size"] = 24
 
     def clean_message(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -69,13 +76,13 @@ class StatusForm(forms.ModelForm):
     def clean_begin(self):
         begin = self.cleaned_data.get("begin")
         if not begin:
-            begin = datetime.datetime(1,1,1)
+            begin = datetime.datetime(1, 1, 1)
         return begin
 
     def clean_end(self):
         end = self.cleaned_data.get("end")
         if not end:
-            end = datetime.datetime(9999,12,31)
+            end = datetime.datetime(9999, 12, 31)
         return end
 
     def clean_timestamp(self):
@@ -90,15 +97,17 @@ class StatusForm(forms.ModelForm):
         model = models.StatusMessage
 
 
-class Status:
+class Status(object):
     u"""Class for displaying a status message for a physical process.
     """
     def __init__(self, status_dict, process_name, username):
         u"""
         :Parameters:
-          - `status_dict`: contains the informations of the current status level
+          - `status_dict`: contains the informations of the current status
+            level
           - `process_name`: the verbose name of the process
-          - `username`: the first name and last name of the user who has written the status message
+          - `username`: the first name and last name of the user who has
+            written the status message
 
         :type status_dict: dictionary
         :type process_name: unicode
@@ -106,17 +115,17 @@ class Status:
         """
         self.process_name = process_name
         self.user = username
-        self.status_level = status_dict['status_level']
-        self.starting_time = "" if status_dict['begin'] == datetime.datetime(1,1,1) else status_dict['begin']
-        self.end_time = "" if status_dict['end'] == datetime.datetime(9999,12,31) else status_dict['end']
-        self.timestamp = status_dict['timestamp']
-        self.status_message = status_dict['message']
+        self.status_level = status_dict["status_level"]
+        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1,1,1) else status_dict["begin"]
+        self.end_time = "" if status_dict["end"] == datetime.datetime(9999,12,31) else status_dict["end"]
+        self.timestamp = status_dict["timestamp"]
+        self.status_message = status_dict["message"]
 
 
 @login_required
 def add(request):
-    u"""With this function, the messages are stored into the database.
-    It also gets the information for displaying the 'add_status_message' template.
+    u"""With this function, the messages are stored into the database.  It also
+    gets the information for displaying the "add_status_message" template.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -161,13 +170,13 @@ def show(request):
                    if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
     while process_list:
         process = process_list.pop()
-        status_list = list(models.StatusMessage.objects.filter(processes=process.id) \
-                           .filter(begin__lt=datetime.datetime.today()) \
+        status_list = list(models.StatusMessage.objects.filter(processes=process.id)
+                           .filter(begin__lt=datetime.datetime.today())
                            .filter(end__gt=datetime.datetime.today()).values())
         if status_list:
             status_list.sort(key=lambda status_dict: status_dict.get("begin"), reverse=True)
             max_index = 0
-            if len(status_list) >1:
+            if len(status_list) > 1:
                 for index, status in enumerate(status_list):
                     if status_list[max_index]["begin"] == status["begin"]:
                         if status_list[max_index]["timestamp"] < status["timestamp"]:
@@ -175,7 +184,7 @@ def show(request):
                     else:
                         break
             user = User.objects.get(id=status_list[max_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[max_index],process.name,
+            status_list_for_context.append(Status(status_list[max_index], process.name,
                                                   u"{0} {1}".format(user.first_name, user.last_name)))
         else:
             continue

@@ -105,7 +105,7 @@ class RelatedDataForm(forms.Form):
     """
     _ = ugettext_lazy
     samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
-    sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", u"Sample serieses"), queryset=None,
+    sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", u"Sample series"), queryset=None,
                                                    required=False)
     image_file = forms.FileField(label=_(u"Image file"), required=False)
 

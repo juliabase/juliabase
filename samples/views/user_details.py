@@ -24,6 +24,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
+from django.conf import settings
 from django import forms
 from django.forms.util import ValidationError
 import django.core.urlresolvers
@@ -33,7 +34,7 @@ from samples import models, permissions
 from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
-import settings
+
 
 @login_required
 def show_user(request, login_name):
@@ -68,8 +69,8 @@ class UserDetailsForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
-        content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models() \
-                             if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
+        content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()
+                         if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
         content_types.extend([ContentType.objects.get(app_label="samples", model="sample"),
                               ContentType.objects.get(app_label="samples", model="sampleseries"),
                               ContentType.objects.get(app_label="chantal_common", model="topic")])

@@ -146,7 +146,8 @@ def get_editable_sample_series(user):
 all_addable_physical_process_models = None
 def get_all_addable_physical_process_models():
     u"""Get all physical process classes (depositions, measurements; no sample
-    splits) that one can add or edit.
+    splits) that one can add or edit.  Never call this routine from top-level
+    module code because it may cause cyclic imports.
 
     :Return:
       Dictionary mapping all physical processes one can to add.  Every process
