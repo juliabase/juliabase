@@ -80,7 +80,7 @@ copyright holder, you must destroy it immediately and completely.
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
-    <li><a href="{% url samples.views.status.add %}">{% trans 'Add status message' %}
+    <li><a href="{% url samples.views.status.add %}">{% trans 'Status message' %}</a></li>
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>
@@ -135,7 +135,7 @@ copyright holder, you must destroy it immediately and completely.
     {% endif %}
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/table.png")'>
      <a href="{% url samples.views.status.show %}"
-         >{% trans 'Show status messages' %}</a></li>
+         >{% trans 'Status messages' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_edit.png")'>
       <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
          >{% trans 'Edit preferences' %}</a></li>

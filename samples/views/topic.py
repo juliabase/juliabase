@@ -40,7 +40,7 @@ class NewTopicForm(forms.Form):
     """
     _ = ugettext_lazy
     new_topic_name = forms.CharField(label=_(u"Name of new topic"), max_length=80)
-    # Translation hint: Topic which is not open to senior members
+    # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_(u"confidential"), required=False)
     def __init__(self, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)

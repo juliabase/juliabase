@@ -87,7 +87,7 @@ class StatusForm(forms.ModelForm):
         return timestamp
 
     class Meta:
-        model = models.StatusMessages
+        model = models.StatusMessage
 
 
 class Status:
@@ -134,13 +134,11 @@ def add(request):
             status = status_form.save()
             for physical_process in status.processes.all():
                 feed_utils.Reporter(request.user).report_status_message(physical_process, status)
-            return utils.successful_response(request,
-                    _(u"The status message was successfully added to the database."))
+            return utils.successful_response(request, _(u"The status message was successfully added to the database."))
     else:
         status_form = StatusForm(request.user)
     title =  _(u"Add status message")
-    return render_to_response("samples/add_status_message.html",
-                              {"title": title, "status": status_form},
+    return render_to_response("samples/add_status_message.html", {"title": title, "status": status_form},
                               context_instance=RequestContext(request))
 
 
@@ -163,7 +161,7 @@ def show(request):
                    if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
     while process_list:
         process = process_list.pop()
-        status_list = list(models.StatusMessages.objects.filter(processes=process.id) \
+        status_list = list(models.StatusMessage.objects.filter(processes=process.id) \
                            .filter(begin__lt=datetime.datetime.today()) \
                            .filter(end__gt=datetime.datetime.today()).values())
         if status_list:

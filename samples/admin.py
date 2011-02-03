@@ -18,7 +18,7 @@ from __future__ import absolute_import
 from django.contrib import admin
 from django.conf import settings
 from samples.models_common import ExternalOperator, Sample, SampleAlias, SampleSplit, SampleDeath, Result, \
-    SampleSeries, Initials, UserDetails, Process, Clearance, SampleClaim, StatusMessages
+    SampleSeries, Initials, UserDetails, Process, Clearance, SampleClaim, StatusMessage
 from samples.models_feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysicalProcess, FeedEditedPhysicalProcess, \
     FeedResult, FeedCopiedMySamples, FeedEditedSamples, FeedSampleSplit, FeedEditedSampleSeries, FeedNewSampleSeries, \
     FeedMovedSampleSeries, FeedChangedTopic
@@ -35,7 +35,7 @@ admin.site.register(UserDetails)
 admin.site.register(Process)
 admin.site.register(Clearance)
 admin.site.register(SampleClaim)
-admin.site.register(StatusMessages)
+admin.site.register(StatusMessage)
 
 admin.site.register(FeedNewSamples)
 admin.site.register(FeedMovedSamples)

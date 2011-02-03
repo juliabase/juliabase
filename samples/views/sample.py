@@ -122,7 +122,7 @@ def edit(request, sample_name):
     permissions.assert_can_edit_sample(request.user, sample)
     old_topic, old_responsible_person = sample.topic, sample.currently_responsible_person
     user_details = request.user.samples_user_details
-    sample_details = utils.get_sample_details(sample)
+    sample_details = sample.get_sample_details()
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm(request.POST)
@@ -149,7 +149,7 @@ def edit(request, sample_name):
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
             return utils.successful_response(
                 request, _(u"Sample {sample} was successfully changed in the database.").format(sample=sample),
-                sample.get_absolute_url())
+                by_id, {"sample_id": sample.id, "path_suffix": u""})
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
@@ -192,7 +192,7 @@ def get_allowed_processes(user, sample):
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
         sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "/split/", "type": "split"})
-        # Translation hint: Of a sample
+        # Translators: Of a sample
         sample_processes.append({"label": _(u"cease of existence"), "url": sample.get_absolute_url() + "/kill/",
                                  "type": "death"})
     general_processes = []
@@ -376,7 +376,7 @@ class SamplesAndProcesses(object):
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
             self.sample_context["id_for_rename"] = None
-        sample_details = utils.get_sample_details(sample)
+        sample_details = sample.get_sample_details()
         if sample_details:
             self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
 

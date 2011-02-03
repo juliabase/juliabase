@@ -32,7 +32,7 @@ from django.db import models
 import django.core.urlresolvers
 from chantal_common.models import Topic, PolymorphicModel
 from chantal_common.utils import get_really_full_name
-from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries, StatusMessages
+from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries, StatusMessage
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -223,7 +223,7 @@ class FeedResult(FeedEntry):
     this model doesn't care whether the result is connected with samples or
     sample series or both.  This is distinguished in the HTML template.
     """
-        # Translation hint: experimental result
+        # Translators: experimental result
     result = models.ForeignKey(Result, verbose_name=_(u"result"))
     description = models.TextField(_(u"description"), blank=True)
     is_new = models.BooleanField(_(u"result is new"))
@@ -308,9 +308,9 @@ class FeedSampleSplit(FeedEntry):
     sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False)
 
     class Meta(FeedEntry.Meta):
-            # Translation hint: Feed entry for a split of a sample
+            # Translators: Feed entry for a split of a sample
         verbose_name = _(u"sample split feed entry")
-            # Translation hint: Feed entries for splits of samples
+            # Translators: Feed entries for splits of samples
         verbose_name_plural = _(u"sample split feed entries")
 
     def get_metadata(self):
@@ -407,7 +407,7 @@ class FeedChangedTopic(FeedEntry):
     u"""Model for feed entries for sample series moved to a new topic.
     """
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
-        # Translation hint: Action is either addition or removal
+        # Translators: Action is either addition or removal
     action = models.CharField(_("action"), max_length=7, choices=changed_topic_action_choices)
 
     class Meta(FeedEntry.Meta):
@@ -425,11 +425,12 @@ class FeedChangedTopic(FeedEntry):
         metadata["category label"] = "changed topic membership"
         return metadata
 
+
 class FeedStatusMessage(FeedEntry):
     u"""Model for feed entries for new status messages from physical processes.
     """
     process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
-    status = models.ForeignKey(StatusMessages, verbose_name=_(u"Status message"), related_name="news feed")
+    status = models.ForeignKey(StatusMessage, verbose_name=_(u"Status message"), related_name="feed_entries")
 
     class Meta(FeedEntry.Meta):
         verbose_name = _(u"status message feed entry")
@@ -438,7 +439,7 @@ class FeedStatusMessage(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New status message for {process} was reported").format(process=self.process)
+        metadata["title"] = _(u"New status message for {process}").format(process=self.process)
         metadata["category term"] = metadata["category label"] = "new status message"
         return metadata
 

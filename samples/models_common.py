@@ -24,7 +24,7 @@ from __future__ import absolute_import, division
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy
 from django.utils import translation
 from django.template import defaultfilters, Context
 from django.template.loader import render_to_string
@@ -77,11 +77,11 @@ class ExternalOperator(models.Model):
     name = models.CharField(_(u"name"), max_length=30)
     institution = models.CharField(_(u"institution"), max_length=255)
     email = models.EmailField(_(u"email"))
-    alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
+    alternative_email = models.EmailField(_(u"alternative email"), blank=True)
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
-        # Translation hint: Topic which is not open to senior members
+        # Translators: Topic which is not open to senior members
     confidential = models.BooleanField(_(u"confidential"), default=False)
 
     class Meta:
@@ -105,7 +105,7 @@ class ExternalOperator(models.Model):
 
 
 timestamp_inaccuracy_choices = (
-        # Translation hint: It's about timestamps
+        # Translators: It's about timestamps
     (0, _(u"totally accurate")),
     (1, _(u"accurate to the minute")),
     (2, _(u"accurate to the hour")),
@@ -232,12 +232,13 @@ class Process(PolymorphicModel):
         """
         if number == 0:
             # We give this a nicer URL because this case is so common
-            plot_url = django.core.urlresolvers.reverse("default_plot", kwargs={"process_id": str(self.pk)})
-            thumbnail_url = django.core.urlresolvers.reverse("default_thumbnail", kwargs={"process_id": str(self.pk)})
+            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.pk)})
+            thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
+                                                             kwargs={"process_id": str(self.pk)})
         else:
-            plot_url = django.core.urlresolvers.reverse("samples.views.plots.show_plot",
+            plot_url = django.core.urlresolvers.reverse("process_plot",
                                                         kwargs={"process_id": str(self.pk), "number": str(number)})
-            thumbnail_url = django.core.urlresolvers.reverse("samples.views.plots.show_thumbnail",
+            thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.pk), "number": str(number)})
         return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, number)),
                 "plot_url": plot_url,
@@ -590,15 +591,15 @@ class Sample(models.Model):
     name = models.CharField(_(u"name"), max_length=30, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_(u"watchers"))
-        # Translation hint: location of a sample
+        # Translators: location of a sample
     current_location = models.CharField(_(u"current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
                                                      verbose_name=_(u"currently responsible person"))
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
-        # Translation hint: keywords for samples
+        # Translators: keywords for samples
     tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
-                                     # Translation hint: ID of mother sample
+                                     # Translators: ID of mother sample
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
@@ -759,7 +760,32 @@ class Sample(models.Model):
                 break
         return None
 
-    def get_data(self):
+    def get_sample_details(self):
+        u"""Retreive the sample details of a sample.  Sample details are an
+        optional feature that doesn't exist in chantal_samples itself.  It can
+        be provided by an app built on top of it.
+
+        If you do so, the sample details must have a O2O relationship to
+        ``Sample`` with the related name ``sample_details``.  Furthermore, it
+        must have a ``get_context_for_user`` method which takes the ``user``
+        and the ``sample_context`` as a parameter, and returns the populated
+        sample context dict.
+
+        This in turn can then be used in the overriden ``show_sample.html``
+        template in the ``sample_details`` block.
+
+        :Return:
+          the sample details object, or ``None`` if there aren't any (because
+          there is no model at all or no particular details for *this* sample)
+
+        :rtype: ``SampleDetails`` or ``NoneType``
+        """
+        try:
+            return self.sample_details
+        except (AttributeError, models.ObjectDoesNotExist):
+            return None
+
+    def get_data(self, only_processes=False):
         u"""Extract the data of this sample as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for general data
         export.  Every child of the top-level node is a process of the sample.
@@ -774,14 +800,26 @@ class Sample(models.Model):
         unicode to ``DataNode`` instead of an instance because an instance gets
         translated.
 
+        :Parameters:
+          - `only_processes`: Whether only processes should be included.  It is
+            not part of the official `get_data` API.  I use it only to avoid
+            having a special inner function in this method.
+
+        :type only_processes: bool
+
         :Return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
         data_node = DataNode(self.name)
+        if not only_processes:
+            sample_details = self.get_sample_details()
+            if sample_details:
+                sample_details_data = sample_details.get_data()
+                data_node.children = sample_details_data.children
         if self.split_origin:
-            ancestor_data = self.split_origin.parent.get_data()
+            ancestor_data = self.split_origin.parent.get_data(only_processes=True)
             data_node.children.extend(ancestor_data.children)
         data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
         data_node.items = [DataItem(u"ID", self.pk),
@@ -792,9 +830,11 @@ class Sample(models.Model):
                            DataItem(u"tags", self.tags),
                            DataItem(u"split origin", self.split_origin and self.split_origin.id),
                            DataItem(u"topic", self.topic)]
+        if not only_processes and sample_details:
+            data_node.items.extend(sample_details_data.items)
         return data_node
 
-    def get_data_for_table_export(self):
+    def get_data_for_table_export(self, only_processes=False):
         u"""Extract the data of this sample as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
         data export.  Every child of the top-level node is a process of the
@@ -804,6 +844,13 @@ class Sample(models.Model):
         Note that ``_`` must get ``ugettext`` in these methods because
         otherwise, subsequent modifications in derived classes break.
 
+        :Parameters:
+          - `only_processes`: Whether only processes should be included.  It is
+            not part of the official `get_data` API.  I use it only to avoid
+            having a special inner function in this method.
+
+        :type only_processes: bool
+
         :Return:
           a node for building a data tree
 
@@ -811,9 +858,14 @@ class Sample(models.Model):
         """
         _ = ugettext
         data_node = DataNode(self, unicode(self))
+        if not only_processes:
+            sample_details = self.get_sample_details()
+            if sample_details:
+                sample_details_data = sample_details.get_data_for_table_export()
+                data_node.children = sample_details_data.children
         if self.split_origin:
-            ancestor_data = self.split_origin.parent.get_data_for_table_export()
-            data_node.children.extend(ancestor_data.children)
+            ancestor_data = self.split_origin.parent.get_data_for_table_export(only_processes=True)
+            data_node.children.extend(ancestor_data.children[1 if sample_details else 0:])
         data_node.children.extend(process.actual_instance.get_data_for_table_export() for process in self.processes.all())
         # I don't think that any sample properties are interesting for table
         # export; people only want to see the *process* data.  Thus, I don't
@@ -851,8 +903,13 @@ class Sample(models.Model):
                          search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
         related_models = dict((model, "processes") for model in get_all_searchable_physical_processes())
         related_models[Result] = "processes"
+        # FixMe: The following line must be removed but not before possible
+        # problems are tackled.
         related_models[Process] = "processes"
-        return search.SearchTreeNode(cls, related_models, search_fields)
+        if hasattr(cls, "sample_details"):
+            return search.DetailsSearchTreeNode(cls, related_models, search_fields, "sample_details")
+        else:
+            return search.SearchTreeNode(cls, related_models, search_fields)
 
 
 class SampleAlias(models.Model):
@@ -889,7 +946,7 @@ class SampleSplit(Process):
     through `Sample.split_origin`.  This way one can walk through the path of
     relationship in both directions.
     """
-        # Translation hint: parent of a sample
+        # Translators: parent of a sample
     parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
     u"""This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
@@ -963,12 +1020,12 @@ class Clearance(models.Model):
 
 
 class SampleClaim(models.Model):
-        # Translation hint: someone who assert a claim to samples
+        # Translators: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"requester"), related_name="claims")
     reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"reviewer"),
                                  related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_(u"samples"))
-        # Translation hint: "closed" claim to samples
+        # Translators: "closed" claim to samples
     closed = models.BooleanField(_(u"closed"), default=False)
 
     class Meta:
@@ -998,22 +1055,22 @@ class SampleDeath(Process):
     processes to a sample if it has a `SampleDeath` process, and its timestamp
     must be the last.
     """
-        # Translation hint: Of a sample
+        # Translators: Of a sample
     reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
 
     class Meta(Process.Meta):
-            # Translation hint: Of a sample
+            # Translators: Of a sample
         verbose_name = _(u"cease of existence")
-            # Translation hint: Of a sample
+            # Translators: Of a sample
         verbose_name_plural = _(u"ceases of existence")
 
     def __unicode__(self):
         _ = ugettext
         try:
-            # Translation hint: Of a sample
+            # Translators: Of a sample
             return _(u"cease of existence of {sample}").format(sample=self.samples.get())
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
-            # Translation hint: Of a sample
+            # Translators: Of a sample
             return _(u"cease of existence #{number}").format(number=self.pk)
 
     @classmethod
@@ -1031,10 +1088,10 @@ class Result(Process):
     u"""Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
-        # Translation hint: Of a result
+        # Translators: Of a result
     title = models.CharField(_(u"title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
-        # Translation hint: Physical quantities are meant
+        # Translators: Physical quantities are meant
     quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in JSON format"))
     u"""This is a data structure, serialised in JSON.  If you de-serialise it,
     it is a tuple with two items.  The first is a list of unicodes with all
@@ -1046,9 +1103,9 @@ class Result(Process):
     """
 
     class Meta(Process.Meta):
-            # Translation hint: experimental result
+            # Translators: experimental result
         verbose_name = _(u"result")
-            # Translation hint: experimental results
+            # Translators: experimental results
         verbose_name_plural = _(u"results")
 
     def save(self, *args, **kwargs):
@@ -1064,14 +1121,14 @@ class Result(Process):
     def __unicode__(self):
         _ = ugettext
         try:
-            # Translation hint: experimental result
+            # Translators: experimental result
             return _(u"result for {sample}").format(sample=self.samples.get())
         except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
             try:
-                # Translation hint: experimental result
+                # Translators: experimental result
                 return _(u"result for {sample}").format(sample=self.sample_series.get())
             except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
-                # Translation hint: experimental result
+                # Translators: experimental result
                 return _(u"result #{number}").format(number=self.pk)
 
     @models.permalink
@@ -1197,7 +1254,7 @@ class Result(Process):
         quantities, value_lists = json.loads(self.quantities_and_values)
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
-                # Translation hint: In a table
+                # Translators: In a table
                 child_node = DataNode(_(u"row"), _(u"row #{number}").format(number=i + 1))
                 child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
                 data_node.children.append(child_node)
@@ -1213,7 +1270,7 @@ class SampleSeries(models.Model):
     after it has been created.
     """
     name = models.CharField(_(u"name"), max_length=50, primary_key=True,
-                            # Translation hint: The “Y” stands for “year”
+                            # Translators: The “Y” stands for “year”
                             help_text=_(u"must be of the form “originator-YY-name”"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
@@ -1226,7 +1283,7 @@ class SampleSeries(models.Model):
 
     class Meta:
         verbose_name = _(u"sample series")
-        verbose_name_plural = _(u"sample serieses")
+        verbose_name_plural = pgettext_lazy("plural", u"sample series")
 
     def save(self, *args, **kwargs):
         u"""Saves the instance.
@@ -1347,8 +1404,7 @@ class Initials(models.Model):
 
     class Meta:
         verbose_name = _(u"initials")
-            # Translation hint: Plural of “initials”
-        verbose_name_plural = _(u"initialses")
+        verbose_name_plural = pgettext_lazy("plural", u"initialses")
 
     def __unicode__(self):
         return self.initials
@@ -1391,8 +1447,8 @@ class UserDetails(models.Model):
     be done.  In order to be able to distinguish between the two cases, we save
     the old data here, for comparison.
     """
-    subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users", verbose_name=_(u"subscribed newsfeeds"),
-                                              blank=True,)
+    subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users",
+                                              verbose_name=_(u"subscribed newsfeeds"), blank=True)
 
     class Meta:
         verbose_name = _(u"user details")
@@ -1420,21 +1476,22 @@ status_level_choices=(
     ("yellow", _(u"yellow")),
     ("green", _(u"green"))
 )
-class StatusMessages(models.Model):
-    u"""This class is for the current status of the processes.
-    The class discusses whether the process is available, or is currently out of service.
-    It provides a many to many relationship between the status messages and the processes.
+
+class StatusMessage(models.Model):
+    u"""This class is for the current status of the processes.  The class
+    discusses whether the process is available, or is currently out of service.
+    It provides a many to many relationship between the status messages and the
+    processes.
     """
-    processes = models.ManyToManyField(ContentType, related_name="status", verbose_name=_(u"Processes"))
+    processes = models.ManyToManyField(ContentType, related_name="status", verbose_name=_(u"processes"))
     timestamp = models.DateTimeField(_(u"timestamp"))
-    begin = models.DateTimeField(_(u"begin"), blank=True, null=True, help_text=(u"YYYY-MM-DD HH:MM:SS"))
-    end = models.DateTimeField(_(u"end"), blank=True, null=True, help_text=(u"YYYY-MM-DD HH:MM:SS"))
+    begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=u"YYYY-MM-DD HH:MM:SS")
+    end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=u"YYYY-MM-DD HH:MM:SS")
     begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
-                                                            default=0)
-    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices,
-                                                            default=0)
+                                                        default=0)
+    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status",
-                                       verbose_name=_(u"reporter of the message"))
+                                 verbose_name=_(u"reporter of the message"))
     message = models.TextField(_(u"status message"))
     status_level = models.CharField(_(u"status level"), choices=status_level_choices, default="undefined", max_length=10)
 

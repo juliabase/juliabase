@@ -241,11 +241,11 @@ def add_user_details(sender, instance, created, **kwargs):
     u"""Create ``UserDetails`` for every newly created user.
     """
     if created:
-        user_details, _ = samples_app.UserDetails.objects.get_or_create(user=instance,
-                                                                        idenfifying_data_hash=get_identifying_data_hash(instance))
-        user_details.subscribed_feeds = ContentType.objects.filter(id__in=[ContentType.objects.get(name="sample").id,
-                                                                           ContentType.objects.get(name="sample series").id,
-                                                                           ContentType.objects.get(name="topic").id])
+        user_details, __ = samples_app.UserDetails.objects.get_or_create(
+            user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
+        user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
+                                         ContentType.objects.get(app_label="samples", model="sampleseries"),
+                                         ContentType.objects.get(app_label="chantal_common", model="topic")]
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 

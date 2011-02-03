@@ -19,10 +19,11 @@ the database was changed in one way or another.
 
 from __future__ import absolute_import
 
+from django.contrib.contenttypes.models import ContentType
+import chantal_common.models
 from samples import models
 from samples.views import utils
 from samples import permissions
-from django.contrib.contenttypes.models import ContentType
 
 
 class Reporter(object):
@@ -82,7 +83,7 @@ class Reporter(object):
         self.already_informed_users = set()
         self.originator = originator
 
-    def __connect_with_users(self, entry, subscribed_users):
+    def __connect_with_users(self, entry, sending_model=None):
         u"""Take an already generated feed entry and set its recipients to all
         users that are probably interested in this news (and allowed to see
         it).  This method ensures that neither the originator, nor users who
@@ -94,12 +95,15 @@ class Reporter(object):
         :Parameters:
           - `entry`: the feed entry that should be connected with users that
             should receive it
+          - `sending_model`: the model which is the origin of the news
 
         :type entry: `models.FeedEntry`
+        :type sending_model: class, descendant of ``models.Model``
         """
         self.interested_users -= self.already_informed_users
-        if subscribed_users:
-            self.interested_users &= subscribed_users
+        if sending_model:
+            self.interested_users &= set(user_details.user for user_details in
+                                         ContentType.objects.get_for_model(sending_model).subscribed_users.all())
         self.already_informed_users.update(self.interested_users)
         self.interested_users.discard(self.originator)
         if self.interested_users:
@@ -205,9 +209,8 @@ class Reporter(object):
             entry = models.FeedNewSamples.objects.create(originator=self.originator, topic=topic, purpose=common_purpose)
             entry.samples = samples
             entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
-            subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_user.all())
             self.__add_topic_members(topic)
-            self.__connect_with_users(entry, subscribed_users)
+            self.__connect_with_users(entry, chantal_common.models.Topic)
 
     def report_physical_process(self, process, edit_description=None):
         u"""Generate a feed entry for a physical process (deposition,
@@ -261,7 +264,7 @@ class Reporter(object):
         self.__add_watchers(result, entry.important)
         for sample_series in result.sample_series.all():
             self.__add_watchers(sample_series)
-        self.__connect_with_users(entry, set())
+        self.__connect_with_users(entry)
 
     def report_copied_my_samples(self, samples, recipient, comments):
         u"""Generate a feed entry for sample that one user has copied to
@@ -279,9 +282,7 @@ class Reporter(object):
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
         entry.samples = samples
         self.interested_users.add(recipient)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(name="sample").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.Sample)
 
     def report_new_responsible_person_samples(self, samples, edit_description):
         u"""Generate a feed entry for samples that changed their currently
@@ -306,9 +307,7 @@ class Reporter(object):
             important=edit_description["important"], responsible_person_changed=True)
         entry.samples = samples
         self.interested_users.add(samples[0].currently_responsible_person)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(name="sample").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.Sample)
 
     def report_changed_sample_topic(self, samples, old_topic, edit_description):
         u"""Generate a feed entry about a topic change for sample(s).  All
@@ -339,8 +338,7 @@ class Reporter(object):
         if old_topic:
             self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, chantal_common.models.Topic)
 
     def report_edited_samples(self, samples, edit_description):
         u"""Generate a feed entry about a general edit of sample(s).  All users
@@ -361,8 +359,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"], important=important)
         entry.samples = samples
         self.__add_interested_users(samples, important)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.Sample)
 
     def report_sample_split(self, sample_split, sample_completely_split):
         u"""Generate a feed entry for a sample split.
@@ -380,8 +377,7 @@ class Reporter(object):
         # I can't use the parent sample for this because if it was completely
         # split, it is already removed from “My Samples”.
         self.__add_interested_users([sample_split.pieces.all()[0]])
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.Sample)
 
     def report_edited_sample_series(self, sample_series, edit_description):
         u"""Generate a feed entry about an edited of sample series.  All users
@@ -402,8 +398,7 @@ class Reporter(object):
             originator=self.originator, sample_series=sample_series, description=edit_description["description"],
             important=important)
         self.__add_watchers(sample_series, important)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.SampleSeries)
 
     def report_new_responsible_person_sample_series(self, sample_series, edit_description):
         u"""Generate a feed entry for a sample series that changed their
@@ -428,8 +423,7 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True, sample_series=sample_series)
         self.interested_users.add(sample_series.currently_responsible_person)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.SampleSeries)
 
     def report_changed_sample_series_topic(self, sample_series, old_topic, edit_description):
         u"""Generate a feed entry about a topic change for a sample series.
@@ -459,8 +453,7 @@ class Reporter(object):
         entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.SampleSeries)
 
     def report_new_sample_series(self, sample_series):
         u"""Generate one feed entry for a new sample series.
@@ -475,8 +468,7 @@ class Reporter(object):
             originator=self.originator, sample_series=sample_series, topic=topic)
         entry.subscribers = self.__get_subscribers(sample_series)
         self.__add_topic_members(topic)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="sample series").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, models.SampleSeries)
 
     def report_changed_topic_membership(self, users, topic, action):
         u"""Generate one feed entry for changed topic memberships, i.e. added
@@ -494,20 +486,23 @@ class Reporter(object):
         """
         entry = models.FeedChangedTopic.objects.create(originator=self.originator, topic=topic, action=action)
         self.interested_users = set(users)
-        subscribed_users = set(user_details.user for user_details in ContentType.objects.get(name="topic").subscribed_users.all())
-        self.__connect_with_users(entry, subscribed_users)
+        self.__connect_with_users(entry, chantal_common.models.Topic)
 
     def report_status_message(self, physical_process_content_type, status_message):
-        u"""Generate one feed entry for new status messages for physical processes.
+        u"""Generate one feed entry for new status messages for physical
+        processes.
 
         :Parameters:
-          - `physical_process_content_type`: the content type of the physical process which status has changed
+          - `physical_process_content_type`: the content type of the physical
+            process whose status has changed
           - `status_message`: the status message for the physical process
 
-        :type physical_process_content_type: ``django.contrib.contenttypes.models.ContentType``
-        :type status_message: ``samples.models_common.StatusMessages``
+        :type physical_process_content_type:
+          ``django.contrib.contenttypes.models.ContentType``
+        :type status_message: ``samples.models_common.StatusMessage``
         """
-        entry = models.FeedStatusMessage.objects.create(originator=self.originator, process=physical_process_content_type, status=status_message)
-        subscribed_users = set(user_details.user for user_details in physical_process_content_type.subscribed_users.all())
-        self.interested_users = subscribed_users
-        self.__connect_with_users(entry, subscribed_users)
+        entry = models.FeedStatusMessage.objects.create(originator=self.originator, process=physical_process_content_type,
+                                                        status=status_message)
+        self.interested_users = set(user_details.user
+                                    for user_details in physical_process_content_type.subscribed_users.all())
+        self.__connect_with_users(entry)
