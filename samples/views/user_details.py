@@ -70,7 +70,7 @@ class UserDetailsForm(forms.ModelForm):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
         content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()
-                         if not (cls._meta.app_label, cls._meta.model) in settings.PHYSICAL_PROCESS_BLACKLIST]
+                         if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
         content_types.extend([ContentType.objects.get(app_label="samples", model="sample"),
                               ContentType.objects.get(app_label="samples", model="sampleseries"),
                               ContentType.objects.get(app_label="chantal_common", model="topic")])

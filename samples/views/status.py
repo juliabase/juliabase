@@ -59,7 +59,7 @@ class StatusForm(forms.ModelForm):
         self.fields["timestamp"].initial = datetime.datetime.now()
         #FixMe: this list should be global but something don't work correctly
         ids = [ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models()
-               if not (cls._meta.app_label, cls._meta.model) in settings.PHYSICAL_PROCESS_BLACKLIST]
+               if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
         self.fields["processes"].queryset = ContentType.objects.filter(id__in=ids)
         self.fields["processes"].widget.attrs["size"] = 24
 
