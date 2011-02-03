@@ -143,8 +143,8 @@ class PolymorphicModel(models.Model):
     Simply derive the top-level model class from this one, and then you can
     easily resolve polymorphy in it and its derived classes.
     """
-    content_type = models.ForeignKey(ContentType, null=True, blank=True)
-    actual_object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
+    actual_object_id = models.PositiveIntegerField(null=True, blank=True, editable=False)
     actual_instance = generic.GenericForeignKey("content_type", "actual_object_id")
 
     def save(self, *args, **kwargs):

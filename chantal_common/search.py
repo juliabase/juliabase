@@ -760,3 +760,75 @@ class AbstractSearchTreeNode(SearchTreeNode):
                 Q_expression = current_Q
         result = result.filter(Q_expression).distinct()
         return result.values("pk")
+
+
+class DetailsSearchTreeNode(SearchTreeNode):
+    u"""Class representing a search tree node which represents a model which is
+    extended with a “details” model through a O2O relationship.  If you use an
+    ordinary `SearchTreeNode` for this, you get an extra nesting level because
+    the user first have to choose the details model, and then he gets its
+    fields.  By using this class however, the details model is merged with its
+    main model – at least as far as searching is concerned.
+
+    Note that this class is not applicable if both the main model and its
+    datails model have a related model in common.  This cannot be untangled, so
+    then you have to bite the bullet and use `SearchTreeNode` instead.
+
+    Also note that there must be a details instance for every main instance.
+    You must assure elsewhere that there is no “dangling” main model instance.
+    """
+
+    def __init__(self, model_class, related_models, search_fields, details_model_attribute):
+        u"""Class constructor.
+
+        :Parameters:
+          - `model_class`: the model class associated with this node
+          - `related_models`: see the description of the instance variable of
+            the same name
+          - `search_fields`: see the description of the instance variable of
+            the same name; they don't contain a form because their `parse_data`
+            method has not been called yet
+          - `details_model_attribute`: attribute name which represents the O2O
+            relationship to the details model
+
+        :type model_class: class (decendant of ``Model``)
+        :type related_models: dict mapping class (decendant of ``Model``) to
+          str
+        :type search_fields: list of `SearchField`
+        :type details_model_attribute: str
+        """
+        super(DetailsSearchTreeNode, self).__init__(model_class, related_models, search_fields)
+        self.details_model_attribute = details_model_attribute
+        self.details_model_class = getattr(model_class, details_model_attribute).related.model
+        self.details_node = self.details_model_class.get_search_tree_node()
+        self.related_models.update(self.details_node.related_models)
+        self.search_fields.extend(self.details_node.search_fields)
+
+    def get_query_set(self, base_query=None):
+        # The basic idea here is the following: The search fields and the
+        # related models of the details model were merged with the ones of the
+        # main model.  During `parse_data`, they are read in as if they were
+        # part of the main model.
+        #
+        # Here, however, we have to untangle this.  The search fields of the
+        # details model are simply skipped over here – the details model still
+        # has its own references to them and can use them after all.  The
+        # children which actually belong to the details model are skipped over
+        # and injected into the details model's node.  Finally, this node is
+        # used in the query as a filter.
+        result = base_query if base_query is not None else self.model_class.objects
+        kwargs = {}
+        for search_field in (field for field in self.search_fields if field not in self.details_node.search_fields):
+            values = search_field.get_values()
+            if values:
+                kwargs.update(values)
+        result = result.filter(**kwargs)
+        for __, node in self.children:
+            if node:
+                if node.model_class not in self.details_node.related_models:
+                    name = self.related_models[node.model_class] + "__pk__in"
+                    result = result.filter(**{name: node.get_query_set()})
+                else:
+                    self.details_node.children.append((None, node))
+        result = result.filter(pk__in=self.details_node.get_query_set())
+        return result.values("pk")
