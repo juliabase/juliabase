@@ -77,7 +77,7 @@ class ExternalOperator(models.Model):
     name = models.CharField(_(u"name"), max_length=30)
     institution = models.CharField(_(u"institution"), max_length=255)
     email = models.EmailField(_(u"email"))
-    alternative_email = models.EmailField(_(u"alternative email"), null=True, blank=True)
+    alternative_email = models.EmailField(_(u"alternative email"), blank=True)
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
     contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
                                        verbose_name=_(u"contact person in the institute"))
@@ -1447,8 +1447,8 @@ class UserDetails(models.Model):
     be done.  In order to be able to distinguish between the two cases, we save
     the old data here, for comparison.
     """
-    subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users", verbose_name=_(u"subscribed newsfeeds"),
-                                              blank=True,)
+    subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users",
+                                              verbose_name=_(u"subscribed newsfeeds"), blank=True)
 
     class Meta:
         verbose_name = _(u"user details")
@@ -1476,21 +1476,22 @@ status_level_choices=(
     ("yellow", _(u"yellow")),
     ("green", _(u"green"))
 )
-class StatusMessages(models.Model):
-    u"""This class is for the current status of the processes.
-    The class discusses whether the process is available, or is currently out of service.
-    It provides a many to many relationship between the status messages and the processes.
+
+class StatusMessage(models.Model):
+    u"""This class is for the current status of the processes.  The class
+    discusses whether the process is available, or is currently out of service.
+    It provides a many to many relationship between the status messages and the
+    processes.
     """
-    processes = models.ManyToManyField(ContentType, related_name="status", verbose_name=_(u"Processes"))
+    processes = models.ManyToManyField(ContentType, related_name="status", verbose_name=_(u"processes"))
     timestamp = models.DateTimeField(_(u"timestamp"))
-    begin = models.DateTimeField(_(u"begin"), blank=True, null=True, help_text=(u"YYYY-MM-DD HH:MM:SS"))
-    end = models.DateTimeField(_(u"end"), blank=True, null=True, help_text=(u"YYYY-MM-DD HH:MM:SS"))
+    begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=u"YYYY-MM-DD HH:MM:SS")
+    end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=u"YYYY-MM-DD HH:MM:SS")
     begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
-                                                            default=0)
-    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices,
-                                                            default=0)
+                                                        default=0)
+    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status",
-                                       verbose_name=_(u"reporter of the message"))
+                                 verbose_name=_(u"reporter of the message"))
     message = models.TextField(_(u"status message"))
     status_level = models.CharField(_(u"status level"), choices=status_level_choices, default="undefined", max_length=10)
 

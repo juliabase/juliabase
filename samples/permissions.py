@@ -145,8 +145,8 @@ def get_editable_sample_series(user):
 
 all_addable_physical_process_models = None
 def get_all_addable_physical_process_models():
-    u"""Get a list with all physical process classes (depositions, measurements;
-    no sample splits) that one can add or edit.
+    u"""Get all physical process classes (depositions, measurements; no sample
+    splits) that one can add or edit.
 
     :Return:
       Dictionary mapping all physical processes one can to add.  Every process
@@ -166,10 +166,9 @@ def get_all_addable_physical_process_models():
                     url = process_class.get_add_link()
                 except NotImplementedError, AttributeError:
                     continue
-                all_addable_physical_process_models[process_class] = {"url": process_class.get_add_link(),
-                                                                      "label": process_class._meta.verbose_name,
-                                                                      "label_plural": process_class._meta.verbose_name_plural,
-                                                                      "type": process_class.__name__}
+                all_addable_physical_process_models[process_class] = {
+                    "url": process_class.get_add_link(), "label": process_class._meta.verbose_name,
+                    "label_plural": process_class._meta.verbose_name_plural, "type": process_class.__name__}
     return all_addable_physical_process_models
 
 

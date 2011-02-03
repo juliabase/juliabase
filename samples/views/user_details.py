@@ -68,11 +68,13 @@ class UserDetailsForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
-        list = [ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models() \
-                   if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
-        list.extend([ContentType.objects.get(name="sample").id, ContentType.objects.get(name="sample series").id,
-                     ContentType.objects.get(name="topic").id])
-        self.fields["subscribed_feeds"].queryset = ContentType.objects.filter(id__in=list)
+        content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models() \
+                             if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
+        content_types.extend([ContentType.objects.get(app_label="samples", model="sample"),
+                              ContentType.objects.get(app_label="samples", model="sampleseries"),
+                              ContentType.objects.get(app_label="chantal_common", model="topic")])
+        self.fields["subscribed_feeds"].queryset = \
+            ContentType.objects.filter(id__in=set(content_type.id for content_type in content_types))
 
 
     class Meta:
