@@ -30,6 +30,7 @@ from django.template import RequestContext
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.text import capfirst
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models
 from samples.views import form_utils, feed_utils, utils
@@ -47,9 +48,10 @@ class StatusForm(forms.ModelForm):
     u"""The status message model form class.
     """
     _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=_(u"Operator"))
-    status_level = forms.ChoiceField(label=_(u"Status level"), widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer),
-                                     choices=models.status_level_choices)
+    operator = form_utils.FixedOperatorField(label=capfirst(_(u"operator")))
+    status_level = forms.ChoiceField(label=capfirst(_(u"status level")), choices=models.status_level_choices,
+                                     widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+    processes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
 
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
@@ -57,10 +59,11 @@ class StatusForm(forms.ModelForm):
         self.fields["operator"].set_operator(user, user.is_staff)
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
-        #FixMe: this list should be global but something don't work correctly
-        ids = [ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models()
-               if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
-        self.fields["processes"].queryset = ContentType.objects.filter(id__in=ids)
+        choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name)
+                   for cls in get_all_addable_physical_process_models()
+                   if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
+        choices.sort(key=lambda item: item[1].lower())
+        self.fields["processes"].choices = choices
         self.fields["processes"].widget.attrs["size"] = 24
 
     def clean_message(self):
