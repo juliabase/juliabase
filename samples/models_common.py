@@ -1483,14 +1483,14 @@ class StatusMessage(models.Model):
     It provides a many to many relationship between the status messages and the
     processes.
     """
-    processes = models.ManyToManyField(ContentType, related_name="status", verbose_name=_(u"processes"))
+    processes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_(u"processes"))
     timestamp = models.DateTimeField(_(u"timestamp"))
-    begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=u"YYYY-MM-DD HH:MM:SS")
-    end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=u"YYYY-MM-DD HH:MM:SS")
+    begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
+    end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
                                                         default=0)
     end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
-    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status",
+    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status_messages",
                                  verbose_name=_(u"reporter of the message"))
     message = models.TextField(_(u"status message"))
     status_level = models.CharField(_(u"status level"), choices=status_level_choices, default="undefined", max_length=10)

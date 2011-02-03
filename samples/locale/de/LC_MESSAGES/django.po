@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-03 21:46+0100\n"
-"PO-Revision-Date: 2011-02-03 21:47+0100\n"
+"POT-Creation-Date: 2011-02-03 22:12+0100\n"
+"PO-Revision-Date: 2011-02-03 22:13+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -450,6 +450,10 @@ msgstr "grün"
 #: models_common.py:1488
 msgid "begin"
 msgstr "Anfang"
+
+#: models_common.py:1488 models_common.py:1489
+msgid "YYYY-MM-DD HH:MM:SS"
+msgstr "JJJJ-MM-TT HH:MM:SS"
 
 #: models_common.py:1489
 msgid "end"
@@ -2502,7 +2506,7 @@ msgstr "Alle Ihre externen Kontakte"
 msgid "Chantal news for {user_name}"
 msgstr "Chantal-Neuigkeiten für {user_name}"
 
-#: views/form_utils.py:64 views/status.py:86
+#: views/form_utils.py:64 views/status.py:89
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
@@ -3075,19 +3079,19 @@ msgstr "Die Probe „{sample}“ wurde erfolgreich gespalten."
 msgid "Split sample “{sample}”"
 msgstr "Spalten der Probe „{sample}“"
 
-#: views/status.py:47
+#: views/status.py:50
 msgid "Operator"
 msgstr "Operateur"
 
-#: views/status.py:137
+#: views/status.py:142
 msgid "The status message was successfully added to the database."
 msgstr "Die Statusmeldung wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/status.py:140
+#: views/status.py:145
 msgid "Add status message"
 msgstr "Statusmeldung hinzufügen"
 
-#: views/status.py:183
+#: views/status.py:188
 msgid "Status messages for processes"
 msgstr "Statusmeldungen für Prozesse"
 

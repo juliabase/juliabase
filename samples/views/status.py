@@ -14,11 +14,15 @@
 
 u"""Add and show status messages for the physical processes
 """
+
+
 from __future__ import absolute_import
+
 from chantal_common.utils import check_markdown
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 from django.forms import widgets
 from django.forms.util import ValidationError
 from django.shortcuts import render_to_response
@@ -31,7 +35,6 @@ from samples.permissions import get_all_addable_physical_process_models
 from samples.views import form_utils, feed_utils, utils
 import datetime
 import django.forms as forms
-import settings
 
 
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
@@ -96,9 +99,11 @@ class Status:
     def __init__(self, status_dict, process_name, username):
         u"""
         :Parameters:
-          - `status_dict`: contains the informations of the current status level
+          - `status_dict`: contains the informations of the current status
+            level
           - `process_name`: the verbose name of the process
-          - `username`: the first name and last name of the user who has written the status message
+          - `username`: the first name and last name of the user who has
+            written the status message
 
         :type status_dict: dictionary
         :type process_name: unicode
@@ -106,17 +111,17 @@ class Status:
         """
         self.process_name = process_name
         self.user = username
-        self.status_level = status_dict['status_level']
-        self.starting_time = "" if status_dict['begin'] == datetime.datetime(1,1,1) else status_dict['begin']
-        self.end_time = "" if status_dict['end'] == datetime.datetime(9999,12,31) else status_dict['end']
-        self.timestamp = status_dict['timestamp']
-        self.status_message = status_dict['message']
+        self.status_level = status_dict["status_level"]
+        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1,1,1) else status_dict["begin"]
+        self.end_time = "" if status_dict["end"] == datetime.datetime(9999,12,31) else status_dict["end"]
+        self.timestamp = status_dict["timestamp"]
+        self.status_message = status_dict["message"]
 
 
 @login_required
 def add(request):
-    u"""With this function, the messages are stored into the database.
-    It also gets the information for displaying the 'add_status_message' template.
+    u"""With this function, the messages are stored into the database.  It also
+    gets the information for displaying the "add_status_message" template.
 
     :Parameters:
       - `request`: the current HTTP Request object
