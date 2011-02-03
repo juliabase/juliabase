@@ -67,11 +67,11 @@ def get_current_kicker_number(player):
                         else preliminary_kicker_number
                 except NoKickerNumber:
                     continue
-                S = 1/2 + 90/7 * (match.goals_a - match.goals_b) / seconds
+                S = 1/2 + 90/7 * (match.goals_a - match.goals_b) / match.seconds
                 E = 1 / (1 + 10**((number_player_a_1 + number_player_a_2 - number_player_b_1 - number_player_b_2) / 800))
                 delta = S - E
                 delta_player = 40 * delta
-                if player in [match.player_b_1, match.payer_b_2]:
+                if player in [match.player_b_1, match.player_b_2]:
                     delta_player = - delta_player
                 preliminary_kicker_number += delta_player
                 number_of_matches += 1
