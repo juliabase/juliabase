@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-03 22:12+0100\n"
+"POT-Creation-Date: 2011-02-03 22:22+0100\n"
 "PO-Revision-Date: 2011-02-03 22:15+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1144,7 +1144,11 @@ msgid ""
 "you only select “sample”, you will be informed\n"
 "            about everything that happens to samples.)\n"
 "          "
-msgstr "\n(Wählen Sie die Newsfeeds, die Sie interessieren.  Beispiel: Wenn Sie nur „Probe“ auswählen, werden Sie nur über Dinge informiert, die Proben betreffen.)"
+msgstr ""
+"\n"
+"(Wählen Sie die Newsfeeds, die Sie interessieren.  Beispiel: Wenn Sie nur "
+"„Probe“ auswählen, werden Sie nur über Dinge informiert, die Proben "
+"betreffen.)"
 
 #: templates/samples/edit_result.html:22
 msgid "Error in result"
@@ -1585,13 +1589,17 @@ msgid ""
 "\n"
 "    %(originator)s has reported the following status message:\n"
 "  "
-msgstr "\n%(originator)s hat die folgende Statusmeldung eingestellt:"
+msgstr ""
+"\n"
+"%(originator)s hat die folgende Statusmeldung eingestellt:"
 
 #: templates/samples/feed_status_message.html:27
 msgid ""
 "\n"
 "The current status messages can you find <a href=\"/status/\">here</a>.\n"
-msgstr "\nDie aktuelle Statusmeldung können Sie <a href=\"/status/\">hier</a> finden.\n"
+msgstr ""
+"\n"
+"Die aktuelle Statusmeldung können Sie <a href=\"/status/\">hier</a> finden.\n"
 
 #: templates/samples/lab_notebook.html:32
 #: templates/samples/show_process.html:34
@@ -2103,7 +2111,7 @@ msgstr "Ergebnis ändern"
 msgid "Process"
 msgstr "Prozess"
 
-#: templates/samples/show_status.html:25
+#: templates/samples/show_status.html:25 views/status.py:51
 msgid "Status level"
 msgstr "Statuslevel"
 

@@ -48,8 +48,8 @@ class StatusForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     operator = form_utils.FixedOperatorField(label=_(u"Operator"))
-    status_level =  forms.ChoiceField(widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer),
-                                          choices=models.status_level_choices)
+    status_level = forms.ChoiceField(label=_(u"Status level"), widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer),
+                                     choices=models.status_level_choices)
 
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
@@ -93,7 +93,7 @@ class StatusForm(forms.ModelForm):
         model = models.StatusMessage
 
 
-class Status:
+class Status(object):
     u"""Class for displaying a status message for a physical process.
     """
     def __init__(self, status_dict, process_name, username):
@@ -166,13 +166,13 @@ def show(request):
                    if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
     while process_list:
         process = process_list.pop()
-        status_list = list(models.StatusMessage.objects.filter(processes=process.id) \
-                           .filter(begin__lt=datetime.datetime.today()) \
+        status_list = list(models.StatusMessage.objects.filter(processes=process.id)
+                           .filter(begin__lt=datetime.datetime.today())
                            .filter(end__gt=datetime.datetime.today()).values())
         if status_list:
             status_list.sort(key=lambda status_dict: status_dict.get("begin"), reverse=True)
             max_index = 0
-            if len(status_list) >1:
+            if len(status_list) > 1:
                 for index, status in enumerate(status_list):
                     if status_list[max_index]["begin"] == status["begin"]:
                         if status_list[max_index]["timestamp"] < status["timestamp"]:
@@ -180,7 +180,7 @@ def show(request):
                     else:
                         break
             user = User.objects.get(id=status_list[max_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[max_index],process.name,
+            status_list_for_context.append(Status(status_list[max_index], process.name,
                                                   u"{0} {1}".format(user.first_name, user.last_name)))
         else:
             continue
