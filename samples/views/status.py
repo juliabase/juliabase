@@ -76,7 +76,7 @@ class StatusForm(forms.ModelForm):
     def clean_begin(self):
         begin = self.cleaned_data.get("begin")
         if not begin:
-            begin = datetime.datetime(1, 1, 1)
+            begin = datetime.datetime(1900, 1, 1)
         return begin
 
     def clean_end(self):
@@ -116,7 +116,7 @@ class Status(object):
         self.process_name = process_name
         self.user = username
         self.status_level = status_dict["status_level"]
-        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1,1,1) else status_dict["begin"]
+        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1900,1,1) else status_dict["begin"]
         self.end_time = "" if status_dict["end"] == datetime.datetime(9999,12,31) else status_dict["end"]
         self.timestamp = status_dict["timestamp"]
         self.status_message = status_dict["message"]
