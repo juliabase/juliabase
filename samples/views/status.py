@@ -18,7 +18,7 @@ u"""Add and show status messages for the physical processes
 
 from __future__ import absolute_import
 
-from chantal_common.utils import check_markdown
+import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -31,10 +31,10 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
+from chantal_common.utils import check_markdown, get_really_full_name
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models
 from samples.views import form_utils, feed_utils, utils
-import datetime
 import django.forms as forms
 
 
@@ -116,8 +116,8 @@ class Status(object):
         self.process_name = process_name
         self.user = username
         self.status_level = status_dict["status_level"]
-        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1900,1,1) else status_dict["begin"]
-        self.end_time = "" if status_dict["end"] == datetime.datetime(9999,12,31) else status_dict["end"]
+        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1900, 1, 1) else status_dict["begin"]
+        self.end_time = "" if status_dict["end"] == datetime.datetime(9999, 12, 31) else status_dict["end"]
         self.timestamp = status_dict["timestamp"]
         self.status_message = status_dict["message"]
 
@@ -166,8 +166,8 @@ def show(request):
     :rtype: ``HttpResponse``
     """
     status_list_for_context = []
-    process_list = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models() \
-                   if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
+    process_list = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()
+                    if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
     while process_list:
         process = process_list.pop()
         status_list = list(models.StatusMessage.objects.filter(processes=process.id)
@@ -184,8 +184,8 @@ def show(request):
                     else:
                         break
             user = User.objects.get(id=status_list[max_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[max_index], process.name,
-                                                  u"{0} {1}".format(user.first_name, user.last_name)))
+            status_list_for_context.append(Status(status_list[max_index], process._meta.verbose_name,
+                                                  get_really_full_name(user)))
         else:
             continue
     status_list_for_context.sort(key=lambda Status: Status.process_name.lower())
