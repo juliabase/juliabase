@@ -31,7 +31,7 @@ copyright holder, you must destroy it immediately and completely.
     {% for status_message in status_messages %}
          <tr style="vertical-align: top">
             <td>{{ status_message.process_name|first_upper }}</td>
-            <td>{{ status_message.status_message|markdown }}</td>
+            <td>{{ status_message.status_message|markdown:"collapse" }}</td>
             <td style="text-align: center; vertical-align: middle">
                 {% if status_message.status_level == "undefined" %}
                     <img src="{{ STATIC_URL }}chantal/icons/grey.png" alt="undefined"/>

@@ -247,7 +247,7 @@ sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-
 
 @register.filter
 @stringfilter
-def markdown_samples(value):
+def markdown_samples(value, margins="default"):
     u"""Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
     clickable links.  Embedded HTML tags are always escaped.  Warning: You need
@@ -290,7 +290,11 @@ def markdown_samples(value):
         else:
             result += value[position:]
             break
-    return markup.markdown(result)
+    result = markup.markdown(result)
+    if result.startswith(u"<p>"):
+        if margins == "collapse":
+            result = mark_safe(u"""<p style="margin: 0pt">""" + result[3:])
+    return result
 
 
 @register.filter
