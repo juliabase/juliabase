@@ -184,7 +184,7 @@ def show(request):
                     else:
                         break
             user = User.objects.get(id=status_list[max_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[max_index], process.get_model()._meta.verbose_name,
+            status_list_for_context.append(Status(status_list[max_index], process.model_class()._meta.verbose_name,
                                                   get_really_full_name(user)))
         else:
             continue
