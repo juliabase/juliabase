@@ -25,16 +25,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.forms import widgets
 from django.forms.util import ValidationError
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+import django.core.urlresolvers
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
-from chantal_common.utils import check_markdown, get_really_full_name, append_error
+from chantal_common.utils import check_markdown, get_really_full_name, append_error, HttpResponseSeeOther
 from chantal_common.search import DateTimeField
 from samples import models
-from samples.permissions import get_all_addable_physical_process_models
+from samples.permissions import get_all_addable_physical_process_models, PermissionError
 from samples.views import form_utils, feed_utils, utils
 import django.forms as forms
 
@@ -137,7 +138,8 @@ def add(request):
 
 @login_required
 def show(request):
-    u"""This function shows the current status messages for the physical processes.
+    u"""This function shows the current status messages for the physical
+    processes.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -170,3 +172,27 @@ def show(request):
                                                            "status_messages": status_messages,
                                                            "further_status_messages": further_status_messages},
                               context_instance=RequestContext(request))
+
+
+@login_required
+def delete(request, id_):
+    u"""This function removes a status message for good.  Note that it removes
+    it for all its connected process types.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `id_`: the id of the message to be removed
+
+    :type request: ``HttpRequest``
+    :type id_: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    status_message = get_object_or_404(models.StatusMessage, pk=utils.convert_id_to_int(id_))
+    if request.user != status_message.operator:
+        raise PermissionError(request.user, u"You cannot delete status messages of another user.")
+    status_message.delete()
+    return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))
