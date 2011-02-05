@@ -16,15 +16,10 @@ copyright holder, you must destroy it immediately and completely.
 {% load chantal %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator %}
-    {{ originator }} has reported the following status message:
+  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
+  {{ originator }} has reported the following <a href="{{ link }}">status message</a>:
   {% endblocktrans %}
 </p>
 <blockquote>
 {{ entry.status.message|markdown_samples }}
 </blockquote>
-<p>
-{% blocktrans %}
-The current status messages can you find <a href="/status/">here</a>.
-{% endblocktrans %}
-</p>
