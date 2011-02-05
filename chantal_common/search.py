@@ -310,7 +310,14 @@ class ChoiceSearchField(SearchField):
 class DateTimeField(forms.Field):
     u"""Custom form field for timestamps that can be given blurrily.  For
     example, you can just give a year, or a year and a month.  You just can't
-    start in the middle of a full timestamp.
+    start in the middle of a full timestamp.  You must pass the boolean
+    ``start`` keyword argument to this field so that it know whether it should
+    fill missing slots (days, hours etc) with the _smallest_ possible values or
+    the _biggest_ ones.
+
+    Additionally, you can tell the field with an optional
+    ``with_inaccuracy=True`` to give a 2-tuple back, with the inaccuracy as the
+    second item.
     """
 
     datetime_pattern = re.compile(r"(?P<year>\d{4})(?:-(?P<month>\d{1,2})(?:-(?P<day>\d{1,2})"
@@ -318,6 +325,7 @@ class DateTimeField(forms.Field):
 
     def __init__(self, *args, **kwargs):
         self.start = kwargs.pop("start")
+        self.with_inaccuracy = kwargs.pop("with_inaccuracy", False)
         super(DateTimeField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -327,6 +335,19 @@ class DateTimeField(forms.Field):
         if not match:
             raise forms.ValidationError(_(u"The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."))
         year, month, day, hour, minute, second = match.groups()
+        if self.with_inaccuracy:
+            if month is None:
+                inaccuracy = 5
+            elif day is None:
+                inaccuracy = 4
+            elif hour is None:
+                inaccuracy = 3
+            elif minute is None:
+                inaccuracy = 2
+            elif second is None:
+                inaccuracy = 1
+            else:
+                inaccuracy = 0
         if self.start:
             year, month, day, hour, minute, second = \
                 int(year), int(month or "1"), int(day or "1"), int(hour or "0"), int(minute or "0"), int(second or "0")
@@ -337,7 +358,8 @@ class DateTimeField(forms.Field):
                 day = [31, None, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
             if not day:
                 day = 29 if calendar.isleap(year) else 28
-        return datetime.datetime(year, month, day, hour, minute, second)
+        timestamp = datetime.datetime(year, month, day, hour, minute, second)
+        return (timestamp, inaccuracy) if self.with_inaccuracy else timestamp
 
 
 class DateTimeSearchField(RangeSearchField):

@@ -123,7 +123,7 @@ def substitute_formulae(string):
 
 @register.filter
 @stringfilter
-def markdown(value):
+def markdown(value, margins="default"):
     u"""Filter for formatting the value by assuming Markdown syntax.  Embedded
     HTML tags are always escaped.  Warning: You need at least Python Markdown
     1.7 or later so that this works.
@@ -134,7 +134,11 @@ def markdown(value):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    return markup.markdown(substitute_formulae(utils.substitute_html_entities(unicode(value))))
+    result = markup.markdown(substitute_formulae(utils.substitute_html_entities(unicode(value))))
+    if result.startswith(u"<p>"):
+        if margins == "collapse":
+            result = mark_safe(u"""<p style="margin: 0pt">""" + result[3:])
+    return result
 
 
 @register.simple_tag

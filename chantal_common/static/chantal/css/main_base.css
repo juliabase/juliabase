@@ -13,7 +13,7 @@ copyright holder, you must destroy it immediately and completely.
 
 body { 
     background-color: gray;
-    font-family: Frutiger, "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, sans-serif;
+    font-family: "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, sans-serif;
     margin: 0pt; padding: 0pt;
 }
 p.logo-text {
