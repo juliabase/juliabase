@@ -131,7 +131,7 @@ def add(request):
             return utils.successful_response(request, _(u"The status message was successfully added to the database."))
     else:
         status_form = StatusForm(request.user)
-    title =  _(u"Add status message")
+    title = _(u"Add status message")
     return render_to_response("samples/add_status_message.html", {"title": title, "status": status_form},
                               context_instance=RequestContext(request))
 

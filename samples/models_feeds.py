@@ -439,7 +439,9 @@ class FeedStatusMessage(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New status message for {process}").format(process=self.process)
+        metadata["title"] = _(u"New status message for {process}").format(
+            process=self.process.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new status message"
+        metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
         return metadata
 
