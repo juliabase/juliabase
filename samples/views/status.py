@@ -32,6 +32,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
 from chantal_common.utils import check_markdown, get_really_full_name
+from chantal_common.search import DateTimeField
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models
 from samples.views import form_utils, feed_utils, utils
@@ -51,6 +52,10 @@ class StatusForm(forms.ModelForm):
     operator = form_utils.FixedOperatorField(label=capfirst(_(u"operator")))
     status_level = forms.ChoiceField(label=capfirst(_(u"status level")), choices=models.status_level_choices,
                                      widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+    begin = DateTimeField(label=capfirst(_(u"begin")), start=True, required=False, with_inaccuracy=True,
+                          help_text=_(u"YYYY-MM-DD HH:MM:SS"))
+    end = DateTimeField(label=capfirst(_(u"end")), start=False, required=False, with_inaccuracy=True,
+                        help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     processes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
 
     def __init__(self, user, *args, **kwargs):
@@ -73,18 +78,6 @@ class StatusForm(forms.ModelForm):
         check_markdown(message)
         return message
 
-    def clean_begin(self):
-        begin = self.cleaned_data.get("begin")
-        if not begin:
-            begin = datetime.datetime(1900, 1, 1)
-        return begin
-
-    def clean_end(self):
-        end = self.cleaned_data.get("end")
-        if not end:
-            end = datetime.datetime(9999, 12, 31)
-        return end
-
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
         """
@@ -92,6 +85,19 @@ class StatusForm(forms.ModelForm):
         if timestamp > datetime.datetime.now():
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        begin, end = cleaned_data.get("begin"), cleaned_data.get("end")
+        if begin:
+            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]
+        else:
+            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = datetime.datetime(1900, 1, 1), 6
+        if end:
+            cleaned_data["end"], cleaned_data["end_inaccuracy"] = cleaned_data["end"]
+        else:
+            cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
+        return cleaned_data
 
     class Meta:
         model = models.StatusMessage
@@ -116,8 +122,10 @@ class Status(object):
         self.process_name = process_name
         self.user = username
         self.status_level = status_dict["status_level"]
-        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1900, 1, 1) else status_dict["begin"]
-        self.end_time = "" if status_dict["end"] == datetime.datetime(9999, 12, 31) else status_dict["end"]
+        self.starting_time = status_dict["begin"]
+        self.starting_time_inaccuracy = status_dict["begin_inaccuracy"]
+        self.end_time = status_dict["end"]
+        self.end_time_inaccuracy = status_dict["end_inaccuracy"]
         self.timestamp = status_dict["timestamp"]
         self.status_message = status_dict["message"]
 

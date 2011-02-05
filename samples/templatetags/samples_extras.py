@@ -212,6 +212,7 @@ timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
                      _(u"%b %Y"),
                      u"%Y",
                      _(u"date unknown"))
+
 @register.filter
 def timestamp(value, minimal_inaccuracy=0):
     u"""Filter for formatting the timestamp of a process properly to reflect
@@ -235,6 +236,34 @@ def timestamp(value, minimal_inaccuracy=0):
         inaccuracy = value["timestamp_inaccuracy"]
     return mark_safe(chantal_common.utils.unicode_strftime(timestamp_,
                                                            timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
+
+
+@register.filter
+def status_timestamp(value, type_):
+    u"""Filter for formatting the timestamp of a status message properly to
+    reflect the inaccuracy connected with this timestamp.
+
+    :Parameters:
+      - `value`: the status message timestamp should be formatted
+      - `type_`: either ``"begin"`` or ``"end"``
+
+    :type value: ``samples.views.status.Status``
+    :type type_: str
+
+    :Return:
+      the rendered timestamp
+
+    :rtype: unicode
+    """
+    if type_ == "begin":
+        timestamp_ = value.starting_time
+        inaccuracy = value.starting_time_inaccuracy
+    elif type_ == "end":
+        timestamp_ = value.end_time
+        inaccuracy = value.end_time_inaccuracy
+    if inaccuracy == 6:
+        return None
+    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
 # FixMe: This pattern should probably be moved to settings.py.

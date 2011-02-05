@@ -43,8 +43,8 @@ copyright holder, you must destroy it immediately and completely.
                     <img src="{{ STATIC_URL }}chantal/icons/green.png" alt="green"/>
                 {% endif %}{% endif %}{% endif %}{% endif %}
             </td>
-            <td>{{ status_message.starting_time }}</td>
-            <td>{{ status_message.end_time }}</td>
+            <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
+            <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
             <td>{{ status_message.user }}</td>
             <td>{{ status_message.timestamp }}</td>
          </tr>
