@@ -103,33 +103,6 @@ class StatusForm(forms.ModelForm):
         model = models.StatusMessage
 
 
-class Status(object):
-    u"""Class for displaying a status message for a physical process.
-    """
-    def __init__(self, status_dict, process_name, username):
-        u"""
-        :Parameters:
-          - `status_dict`: contains the informations of the current status
-            level
-          - `process_name`: the verbose name of the process
-          - `username`: the first name and last name of the user who has
-            written the status message
-
-        :type status_dict: dictionary
-        :type process_name: unicode
-        :type username: unicode
-        """
-        self.process_name = process_name
-        self.user = username
-        self.status_level = status_dict["status_level"]
-        self.starting_time = status_dict["begin"]
-        self.starting_time_inaccuracy = status_dict["begin_inaccuracy"]
-        self.end_time = status_dict["end"]
-        self.end_time_inaccuracy = status_dict["end_inaccuracy"]
-        self.timestamp = status_dict["timestamp"]
-        self.status_message = status_dict["message"]
-
-
 @login_required
 def add(request):
     u"""With this function, the messages are stored into the database.  It also
@@ -173,30 +146,16 @@ def show(request):
 
     :rtype: ``HttpResponse``
     """
-    status_list_for_context = []
-    process_list = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()
-                    if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
-    while process_list:
-        process = process_list.pop()
-        status_list = list(models.StatusMessage.objects.filter(processes=process.id)
-                           .filter(begin__lt=datetime.datetime.today())
-                           .filter(end__gt=datetime.datetime.today()).values())
-        if status_list:
-            status_list.sort(key=lambda status_dict: status_dict.get("begin"), reverse=True)
-            max_index = 0
-            if len(status_list) > 1:
-                for index, status in enumerate(status_list):
-                    if status_list[max_index]["begin"] == status["begin"]:
-                        if status_list[max_index]["timestamp"] < status["timestamp"]:
-                            max_index = index
-                    else:
-                        break
-            user = User.objects.get(id=status_list[max_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[max_index], process.model_class()._meta.verbose_name,
-                                                  get_really_full_name(user)))
-        else:
-            continue
-    status_list_for_context.sort(key=lambda Status: Status.process_name.lower())
-    template_context = {"title": _(u"Status messages for processes"),
-                        "status_messages": status_list_for_context}
-    return render_to_response("samples/show_status.html", template_context, context_instance=RequestContext(request))
+    status_messages = []
+    now = datetime.datetime.now()
+    eligible_status_messages = models.StatusMessage.objects.filter(begin__lt=now, end__gt=now)
+    process_types = set()
+    for status_message in eligible_status_messages:
+        process_types |= set(status_message.processes.all())
+    for process_type in process_types:
+        current_status = eligible_status_messages.filter(processes=process_type).order_by("-begin", "-timestamp")[0]
+        status_messages.append((current_status, process_type.model_class()._meta.verbose_name))
+    status_messages.sort(key=lambda item: item[1].lower())
+    return render_to_response("samples/show_status.html", {"title": _(u"Status messages"),
+                                                           "status_messages": status_messages},
+                              context_instance=RequestContext(request))

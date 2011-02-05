@@ -256,11 +256,11 @@ def status_timestamp(value, type_):
     :rtype: unicode
     """
     if type_ == "begin":
-        timestamp_ = value.starting_time
-        inaccuracy = value.starting_time_inaccuracy
+        timestamp_ = value.begin
+        inaccuracy = value.begin_inaccuracy
     elif type_ == "end":
-        timestamp_ = value.end_time
-        inaccuracy = value.end_time_inaccuracy
+        timestamp_ = value.end
+        inaccuracy = value.end_inaccuracy
     if inaccuracy == 6:
         return None
     return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))

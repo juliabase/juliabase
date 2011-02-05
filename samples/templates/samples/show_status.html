@@ -28,9 +28,9 @@ copyright holder, you must destroy it immediately and completely.
         <td>{% trans 'Reporter' %}</td>
         <td>{% trans 'posted at' %}</td>
      </tr>
-    {% for status_message in status_messages %}
+    {% for status_message, process_name in status_messages %}
          <tr style="vertical-align: top">
-            <td>{{ status_message.process_name|first_upper }}</td>
+            <td>{{ process_name|first_upper }}</td>
             <td>{{ status_message.status_message|markdown:"collapse" }}</td>
             <td style="text-align: center; vertical-align: middle">
                 {% if status_message.status_level == "undefined" %}
@@ -45,7 +45,7 @@ copyright holder, you must destroy it immediately and completely.
             </td>
             <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
             <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
-            <td>{{ status_message.user }}</td>
+            <td>{{ status_message.user|get_really_full_name }}</td>
             <td>{{ status_message.timestamp }}</td>
          </tr>
     {% endfor %}
