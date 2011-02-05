@@ -51,6 +51,11 @@ copyright holder, you must destroy it immediately and completely.
     {% endfor %}
 </table>
 
+<p><a href="{% url samples.views.status.add %}" style="margin-right: 3em">{% trans 'Add a status message' %}</a>
+<a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
+      >{% trans 'Subscribe to status messages' %}</a></p>
+
+
 {% if further_status_messages %}
   <h2>{% trans "Further status messages" %}</h2>
 

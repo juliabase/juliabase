@@ -31,7 +31,7 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
-from chantal_common.utils import check_markdown, get_really_full_name
+from chantal_common.utils import check_markdown, get_really_full_name, append_error
 from chantal_common.search import DateTimeField
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models
@@ -97,6 +97,9 @@ class StatusForm(forms.ModelForm):
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = cleaned_data["end"]
         else:
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
+        if cleaned_data["begin"] > cleaned_data["end"]:
+            append_error(self, _(u"The begin must be before the end."), "begin")
+            del self.cleaned_data["begin"]
         return cleaned_data
 
     class Meta:
