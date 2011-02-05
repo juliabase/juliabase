@@ -143,4 +143,5 @@ urlpatterns = patterns("samples.views",
 
                        (r"^status/add/$", "status.add"),
                        (r"^status/$", "status.show"),
+                       (r"^status/(?P<id_>\d+)/delete/$", "status.delete"),
                        )

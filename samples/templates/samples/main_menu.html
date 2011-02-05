@@ -80,7 +80,6 @@ copyright holder, you must destroy it immediately and completely.
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
-    <li><a href="{% url samples.views.status.add %}">{% trans 'Status message' %}</a></li>
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>

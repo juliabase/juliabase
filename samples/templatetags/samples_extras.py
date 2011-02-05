@@ -212,6 +212,7 @@ timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
                      _(u"%b %Y"),
                      u"%Y",
                      _(u"date unknown"))
+
 @register.filter
 def timestamp(value, minimal_inaccuracy=0):
     u"""Filter for formatting the timestamp of a process properly to reflect
@@ -237,6 +238,34 @@ def timestamp(value, minimal_inaccuracy=0):
                                                            timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
 
 
+@register.filter
+def status_timestamp(value, type_):
+    u"""Filter for formatting the timestamp of a status message properly to
+    reflect the inaccuracy connected with this timestamp.
+
+    :Parameters:
+      - `value`: the status message timestamp should be formatted
+      - `type_`: either ``"begin"`` or ``"end"``
+
+    :type value: ``samples.views.status.Status``
+    :type type_: str
+
+    :Return:
+      the rendered timestamp
+
+    :rtype: unicode
+    """
+    if type_ == "begin":
+        timestamp_ = value.begin
+        inaccuracy = value.begin_inaccuracy
+    elif type_ == "end":
+        timestamp_ = value.end
+        inaccuracy = value.end_inaccuracy
+    if inaccuracy == 6:
+        return None
+    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
+
+
 # FixMe: This pattern should probably be moved to settings.py.
 sample_name_pattern = \
     re.compile(ur"""(\W|\A)(?P<name>[0-9][0-9][A-Z]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9#]*)?|  # old-style sample name
@@ -247,7 +276,7 @@ sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-
 
 @register.filter
 @stringfilter
-def markdown_samples(value):
+def markdown_samples(value, margins="default"):
     u"""Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
     clickable links.  Embedded HTML tags are always escaped.  Warning: You need
@@ -290,7 +319,11 @@ def markdown_samples(value):
         else:
             result += value[position:]
             break
-    return markup.markdown(result)
+    result = markup.markdown(result)
+    if result.startswith(u"<p>"):
+        if margins == "collapse":
+            result = mark_safe(u"""<p style="margin: 0pt">""" + result[3:])
+    return result
 
 
 @register.filter

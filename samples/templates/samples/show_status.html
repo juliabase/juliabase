@@ -28,10 +28,10 @@ copyright holder, you must destroy it immediately and completely.
         <td>{% trans 'Reporter' %}</td>
         <td>{% trans 'posted at' %}</td>
      </tr>
-    {% for status_message in status_messages %}
+    {% for status_message, process_name in status_messages %}
          <tr style="vertical-align: top">
-            <td>{{ status_message.process_name|first_upper }}</td>
-            <td>{{ status_message.status_message }}</td>
+            <td>{{ process_name|first_upper }}</td>
+            <td>{{ status_message.message|markdown:"collapse" }}</td>
             <td style="text-align: center; vertical-align: middle">
                 {% if status_message.status_level == "undefined" %}
                     <img src="{{ STATIC_URL }}chantal/icons/grey.png" alt="undefined"/>
@@ -43,11 +43,72 @@ copyright holder, you must destroy it immediately and completely.
                     <img src="{{ STATIC_URL }}chantal/icons/green.png" alt="green"/>
                 {% endif %}{% endif %}{% endif %}{% endif %}
             </td>
-            <td>{{ status_message.starting_time }}</td>
-            <td>{{ status_message.end_time }}</td>
-            <td>{{ status_message.user }}</td>
-            <td>{{ status_message.timestamp }}</td>
+            <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
+            <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
+            <td>{{ status_message.operator|get_really_full_name }}</td>
+            <td>{{ status_message.timestamp }}
+              {% if user == status_message.operator %}
+                <a href="{% url samples.views.status.delete id_=status_message.id %}"
+                   ><img src="{{ STATIC_URL }}chantal/icons/cancel.png"
+                         title="{% trans 'remove status message for all processes' %}" alt="{% trans 'cancel' %}"/></a>
+              {% endif %}
+            </td>
          </tr>
     {% endfor %}
 </table>
+
+<p><a href="{% url samples.views.status.add %}" style="margin-right: 3em">{% trans 'Add a status message' %}</a>
+<a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
+      >{% trans 'Subscribe to status messages' %}</a></p>
+
+
+{% if further_status_messages %}
+  <h2>{% trans "Further status messages" %}</h2>
+
+  <table cellpadding="3" border="1">
+       <tr style="vertical-align: top; font-weight:bold">
+          <td>{% trans 'Process' %}</td>
+          <td>{% trans 'Status message' %}</td>
+          <td>{% trans 'Status level' %}</td>
+          <td>{% trans 'Starting time' %}</td>
+          <td>{% trans 'End time' %}</td>
+          <td>{% trans 'Reporter' %}</td>
+          <td>{% trans 'posted at' %}</td>
+       </tr>
+      {% for process_name, status_messages in further_status_messages %}
+           {% for status_message in status_messages %}
+             <tr style="vertical-align: top">
+                {% if forloop.first %}
+                  <td rowspan="{{ status_messages|length }}">{{ process_name|first_upper }}</td>
+                {% endif %}
+                <td>{{ status_message.message|markdown:"collapse" }}</td>
+                <td style="text-align: center; vertical-align: middle">
+                    {% if status_message.status_level == "undefined" %}
+                        <img src="{{ STATIC_URL }}chantal/icons/grey.png" alt="{% trans 'undefined' %}"/>
+                    {% else %}{% if status_message.status_level == "red" %}
+                        <img src="{{ STATIC_URL }}chantal/icons/red.png" alt="{% trans 'red' %}"/>
+                    {% else %}{% if status_message.status_level == "yellow" %}
+                        <img src="{{ STATIC_URL }}chantal/icons/yellow.png" alt="{% trans 'yellow' %}"/>
+                    {% else %}{% if status_message.status_level == "green" %}
+                        <img src="{{ STATIC_URL }}chantal/icons/green.png" alt="{% trans 'green' %}"/>
+                    {% endif %}{% endif %}{% endif %}{% endif %}
+                </td>
+                <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
+                <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
+                <td>{{ status_message.operator|get_really_full_name }}</td>
+                <td>{{ status_message.timestamp }}
+                  {% if user == status_message.operator %}
+                    <a href="{% url samples.views.status.delete id_=status_message.id %}"
+                       ><img src="{{ STATIC_URL }}chantal/icons/cancel.png"
+                             title="{% trans 'remove status message for all processes' %}"
+                             alt="{% trans 'cancel' %}"/></a>
+                  {% endif %}
+                </td>
+             </tr>
+          {% endfor %}
+      {% endfor %}
+  </table>
+
+{% endif %}
+
 {% endblock %}

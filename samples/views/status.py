@@ -18,23 +18,25 @@ u"""Add and show status messages for the physical processes
 
 from __future__ import absolute_import
 
-from chantal_common.utils import check_markdown
+import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.forms import widgets
 from django.forms.util import ValidationError
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
+import django.core.urlresolvers
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
+from chantal_common.utils import check_markdown, get_really_full_name, append_error, HttpResponseSeeOther
+from chantal_common.search import DateTimeField
 from samples import models
-from samples.permissions import get_all_addable_physical_process_models
+from samples.permissions import get_all_addable_physical_process_models, PermissionError
 from samples.views import form_utils, feed_utils, utils
-import datetime
 import django.forms as forms
 
 
@@ -51,6 +53,10 @@ class StatusForm(forms.ModelForm):
     operator = form_utils.FixedOperatorField(label=capfirst(_(u"operator")))
     status_level = forms.ChoiceField(label=capfirst(_(u"status level")), choices=models.status_level_choices,
                                      widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+    begin = DateTimeField(label=capfirst(_(u"begin")), start=True, required=False, with_inaccuracy=True,
+                          help_text=_(u"YYYY-MM-DD HH:MM:SS"))
+    end = DateTimeField(label=capfirst(_(u"end")), start=False, required=False, with_inaccuracy=True,
+                        help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     processes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
 
     def __init__(self, user, *args, **kwargs):
@@ -73,18 +79,6 @@ class StatusForm(forms.ModelForm):
         check_markdown(message)
         return message
 
-    def clean_begin(self):
-        begin = self.cleaned_data.get("begin")
-        if not begin:
-            begin = datetime.datetime(1900, 1, 1)
-        return begin
-
-    def clean_end(self):
-        end = self.cleaned_data.get("end")
-        if not end:
-            end = datetime.datetime(9999, 12, 31)
-        return end
-
     def clean_timestamp(self):
         u"""Forbid timestamps that are in the future.
         """
@@ -93,33 +87,24 @@ class StatusForm(forms.ModelForm):
             raise ValidationError(_(u"The timestamp must not be in the future."))
         return timestamp
 
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        begin, end = cleaned_data.get("begin"), cleaned_data.get("end")
+        if begin:
+            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]
+        else:
+            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = datetime.datetime(1900, 1, 1), 6
+        if end:
+            cleaned_data["end"], cleaned_data["end_inaccuracy"] = cleaned_data["end"]
+        else:
+            cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
+        if cleaned_data["begin"] > cleaned_data["end"]:
+            append_error(self, _(u"The begin must be before the end."), "begin")
+            del self.cleaned_data["begin"]
+        return cleaned_data
+
     class Meta:
         model = models.StatusMessage
-
-
-class Status(object):
-    u"""Class for displaying a status message for a physical process.
-    """
-    def __init__(self, status_dict, process_name, username):
-        u"""
-        :Parameters:
-          - `status_dict`: contains the informations of the current status
-            level
-          - `process_name`: the verbose name of the process
-          - `username`: the first name and last name of the user who has
-            written the status message
-
-        :type status_dict: dictionary
-        :type process_name: unicode
-        :type username: unicode
-        """
-        self.process_name = process_name
-        self.user = username
-        self.status_level = status_dict["status_level"]
-        self.starting_time = "" if status_dict["begin"] == datetime.datetime(1900,1,1) else status_dict["begin"]
-        self.end_time = "" if status_dict["end"] == datetime.datetime(9999,12,31) else status_dict["end"]
-        self.timestamp = status_dict["timestamp"]
-        self.status_message = status_dict["message"]
 
 
 @login_required
@@ -153,7 +138,8 @@ def add(request):
 
 @login_required
 def show(request):
-    u"""This function shows the current status messages for the physical processes.
+    u"""This function shows the current status messages for the physical
+    processes.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -165,30 +151,48 @@ def show(request):
 
     :rtype: ``HttpResponse``
     """
-    status_list_for_context = []
-    process_list = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models() \
-                   if not cls._meta.verbose_name in settings.PHYSICAL_PROCESS_BLACKLIST]
-    while process_list:
-        process = process_list.pop()
-        status_list = list(models.StatusMessage.objects.filter(processes=process.id)
-                           .filter(begin__lt=datetime.datetime.today())
-                           .filter(end__gt=datetime.datetime.today()).values())
-        if status_list:
-            status_list.sort(key=lambda status_dict: status_dict.get("begin"), reverse=True)
-            max_index = 0
-            if len(status_list) > 1:
-                for index, status in enumerate(status_list):
-                    if status_list[max_index]["begin"] == status["begin"]:
-                        if status_list[max_index]["timestamp"] < status["timestamp"]:
-                            max_index = index
-                    else:
-                        break
-            user = User.objects.get(id=status_list[max_index]["operator_id"])
-            status_list_for_context.append(Status(status_list[max_index], process.name,
-                                                  u"{0} {1}".format(user.first_name, user.last_name)))
-        else:
-            continue
-    status_list_for_context.sort(key=lambda Status: Status.process_name.lower())
-    template_context = {"title": _(u"Status messages for processes"),
-                        "status_messages": status_list_for_context}
-    return render_to_response("samples/show_status.html", template_context, context_instance=RequestContext(request))
+    now = datetime.datetime.now()
+    eligible_status_messages = models.StatusMessage.objects.filter(begin__lt=now, end__gt=now)
+    process_types = set()
+    for status_message in eligible_status_messages:
+        process_types |= set(status_message.processes.all())
+    status_messages = []
+    for process_type in process_types:
+        current_status = eligible_status_messages.filter(processes=process_type).order_by("-begin", "-timestamp")[0]
+        status_messages.append((current_status, process_type.model_class()._meta.verbose_name))
+    consumed_status_message_ids = set(item[0].id for item in status_messages)
+    status_messages.sort(key=lambda item: item[1].lower())
+    further_status_messages = {}
+    for status_message in models.StatusMessage.objects.filter(end__gt=now).exclude(id__in=consumed_status_message_ids). \
+            order_by("end"):
+        for process_type in status_message.processes.all():
+            further_status_messages.setdefault(process_type.model_class()._meta.verbose_name, []).append(status_message)
+    further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
+    return render_to_response("samples/show_status.html", {"title": _(u"Status messages"),
+                                                           "status_messages": status_messages,
+                                                           "further_status_messages": further_status_messages},
+                              context_instance=RequestContext(request))
+
+
+@login_required
+def delete(request, id_):
+    u"""This function removes a status message for good.  Note that it removes
+    it for all its connected process types.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `id_`: the id of the message to be removed
+
+    :type request: ``HttpRequest``
+    :type id_: unicode
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    status_message = get_object_or_404(models.StatusMessage, pk=utils.convert_id_to_int(id_))
+    if request.user != status_message.operator:
+        raise PermissionError(request.user, u"You cannot delete status messages of another user.")
+    status_message.delete()
+    return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))
