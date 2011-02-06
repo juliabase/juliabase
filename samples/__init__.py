@@ -392,7 +392,6 @@ def expire_feed_entries(sender, **kwargs):
     """
     now = datetime.datetime.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
-    for entry in samples_app.FeedEntry.objects.filter(timestamp__lt=six_weeks_ago):
-        entry.delete()
+    samples_app.FeedEntry.objects.filter(timestamp__lt=six_weeks_ago).delete()
 
 maintain.connect(expire_feed_entries, sender=None)
