@@ -200,4 +200,4 @@ def withdraw(request, id_):
     status_message.save()
     for physical_process in status_message.processes.all():
         feed_utils.Reporter(request.user).report_withdrawn_status_message(physical_process, status_message)
-    return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))
+    return utils.successful_response(request, _(u"The status message was successfully withdrawn."), show)

@@ -49,7 +49,8 @@ copyright holder, you must destroy it immediately and completely.
               <td>{{ status_message.operator|get_really_full_name }}</td>
               <td>{{ status_message.timestamp }}
                 {% if user == status_message.operator %}
-                  <form method="post" action="{% url samples.views.status.withdraw id_=status_message.id %}">
+                  <form method="post" 
+             action="{% url samples.views.status.withdraw id_=status_message.id %}?next={% url samples.views.status.show %}">
                     <input type="image" src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="{% trans 'cancel' %}"
                            title="{% trans 'remove status message for all processes' %}"/>
                   </form>
