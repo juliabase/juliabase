@@ -61,9 +61,10 @@ copyright holder, you must destroy it immediately and completely.
   <p>{% trans 'There are no current status messages.' %}</p>
 {% endif %}
 
-<p><a href="{% url samples.views.status.add %}" style="margin-right: 3em">{% trans 'Add a status message' %}</a>
-<a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
-      >{% trans 'Subscribe to status messages' %}</a></p>
+<p><a href="{% url samples.views.status.add %}?next={% url samples.views.status.show %}" style="margin-right: 3em"
+      >{% trans 'Add a status message' %}</a>
+<a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}?next={% url samples.views.status.show %}"
+   >{% trans 'Subscribe to status messages' %}</a></p>
 
 
 {% if further_status_messages %}
