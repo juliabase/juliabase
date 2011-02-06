@@ -49,7 +49,7 @@ copyright holder, you must destroy it immediately and completely.
               <td>{{ status_message.operator|get_really_full_name }}</td>
               <td>{{ status_message.timestamp }}
                 {% if user == status_message.operator %}
-                  <a href="{% url samples.views.status.delete id_=status_message.id %}"
+                  <a href="{% url samples.views.status.withdraw id_=status_message.id %}"
                      ><img src="{{ STATIC_URL }}chantal/icons/cancel.png"
                            title="{% trans 'remove status message for all processes' %}" alt="{% trans 'cancel' %}"/></a>
                 {% endif %}
@@ -102,7 +102,7 @@ copyright holder, you must destroy it immediately and completely.
                 <td>{{ status_message.operator|get_really_full_name }}</td>
                 <td>{{ status_message.timestamp }}
                   {% if user == status_message.operator %}
-                    <a href="{% url samples.views.status.delete id_=status_message.id %}"
+                    <a href="{% url samples.views.status.withdraw id_=status_message.id %}"
                        ><img src="{{ STATIC_URL }}chantal/icons/cancel.png"
                              title="{% trans 'remove status message for all processes' %}"
                              alt="{% trans 'cancel' %}"/></a>

@@ -175,13 +175,13 @@ def show(request):
 
 
 @login_required
-def delete(request, id_):
-    u"""This function removes a status message for good.  Note that it removes
-    it for all its connected process types.
+def withdraw(request, id_):
+    u"""This function withdraws a status message for good.  Note that it
+    withdraws it for all its connected process types.  It is idempotent.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `id_`: the id of the message to be removed
+      - `id_`: the id of the message to be withdrawn
 
     :type request: ``HttpRequest``
     :type id_: unicode
@@ -193,6 +193,7 @@ def delete(request, id_):
     """
     status_message = get_object_or_404(models.StatusMessage, pk=utils.convert_id_to_int(id_))
     if request.user != status_message.operator:
-        raise PermissionError(request.user, u"You cannot delete status messages of another user.")
-    status_message.delete()
+        raise PermissionError(request.user, u"You cannot withdraw status messages of another user.")
+    status_message.withdrawn = True
+    status_message.save()
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))

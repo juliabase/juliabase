@@ -1494,6 +1494,7 @@ class StatusMessage(models.Model):
                                  verbose_name=_(u"reporter of the message"))
     message = models.TextField(_(u"status message"))
     status_level = models.CharField(_(u"status level"), choices=status_level_choices, default="undefined", max_length=10)
+    withdrawn = models.BooleanField(_(u"withdrawn"), default=False)
 
     class Meta:
         verbose_name = _(u"status message")
