@@ -20,6 +20,7 @@ from __future__ import absolute_import
 
 import datetime
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
@@ -175,6 +176,7 @@ def show(request):
 
 
 @login_required
+@require_http_methods(["POST"])
 def withdraw(request, id_):
     u"""This function withdraws a status message for good.  Note that it
     withdraws it for all its connected process types.  It is idempotent.
@@ -197,5 +199,5 @@ def withdraw(request, id_):
     status_message.withdrawn = True
     status_message.save()
     for physical_process in status_message.processes.all():
-        feed_utils.Reporter(request.user).report_status_message(physical_process, status_message)
+        feed_utils.Reporter(request.user).report_withdrawn_status_message(physical_process, status_message)
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))
