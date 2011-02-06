@@ -506,3 +506,22 @@ class Reporter(object):
         self.interested_users = set(user_details.user
                                     for user_details in physical_process_content_type.subscribed_users.all())
         self.__connect_with_users(entry)
+
+    def report_withdrawn_status_message(self, physical_process_content_type, status_message):
+        u"""Generate one feed entry for a withdrawn status message for physical
+        processes.
+
+        :Parameters:
+          - `physical_process_content_type`: the content type of the physical
+            process one of whose statuses was withdrawn
+          - `status_message`: the status message for the physical process
+
+        :type physical_process_content_type:
+          ``django.contrib.contenttypes.models.ContentType``
+        :type status_message: ``samples.models_common.StatusMessage``
+        """
+        entry = models.FeedWithdrawnStatusMessage.objects.create(
+            originator=self.originator, process=physical_process_content_type, status=status_message)
+        self.interested_users = set(user_details.user
+                                    for user_details in physical_process_content_type.subscribed_users.all())
+        self.__connect_with_users(entry)

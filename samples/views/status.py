@@ -196,4 +196,6 @@ def withdraw(request, id_):
         raise PermissionError(request.user, u"You cannot withdraw status messages of another user.")
     status_message.withdrawn = True
     status_message.save()
+    for physical_process in status_message.processes.all():
+        feed_utils.Reporter(request.user).report_status_message(physical_process, status)
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))
