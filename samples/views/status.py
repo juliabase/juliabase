@@ -152,7 +152,7 @@ def show(request):
     :rtype: ``HttpResponse``
     """
     now = datetime.datetime.now()
-    eligible_status_messages = models.StatusMessage.objects.filter(begin__lt=now, end__gt=now)
+    eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now)
     process_types = set()
     for status_message in eligible_status_messages:
         process_types |= set(status_message.processes.all())
@@ -163,8 +163,8 @@ def show(request):
     consumed_status_message_ids = set(item[0].id for item in status_messages)
     status_messages.sort(key=lambda item: item[1].lower())
     further_status_messages = {}
-    for status_message in models.StatusMessage.objects.filter(end__gt=now).exclude(id__in=consumed_status_message_ids). \
-            order_by("end"):
+    for status_message in models.StatusMessage.objects.filter(withdrawn=False, end__gt=now).exclude(
+        id__in=consumed_status_message_ids).order_by("end"):
         for process_type in status_message.processes.all():
             further_status_messages.setdefault(process_type.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
@@ -191,7 +191,7 @@ def withdraw(request, id_):
 
     :rtype: ``HttpResponse``
     """
-    status_message = get_object_or_404(models.StatusMessage, pk=utils.convert_id_to_int(id_))
+    status_message = get_object_or_404(models.StatusMessage, withdrawn=False, pk=utils.convert_id_to_int(id_))
     if request.user != status_message.operator:
         raise PermissionError(request.user, u"You cannot withdraw status messages of another user.")
     status_message.withdrawn = True
