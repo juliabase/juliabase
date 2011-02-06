@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-06 00:20+0100\n"
-"PO-Revision-Date: 2011-02-06 00:21+0100\n"
+"POT-Creation-Date: 2011-02-06 11:31+0100\n"
+"PO-Revision-Date: 2011-02-06 11:33+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -128,7 +128,8 @@ msgid "finished"
 msgstr "abgeschlossen"
 
 #: models_common.py:153 models_feeds.py:177 models_feeds.py:200
-#: models_feeds.py:432 views/lab_notebook.py:210 views/sample.py:849
+#: models_feeds.py:432 models_feeds.py:453 views/lab_notebook.py:210
+#: views/sample.py:849
 msgid "process"
 msgstr "Prozess"
 
@@ -472,7 +473,8 @@ msgstr "Zeitstempel-Unsicherheit des Endes"
 msgid "reporter of the message"
 msgstr "Melder der Nachricht"
 
-#: models_common.py:1495 models_common.py:1499
+#: models_common.py:1495 models_common.py:1500 models_feeds.py:433
+#: models_feeds.py:454
 msgid "status message"
 msgstr "Statusmeldung"
 
@@ -480,11 +482,15 @@ msgstr "Statusmeldung"
 msgid "status level"
 msgstr "Statuslevel"
 
-#: models_common.py:1500
+#: models_common.py:1497
+msgid "withdrawn"
+msgstr "zurückgezogen"
+
+#: models_common.py:1501
 msgid "status messages"
 msgstr "Statusmeldungen"
 
-#: models_common.py:1504
+#: models_common.py:1505
 msgid "status message #{number}"
 msgstr "Statusmeldung Nr. {number}"
 
@@ -755,11 +761,6 @@ msgstr "Jetzt in Thema „{name}“"
 msgid "Not anymore in topic “{name}”"
 msgstr "Nicht mehr in Thema „{name}“"
 
-#: models_feeds.py:433 templates/samples/show_status.html:25
-#: templates/samples/show_status.html:75
-msgid "Status message"
-msgstr "Statusmeldung"
-
 #: models_feeds.py:436
 msgid "status message feed entry"
 msgstr "Feed-Eintrag für Statusmeldung"
@@ -771,6 +772,18 @@ msgstr "Feed-Einträge für Statusmeldungen"
 #: models_feeds.py:442
 msgid "New status message for {process}"
 msgstr "Neue Statusmeldung für {process}"
+
+#: models_feeds.py:457
+msgid "withdrawn status message feed entry"
+msgstr "Feed-Eintrag für zurückgezogene Statusmeldung"
+
+#: models_feeds.py:458
+msgid "withdrawn status message feed entries"
+msgstr "Feed-Einträge für zurückgezogene Statusmeldungen"
+
+#: models_feeds.py:463
+msgid "Withdrawn status message for {process}"
+msgstr "Zurückgezogene Statusmeldung für {process}"
 
 #: permissions.py:71
 msgid "[not available]"
@@ -1585,13 +1598,25 @@ msgstr ""
 "Probe übrig.  Die Eltern-Probe wurde daher von „Meine Proben“ entfernt."
 
 #: templates/samples/feed_status_message.html:19
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "  %(originator)s has reported the following <a href=\"%(link)s\">status "
 "message</a>:\n"
 "  "
-msgstr "\n%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> eingestellt:"
+msgstr ""
+"\n"
+"%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> "
+"eingestellt:"
+
+#: templates/samples/feed_withdrawn_status_message.html:19
+#, python-format
+msgid ""
+"\n"
+"  %(originator)s has <em>withdrawn</em> the following <a href=\"%(link)s"
+"\">status message</a>:\n"
+"  "
+msgstr "\n%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> <em>zurückgezogen</em>:"
 
 #: templates/samples/lab_notebook.html:32
 #: templates/samples/show_process.html:34
@@ -2102,6 +2127,10 @@ msgstr "Ergebnis ändern"
 #: templates/samples/show_status.html:24 templates/samples/show_status.html:74
 msgid "Process"
 msgstr "Prozess"
+
+#: templates/samples/show_status.html:25 templates/samples/show_status.html:75
+msgid "Status message"
+msgstr "Statusmeldung"
 
 #: templates/samples/show_status.html:26 templates/samples/show_status.html:76
 msgid "Status level"

@@ -430,7 +430,7 @@ class FeedStatusMessage(FeedEntry):
     u"""Model for feed entries for new status messages from physical processes.
     """
     process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
-    status = models.ForeignKey(StatusMessage, verbose_name=_(u"Status message"), related_name="feed_entries")
+    status = models.ForeignKey(StatusMessage, verbose_name=_(u"status message"), related_name="feed_entries")
 
     class Meta(FeedEntry.Meta):
         verbose_name = _(u"status message feed entry")
@@ -445,3 +445,23 @@ class FeedStatusMessage(FeedEntry):
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
         return metadata
 
+
+class FeedWithdrawnStatusMessage(FeedEntry):
+    u"""Model for feed entries for withdrawn status messages from physical
+    processes.
+    """
+    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    status = models.ForeignKey(StatusMessage, verbose_name=_(u"status message"), related_name="feed_entries_for_withdrawal")
+
+    class Meta(FeedEntry.Meta):
+        verbose_name = _(u"withdrawn status message feed entry")
+        verbose_name_plural = _(u"withdrawn status message feed entries")
+
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Withdrawn status message for {process}").format(
+            process=self.process.model_class()._meta.verbose_name)
+        metadata["category term"] = metadata["category label"] = "withdrawn status message"
+        metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
+        return metadata
