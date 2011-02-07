@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-07 01:26+0100\n"
-"PO-Revision-Date: 2011-02-07 01:27+0100\n"
+"PO-Revision-Date: 2011-02-07 01:44+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2150,7 +2150,7 @@ msgstr "entferne Statusmeldung für alle Prozesse"
 
 #: templates/samples/show_status.html:63
 msgid "There are no current status messages."
-msgstr "Es sind keine aktuellen Statusmeldung vorhanden."
+msgstr "Es sind keine aktuellen Statusmeldungen vorhanden."
 
 #: templates/samples/show_status.html:67
 msgid "Add a status message"
