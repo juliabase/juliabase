@@ -22,11 +22,11 @@ copyright holder, you must destroy it immediately and completely.
   <table cellpadding="3" border="1">
        <tr style="vertical-align: top; font-weight:bold">
           <td>{% trans 'Process' %}</td>
-          <td>{% trans 'Status message' %}</td>
-          <td>{% trans 'Status level' %}</td>
-          <td>{% trans 'Starting time' %}</td>
-          <td>{% trans 'End time' %}</td>
-          <td>{% trans 'Reporter' %}</td>
+          <td>{% verbose_name StatusMessage.message %}</td>
+          <td>{% verbose_name StatusMessage.status_level %}</td>
+          <td>{% verbose_name StatusMessage.begin %}</td>
+          <td>{% verbose_name StatusMessage.end %}</td>
+          <td>{% verbose_name StatusMessage.operator %}</td>
           <td>{% trans 'posted at' %}</td>
        </tr>
       {% for status_message, process_name in status_messages %}
@@ -75,11 +75,11 @@ copyright holder, you must destroy it immediately and completely.
   <table cellpadding="3" border="1">
        <tr style="vertical-align: top; font-weight:bold">
           <td>{% trans 'Process' %}</td>
-          <td>{% trans 'Status message' %}</td>
-          <td>{% trans 'Status level' %}</td>
-          <td>{% trans 'Starting time' %}</td>
-          <td>{% trans 'End time' %}</td>
-          <td>{% trans 'Reporter' %}</td>
+          <td>{% verbose_name StatusMessage.message %}</td>
+          <td>{% verbose_name StatusMessage.status_level %}</td>
+          <td>{% verbose_name StatusMessage.begin %}</td>
+          <td>{% verbose_name StatusMessage.end %}</td>
+          <td>{% verbose_name StatusMessage.operator %}</td>
           <td>{% trans 'posted at' %}</td>
        </tr>
       {% for process_name, status_messages in further_status_messages %}
