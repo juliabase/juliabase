@@ -17,7 +17,7 @@ copyright holder, you must destroy it immediately and completely.
 
 <p>
   {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
-  {{ originator }} has reported the following <a href="{{ link }}">status message</a>:
+  {{ originator }} has <em>withdrawn</em> the following <a href="{{ link }}">status message</a>:
   {% endblocktrans %}
 </p>
 <blockquote>

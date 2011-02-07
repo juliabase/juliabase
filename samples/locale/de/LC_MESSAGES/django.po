@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-05 23:36+0100\n"
-"PO-Revision-Date: 2011-02-05 23:37+0100\n"
+"POT-Creation-Date: 2011-02-07 01:26+0100\n"
+"PO-Revision-Date: 2011-02-07 01:27+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -106,7 +106,7 @@ msgstr "Zeitstempel"
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: models_common.py:134 models_common.py:377 views/status.py:53
+#: models_common.py:134 models_common.py:377 views/status.py:54
 msgid "operator"
 msgstr "Operateur"
 
@@ -128,12 +128,13 @@ msgid "finished"
 msgstr "abgeschlossen"
 
 #: models_common.py:153 models_feeds.py:177 models_feeds.py:200
-#: models_feeds.py:432 views/lab_notebook.py:210 views/sample.py:849
+#: models_feeds.py:432 models_feeds.py:453 views/lab_notebook.py:210
+#: views/sample.py:849
 msgid "process"
 msgstr "Prozess"
 
 #: models_common.py:154 models_common.py:604 models_common.py:1009
-#: models_common.py:1486 views/status.py:60
+#: models_common.py:1486 views/status.py:61
 msgid "processes"
 msgstr "Prozesse"
 
@@ -431,32 +432,32 @@ msgstr "Benutzerdetails"
 msgid "Can edit permissions for all physical processes"
 msgstr "Darf die Berechtigungen für alle physikalischen Prozesse ändern"
 
-#: models_common.py:1474 templates/samples/show_status.html:87
+#: models_common.py:1474 templates/samples/show_status.html:94
 msgid "undefined"
 msgstr "undefiniert"
 
-#: models_common.py:1475 templates/samples/show_status.html:89
+#: models_common.py:1475 templates/samples/show_status.html:96
 msgid "red"
 msgstr "rot"
 
-#: models_common.py:1476 templates/samples/show_status.html:91
+#: models_common.py:1476 templates/samples/show_status.html:98
 msgid "yellow"
 msgstr "gelb"
 
-#: models_common.py:1477 templates/samples/show_status.html:93
+#: models_common.py:1477 templates/samples/show_status.html:100
 msgid "green"
 msgstr "grün"
 
-#: models_common.py:1488 views/status.py:56
+#: models_common.py:1488 views/status.py:57
 msgid "begin"
 msgstr "Anfang"
 
-#: models_common.py:1488 models_common.py:1489 views/status.py:57
-#: views/status.py:59
+#: models_common.py:1488 models_common.py:1489 views/status.py:58
+#: views/status.py:60
 msgid "YYYY-MM-DD HH:MM:SS"
 msgstr "JJJJ-MM-TT HH:MM:SS"
 
-#: models_common.py:1489 views/status.py:58
+#: models_common.py:1489 views/status.py:59
 msgid "end"
 msgstr "Ende"
 
@@ -469,22 +470,30 @@ msgid "end inaccuracy"
 msgstr "Zeitstempel-Unsicherheit des Endes"
 
 #: models_common.py:1494
-msgid "reporter of the message"
-msgstr "Melder der Nachricht"
+msgid "reporter"
+msgstr "Melder"
 
-#: models_common.py:1495 models_common.py:1499
+#: models_common.py:1495
+msgid "message"
+msgstr "Meldung"
+
+#: models_common.py:1496
+msgid "level"
+msgstr "Level"
+
+#: models_common.py:1497
+msgid "withdrawn"
+msgstr "zurückgezogen"
+
+#: models_common.py:1500 models_feeds.py:433 models_feeds.py:454
 msgid "status message"
 msgstr "Statusmeldung"
 
-#: models_common.py:1496 views/status.py:54
-msgid "status level"
-msgstr "Statuslevel"
-
-#: models_common.py:1500
+#: models_common.py:1501
 msgid "status messages"
 msgstr "Statusmeldungen"
 
-#: models_common.py:1504
+#: models_common.py:1505
 msgid "status message #{number}"
 msgstr "Statusmeldung Nr. {number}"
 
@@ -755,11 +764,6 @@ msgstr "Jetzt in Thema „{name}“"
 msgid "Not anymore in topic “{name}”"
 msgstr "Nicht mehr in Thema „{name}“"
 
-#: models_feeds.py:433 templates/samples/show_status.html:24
-#: templates/samples/show_status.html:71
-msgid "Status message"
-msgstr "Statusmeldung"
-
 #: models_feeds.py:436
 msgid "status message feed entry"
 msgstr "Feed-Eintrag für Statusmeldung"
@@ -771,6 +775,18 @@ msgstr "Feed-Einträge für Statusmeldungen"
 #: models_feeds.py:442
 msgid "New status message for {process}"
 msgstr "Neue Statusmeldung für {process}"
+
+#: models_feeds.py:457
+msgid "withdrawn status message feed entry"
+msgstr "Feed-Eintrag für zurückgezogene Statusmeldung"
+
+#: models_feeds.py:458
+msgid "withdrawn status message feed entries"
+msgstr "Feed-Einträge für zurückgezogene Statusmeldungen"
+
+#: models_feeds.py:463
+msgid "Withdrawn status message for {process}"
+msgstr "Zurückgezogene Statusmeldung für {process}"
 
 #: permissions.py:71
 msgid "[not available]"
@@ -1588,19 +1604,25 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"    %(originator)s has reported the following status message:\n"
+"  %(originator)s has reported the following <a href=\"%(link)s\">status "
+"message</a>:\n"
 "  "
 msgstr ""
 "\n"
-"%(originator)s hat die folgende Statusmeldung eingestellt:"
+"%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> "
+"eingestellt:"
 
-#: templates/samples/feed_status_message.html:27
+#: templates/samples/feed_withdrawn_status_message.html:19
+#, python-format
 msgid ""
 "\n"
-"The current status messages can you find <a href=\"/status/\">here</a>.\n"
+"  %(originator)s has <em>withdrawn</em> the following <a href=\"%(link)s"
+"\">status message</a>:\n"
+"  "
 msgstr ""
 "\n"
-"Die aktuelle Statusmeldung können Sie <a href=\"/status/\">hier</a> finden.\n"
+"%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> "
+"<em>zurückgezogen</em>:"
 
 #: templates/samples/lab_notebook.html:32
 #: templates/samples/show_process.html:34
@@ -1780,7 +1802,7 @@ msgstr "Sonstiges"
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/samples/main_menu.html:137 views/status.py:171
+#: templates/samples/main_menu.html:137 views/status.py:172
 msgid "Status messages"
 msgstr "Statusmeldungen"
 
@@ -2108,49 +2130,37 @@ msgstr[1] ""
 msgid "Edit this result"
 msgstr "Ergebnis ändern"
 
-#: templates/samples/show_status.html:23 templates/samples/show_status.html:70
+#: templates/samples/show_status.html:24 templates/samples/show_status.html:77
 msgid "Process"
 msgstr "Prozess"
 
-#: templates/samples/show_status.html:25 templates/samples/show_status.html:72
-msgid "Status level"
-msgstr "Statuslevel"
-
-#: templates/samples/show_status.html:26 templates/samples/show_status.html:73
-msgid "Starting time"
-msgstr "Startzeit"
-
-#: templates/samples/show_status.html:27 templates/samples/show_status.html:74
-msgid "End time"
-msgstr "Endezeit"
-
-#: templates/samples/show_status.html:28 templates/samples/show_status.html:75
-msgid "Reporter"
-msgstr "Melder"
-
-#: templates/samples/show_status.html:29 templates/samples/show_status.html:76
+#: templates/samples/show_status.html:30 templates/samples/show_status.html:83
 msgid "posted at"
 msgstr "eingestellt am"
 
-#: templates/samples/show_status.html:53
-#: templates/samples/show_status.html:103
-msgid "remove status message for all processes"
-msgstr "entferne Statusmeldung für alle Prozesse"
-
-#: templates/samples/show_status.html:53
-#: templates/samples/show_status.html:104
+#: templates/samples/show_status.html:54
+#: templates/samples/show_status.html:111
 msgid "cancel"
 msgstr "entfernen"
 
-#: templates/samples/show_status.html:60
+#: templates/samples/show_status.html:55
+#: templates/samples/show_status.html:110
+msgid "remove status message for all processes"
+msgstr "entferne Statusmeldung für alle Prozesse"
+
+#: templates/samples/show_status.html:63
+msgid "There are no current status messages."
+msgstr "Es sind keine aktuellen Statusmeldung vorhanden."
+
+#: templates/samples/show_status.html:67
 msgid "Add a status message"
 msgstr "Statusmeldung hinzufügen"
 
-#: templates/samples/show_status.html:62
+#: templates/samples/show_status.html:69
 msgid "Subscribe to status messages"
 msgstr "Statusmeldungen abonnieren"
 
-#: templates/samples/show_status.html:66
+#: templates/samples/show_status.html:73
 msgid "Further status messages"
 msgstr "Weitere Statusmeldungen"
 
@@ -2529,7 +2539,7 @@ msgstr "Alle Ihre externen Kontakte"
 msgid "Chantal news for {user_name}"
 msgstr "Chantal-Neuigkeiten für {user_name}"
 
-#: views/form_utils.py:64 views/status.py:87
+#: views/form_utils.py:64 views/status.py:88
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
@@ -3102,17 +3112,25 @@ msgstr "Die Probe „{sample}“ wurde erfolgreich gespalten."
 msgid "Split sample “{sample}”"
 msgstr "Spalten der Probe „{sample}“"
 
-#: views/status.py:102
+#: views/status.py:55
+msgid "status level"
+msgstr "Statuslevel"
+
+#: views/status.py:103
 msgid "The begin must be before the end."
 msgstr "Der Beginn muß vor dem Ende liegen."
 
-#: views/status.py:131
+#: views/status.py:132
 msgid "The status message was successfully added to the database."
 msgstr "Die Statusmeldung wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/status.py:134
+#: views/status.py:135
 msgid "Add status message"
 msgstr "Statusmeldung hinzufügen"
+
+#: views/status.py:203
+msgid "The status message was successfully withdrawn."
+msgstr "Die Statusmeldung wurde erfolgreich zurückgezogen."
 
 #: views/table_export.py:525
 msgid "Column groups"
@@ -3132,7 +3150,7 @@ msgstr "Name des neuen Themas"
 
 #: views/topic.py:52
 msgid "This topic name is already used."
-msgstr "Dieser Themaname ist bereits vergeben."
+msgstr "Dieser Themenname ist bereits vergeben."
 
 #: views/topic.py:81
 msgid "Topic {name} was successfully created."
@@ -3195,6 +3213,32 @@ msgstr " und "
 #: views/utils.py:524
 msgid " and "
 msgstr " und "
+
+#~ msgid "reporter of the message"
+#~ msgstr "Melder der Nachricht"
+
+#~ msgid "Status message"
+#~ msgstr "Statusmeldung"
+
+#~ msgid "Status level"
+#~ msgstr "Statuslevel"
+
+#~ msgid "Starting time"
+#~ msgstr "Startzeit"
+
+#~ msgid "End time"
+#~ msgstr "Endezeit"
+
+#~ msgid ""
+#~ "\n"
+#~ "The current status messages can you find <a href=\"/status/\">here</a>.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Die aktuelle Statusmeldung können Sie <a href=\"/status/\">hier</a> "
+#~ "finden.\n"
+
+#~ msgid "No status messages are active currently."
+#~ msgstr "Es sind keine aktuellen Statusmeldung vorhanden."
 
 #~ msgid "Operator"
 #~ msgstr "Operateur"

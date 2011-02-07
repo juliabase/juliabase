@@ -1491,9 +1491,10 @@ class StatusMessage(models.Model):
                                                         default=0)
     end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status_messages",
-                                 verbose_name=_(u"reporter of the message"))
-    message = models.TextField(_(u"status message"))
-    status_level = models.CharField(_(u"status level"), choices=status_level_choices, default="undefined", max_length=10)
+                                 verbose_name=_(u"reporter"))
+    message = models.TextField(_(u"message"))
+    status_level = models.CharField(_(u"level"), choices=status_level_choices, default="undefined", max_length=10)
+    withdrawn = models.BooleanField(_(u"withdrawn"), default=False)
 
     class Meta:
         verbose_name = _(u"status message")

@@ -20,6 +20,7 @@ from __future__ import absolute_import
 
 import datetime
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
@@ -131,7 +132,7 @@ def add(request):
             return utils.successful_response(request, _(u"The status message was successfully added to the database."))
     else:
         status_form = StatusForm(request.user)
-    title =  _(u"Add status message")
+    title = _(u"Add status message")
     return render_to_response("samples/add_status_message.html", {"title": title, "status": status_form},
                               context_instance=RequestContext(request))
 
@@ -152,7 +153,7 @@ def show(request):
     :rtype: ``HttpResponse``
     """
     now = datetime.datetime.now()
-    eligible_status_messages = models.StatusMessage.objects.filter(begin__lt=now, end__gt=now)
+    eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now)
     process_types = set()
     for status_message in eligible_status_messages:
         process_types |= set(status_message.processes.all())
@@ -163,8 +164,8 @@ def show(request):
     consumed_status_message_ids = set(item[0].id for item in status_messages)
     status_messages.sort(key=lambda item: item[1].lower())
     further_status_messages = {}
-    for status_message in models.StatusMessage.objects.filter(end__gt=now).exclude(id__in=consumed_status_message_ids). \
-            order_by("end"):
+    for status_message in models.StatusMessage.objects.filter(withdrawn=False, end__gt=now).exclude(
+        id__in=consumed_status_message_ids).order_by("end"):
         for process_type in status_message.processes.all():
             further_status_messages.setdefault(process_type.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
@@ -175,13 +176,14 @@ def show(request):
 
 
 @login_required
-def delete(request, id_):
-    u"""This function removes a status message for good.  Note that it removes
-    it for all its connected process types.
+@require_http_methods(["POST"])
+def withdraw(request, id_):
+    u"""This function withdraws a status message for good.  Note that it
+    withdraws it for all its connected process types.  It is idempotent.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `id_`: the id of the message to be removed
+      - `id_`: the id of the message to be withdrawn
 
     :type request: ``HttpRequest``
     :type id_: unicode
@@ -191,8 +193,11 @@ def delete(request, id_):
 
     :rtype: ``HttpResponse``
     """
-    status_message = get_object_or_404(models.StatusMessage, pk=utils.convert_id_to_int(id_))
+    status_message = get_object_or_404(models.StatusMessage, withdrawn=False, pk=utils.convert_id_to_int(id_))
     if request.user != status_message.operator:
-        raise PermissionError(request.user, u"You cannot delete status messages of another user.")
-    status_message.delete()
-    return HttpResponseSeeOther(django.core.urlresolvers.reverse(show))
+        raise PermissionError(request.user, u"You cannot withdraw status messages of another user.")
+    status_message.withdrawn = True
+    status_message.save()
+    for physical_process in status_message.processes.all():
+        feed_utils.Reporter(request.user).report_withdrawn_status_message(physical_process, status_message)
+    return utils.successful_response(request, _(u"The status message was successfully withdrawn."), show)
