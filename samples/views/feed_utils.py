@@ -235,10 +235,8 @@ class Reporter(object):
                     description=edit_description["description"], important=important)
             else:
                 entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
-            subscribed_users = set(user_details.user for user_details in ContentType.objects \
-                                   .get(model=process.__class__.__name__.lower()).subscribed_users.all())
             self.__add_watchers(process, important)
-            self.__connect_with_users(entry, subscribed_users)
+            self.__connect_with_users(entry, process.__class__)
 
     def report_result_process(self, result, edit_description=None):
         u"""Generate a feed entry for a result process which was recently
