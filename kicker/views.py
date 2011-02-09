@@ -43,8 +43,8 @@ def get_current_kicker_number(player):
         return models.KickerNumber.objects.filter(player=player).latest("timestamp").number
     except models.KickerNumber.DoesNotExist:
         preliminary_kicker_number = 1500
-        matches = models.Match.objects.filter(Q(player_a_1=player) | Q(player_a_2=player) | Q(player_b_1=player) |
-                                              Q(player_b_2=player)).distinct()
+        matches = list(models.Match.objects.filter(Q(player_a_1=player) | Q(player_a_2=player) | Q(player_b_1=player) |
+                                                   Q(player_b_2=player)).distinct())
         # FixMe: This part is very inefficient.  One should collect the matches
         # *before* one enters the while loop.  This way, one avoids unnecessary
         # doubling of many operations.  On the other hand, one needs a new data
