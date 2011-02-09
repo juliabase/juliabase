@@ -53,7 +53,7 @@ def get_current_kicker_number(player):
         cycles_left = 50
         while cycles_left:
             cycles_left -= 1
-            old_start_number = preliminary_kicker_number
+            old_kicker_number = preliminary_kicker_number
             number_of_matches = 0
             for match in matches:
                 try:
@@ -68,7 +68,7 @@ def get_current_kicker_number(player):
                 except NoKickerNumber:
                     continue
                 S = 1/2 + 90/7 * (match.goals_a - match.goals_b) / match.seconds
-                E = 1 / (1 + 10**((number_player_a_1 + number_player_a_2 - number_player_b_1 - number_player_b_2) / 800))
+                E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
                 delta = S - E
                 delta_player = 40 * delta
                 if player in [match.player_b_1, match.player_b_2]:
@@ -77,7 +77,7 @@ def get_current_kicker_number(player):
                 number_of_matches += 1
             if number_of_matches < 7:
                 raise NoKickerNumber
-            if old_start_number - preliminary_kicker_number < 1:
+            if abs(old_kicker_number - preliminary_kicker_number) < 1:
                 break
         return preliminary_kicker_number
 
