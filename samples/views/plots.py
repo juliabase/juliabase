@@ -32,20 +32,20 @@ from chantal_common.signals import storage_changed
 
 
 @login_required
-def show_plot(request, process_id, number, thumbnail):
+def show_plot(request, process_id, plot_id, thumbnail):
     u"""Shows a particular plot.  Although its response is a bitmap rather than
     an HTML file, it is served by Django in order to enforce user permissions.
 
     :Parameters:
       - `request`: the current HTTP Request object
       - `process_id`: the database ID of the process to show
-      - `number`: the number of the image.  This is mostly ``0`` because most
-        measurement models have only one graphics.
+      - `plot_id`: the plot_id of the image.  This is mostly ``u""`` because
+        most measurement models have only one graphics.
       - `thumbnail`: whether we serve a thumbnail instead of a real PDF plot
 
     :type request: ``HttpRequest``
     :type process_id: unicode
-    :type number: unicode
+    :type plot_id: unicode
     :type thumbnail: bool
 
     :Returns:
@@ -56,9 +56,8 @@ def show_plot(request, process_id, number, thumbnail):
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
     process = process.actual_instance
     permissions.assert_can_view_physical_process(request.user, process)
-    number = int(number)
-    plot_filepath = process.calculate_plot_locations(number)["thumbnail_file" if thumbnail else "plot_file"]
-    datafile_name = process.get_datafile_name(number)
+    plot_filepath = process.calculate_plot_locations(plot_id)["thumbnail_file" if thumbnail else "plot_file"]
+    datafile_name = process.get_datafile_name(plot_id)
     if datafile_name is None:
         raise Http404(u"No such plot available.")
     timestamps = [] if thumbnail else [sample.last_modified for sample in process.samples.all()]
@@ -78,7 +77,7 @@ def show_plot(request, process_id, number, thumbnail):
                 axes = figure.add_subplot(111)
                 axes.set_position((0.17, 0.16, 0.78, 0.78))
                 axes.grid(True)
-                process.draw_plot(axes, number, datafile_name, for_thumbnail=True)
+                process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=True)
                 chantal_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, dpi=settings.THUMBNAIL_WIDTH / 4)
             else:
@@ -87,11 +86,11 @@ def show_plot(request, process_id, number, thumbnail):
                 axes = figure.add_subplot(111)
                 axes.grid(True)
                 axes.set_title(unicode(process))
-                process.draw_plot(axes, number, datafile_name, for_thumbnail=False)
+                process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
                 chantal_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
         except utils.PlotError:
             raise Http404(u"Plot could not be generated.")
     return chantal_common.utils.static_file_response(plot_filepath,
-                                                     None if thumbnail else process.get_plotfile_basename(number) + ".pdf")
+                                                     None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")

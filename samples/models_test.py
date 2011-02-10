@@ -57,19 +57,19 @@ class TestPhysicalProcess(PhysicalProcess):
     def __unicode__(self):
         return u"Test measurement #{number}".format(number=self.number)
 
-    def draw_plot(self, axes, number, filename, for_thumbnail):
+    def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         x_values, y_values = read_techplot_file(filename)
         axes.semilogy(x_values, y_values)
         axes.set_xlabel(u"abscissa")
         axes.set_ylabel(u"ordinate")
 
-    def get_datafile_name(self, number):
+    def get_datafile_name(self, plot_id):
         if self.evaluated_datafile:
             return os.path.join("/mnt/data", self.evaluated_datafile)
         else:
             return os.path.join("/mnt/data", self.raw_datafile)
 
-    def get_plotfile_basename(self, number):
+    def get_plotfile_basename(self, plot_id):
         return ("measurement_for_{0}".format(self.samples.get())).replace("*", "")
 
     def get_data(self):

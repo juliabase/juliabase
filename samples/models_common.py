@@ -199,7 +199,7 @@ class Process(PolymorphicModel):
         """
         return ("samples.views.main.show_process", [str(self.pk)])
 
-    def calculate_plot_locations(self, number=0):
+    def calculate_plot_locations(self, plot_id=u""):
         u"""Get the location of a plot in the local filesystem as well as on
         the webpage.
 
@@ -210,10 +210,10 @@ class Process(PolymorphicModel):
         Besides, this method excludes name collisions.
 
         :Parameters:
-          - `number`: the number of the image.  This is mostly ``0`` because
-            most measurement models have only one graphics.
+          - `plot_id`: the unique ID of the image.  This is mostly ``""``
+            because most measurement models have only one graphics.
 
-        :type number: int
+        :type plot_id: unicode
 
         :Return:
           a dictionary containing the following keys:
@@ -230,22 +230,22 @@ class Process(PolymorphicModel):
 
         :rtype: dict mapping str to str
         """
-        if number == 0:
+        if not plot_id:
             # We give this a nicer URL because this case is so common
             plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.pk)})
             thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.pk)})
         else:
             plot_url = django.core.urlresolvers.reverse("process_plot",
-                                                        kwargs={"process_id": str(self.pk), "number": str(number)})
+                                                        kwargs={"process_id": str(self.pk), "plot_id": plot_id})
             thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
-                                                             kwargs={"process_id": str(self.pk), "number": str(number)})
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, number)),
+                                                             kwargs={"process_id": str(self.pk), "plot_id": plot_id})
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, plot_id)),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, number)),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, plot_id)),
                 "thumbnail_url": thumbnail_url}
 
-    def draw_plot(self, axes, number, filename, for_thumbnail):
+    def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         u"""Generate a plot using Matplotlib commands.  You may do whatever you
         want here – but eventually, there must be a savable Matplotlib plot in
         the `axes`.  The ``filename`` parameter is not really necessary but it
@@ -258,16 +258,16 @@ class Process(PolymorphicModel):
           - `axes`: The Matplotlib axes to which the plot must be drawn.  You
             call methods of this parameter to draw the plot,
             e.g. ``axes.plot(x_values, y_values)``.
-          - `number`: The number of the plot.  For most models offering plots,
-            this can only be zero and as such is not used it all in this
-            method.
+          - `plot_id`: The ID of the plot.  For most models offering plots,
+            this can only be the empty string and as such is not used it all in
+            this method.
           - `filename`: the filename of the original data file; it may also be
             a list of filenames if more than one file lead to the plot
           - `for_thumbnail`: whether we do a plot for the thumbnail bitmap; for
             simple plots, this can be ignored
 
         :type axes: ``matplotlib.axes.Axes``
-        :type number: int
+        :type plot_id: unicode
         :type filename: str or list of str
         :type for_thumbnail: bool
 
@@ -277,20 +277,20 @@ class Process(PolymorphicModel):
         """
         raise NotImplementedError
 
-    def get_datafile_name(self, number):
+    def get_datafile_name(self, plot_id):
         u"""Get the name of the file with the original data for the plot with
-        the given ``number``.  It may also be a list of filenames if more than
+        the given ``plot_id``.  It may also be a list of filenames if more than
         one file lead to the plot.
 
         This method must be overridden in derived classes that wish to offer
         plots.
 
         :Parameters:
-          - `number`: the number of the plot.  For most models offering plots,
-            this can only be zero and as such is not used it all in this
-            method.
+          - `plot_id`: the ID of the plot.  For most models offering plots,
+            this can only be the empty string and as such is not used it all in
+            this method.
 
-        :type number: int
+        :type plot_id: unicode
 
         :Return:
           The absolute path of the file(s) with the original data for this plot
@@ -302,8 +302,8 @@ class Process(PolymorphicModel):
         """
         raise NotImplementedError
 
-    def get_plotfile_basename(self, number):
-        u"""Get the name of the plot files with the given ``number``.  For
+    def get_plotfile_basename(self, plot_id):
+        u"""Get the name of the plot files with the given ``plot_id``.  For
         example, for the PDS measurement for the sample 01B410, this may be
         ``"pds_01B410"``.  It should be human-friendly and reasonable
         descriptive since this is the name that is used if the user wishes to
@@ -314,11 +314,11 @@ class Process(PolymorphicModel):
         plots.
 
         :Parameters:
-          - `number`: the number of the plot.  For most models offering plots,
+          - `plot_id`: the ID of the plot.  For most models offering plots,
             this can only be zero and as such is not used it all in this
             method.
 
-        :type number: int
+        :type plot_id: unicode
 
         :Return:
           the base name for the plot files, without directories or extension
