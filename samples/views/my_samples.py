@@ -184,12 +184,12 @@ def enforce_clearance(user, clearance_processes, destination_user, sample, clear
     base_query = sample.processes.filter(finished=True)
     processes = base_query if not cutoff_timestamp else base_query.filter(timestamp__lte=cutoff_timestamp)
     for process in processes:
-        class_ = process.content_type.model_class()
-        if issubclass(class_, models.Result) and permissions.has_permission_to_view_result_process(user, process):
+        process = process.actual_instance
+        if isinstance(process, models.Result) and permissions.has_permission_to_view_result_process(user, process):
             clearance.processes.add(process)
-        elif issubclass(class_, models.PhysicalProcess) and \
+        elif isinstance(process, models.PhysicalProcess) and \
                 permissions.has_permission_to_view_physical_process(user, process):
-            if clearance_processes == "all" or class_ in clearance_processes:
+            if clearance_processes == "all" or isinstance(process, clearance_processes):
                 clearance.processes.add(process)
     split_origin = sample.split_origin
     if split_origin:

@@ -534,7 +534,7 @@ def digest_process(process, user, local_context={}):
     :Parameters:
       - `process`: the process to be digest
       - `user`: current user
-      - `local_context`: the local sample context; currently, this is only
+      - `local_context`: the local sample context; for example, this is
         relevant to ``SampleSplit``, see ``SampleSplit.get_cache_key``.
 
     :type process: `models.Process`
