@@ -23,8 +23,13 @@ from samples.models_feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysic
     FeedResult, FeedCopiedMySamples, FeedEditedSamples, FeedSampleSplit, FeedEditedSampleSeries, FeedNewSampleSeries, \
     FeedMovedSampleSeries, FeedChangedTopic, FeedStatusMessage
 
+
+class SampleAdmin(admin.ModelAdmin):
+    raw_id_fields = ("processes",)
+
+
 admin.site.register(ExternalOperator)
-admin.site.register(Sample)
+admin.site.register(Sample, SampleAdmin)
 admin.site.register(SampleAlias)
 admin.site.register(SampleSplit)
 admin.site.register(SampleDeath)
