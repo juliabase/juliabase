@@ -239,12 +239,11 @@ class Process(PolymorphicModel):
                                                         kwargs={"process_id": str(self.pk), "plot_id": plot_id})
             thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.pk), "plot_id": plot_id})
-        language = get_language()
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots",
-                                          "{0}-{1}-{2}.pdf".format(self.pk, plot_id, language)),
+        basename = "{0}-{1}-{2}-{3}-{4}".format(
+            self.content_type.app_label, self.content_type.model, get_language(), self.pk, plot_id)
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".pdf"),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots",
-                                               "{0}-{1}-{2}.png".format(self.pk, plot_id, language)),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".png"),
                 "thumbnail_url": thumbnail_url}
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
