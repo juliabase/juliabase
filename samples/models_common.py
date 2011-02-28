@@ -24,8 +24,7 @@ from __future__ import absolute_import, division
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy
-from django.utils import translation
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.template import defaultfilters, Context
 from django.template.loader import render_to_string
 from django.utils.http import urlquote, urlquote_plus
@@ -240,9 +239,12 @@ class Process(PolymorphicModel):
                                                         kwargs={"process_id": str(self.pk), "plot_id": plot_id})
             thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.pk), "plot_id": plot_id})
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.pdf".format(self.pk, plot_id)),
+        language = get_language()
+        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots",
+                                          "{0}-{1}-{2}.pdf".format(self.pk, plot_id, language)),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", "{0}-{1}.png".format(self.pk, plot_id)),
+                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots",
+                                               "{0}-{1}-{2}.png".format(self.pk, plot_id, language)),
                 "thumbnail_url": thumbnail_url}
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
