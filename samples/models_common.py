@@ -41,7 +41,6 @@ from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
 
 
-
 def get_user_settings_hash(user):
     u"""Calculate a hash of the user's settings.  This is used for caching.  In
     order to fetch HTML-containing material from the cache, it is necessary to
