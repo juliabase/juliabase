@@ -42,6 +42,15 @@ register = template.Library()
 
 
 @register.filter
+def round(value, digits):
+    u"""Filter for rounding a numeric value to a fixed number of significant
+    digits.  The result may be used for the `quantity` filter below.
+    """
+    decimal.getcontext().prec = int(digits)
+    return mark_save(str(decimal.Decimal(str(value)) * 1))
+
+
+@register.filter
 def quantity(value, unit=None, autoescape=False):
     u"""Filter for pretty-printing a physical quantity.  It converts 3.4e-3
     into 3.4·10⁻³.  The number is the part that is actually filtered, while the
@@ -66,7 +75,7 @@ def quantity(value, unit=None, autoescape=False):
             value_string = conditional_escape(value_string)
         result = u""
         match = re.match(ur"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
-                         ur"(e(?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
+                         ur"([Ee](?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
         match_dict = match.groupdict(u"")
         result = match_dict["leading"] + match_dict["prepoint"].replace(u"-", u"−")
         if match_dict["postpoint"]:
