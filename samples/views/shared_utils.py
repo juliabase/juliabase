@@ -189,7 +189,7 @@ def __read_plot_file(filename, columns, start_value, end_value="", separator=Non
                 except ValueError:
                     value = float("nan")
                 result_array.append(value)
-        elif line.lower().startswith(start_value):
+        elif line.lower().startswith(start_value.lower()):
             start_values = True
     datafile.close()
     return result
