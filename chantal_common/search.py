@@ -649,9 +649,10 @@ class SearchTreeNode(object):
         u"""Returns a unicode representation of this node and its subtree.  It
         is only useful for debugging purposes.
         """
+        choices_last_child = self.children[-1][0].fields["_model"].choices if self.children else []
         return u"({0}[{1}]: {2};{3})".format(
             self.model_class.__name__,
-            u",".join(choice[0] for choice in self.children[-1][0].fields["_model"].choices if choice[0]),
+            u",".join(choice[0] for choice in choices_last_child if choice[0]),
             u",".join(unicode(search_field) for search_field in self.search_fields),
             u",".join(unicode(child[1]) for child in self.children if child[1]))
 
