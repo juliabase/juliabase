@@ -46,8 +46,7 @@ def round(value, digits):
     u"""Filter for rounding a numeric value to a fixed number of significant
     digits.  The result may be used for the `quantity` filter below.
     """
-    decimal.getcontext().prec = int(digits)
-    return mark_save(str(decimal.Decimal(str(value)) * 1))
+    return mark_save("{{0:.{0}g}}".format(digits).format(float(value)))
 
 
 @register.filter
