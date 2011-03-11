@@ -139,6 +139,62 @@ class PlotError(Exception):
     pass
 
 
+def __read_plot_file(filename, columns, start_value, end_value="", separator=None):
+    u"""Read a datafile and return the content of selected columns.
+    You shouldn't use this function directly. Use the specific functions instead.
+
+    :Parameters:
+      - `filename`: full path to the data file
+      - `columns`: the columns that should be read.
+      - `start_value`: the start_value indicates the line after the data should be read
+      - `end_value`: the end_value marks the line where the record should end.
+         The default is the empty string
+      - `separator`: the separator which separates the values from each other.
+        Default is ``None``
+
+    :type filename: str
+    :type columns: list of int
+    :type start_value: str
+    :type end_value: str
+    :type separator: str or None
+
+    :Return:
+      List of all columns.  Every column is represented as a list of floating
+      point values.
+
+    :rtype: list of list of float
+
+    :Exceptions:
+      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+        unparseble data)
+    """
+    start_values = False
+    try:
+        datafile = codecs.open(filename, encoding="cp1252")
+    except IOError:
+        raise PlotError("datafile could not be opened")
+    result = [[] for i in range(len(columns))]
+    for line in datafile:
+        if start_values:
+            if end_value and line.lower().startswith(end_value):
+                break
+            if not line.strip():
+                continue
+            cells = line.strip().split(separator)
+            for column, result_array in zip(columns, result):
+                try:
+                    value = float(cells[column])
+                except IndexError:
+                    raise PlotError("datafile contained too few columns")
+                except ValueError:
+                    value = float("nan")
+                result_array.append(value)
+        elif line.lower().startswith(start_value.lower()):
+            start_values = True
+    datafile.close()
+    return result
+
+
 def read_techplot_file(filename, columns=(0, 1)):
     u"""Read a datafile in TechPlot format and return the content of selected
     columns.
@@ -161,31 +217,32 @@ def read_techplot_file(filename, columns=(0, 1)):
       - `PlotError`: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
-    start_values = False
-    try:
-        datafile = codecs.open(filename, encoding="cp1252")
-    except IOError:
-        raise PlotError("datafile could not be opened")
-    result = [[] for i in range(len(columns))]
-    for line in datafile:
-        if start_values:
-            if line.lower().startswith("end"):
-                break
-            if not line.strip():
-                continue
-            cells = line.split()
-            for column, result_array in zip(columns, result):
-                try:
-                    value = float(cells[column])
-                except IndexError:
-                    raise PlotError("datafile contained too few columns")
-                except ValueError:
-                    value = float("nan")
-                result_array.append(value)
-        elif line.lower().startswith("begin"):
-            start_values = True
-    datafile.close()
-    return result
+    return __read_plot_file(filename, columns, start_value="begin", end_value="end")
+
+
+def read_solarsimulator_plot_file(filename, columns=(0, 1)):
+    u"""Read a datafile from a solarsimulator measurement and return the content of selected
+    columns.
+
+    :Parameters:
+      - `filename`: full path to the solarsimulator measurement data file
+      - `columns`: the columns that should be read.  Defaults to the first two,
+        i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
+
+    :type filename: str
+    :type columns: list of int
+
+    :Return:
+      List of all columns.  Every column is represented as a list of floating
+      point values.
+
+    :rtype: list of list of float
+
+    :Exceptions:
+      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+        unparseble data)
+    """
+    return __read_plot_file(filename, columns, start_value=";U/V", separator=",")
 
 
 def mkdirs(path):
