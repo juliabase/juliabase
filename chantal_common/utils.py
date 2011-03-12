@@ -28,7 +28,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext as _
 from django.utils.functional import allow_lazy
 from . import mimeparse
 
@@ -177,7 +177,60 @@ def check_markdown(text):
         elements.
     """
     if dangerous_markup_pattern.search(text):
-        raise ValidationError(ugettext(u"You mustn't use image and headings syntax in Markdown markup."))
+        raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
+
+
+def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_directory=False):
+    u"""Test whether a certain file is openable by Chantal.
+
+    :Parameters:
+    - `filepath`: Path to the file to be tested.  This may be absolute or
+      relative.  If empty, this function does nothing.
+    - `default_root`: If ``filepath`` is relative, this path is prepended to
+      it.
+    - `allowed_roots`: All absolute root paths where ``filepath`` is allowed.
+      ``default_root`` is implicitly added to it.
+    - `may_be_directory`: if ``True``, ``filepath`` may be a readable directory
+
+    :type filepath: str
+    :type default_root: str
+    :type allowed_roots: iterable of str
+    :type may_be_directory: bool
+
+    :Return:
+      the normalised ``filepath``
+
+    :rtype: str
+
+    :Exceptions:
+      - `ValidationError`: if the ``text`` contained forbidden syntax
+        elements.
+    """
+    if filepath:
+        def raise_inaccessible_exception():
+            raise ValidationError(_(u"Couldn't open {filename}.").format(filename=filepath))
+        filepath = os.path.normpath(filepath)
+        assert os.path.isabs(default_root)
+        assert all(os.path.isabs(path) for path in allowed_roots)
+        default_root = os.path.normpath(default_root)
+        allowed_roots = set(os.path.normpath(path) for path in allowed_roots)
+        allowed_roots.add(default_root)
+        assert all(os.path.isdir(path) for path in allowed_roots)
+        absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
+        if os.path.isdir(absolute_filepath):
+            if not may_be_directory:
+                raise_inaccessible_exception()
+            absolute_filepath = os.path.join(absolute_filepath, ".")
+        if not any(os.path.commonprefix([absolute_filepath, path]) for path in allowed_roots):
+            raise ValidationError(_(u"This file is not in an allowed directory."))
+        if not os.path.exists(absolute_filepath):
+            raise_inaccessible_exception()
+        if os.path.isfile(absolute_filepath):
+            try:
+                open(absolute_filepath)
+            except IOError:
+                raise_inaccessible_exception()
+        return filepath
 
 
 class _AddHelpLink(object):
