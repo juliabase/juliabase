@@ -28,7 +28,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext
 from django.utils.functional import allow_lazy
 from . import mimeparse
 
