@@ -46,8 +46,7 @@ def round(value, digits):
     u"""Filter for rounding a numeric value to a fixed number of significant
     digits.  The result may be used for the `quantity` filter below.
     """
-    decimal.getcontext().prec = int(digits)
-    return mark_save(str(decimal.Decimal(str(value)) * 1))
+    return str(decimal.Context(prec=int(digits), rounding=decimal.ROUND_HALF_UP).create_decimal(str(value)))
 
 
 @register.filter
@@ -377,10 +376,11 @@ class ValueFieldNode(template.Node):
     u"""Helper class to realise the `value_field` tag.
     """
 
-    def __init__(self, field, unit):
+    def __init__(self, field, unit, significant_digits):
         self.field_name = field
         self.field = template.Variable(field)
         self.unit = unit
+        self.significant_digits = significant_digits
 
     def render(self, context):
         field = self.field.resolve(context)
@@ -406,6 +406,11 @@ class ValueFieldNode(template.Node):
             field = u"—"
         else:
             unit = self.unit
+        if self.significant_digits:
+            if isinstance(field, (tuple, list)):
+                field = (round(field[0], self.significant_digits), round(field[1], self.significant_digits))
+            else:
+                field = round(field, self.significant_digits)
         return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
@@ -417,25 +422,39 @@ def value_field(parser, token):
     columns.  This tag is primarily used in templates of show views, especially
     those used to compile the sample history.  Example::
 
-        {% value_field layer.base_pressure "W" %}
+        {% value_field layer.base_pressure 3 "W" %}
 
     The unit (``"W"`` for “Watt”) is optional.  If you have a boolean field,
     you can give ``"yes/no"`` as the unit, which converts the boolean value to
     a yes/no string (in the current language).  For gas flow fields that should
     collapse if the gas wasn't used, use ``"sccm_collapse"``.
+
+    The Number 3 is also optional. With this option you can set the number of significant
+    digits of the value. The value will be round to match the number of significant digits.
     """
     tokens = token.split_contents()
-    if len(tokens) == 3:
-        tag, field, unit = tokens
+    if len(tokens) == 4:
+        tag, field, significant_digits, unit = tokens
         if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
             raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
         unit = unit[1:-1]
+    elif len(tokens) == 3:
+        tag, field, unit = tokens
+        significant_digits = None
+        if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
+            if not isinstance(unit, int):
+                raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
+            else:
+                significant_digits = unit
+                unit = None
+        else:
+            unit = unit[1:-1]
     elif len(tokens) == 2:
         tag, field = tokens
-        unit = None
+        unit = significant_digits = None
     else:
         raise template.TemplateSyntaxError, "value_field requires one or two arguments"
-    return ValueFieldNode(field, unit)
+    return ValueFieldNode(field, unit, significant_digits)
 
 
 @register.simple_tag
