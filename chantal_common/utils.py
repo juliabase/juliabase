@@ -28,7 +28,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext
 from django.utils.functional import allow_lazy
 from . import mimeparse
 
@@ -231,6 +231,8 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
             except IOError:
                 raise_inaccessible_exception()
         return filepath
+    else:
+        return u""
 
 
 class _AddHelpLink(object):
