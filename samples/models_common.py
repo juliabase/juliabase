@@ -201,12 +201,6 @@ class Process(PolymorphicModel):
         u"""Get the location of a plot in the local filesystem as well as on
         the webpage.
 
-        Every plot resides in a directory with a peculiar name in order to be
-        un-guessable.  This is not security by obscurity because we really use
-        cryptographic hashes.  While it still is not the highest level of
-        security, it is a sensible compromise between security and performance.
-        Besides, this method excludes name collisions.
-
         :Parameters:
           - `plot_id`: the unique ID of the image.  This is mostly ``""``
             because most measurement models have only one graphics.

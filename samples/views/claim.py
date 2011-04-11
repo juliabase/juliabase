@@ -149,7 +149,7 @@ def list_(request, username):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    if user != request.user:
+    if user != request.user and not user.is_staff:
         raise permissions.PermissionError(request.user, _(u"You are not allowed to see claims of another user."))
     return render_to_response("samples/list_claims.html",
                               {"title": _(u"Claims for {user}").format(user=get_really_full_name(user)),
@@ -210,7 +210,7 @@ def show(request, claim_id):
     claim = get_object_or_404(models.SampleClaim, pk=utils.int_or_zero(claim_id))
     is_reviewer = request.user == claim.reviewer
     is_requester = request.user == claim.requester
-    if not is_reviewer and not is_requester:
+    if not is_reviewer and not is_requester and not user.is_staff:
         raise permissions.PermissionError(request.user, _(u"You are neither the requester nor the reviewer of this claim."))
     if request.method == "POST" and not claim.closed:
         withdraw_form = CloseForm(_(u"withdraw claim"), request.POST, prefix="withdraw") if is_requester else None
