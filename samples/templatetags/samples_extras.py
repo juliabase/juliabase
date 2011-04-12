@@ -98,7 +98,10 @@ def quantity(value, unit=None, autoescape=False):
     if autoescape:
         unit = conditional_escape(unit) if unit else None
     if unit:
-        result += "&nbsp;" + unit
+        if unit[0] in "0123456789":
+            result += " · " + unit
+        else:
+            result += " " + unit
     return mark_safe(result)
 quantity.needs_autoescape = True
 
