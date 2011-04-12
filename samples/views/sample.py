@@ -705,6 +705,8 @@ def restricted_samples_query(user):
     the user is allowed to see all of the samples themselves necessary.  It is
     only about the names.  See the `search` view for further information.
     """
+    if user.is_staff:
+        return models.Sample.objects.all()
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).distinct()
@@ -733,7 +735,6 @@ def search(request):
 
     :rtype: ``HttpResponse``
     """
-    found_samples = []
     too_many_results = False
     base_query = restricted_samples_query(request.user)
     search_samples_form = SearchSamplesForm(request.GET)
