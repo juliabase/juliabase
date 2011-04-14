@@ -33,10 +33,10 @@ from samples import models, permissions
 from samples.views.shared_utils import *
 
 
-old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#]*)?$")
+old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$")
 new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})|  # initials of a user
                                          [A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4})             # external operator
-                                         -[-A-Za-z_/0-9#]+$""", re.VERBOSE)
+                                         -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)
 provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)$")
 def sample_name_format(name):
     u"""Determines which sample name format the given name has.  It doesn't
