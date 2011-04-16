@@ -396,10 +396,7 @@ def change_my_samples(request):
         sample_ids_to_add = [int(id_) for id_ in request.POST.get("add", "").split(",") if id_]
     except ValueError:
         raise Http404("One or more of the sample IDs were invalid.")
-    # taken from `samples.views.sample.search`.
-    base_query = models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=request.user) |
-                                              Q(currently_responsible_person=request.user) |
-                                              Q(clearances__user=request.user) | Q(topic__isnull=True)).distinct()
+    base_query = utils.restricted_samples_query(request.user)
     try:
         samples_to_remove = models.Sample.objects.in_bulk(sample_ids_to_remove)
         samples_to_add = base_query.in_bulk(sample_ids_to_add)
