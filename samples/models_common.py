@@ -148,6 +148,7 @@ class Process(PolymorphicModel):
 
     class Meta:
         ordering = ["timestamp"]
+        get_latest_by = "timestamp"
         verbose_name = _(u"process")
         verbose_name_plural = _(u"processes")
 
