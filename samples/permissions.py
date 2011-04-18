@@ -248,15 +248,18 @@ def assert_can_fully_view_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to fully view the
         sample.
     """
-    if sample.topic and sample.topic not in user.topics.all() and sample.currently_responsible_person != user and \
+    currently_responsible_person = sample.currently_responsible_person
+    if sample.topic and sample.topic not in user.topics.all() and currently_responsible_person != user and \
             not user.is_superuser:
         if sample.topic.confidential:
             description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            u"its currently responsible person.")
+                            u"its currently responsible person ({name})."). \
+                            format(name=chantal_common_utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
             description = _(u"You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            u"its currently responsible person, nor can you view all samples.")
+                            u"its currently responsible person ({name}), nor can you view all samples."). \
+                            format(name=chantal_common_utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
 
 

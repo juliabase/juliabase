@@ -23,6 +23,7 @@ from __future__ import absolute_import
 import re, string, datetime
 from django.http import Http404
 from django.core.cache import cache
+from django.db.models import Q
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
@@ -572,3 +573,16 @@ def get_physical_processes():
                               if issubclass(process, models.PhysicalProcess)]
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
     return all_physical_processes
+
+
+def restricted_samples_query(user):
+    u"""Returns a ``QuerySet`` which is restricted to samples the names of
+    which the given user is allowed to see.  Note that this doesn't mean that
+    the user is allowed to see all of the samples themselves necessary.  It is
+    only about the names.  See the `search` view for further information.
+    """
+    if user.is_staff:
+        return models.Sample.objects.all()
+    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
+                                        Q(currently_responsible_person=user) | Q(clearances__user=user) |
+                                        Q(topic__isnull=True)).distinct()

@@ -699,19 +699,6 @@ class AddToMySamplesForm(forms.Form):
     add_to_my_samples = forms.BooleanField(required=False)
 
 
-def restricted_samples_query(user):
-    u"""Returns a ``QuerySet`` which is restricted to samples the names of
-    which the given user is allowed to see.  Note that this doesn't mean that
-    the user is allowed to see all of the samples themselves necessary.  It is
-    only about the names.  See the `search` view for further information.
-    """
-    if user.is_staff:
-        return models.Sample.objects.all()
-    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
-                                        Q(currently_responsible_person=user) | Q(clearances__user=user) |
-                                        Q(topic__isnull=True)).distinct()
-
-
 max_results = 50
 @login_required
 def search(request):
@@ -736,7 +723,7 @@ def search(request):
     :rtype: ``HttpResponse``
     """
     too_many_results = False
-    base_query = restricted_samples_query(request.user)
+    base_query = utils.restricted_samples_query(request.user)
     search_samples_form = SearchSamplesForm(request.GET)
     found_samples = []
     if search_samples_form.is_valid():
@@ -798,7 +785,7 @@ def advanced_search(request):
         search_tree.parse_data(request.GET if parse_tree else None, "")
         if search_tree.is_valid():
             if search_tree.model_class == models.Sample:
-                base_query = restricted_samples_query(request.user)
+                base_query = utils.restricted_samples_query(request.user)
             elif search_tree.model_class == models.SampleSeries:
                 base_query = models.SampleSeries.objects.filter(
                     Q(topic__confidential=False) | Q(topic__members=request.user) |
