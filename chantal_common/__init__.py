@@ -25,9 +25,9 @@ The error codes for a JSON client are the following:
     ======= ===============================================
     1       Web form error
     2       URL not found, i.e. HTTP 404
-    3       POST parameter missing
+    3       GET/POST parameter missing
     4       user could not be authenticated
-    5       POST parameter invalid
+    5       GET/POST parameter invalid
     ======= ===============================================
 """
 
