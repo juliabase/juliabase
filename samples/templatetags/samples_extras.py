@@ -410,10 +410,7 @@ class ValueFieldNode(template.Node):
         else:
             unit = self.unit
         if self.significant_digits:
-            if isinstance(field, (tuple, list)):
-                field = (round(field[0], self.significant_digits), round(field[1], self.significant_digits))
-            else:
-                field = round(field, self.significant_digits)
+            field = round(field, self.significant_digits)
         return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
@@ -432,8 +429,9 @@ def value_field(parser, token):
     a yes/no string (in the current language).  For gas flow fields that should
     collapse if the gas wasn't used, use ``"sccm_collapse"``.
 
-    The Number 3 is also optional. With this option you can set the number of significant
-    digits of the value. The value will be round to match the number of significant digits.
+    The number 3 is also optional.  With this option you can set the number of
+    significant digits of the value.  The value will be rounded to match the
+    number of significant digits.
     """
     tokens = token.split_contents()
     if len(tokens) == 4:
@@ -456,24 +454,25 @@ def value_field(parser, token):
         tag, field = tokens
         unit = significant_digits = None
     else:
-        raise template.TemplateSyntaxError, "value_field requires one or two arguments"
+        raise template.TemplateSyntaxError, "value_field requires one, two, or three arguments"
     return ValueFieldNode(field, unit, significant_digits)
 
 
 @register.simple_tag
-def split_field(field1, field2, separator=""):
-    u"""Tag for combining two input fields wich have the same label and help text.
-    It consists of two ``<td>`` elements, one for the label and one for
-    the two input fields, so it spans two columns.  This tag is primarily used in
-    tamplates of edit views.  Example::
+def split_field(field1, field2, field3=None):
+    u"""Tag for combining two or three input fields wich have the same label
+    and help text.  It consists of two or three ``<td>`` elements, one for the
+    label and one for the input fields, so it spans multiple columns.  This tag
+    is primarily used in templates of edit views.  Example::
 
-        {% split_field layer.voltage1 layer.voltage2 "/" %}
+        {% split_field layer.voltage1 layer.voltage2 %}
     """
     result = u"""<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
-        html_name=field1.html_name, label=field1.label)
+        html_name=field1.html_name, label=field1.label.rpartition(" ")[0])
     help_text = u""" <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else u""
-    result += u"""<td class="input">{field1}{separator}{field2}{help_text}</td>""".format(
-        field1=field1, field2=field2, help_text=help_text, separator=separator)
+    fields = [field1, field2, field3]
+    result += u"""<td class="input">{fields_string}{help_text}</td>""".format(
+        fields_string=u"/".join(unicode(field) for field in fields if field), help_text=help_text)
     return result
 
 
