@@ -480,51 +480,50 @@ class ValueSplitFieldNode(template.Node):
     u"""Helper class to realise the `value_split_field` tag.
     """
 
-    def __init__(self, field1, field2, unit, separator):
-        self.field_name1 = field1
-        self.field_name2 = field2
-        self.field1 = template.Variable(field1)
-        self.field2 = template.Variable(field2)
-        self.separator = separator if separator is not None else ''
+    def __init__(self, fields, unit):
+        self.field_name = fields[0]
+        self.fields = [template.Variable(field) for field in fields]
         self.unit = unit
 
     def render(self, context):
-        field1 = self.field1.resolve(context)
-        field2 = self.field2.resolve(context)
-        if "." not in self.field_name1:
-            verbose_name = unicode(context[self.field_name1]._meta.verbose_name)
+        fields = [field.resolve(context) for field in self.fields]
+        if "." not in self.field_name:
+            verbose_name = unicode(context[self.field_name]._meta.verbose_name)
         else:
-            instance, field_name = self.field_name1.rsplit(".", 1)
+            instance, __, field_name = self.field_name.rpartition(".")
             model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+        if verbose_name.endswith(u" 1"):
+            verbose_name = verbose_name[:-2]
         if self.unit == "sccm_collapse":
-            if not field1 and not field2:
+            if not any(fields):
                 return u"""<td colspan="2"/>"""
             unit = "sccm"
         else:
             unit = self.unit
-        if not field1 and field1 != 0:
-            field1 = u"—"
-        if not field2 and field2 != 0:
-            field2 = u"—"
-        if field1 == field2 == u"—":
+        for i in range(len(fields)):
+            if not fields[i] and fields[i] != 0:
+                fields[i] = u"—"
+        if all(field == u"—" for field in fields):
             unit = None
-        return u"""<td class="label">{label}:</td><td class="value">{value1} {separator} {value2}</td>""".format(
-            label=verbose_name, value1=field1 if unit is None else quantity(field1, unit),
-            value2=field2 if unit is None else quantity(field2, unit),
-            separator=self.separator)
+        values = u""
+        for field in fields[:-1]:
+            values += unicode(field) + u" / "
+        values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
+        return u"""<td class="label">{label}:</td><td class="value">{values}</td>""".format(
+            label=verbose_name, values=values)
 
 
 @register.tag
 def value_split_field(parser, token):
-    u"""Tag for combining two value fields wich have the same label and help text.
-    It consists of two ``<td>`` elements, one for the label and one for
-    the two value fields, so it spans two columns.This tag is primarily used in
-    templates of show views, especially those used to compile the sample history.
-    Example::
+    u"""Tag for combining two or more value fields wich have the same label and
+    help text.  It consists of two ``<td>`` elements, one for the label and one
+    for the value fields, so it spans two columns.  This tag is primarily used
+    in templates of show views, especially those used to compile the sample
+    history.  Example::
 
-        {% value_split_field layer.voltage_1 layer.voltage_2 "/" "V" %}
+        {% value_split_field layer.voltage_1 layer.voltage_2 "V" %}
 
     The unit (``"V"`` for “Volt”) is optional.  If you have a boolean field,
     you can give ``"yes/no"`` as the unit, which converts the boolean value to
@@ -532,25 +531,17 @@ def value_split_field(parser, token):
     collapse if the gas wasn't used, use ``"sccm_collapse"``.
     """
     tokens = token.split_contents()
-    if len(tokens) == 5:
-        tag, field1, field2, separator, unit = tokens
-        if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
-            raise template.TemplateSyntaxError, "value_split_field's unit argument should be in quotes"
-        unit = unit[1:-1]
-        if not (separator[0] == separator[-1] and separator[0] in ('"', "'")):
-            raise template.TemplateSyntaxError, "value_split_field's separator argument should be in quotes"
-        separator = separator[1:-1]
-    elif len(tokens) == 4:
-        tag, field1, field2, separator = tokens
-        unit = None
-        separator = separator[1:-1]
-    elif len(tokens) == 3:
-        tag, field1, field2 = tokens
-        separator = None
-        unit = None
-    else:
-        raise template.TemplateSyntaxError, "value_split_field requires three, four or five arguments"
-    return ValueSplitFieldNode(field1, field2, unit, separator)
+    fields = []
+    unit = None
+    for i, token in enumerate(tokens):
+        if i > 0:
+            if token[0] == token[-1] and token[0] in ('"', "'"):
+                if i < len(tokens) - 1:
+                    raise template.TemplateSyntaxError, "the unit must be the very last argument"
+                unit = token[1:-1]
+            else:
+                fields.append(token)
+    return ValueSplitFieldNode(fields, unit)
 
 
 @register.simple_tag
