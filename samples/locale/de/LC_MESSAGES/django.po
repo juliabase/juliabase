@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-18 13:45+0200\n"
-"PO-Revision-Date: 2011-04-18 13:46+0200\n"
+"POT-Creation-Date: 2011-04-27 16:52+0200\n"
+"PO-Revision-Date: 2011-04-27 16:53+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -156,13 +156,13 @@ msgid "current location"
 msgstr "aktueller Probenort"
 
 #: models_common.py:592 models_common.py:1272
-#: templates/samples/show_claim.html:42
+#: templates/samples/show_claim.html:43
 #: templates/samples/show_sample_series.html:53
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
 #: models_common.py:593 models_feeds.py:126
-#: templates/samples/show_claim.html:43
+#: templates/samples/show_claim.html:44
 msgid "purpose"
 msgstr "Zweck"
 
@@ -182,12 +182,12 @@ msgstr "Split-Ursprung"
 
 #: models_common.py:600 models_common.py:1276 models_feeds.py:125
 #: models_feeds.py:152 models_feeds.py:352 models_feeds.py:377
-#: models_feeds.py:409 templates/samples/show_claim.html:44
+#: models_feeds.py:409 templates/samples/show_claim.html:45
 msgid "topic"
 msgstr "Thema"
 
 #: models_common.py:605 models_common.py:921 models_common.py:1003
-#: templates/samples/show_claim.html:40 views/sample_series.py:352
+#: templates/samples/show_claim.html:41 views/sample_series.py:352
 msgid "sample"
 msgstr "Probe"
 
@@ -800,14 +800,18 @@ msgstr "Zugriff verweigert: "
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor are you its currently responsible person ({name})."
-msgstr "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch ihr aktuell Verantwortlicher ({name}) sind."
+msgstr ""
+"Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
+"ihr aktuell Verantwortlicher ({name}) sind."
 
 #: permissions.py:260
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor are you its currently responsible person ({name}), nor can you "
 "view all samples."
-msgstr "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch ihr aktuell Verantwortlicher ({name}) sind, noch alle Proben sehen dürfen."
+msgstr ""
+"Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
+"ihr aktuell Verantwortlicher ({name}) sind, noch alle Proben sehen dürfen."
 
 #: permissions.py:317
 msgid ""
@@ -997,7 +1001,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/edit_my_samples.html:22
 #: templates/samples/edit_result.html:23
 #: templates/samples/edit_sample_death.html:22
-#: templates/samples/show_claim.html:59 templates/samples/show_claim.html:60
+#: templates/samples/show_claim.html:60 templates/samples/show_claim.html:61
 #: templates/samples/split_and_rename.html:22
 #: templatetags/samples_extras.py:565
 msgid "General error"
@@ -1895,15 +1899,23 @@ msgstr ""
 msgid "This claim was either approved or withdrawn."
 msgstr "Dieser Anspruch wurde entweder akzeptiert oder zurückgezogen."
 
-#: templates/samples/show_claim.html:25
+#: templates/samples/show_claim.html:23
+msgid ""
+"This claim is active and needs now to be approved by the reviewer or "
+"withdrawn by the requester."
+msgstr ""
+"Dieser Anspruch ist aktiv und muss nun entweder vom Reviewer akzeptiert oder "
+"vom Antragssteller zurückgezogen werden."
+
+#: templates/samples/show_claim.html:26
 msgid "Requester"
 msgstr "Antragssteller"
 
-#: templates/samples/show_claim.html:29
+#: templates/samples/show_claim.html:30
 msgid "Reviewer"
 msgstr "Reviewer"
 
-#: templates/samples/show_claim.html:34
+#: templates/samples/show_claim.html:35
 #, python-format
 msgid ""
 "\n"
