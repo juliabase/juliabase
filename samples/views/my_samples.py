@@ -67,12 +67,14 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
+        clearance_sets = sorted((utils.capitalize_first_letter(ugettext(name)), models.clearance_sets[name])
+                                for name in models.clearance_sets, 2)
+        clearance_sets = [(str(i),) + clearance_set for i, clearance_set in enumerate(clearance_sets, 2)]
         self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
                                             ("1", _(u"all processes up to now"))]
-        self.fields["clearance"].choices.extend((str(i), utils.capitalize_first_letter(ugettext(name)))
-                                                for i, name in enumerate(models.clearance_sets, 2))
+        self.fields["clearance"].choices.extend((i, name) for i, name, __ in clearance_sets)
         self.clearance_choices = {"": None, "0": (), "1": "all"}
-        self.clearance_choices.update((i, models.clearance_sets[name]) for i, name in self.fields["clearance"].choices[3:])
+        self.clearance_choices.update((i, models) for i, __, models in clearance_sets)
 
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.
