@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import chantal_common.utils
 from chantal_common.utils import append_error, get_really_full_name
 from samples import models, permissions
@@ -69,7 +69,8 @@ class ActionForm(forms.Form):
         self.fields["new_topic"].set_topics(user)
         self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
                                             ("1", _(u"all processes up to now"))]
-        self.fields["clearance"].choices.extend((str(i), name) for i, name in enumerate(models.clearance_sets, 2))
+        self.fields["clearance"].choices.extend((str(i), utils.capitalize_first_letter(ugettext(name)))
+                                                for i, name in enumerate(models.clearance_sets, 2))
         self.clearance_choices = {"": None, "0": (), "1": "all"}
         self.clearance_choices.update((i, models.clearance_sets[name]) for i, name in self.fields["clearance"].choices[3:])
 
