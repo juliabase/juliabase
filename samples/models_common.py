@@ -1216,9 +1216,12 @@ class Result(Process):
         """
         data_node = super(Result, self).get_data()
         data_node.name = data_node.descriptive_name = self.title
+        data_node.items.extend([DataItem(u"title", self.title),
+                                DataItem(u"sample series", self.sample_series.values_list("name", flat=True))])
+
         quantities, value_lists = json.loads(self.quantities_and_values)
         for i, value_list in enumerate(value_lists):
-            child_node = DataNode(u"row #{number}")
+            child_node = DataNode(u"row #{number}".format(number=i + 1))
             child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
             data_node.children.append(child_node)
         return data_node
