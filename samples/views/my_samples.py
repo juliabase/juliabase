@@ -67,8 +67,7 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
-        clearance_sets = sorted((utils.capitalize_first_letter(ugettext(name)), models)
-                                for name, models in models.clearance_sets.iteritems())
+        clearance_sets = sorted((utils.capitalize_first_letter(name), models) for name, models in models.clearance_sets)
         clearance_sets = [(str(i),) + clearance_set for i, clearance_set in enumerate(clearance_sets, 2)]
         self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
                                             ("1", _(u"all processes up to now"))]
