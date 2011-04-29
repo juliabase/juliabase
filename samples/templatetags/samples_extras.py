@@ -46,7 +46,7 @@ def round(value, digits):
     u"""Filter for rounding a numeric value to a fixed number of significant
     digits.  The result may be used for the `quantity` filter below.
     """
-    return "{{0:.{0}g}}".format(digits).format(float(value))
+    return samples.views.utils.round(value, digits)
 
 
 @register.filter

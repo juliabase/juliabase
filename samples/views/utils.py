@@ -586,3 +586,21 @@ def restricted_samples_query(user):
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).distinct()
+
+def round(value, digits):
+    u"""Method for rounding a numeric value to a fixed number of significant
+    digits.
+
+    :Parameters:
+      - `value`: the numeric value
+      - `digit`: number of significant digits
+
+    :type value: `float`
+    :type digits: `int`
+
+    :Return:
+        rounded value
+
+    :rtype: `str`
+    """
+    return "{{0:.{0}g}}".format(digits).format(float(value))
