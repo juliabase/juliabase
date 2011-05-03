@@ -136,6 +136,10 @@ class EditTopicForm(forms.Form):
                              "members")
         return cleaned_data
 
+    class Meta:
+        widgets = {
+            "members": forms.SelectMultiple(attrs={"size": 30}),
+            }
 
 @login_required
 def edit(request, name):
