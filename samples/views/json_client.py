@@ -162,7 +162,7 @@ def available_items(request, model_name):
         raise Http404("Model name not found.")
     # FixMe: Add all interesing models here.
     id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number",
-                "LargeAreaDeposition": "number"}.get(model_name, "id")
+                "LargeAreaDeposition": "number", "LargeSputterDeposition": "number"}.get(model_name, "id")
     return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
 
