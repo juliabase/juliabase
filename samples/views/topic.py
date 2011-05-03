@@ -123,6 +123,7 @@ class EditTopicForm(forms.Form):
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)
         self.fields["members"].set_users(topic.members.all())
+        self.fields["members"].widget.attrs["size"] = 30
         self.fields["confidential"].initial = topic.confidential
         self.user = user
         self.topic = topic
@@ -135,11 +136,6 @@ class EditTopicForm(forms.Form):
                 append_error(self, _(u"In confidential topics, at least one member must have permission to edit the topic."),
                              "members")
         return cleaned_data
-
-    class Meta:
-        widgets = {
-            "members": forms.SelectMultiple(attrs={"size": 30}),
-            }
 
 @login_required
 def edit(request, name):
