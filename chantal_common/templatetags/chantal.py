@@ -25,7 +25,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape, escape
 import django.utils.http
 from django.contrib.markup.templatetags import markup
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, pgettext
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
 from chantal_common import utils
@@ -223,3 +223,14 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
     :type outest_tag: unicode
     """
     return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
+
+
+@register.simple_tag
+def ptrans(context, string):
+    # FixMe: I hope that in upcoming Django versions, this will be included
+    # anyway.  Then, this tag should be deleted.
+    u"""Tag for translating a string with context.  Example::
+
+        {% ptrans 'month' 'May' %}
+    """
+    return pgettext(context, string)
