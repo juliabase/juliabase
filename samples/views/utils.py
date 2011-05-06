@@ -132,6 +132,8 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
+deposition_index_pattern = re.compile(ur"\d{3,4}")
+
 def get_next_deposition_number(letter):
     u"""Find a good next deposition number.  For example, if the last run was
     called “08B-045”, this routine yields “08B-046” (unless the new year has
@@ -152,7 +154,8 @@ def get_next_deposition_number(letter):
     pattern_string = ur"^{0}[0-9]+".format(re.escape(prefix))
     deposition_numbers = \
         models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
-    numbers = [int(deposition_number[prefix_length:]) for deposition_number in deposition_numbers]
+    numbers = [int(deposition_index_pattern.match(deposition_number[prefix_length:]).group())
+               for deposition_number in deposition_numbers]
     next_number = max(numbers) + 1 if numbers else 1
     return prefix + u"{0:03}".format(next_number)
 

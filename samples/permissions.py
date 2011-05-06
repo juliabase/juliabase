@@ -264,8 +264,8 @@ def assert_can_fully_view_sample(user, sample):
 
 
 def get_sample_clearance(user, sample):
-    u"""Retuns the clearance a user needs to visit a sample, if he needs one at
-    all.
+    u"""Returns the clearance a user needs to visit a sample, if he needs one
+    at all.
 
     :Parameters:
       - `user`: the user whose permission should be checked

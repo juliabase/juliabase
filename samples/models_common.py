@@ -1216,11 +1216,15 @@ class Result(Process):
         """
         data_node = super(Result, self).get_data()
         data_node.name = data_node.descriptive_name = self.title
-        quantities, value_lists = json.loads(self.quantities_and_values)
-        for i, value_list in enumerate(value_lists):
-            child_node = DataNode(u"row #{number}")
-            child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
-            data_node.children.append(child_node)
+        quantities, values_lists = json.loads(self.quantities_and_values)
+        quantities_and_values = []
+        for i, quantity in enumerate(quantities):
+            values = [values[i] for values in values_lists]
+            quantities_and_values.append((quantity, values))
+        data_node.items.extend([DataItem(u"title", self.title),
+                                DataItem(u"image type", self.image_type),
+                                DataItem(u"quantities and values", quantities_and_values),
+                                DataItem(u"sample series", self.sample_series.values_list("name", flat=True))])
         return data_node
 
     def get_data_for_table_export(self):

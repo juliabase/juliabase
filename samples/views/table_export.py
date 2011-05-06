@@ -459,7 +459,7 @@ def flatten_tree(root):
     """
 
     def flatten_row_tree(node):
-        name_dict = {node.name: dict((item.key, item.value) for item in node.items)}
+        name_dict = {node.name: dict((item.key, item.value if item.value is not None else u"") for item in node.items)}
         for child in node.children:
             name_dict.update(flatten_row_tree(child))
         return name_dict
