@@ -96,6 +96,10 @@ def primary_keys(request):
             for alias, sample_id in models.SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
                 result_dict["samples"].setdefault(alias, []).append(sample_id)
             result_dict["samples"].update(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
+    if "depositions" in query_dict:
+        deposition_numbers = query_dict["depositions"].split(",")
+        result_dict["depositions"] = dict(models.Deposition.objects. 
+                                          filter(number__in=deposition_numbers).values_list("number", "id"))
     if "users" in query_dict:
         if query_dict["users"] == "*":
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.values_list("username", "id"))
