@@ -1064,7 +1064,7 @@ class SampleDeath(Process):
         try:
             # Translators: Of a sample
             return _(u"cease of existence of {sample}").format(sample=self.samples.get())
-        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
             # Translators: Of a sample
             return _(u"cease of existence #{number}").format(number=self.pk)
 
@@ -1118,11 +1118,11 @@ class Result(Process):
         try:
             # Translators: experimental result
             return _(u"result for {sample}").format(sample=self.samples.get())
-        except Sample.DoesNotExist, Sample.MultipleObjectsReturned:
+        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
             try:
                 # Translators: experimental result
                 return _(u"result for {sample}").format(sample=self.sample_series.get())
-            except SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned:
+            except (SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned):
                 # Translators: experimental result
                 return _(u"result #{number}").format(number=self.pk)
 

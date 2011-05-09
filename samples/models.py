@@ -49,14 +49,14 @@ if settings.TESTING:
 
 u"""
 
-:var clearance_sets: Dictionary mapping clearance codenames to Process
-  subclasses.  This dictionary is used in the “edit MySamples“ view to offer
-  pre-defined sets of Processes that should be allowed to see by the user to
-  whom the samples are copied.  The dictionary may be left empty.  Otherwise,
-  it may be injected here from the ``models.py`` of another app.
+:var clearance_sets: List of 2-tupels containing clearance names and tuples of
+  ``Process`` subclasses.  This list is used in the “edit MySamples“ view to
+  offer pre-defined sets of Processes that should be allowed to see by the user
+  to whom the samples are copied.  The list may be left empty.  Otherwise, it
+  may be injected here from the ``models.py`` of another app.
 
-:type clearance_sets: dict mapping unicode to tuple of `Process`.
+:type clearance_sets: list of (unicode, tuple of `Process`)
 """
 
 
-clearance_sets = {}
+clearance_sets = []

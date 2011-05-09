@@ -20,6 +20,7 @@ copyright holder, you must destroy it immediately and completely.
 {% if claim.closed %}
   <p>{% trans 'This claim was either approved or withdrawn.' %}</p>
 {% else %}
+  <p>{% trans 'This claim is active and needs now to be approved by the reviewer or withdrawn by the requester.' %}</p>
   <table cellpadding="5">
     <tr>
       <td>{% trans "Requester" %}:</td>
