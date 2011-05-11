@@ -164,8 +164,10 @@ def available_items(request, model_name):
         break
     else:
         raise Http404("Model name not found.")
-    # FixMe: Add all interesing models here.
-    id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number",
+    # FixMe: Add all interesing models here, and make it accessible from
+    # chantal_ipv.
+    id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number", "SmallClusterToolDeposition": "number",
+                "NewClusterToolDeposition": "number",
                 "LargeAreaDeposition": "number", "LargeSputterDeposition": "number"}.get(model_name, "id")
     return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 

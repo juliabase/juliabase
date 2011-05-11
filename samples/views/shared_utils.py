@@ -329,4 +329,4 @@ def sanitize_for_markdown(text):
             if len(line) < 70:
                 lines[j] += "  "
         paragraphs[i] = u"\n".join(lines)
-    return u"\n\n".join(paragraphs)
+    return u"\n\n".join(paragraphs) + "\n"
