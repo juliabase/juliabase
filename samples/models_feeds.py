@@ -121,7 +121,7 @@ class FeedNewSamples(FeedEntry):
     u"""Model for feed entries about new samples having been added to the
     database.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="new_samples_news")
     purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
@@ -148,7 +148,7 @@ class FeedNewSamples(FeedEntry):
 class FeedMovedSamples(FeedEntry):
     u"""Model for feed entries about samples moved to a new topic.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"), blank=True)
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
     topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="moved_samples_news")
     old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True)
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)

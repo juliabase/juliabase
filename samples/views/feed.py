@@ -27,7 +27,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
 from chantal_common.utils import get_really_full_name
-from samples import permissions
+from samples import permissions, models
 from django.conf import settings
 import django.core.urlresolvers
 from samples.views import utils
@@ -177,6 +177,13 @@ def show(request, username, user_hash):
     for entry in entries:
         if only_important and not entry.important:
             continue
+        if isinstance(entry, (models.FeedNewSamples, models.FeedMovedSamples, models.FeedCopiedMySamples,
+                              models.FeedEditedSamples)):
+            # Remove orphaned entries (i.e. whose samples have been deleted)
+            # because they are a) phony and b) cause tracebacks.
+            if entry.samples.count() == 0:
+                entry.delete()
+                continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
             "tag:{0},{1}:{2}".format(settings.DOMAIN_NAME, entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
