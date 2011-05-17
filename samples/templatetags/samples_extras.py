@@ -467,12 +467,13 @@ def split_field(field1, field2, field3=None):
 
         {% split_field layer.voltage1 layer.voltage2 %}
     """
+    separator = u"–" if not field3 and field2.html_name.endswith("_end") else u"/"
     result = u"""<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field1.html_name, label=field1.label.rpartition(" ")[0])
     help_text = u""" <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else u""
     fields = [field1, field2, field3]
     result += u"""<td class="input">{fields_string}{help_text}</td>""".format(
-        fields_string=u"/".join(unicode(field) for field in fields if field), help_text=help_text)
+        fields_string=separator.join(unicode(field) for field in fields if field), help_text=help_text)
     return result
 
 
@@ -482,6 +483,7 @@ class ValueSplitFieldNode(template.Node):
 
     def __init__(self, fields, unit):
         self.field_name = fields[0]
+        self.from_to_field = len(fields) == 2 and fields[1].endswith("_end")
         self.fields = [template.Variable(field) for field in fields]
         self.unit = unit
 
@@ -494,23 +496,33 @@ class ValueSplitFieldNode(template.Node):
             model = context[instance].__class__
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
-        if verbose_name.endswith(u" 1"):
-            verbose_name = verbose_name[:-2]
         if self.unit == "sccm_collapse":
-            if not any(fields):
+            if all(field is None for field in fields):
                 return u"""<td colspan="2"/>"""
             unit = "sccm"
         else:
             unit = self.unit
-        for i in range(len(fields)):
-            if not fields[i] and fields[i] != 0:
-                fields[i] = u"—"
-        if all(field == u"—" for field in fields):
-            unit = None
-        values = u""
-        for field in fields[:-1]:
-            values += unicode(field) + u" / "
-        values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
+        if self.from_to_field:
+            if fields[0] is None and fields[1] is None:
+                values = u"—"
+            elif fields[1] is None:
+                values = quantity(fields[0], unit)
+            else:
+                values = quantity(fields, unit)
+        else:
+            if verbose_name.endswith(u" 1"):
+                verbose_name = verbose_name[:-2]
+            for i in range(len(fields)):
+                if not fields[i] and fields[i] != 0:
+                    fields[i] = u"—"
+            if all(field == u"—" for field in fields):
+                unit = None
+            values = u""
+            # FixMe: Not only the very last field should be pretty-printed by
+            # ``quantity`` but all non-``None`` fields.
+            for field in fields[:-1]:
+                values += unicode(field) + u" / "
+            values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
         return u"""<td class="label">{label}:</td><td class="value">{values}</td>""".format(
             label=verbose_name, values=values)
 
