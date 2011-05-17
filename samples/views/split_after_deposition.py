@@ -380,7 +380,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
     return original_data_forms, new_name_form_lists, global_new_data_form
 
 
-def forms_from_database(deposition, remote_client):
+def forms_from_database(deposition, remote_client, numbering):
     u"""Take a deposition instance and construct forms from it for its old and
     new data.  The top-level new data list has the same number of elements as
     the old data list because they correspond to each other.
@@ -389,9 +389,14 @@ def forms_from_database(deposition, remote_client):
       - `deposition`: the deposition to be converted to forms.
       - `remote_client`: whether the request was sent from the Chantal remote
         client
+      - `numbering`: numbering pattern for old-style and provisional sample
+        names that get the deposition number as their new name; currently, only
+        ``None`` (no numbering) and ``-1`` (for ``-1``, ``-2``, etc) are
+        supported.
 
     :type deposition: `models.Deposition`
     :type remote_client: bool
+    :type numbering: ``NoneType`` or unicode
 
     :Return:
       list of original data (i.e. old names) of every sample, list of lists of
@@ -400,12 +405,19 @@ def forms_from_database(deposition, remote_client):
     :rtype: list of `OriginalDataForm`, list of lists of `NewNameForm`,
       `GlobalNewDataForm`
     """
+    def get_suffix(i, numbering):
+        if numbering == "-1":
+            return u"-{0}".format(i + 1)
+        else:
+            return u""
     samples = deposition.samples.all()
-    original_data_forms = [OriginalDataForm(remote_client, deposition.number, initial={"sample": sample.name}, prefix=str(i))
+    original_data_forms = [OriginalDataForm(remote_client, deposition.number + get_suffix(i, numbering),
+                                            initial={"sample": sample.name}, prefix=str(i))
                            for i, sample in enumerate(samples)]
     new_name_form_lists = [[NewNameForm(
                 readonly=True,
-                initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else deposition.number},
+                initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else
+                         deposition.number + get_suffix(i, numbering)},
                 prefix="{0}_0".format(i))] for i, sample in enumerate(samples)]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
@@ -414,7 +426,11 @@ def forms_from_database(deposition, remote_client):
 @login_required
 def split_and_rename_after_deposition(request, deposition_number):
     u"""View for renaming and/or splitting samples immediately after they have
-    been deposited in the same run.
+    been deposited in the same run.  The optional query string parameter
+    ``numbering`` may be set to ``-1``.  This means that with a GET request,
+    all samples with oldstyle or provisional names get the name of the
+    deposition as their new name, plus a suffix which numbers them
+    consecutively.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -447,7 +463,9 @@ def split_and_rename_after_deposition(request, deposition_number):
             return utils.successful_response(request, _(u"Samples were successfully split and/or renamed."),
                                              json_response=True)
     else:
-        original_data_forms, new_name_form_lists, global_new_data_form = forms_from_database(deposition, remote_client)
+        original_data_forms, new_name_form_lists, global_new_data_form = \
+            forms_from_database(deposition, remote_client, request.GET.get("numbering"))
+    print request.GET.get("numbering")
     return render_to_response("samples/split_after_deposition.html",
                               {"title": _(u"Bulk sample rename for {deposition}").format(deposition=deposition),
                                "samples": zip(original_data_forms, new_name_form_lists),
