@@ -467,9 +467,10 @@ def split_field(field1, field2, field3=None):
 
         {% split_field layer.voltage1 layer.voltage2 %}
     """
-    separator = u"–" if not field3 and field2.html_name.endswith("_end") else u"/"
+    from_to_field = not field3 and field2.html_name.endswith("_end")
+    separator = u"–" if from_to_field else u"/"
     result = u"""<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
-        html_name=field1.html_name, label=field1.label.rpartition(" ")[0])
+        html_name=field1.html_name, label=field1.label if from_to_field else field1.label.rpartition(" ")[0])
     help_text = u""" <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else u""
     fields = [field1, field2, field3]
     result += u"""<td class="input">{fields_string}{help_text}</td>""".format(
