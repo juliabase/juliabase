@@ -466,6 +466,12 @@ def split_field(field1, field2, field3=None):
     is primarily used in templates of edit views.  Example::
 
         {% split_field layer.voltage1 layer.voltage2 %}
+
+    The tag assumes that for from–to fields, the field name of the upper limit
+    must end in ``"_end"``, and for ordinary multiple fields, the verbose name
+    of the first field must end in a space-separated number or letter.  For
+    example, the verbose names may be ``"voltage 1"``, ``"voltage 2"``, and
+    ``"voltage 3"``.
     """
     from_to_field = not field3 and field2.html_name.endswith("_end")
     separator = u"–" if from_to_field else u"/"
