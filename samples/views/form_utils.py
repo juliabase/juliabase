@@ -751,7 +751,7 @@ def clean_deposition_number_field(value, letter):
         # Translators: “YY” is year, “L” is letter, and “NNN” is number
         raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
     if value[2] != letter:
-        raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(letter))
+        raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
     return value
 
 
