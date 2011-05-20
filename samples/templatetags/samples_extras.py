@@ -32,6 +32,7 @@ from django.conf import settings
 import chantal_common.utils
 import chantal_common.templatetags.chantal
 import samples.views.utils
+from samples.views.form_utils import time_pattern
 import chantal_common.search
 
 register = template.Library()
@@ -615,7 +616,8 @@ def display_search_tree(tree):
 def hms_to_minutes(time_string):
     u"""Converts ``"01:01:02"`` to ``"61.03"``.
     """
-    if not time_string:
+    match = time_pattern.match(time_string)
+    if not match:
         return time_string
-    minutes = int(time_string[:2]) * 60 + int(time_string[3:5]) + int(time_string[6:]) / 60
+    minutes = int(match.group("H", "0")) * 60 + int(match.group("M")) + int(match.group("M")) / 60
     return round(minutes, 2)
