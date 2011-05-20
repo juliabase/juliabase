@@ -615,5 +615,7 @@ def display_search_tree(tree):
 def hms_to_minutes(time_string):
     u"""Converts ``"01:01:02"`` to ``"61.03"``.
     """
+    if not time_string:
+        return time_string
     minutes = int(time_string[:2]) * 60 + int(time_string[3:5]) + int(time_string[6:]) / 60
     return round(minutes, 2)
