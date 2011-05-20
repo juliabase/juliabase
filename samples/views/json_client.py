@@ -167,7 +167,7 @@ def available_items(request, model_name):
     # FixMe: Add all interesing models here, and make it accessible from
     # chantal_ipv.
     id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number", "OldClusterToolDeposition": "number",
-                "NewClusterToolDeposition": "number",
+                "NewClusterToolDeposition": "number", "PHotWireDeposition": "number",
                 "LargeAreaDeposition": "number", "LargeSputterDeposition": "number"}.get(model_name, "id")
     return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 

@@ -380,7 +380,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
     return original_data_forms, new_name_form_lists, global_new_data_form
 
 
-def forms_from_database(deposition, remote_client):
+def forms_from_database(deposition, remote_client, new_names):
     u"""Take a deposition instance and construct forms from it for its old and
     new data.  The top-level new data list has the same number of elements as
     the old data list because they correspond to each other.
@@ -389,9 +389,14 @@ def forms_from_database(deposition, remote_client):
       - `deposition`: the deposition to be converted to forms.
       - `remote_client`: whether the request was sent from the Chantal remote
         client
+      - `new_names`: dictionary which maps sample IDs to suggested new names of
+        this sample; by default (i.e., if the sample ID doesn't occur in
+        ``new_names``), the suggested new name is the deposition number, or the
+        old name iff it is a new-style name
 
     :type deposition: `models.Deposition`
     :type remote_client: bool
+    :type new_names: dict mapping int to unicode
 
     :Return:
       list of original data (i.e. old names) of every sample, list of lists of
@@ -400,13 +405,19 @@ def forms_from_database(deposition, remote_client):
     :rtype: list of `OriginalDataForm`, list of lists of `NewNameForm`,
       `GlobalNewDataForm`
     """
+    def new_name(sample):
+        try:
+            return new_names[sample.id]
+        except KeyError:
+            if utils.sample_name_format(sample.name) == "new":
+                return sample.name
+            else:
+                return deposition.number
     samples = deposition.samples.all()
-    original_data_forms = [OriginalDataForm(remote_client, deposition.number, initial={"sample": sample.name}, prefix=str(i))
+    original_data_forms = [OriginalDataForm(remote_client, new_name(sample), initial={"sample": sample.name}, prefix=str(i))
                            for i, sample in enumerate(samples)]
-    new_name_form_lists = [[NewNameForm(
-                readonly=True,
-                initial={"new_name": sample.name if utils.sample_name_format(sample.name) == "new" else deposition.number},
-                prefix="{0}_0".format(i))] for i, sample in enumerate(samples)]
+    new_name_form_lists = [[NewNameForm(readonly=True, initial={"new_name": new_name(sample)}, prefix="{0}_0".format(i))]
+                           for i, sample in enumerate(samples)]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
 
@@ -415,6 +426,10 @@ def forms_from_database(deposition, remote_client):
 def split_and_rename_after_deposition(request, deposition_number):
     u"""View for renaming and/or splitting samples immediately after they have
     been deposited in the same run.
+
+    Optionally, you can give query string parameters of the form
+    ``new-name-21=super`` where 21 is the sample ID and “super” is the
+    suggested new name of this sample.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -447,7 +462,11 @@ def split_and_rename_after_deposition(request, deposition_number):
             return utils.successful_response(request, _(u"Samples were successfully split and/or renamed."),
                                              json_response=True)
     else:
-        original_data_forms, new_name_form_lists, global_new_data_form = forms_from_database(deposition, remote_client)
+        new_names = dict((utils.int_or_zero(key[len("new-name-"):]), new_name)
+                         for key, new_name in request.GET.iteritems() if key.startswith("new-name-"))
+        new_names.pop(0, None)
+        original_data_forms, new_name_form_lists, global_new_data_form = \
+            forms_from_database(deposition, remote_client, new_names)
     return render_to_response("samples/split_after_deposition.html",
                               {"title": _(u"Bulk sample rename for {deposition}").format(deposition=deposition),
                                "samples": zip(original_data_forms, new_name_form_lists),

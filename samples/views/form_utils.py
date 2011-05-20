@@ -733,10 +733,11 @@ def clean_deposition_number_field(value, letter):
 
     :Parameters:
       - `value`: the deposition number entered by the user
-      - `letter`: the single uppercase letter denoting the deposition system
+      - `letter`: the single uppercase letter denoting the deposition system;
+        it may also be a list containing multiple possibily letters
 
     :type value: unicode
-    :type letter: unicode
+    :type letter: unicode or list of unicode
 
     :Return:
       the original ``value`` (unchanged)
@@ -750,8 +751,13 @@ def clean_deposition_number_field(value, letter):
     if not deposition_number_pattern.match(value):
         # Translators: “YY” is year, “L” is letter, and “NNN” is number
         raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
-    if value[2] != letter:
-        raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(letter))
+    if isinstance(letter, list):
+        if value[2] not in letter:
+            raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(
+                    letter=u", ".join(letter)))
+    else:
+        if value[2] != letter:
+            raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
     return value
 
 
