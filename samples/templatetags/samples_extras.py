@@ -619,5 +619,5 @@ def hms_to_minutes(time_string):
     match = time_pattern.match(time_string)
     if not match:
         return time_string
-    minutes = int(match.group("H", "0")) * 60 + int(match.group("M")) + int(match.group("M")) / 60
+    minutes = int(match.group("H") or "0") * 60 + int(match.group("M")) + int(match.group("M")) / 60
     return round(minutes, 2)
