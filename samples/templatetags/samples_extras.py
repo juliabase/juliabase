@@ -608,3 +608,12 @@ def display_search_tree(tree):
         result += u"</td></tr>"
     result += u"</table>"
     return result
+
+
+@register.filter
+@stringfilter
+def hms_to_minutes(time_string):
+    u"""Converts ``"01:01:02"`` to ``"61.03"``.
+    """
+    minutes = int(time_string[:2]) * 60 + int(time_string[3:5]) + int(time_string[6:]) / 60
+    return round(minutes, 2)
