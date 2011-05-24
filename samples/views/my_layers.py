@@ -148,10 +148,17 @@ def save_to_database(my_layer_forms, user):
     u"""Save the new “My Layers” into the database.
     """
     user_details = user.samples_user_details
+    old_layers = user_details.my_layers
     user_details.my_layers = json.dumps(
         [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms])
-    user_details.save()
-
+    if len(old_layers) == len(user_details.my_layers):
+        return _(u"Nothing changed.")
+    elif len(old_layers) > len(user_details.my_layers):
+        user_details.save()
+        return _(u"Layers successfully deleted from “My Layers”.")
+    else:
+        user_details.save()
+        return _(u"Layers successfully added to “My Layers”.")
 
 @login_required
 def edit(request, login_name):
@@ -178,8 +185,8 @@ def edit(request, login_name):
         all_valid = all([my_layer_form.is_valid() for my_layer_form in my_layer_forms])
         referentially_valid = is_referentially_valid(my_layer_forms)
         if all_valid and referentially_valid and not structure_changed:
-            save_to_database(my_layer_forms, user)
-            return utils.successful_response(request)
+            result = save_to_database(my_layer_forms, user)
+            return utils.successful_response(request, result)
     else:
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
