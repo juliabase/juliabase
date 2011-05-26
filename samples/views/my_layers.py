@@ -30,6 +30,7 @@ import django.contrib.auth.models
 from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils
+from django.contrib import messages
 
 
 class MyLayerForm(forms.Form):
@@ -151,14 +152,15 @@ def save_to_database(my_layer_forms, user):
     old_layers = user_details.my_layers
     user_details.my_layers = json.dumps(
         [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms])
-    if len(old_layers) == len(user_details.my_layers):
-        return _(u"Nothing changed.")
-    elif len(old_layers) > len(user_details.my_layers):
-        user_details.save()
-        return _(u"Layers successfully deleted from “My Layers”.")
+    for i in range(1, max(len(old_layers), len(user_details.my_layers))):
+        print  old_layers[i], user_details.my_layers[i]
+        if not old_layers[i] == user_details.my_layers[i]:
+            break
     else:
-        user_details.save()
-        return _(u"Layers successfully added to “My Layers”.")
+        return  _(u"Nothing changed.")
+    user_details.save()
+    return  _(u"Successfully changed “My Layers”")
+
 
 @login_required
 def edit(request, login_name):
@@ -187,6 +189,8 @@ def edit(request, login_name):
         if all_valid and referentially_valid and not structure_changed:
             result = save_to_database(my_layer_forms, user)
             return utils.successful_response(request, result)
+        elif all_valid and referentially_valid and structure_changed:
+            messages.error(request,_(u"Changes did not saved yet."))
     else:
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
