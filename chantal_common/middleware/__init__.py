@@ -67,7 +67,7 @@ class LocaleMiddleware(object):
         request.LANGUAGE_CODE = translation.get_language()
         # Now for the locale, but only if necessary because it seems to be a
         # costly operation.
-        new_locale = settings.LOCALES_DICT.get(self.get_language_code_only(language))
+        new_locale = settings.LOCALES_DICT.get(self.get_language_code_only(language)) or settings.LOCALES_DICT["en"]
         old_locale = locale.getlocale()[0]
         if not old_locale or not new_locale.startswith(old_locale):
             locale.setlocale(locale.LC_ALL, new_locale or "C")
