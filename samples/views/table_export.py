@@ -527,6 +527,7 @@ class ColumnGroupsForm(forms.Form):
     def __init__(self, column_groups, *args, **kwargs):
         super(ColumnGroupsForm, self).__init__(*args, **kwargs)
         self.fields["column_groups"].choices = ((column_group.name, column_group.name) for column_group in column_groups)
+        self.fields["column_groups"].widget.attrs["size"] = "10"
 
     def clean_column_groups(self):
         return set(self.cleaned_data["column_groups"])
@@ -544,6 +545,7 @@ class ColumnsForm(forms.Form):
         self.fields["columns"].choices = \
             ((column_group.name, [(i, columns[i].key) for i in sorted(column_group.key_indices.values())])
              for column_group in column_groups if column_group.name in selected_column_groups)
+        self.fields["columns"].widget.attrs["size"] = "10"
 
     def clean_columns(self):
         try:

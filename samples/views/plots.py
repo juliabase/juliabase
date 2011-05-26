@@ -90,7 +90,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 chantal_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
-        except utils.PlotError:
-            raise Http404(u"Plot could not be generated.")
+        except utils.PlotError as e:
+            raise Http404(unicode(e) or u"Plot could not be generated.")
     return chantal_common.utils.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")
