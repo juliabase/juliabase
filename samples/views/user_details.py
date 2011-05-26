@@ -76,7 +76,7 @@ class UserDetailsForm(forms.ModelForm):
                               ContentType.objects.get(app_label="chantal_common", model="topic")])
         self.fields["subscribed_feeds"].queryset = \
             ContentType.objects.filter(id__in=set(content_type.id for content_type in content_types))
-
+        self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
 
     class Meta:
         model = models.UserDetails
