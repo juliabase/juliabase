@@ -65,12 +65,14 @@ class LocaleMiddleware(object):
         language = self.get_language_for_user(request)
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
-        # Now for the locale, but only if necessary because it seems to be a
-        # costly operation.
-        new_locale = settings.LOCALES_DICT.get(self.get_language_code_only(language)) or settings.LOCALES_DICT["en"]
-        old_locale = locale.getlocale()[0]
-        if not old_locale or not new_locale.startswith(old_locale):
-            locale.setlocale(locale.LC_ALL, new_locale or "C")
+        # FixMe: Find a better way to map language codes to locales.  In
+        # particular, sublanguages should be taken into account.
+        new_locale = settings.LOCALES_DICT.get(self.get_language_code_only(language)) or (None, None)
+        old_locale = locale.getlocale()
+        # Changing the locale might be an expensive operation, so only if
+        # necessary.
+        if old_locale != new_locale:
+            locale.setlocale(locale.LC_ALL, new_locale)
 
     def process_response(self, request, response):
         patch_vary_headers(response, ("Accept-Language",))
