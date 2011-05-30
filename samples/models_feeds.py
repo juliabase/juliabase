@@ -175,8 +175,6 @@ class FeedNewPhysicalProcess(FeedEntry):
     u"""Model for feed entries about new physical processes.
     """
     process = models.OneToOneField(Process, verbose_name=_(u"process"))
-    sample_owners = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"owners"),
-                                           related_name="feed_entries_new_physical_process", blank=True)
 
     class Meta(FeedEntry.Meta):
         verbose_name = _(u"new physical process feed entry")
@@ -201,8 +199,6 @@ class FeedEditedPhysicalProcess(FeedEntry):
     """
     process = models.ForeignKey(Process, verbose_name=_(u"process"))
     description = models.TextField(_(u"description"))
-    sample_owners = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"owners"),
-                                           related_name="feed_entries_edit_physical_process", blank=True)
 
     class Meta(FeedEntry.Meta):
         verbose_name = _(u"edited physical process feed entry")

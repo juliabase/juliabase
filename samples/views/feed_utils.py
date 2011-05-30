@@ -100,17 +100,10 @@ class Reporter(object):
         :type entry: `models.FeedEntry`
         :type sending_model: class, descendant of ``models.Model``
         """
-        interested_sample_owners = set()
         self.interested_users -= self.already_informed_users
-        if (isinstance(entry, models.FeedEditedPhysicalProcess) or isinstance(entry, models.FeedNewPhysicalProcess))\
-            and entry.sample_owners:
-            interested_sample_owners = self.interested_users & set(user_details.user for user_details in
-                                         ContentType.objects.get_for_model(models.Sample).subscribed_users.all()
-                                         if user_details.user in entry.sample_owners.all())
         if sending_model:
             self.interested_users &= set(user_details.user for user_details in
                                          ContentType.objects.get_for_model(sending_model).subscribed_users.all())
-        self.interested_users |= interested_sample_owners
         self.already_informed_users.update(self.interested_users)
         self.interested_users.discard(self.originator)
         if self.interested_users:
@@ -236,16 +229,12 @@ class Reporter(object):
         """
         if process.finished:
             important = edit_description["important"] if edit_description else True
-            sample_owners = []
-            for sample in process.samples.all():
-                sample_owners.append(sample.currently_responsible_person)
             if edit_description:
                 entry = models.FeedEditedPhysicalProcess.objects.create(
                     originator=self.originator, process=process,
                     description=edit_description["description"], important=important)
             else:
                 entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
-            entry.sample_owners = sample_owners
             self.__add_watchers(process, important)
             self.__connect_with_users(entry, process.__class__)
 
