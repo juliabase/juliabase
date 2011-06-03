@@ -53,6 +53,12 @@ div.inner-frame {
     min-height: 0px;   /* IE7 quirk */
 }
 
+@media only screen and (max-device-width: 960px) { 
+    div.inner-frame {
+	background-image: none;
+    }
+}
+
 table.headbar {
     font-size: small;
     color: white;
