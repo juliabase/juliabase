@@ -104,7 +104,6 @@ class Deposition(PhysicalProcess):
             # models in the advanced search
             raise NotImplementedError
         model_field = super(Deposition, cls).get_search_tree_node()
-        model_field.related_models = {Sample: "samples"}
         return model_field
 
 
