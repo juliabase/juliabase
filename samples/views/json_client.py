@@ -392,22 +392,27 @@ def change_my_samples(request):
     :type request: ``HttpRequest``
 
     :Returns:
-      ``True`` if it worked, ``False`` if something went wrong.  It returns a
-      404 if one sample wasn't found.
+      The IDs of the samples for which the change had to be actually made.  It
+      returns a 404 if one sample wasn't found.
 
     :rtype: ``HttpResponse``
     """
     try:
-        sample_ids_to_remove = [int(id_) for id_ in request.POST.get("remove", "").split(",") if id_]
-        sample_ids_to_add = [int(id_) for id_ in request.POST.get("add", "").split(",") if id_]
+        sample_ids_to_remove = set(int(id_) for id_ in request.POST.get("remove", "").split(",") if id_)
+        sample_ids_to_add = set(int(id_) for id_ in request.POST.get("add", "").split(",") if id_)
     except ValueError:
         raise Http404("One or more of the sample IDs were invalid.")
-    base_query = utils.restricted_samples_query(request.user)
+    doubled_ids = sample_ids_to_remove & sample_ids_to_add
+    sample_ids_to_remove -= doubled_ids
+    sample_ids_to_add -= doubled_ids
     try:
-        samples_to_remove = models.Sample.objects.in_bulk(sample_ids_to_remove)
-        samples_to_add = base_query.in_bulk(sample_ids_to_add)
+        samples_to_remove = models.Sample.objects.in_bulk(list(sample_ids_to_remove))
+        samples_to_add = utils.restricted_samples_query(request.user).in_bulk(list(sample_ids_to_add))
     except models.Sample.DoesNotExist:
         raise Http404("One or more of the sample IDs could not be found.")
+    current_my_samples = set(request.user.my_samples.values_list("id", flat=True))
+    changed_sample_ids = sample_ids_to_remove & current_my_samples | \
+        sample_ids_to_add & current_my_samples - sample_ids_to_remove
     request.user.my_samples.remove(*samples_to_remove.values())
     request.user.my_samples.add(*samples_to_add.values())
-    return respond_in_json(True)
+    return respond_in_json(changed_sample_ids)
