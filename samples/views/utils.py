@@ -590,6 +590,7 @@ def restricted_samples_query(user):
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).distinct()
 
+
 def round(value, digits):
     u"""Method for rounding a numeric value to a fixed number of significant
     digits.
