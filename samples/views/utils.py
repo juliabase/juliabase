@@ -581,8 +581,8 @@ def get_physical_processes():
 def restricted_samples_query(user):
     u"""Returns a ``QuerySet`` which is restricted to samples the names of
     which the given user is allowed to see.  Note that this doesn't mean that
-    the user is allowed to see all of the samples themselves necessary.  It is
-    only about the names.  See the `search` view for further information.
+    the user is allowed to see all of the samples themselves necessarily.  It
+    is only about the names.  See the `search` view for further information.
     """
     if user.is_staff:
         return models.Sample.objects.all()
