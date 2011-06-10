@@ -412,7 +412,7 @@ def change_my_samples(request):
         raise Http404("One or more of the sample IDs could not be found.")
     current_my_samples = set(request.user.my_samples.values_list("id", flat=True))
     changed_sample_ids = sample_ids_to_remove & current_my_samples | \
-        sample_ids_to_add & current_my_samples - sample_ids_to_remove
+        sample_ids_to_add - (current_my_samples - sample_ids_to_remove)
     request.user.my_samples.remove(*samples_to_remove.values())
     request.user.my_samples.add(*samples_to_add.values())
     return respond_in_json(changed_sample_ids)
