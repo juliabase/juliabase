@@ -114,7 +114,8 @@ def embed_timestamp(request, name):
         except models.SampleSeries.DoesNotExist:
             request._sample_series_timestamp = None
         else:
-            timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp)
+            timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp,
+                            request.user.chantal_user_details.layout_last_modified)
             request._sample_series_timestamp = adjust_timezone_information(timestamp)
 
 

@@ -260,7 +260,7 @@ class SamplesAndProcesses(object):
         :rtype: `SamplesAndProcesses`
         """
         sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
-        cache_key = "sample:{0}-{1}".format(sample.pk, models.get_user_settings_hash(user))
+        cache_key = "sample:{0}-{1}".format(sample.pk, user.chantal_user_details.get_data_hash())
         samples_and_processes = cache.get(cache_key)
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
@@ -511,6 +511,7 @@ def embed_timestamp(request, sample_name):
             user_details = request.user.samples_user_details
             timestamps.append(user_details.display_settings_timestamp)
             timestamps.append(user_details.my_samples_timestamp)
+            timestamps.append(request.user.chantal_user_details.layout_last_modified)
             request._sample_timestamp = adjust_timezone_information(max(timestamps))
 
 

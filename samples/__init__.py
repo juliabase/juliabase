@@ -43,7 +43,7 @@ main menu page.  We implement a three-level cache:
    are stored in the cache as a special data structure called
    ``SamplesAndProcesses``.  In order to increase cache efficiency, this data
    structure can be re-used for different users.  Additionally, it is stored
-   multiple times in the cache, for different “display settings” (language,
+   multiple times in the cache, for different “layout settings” (language,
    skin).  However, it becomes invalid if the sample or some of the displayed
    information is changed.
 
@@ -88,9 +88,14 @@ in order to delete cache items or to update a last-modified timestamp:
    auto-updated whenever the respective series is saved.
 
 5. ``UserDetails``.  This contains a ``display_settings_timestamp`` which is
-   the last time the user has changed display settings (language, skin, etc).
-   Moreover, it contains ``my_samples_timestamp`` which is the last time the
-   user has changed his “My Samples”.
+   the last time the user has changed things that affect display of samples and
+   sample series (topic memberships, clearances, etc).  Moreover, it contains
+   ``my_samples_timestamp`` which is the last time the user has changed his “My
+   Samples”.
+
+   Additionally, the ``UserDetails`` of ``chantal_common`` contain the field
+   ``layout_last_modified`` which is updated when language or browser are
+   changed (this also affects display of samples and sample series).
 
 Note that ``SampleSplit`` needs special treatment because it is the only
 process which contains sample data (namely the sample's name).  Additionally,
@@ -196,24 +201,6 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
 signals.m2m_changed.connect(touch_my_samples, sender=samples_app.Sample.watchers.through)
 
 
-def touch_display_settings(sender, instance, **kwargs):
-    u"""Touch the “display settings modified” field in the ``UserDetails``.
-    This function is called whenever the ``UserDetails`` of ``chantal_common``
-    are changed.  In particular this means that the sample datasheet is not
-    taken from the browser cache if the user's preferred language has recently
-    changed.
-    """
-    try:
-        if instance.get_data_hash() != instance._old:
-            instance.user.samples_user_details.touch_display_settings()
-    except samples_app.UserDetails.DoesNotExist:
-        # We can safely ignore it.  The initial value of
-        # display_settings_timestamp is correctly set anyway.
-        pass
-
-signals.post_save.connect(touch_display_settings, sender=chantal_common_app.UserDetails)
-
-
 def get_identifying_data_hash(user):
     u"""Return the hash of username, firstname, and lastname.  See the
     ``idenfifying_data_hash`` field in ``UserDetails`` for further information.
@@ -251,9 +238,9 @@ signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.Us
 
 
 def touch_user_samples_and_processes(sender, instance, created, **kwargs):
-    u"""Removes all chached items of samples, sample series, and processes
-    which are connected with a user.  This is done because the user's name may
-    have changed.
+    u"""Removes all cached items of samples, sample series, and processes which
+    are connected with a user.  This is done because the user's name may have
+    changed.
     """
     former_identifying_data_hash = get_identifying_data_hash(instance)
     if former_identifying_data_hash != instance.samples_user_details.idenfifying_data_hash:

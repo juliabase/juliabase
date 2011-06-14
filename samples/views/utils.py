@@ -551,7 +551,7 @@ def digest_process(process, user, local_context={}):
     :rtype: dict mapping str to ``object``
     """
     process = process.actual_instance
-    cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
+    cache_key = process.get_cache_key(user.chantal_user_details.get_data_hash(), local_context)
     cached_context = cache.get(cache_key) if cache_key else None
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
