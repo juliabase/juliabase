@@ -17,7 +17,7 @@ u"""Models in the relational database for Chantal-Common.
 """
 
 from __future__ import absolute_import
-import hashlib
+import hashlib, datetime
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -43,6 +43,9 @@ class UserDetails(models.Model):
     department = models.CharField(_(u"department"), max_length=30, blank=True)
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     browser_system = models.CharField(_(u"operating system"), max_length=10, default="windows")
+    layout_last_modified = models.DateTimeField(_(u"layout last modified"), auto_now_add=True)
+    """Timestamp at which the settings which affect appearance of the HTML were
+    changed for the last time."""
     is_administrative = models.BooleanField(_(u"is administrative"), default=False)
     """``True`` if the account doesn't belong to an actual user, and thus
     shouldn't be eligible for things like "currently_responsible_person"."""
@@ -57,6 +60,11 @@ class UserDetails(models.Model):
 
     def __unicode__(self):
         return unicode(self.user)
+
+    def save(self, *args, **kwargs):
+        if self._old == self.get_data_hash():
+            self.layout_last_modified = datetime.datetime.now()
+        super(UserDetails, self).save(*args, **kwargs)
 
     def get_data_hash(self):
         u"""Get the hash of all fields that change the HTML's appearance,
