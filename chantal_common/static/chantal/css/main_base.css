@@ -53,6 +53,9 @@ div.inner-frame {
     min-height: 0px;   /* IE7 quirk */
 }
 
+/* FixMe: This is a cheap fix for Android 2.2, the standard browser of which
+cannot render the alpha channel of the background image properly.  It should be
+removed when this is not a problem anymore. */
 @media only screen and (max-device-width: 960px) { 
     div.inner-frame {
 	background-image: none;

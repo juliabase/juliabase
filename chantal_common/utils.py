@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import codecs, re, os, os.path, time, json, decimal, datetime, copy
+import codecs, re, os, os.path, time, json, decimal, datetime, copy, mimetypes
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -595,9 +595,7 @@ def static_file_response(filepath, served_filename=None):
     if not settings.USE_X_SENDFILE:
         response.write(open(filepath).read())
     response["X-Sendfile"] = filepath
-    response["Content-Type"] = \
-        {".jpeg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf"}. \
-        get(os.path.splitext(filepath)[1], "application/octet-stream")
+    response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
     response["Content-Length"] = os.path.getsize(filepath)
     if served_filename:
         response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
