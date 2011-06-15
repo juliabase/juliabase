@@ -62,7 +62,7 @@ class UserDetails(models.Model):
         return unicode(self.user)
 
     def save(self, *args, **kwargs):
-        if self._old == self.get_data_hash():
+        if self._old != self.get_data_hash():
             self.layout_last_modified = datetime.datetime.now()
         super(UserDetails, self).save(*args, **kwargs)
 
