@@ -217,7 +217,15 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         allowed_roots.add(default_root)
         assert all(os.path.isdir(path) for path in allowed_roots)
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
-        if os.path.isdir(absolute_filepath):
+        # FixMe: This try block is only necessary as long as we don't have WSGI
+        # running in daemon mode.  Then, Tranc (or whatever) seems to set the
+        # LANG environ variable to an invalid value, causing os.stat (which is
+        # called by isdir) to fail.
+        try:
+            is_dir = os.path.isdir(absolute_filepath)
+        except UnicodeEncodeError:
+            is_dir = os.path.isdir(absolute_filepath.encode("utf-8"))
+        if is_dir:
             if not may_be_directory:
                 raise_inaccessible_exception()
             absolute_filepath = os.path.join(absolute_filepath, ".")
