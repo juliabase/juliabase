@@ -551,7 +551,7 @@ def digest_process(process, user, local_context={}):
     :rtype: dict mapping str to ``object``
     """
     process = process.actual_instance
-    cache_key = process.get_cache_key(models.get_user_settings_hash(user), local_context)
+    cache_key = process.get_cache_key(user.chantal_user_details.get_data_hash(), local_context)
     cached_context = cache.get(cache_key) if cache_key else None
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
@@ -581,14 +581,15 @@ def get_physical_processes():
 def restricted_samples_query(user):
     u"""Returns a ``QuerySet`` which is restricted to samples the names of
     which the given user is allowed to see.  Note that this doesn't mean that
-    the user is allowed to see all of the samples themselves necessary.  It is
-    only about the names.  See the `search` view for further information.
+    the user is allowed to see all of the samples themselves necessarily.  It
+    is only about the names.  See the `search` view for further information.
     """
     if user.is_staff:
         return models.Sample.objects.all()
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).distinct()
+
 
 def round(value, digits):
     u"""Method for rounding a numeric value to a fixed number of significant

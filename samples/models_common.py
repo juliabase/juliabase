@@ -41,32 +41,6 @@ from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
 
 
-def get_user_settings_hash(user):
-    u"""Calculate a hash of the user's settings.  This is used for caching.  In
-    order to fetch HTML-containing material from the cache, it is necessary to
-    have the user's settings in the cache key.  Otherwise, the HTML would be
-    wrong.  Currently, this is only the language and the user's operating
-    system.  So if you switch the language from English to German, this hash
-    prevents Chantal from fetching HTML that still is in English.
-    Theoretically, a skin setting may also be included here (if skins are not
-    solely realised via CSS).
-
-    :Parameters:
-      - `user`: the currently logged-in user
-
-    :type user: ``django.contrib.auth.models.User``
-
-    :Return:
-      an ASCII hash representing the user's settings
-
-    :rtype: str
-    """
-    hash_ = hashlib.sha1()
-    hash_.update(user.chantal_user_details.language)
-    hash_.update(user.chantal_user_details.browser_system)
-    return hash_.hexdigest()
-
-
 class ExternalOperator(models.Model):
     u"""Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
@@ -1462,8 +1436,10 @@ class UserDetails(models.Model):
     def touch_display_settings(self):
         u"""Set the last modifications of sample settings to the current time.
         This method must be called every time when something was changed which
-        influences the display of a sample datasheet, e. g. the language or the
-        “My Samples” list.  It is used for efficient caching.
+        influences the display of a sample datasheet (and is not covered by
+        other timestamps (``my_samples_timestamp``,
+        `chantal_common.models.UserDetails.layout_last_modified`), e. g. topic
+        memberships.  It is used for efficient caching.
         """
         self.display_settings_timestamp = datetime.datetime.now()
         self.save()
