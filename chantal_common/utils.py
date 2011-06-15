@@ -218,7 +218,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         assert all(os.path.isdir(path) for path in allowed_roots)
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
         # FixMe: This try block is only necessary as long as we don't have WSGI
-        # running in daemon mode.  Then, Tranc (or whatever) seems to set the
+        # running in daemon mode.  Then, Trac (or whatever) seems to set the
         # LANG environ variable to an invalid value, causing os.stat (which is
         # called by isdir) to fail.
         try:
