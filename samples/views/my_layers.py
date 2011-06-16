@@ -152,14 +152,12 @@ def save_to_database(my_layer_forms, user):
     old_layers = user_details.my_layers
     user_details.my_layers = json.dumps(
         [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms])
-    for i in range(1, max(len(old_layers), len(user_details.my_layers))):
-        if not old_layers[i] == user_details.my_layers[i]:
-            break
+
+    if not old_layers == user_details.my_layers:
+        user_details.save()
+        return  _(u"Successfully changed “My Layers”")
     else:
         return  _(u"Nothing changed.")
-    user_details.save()
-    return  _(u"Successfully changed “My Layers”")
-
 
 @login_required
 def edit(request, login_name):

@@ -155,6 +155,7 @@ class AddLayersForm(forms.Form):
     def __init__(self, user_details, model, data=None, **kwargs):
         super(AddLayersForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
+        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
         self.model = model
 
     def clean_number_of_layers_to_add(self):
