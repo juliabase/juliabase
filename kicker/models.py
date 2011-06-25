@@ -32,6 +32,7 @@ class Match(models.Model):
     seconds = models.FloatField(_("seconds"), help_text=_(u"duration of the match"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     finished = models.BooleanField(_(u"finished"), default=False)
+    reporter = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"reporter"), related_name="+")
 
     class Meta:
         ordering = ["timestamp"]

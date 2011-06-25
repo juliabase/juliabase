@@ -42,6 +42,13 @@ def get_current_kicker_number(player):
     try:
         return models.KickerNumber.objects.filter(player=player).latest("timestamp").number
     except models.KickerNumber.DoesNotExist:
+        raise NoKickerNumber
+
+
+def get_current_kicker_number_or_estimate(player):
+    try:
+        return get_current_kicker_number(player)
+    except NoKickerNumber:
         preliminary_kicker_number = 1500
         matches = list(models.Match.objects.filter(Q(player_a_1=player) | Q(player_a_2=player) | Q(player_b_1=player) |
                                                    Q(player_b_2=player)).distinct())
@@ -56,6 +63,7 @@ def get_current_kicker_number(player):
             old_kicker_number = preliminary_kicker_number
             number_of_matches = 0
             for match in matches:
+                assert match.finished
                 try:
                     number_player_a_1 = get_current_kicker_number(match.player_a_1) if match.player_a_1 != player \
                         else preliminary_kicker_number
@@ -95,9 +103,9 @@ def get_old_stock_value(player):
 
 @login_required
 def edit_match(request, id_=None):
-    if request.user.username != "kicker":
-        raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
     match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
+    if match and match.reporter != request.user:
+        raise JSONRequestException(3005, u"You must be the original reporter of this match.")
     try:
         if not match:
             player_a_1 = get_object_or_404(django.contrib.auth.models.User, username=request.POST["player_a_1"])
@@ -113,25 +121,23 @@ def edit_match(request, id_=None):
         raise JSONRequestException(3, error.args[0])
     except ValueError as error:
         raise JSONRequestException(5, error.args[0])
-    if seconds <= 0:
-        raise JSONRequestException(5, u"Seconds must be positive")
     if not match:
         if player_a_1 == player_a_2 and player_b_1 != player_b_2 or player_a_1 != player_a_2 and player_b_1 == player_b_2:
-            raise JSONRequestException(3000, "Games with three players can't be processed")
+            raise JSONRequestException(3000, u"Games with three players can't be processed.")
         if player_a_1 == player_a_2 == player_b_1 == player_b_2:
-            raise JSONRequestException(3001, "All players are the same person")
+            raise JSONRequestException(3001, u"All players are the same person.")
         if models.Match.objects.filter(finished=False).exists():
-            raise JSONRequestException(3004, "You can't add a match if another is not yet finished")
+            raise JSONRequestException(3004, u"You can't add a match if another is not yet finished.")
     else:
         if match.finished:
-            raise JSONRequestException(3003, "A finished match can't be edited anymore")
+            raise JSONRequestException(3003, u"A finished match can't be edited anymore.")
         player_a_1 = match.player_a_1
         player_a_2 = match.player_a_2
         player_b_1 = match.player_b_1
         player_b_2 = match.player_b_2
     try:
         if models.Match.objects.latest("timestamp").timestamp >= timestamp:
-            raise JSONRequestException(3002, "This game is not the most recent one")
+            raise JSONRequestException(3002, u"This game is not the most recent one.")
     except models.Match.DoesNotExist:
         pass
     if match:
@@ -148,13 +154,16 @@ def edit_match(request, id_=None):
     else:
         match = models.Match.objects.create(
             player_a_1=player_a_1, player_a_2=player_a_2, player_b_1=player_b_1, player_b_2=player_b_2,
-            goals_a=goals_a, goals_b=goals_b, timestamp=timestamp, finished=finished, seconds=seconds)
+            goals_a=goals_a, goals_b=goals_b, timestamp=timestamp, finished=finished, seconds=seconds,
+            reporter=request.user)
     if match.finished:
+        if seconds <= 0:
+            raise JSONRequestException(5, u"Seconds must be positive.")
         try:
-            number_player_a_1 = get_current_kicker_number(player_a_1)
-            number_player_a_2 = get_current_kicker_number(player_a_2)
-            number_player_b_1 = get_current_kicker_number(player_b_1)
-            number_player_b_2 = get_current_kicker_number(player_b_2)
+            number_player_a_1 = get_current_kicker_number_or_estimate(player_a_1)
+            number_player_a_2 = get_current_kicker_number_or_estimate(player_a_2)
+            number_player_b_1 = get_current_kicker_number_or_estimate(player_b_1)
+            number_player_b_2 = get_current_kicker_number_or_estimate(player_b_2)
         except NoKickerNumber:
             pass
         else:
@@ -194,6 +203,17 @@ def edit_match(request, id_=None):
 
 
 @login_required
+def cancel_match(request, id_):
+    match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
+    if match and match.reporter != request.user:
+        raise JSONRequestException(3005, u"You must be the original reporter of this match.")
+    if match.finished:
+        raise JSONRequestException(3003, u"A finished match can't be canceled.")
+    match.delete()
+    return respond_in_json(True)
+
+
+@login_required
 def set_start_kicker_number(request, username):
     if request.user.username != "kicker":
         raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
@@ -218,7 +238,7 @@ def get_eligible_players():
     two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
     ids = list(models.KickerNumber.objects.filter(timestamp__gt=two_weeks_ago).values_list("player", flat=True))
     eligible_players = list(django.contrib.auth.models.User.objects.in_bulk(ids).values())
-    result = [(get_current_kicker_number(player), player) for player in eligible_players]
+    result = [(get_current_kicker_number_or_estimate(player), player) for player in eligible_players]
     result.sort(reverse=True)
     return [(entry[1], int(round(entry[0]))) for entry in result]
 
@@ -234,7 +254,8 @@ def plot_commands(axes, plot_data):
     months_formatter = matplotlib.dates.DateFormatter('%b')
     axes.xaxis.set_major_formatter(months_formatter)
     axes.grid(True)
-    
+
+
 def update_plot():
     path = os.path.join(settings.STATIC_ROOT, "kicker/")
 #    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
