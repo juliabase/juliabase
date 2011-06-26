@@ -125,8 +125,13 @@ def edit_match(request, id_=None):
             raise JSONRequestException(3000, u"Games with three players can't be processed.")
         if player_a_1 == player_a_2 == player_b_1 == player_b_2:
             raise JSONRequestException(3001, u"All players are the same person.")
-        if models.Match.objects.filter(finished=False).exists():
-            raise JSONRequestException(3004, u"You can't add a match if another is not yet finished.")
+        unfinished_matches = models.Match.objects.filter(finished=False)
+        if unfinished_matches.exists():
+            if unfinished_matches.exclude(reporter=request.user).exists():
+                raise JSONRequestException(3004,
+                                           u"You can't add a match if another one of another reporter is not yet finished.")
+            for match in unfinished_matches.all():
+                match.delete()
     else:
         if match.finished:
             raise JSONRequestException(3003, u"A finished match can't be edited anymore.")
@@ -355,8 +360,8 @@ def edit_user_details(request, username):
 @login_required
 def get_player(request):
     try:
-        user_details = get_object_or_404(models.UserDetails, shortkey=request.GET.get("shortkey", u""))
-    except models.UserDetails.MultipleObjectsReturned:
+        user_details = models.UserDetails.objects.get(shortkey=request.GET.get("shortkey", u""))
+    except (models.UserDetails.MultipleObjectsReturned, models.UserDetails.DoesNotExist):
         raise Http404(u"User not found.")
     return respond_in_json(
         (user_details.user.username, user_details.nickname or user_details.user.first_name or user_details.user.username))
