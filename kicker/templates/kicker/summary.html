@@ -39,7 +39,7 @@ copyright holder, you must destroy it immediately and completely.
   <tbody>
     {% for match in latest_matches %}
       <tr>
-	<td>{{ match.timestamp|date:"SHORT_DATE_FORMAT" }}</td>
+	<td>{{ match.timestamp|date:"D" }}</td>
 	<td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
           – {{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
 	<td>{{ match.goals_a }}:{{ match.goals_b }}</td>
