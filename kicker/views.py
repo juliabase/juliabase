@@ -167,7 +167,7 @@ def edit_match(request, id_=None):
         if seconds <= 0:
             raise JSONRequestException(5, u"Seconds must be positive.")
         if numbers_available:
-            S = 1/2 + 90/7 * (goals_a - goals_b) / seconds
+            S = 1/2 + 150/7 * (goals_a - goals_b) / seconds
             E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
             delta = S - E
             delta_a_1 = get_k(player_a_1) * delta
