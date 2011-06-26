@@ -90,8 +90,8 @@ def get_current_kicker_number_or_estimate(player):
         return preliminary_kicker_number
 
 
-def get_k(player):
-    return 24 if models.KickerNumber.objects.filter(player=player).count() > 30 else 30
+def get_k(player=None):
+    return 24 if not player or models.KickerNumber.objects.filter(player=player).count() > 30 else 30
 
 
 def get_old_stock_value(player):
@@ -156,17 +156,18 @@ def edit_match(request, id_=None):
             player_a_1=player_a_1, player_a_2=player_a_2, player_b_1=player_b_1, player_b_2=player_b_2,
             goals_a=goals_a, goals_b=goals_b, timestamp=timestamp, finished=finished, seconds=seconds,
             reporter=request.user)
+    try:
+        number_player_a_1 = get_current_kicker_number_or_estimate(player_a_1)
+        number_player_a_2 = get_current_kicker_number_or_estimate(player_a_2)
+        number_player_b_1 = get_current_kicker_number_or_estimate(player_b_1)
+        number_player_b_2 = get_current_kicker_number_or_estimate(player_b_2)
+        numbers_available = True
+    except NoKickerNumber:
+        numbers_available = False
     if match.finished:
         if seconds <= 0:
             raise JSONRequestException(5, u"Seconds must be positive.")
-        try:
-            number_player_a_1 = get_current_kicker_number_or_estimate(player_a_1)
-            number_player_a_2 = get_current_kicker_number_or_estimate(player_a_2)
-            number_player_b_1 = get_current_kicker_number_or_estimate(player_b_1)
-            number_player_b_2 = get_current_kicker_number_or_estimate(player_b_2)
-        except NoKickerNumber:
-            pass
-        else:
+        if numbers_available:
             S = 1/2 + 90/7 * (goals_a - goals_b) / seconds
             E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
             delta = S - E
@@ -198,7 +199,14 @@ def edit_match(request, id_=None):
             models.StockValue.objects.create(
                 gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_2,
                 timestamp=match.timestamp)
-    return respond_in_json(match.pk)
+    else:
+        if numbers_available:
+            B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
+            expected_score = (int(round(6 / (1 + B))), int(round(6 / (1 + 1 / B))))
+    if numbers_available:
+        return respond_in_json(match.pk, get_k() * delta if match.finished else expected_score)
+    else:
+        return respond_in_json(match.pk, None)
 
 
 @login_required
