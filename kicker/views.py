@@ -51,7 +51,7 @@ def get_current_kicker_number_or_estimate(player):
     except NoKickerNumber:
         preliminary_kicker_number = 1500
         matches = list(models.Match.objects.filter(Q(player_a_1=player) | Q(player_a_2=player) | Q(player_b_1=player) |
-                                                   Q(player_b_2=player)).distinct())
+                                                   Q(player_b_2=player)).filter(finished=True).distinct())
         # FixMe: This part is very inefficient.  One should collect the matches
         # *before* one enters the while loop.  This way, one avoids unnecessary
         # doubling of many operations.  On the other hand, one needs a new data
@@ -63,7 +63,6 @@ def get_current_kicker_number_or_estimate(player):
             old_kicker_number = preliminary_kicker_number
             number_of_matches = 0
             for match in matches:
-                assert match.finished
                 try:
                     number_player_a_1 = get_current_kicker_number(match.player_a_1) if match.player_a_1 != player \
                         else preliminary_kicker_number
@@ -204,9 +203,9 @@ def edit_match(request, id_=None):
             B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
             expected_score = (int(round(6 / (1 + B))), int(round(6 / (1 + 1 / B))))
     if numbers_available:
-        return respond_in_json(match.pk, get_k() * delta if match.finished else expected_score)
+        return respond_in_json((match.pk, get_k() * delta if match.finished else expected_score))
     else:
-        return respond_in_json(match.pk, None)
+        return respond_in_json((match.pk, None))
 
 
 @login_required
