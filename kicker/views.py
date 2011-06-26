@@ -341,12 +341,12 @@ def edit_user_details(request, username):
         raise Http404(u"You can't access the user details of another user.")
     user_details = user.kicker_user_details
     if request.method == "POST":
-        user_details_form = UserDetailsForm(request.POST, instance=user_details)
+        user_details_form = UserDetailsForm(request.user, request.POST, instance=user_details)
         if user_details_form.is_valid():
             user_details_form.save()
             return successful_response(request, _(u"The preferences were successfully updated."), summary)
     else:
-        user_details_form = UserDetailsForm(instance=user_details)
+        user_details_form = UserDetailsForm(requets.user, instance=user_details)
     return render_to_response("kicker/user_details.html", {
             "title": _(u"Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
             "user_details": user_details_form}, context_instance=RequestContext(request))
