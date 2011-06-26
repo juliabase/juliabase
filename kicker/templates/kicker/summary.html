@@ -35,14 +35,14 @@ copyright holder, you must destroy it immediately and completely.
   </tbody>
 </table>
 
-<table cellspacing="10">
+<table cellspacing="10" style="font-size: x-small">
   <tbody>
     {% for match in latest_matches %}
       <tr>
-	<td>{{ match.timestamp }}</td>
+	<td>{{ match.timestamp|date:"SHORT_DATE_FORMAT" }}</td>
 	<td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
           – {{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
-	<td>{{ match.gloals_a }}:{{ match.gloals_b }}</td>
+	<td>{{ match.goals_a }}:{{ match.goals_b }}</td>
 	<td>({{ match.reporter|nickname }})</td>
       </tr>
     {% endfor %}
