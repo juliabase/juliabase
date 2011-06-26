@@ -304,9 +304,8 @@ def summary(request):
     update_plot()
     eligible_players = get_eligible_players()
     return render_to_response("kicker/summary.html", {
-        "title": _(u"Kicker summary"),
-        "kicker_numbers": [(entry[0].kicker_user_details.nickname or get_really_full_name(entry[0]), entry[1])
-                           for entry in eligible_players]},
+        "title": _(u"Kicker summary"), "kicker_numbers": eligible_players,
+        "latest_matches": models.Match.objects.all()[-20:]},
         context_instance=RequestContext(request))
 
 

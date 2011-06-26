@@ -15,6 +15,7 @@ copyright holder, you must destroy it immediately and completely.
 
 {% load i18n %}
 {% load chantal %}
+{% load kicker %}
 
 {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
 
@@ -25,10 +26,24 @@ copyright holder, you must destroy it immediately and completely.
 </div>
 <table style="border: 2px solid gray" cellspacing="10">
   <tbody>
-    {% for name, kicker_number in kicker_numbers %}
+    {% for player, kicker_number in kicker_numbers %}
       <tr>
-	<td>{{ name }}</td>
+	<td>{{ player|nickname }}</td>
 	<td>{{ kicker_number }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<table cellspacing="10">
+  <tbody>
+    {% for match in latest_matches %}
+      <tr>
+	<td>{{ match.timestamp }}</td>
+	<td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
+          – {{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
+	<td>{{ match.gloals_a }}:{{ match.gloals_b }}</td>
+	<td>({{ match.reporter|nickname }})</td>
       </tr>
     {% endfor %}
   </tbody>
