@@ -30,6 +30,5 @@ register = template.Library()
 
 
 @register.filter
-@stringfilter
 def nickname(user):
     return user.kicker_user_details.nickname or utils.get_really_full_name(user)
