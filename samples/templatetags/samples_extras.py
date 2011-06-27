@@ -526,10 +526,11 @@ class ValueSplitFieldNode(template.Node):
             if all(field == u"—" for field in fields):
                 unit = None
             values = u""
-            # FixMe: Not only the very last field should be pretty-printed by
-            # ``quantity`` but all non-``None`` fields.
             for field in fields[:-1]:
-                values += unicode(field) + u" / "
+                if field == u"—":
+                    values += unicode(field) + u" / "
+                else:
+                    values += quantity(field) + u" / "
             values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
         return u"""<td class="label">{label}:</td><td class="value">{values}</td>""".format(
             label=verbose_name, values=values)

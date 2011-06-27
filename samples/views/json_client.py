@@ -98,7 +98,7 @@ def primary_keys(request):
             result_dict["samples"].update(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
     if "depositions" in query_dict:
         deposition_numbers = query_dict["depositions"].split(",")
-        result_dict["depositions"] = dict(models.Deposition.objects. 
+        result_dict["depositions"] = dict(models.Deposition.objects.
                                           filter(number__in=deposition_numbers).values_list("number", "id"))
     if "users" in query_dict:
         if query_dict["users"] == "*":
