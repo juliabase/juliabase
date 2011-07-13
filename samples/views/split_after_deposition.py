@@ -46,20 +46,20 @@ class OriginalDataForm(Form):
     number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
 
-    def __init__(self, remote_client, deposition_number, post_data=None, *args, **kwargs):
+    def __init__(self, remote_client, new_name, post_data=None, *args, **kwargs):
         if "initial" not in kwargs:
             kwargs["initial"] = {}
         if post_data is None:
             old_sample_name = kwargs["initial"]["sample"]
             kwargs["initial"]["new_name"] = old_sample_name if utils.sample_name_format(old_sample_name) == "new" \
-                else deposition_number
+                else new_name
         super(OriginalDataForm, self).__init__(post_data, *args, **kwargs)
-        self.remote_client, self.deposition_number = remote_client, deposition_number
+        self.remote_client, self.new_name = remote_client, new_name
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
         new_name_format = utils.sample_name_format(new_name)
-        if new_name_format == "old" and utils.does_sample_exist(new_name):
+        if new_name_format == "old" and new_name != self.new_name and utils.does_sample_exist(new_name):
             raise ValidationError(_(u"This sample name exists already."))
         elif new_name_format == "provisional":
             raise ValidationError(_(u"You must get rid of the provisional sample name."))
@@ -96,7 +96,7 @@ class OriginalDataForm(Form):
                     append_error(self, _(u"The new name must begin with the old name."), "new_name")
                     del self.cleaned_data["new_name"]
             else:
-                if not new_name.startswith(self.deposition_number):
+                if not new_name.startswith(self.new_name):
                     append_error(self, _(u"The new name must begin with the deposition number."), "new_name")
                     del self.cleaned_data["new_name"]
         return self.cleaned_data
