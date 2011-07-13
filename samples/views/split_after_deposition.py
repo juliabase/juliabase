@@ -57,13 +57,15 @@ class OriginalDataForm(Form):
         self.remote_client, self.new_name = remote_client, new_name
 
     def clean_new_name(self):
-        new_name = self.cleaned_data["new_name"]
-        new_name_format = utils.sample_name_format(new_name)
-        if new_name_format == "old" and new_name != self.new_name and utils.does_sample_exist(new_name):
-            raise ValidationError(_(u"This sample name exists already."))
-        elif new_name_format == "provisional":
-            raise ValidationError(_(u"You must get rid of the provisional sample name."))
-        return new_name
+        if "sample" in self.cleaned_data:
+            new_name = self.cleaned_data["new_name"]
+            new_name_format = utils.sample_name_format(new_name)
+            if new_name_format == "old" and new_name != self.cleaned_data["sample"].name and \
+                    utils.does_sample_exist(new_name):
+                raise ValidationError(_(u"This sample name exists already."))
+            elif new_name_format == "provisional":
+                raise ValidationError(_(u"You must get rid of the provisional sample name."))
+            return new_name
 
     def clean_sample(self):
         if not self.remote_client:
@@ -95,7 +97,7 @@ class OriginalDataForm(Form):
                 if not new_name.startswith(sample.name):
                     append_error(self, _(u"The new name must begin with the old name."), "new_name")
                     del self.cleaned_data["new_name"]
-            else:
+            elif sample and sample.name != new_name:
                 if not new_name.startswith(self.new_name):
                     append_error(self, _(u"The new name must begin with the deposition number."), "new_name")
                     del self.cleaned_data["new_name"]
