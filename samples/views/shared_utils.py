@@ -220,6 +220,8 @@ def read_techplot_file(filename, columns=(0, 1)):
     return __read_plot_file(filename, columns, start_value="begin", end_value="end")
 
 
+# FixMe: This should be moved to ``chantal_ipv``.
+
 def read_solarsimulator_plot_file(filename, columns=(0, 1)):
     u"""Read a datafile from a solarsimulator measurement and return the content of selected
     columns.
