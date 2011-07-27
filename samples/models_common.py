@@ -1403,9 +1403,8 @@ class UserDetails(models.Model):
     """
     display_settings_timestamp = models.DateTimeField(_(u"display settings last modified"), auto_now_add=True)
     u"""This timestamp denotes when anything changed which influences the
-    display of a sample, process, sample series etc, e.g. the language, the
-    skin etc.  It is used for expiring browser caching.  See
-    `touch_display_settings`.
+    display of a sample, process, sample series etc which is not covered by
+    other timestamps.  See `touch_display_settings`.
     """
     my_samples_timestamp = models.DateTimeField(_(u"My Samples last modified"), auto_now_add=True)
     u"""This timestamp denotes when My Samples were changed most recently.  It
