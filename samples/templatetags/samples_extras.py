@@ -410,7 +410,7 @@ class ValueFieldNode(template.Node):
             field = u"—"
         else:
             unit = self.unit
-        if self.significant_digits:
+        if self.significant_digits and field != u"—":
             field = round(field, self.significant_digits)
         return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
@@ -423,20 +423,21 @@ def value_field(parser, token):
     columns.  This tag is primarily used in templates of show views, especially
     those used to compile the sample history.  Example::
 
-        {% value_field layer.base_pressure 3 "W" %}
+        {% value_field layer.base_pressure "W" 3 %}
 
     The unit (``"W"`` for “Watt”) is optional.  If you have a boolean field,
     you can give ``"yes/no"`` as the unit, which converts the boolean value to
     a yes/no string (in the current language).  For gas flow fields that should
     collapse if the gas wasn't used, use ``"sccm_collapse"``.
 
-    The number 3 is also optional.  With this option you can set the number of
-    significant digits of the value.  The value will be rounded to match the
-    number of significant digits.
+    The number 3 is also optional.  However, if it is set, the unit must be at
+    least ``""``.  With this option you can set the number of significant
+    digits of the value.  The value will be rounded to match the number of
+    significant digits.
     """
     tokens = token.split_contents()
     if len(tokens) == 4:
-        tag, field, significant_digits, unit = tokens
+        tag, field, unit, significant_digits = tokens
         if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
             raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
         unit = unit[1:-1]
@@ -456,7 +457,7 @@ def value_field(parser, token):
         unit = significant_digits = None
     else:
         raise template.TemplateSyntaxError, "value_field requires one, two, or three arguments"
-    return ValueFieldNode(field, unit, significant_digits)
+    return ValueFieldNode(field, unit or None, significant_digits)
 
 
 @register.simple_tag
