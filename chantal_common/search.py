@@ -488,7 +488,7 @@ def get_search_results(search_tree, max_results, base_query=None):
 
     :rtype: list of model instances, bool
     """
-    results = search_tree.get_query_set(base_query)
+    results = search_tree.get_query_set(base_query).distinct()
     too_many_results = results.count() > max_results
     if too_many_results:
         results = results[:max_results]
