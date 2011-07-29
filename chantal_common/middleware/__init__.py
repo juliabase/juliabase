@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import
 
-import locale, re, json, hashlib, random
+import locale, re, json, hashlib, random, time
 from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
@@ -136,6 +136,9 @@ class JSONClientMiddleware(object):
                 response.status_code == 200:
             hash_ = hashlib.sha1()
             hash_.update(str(random.random()))
+            # For some very obscure reason, a random number was not enough --
+            # it led to collisions time after time.
+            hash_.update(str(time.time()))
             hash_value = hash_.hexdigest()
             user = request.user
             if not user.is_authenticated():
