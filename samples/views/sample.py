@@ -627,7 +627,7 @@ def by_id(request, sample_id, path_suffix):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `sample_id`: the numberic ID of the sample
+      - `sample_id`: the numeric ID of the sample
       - `path_suffix`: the trailing path, e.g. ``"/split/"``; if you just view
         a sample, it is empty (or only the query string)
 
