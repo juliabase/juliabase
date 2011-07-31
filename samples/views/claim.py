@@ -207,7 +207,7 @@ def show(request, claim_id):
     :rtype: ``HttpResponse``
     """
     _ = ugettext
-    claim = get_object_or_404(models.SampleClaim, pk=utils.int_or_zero(claim_id))
+    claim = get_object_or_404(models.SampleClaim, pk=utils.convert_id_to_int(claim_id))
     is_reviewer = request.user == claim.reviewer or request.user.is_staff
     is_requester = request.user == claim.requester
     if not is_reviewer and not is_requester:

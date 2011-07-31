@@ -148,7 +148,7 @@ def bulk_rename(request):
         samples = [get_object_or_404(models.Sample, name="*"+number.zfill(5)) for number in numbers_list.split(",")]
     elif "ids" in request.GET:
         ids = request.GET["ids"].split(",")
-        samples = [get_object_or_404(models.Sample, pk=utils.int_or_zero(id_)) for id_ in ids]
+        samples = [get_object_or_404(models.Sample, pk=utils.convert_id_to_int(id_)) for id_ in ids]
         if not all(utils.sample_name_format(sample.name) in ["old", "provisional"] for sample in samples):
             raise Http404(u"Some given samples not found amongst those with old-style names.")
     else:

@@ -32,11 +32,12 @@ import re, string, codecs, os, os.path
 
 
 def int_or_zero(number):
-    u"""
+    u"""Converts ``number`` to an integer.  If this doesn't work, return ``0``.
+    
     :Parameters:
       - `number`: a string that is supposed to contain an integer number
 
-    :type number: str or unicode
+    :type number: str or unicode or ``NoneType``
 
     :Return:
       the ``int`` representation of ``number``, or 0 if it didn't represent a
@@ -46,11 +47,8 @@ def int_or_zero(number):
     """
     try:
         return int(number)
-    except ValueError:
+    except (ValueError, TypeError):
         return 0
-    except TypeError:
-        if number is None:
-            return 0
 
 
 def camel_case_to_underscores(name):
