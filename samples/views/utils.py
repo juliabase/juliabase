@@ -223,7 +223,9 @@ def convert_id_to_int(process_id):
     availability in the database).
 
     FixMe: This should be replaced with a function the gets the database model
-    class as an additional parameter and returns the found object.
+    class as an additional parameter and returns the found object, along the
+    lines of ``get_object_or_404``.  Then, it should also allow for ``None`` as
+    the `process_id`.
 
     :Parameters:
       - `process_id`: the pristine process ID as given via the URL by the user
