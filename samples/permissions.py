@@ -423,7 +423,8 @@ def assert_can_view_physical_process(user, process):
 
     :Parameters:
       - `user`: the user whose permission should be checked
-      - `process`: The concrete process to view.
+      - `process`: The concrete process to view.  It it not necessary that it
+        is the actual instance, i.e. it may also be a ``Process`` instance.
 
     :type user: ``django.contrib.auth.models.User``
     :type process: `models.Process`
