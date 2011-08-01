@@ -293,7 +293,7 @@ class FeedEditedSamples(FeedEntry):
         _ = ugettext
         metadata = {}
         if self.samples.count() == 1:
-            metadata["title"] = _(u"Sample {sample} was edited").format(sample=self.samples.all()[0])
+            metadata["title"] = _(u"Sample {sample} was edited").format(sample=self.samples.get())
         else:
             metadata["title"] = _(u"Samples were edited")
         metadata["category term"] = "edited samples"

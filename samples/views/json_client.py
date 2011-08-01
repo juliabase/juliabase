@@ -323,9 +323,9 @@ def add_sample(request):
         name = get_next_quirky_name(name, year_digits)[:30]
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
-                                                         pk=utils.int_or_zero(currently_responsible_person))
+                                                         pk=utils.convert_id_to_int(currently_responsible_person))
     if topic:
-        topic = get_object_or_404(Topic, pk=utils.int_or_zero(topic))
+        topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
     try:
         sample = models.Sample.objects.create(name=name, current_location=current_location,
                                               currently_responsible_person=currently_responsible_person, purpose=purpose,
@@ -370,7 +370,7 @@ def add_alias(request):
         alias = request.POST["alias"]
     except KeyError:
         return respond_in_json(False)
-    sample = get_object_or_404(models.Sample, pk=utils.int_or_zero(sample_pk))
+    sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_pk))
     try:
         models.models.SampleAlias.create(name=alias, sample=sample)
     except IntegrityError:
