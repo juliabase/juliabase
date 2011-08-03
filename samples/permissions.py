@@ -329,7 +329,7 @@ def assert_can_edit_physical_process(user, process):
 
     :Parameters:
       - `user`: the user whose permission should be checked
-      - `process`: The concrete process to edit.
+      - `process`: The process to edit.  This neend't be the actual instance.
 
     :type user: ``django.contrib.auth.models.User``
     :type process: `models.Process`
@@ -338,7 +338,7 @@ def assert_can_edit_physical_process(user, process):
       - `PermissionError`: raised if the user is not allowed to edit the
         process.
     """
-    process_class = process.__class__
+    process_class = process.content_type.model_class()
     codename = "edit_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
