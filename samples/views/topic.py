@@ -56,7 +56,7 @@ class NewTopicForm(forms.Form):
 @login_required
 def add(request):
     u"""View for adding a new topic.  This action is only allowed to the heads
-    of institute topics.  The name of topics may contain arbitrary characters.
+    of institute groups.  The name of topics may contain arbitrary characters.
 
     :Parameters:
       - `request`: the current HTTP Request object

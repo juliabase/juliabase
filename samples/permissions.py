@@ -209,7 +209,7 @@ class PermissionError(Exception):
       inclusive.  It should be a complete sentence, which addresses the user
       directly.  It should start with a capital letter and end with a full
       stop.  For example, it may be “You are not allowed to view sample 01B-410
-      because you're not … Note that a head of an institute topic may add you
+      because you're not … Note that a head of an institute groups may add you
       to new topics.”.
 
     :type description: unicode
@@ -657,7 +657,7 @@ def assert_can_view_external_operator(user, external_operator):
 def assert_can_edit_topic(user, topic=None):
     u"""Tests whether the user can change topic memberships of other users,
     set the topic's restriction status, and add new topics.  This typically
-    is a priviledge of heads of institute topics.
+    is a priviledge of heads of institute groups.
 
     :Parameters:
       - `user`: the user whose permission should be checked
