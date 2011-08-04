@@ -209,7 +209,7 @@ class PermissionError(Exception):
       inclusive.  It should be a complete sentence, which addresses the user
       directly.  It should start with a capital letter and end with a full
       stop.  For example, it may be “You are not allowed to view sample 01B-410
-      because you're not … Note that a head of an institute topic may add you
+      because you're not … Note that a head of an institute groups may add you
       to new topics.”.
 
     :type description: unicode
@@ -329,7 +329,7 @@ def assert_can_edit_physical_process(user, process):
 
     :Parameters:
       - `user`: the user whose permission should be checked
-      - `process`: The concrete process to edit.
+      - `process`: The process to edit.  This neend't be the actual instance.
 
     :type user: ``django.contrib.auth.models.User``
     :type process: `models.Process`
@@ -338,7 +338,7 @@ def assert_can_edit_physical_process(user, process):
       - `PermissionError`: raised if the user is not allowed to edit the
         process.
     """
-    process_class = process.__class__
+    process_class = process.content_type.model_class()
     codename = "edit_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
@@ -657,7 +657,7 @@ def assert_can_view_external_operator(user, external_operator):
 def assert_can_edit_topic(user, topic=None):
     u"""Tests whether the user can change topic memberships of other users,
     set the topic's restriction status, and add new topics.  This typically
-    is a priviledge of heads of institute topics.
+    is a priviledge of heads of institute groups.
 
     :Parameters:
       - `user`: the user whose permission should be checked
