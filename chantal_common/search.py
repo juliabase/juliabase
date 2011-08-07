@@ -14,6 +14,12 @@
 
 
 u"""Functions and classes for the advanced search.
+
+FixMe: For some reason now obscure to me, ``.values("pk")`` is used throughout
+this module although
+https://docs.djangoproject.com/en/1.3/ref/models/querysets/#in suggests that it
+is superfluous.  It doesn't have any bad functionality/performance impact
+though.
 """
 
 from __future__ import absolute_import
