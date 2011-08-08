@@ -43,7 +43,7 @@ copyright holder, you must destroy it immediately and completely.
             {% for new_name in new_names %}
               {% if new_name.errors or new_name.non_field_errors %}
                 <tr>
-                  <td colspan="0">
+                  <td colspan="100">
                     {% error_list new_name _("Error in sample name") %}
                   </td>
                 </tr>
