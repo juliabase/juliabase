@@ -18,7 +18,7 @@ copyright holder, you must destroy it immediately and completely.
       <table width="100%" cellspacing="0" cellpadding="0">
     {% endifequal %}
     <tr>
-      <td class="error-messages" colspan="0">
+      <td class="error-messages" colspan="100">
 	{% for field in form %}
 	  {% if field.errors %}<p>{{ field.label|safe }}</p>{{ field.errors }}{% endif %}
 	{% endfor %}
