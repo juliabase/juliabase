@@ -272,7 +272,7 @@ class GeneralSampleField(object):
             allowed to see all topic names, therefore it is necessary to know
             who it is
 
-        :type samples: list of `models.Sample`
+        :type samples: iterable of `models.Sample`
         :type user: ``django.contrib.auth.models.User``
         """
         topics, topicless_samples = utils.build_structured_sample_list(samples, user)
