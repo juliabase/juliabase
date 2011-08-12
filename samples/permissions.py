@@ -418,9 +418,9 @@ def assert_can_view_lab_notebook(user, process_class):
 def assert_can_view_physical_process(user, process):
     u"""Tests whether the user can view a physical process (i.e. deposition,
     measurement, etching process, clean room work etc).  You can view a process
-    if you can view all such processes, if you can add such processes and you
-    are the operator of this process, if you have a clearance for this process,
-    or if you can see at least one of the processed samples.
+    if you can view all such processes, if you are the operator of this
+    process, if you have a clearance for this process, or if you can see at
+    least one of the processed samples.
 
     :Parameters:
       - `user`: the user whose permission should be checked
@@ -435,26 +435,20 @@ def assert_can_view_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
-    if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
-        has_add_permission = user.has_perm("{app_label}.{codename}".format(
-                app_label=process_class._meta.app_label, codename=codename))
-    else:
-        has_add_permission = True
     codename = "view_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
     else:
         has_view_all_permission = user.is_superuser
-    if not has_view_all_permission and not (has_add_permission and process.operator == user) and \
-            not any(has_permission_to_fully_view_sample(user, sample) for sample in process.samples.all()):
-        if not samples.models.Clearance.objects.filter(user=user, processes=process).exists():
-            description = _(u"You are not allowed to view the process “{process}” because neither you have the "
-                            u"permission “{permission}”, nor you are allowed to view one of the processed samples, "
-                            "nor is there a clearance for you for this process.").format(
-                process=process, permission=translate_permission(permission_name_to_view_all))
-            raise PermissionError(user, description, new_topic_would_help=True)
+    if not has_view_all_permission and process.operator != user and \
+            not any(has_permission_to_fully_view_sample(user, sample) for sample in process.samples.all()) and \
+            not samples.models.Clearance.objects.filter(user=user, processes=process).exists():
+        description = _(u"You are not allowed to view the process “{process}” because neither you have the "
+                        u"permission “{permission}”, nor you are allowed to view one of the processed samples, "
+                        "nor are you the operator, nor is there a clearance for you for this process.").format(
+            process=process, permission=translate_permission(permission_name_to_view_all))
+        raise PermissionError(user, description, new_topic_would_help=True)
 
 
 def assert_can_edit_result_process(user, result_process):
