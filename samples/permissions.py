@@ -414,6 +414,7 @@ def assert_can_view_lab_notebook(user, process_class):
             permission=translate_permission(permission_name_to_view_all))
         raise PermissionError(user, description)
 
+
 def assert_can_view_physical_process(user, process):
     u"""Tests whether the user can view a physical process (i.e. deposition,
     measurement, etching process, clean room work etc).  You can view a process
