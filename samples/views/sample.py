@@ -320,15 +320,19 @@ class SamplesAndProcesses(object):
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
+            processes = models.Process.objects. \
+                filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"])). \
+                distinct()
+            if local_context["cutoff_timestamp"]:
+                processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             if local_context["clearance"]:
-                basic_query = local_context["clearance"].processes.filter(samples=local_context["sample"])
-            else:
-                basic_query = models.Process.objects. \
-                    filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"]))
-            if local_context["cutoff_timestamp"] is None:
-                processes = basic_query.distinct()
-            else:
-                processes = basic_query.filter(timestamp__lte=local_context["cutoff_timestamp"]).distinct()
+                viewable_process_pks = set()
+                for process in processes:
+                    if process.operator == user or \
+                            issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
+                            permissions.has_permission_to_view_physical_process(user, process):
+                        viewable_process_pks.add(process.pk)
+                processes = models.Process.objects.filter(pk__in=viewable_process_pks)
             for process in processes:
                 process_context = utils.digest_process(process, user, local_context)
                 self.process_contexts.append(process_context)
