@@ -28,6 +28,10 @@ class SampleAdmin(admin.ModelAdmin):
     raw_id_fields = ("processes",)
 
 
+class ClearanceAdmin(admin.ModelAdmin):
+    raw_id_fields = ("processes",)
+
+
 admin.site.register(ExternalOperator)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(SampleAlias)
@@ -38,7 +42,7 @@ admin.site.register(SampleSeries)
 admin.site.register(Initials)
 admin.site.register(UserDetails)
 admin.site.register(Process)
-admin.site.register(Clearance)
+admin.site.register(Clearance, ClearanceAdmin)
 admin.site.register(SampleClaim)
 admin.site.register(StatusMessage)
 
