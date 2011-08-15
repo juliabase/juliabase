@@ -325,14 +325,6 @@ class SamplesAndProcesses(object):
                 distinct()
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
-            if local_context["clearance"]:
-                viewable_process_pks = set()
-                for process in processes:
-                    if process.operator == user or \
-                            issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                            permissions.has_permission_to_view_physical_process(user, process):
-                        viewable_process_pks.add(process.pk)
-                processes = models.Process.objects.filter(pk__in=viewable_process_pks)
             for process in processes:
                 process_context = utils.digest_process(process, user, local_context)
                 self.process_contexts.append(process_context)
@@ -403,6 +395,15 @@ class SamplesAndProcesses(object):
         :type post_data: ``QueryDict`` or ``NoneType``
         """
         self.update_sample_context_for_user(user, clearance, post_data)
+        if clearance:
+            viewable_process_contexts = []
+            for process_context in self.process_contexts:
+                process = process_context["process"]
+                if process.operator == user or \
+                        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
+                        permissions.has_permission_to_view_physical_process(user, process):
+                    viewable_process_contexts.append(process.pk)
+            self.process_contexts = viewable_process_contexts
         for process_context in self.process_contexts:
             process_context.update(
                 process_context["process"].get_context_for_user(user, process_context))
