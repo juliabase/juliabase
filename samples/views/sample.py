@@ -397,7 +397,7 @@ class SamplesAndProcesses(object):
                 if process.operator == user or \
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
                         permissions.has_permission_to_view_physical_process(user, process):
-                    viewable_process_contexts.append(process.pk)
+                    viewable_process_contexts.append(process_context)
             self.process_contexts = viewable_process_contexts
 
     def personalize(self, user, clearance, post_data):
