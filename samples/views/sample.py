@@ -266,6 +266,7 @@ class SamplesAndProcesses(object):
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             cache.set(cache_key, samples_and_processes)
             sample.append_cache_key(cache_key)
+            samples_and_processes.remove_noncleared_process_contexts(user, clearance)
         else:
             samples_and_processes.personalize(user, clearance, post_data)
         return samples_and_processes
@@ -274,14 +275,14 @@ class SamplesAndProcesses(object):
         u"""
         :Parameters:
           - `sample`: the sample to which the processes belong
-          - `full_view`: whether the user can fully view the sample; ``False``
-            currently means that the sample is accessed through a clearance
+          - `clearance`: the clearance object that was used to show the sample,
+            or ``None`` if no clearance was necessary (though maybe existing)
           - `user`: the currently logged-in user
           - `post_data`: the POST data if it was an HTTP POST request, and
             ``None`` otherwise
 
         :type sample: `models.Sample`
-        :type full_view: bool
+        :type clearance: `models.Clearance`
         :type user: ``django.contrib.auth.models.User``
         :type post_data: ``QueryDict`` or ``NoneType``
         """
@@ -376,6 +377,29 @@ class SamplesAndProcesses(object):
         if sample_details:
             self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
 
+    def remove_noncleared_process_contexts(self, user, clearance):
+        u"""Removes all items from ``self.process_contexts`` which the `user`
+        is not allowed to see due to the `clearance`.  Obviously, this routine
+        is a no-op if `clearance` is ``None``.
+
+        :Parameters:
+          - `user`: the currently logged-in user
+          - `clearance`: the clearance object that was used to show the sample,
+            or ``None`` if no clearance was necessary (though maybe existing)
+
+        :type user: ``django.contrib.auth.models.User``
+        :type clearance: `models.Clearance`
+        """
+        if clearance:
+            viewable_process_contexts = []
+            for process_context in self.process_contexts:
+                process = process_context["process"]
+                if process.operator == user or \
+                        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
+                        permissions.has_permission_to_view_physical_process(user, process):
+                    viewable_process_contexts.append(process.pk)
+            self.process_contexts = viewable_process_contexts
+
     def personalize(self, user, clearance, post_data):
         u"""Change the ``SamplesAndProcesses`` object so that it is suitable
         for the current user.  If the object was taken from the cache, it was
@@ -395,15 +419,7 @@ class SamplesAndProcesses(object):
         :type post_data: ``QueryDict`` or ``NoneType``
         """
         self.update_sample_context_for_user(user, clearance, post_data)
-        if clearance:
-            viewable_process_contexts = []
-            for process_context in self.process_contexts:
-                process = process_context["process"]
-                if process.operator == user or \
-                        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                        permissions.has_permission_to_view_physical_process(user, process):
-                    viewable_process_contexts.append(process.pk)
-            self.process_contexts = viewable_process_contexts
+        self.remove_noncleared_process_contexts(user, clearance)
         for process_context in self.process_contexts:
             process_context.update(
                 process_context["process"].get_context_for_user(user, process_context))
