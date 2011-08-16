@@ -136,7 +136,9 @@ class Process(PolymorphicModel):
         """
         keys_list_key = "process-keys:{0}".format(self.pk)
         with cache_key_locked("process-lock:{0}".format(self.pk)):
-            cache.delete_many(cache.get(keys_list_key))
+            keys = cache.get(keys_list_key)
+            if keys:
+                cache.delete_many(keys)
             cache.delete(keys_list_key)
         with_relations = kwargs.pop("with_relations", True)
         super(Process, self).save(*args, **kwargs)
@@ -587,7 +589,9 @@ class Sample(models.Model):
         """
         keys_list_key = "sample-keys:{0}".format(self.pk)
         with cache_key_locked("sample-lock:{0}".format(self.pk)):
-            cache.delete_many(cache.get(keys_list_key))
+            keys = cache.get(keys_list_key)
+            if keys:
+                cache.delete_many(keys)
             cache.delete(keys_list_key)
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
