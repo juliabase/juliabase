@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs
+    respond_in_json, get_all_models, mkdirs, cache_key_locked
 from chantal_common.signals import storage_changed
 from samples.views import utils, form_utils, feed_utils, table_export
 import chantal_common.search
@@ -264,8 +264,12 @@ class SamplesAndProcesses(object):
         samples_and_processes = cache.get(cache_key)
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
-            cache.set(cache_key, samples_and_processes)
-            sample.append_cache_key(cache_key)
+            keys_list_key = "sample-keys:{0}".format(sample.pk)
+            with cache_key_locked("sample-lock:{0}".format(sample.pk)):
+                keys = cache.get(keys_list_key, [])
+                keys.append(cache_key)
+                cache.set(keys_list_key, keys)
+                cache.set(cache_key, samples_and_processes)
             samples_and_processes.remove_noncleared_process_contexts(user, clearance)
         else:
             samples_and_processes.personalize(user, clearance, post_data)

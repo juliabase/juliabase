@@ -32,7 +32,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name
+from chantal_common.utils import get_really_full_name, cache_key_locked
 from chantal_common.models import Topic, PolymorphicModel
 from samples import permissions
 from samples.views import shared_utils
@@ -107,9 +107,7 @@ class Process(PolymorphicModel):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
     comments = models.TextField(_(u"comments"), blank=True)
-    # I don't use auto_now because then, `append_cache_key` wouldn't work.
-    last_modified = models.DateTimeField(_(u"last modified"), editable=False)
-    cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
     finished = models.BooleanField(_(u"finished"), default=True)
     u"""Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
@@ -136,10 +134,10 @@ class Process(PolymorphicModel):
 
         :type with_relations: bool
         """
-        if self.cache_keys:
-            cache.delete_many(self.cache_keys.split("\n"))
-        self.cache_keys = ""
-        self.last_modified = datetime.datetime.now()
+        keys_list_key = "process-keys:{0}".format(self.pk)
+        with cache_key_locked("process-lock:{0}".format(self.pk)):
+            cache.delete_many(cache.get(keys_list_key))
+            cache.delete(keys_list_key)
         with_relations = kwargs.pop("with_relations", True)
         super(Process, self).save(*args, **kwargs)
         if with_relations:
@@ -352,21 +350,6 @@ class Process(PolymorphicModel):
         processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
         return {"processes": processes}
 
-    def append_cache_key(self, cache_key):
-        u"""Append a new cache key to the list of cache keys for this process.
-        If the process is updated, those cache items are deleted in `save`.
-
-        :Parameters:
-          - `cache_key`: the cache key
-
-        :type cache_key: str
-        """
-        if self.cache_keys:
-            self.cache_keys += "\n" + cache_key
-        else:
-            self.cache_keys = cache_key
-        super(Process, self).save()
-
     def get_cache_key(self, user_settings_hash, local_context):
         u"""Calculate a cache key for this context instance of the process.
         Note that there may be many cache items to one process, e. g. one for
@@ -473,7 +456,7 @@ class Process(PolymorphicModel):
         search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name")]
         search_fields.extend(
-            search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "cache_keys", "last_modified", "finished"]))
+            search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "last_modified", "finished"]))
         related_models = {Sample: "samples"}
         related_models.update(
             (related_object.model, related_object.get_accessor_name()) for related_object
@@ -572,8 +555,7 @@ class Sample(models.Model):
                                      verbose_name=_(u"split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
-    last_modified = models.DateTimeField(_(u"last modified"), editable=False)
-    cache_keys = models.TextField(_(u"cache keys"), blank=True, editable=False)
+    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
 
     class Meta:
         verbose_name = _(u"sample")
@@ -603,10 +585,10 @@ class Sample(models.Model):
         :type with_relations: bool
         :type from_split: `SampleSplit` or ``NoneType``
         """
-        if self.cache_keys:
-            cache.delete_many(self.cache_keys.split("\n"))
-        self.cache_keys = ""
-        self.last_modified = datetime.datetime.now()
+        keys_list_key = "sample-keys:{0}".format(self.pk)
+        with cache_key_locked("sample-lock:{0}".format(self.pk)):
+            cache.delete_many(cache.get(keys_list_key))
+            cache.delete(keys_list_key)
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
         super(Sample, self).save(*args, **kwargs)
@@ -840,21 +822,6 @@ class Sample(models.Model):
         # export; people only want to see the *process* data.  Thus, I don't
         # set ``data_node.items``.
         return data_node
-
-    def append_cache_key(self, cache_key):
-        u"""Append a new cache key to the list of cache keys for this sample.
-        If the sample is updated, those cache items are deleted in `save`.
-
-        :Parameters:
-          - `cache_key`: the cache key
-
-        :type cache_key: str
-        """
-        if self.cache_keys:
-            self.cache_keys += "\n" + cache_key
-        else:
-            self.cache_keys = cache_key
-        super(Sample, self).save()
 
     @classmethod
     def get_search_tree_node(cls):
