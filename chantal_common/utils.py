@@ -642,13 +642,13 @@ def cache_key_locked(key):
     """
     cycles = 20
     while cycles:
-        if cache.add(key):
+        if cache.add(key, 1):
             break
         cycles -= 1
         time.sleep(0.3)
     else:
         cache.clear()
-        successful = cache.add(key)
+        successful = cache.add(key, 1)
         assert successful
     try:
         yield
