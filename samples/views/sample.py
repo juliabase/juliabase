@@ -268,7 +268,7 @@ class SamplesAndProcesses(object):
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
-                cache.set(keys_list_key, keys)
+                cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 cache.set(cache_key, samples_and_processes)
             samples_and_processes.remove_noncleared_process_contexts(user, clearance)
         else:

@@ -24,6 +24,7 @@ import re, string, datetime
 from django.http import Http404
 from django.core.cache import cache
 from django.db.models import Q
+from django.conf import settings
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
@@ -562,7 +563,7 @@ def digest_process(process, user, local_context={}):
             with chantal_common.utils.cache_key_locked("process-lock:{0}".format(process.pk)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
-                cache.set(keys_list_key, keys)
+                cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 cache.set(cache_key, process_context)
     else:
         cached_context.update(local_context)
