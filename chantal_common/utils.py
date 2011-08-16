@@ -16,11 +16,13 @@
 from __future__ import absolute_import
 
 import codecs, re, os, os.path, time, json, decimal, datetime, copy, mimetypes
+from contextlib import contextmanager
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
 import django.http
 import django.contrib.auth.models
+from django.core.cache import cache
 from django.db.models import get_models, get_app
 from django.conf import settings
 from django.utils.encoding import iri_to_uri
@@ -625,3 +627,30 @@ def mkdirs(path):
         os.makedirs(os.path.dirname(path))
     except OSError:
         pass
+
+
+@contextmanager
+def cache_key_locked(key):
+    u"""Locks the `key` in the cache.  If `key` already exists, it waits for
+    max. 6 seconds.  If it's still not released, the whole cache is cleared.
+    In all cases, `key` is hold in the context.  After the context is left
+    (even via an excaption), the key is deleted, i.e. the lock is removed.  Use
+    it like this::
+
+        with cache_key_locked("my_lock_name"):
+            ...
+    """
+    cycles = 20
+    while cycles:
+        if cache.add(key):
+            break
+        cycles -= 1
+        time.sleep(0.3)
+    else:
+        cache.clear()
+        successful = cache.add(key)
+        assert successful
+    try:
+        yield
+    finally:
+        cache.delete(key)
