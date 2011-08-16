@@ -68,7 +68,9 @@ class UserDetails(models.Model):
 
     def get_data_hash(self):
         u"""Get the hash of all fields that change the HTML's appearance,
-        e.g. language, skin, browser type etc.
+        e.g. language, skin, browser type etc.  This hash is used to decide
+        whether a cached sample instance of another user can be used for this
+        one.
 
         :Return:
           the data hash value
