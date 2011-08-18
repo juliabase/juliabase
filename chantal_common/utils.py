@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 import codecs, re, os, os.path, time, json, decimal, datetime, copy, mimetypes
 from contextlib import contextmanager
@@ -634,7 +634,7 @@ def cache_key_locked(key):
     u"""Locks the `key` in the cache.  If `key` already exists, it waits for
     max. 6 seconds.  If it's still not released, the whole cache is cleared.
     In all cases, `key` is hold in the context.  After the context is left
-    (even via an excaption), the key is deleted, i.e. the lock is removed.  Use
+    (even via an exception), the key is deleted, i.e. the lock is removed.  Use
     it like this::
 
         with cache_key_locked("my_lock_name"):
@@ -654,3 +654,53 @@ def cache_key_locked(key):
         yield
     finally:
         cache.delete(key)
+
+
+class MyNone:
+    u"""Singleton class for detecting cache misses in `get_from_cache`
+    reliably.
+    """
+    pass
+
+my_none = MyNone()
+
+
+def _incr_cache_item(key):
+    u"""Internal routine for incrementing a cache value, or creating it if
+    non-existing.
+    """
+    try:
+        cache.incr(key)
+    except ValueError:
+        cache.add(key, 1)
+
+
+def get_from_cache(key, default=None):
+    u"""Gets an item from the cache and records statistics for
+    `cache_hit_rate`.  The semantics of this routine are the same as for
+    Django's `cache.get`.  So, you can use it as a drop-in replacement for it.
+    """
+    result = cache.get(key, my_none)
+    if result is my_none:
+        _incr_cache_item("samples-cache-hits")
+        return default
+    else:
+        _incr_cache_item("samples-cache-misses")
+        return result
+
+
+def cache_hit_rate():
+    u"""Returns the current cache hit rate.  This value is between 0 and 1.  It
+    returns ``None`` is no such value could be calculated.
+
+    :Return:
+      the hit rate, or ``None`` if neither hits nor misses have been recorded
+
+    :rtype: float or ``NoneType``
+    """
+    hits = cache.incr("samples-cache-hits", 0)
+    misses = cache.incr("samples-cache-misses", 0)
+    if hits + misses = 0:
+        return None
+    else:
+        return hits / (hits + misses)
