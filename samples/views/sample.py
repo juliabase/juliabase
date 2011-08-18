@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked
+    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache
 from chantal_common.signals import storage_changed
 from samples.views import utils, form_utils, feed_utils, table_export
 import chantal_common.search
@@ -261,7 +261,7 @@ class SamplesAndProcesses(object):
         """
         sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
         cache_key = "sample:{0}-{1}".format(sample.pk, user.chantal_user_details.get_data_hash())
-        samples_and_processes = cache.get(cache_key)
+        samples_and_processes = get_from_cache(cache_key)
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             keys_list_key = "sample-keys:{0}".format(sample.pk)

@@ -555,7 +555,7 @@ def digest_process(process, user, local_context={}):
     """
     process = process.actual_instance
     cache_key = process.get_cache_key(user.chantal_user_details.get_data_hash(), local_context)
-    cached_context = cache.get(cache_key) if cache_key else None
+    cached_context = chantal_common.utils.get_from_cache(cache_key) if cache_key else None
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
         if cache_key:
