@@ -698,8 +698,8 @@ def cache_hit_rate():
 
     :rtype: float or ``NoneType``
     """
-    hits = cache.incr("samples-cache-hits", 0)
-    misses = cache.incr("samples-cache-misses", 0)
+    hits = cache.get("samples-cache-hits", 0)
+    misses = cache.get("samples-cache-misses", 0)
     if hits + misses == 0:
         return None
     else:
