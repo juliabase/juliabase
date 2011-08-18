@@ -682,10 +682,10 @@ def get_from_cache(key, default=None):
     """
     result = cache.get(key, my_none)
     if result is my_none:
-        _incr_cache_item("samples-cache-hits")
+        _incr_cache_item("samples-cache-misses")
         return default
     else:
-        _incr_cache_item("samples-cache-misses")
+        _incr_cache_item("samples-cache-hits")
         return result
 
 
