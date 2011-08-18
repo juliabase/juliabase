@@ -700,7 +700,7 @@ def cache_hit_rate():
     """
     hits = cache.incr("samples-cache-hits", 0)
     misses = cache.incr("samples-cache-misses", 0)
-    if hits + misses = 0:
+    if hits + misses == 0:
         return None
     else:
         return hits / (hits + misses)
