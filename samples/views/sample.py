@@ -261,7 +261,8 @@ class SamplesAndProcesses(object):
         """
         sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
         cache_key = "sample:{0}-{1}".format(sample.pk, user.chantal_user_details.get_data_hash())
-        samples_and_processes = get_from_cache(cache_key)
+        # ``6`` is the expectation value of the number of processes.
+        samples_and_processes = get_from_cache(cache_key, hits=6)
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             keys_list_key = "sample-keys:{0}".format(sample.pk)
