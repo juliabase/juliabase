@@ -665,27 +665,33 @@ class MyNone:
 my_none = MyNone()
 
 
-def _incr_cache_item(key):
+def _incr_cache_item(key, increment):
     u"""Internal routine for incrementing a cache value, or creating it if
     non-existing.
     """
     try:
-        cache.incr(key)
+        cache.incr(key, increment)
     except ValueError:
-        cache.add(key, 1)
+        cache.add(key, increment)
 
 
-def get_from_cache(key, default=None):
+def get_from_cache(key, default=None, hits=1, misses=1):
     u"""Gets an item from the cache and records statistics for
     `cache_hit_rate`.  The semantics of this routine are the same as for
     Django's `cache.get`.  So, you can use it as a drop-in replacement for it.
+
+    With `hits` and `misses` you can set the number of hits and misses that
+    should be equivalent with this cache access.  For example, if you fetch a
+    very expensive objects like a sample, you may set them to a high values.
+    However, if it fails, `misses` should still be small for samples because
+    the generation of processes will call this method itself anyway.
     """
     result = cache.get(key, my_none)
     if result is my_none:
-        _incr_cache_item("samples-cache-misses")
+        _incr_cache_item("samples-cache-misses", misses)
         return default
     else:
-        _incr_cache_item("samples-cache-hits")
+        _incr_cache_item("samples-cache-hits", hits)
         return result
 
 
