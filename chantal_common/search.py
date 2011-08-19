@@ -364,7 +364,10 @@ class DateTimeField(forms.Field):
                 day = [31, None, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
             if not day:
                 day = 29 if calendar.isleap(year) else 28
-        timestamp = datetime.datetime(year, month, day, hour, minute, second)
+        try:
+            timestamp = datetime.datetime(year, month, day, hour, minute, second)
+        except ValueError:
+            raise forms.ValidationError(_(u"Invalid date or time."))
         return (timestamp, inaccuracy) if self.with_inaccuracy else timestamp
 
 

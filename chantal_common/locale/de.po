@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Chantal-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-01 17:01+0100\n"
-"PO-Revision-Date: 2010-11-01 17:02+0100\n"
+"POT-Creation-Date: 2011-08-19 08:35+0200\n"
+"PO-Revision-Date: 2011-08-19 08:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,7 +50,7 @@ msgstr "Französisch"
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: models.py:41 models.py:169
+#: models.py:41 models.py:179
 msgid "user"
 msgstr "Benutzer"
 
@@ -67,100 +67,122 @@ msgid "operating system"
 msgstr "Betriebssystem"
 
 #: models.py:46
+msgid "layout last modified"
+msgstr "letzte Änderung des Layouts"
+
+#: models.py:49
 msgid "is administrative"
 msgstr "ist administrativ"
 
-#: models.py:51 models.py:52
+#: models.py:54 models.py:55
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models.py:88
+#: models.py:98
 msgid "name"
 msgstr "Name"
 
-#: models.py:89
+#: models.py:99
 msgid "members"
 msgstr "Mitglieder"
 
-#: models.py:91
+#: models.py:101
 msgid "confidential"
 msgstr "vertraulich"
 
-#: models.py:94
+#: models.py:104
 msgid "topic"
 msgstr "Thema"
 
-#: models.py:95
+#: models.py:105
 msgid "topics"
 msgstr "Themen"
 
-#: models.py:97
+#: models.py:107
 msgid "Can edit all topics, and can add new topics"
 msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
-#: models.py:98
+#: models.py:108
 msgid "Can edit topics that he/she is a member of"
 msgstr "Darf Themen ändern, in denen er/sie Mitglied ist"
 
-#: models.py:130
+#: models.py:140
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: models.py:168
+#: models.py:178
 msgid "hash value"
 msgstr "Hashwert"
 
-#: models.py:171
+#: models.py:181
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: models.py:173
+#: models.py:183
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: models.py:176
+#: models.py:186
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: models.py:177
+#: models.py:187
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: search.py:202
+#: search.py:254
 msgid "You can't search for empty values while giving a non-empty value."
-msgstr "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen nicht-leeren Wert angeben."
+msgstr ""
+"Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
+"nicht-leeren Wert angeben."
 
-#: search.py:209
+#: search.py:261
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: search.py:278
+#: search.py:342
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: search.py:313
+#: search.py:370
+msgid "Invalid date or time."
+msgstr "Ungültiges Datum oder ungültige Zeit."
+
+#: search.py:402
 msgid "doesn't matter"
 msgstr "egal"
 
-#: search.py:313
+#: search.py:402
 msgid "yes"
 msgstr "ja"
 
-#: search.py:313
+#: search.py:402
 msgid "no"
 msgstr "nein"
 
-#: search.py:332
+#: search.py:421
 msgid "containing"
 msgstr "enthaltend"
 
-#: utils.py:178
+#: search.py:757
+msgid "restrict to"
+msgstr "beschränken auf"
+
+#: utils.py:182
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
+
+#: utils.py:213
+msgid "Couldn't open {filename}."
+msgstr "Konnte {filename} nicht öffnen."
+
+#: utils.py:235
+msgid "This file is not in an allowed directory."
+msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #: views.py:32
 msgid "Sandbox"
@@ -197,7 +219,7 @@ msgstr ""
 msgid "Internal Chantal error"
 msgstr "Interner Chantal-Fehler"
 
-#: templates/500.html:34 templates/base_chantal.html:61
+#: templates/500.html:34 templates/base_chantal.html:62
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -220,28 +242,28 @@ msgstr ""
 "Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald "
 "der Fehler behoben ist.\n"
 
-#: templates/base_chantal.html:36
+#: templates/base_chantal.html:37
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: templates/base_chantal.html:42
+#: templates/base_chantal.html:43
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/base_chantal.html:46
+#: templates/base_chantal.html:47
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/base_chantal.html:50
+#: templates/base_chantal.html:51
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: templates/base_chantal.html:52 templates/base_chantal.html.py:58
+#: templates/base_chantal.html:53 templates/base_chantal.html.py:59
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/base_chantal.html:54
+#: templates/base_chantal.html:55
 msgid "Log out"
 msgstr "Abmelden"
 
@@ -334,14 +356,17 @@ msgstr ""
 msgid "Error in markup"
 msgstr "Fehler im Markup"
 
+#. Translators: Input for markdown conversion
 #: templates/chantal_common/markdown_sandbox.html:45
 msgid "input"
 msgstr "Eingabe"
 
+#. Translators: result of conversion
 #: templates/chantal_common/markdown_sandbox.html:47
 msgid "result"
 msgstr "Ergebnis"
 
+#. Translators: result of markdown conversion
 #: templates/chantal_common/markdown_sandbox.html:66
 msgid "Generate result"
 msgstr "Ergebnis erzeugen"
@@ -354,23 +379,20 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templatetags/chantal.py:145
+#: templatetags/chantal.py:149
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: templatetags/chantal.py:154
+#: templatetags/chantal.py:158
 msgid "Yes"
 msgstr "Ja"
 
-#: templatetags/chantal.py:154
+#: templatetags/chantal.py:158
 msgid "No"
 msgstr "Nein"
 
 #~ msgid "flow rate"
 #~ msgstr "Flussrate"
-
-#~ msgid "settings last modified"
-#~ msgstr "letzte Änderung der Einstellungen"
 
 #~ msgid "is an external user"
 #~ msgstr "ist ein externer Benutzer"
