@@ -265,7 +265,7 @@ class SamplesAndProcesses(object):
         # expectation value of the number of processes because otherwise, we
         # hit the database again just for the sake of getting statistics.  But
         # for now, I really need accurate statistics more than performance.
-        samples_and_processes = get_from_cache(cache_key, hits=samples.processes.count())
+        samples_and_processes = get_from_cache(cache_key, hits=sample.processes.count())
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             keys_list_key = "sample-keys:{0}".format(sample.pk)
