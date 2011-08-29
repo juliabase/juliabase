@@ -529,7 +529,7 @@ class ValueSplitFieldNode(template.Node):
             values = u""
             for field in fields[:-1]:
                 if field == u"—":
-                    values += unicode(field) + u" / "
+                    values += u"— / "
                 else:
                     values += quantity(field) + u" / "
             values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
@@ -623,3 +623,45 @@ def hms_to_minutes(time_string):
         return time_string
     minutes = int(match.group("H") or "0") * 60 + int(match.group("M")) + int(match.group("M")) / 60
     return round(minutes, 2)
+
+
+@register.simple_tag
+def lab_notebook_comments(process, position):
+    u"""This tag allows to set a stand-alone comment in a lab notebook.
+    The comment string will be extracted from the process comment and should be placed
+    before or after the process.
+    The argument ``position`` must be ``before`` or ``after`` to specify the position
+    related to the process.
+
+    :Parameters:
+     -`process`: the actual process instance
+     -`position`: the argument to specify whether the comment is set
+     before or after the process.
+
+    :type process: ``models.Process``
+    :type position: str
+    """
+    if position.lower() == "before":
+        keyword = "BEFORE:"
+        try:
+            start_index = process.comments.index(keyword) + len(keyword)
+        except ValueError:
+            return ""
+        try:
+            keyword = "AFTER:"
+            end_index = process.comments.index(keyword)
+        except ValueError:
+            end_index = len(process.comments)
+    elif position.lower() == "after":
+        keyword = "AFTER:"
+        try:
+            start_index = process.comments.index(keyword) + len(keyword)
+        except ValueError:
+            return ""
+        end_index = len(process.comments)
+    else:
+        return ""
+    notebook_comment = """<tr style="vertical-align: top"><td colspan="100" class="top" style="text-align: center">{0}</td></tr>""" \
+        .format(markdown_samples(process.comments[start_index: end_index].strip()))
+    return mark_safe(notebook_comment)
+
