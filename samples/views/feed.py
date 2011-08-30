@@ -154,7 +154,7 @@ def show(request, username, user_hash):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     permissions.assert_can_view_feed(user_hash, user)
-    url_prefix = "http://" + settings.DOMAIN_NAME
+    url_prefix = "{0}://{1}".format(settings.PROTOCOL, settings.DOMAIN_NAME)
     feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show,
                                                                       kwargs={"username": username, "user_hash": user_hash})
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
@@ -192,7 +192,8 @@ def show(request, username, user_hash):
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
         author = ElementTree.SubElement(entry_element, "author")
         ElementTree.SubElement(author, "name").text = get_really_full_name(entry.originator)
-        ElementTree.SubElement(author, "email").text = entry.originator.email
+        if entry.originator.email:
+            ElementTree.SubElement(author, "email").text = entry.originator.email
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
         if "link" in metadata:
