@@ -169,7 +169,7 @@ def show(request, username, user_hash):
     author = ElementTree.SubElement(feed, "author")
     ElementTree.SubElement(author, "name").text = "Torsten Bronger"
     ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
-    ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url+"?hash="+user_hash)
+    ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url)
     ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
     ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/ipv/sonne.png"
     ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/ipv/juelich.png"
