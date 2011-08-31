@@ -231,11 +231,15 @@ class SamplesAndProcesses(object):
       (the ``show_….html`` templates for single processes) as well as the
       “outer” template ``show_sample.html``.
 
+    :ivar process_ids: Set of all process IDs of the sample
+
     :ivar process_lists: Data of child samples
 
     :type process_lists: list of `SamplesAndProcesses`
 
     :type process_contexts: list of dict mapping str to ``object``
+
+    :type process_ids: set of int
     """
 
     @staticmethod
@@ -298,6 +302,7 @@ class SamplesAndProcesses(object):
         self.sample_context = {"sample": sample}
         self.update_sample_context_for_user(user, clearance, post_data)
         self.process_contexts = []
+        self.process_ids = set()
         def collect_process_contexts(local_context=None):
             u"""Constructs the list of process context dictionaries.  This
             internal helper function directly populates
@@ -337,6 +342,7 @@ class SamplesAndProcesses(object):
             for process in processes:
                 process_context = utils.digest_process(process, user, local_context)
                 self.process_contexts.append(process_context)
+                self.process_ids.add(process.id)
         collect_process_contexts()
         self.process_lists = []
 
@@ -406,6 +412,8 @@ class SamplesAndProcesses(object):
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
                         permissions.has_permission_to_view_physical_process(user, process):
                     viewable_process_contexts.append(process_context)
+                else:
+                    self.process_ids.remove(process.id)
             self.process_contexts = viewable_process_contexts
 
     def personalize(self, user, clearance, post_data):
@@ -508,6 +516,21 @@ class SamplesAndProcesses(object):
             added.update(added_)
             removed.update(removed_)
         return added, removed
+
+    def get_all_process_ids(self):
+        u"""Returns all process IDs of this sample.  When child samples are
+        shown on the sample's data sheet, too, also their process IDs are
+        included.
+
+        :Return:
+          all process ids of the sample data sheet
+
+        :rtype: set of int
+        """
+        all_process_ids = self.process_ids
+        for process_list in self.process_lists:
+            all_process_ids.update(process_list.get_all_process_ids())
+        return all_process_ids
 
 
 def embed_timestamp(request, sample_name):
