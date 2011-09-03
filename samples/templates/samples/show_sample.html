@@ -158,7 +158,14 @@ copyright holder, you must destroy it immediately and completely.
           </h2>
         {% endspaceless %}
         <div{% if not process.process.finished %} style="color: gray"{% endif %}>
-          {{ process.html_body }}
+          <div id="process-body-{{ process.process.id }}">
+            {{ process.html_body }}
+          </div>
+          {% if process.short_html_body %}
+            <div id="process-short-body-{{ process.process.id }}" style="display: none">
+              {{ process.short_html_body }}
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}

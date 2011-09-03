@@ -25,7 +25,7 @@ from __future__ import absolute_import, division
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
-from django.template import defaultfilters, Context
+from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
@@ -432,6 +432,14 @@ class Process(PolymorphicModel):
             context["html_body"] = render_to_string(
                 "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
                 context_instance=Context(context))
+            if "short_html_body" not in context:
+                try:
+                    context["short_html_body"] = render_to_string(
+                        "samples/show-short_{0}.html". \
+                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
+                        context_instance=Context(context))
+                except TemplateDoesNotExist:
+                    context["short_html_body"] = None
         if "operator" not in context:
             context["operator"] = self.external_operator or self.operator
         if "timestamp" not in context:
