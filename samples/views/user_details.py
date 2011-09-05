@@ -71,6 +71,11 @@ class UserDetailsForm(forms.ModelForm):
         self.fields["auto_addition_topics"].queryset = user.topics
         content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()
                          if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
+
+        self.fields["default_folded_process_classes"].queryset = \
+            ContentType.objects.filter(id__in=set([ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models()]))
+
+        self.fields["default_folded_process_classes"].widget.attrs["size"] = "15"
         content_types.extend([ContentType.objects.get(app_label="samples", model="sample"),
                               ContentType.objects.get(app_label="samples", model="sampleseries"),
                               ContentType.objects.get(app_label="chantal_common", model="topic")])
@@ -80,7 +85,7 @@ class UserDetailsForm(forms.ModelForm):
 
     class Meta:
         model = models.UserDetails
-        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds")
+        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds", "default_folded_process_classes")
 
 
 @login_required
