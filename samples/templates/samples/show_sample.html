@@ -20,11 +20,24 @@ copyright holder, you must destroy it immediately and completely.
 {% block local_scripts %}
 <script type="text/javascript">
 $(function() {chantal.request("{% url chantal_ipv.views.samples.json_client.get_folded_processes sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:","|urlquote_plus }}",
-            function(data) { for each (var id in data)
-                             {
-                                $("#process-body-" + id).hide();
-                              }
-                            })});
+                               function(data) { for (var i=0; i < data.length; i++)
+                                                { $("#process-body-" + data[i]).hide(); $("#process-short-body-" + data[i]).show(); }
+                               });
+              $("h2.process").click(function(event){var process_id = event.target.id.split('-')[2];
+                                                    chantal.request("{% url chantal_ipv.views.samples.json_client.fold_process sample_id=samples_and_processes.sample_context.sample.id %}?process_id=" + process_id,
+                                                    function(data) {if (data) {
+                                                             $("#process-body-" + process_id).hide("fast");
+                                                             $("#process-short-body-" + process_id).show("fast");
+                                                         } else {
+                                                             $("#process-body-" + process_id).show("fast");
+                                                             $("#process-short-body-" + process_id).hide("fast");
+                                                         }
+                                                    });
+                                                   })
+              });
+
+
+
 </script>
 {% endblock %}
 
@@ -147,7 +160,7 @@ $(function() {chantal.request("{% url chantal_ipv.views.samples.json_client.get_
           {{ process|timestamp }}
         </p>
         {% spaceless %}
-          <h2 class="process">
+          <h2 id="process-heading-{{ process.process.id }}" class="process">
             {{ process.name }}{% if process.edit_url %}<a class="edit-icon"
                                              href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
@@ -168,8 +181,15 @@ $(function() {chantal.request("{% url chantal_ipv.views.samples.json_client.get_
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
-        <div id="process-body-{{ process.process.id }}" {% if not process.process.finished %} style="color: gray"{% endif %}>
-          {{ process.html_body }}
+        <div{% if not process.process.finished %} style="color: gray"{% endif %}>
+          <div id="process-body-{{ process.process.id }}">
+            {{ process.html_body }}
+          </div>
+          {% if process.short_html_body %}
+            <div id="process-short-body-{{ process.process.id }}" style="display: none">
+              {{ process.short_html_body }}
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endif %}
