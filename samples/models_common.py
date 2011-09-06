@@ -1026,7 +1026,7 @@ class SampleDeath(Process):
         raise NotImplementedError
 
 
-image_type_choices=(("none", _(u"none")),
+image_type_choices = (("none", _(u"none")),
                     ("pdf", "PDF"),
                     ("png", "PNG"),
                     ("jpeg", "JPEG"),
@@ -1401,6 +1401,12 @@ class UserDetails(models.Model):
     subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users",
                                               verbose_name=_(u"subscribed newsfeeds"), blank=True)
 
+    default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
+                                              verbose_name=_(u"folded processes"), blank=True)
+
+    folded_processes = models.TextField(_(u"folded processes"), blank=True, help_text=_(u"in JSON format"),
+                                        default="{}")
+
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
@@ -1423,7 +1429,7 @@ class UserDetails(models.Model):
         self.save()
 
 
-status_level_choices=(
+status_level_choices = (
     ("undefined", _(u"undefined")),
     ("red", _(u"red")),
     ("yellow", _(u"yellow")),

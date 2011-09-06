@@ -61,9 +61,21 @@ copyright holder, you must destroy it immediately and completely.
         {{ user_details.subscribed_feeds }}
       </td>
     </tr>
+    <tr>
+      <td class="label">
+        <label for="id_{{ user_details.default_folded_process_classes.html_name }}" style="margin-right: 0.5em; vertical-align: top">
+          {{ user_details.default_folded_process_classes.label }}:
+        </label>
+        <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
+          {% blocktrans %}
+            (With this setting, it is possible to fold less interesting processes in the sample data sheet by default.)
+          {% endblocktrans %}</div>
+      </td>
+      <td class="input">
+        {{ user_details.default_folded_process_classes }}
+      </td>
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
-
-
 {% endblock %}

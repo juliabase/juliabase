@@ -17,6 +17,27 @@ copyright holder, you must destroy it immediately and completely.
 {% load chantal %}
 {% load samples_extras %}
 
+{% block local_scripts %}
+<script type="text/javascript">
+$(function() {chantal.request("{% url samples.views.json_client.get_folded_processes sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:","|urlquote_plus }}",
+                               function(data) { for (var i=0; i < data.length; i++)
+                                                { $("#process-body-" + data[i]).hide(); $("#process-short-body-" + data[i]).show(); }
+                               });
+              $("h2.process").click(function(event){var process_id = event.target.id.split('-')[2];
+                                                    chantal.request("{% url samples.views.json_client.fold_process sample_id=samples_and_processes.sample_context.sample.id %}?process_id=" + process_id,
+                                                    function(data) {if (data) {
+                                                             $("#process-body-" + process_id).hide("fast");
+                                                             $("#process-short-body-" + process_id).show("fast");
+                                                         } else {
+                                                             $("#process-body-" + process_id).show("fast");
+                                                             $("#process-short-body-" + process_id).hide("fast");
+                                                         }
+                                                    });
+                                                   })
+              });
+</script>
+{% endblock %}
+
 {% block content_title %}{% endblock %}
 
 {% block frame_content %}
@@ -36,8 +57,8 @@ copyright holder, you must destroy it immediately and completely.
       {% endif %}
       {% if sample.can_add_process %}<a class="edit-icon" href="{% url samples.views.sample.add_process sample_name=sample.sample.name %}"
                                  ><img src="{{ STATIC_URL }}chantal/icons/cog_add.png" alt="add-process icon"
-                                       title="{% trans 'add process' %}" width="16" height="16"/></a>{% endif %} 
-      {% if not sample.clearance %}<a class="edit-icon" 
+                                       title="{% trans 'add process' %}" width="16" height="16"/></a>{% endif %}
+      {% if not sample.clearance %}<a class="edit-icon"
          href="{% url samples.views.sample.export sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
          ><img src="{{ STATIC_URL }}chantal/icons/table.png" alt="export icon" width="16" height="16"
                title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
@@ -136,19 +157,19 @@ copyright holder, you must destroy it immediately and completely.
           {{ process|timestamp }}
         </p>
         {% spaceless %}
-          <h2>
-            {{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
+          <h2 id="process-heading-{{ process.process.id }}" class="process" style="margin-bottom: 0ex">
+            {{ process.name }}{% if process.edit_url %}<a class="edit-icon"
                                              href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
-            {% endif %}{% if process.export_url %}<a class="edit-icon" 
+            {% endif %}{% if process.export_url %}<a class="edit-icon"
                     href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
                      width="16" height="16"/></a>
-            {% endif %}{% if process.resplit_url %}<a class="edit-icon" 
+            {% endif %}{% if process.resplit_url %}<a class="edit-icon"
                      href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
@@ -157,7 +178,7 @@ copyright holder, you must destroy it immediately and completely.
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
-        <div{% if not process.process.finished %} style="color: gray"{% endif %}>
+        <div style="margin-top:0.25em; overflow: auto{% if not process.process.finished %}; color: gray"{% endif %}">
           <div id="process-body-{{ process.process.id }}">
             {{ process.html_body }}
           </div>

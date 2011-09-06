@@ -21,7 +21,7 @@ communication to the remote client happens in JSON format.
 
 from __future__ import absolute_import
 
-import sys
+import sys, json
 from django.db.utils import IntegrityError
 from django.db.models import Q
 from django.conf import settings
@@ -37,6 +37,7 @@ from chantal_common.models import Topic
 from chantal_common.utils import respond_in_json, JSONRequestException
 from samples.views import utils
 from samples import models, permissions
+from django.contrib.contenttypes.models import ContentType
 
 
 @login_required
@@ -416,3 +417,104 @@ def change_my_samples(request):
     request.user.my_samples.remove(*samples_to_remove.values())
     request.user.my_samples.add(*samples_to_add.values())
     return respond_in_json(changed_sample_ids)
+
+
+def _is_folded(process_id, folded_process_classes, exceptional_processes, switch):
+    u"""Helper routine to determine whether the process is folded or not. Is the switch
+    parameter is ``True``, the new status is saved.
+
+    :Parameters:
+     - `process_id`: The process ID from the process, which should be checked.
+     - `folded_process_classes`: The content types from the process classes, which are folded by default.
+     - `exceptional_processes`: The process IDs from the processes that do not follow the default settings.
+     - `switch`: It says whether the new status should be saved or not.
+
+    :type process_id: int
+    :type folded_process_classes: list
+    :type exceptional_processes: list
+    :type switch: bool
+
+    :Retruns:
+     True when the process is now folded else False.
+
+    :rtype: bool
+    """
+    content_type = models.Process.objects.get(pk=process_id).content_type
+    default_is_folded = content_type in folded_process_classes
+    if switch:
+        if process_id in exceptional_processes:
+            exceptional_processes.remove(process_id)
+        else:
+            exceptional_processes.append(process_id)
+    exceptional = process_id in exceptional_processes
+    process_is_folded = not default_is_folded and exceptional or default_is_folded and not exceptional
+    return process_is_folded
+
+
+@login_required
+@require_http_methods(["GET"])
+def fold_process(request, sample_id):
+    u"""Fold a single process in one sample data sheet. The new behavior is also saved.
+
+    :Parameters:
+     - `request`: The current HTTP Request object.  It must contain the process
+        ID of the process which behavior should be changed.
+     - `sample_id`: The sample ID represent the data sheet where the process has to be changed.
+
+    :type request: ``HttpRequest``
+    :type sample_id: int
+
+    :Returns:
+     True when the process is now folded else False.
+
+    :rtype: ``HttpResponse``
+    """
+    try:
+        int(sample_id)
+    except ValueError:
+        raise JSONRequestException(5, 'invalid "sample_id"')
+    process_id = utils.int_or_zero(request.GET["process_id"])
+    folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
+    folded_processes = json.loads(request.user.samples_user_details.folded_processes)
+    exceptional_processes = folded_processes.setdefault(sample_id, [])
+    is_folded = _is_folded(process_id, folded_process_classes, exceptional_processes, switch=True)
+    request.user.samples_user_details.folded_processes = json.dumps(folded_processes)
+    request.user.samples_user_details.save()
+    return respond_in_json(is_folded)
+
+
+@login_required
+@require_http_methods(["GET"])
+def get_folded_processes(request, sample_id):
+    u"""Get all the IDs from the processes, who have to be folded.
+
+    :Parameters:
+     - `request`: The current HTTP Request object.  It must contain all the process
+        IDs of the processes from the selected sample.
+     - `sample_id`: The sample ID represent the data sheet the user wants to see.
+
+    :type request: ``HttpRequest``
+    :type sample_id: int
+
+    :Returns:
+     The process IDs of the processes, who have to be folded on the samples data sheet.
+
+    :rtype: ``HttpResponse``
+    """
+    try:
+        process_ids = [int(id_) for id_ in request.GET["process_ids"].split(",")]
+    except KeyError:
+        raise JSONRequestException(3, '"process_ids" missing')
+    except ValueError:
+        raise JSONRequestException(5, '"process_ids" has invalid format')
+    try:
+        int(sample_id)
+    except ValueError:
+        raise JSONRequestException(5, 'invalid "sample_id"')
+    folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
+    exceptional_processes_by_sample_id = json.loads(request.user.samples_user_details.folded_processes).get(sample_id, [])
+    folded_process_ids = []
+    for process_id in process_ids:
+        if _is_folded(process_id, folded_process_classes, exceptional_processes_by_sample_id, switch=False):
+            folded_process_ids.append(process_id)
+    return respond_in_json(folded_process_ids)
