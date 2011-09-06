@@ -420,7 +420,24 @@ def change_my_samples(request):
 
 
 def _is_folded(process_id, folded_process_classes, exceptional_processes, switch):
-    u"""
+    u"""Helper routine to determine whether the process is folded or not. Is the switch
+    parameter is ``True``, the new status is saved.
+
+    :Parameters:
+     - `process_id`: The process ID from the process, which should be checked.
+     - `folded_process_classes`: The content types from the process classes, which are folded by default.
+     - `exceptional_processes`: The process IDs from the processes that do not follow the default settings.
+     - `switch`: It says whether the new status should be saved or not.
+
+    :type process_id: int
+    :type folded_process_classes: list
+    :type exceptional_processes: list
+    :type switch: bool
+
+    :Retruns:
+     True when the process is now folded else False.
+
+    :rtype: bool
     """
     content_type = models.Process.objects.get(pk=process_id).content_type
     default_is_folded = content_type in folded_process_classes
@@ -437,7 +454,20 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 @login_required
 @require_http_methods(["GET"])
 def fold_process(request, sample_id):
-    u"""
+    u"""Fold a single process in one sample data sheet. The new behavior is also saved.
+
+    :Parameters:
+     - `request`: The current HTTP Request object.  It must contain the process
+        ID of the process which behavior should be changed.
+     - `sample_id`: The sample ID represent the data sheet where the process has to be changed.
+
+    :type request: ``HttpRequest``
+    :type sample_id: int
+
+    :Returns:
+     True when the process is now folded else False.
+
+    :rtype: ``HttpResponse``
     """
     try:
         int(sample_id)
@@ -456,7 +486,20 @@ def fold_process(request, sample_id):
 @login_required
 @require_http_methods(["GET"])
 def get_folded_processes(request, sample_id):
-    u"""
+    u"""Get all the IDs from the processes, who have to be folded.
+
+    :Parameters:
+     - `request`: The current HTTP Request object.  It must contain all the process
+        IDs of the processes from the selected sample.
+     - `sample_id`: The sample ID represent the data sheet the user wants to see.
+
+    :type request: ``HttpRequest``
+    :type sample_id: int
+
+    :Returns:
+     The process IDs of the processes, who have to be folded on the samples data sheet.
+
+    :rtype: ``HttpResponse``
     """
     try:
         process_ids = [int(id_) for id_ in request.GET["process_ids"].split(",")]

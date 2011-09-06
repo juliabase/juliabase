@@ -1402,7 +1402,7 @@ class UserDetails(models.Model):
                                               verbose_name=_(u"subscribed newsfeeds"), blank=True)
 
     default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
-                                              verbose_name=_(u"default folded process classes"), blank=True)
+                                              verbose_name=_(u"folded processes"), blank=True)
 
     folded_processes = models.TextField(_(u"folded processes"), blank=True, help_text=_(u"in JSON format"),
                                         default="{}")

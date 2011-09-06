@@ -19,7 +19,7 @@ information, and preferences.
 
 from __future__ import absolute_import
 
-import re
+import re, json
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -34,6 +34,7 @@ from samples import models, permissions
 from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
+from chantal_common import utils as chantal_common_utils
 
 
 @login_required
@@ -69,12 +70,13 @@ class UserDetailsForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
-        content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()
-                         if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
-
+        all_process_content_types = [ContentType.objects.get_for_model(process_class)
+                                      for process_class in chantal_common_utils.get_all_models().itervalues()
+                                      if issubclass(process_class, models.Process) and not process_class._meta.abstract
+                                      and process_class not in [models.Process, models.Deposition]]
         self.fields["default_folded_process_classes"].queryset = \
-            ContentType.objects.filter(id__in=set([ContentType.objects.get_for_model(cls).id for cls in get_all_addable_physical_process_models()]))
-
+            ContentType.objects.filter(id__in=set(content_type.id for content_type in all_process_content_types))
+        content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()]
         self.fields["default_folded_process_classes"].widget.attrs["size"] = "15"
         content_types.extend([ContentType.objects.get(app_label="samples", model="sample"),
                               ContentType.objects.get(app_label="samples", model="sampleseries"),
@@ -115,6 +117,20 @@ def edit_preferences(request, login_name):
 
     :rtype: ``HttpResponse``
     """
+    def __change_folded_processes(default_folded_process_classes, user):
+        u"""Creates the new exceptional processes dictionary and saves it into the user details.
+        """
+        old_default_classes = set(ContentType.objects.filter(dont_show_to_user=user.samples_user_details))
+        new_default_classes = set(default_folded_process_classes)
+        differences = old_default_classes ^ new_default_classes
+        exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
+        for process_id_list in exceptional_processes_dict.itervalues():
+            for process_id in process_id_list:
+                if models.Process.objects.get(pk=process_id).content_type in differences:
+                    process_id_list.remove(process_id)
+        user.samples_user_details.folded_processes = json.dumps(exceptional_processes_dict)
+        user.samples_user_details.save()
+
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _(u"You can't access the preferences of another user."))
@@ -124,6 +140,7 @@ def edit_preferences(request, login_name):
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
         initials_form = form_utils.InitialsForm(user, initials_mandatory, request.POST)
         if user_details_form.is_valid() and initials_form.is_valid():
+            __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
             user_details_form.save()
             initials_form.save()
             return utils.successful_response(request, _(u"The preferences were successfully updated."))
