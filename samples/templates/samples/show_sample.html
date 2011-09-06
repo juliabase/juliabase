@@ -178,7 +178,7 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
-        <div style="margin-top:0.25em; overflow: auto{% if not process.process.finished %}; color: gray"{% endif %}">
+        <div style="margin-top:0.25em; overflow: auto{% if not process.process.finished %}; color: gray{% endif %}">
           <div id="process-body-{{ process.process.id }}">
             {{ process.html_body }}
           </div>
