@@ -157,7 +157,7 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
           {{ process|timestamp }}
         </p>
         {% spaceless %}
-          <h2 id="process-heading-{{ process.process.id }}" class="process" style="margin-bottom: 0ex">
+          <h2 id="process-heading-{{ process.process.id }}" class="process">
             {{ process.name }}{% if process.edit_url %}<a class="edit-icon"
                                              href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
@@ -178,7 +178,7 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
-        <div style="margin-top:0.25em{% if not process.process.finished %}; color: gray"{% endif %}">
+        <div style="{% if not process.process.finished %}; color: gray"{% endif %}">
           <div id="process-body-{{ process.process.id }}">
             {{ process.html_body }}
           </div>
