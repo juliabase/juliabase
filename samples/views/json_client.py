@@ -439,7 +439,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 
     :rtype: bool
     """
-    content_type = models.Process.objects.get(pk=process_id).content_type
+    content_type = get_object_or_404(models.Process, pk=process_id).content_type
     default_is_folded = content_type in folded_process_classes
     if switch:
         if process_id in exceptional_processes:
@@ -502,15 +502,10 @@ def get_folded_processes(request, sample_id):
     :rtype: ``HttpResponse``
     """
     try:
-        process_ids = [int(id_) for id_ in request.GET["process_ids"].split(",")]
+        process_ids = [utils.convert_id_to_int(id_) for id_ in request.GET["process_ids"].split(",")]
     except KeyError:
         raise JSONRequestException(3, '"process_ids" missing')
-    except ValueError:
-        raise JSONRequestException(5, '"process_ids" has invalid format')
-    try:
-        int(sample_id)
-    except ValueError:
-        raise JSONRequestException(5, 'invalid "sample_id"')
+    utils.convert_id_to_int(sample_id)
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
     exceptional_processes_by_sample_id = json.loads(request.user.samples_user_details.folded_processes).get(sample_id, [])
     folded_process_ids = []
