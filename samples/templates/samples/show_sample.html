@@ -20,7 +20,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block local_scripts %}
 <script type="text/javascript">
 // <![CDATA[
-$(function() {chantal.request("{% url samples.views.json_client.get_folded_processes sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:","|urlquote_plus }}",
+$(function() {chantal.request("{% url samples.views.json_client.get_folded_processes sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:"," }}",
                                function(data) { for (var i=0; i < data.length; i++)
                                                 { $("#process-body-" + data[i]).hide(); $("#process-short-body-" + data[i]).show(); }
                                });
