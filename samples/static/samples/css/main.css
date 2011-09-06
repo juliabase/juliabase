@@ -27,3 +27,10 @@ div.my-samples h2 { margin-top: 0pt }
 
 ul.radio-select { list-style-type: none; display: inline; margin-left: 0; padding-left:0 }
 ul.radio-select li { display: inline; margin-right: 1em }
+
+p.operator_and_timestamp { float: right; font-size: small }
+a.edit-button, a.duplicate-button { font-size: small; white-space: nowrap }
+a.edit-icon { margin-left: 0.3em }
+
+div.process { margin-top: 3ex; clear: both }
+span.aliases { font-size: x-small; font-weight: normal }

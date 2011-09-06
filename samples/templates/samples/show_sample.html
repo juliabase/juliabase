@@ -146,20 +146,8 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
 
     {% if process %}
       <div class="process">
-        <p class="operator_and_timestamp">
-          {% if process.operator|should_show %}
-            {% spaceless %}
-              {% if sample.clearance %}
-                {{ process.operator|get_safe_operator_name }}
-              {% else %}
-                {{ process.operator|get_really_full_name }}
-              {% endif %}
-            {% endspaceless %},
-          {% endif %}
-          {{ process|timestamp }}
-        </p>
         {% spaceless %}
-          <h2 id="process-heading-{{ process.process.id }}" class="process" style="margin-bottom: 0ex">
+          <h2 id="process-heading-{{ process.process.id }}" class="process" style="float: left">
             {{ process.name }}{% if process.edit_url %}<a class="edit-icon"
                                              href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
@@ -180,7 +168,19 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
-        <div style="margin-top:0.25em; overflow: auto{% if not process.process.finished %}; color: gray{% endif %}">
+        <p class="operator_and_timestamp" style="margin-top: 3.6ex">
+          {% if process.operator|should_show %}
+            {% spaceless %}
+              {% if sample.clearance %}
+                {{ process.operator|get_safe_operator_name }}
+              {% else %}
+                {{ process.operator|get_really_full_name }}
+              {% endif %}
+            {% endspaceless %},
+          {% endif %}
+          {{ process|timestamp }}
+        </p>
+        <div style="margin-top:0.25em; clear: both; overflow: auto{% if not process.process.finished %}; color: gray{% endif %}">
           <div id="process-body-{{ process.process.id }}">
             {{ process.html_body }}
           </div>
