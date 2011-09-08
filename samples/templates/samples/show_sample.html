@@ -24,7 +24,7 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                                function(data) { for (var i=0; i < data.length; i++)
                                                 { $("#process-body-" + data[i]).hide(); $("#process-short-body-" + data[i]).show(); }
                                });
-              $("h2.process").click(function(event){var process_id = event.target.id.split('-')[2];
+              $("span.process-heading").click(function(event){var process_id = event.target.id.split('-')[2];
                                                     chantal.request("{% url samples.views.json_client.fold_process sample_id=samples_and_processes.sample_context.sample.id %}?process_id=" + process_id,
                                                     function(data) {if (data) {
                                                              $("#process-body-" + process_id).hide("fast");
@@ -147,9 +147,10 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
     {% if process %}
       <div class="process">
         {% spaceless %}
-          <h2 id="process-heading-{{ process.process.id }}" class="process" style="float: left">
-            {{ process.name }}{% if process.edit_url %}<a class="edit-icon"
-                                             href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+          <h2 style="float: left">
+            <span id="process-heading-{{ process.process.id }}" class="process-heading"
+                  >{{ process.name }}</span>{% if process.edit_url %}<a class="edit-icon"
+                       href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
