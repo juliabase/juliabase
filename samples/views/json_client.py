@@ -204,6 +204,7 @@ def login_remote_client(request):
     raise JSONRequestException(4, "user could not be authenticated")
 
 
+@never_cache
 @require_http_methods(["GET"])
 def logout_remote_client(request):
     u"""By requesting this view, the Chantal Remote Client can log out.  This
@@ -224,6 +225,7 @@ def logout_remote_client(request):
     return respond_in_json(True)
 
 
+@never_cache
 @require_http_methods(["GET"])
 def next_deposition_number(request, letter):
     u"""Send the next free deposition number to a JSON client.
@@ -452,6 +454,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 
 
 @login_required
+@never_cache
 @require_http_methods(["GET"])
 def fold_process(request, sample_id):
     u"""Fold a single process in one sample data sheet. The new behavior is also saved.
@@ -484,6 +487,7 @@ def fold_process(request, sample_id):
 
 
 @login_required
+@never_cache
 @require_http_methods(["GET"])
 def get_folded_processes(request, sample_id):
     u"""Get all the IDs from the processes, who have to be folded.
