@@ -83,13 +83,6 @@ div.info-report { background-color: mediumpurple }
 
 h1 { margin-top: 0pt }
 
-p.operator_and_timestamp { float: right; font-size: small }
-a.edit-button, a.duplicate-button { font-size: small; white-space: nowrap }
-a.edit-icon { margin-left: 0.3em }
-
-div.process { margin-top: 3ex; clear: both }
-span.aliases { font-size: x-small; font-weight: normal }
-
 span.label { margin-right: 0.5em }
 span.value { font-weight: bold }
 td.value, td.input { text-align: left }
@@ -118,7 +111,7 @@ div.short-messages { text-align: center; clear: both }
 
 p.submit-button { text-align: right; margin-bottom: 0px; clear: right }
 
-a > img { border: none }
+a > img, img[usemap] { border: none }
 
 optgroup { font-weight: bold; font-style: normal }
 

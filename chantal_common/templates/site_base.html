@@ -21,11 +21,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block css %}{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
-<!-- FixMe: Maybe this can be done better with jQuery, and I don't even know
-whether the <body> element is the best place for it.  Some Firefox versions are
-really slowed down by it (FF 3.4.8 on Ubuntu 9.10, the same on Ubuntu 10.4
-doesn't show this behaviour).  -->
-<body onload="x = document.getElementsByTagName('input')[0]; if (x.type == 'text') x.focus();">
+<body>
   {% block content %}{% endblock %}
 </body>
 </html>

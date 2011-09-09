@@ -24,6 +24,11 @@ copyright holder, you must destroy it immediately and completely.
   <!-- FixMe: We have no favicon yet. -->
   <link rel="shortcut icon" href="{{ STATIC_URL }}chantal/favicon.ico" type="image/x-icon"/>
   <script type="text/javascript" src="{{ STATIC_URL }}chantal/js/jquery-1.5.min.js"></script>
+  <script type="text/javascript">
+  // <![CDATA[
+    $(function() { $("input:text:visible:first").focus() })
+  // ]]>
+  </script>
   {% block local_scripts %}{% endblock %}
 {% endblock %}
 
