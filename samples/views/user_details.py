@@ -19,7 +19,7 @@ information, and preferences.
 
 from __future__ import absolute_import
 
-import re, json
+import re, json, copy
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -125,7 +125,7 @@ def edit_preferences(request, login_name):
         differences = old_default_classes ^ new_default_classes
         exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
         for process_id_list in exceptional_processes_dict.itervalues():
-            for process_id in process_id_list:
+            for process_id in copy.copy(process_id_list):
                 if models.Process.objects.get(pk=process_id).content_type in differences:
                     process_id_list.remove(process_id)
         user.samples_user_details.folded_processes = json.dumps(exceptional_processes_dict)

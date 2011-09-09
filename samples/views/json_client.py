@@ -204,6 +204,7 @@ def login_remote_client(request):
     raise JSONRequestException(4, "user could not be authenticated")
 
 
+@never_cache
 @require_http_methods(["GET"])
 def logout_remote_client(request):
     u"""By requesting this view, the Chantal Remote Client can log out.  This
@@ -224,6 +225,7 @@ def logout_remote_client(request):
     return respond_in_json(True)
 
 
+@never_cache
 @require_http_methods(["GET"])
 def next_deposition_number(request, letter):
     u"""Send the next free deposition number to a JSON client.
@@ -439,7 +441,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 
     :rtype: bool
     """
-    content_type = models.Process.objects.get(pk=process_id).content_type
+    content_type = get_object_or_404(models.Process, pk=process_id).content_type
     default_is_folded = content_type in folded_process_classes
     if switch:
         if process_id in exceptional_processes:
@@ -452,6 +454,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 
 
 @login_required
+@never_cache
 @require_http_methods(["GET"])
 def fold_process(request, sample_id):
     u"""Fold a single process in one sample data sheet. The new behavior is also saved.
@@ -484,6 +487,7 @@ def fold_process(request, sample_id):
 
 
 @login_required
+@never_cache
 @require_http_methods(["GET"])
 def get_folded_processes(request, sample_id):
     u"""Get all the IDs from the processes, who have to be folded.
@@ -502,15 +506,10 @@ def get_folded_processes(request, sample_id):
     :rtype: ``HttpResponse``
     """
     try:
-        process_ids = [int(id_) for id_ in request.GET["process_ids"].split(",")]
+        process_ids = [utils.convert_id_to_int(id_) for id_ in request.GET["process_ids"].split(",")]
     except KeyError:
         raise JSONRequestException(3, '"process_ids" missing')
-    except ValueError:
-        raise JSONRequestException(5, '"process_ids" has invalid format')
-    try:
-        int(sample_id)
-    except ValueError:
-        raise JSONRequestException(5, 'invalid "sample_id"')
+    utils.convert_id_to_int(sample_id)
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
     exceptional_processes_by_sample_id = json.loads(request.user.samples_user_details.folded_processes).get(sample_id, [])
     folded_process_ids = []
