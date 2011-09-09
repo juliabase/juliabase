@@ -111,7 +111,7 @@ div.short-messages { text-align: center; clear: both }
 
 p.submit-button { text-align: right; margin-bottom: 0px; clear: right }
 
-a > img { border: none }
+a > img, img[usemap] { border: none }
 
 optgroup { font-weight: bold; font-style: normal }
 
