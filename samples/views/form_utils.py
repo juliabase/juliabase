@@ -26,6 +26,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
+from django.contrib.contenttypes.models import ContentType
 from chantal_common.utils import get_really_full_name, check_markdown
 from chantal_common.models import Topic
 from samples import models, permissions
@@ -895,3 +896,23 @@ def dead_samples(samples, timestamp):
         if death_timestamps and death_timestamps[0] <= timestamp:
             result.add(sample)
     return result
+
+
+def choices_of_content_types(classes):
+    u"""Returns the ``choices`` field for a ``MultipleChoiceField`` which
+    contains content types.  Typically, the `classes` are process classes that
+    can be picked by the user.
+
+    :Parameters:
+      - `classes`: the classes which should be included into the selection box
+
+    :type classes: list of class
+
+    :Return:
+      the choices, ready to be used for a ``MultipleChoiceField``
+
+    :rtype: list of (int, unicode)
+    """
+    choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name) for cls in classes]
+    choices.sort(key=lambda item: item[1].lower())
+    return choices

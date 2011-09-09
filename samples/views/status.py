@@ -66,11 +66,9 @@ class StatusForm(forms.ModelForm):
         self.fields["operator"].set_operator(user, user.is_staff)
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
-        choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name)
-                   for cls in get_all_addable_physical_process_models()
-                   if not (cls._meta.app_label, cls._meta.module_name) in settings.PHYSICAL_PROCESS_BLACKLIST]
-        choices.sort(key=lambda item: item[1].lower())
-        self.fields["processes"].choices = choices
+        self.fields["processes"].choices = form_utils.choices_of_content_types(
+            cls for cls in get_all_addable_physical_process_models()
+            if (cls._meta.app_label, cls._meta.module_name) not in settings.PHYSICAL_PROCESS_BLACKLIST)
         self.fields["processes"].widget.attrs["size"] = 24
 
     def clean_message(self):
