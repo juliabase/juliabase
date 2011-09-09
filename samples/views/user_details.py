@@ -29,12 +29,14 @@ from django import forms
 from django.forms.util import ValidationError
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.text import capfirst
 from chantal_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
 from chantal_common import utils as chantal_common_utils
+from chantal_common.models import Topic
 
 
 @login_required
@@ -67,22 +69,19 @@ class UserDetailsForm(forms.ModelForm):
     u"""Model form for user preferences.
     """
     _ = ugettext_lazy
+    subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_(u"subscribed newsfeeds")), required=False)
+    default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_(u"folded processes")), required=False)
+
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
-        all_process_content_types = [ContentType.objects.get_for_model(process_class)
-                                      for process_class in chantal_common_utils.get_all_models().itervalues()
-                                      if issubclass(process_class, models.Process) and not process_class._meta.abstract
-                                      and process_class not in [models.Process, models.Deposition]]
-        self.fields["default_folded_process_classes"].queryset = \
-            ContentType.objects.filter(id__in=set(content_type.id for content_type in all_process_content_types))
-        content_types = [ContentType.objects.get_for_model(cls) for cls in get_all_addable_physical_process_models()]
+        self.fields["default_folded_process_classes"].choices = form_utils.choices_of_content_types(
+            process_class for process_class in chantal_common_utils.get_all_models().itervalues()
+            if issubclass(process_class, models.Process) and not process_class._meta.abstract
+            and process_class not in [models.Process, models.Deposition])
         self.fields["default_folded_process_classes"].widget.attrs["size"] = "15"
-        content_types.extend([ContentType.objects.get(app_label="samples", model="sample"),
-                              ContentType.objects.get(app_label="samples", model="sampleseries"),
-                              ContentType.objects.get(app_label="chantal_common", model="topic")])
-        self.fields["subscribed_feeds"].queryset = \
-            ContentType.objects.filter(id__in=set(content_type.id for content_type in content_types))
+        self.fields["subscribed_feeds"].choices = form_utils.choices_of_content_types(
+            list(get_all_addable_physical_process_models()) + [models.Sample, models.SampleSeries, Topic])
         self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
 
     class Meta:
