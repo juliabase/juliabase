@@ -1,0 +1,43 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+
+
+
+{% block frame_content %}
+<p>{% trans 'Attention: The tags, purposes, topics and current locations of the samples on the left site will be erased complitly!' %}</p>
+<form method="post" action="">
+  <table>
+    <tr>
+      <th>{{ merge_forms.0.from_sample.label }}</th>
+      <th></th>
+      <th>{{ merge_forms.0.to_sample.label }}</th>
+    </tr>
+    {% for merge_form in merge_forms %}
+      {% error_list merge_form _("Error in Merge Samples") "<tr>" %}
+      <tr>
+        <td>{{ merge_form.from_sample }}</td>
+        <td width="100mm" ><img style="display: block;margin-left: auto; margin-right: auto" src="{{ STATIC_URL }}samples/red_arrow.png" alt="{% trans 'red arrow' %}" width="50" height="43"/></td>
+        <td>{{ merge_form.to_sample }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p class="submit-button"><input type="submit"/></p>
+</form>
+{% endblock %}

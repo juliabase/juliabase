@@ -147,4 +147,6 @@ urlpatterns = patterns("samples.views",
 
                        (r"^fold_process/(?P<sample_id>.+)", "json_client.fold_process"),
                        (r"^folded_processes/(?P<sample_id>.+)", "json_client.get_folded_processes"),
+
+                       (r"^merge_samples/$", "merge_samples.merge"),
                        )
