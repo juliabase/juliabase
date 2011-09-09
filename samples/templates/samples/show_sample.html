@@ -27,13 +27,19 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
               $("span.process-heading").click(function(event){var process_id = event.target.id.split('-')[2];
                                                     chantal.request("{% url samples.views.json_client.fold_process sample_id=samples_and_processes.sample_context.sample.id %}?process_id=" + process_id,
                                                     function(data) {if (data) {
+                                                             var shown_element = $("#process-short-body-" + process_id);
                                                              $("#process-body-" + process_id).hide("fast");
-                                                             $("#process-short-body-" + process_id).show("fast");
                                                          } else {
-                                                             $("#process-body-" + process_id).show("fast");
+                                                             var shown_element = $("#process-body-" + process_id);
                                                              $("#process-short-body-" + process_id).hide("fast");
-                                                         }
-                                                    });
+                                                         };
+                                                         shown_element.show("fast", function() {
+                                                           var new_top = shown_element.offset().top +
+                                                                         shown_element.outerHeight() - $(window).height();
+                                                           if (new_top - $(document).scrollTop() > 0)
+                                                               $(document).scrollTop(new_top)
+                                                         })
+                                                     });
                                                    })
               });
 // ]]>
