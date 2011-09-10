@@ -908,6 +908,9 @@ def choices_of_content_types(classes):
     English model name only.  And secondly, it sorts the choices by their
     (translated) names.
 
+    FixMe: The translation thing may become superfluous if Django Ticket #16803
+    is fixed.
+
     :Parameters:
       - `classes`: the classes which should be included into the selection box
 
