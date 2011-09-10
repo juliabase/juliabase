@@ -34,11 +34,15 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                                                              $("#process-short-body-" + process_id).hide("fast");
                                                          };
                                                          shown_element.show("fast", function() {
-                                                           parent_div = shown_element.parent()
-                                                           var new_top = parent_div.offset().top +
-                                                                         parent_div.outerHeight() - $(window).height();
-                                                           if (new_top - $(document).scrollTop() > 0)
-                                                               $(document).scrollTop(new_top)
+                                                           parent_div = shown_element.parent();
+                                                           if (parent_div.outerHeight() > $(window).height())
+                                                               $(document).scrollTop(parent_div.parent().offset().top)
+                                                           else {
+                                                               var new_top = parent_div.offset().top +
+                                                                             parent_div.outerHeight() - $(window).height();
+                                                               if (new_top - $(document).scrollTop() > 0)
+                                                                   $(document).scrollTop(new_top)
+                                                           }
                                                          })
                                                      });
                                                    })
