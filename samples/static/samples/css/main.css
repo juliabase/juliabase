@@ -34,3 +34,6 @@ a.edit-icon { margin-left: 0.3em }
 
 div.process { margin-top: 3ex; clear: both }
 span.aliases { font-size: x-small; font-weight: normal }
+
+/* This solves in some cases the problem with jerky jQuery animation due to non-collapsing margins during animation. */
+div.process-body > *:first-child { margin-top: 0pt }

@@ -34,8 +34,9 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                                                              $("#process-short-body-" + process_id).hide("fast");
                                                          };
                                                          shown_element.show("fast", function() {
-                                                           var new_top = shown_element.offset().top +
-                                                                         shown_element.outerHeight() - $(window).height();
+                                                           parent_div = shown_element.parent()
+                                                           var new_top = parent_div.offset().top +
+                                                                         parent_div.outerHeight() - $(window).height();
                                                            if (new_top - $(document).scrollTop() > 0)
                                                                $(document).scrollTop(new_top)
                                                          })
@@ -187,15 +188,17 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
           {% endif %}
           {{ process|timestamp }}
         </p>
-        <div style="margin-top:0.25em; clear: both; overflow: auto{% if not process.process.finished %}; color: gray{% endif %}">
-          <div id="process-body-{{ process.process.id }}">
+        <div style="clear: both{% if not process.process.finished %}; color: gray{% endif %}">
+          <div id="process-body-{{ process.process.id }}" class="process-body">
             {{ process.html_body }}
           </div>
           {% if process.short_html_body %}
-            <div id="process-short-body-{{ process.process.id }}" style="display: none">
+            <div id="process-short-body-{{ process.process.id }}" style="display: none" class="process-body">
               {{ process.short_html_body }}
             </div>
           {% endif %}
+          {# For getting the full height of the enclosing <div> in JavaScript #}
+          <div style="clear: both"/>
         </div>
       </div>
     {% endif %}
