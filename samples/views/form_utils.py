@@ -903,6 +903,11 @@ def choices_of_content_types(classes):
     contains content types.  Typically, the `classes` are process classes that
     can be picked by the user.
 
+    This routine is necessary for two reasons: It translates the model names
+    behind the content types – ``unicode(contentype_instance)`` yields the
+    English model name only.  And secondly, it sorts the choices by their
+    (translated) names.
+
     :Parameters:
       - `classes`: the classes which should be included into the selection box
 
