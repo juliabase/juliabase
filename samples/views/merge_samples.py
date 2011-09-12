@@ -12,28 +12,52 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-u"""
+u"""The view for merging samples together.
 """
 
 from __future__ import absolute_import
 
-import re, json
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.forms.util import ValidationError
-import django.contrib.auth.models
 from chantal_common.utils import append_error
-from samples import models, permissions
+from samples import models
 from samples.views import utils
-from django.contrib import messages
 from samples.views import form_utils
 
 
-class MergeSamplesForm(forms.Form):
+def extract_preset_sample_by_name(request, name):
+    u"""Extracts a sample from the request dictionary.
+    I can't use the `extract_preset_sample` method from samples.utils
+    because i have two different samples per `MergeSamplesForm`
+    in the request dictionary.
 
+    :Parameters:
+      - `request`: the current HTTP Request object.
+      - `name`: the name of the sample with the index of the `MergeSamplesForm` as prefix.
+
+    :type request: ``HttpRequest``
+    :type name: str
+
+    :Returns:
+      the sample given in the query string, if any.
+
+    :rtype: `models.Sample` or ``NoneType``
+    """
+    query_string_dict = utils.parse_query_string(request)
+    if name in query_string_dict:
+        try:
+            return models.Sample.objects.get(name=query_string_dict[name])
+        except models.Sample.DoesNotExist:
+            pass
+
+class MergeSamplesForm(forms.Form):
+    u"""The merge samples form class.
+    """
+    _ = ugettext_lazy
     from_sample = form_utils.SampleField(label=_(u"merge sample"), required=False)
     to_sample = form_utils.SampleField(label=_(u"into sample"), required=False)
 
@@ -50,7 +74,6 @@ class MergeSamplesForm(forms.Form):
 
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
-        print self.cleaned_data["from_sample"]
         if from_sample and from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample):
             raise ValidationError(_(u"It is not possible to merge a sample who was split or is a result of a split process."))
         return from_sample
@@ -98,8 +121,17 @@ class MergeSamplesForm(forms.Form):
         return cleaned_data
 
 
-
 def merge_samples(from_sample, to_sample):
+    u"""Copies all processes from one sample to another sample.
+    The fist sample will be erased afterwards.
+
+    :Parameters:
+     - `from_sample`: The sample, who is merged into the other sample
+     - `to_sample`l: The sample, who should contains the processes from the other sample
+
+    :type from_sample: `models.Sample`
+    :type to_sample: `models.Sample`
+    """
     current_sample = to_sample
     to_sample_split_origin = to_sample.split_origin
     process_set = set(models.Process.objects.filter(samples=current_sample))
@@ -120,24 +152,16 @@ def merge_samples(from_sample, to_sample):
     sample_alias.save()
     from_sample.delete()
 
-
-
-def extract_preset_sample_by_name(request, name):
-
-    query_string_dict = utils.parse_query_string(request)
-    if name in query_string_dict:
-        try:
-            return models.Sample.objects.get(name=query_string_dict[name])
-        except models.Sample.DoesNotExist:
-            pass
-
-
-
 def is_referentially_valid(merge_samples_forms):
-    u"""
+    u"""Test whether all forms are consistent with each other.
+
+    :Parameters:
+      - `merge_samples_forms`: all “merge samples forms”
+
+    :type new_name_forms: list of `MergeSamplesForm`
 
     :Return:
-
+      whether all forms are consistent with each other
 
     :rtype: bool
     """
@@ -153,20 +177,41 @@ def is_referentially_valid(merge_samples_forms):
                 from_samples.add(from_sample)
     return referentially_valid
 
-
 def from_post_data(request):
-    merge_samples_forms = []
-    for index in range(10):
-        merge_samples_forms.append(MergeSamplesForm(request.user, extract_preset_sample_by_name(request,
-                                                    "{0}_from_sample".format(index)),
-                                                    extract_preset_sample_by_name(request, "{0}_to_sample".format(index)),
-                                                    request.POST, prefix=str(index)))
-    return merge_samples_forms
+    u"""Interpret the POST data sent by the user through his browser and create
+    forms from it.
 
+    :Parameters:
+     - `request`: the current HTTP Request object.
+
+    :type request: ``HttpRequest``
+
+    :Return:
+      The list of the `merge_samples_forms`
+
+    :rtype: list of `MergeSamplesForm`
+    """
+    return [MergeSamplesForm(request.user, extract_preset_sample_by_name(request,
+                            "{0}_from_sample".format(index)),
+                            extract_preset_sample_by_name(request, "{0}_to_sample".format(index)),
+                            request.POST, prefix=str(index)) for index in range(10)]
 
 @login_required
 def merge(request):
+    u"""The merging of the samples is handled in this function.
+    It creates the necessary forms, initiates the merging
+    and returns the ``HttpResponse`` to the web browser.
 
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
     if request.method == "POST":
         merge_samples_forms = from_post_data(request)
         all_valid = all([merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms])
