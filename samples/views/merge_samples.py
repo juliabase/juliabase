@@ -27,6 +27,7 @@ from chantal_common.utils import append_error
 from samples import models
 from samples.views import utils
 from samples.views import form_utils
+import settings
 
 
 def extract_preset_sample_by_name(request, name):
@@ -150,6 +151,7 @@ def merge_samples(from_sample, to_sample):
     sample_alias.name = from_sample.name
     sample_alias.sample = to_sample
     sample_alias.save()
+    settings.clean_up_after_merging(from_sample, to_sample)
     from_sample.delete()
 
 def is_referentially_valid(merge_samples_forms):
