@@ -94,30 +94,21 @@ class MergeSamplesForm(forms.Form):
         if from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user):
                 append_error(self, _(u"The user must be the currently responsible person from both samples."))
-                del cleaned_data[from_sample]
-                del cleaned_data[to_sample]
+                cleaned_data.pop(from_sample, None)
+                cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
                 append_error(self, _(u"You can't merge a sample into itself."))
-                try:
-                    del cleaned_data[from_sample]
-                    del cleaned_data[to_sample]
-                except KeyError:
-                    pass
+                cleaned_data.pop(from_sample, None)
+                cleaned_data.pop(to_sample, None)
             sample_death = has_process(to_sample, models.SampleDeath)
             sample_split = has_process(to_sample, models.SampleSplit)
-            latest_process = models.Process.objects.filter(samples=from_sample).order_by('timestamp').reverse()[0]
+            latest_process = models.Process.objects.filter(samples=from_sample).order_by("timestamp").reverse()[0]
             if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample death from {0}.").format(to_sample.name))
-                try:
-                    del cleaned_data[from_sample]
-                except KeyError:
-                    pass
+                append_error(self, _(u"One or more processes would be after sample death of {0}.").format(to_sample.name))
+                cleaned_data.pop(from_sample, None)
             if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample split from {0}.").format(to_sample.name))
-                try:
-                    del cleaned_data[from_sample]
-                except KeyError:
-                    pass
+                append_error(self, _(u"One or more processes would be after sample split of {0}.").format(to_sample.name))
+                cleaned_data.pop(from_sample, None)
         elif from_sample and not to_sample:
             append_error(self, _(u"You must select a target sample."))
         return cleaned_data
@@ -129,34 +120,26 @@ def merge_samples(from_sample, to_sample):
 
     :Parameters:
      - `from_sample`: The sample, who is merged into the other sample
-     - `to_sample`l: The sample, who should contains the processes from the other sample
+     - `to_sample`: The sample, who should contains the processes from the other sample
 
     :type from_sample: `models.Sample`
     :type to_sample: `models.Sample`
     """
     current_sample = to_sample
-    to_sample_split_origin = to_sample.split_origin
-    process_set = set(models.Process.objects.filter(samples=current_sample))
-    for process in models.Process.objects.filter(samples=from_sample).order_by('timestamp').reverse():
-        if to_sample_split_origin and to_sample_split_origin.timestamp >= process.timestamp:
-            current_sample.processes = process_set
-            current_sample = to_sample_split_origin.parent
-            to_sample_split_origin = current_sample.split_origin
-            process_set = set(models.Process.objects.filter(samples=current_sample))
-        process_set.update([process])
-    current_sample.processes = process_set
-    sample_series = set(models.SampleSeries.objects.filter(samples=to_sample))
-    sample_series.update(set(models.SampleSeries.objects.filter(samples=from_sample)))
-    to_sample.series = sample_series
-    sample_alias = models.SampleAlias()
-    sample_alias.name = from_sample.name
-    sample_alias.sample = to_sample
-    sample_alias.save()
+    for process in from_sample.processes.order_by("-timestamp"):
+        if current_sample.split_origin and current_sample.split_origin.timestamp > process.timestamp:
+            current_sample = current_sample.split_origin.parent
+        current_sample.processes.add(process)
+    to_sample.series.add(*from_sample.series.all())
+    to_aliases = set(alias.name for alias in to_sample.aliases.all())
+    to_sample.aliases.add(*(alias for alias in from_sample.aliases.all() if alias.name not in to_aliases))
+    to_sample.aliases.create(name=from_sample.name)
     try:
-        lookup_view = get_callable(settings.MERGE_CLEANUP_FUNCTION)
-        lookup_view(from_sample, to_sample)
+        cleanup_after_merge = get_callable(settings.MERGE_CLEANUP_FUNCTION)
     except (ImportError, AttributeError):
         pass
+    else:
+        cleanup_after_merge(from_sample, to_sample)
     from_sample.delete()
 
 def is_referentially_valid(merge_samples_forms):
