@@ -127,14 +127,14 @@ def merge_samples(from_sample, to_sample):
     """
     current_sample = to_sample
     to_sample_split_origin = to_sample.split_origin
-    process_set = set(models.Process.objects.filter(samples=current_sample))
+    process_set = set(current_sample.processes.all())
     for process in from_sample.processes.order_by("-timestamp"):
         if to_sample_split_origin and to_sample_split_origin.timestamp >= process.timestamp:
             current_sample.processes = process_set
             current_sample = to_sample_split_origin.parent
             to_sample_split_origin = current_sample.split_origin
-            process_set = set(models.Process.objects.filter(samples=current_sample))
-        process_set.update([process])
+            process_set = set(current_sample.processes.all())
+        process_set.add(process)
     current_sample.processes = process_set
     to_sample.series.add(*from_sample.series.all())
     to_aliases = set(alias.name for alias in to_sample.aliases.all())
