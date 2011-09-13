@@ -75,8 +75,6 @@ copyright holder, you must destroy it immediately and completely.
       <a href="{{ add_sample_url }}">{% trans 'Samples' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/chart_organisation_add.png")'>
       <a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
-    <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/arrow_merge.png")'>
-      <a href="{% url samples.views.merge_samples.merge %}">{% trans 'Merge samples' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/lightbulb_add.png")'>
       <a href="{% url add_result %}">{% trans 'Result' %}</a></li>
     {% for physical_process in physical_processes %}
@@ -148,6 +146,8 @@ copyright holder, you must destroy it immediately and completely.
          >{% trans "Permissions to processes" %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/shape_square_edit.png")'>
       <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
+    <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/arrow_merge.png")'>
+      <a href="{% url samples.views.merge_samples.merge %}">{% trans 'Merge samples' %}</a></li>
     {% if user.has_usable_password %}
       <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/lock_edit.png")'>
         <a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
