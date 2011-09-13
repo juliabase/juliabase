@@ -77,7 +77,8 @@ class MergeSamplesForm(forms.Form):
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
         if from_sample and from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample):
-            raise ValidationError(_(u"It is not possible to merge a sample who was split or is a result of a split process."))
+            raise ValidationError(
+                _(u"It is not possible to merge a sample that was split or is a result of a split process."))
         return from_sample
 
     def clean(self):
@@ -218,5 +219,6 @@ def merge(request):
                                                 extract_preset_sample_by_name(request, "{0}_from_sample".format(index)),
                                                 extract_preset_sample_by_name(request, "{0}_to_sample".format(index)),
                                                 prefix=str(index)) for index in range(10)]
-    return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"), "merge_forms": merge_samples_forms},
+    return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"),
+                                                             "merge_forms": merge_samples_forms},
                               context_instance=RequestContext(request))
