@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-13 22:30+0200\n"
+"POT-Creation-Date: 2011-09-13 22:35+0200\n"
 "PO-Revision-Date: 2011-09-13 22:33+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
@@ -1760,8 +1760,8 @@ msgstr "Proben"
 msgid "Sample series"
 msgstr "Probenserie"
 
-#: templates/samples/main_menu.html:79
-msgid "Merge Samples"
+#: templates/samples/main_menu.html:79 views/merge_samples.py:224
+msgid "Merge samples"
 msgstr "Proben verschmelzen"
 
 #: templates/samples/main_menu.html:81
@@ -1864,7 +1864,9 @@ msgstr "Server-Statistik"
 msgid ""
 "Attention: The tags, purposes, topics, informal stacks, and current "
 "locations of the samples on the left hand side will be erased completely!"
-msgstr "Achtung: Die Tags, Zwecke, Themen, informelle Stapel und aktuelle Probenorte der Proben links werden vollständig gelöscht!"
+msgstr ""
+"Achtung: Die Tags, Zwecke, Themen, informelle Stapel und aktuelle Probenorte "
+"der Proben links werden vollständig gelöscht!"
 
 #: templates/samples/merge_samples.html:34
 msgid "red arrow"
@@ -2716,7 +2718,8 @@ msgstr "Einer oder mehrere Prozesse würde nach dem Tod von {to_sample} sein."
 
 #: views/merge_samples.py:112
 msgid "One or more processes would be after sample split of {to_sample}."
-msgstr "Einer oder mehrere Prozesse würde nach der Spaltung von {to_sample} sein."
+msgstr ""
+"Einer oder mehrere Prozesse würde nach der Spaltung von {to_sample} sein."
 
 #: views/merge_samples.py:116
 msgid "You must select a target sample."
@@ -2729,10 +2732,6 @@ msgstr "Sie können eine Probe nur einmal verschmelzen."
 #: views/merge_samples.py:218
 msgid "Samples were successfully merged."
 msgstr "Die Proben wurden erfolgreich verschmolzen."
-
-#: views/merge_samples.py:224
-msgid "Merge samples"
-msgstr "Proben verschmelzen"
 
 #: views/my_layers.py:40
 msgid "Nickname"
@@ -3306,6 +3305,9 @@ msgstr " und "
 #: views/utils.py:531
 msgid " and "
 msgstr " und "
+
+#~ msgid "Merge Samples"
+#~ msgstr "Proben verschmelzen"
 
 #~ msgid "cache keys"
 #~ msgstr "Cache-Schlüssel"
