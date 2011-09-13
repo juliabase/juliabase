@@ -94,7 +94,7 @@ class MergeSamplesForm(forms.Form):
         to_sample = cleaned_data.get("to_sample")
         if from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user):
-                append_error(self, _(u"The user must be the currently responsible person from both samples."))
+                append_error(self, _(u"The user must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
@@ -105,10 +105,12 @@ class MergeSamplesForm(forms.Form):
             sample_split = has_process(to_sample, models.SampleSplit)
             latest_process = models.Process.objects.filter(samples=from_sample).order_by("timestamp").reverse()[0]
             if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample death of {0}.").format(to_sample.name))
+                append_error(self, _(u"One or more processes would be after sample death of {to_sample}.").format(
+                        to_sample=to_sample.name))
                 cleaned_data.pop(from_sample, None)
             if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample split of {0}.").format(to_sample.name))
+                append_error(self, _(u"One or more processes would be after sample split of {to_sample}.").format(
+                        to_sample=to_sample.name))
                 cleaned_data.pop(from_sample, None)
         elif from_sample and not to_sample:
             append_error(self, _(u"You must select a target sample."))
