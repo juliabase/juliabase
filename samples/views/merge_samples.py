@@ -153,10 +153,11 @@ def merge_samples(from_sample, to_sample):
     sample_alias.sample = to_sample
     sample_alias.save()
     try:
-        lookup_view = get_callable(settings.MERGE_CLEANUP_FUNCTION)
-        lookup_view(from_sample, to_sample)
+        cleanup_after_merge = get_callable(settings.MERGE_CLEANUP_FUNCTION)
     except (ImportError, AttributeError):
         pass
+    else:
+        cleanup_after_merge(from_sample, to_sample)
     from_sample.delete()
 
 def is_referentially_valid(merge_samples_forms):
