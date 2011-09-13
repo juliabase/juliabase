@@ -126,16 +126,10 @@ def merge_samples(from_sample, to_sample):
     :type to_sample: `models.Sample`
     """
     current_sample = to_sample
-    to_sample_split_origin = to_sample.split_origin
-    process_set = set(current_sample.processes.all())
     for process in from_sample.processes.order_by("-timestamp"):
-        if to_sample_split_origin and to_sample_split_origin.timestamp >= process.timestamp:
-            current_sample.processes = process_set
-            current_sample = to_sample_split_origin.parent
-            to_sample_split_origin = current_sample.split_origin
-            process_set = set(current_sample.processes.all())
-        process_set.add(process)
-    current_sample.processes = process_set
+        if current_sample.split_origin and current_sample.split_origin.timestamp > process.timestamp:
+            current_sample = current_sample.split_origin.parent
+        current_sample.processes.add(process)
     to_sample.series.add(*from_sample.series.all())
     to_aliases = set(alias.name for alias in to_sample.aliases.all())
     to_sample.aliases.add(*(alias for alias in from_sample.aliases.all() if alias.name not in to_aliases))
