@@ -43,7 +43,7 @@ class UserDetails(models.Model):
     department = models.CharField(_(u"department"), max_length=30, blank=True)
     language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
     browser_system = models.CharField(_(u"operating system"), max_length=10, default="windows")
-    layout_last_modified = models.DateTimeField(_(u"layout last modified"), auto_now_add=True, default=datetime.datetime.now)
+    layout_last_modified = models.DateTimeField(_(u"layout last modified"), auto_now_add=True)
     """Timestamp at which the settings which affect appearance of the HTML were
     changed for the last time."""
     is_administrative = models.BooleanField(_(u"is administrative"), default=False)
