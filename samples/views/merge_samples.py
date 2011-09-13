@@ -28,6 +28,7 @@ from samples import models
 from samples.views import utils
 from samples.views import form_utils
 import settings
+from django.core.urlresolvers import get_callable
 
 
 def extract_preset_sample_by_name(request, name):
@@ -151,7 +152,11 @@ def merge_samples(from_sample, to_sample):
     sample_alias.name = from_sample.name
     sample_alias.sample = to_sample
     sample_alias.save()
-    settings.clean_up_after_merging(from_sample, to_sample)
+    try:
+        lookup_view = get_callable(settings.MERGE_CLEANUP_FUNCTION)
+        lookup_view(from_sample, to_sample)
+    except (ImportError, AttributeError):
+        pass
     from_sample.delete()
 
 def is_referentially_valid(merge_samples_forms):
