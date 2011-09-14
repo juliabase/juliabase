@@ -97,7 +97,8 @@ class MergeSamplesForm(forms.Form):
         elif not from_sample and to_sample:
             append_error(self, _(u"You must select a source sample."))
         elif from_sample and to_sample:
-            if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user):
+            if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user) \
+                    and not self.user.is_staff:
                 append_error(self, _(u"You must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
