@@ -174,8 +174,10 @@ def is_referentially_valid(merge_samples_forms):
                 referentially_valid = False
             elif from_sample:
                 from_samples.add(from_sample)
-    if not from_samples:
+    if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
+            and not from_samples:
         append_error(merge_samples_forms[0], _(u"No samples selected."))
+        referentially_valid = False
     return referentially_valid
 
 def from_post_data(request):
