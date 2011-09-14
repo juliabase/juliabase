@@ -94,7 +94,7 @@ class MergeSamplesForm(forms.Form):
         to_sample = cleaned_data.get("to_sample")
         if from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user):
-                append_error(self, _(u"The user must be the currently responsible person of both samples."))
+                append_error(self, _(u"You must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
@@ -114,6 +114,8 @@ class MergeSamplesForm(forms.Form):
                 cleaned_data.pop(from_sample, None)
         elif from_sample and not to_sample:
             append_error(self, _(u"You must select a target sample."))
+        elif not from_sample and to_sample:
+            append_error(self, _(u"You must select a source sample."))
         return cleaned_data
 
 
@@ -168,6 +170,8 @@ def is_referentially_valid(merge_samples_forms):
                 referentially_valid = False
             elif from_sample:
                 from_samples.add(from_sample)
+    if not from_samples:
+        append_error(merge_samples_form, _(u"No samples selected."))
     return referentially_valid
 
 def from_post_data(request):
