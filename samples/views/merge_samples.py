@@ -92,7 +92,11 @@ class MergeSamplesForm(forms.Form):
         cleaned_data = self.cleaned_data
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
-        if from_sample and to_sample:
+        if from_sample and not to_sample:
+            append_error(self, _(u"You must select a target sample."))
+        elif not from_sample and to_sample:
+            append_error(self, _(u"You must select a source sample."))
+        elif from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user):
                 append_error(self, _(u"You must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
@@ -117,10 +121,6 @@ class MergeSamplesForm(forms.Form):
                         append_error(self, _(u"One or more processes would be after sample split of {to_sample}.").format(
                                 to_sample=to_sample.name))
                         cleaned_data.pop(from_sample, None)
-        elif from_sample and not to_sample:
-            append_error(self, _(u"You must select a target sample."))
-        elif not from_sample and to_sample:
-            append_error(self, _(u"You must select a source sample."))
         return cleaned_data
 
 
