@@ -84,8 +84,8 @@ class MergeSamplesForm(forms.Form):
     def clean(self):
         def get_first_process(sample, process_cls):
             try:
-                return models.process_cls.objects.filter(samples=sample)[0]
-            except process_cls.DoesNotExist:
+                return process_cls.objects.filter(samples=sample)[0]
+            except IndexError:
                 return None
 
         cleaned_data = self.cleaned_data
@@ -102,15 +102,20 @@ class MergeSamplesForm(forms.Form):
                 cleaned_data.pop(to_sample, None)
             sample_death = get_first_process(to_sample, models.SampleDeath)
             sample_split = get_first_process(to_sample, models.SampleSplit)
-            latest_process = from_sample.processes.reverse()[0]
-            if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample death of {to_sample}.").format(
-                        to_sample=to_sample.name))
-                cleaned_data.pop(from_sample, None)
-            if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample split of {to_sample}.").format(
-                        to_sample=to_sample.name))
-                cleaned_data.pop(from_sample, None)
+            if sample_death or sample_split:
+                try:
+                    latest_process = from_sample.processes.all().reverse()[0]
+                except IndexError:
+                    pass
+                else:
+                    if sample_death and sample_death.timestamp <= latest_process.timestamp:
+                        append_error(self, _(u"One or more processes would be after sample death of {to_sample}.").format(
+                                to_sample=to_sample.name))
+                        cleaned_data.pop(from_sample, None)
+                    if sample_split and sample_split.timestamp <= latest_process.timestamp:
+                        append_error(self, _(u"One or more processes would be after sample split of {to_sample}.").format(
+                                to_sample=to_sample.name))
+                        cleaned_data.pop(from_sample, None)
         elif from_sample and not to_sample:
             append_error(self, _(u"You must select a target sample."))
         elif not from_sample and to_sample:
