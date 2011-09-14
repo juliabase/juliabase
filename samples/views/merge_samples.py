@@ -171,6 +171,7 @@ def is_referentially_valid(merge_samples_forms):
     for merge_samples_form in merge_samples_forms:
         if merge_samples_form.is_valid():
             from_sample = merge_samples_form.cleaned_data["from_sample"]
+            to_sample = merge_samples_form.cleaned_data["to_sample"]
             if from_sample in from_samples or to_sample in from_samples:
                 append_error(merge_samples_form, _(u"You can merge a sample only once."))
                 referentially_valid = False
