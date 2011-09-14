@@ -182,7 +182,7 @@ def is_referentially_valid(merge_samples_forms):
             if from_sample:
                 from_samples.add(from_sample)
             if to_sample:
-                to_samples.add(from_sample)
+                to_samples.add(to_sample)
     if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
             and not from_samples:
         append_error(merge_samples_forms[0], _(u"No samples selected."))
