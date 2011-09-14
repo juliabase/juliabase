@@ -19,9 +19,14 @@ copyright holder, you must destroy it immediately and completely.
 
 
 {% block frame_content %}
-<p>{% trans 'Attention: The tags, purposes, topics, informal stacks, and current locations of the samples on the left hand side will be erased completely!' %}</p>
+<p>
+  {% blocktrans %}
+    Attention: The tags, purposes, topics, informal stacks, and current locations of the samples on the left hand side
+    will be erased completely!
+  {% endblocktrans %}
+</p>
 <form method="post" action="">
-  <table>
+  <table cellspacing="10">
     <tr>
       <th>{{ merge_forms.0.from_sample.label }}</th>
       <th></th>
@@ -31,7 +36,8 @@ copyright holder, you must destroy it immediately and completely.
       {% error_list merge_form _("General error") "<tr>" %}
       <tr>
         <td>{{ merge_form.from_sample }}</td>
-        <td><img style="display: block" src="{{ STATIC_URL }}samples/red_arrow.png" alt="{% trans 'red arrow' %}"/></td>
+        <td><img style="display: block; margin-left: 1em; margin-right: 1em" src="{{ STATIC_URL }}samples/red_arrow.png"
+                 alt="{% trans 'red arrow' %}"/></td>
         <td>{{ merge_form.to_sample }}</td>
       </tr>
     {% endfor %}
