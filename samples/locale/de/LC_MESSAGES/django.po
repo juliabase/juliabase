@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-09 09:05+0200\n"
-"PO-Revision-Date: 2011-09-09 09:09+0200\n"
+"POT-Creation-Date: 2011-09-14 20:08+0200\n"
+"PO-Revision-Date: 2011-09-14 20:09+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -416,11 +416,11 @@ msgstr "Meine Proben zuletzt geändert"
 msgid "identifying data hash"
 msgstr "identifizierender Daten-Hash"
 
-#: models_common.py:1402
+#: models_common.py:1402 views/user_details.py:72
 msgid "subscribed newsfeeds"
 msgstr "abonnierte Newsfeeds"
 
-#: models_common.py:1405 models_common.py:1407
+#: models_common.py:1405 models_common.py:1407 views/user_details.py:73
 msgid "folded processes"
 msgstr "eingefaltete Prozesse"
 
@@ -843,7 +843,10 @@ msgid ""
 "the permission “{permission}”, nor you are allowed to view one of the "
 "processed samples, nor are you the operator, nor is there a clearance for "
 "you for this process."
-msgstr "Sie dürfen den Prozess „{process}“ sich nicht anschauen, weil Sie weder die Berechtigung „{permission}“ haben, noch eine der beteiligten Proben sehen dürfen, noch der Operateur sind, noch eine Freigabe für diesen Prozess haben."
+msgstr ""
+"Sie dürfen den Prozess „{process}“ sich nicht anschauen, weil Sie weder die "
+"Berechtigung „{permission}“ haben, noch eine der beteiligten Proben sehen "
+"dürfen, noch der Operateur sind, noch eine Freigabe für diesen Prozess haben."
 
 #: permissions.py:469
 msgid ""
@@ -999,6 +1002,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/edit_my_samples.html:22
 #: templates/samples/edit_result.html:23
 #: templates/samples/edit_sample_death.html:22
+#: templates/samples/merge_samples.html:36
 #: templates/samples/show_claim.html:60 templates/samples/show_claim.html:61
 #: templates/samples/split_and_rename.html:22
 #: templatetags/samples_extras.py:577
@@ -1086,7 +1090,7 @@ msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
 #: templates/samples/data_matrix_code.html:22
-#: templates/samples/show_sample.html:71 views/sample.py:947
+#: templates/samples/show_sample.html:82 views/sample.py:947
 msgid "Data Matrix code"
 msgstr "Data-Matrix-Code"
 
@@ -1173,7 +1177,8 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"    (Mit dieser Einstellung ist es möglich, alle weniger interessanten Prozesse auf dem Probendatenblatt per Voreinstallung einzufalten.)\n"
+"    (Mit dieser Einstellung ist es möglich, alle weniger interessanten "
+"Prozesse auf dem Probendatenblatt per Voreinstallung einzufalten.)\n"
 "      "
 
 #: templates/samples/edit_result.html:22
@@ -1635,8 +1640,8 @@ msgstr ""
 
 #: templates/samples/lab_notebook.html:32
 #: templates/samples/show_process.html:34
-#: templates/samples/show_sample.html:66
-#: templates/samples/show_sample.html:161
+#: templates/samples/show_sample.html:77
+#: templates/samples/show_sample.html:172
 #: templates/samples/show_sample_series.html:33
 msgid "export as table"
 msgstr "als Tabelle exportieren"
@@ -1728,8 +1733,8 @@ msgstr "Meine Proben"
 #: templates/samples/main_menu.html:24
 #: templates/samples/show_external_operator.html:24
 #: templates/samples/show_process.html:27
-#: templates/samples/show_sample.html:52
-#: templates/samples/show_sample.html:154
+#: templates/samples/show_sample.html:63
+#: templates/samples/show_sample.html:165
 #: templates/samples/show_sample_series.html:23
 #: templates/samples/show_sample_series.html:64
 msgid "edit"
@@ -1746,7 +1751,7 @@ msgstr ""
 msgid "Add things"
 msgstr "Dinge hinzufügen"
 
-#: templates/samples/main_menu.html:75 views/form_utils.py:586
+#: templates/samples/main_menu.html:75 views/form_utils.py:587
 #: views/result.py:107 views/sample_series.py:49
 msgid "Samples"
 msgstr "Proben"
@@ -1811,7 +1816,7 @@ msgstr "Sonstiges"
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/samples/main_menu.html:137 views/status.py:172
+#: templates/samples/main_menu.html:137 views/status.py:170
 msgid "Status messages"
 msgstr "Statusmeldungen"
 
@@ -1831,25 +1836,45 @@ msgstr "Berechtigungen für Prozesse"
 msgid "Edit “My Layers”"
 msgstr "„Meine Schichten“ ändern"
 
-#: templates/samples/main_menu.html:151
+#: templates/samples/main_menu.html:150 views/merge_samples.py:242
+msgid "Merge samples"
+msgstr "Proben verschmelzen"
+
+#: templates/samples/main_menu.html:153
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/samples/main_menu.html:154
+#: templates/samples/main_menu.html:156
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:156
+#: templates/samples/main_menu.html:158
 msgid "Sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: templates/samples/main_menu.html:159
+#: templates/samples/main_menu.html:161
 msgid "About Chantal"
 msgstr "Über Chantal"
 
-#: templates/samples/main_menu.html:161
+#: templates/samples/main_menu.html:163
 msgid "Server statistics"
 msgstr "Server-Statistik"
+
+#: templates/samples/merge_samples.html:23
+msgid ""
+"\n"
+"    Attention: The tags, purposes, topics, informal stacks, and current "
+"locations of the samples on the left hand side\n"
+"    will be erased completely!\n"
+"  "
+msgstr ""
+"\n"
+"Achtung: Die Tags, Zwecke, Themen, informelle Stapel und aktuelle Probenorte "
+"der Proben links werden vollständig gelöscht!"
+
+#: templates/samples/merge_samples.html:40
+msgid "red arrow"
+msgstr "roter Pfeil"
 
 #: templates/samples/password_changed.html:17
 msgid "Password change successful"
@@ -1954,17 +1979,17 @@ msgstr ""
 "aktuelle Kontaktperson seine Daten einsehen kann.\n"
 
 #: templates/samples/show_process.html:30
-#: templates/samples/show_sample.html:157
+#: templates/samples/show_sample.html:168
 msgid "duplicate"
 msgstr "duplizieren"
 
 #: templates/samples/show_process.html:38
-#: templates/samples/show_sample.html:165
+#: templates/samples/show_sample.html:176
 msgid "resplit"
 msgstr "weiterspalten"
 
 #: templates/samples/show_process.html:42
-#: templates/samples/show_sample.html:169
+#: templates/samples/show_sample.html:180
 msgid "(not finished)"
 msgstr "(nicht abgeschlossen)"
 
@@ -2010,23 +2035,23 @@ msgstr[1] ""
 "Dieser Prozess wurde auf die folgenden Probenserien angewandt: <!-- %(link)s"
 "%(name)s -->"
 
-#: templates/samples/show_sample.html:48
+#: templates/samples/show_sample.html:59
 msgid "Sample “"
 msgstr "Probe „"
 
-#: templates/samples/show_sample.html:48
+#: templates/samples/show_sample.html:59
 msgid "”"
 msgstr "“"
 
-#: templates/samples/show_sample.html:56
+#: templates/samples/show_sample.html:67
 msgid "give name"
 msgstr "gib Namen"
 
-#: templates/samples/show_sample.html:62
+#: templates/samples/show_sample.html:73
 msgid "add process"
 msgstr "Prozess hinzufügen"
 
-#: templates/samples/show_sample.html:75
+#: templates/samples/show_sample.html:86
 msgid ""
 "You can see this sample only due to a clearance.  Therefore, some fields and "
 "processes are hidden."
@@ -2034,12 +2059,12 @@ msgstr ""
 "Sie können diese Probe nur aufgrund einer Freigabe sehen.  Deshalb sind "
 "einige Angaben und Prozesse versteckt."
 
-#: templates/samples/show_sample.html:91
+#: templates/samples/show_sample.html:102
 msgid "Attention: Topicless samples may be viewed and edited by anyone."
 msgstr ""
 "Achtung: Themenlose Proben können von jedem eingesehen und geändert werden."
 
-#: templates/samples/show_sample.html:115
+#: templates/samples/show_sample.html:126
 #, python-format
 msgid ""
 "\n"
@@ -2556,11 +2581,11 @@ msgstr "Alle Ihre externen Kontakte"
 msgid "Chantal news for {user_name}"
 msgstr "Chantal-Neuigkeiten für {user_name}"
 
-#: views/form_utils.py:64 views/status.py:88
+#: views/form_utils.py:65 views/status.py:86
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: views/form_utils.py:68
+#: views/form_utils.py:69
 msgid ""
 "The timestamp was older than the one in the database.  Probably someone else "
 "has edited the process by now.  If so, open the process in another tab and "
@@ -2571,19 +2596,19 @@ msgstr ""
 "öffnet Sie den Prozess in einem anderen Tab und kombinieren Sie die "
 "Änderungen."
 
-#: views/form_utils.py:151
+#: views/form_utils.py:152
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
-#: views/form_utils.py:153
+#: views/form_utils.py:154
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: views/form_utils.py:188
+#: views/form_utils.py:189
 msgid "Initials"
 msgstr "Kürzel"
 
-#: views/form_utils.py:211
+#: views/form_utils.py:212
 msgid ""
 "The initials must start with two uppercase letters.  They must contain "
 "uppercase letters and digits only.  Digits must be at the end."
@@ -2591,49 +2616,49 @@ msgstr ""
 "Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
 "Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
 
-#: views/form_utils.py:214
+#: views/form_utils.py:215
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
 
-#: views/form_utils.py:235
+#: views/form_utils.py:236
 msgid "Description of edit"
 msgstr "Beschreibung der Änderung"
 
-#: views/form_utils.py:236
+#: views/form_utils.py:237
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: views/form_utils.py:622
+#: views/form_utils.py:623
 msgid "Remove processed sample(s) from My Samples"
 msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 
-#: views/form_utils.py:653
+#: views/form_utils.py:654
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: views/form_utils.py:657
+#: views/form_utils.py:658
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: views/form_utils.py:686
+#: views/form_utils.py:687
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: views/form_utils.py:718
+#: views/form_utils.py:719
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: views/form_utils.py:724
+#: views/form_utils.py:725
 msgid "The unit is invalid.  Valid units are: {units}"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: {units}"
 
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: views/form_utils.py:754
+#: views/form_utils.py:755
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr ""
 "Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
 
-#: views/form_utils.py:757 views/form_utils.py:761
+#: views/form_utils.py:758 views/form_utils.py:762
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Depositionsbuchstabe muss ein großes „{letter}“ sein."
 
@@ -2665,6 +2690,65 @@ msgstr "Muster für Depositionsnummer"
 #: views/main.py:174
 msgid "Search for deposition"
 msgstr "Nach Deposition suchen"
+
+#: views/merge_samples.py:63
+msgid "merge sample"
+msgstr "verschmelze Probe"
+
+#: views/merge_samples.py:64
+msgid "into sample"
+msgstr "mit Probe"
+
+#: views/merge_samples.py:82
+msgid ""
+"It is not possible to merge a sample that was split, killed, or is the "
+"result of a sample split."
+msgstr ""
+"Es ist unmöglich, eine Probe zu verschmelzen, die gespalten oder getötet "
+"wurde oder das Resultat einer Spaltung ist."
+
+#: views/merge_samples.py:96
+msgid "You must select a target sample."
+msgstr "Sie müssen eine Zielprobe auswählen."
+
+#: views/merge_samples.py:98
+msgid "You must select a source sample."
+msgstr "Sie müssen eine Quellprobe auswählen."
+
+#: views/merge_samples.py:101
+msgid "You must be the currently responsible person of both samples."
+msgstr "Sie müssen die aktuell verantwortliche Person für beide Proben sein."
+
+#: views/merge_samples.py:105
+msgid "You can't merge a sample into itself."
+msgstr "Sie können keine Probe mit sich selbst verschmelzen."
+
+#: views/merge_samples.py:117
+msgid "One or more processes would be after sample death of {to_sample}."
+msgstr "Einer oder mehrere Prozesse würde nach dem Tod von {to_sample} sein."
+
+#: views/merge_samples.py:121
+msgid "One or more processes would be after sample split of {to_sample}."
+msgstr ""
+"Einer oder mehrere Prozesse würde nach der Spaltung von {to_sample} sein."
+
+#: views/merge_samples.py:175
+msgid "You can merge a sample only once."
+msgstr "Sie können eine Probe nur einmal verschmelzen."
+
+#: views/merge_samples.py:179
+msgid ""
+"You can't merge a sample which was merged shortly before.  Do this in a "
+"separate call."
+msgstr "Sie dürfen keine Probe verschmelzen, die kurz vorher verschmolzen wurde.  Tun Sie dies in einem eigenen Aufruf."
+
+#: views/merge_samples.py:187
+msgid "No samples selected."
+msgstr "Keine Proben angegeben."
+
+#: views/merge_samples.py:236
+msgid "Samples were successfully merged."
+msgstr "Die Proben wurden erfolgreich verschmolzen."
 
 #: views/my_layers.py:40
 msgid "Nickname"
@@ -3141,19 +3225,19 @@ msgstr "Spalten der Probe „{sample}“"
 msgid "status level"
 msgstr "Statuslevel"
 
-#: views/status.py:103
+#: views/status.py:101
 msgid "The begin must be before the end."
 msgstr "Der Beginn muß vor dem Ende liegen."
 
-#: views/status.py:132
+#: views/status.py:130
 msgid "The status message was successfully added to the database."
 msgstr "Die Statusmeldung wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/status.py:135
+#: views/status.py:133
 msgid "Add status message"
 msgstr "Statusmeldung hinzufügen"
 
-#: views/status.py:203
+#: views/status.py:201
 msgid "The status message was successfully withdrawn."
 msgstr "Die Statusmeldung wurde erfolgreich zurückgezogen."
 
@@ -3208,26 +3292,26 @@ msgstr ""
 msgid "Change topic memberships of “%s”"
 msgstr "Mitglieder des Themas “%s” ändern"
 
-#: views/user_details.py:136
+#: views/user_details.py:135
 msgid "You can't access the preferences of another user."
 msgstr ""
 "Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
 
-#: views/user_details.py:146
+#: views/user_details.py:145
 msgid "The preferences were successfully updated."
 msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
 
-#: views/user_details.py:152
+#: views/user_details.py:151
 msgid "Change preferences for {user_name}"
 msgstr "Ändere Einstellungen für {user_name}"
 
-#: views/user_details.py:163
+#: views/user_details.py:162
 msgid "You can't access the list of topics and permissions of another user."
 msgstr ""
 "Sie können nicht auf die Themenliste und die Berechtigungen eines anderen "
 "Benutzers zugreifen."
 
-#: views/user_details.py:166
+#: views/user_details.py:165
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
@@ -3238,6 +3322,9 @@ msgstr " und "
 #: views/utils.py:531
 msgid " and "
 msgstr " und "
+
+#~ msgid "Merge Samples"
+#~ msgstr "Proben verschmelzen"
 
 #~ msgid "cache keys"
 #~ msgstr "Cache-Schlüssel"
@@ -3308,9 +3395,6 @@ msgstr " und "
 #~ msgstr ""
 #~ "Einige der angegebenen Proben wurden nicht unter denen mit Namen „alten "
 #~ "Stils“ gefunden."
-
-#~ msgid "No samples given."
-#~ msgstr "Keine Proben angegeben."
 
 #~ msgid "You have no external contacts."
 #~ msgstr "Sie haben keine externen Kontakte."
@@ -3460,9 +3544,6 @@ msgstr " und "
 
 #~ msgid "You must add a \"hash\" parameter to the query string."
 #~ msgstr "Sie müssen einen \"hash\"-Parameter zum Query-String hinzufügen."
-
-#~ msgid "Number of samples"
-#~ msgstr "Anzahl der Proben"
 
 #~ msgid "Substrate"
 #~ msgstr "Substrat"

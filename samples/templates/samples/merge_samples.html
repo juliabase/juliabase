@@ -18,22 +18,26 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 
-
-
 {% block frame_content %}
-<p>{% trans 'Attention: The tags, purposes, topics and current locations of the samples on the left site will be erased complitly!' %}</p>
+<p>
+  {% blocktrans %}
+    Attention: The tags, purposes, topics, informal stacks, and current locations of the samples on the left hand side
+    will be erased completely!
+  {% endblocktrans %}
+</p>
 <form method="post" action="">
-  <table>
+  <table cellspacing="10">
     <tr>
       <th>{{ merge_forms.0.from_sample.label }}</th>
       <th></th>
       <th>{{ merge_forms.0.to_sample.label }}</th>
     </tr>
     {% for merge_form in merge_forms %}
-      {% error_list merge_form _("Error in Merge Samples") "<tr>" %}
+      {% error_list merge_form _("General error") "<tr>" %}
       <tr>
         <td>{{ merge_form.from_sample }}</td>
-        <td width="100mm" ><img style="display: block;margin-left: auto; margin-right: auto" src="{{ STATIC_URL }}samples/red_arrow.png" alt="{% trans 'red arrow' %}" width="50" height="43"/></td>
+        <td><img style="display: block; margin-left: 1em; margin-right: 1em" src="{{ STATIC_URL }}samples/red_arrow.png"
+                 alt="{% trans 'red arrow' %}"/></td>
         <td>{{ merge_form.to_sample }}</td>
       </tr>
     {% endfor %}

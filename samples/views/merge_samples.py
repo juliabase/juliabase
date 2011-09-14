@@ -76,41 +76,52 @@ class MergeSamplesForm(forms.Form):
 
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
-        if from_sample and from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample):
-            raise ValidationError(_(u"It is not possible to merge a sample who was split or is a result of a split process."))
+        if from_sample and (from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample).exists()
+                            or models.SampleDeath.objects.filter(samples=from_sample).exists()):
+            raise ValidationError(
+                _(u"It is not possible to merge a sample that was split, killed, or is the result of a sample split."))
         return from_sample
 
     def clean(self):
-        def has_process(sample, process_cls):
-            for process in models.Process.objects.filter(samples=sample):
-                process = process.actual_instance
-                if isinstance(process, process_cls):
-                    return process
-            return None
+        def get_first_process(sample, process_cls):
+            try:
+                return process_cls.objects.filter(samples=sample)[0]
+            except IndexError:
+                return None
 
         cleaned_data = self.cleaned_data
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
-        if from_sample and to_sample:
-            if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user):
-                append_error(self, _(u"The user must be the currently responsible person from both samples."))
+        if from_sample and not to_sample:
+            append_error(self, _(u"You must select a target sample."))
+        elif not from_sample and to_sample:
+            append_error(self, _(u"You must select a source sample."))
+        elif from_sample and to_sample:
+            if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user) \
+                    and not self.user.is_staff:
+                append_error(self, _(u"You must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
                 append_error(self, _(u"You can't merge a sample into itself."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
-            sample_death = has_process(to_sample, models.SampleDeath)
-            sample_split = has_process(to_sample, models.SampleSplit)
-            latest_process = models.Process.objects.filter(samples=from_sample).order_by("timestamp").reverse()[0]
-            if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample death of {0}.").format(to_sample.name))
-                cleaned_data.pop(from_sample, None)
-            if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                append_error(self, _(u"One or more processes would be after sample split of {0}.").format(to_sample.name))
-                cleaned_data.pop(from_sample, None)
-        elif from_sample and not to_sample:
-            append_error(self, _(u"You must select a target sample."))
+            sample_death = get_first_process(to_sample, models.SampleDeath)
+            sample_split = get_first_process(to_sample, models.SampleSplit)
+            if sample_death or sample_split:
+                try:
+                    latest_process = from_sample.processes.all().reverse()[0]
+                except IndexError:
+                    pass
+                else:
+                    if sample_death and sample_death.timestamp <= latest_process.timestamp:
+                        append_error(self, _(u"One or more processes would be after sample death of {to_sample}.").format(
+                                to_sample=to_sample.name))
+                        cleaned_data.pop(from_sample, None)
+                    if sample_split and sample_split.timestamp <= latest_process.timestamp:
+                        append_error(self, _(u"One or more processes would be after sample split of {to_sample}.").format(
+                                to_sample=to_sample.name))
+                        cleaned_data.pop(from_sample, None)
         return cleaned_data
 
 
@@ -157,14 +168,26 @@ def is_referentially_valid(merge_samples_forms):
     """
     referentially_valid = True
     from_samples = set()
+    to_samples = set()
     for merge_samples_form in merge_samples_forms:
         if merge_samples_form.is_valid():
             from_sample = merge_samples_form.cleaned_data["from_sample"]
-            if from_sample in from_samples:
+            to_sample = merge_samples_form.cleaned_data["to_sample"]
+            if from_sample in from_samples or to_sample in from_samples:
                 append_error(merge_samples_form, _(u"You can merge a sample only once."))
                 referentially_valid = False
-            elif from_sample:
+            if from_sample in to_samples:
+                append_error(merge_samples_form,
+                             _(u"You can't merge a sample which was merged shortly before.  Do this in a separate call."))
+                referentially_valid = False
+            if from_sample:
                 from_samples.add(from_sample)
+            if to_sample:
+                to_samples.add(to_sample)
+    if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
+            and not from_samples:
+        append_error(merge_samples_forms[0], _(u"No samples selected."))
+        referentially_valid = False
     return referentially_valid
 
 def from_post_data(request):
@@ -218,5 +241,6 @@ def merge(request):
                                                 extract_preset_sample_by_name(request, "{0}_from_sample".format(index)),
                                                 extract_preset_sample_by_name(request, "{0}_to_sample".format(index)),
                                                 prefix=str(index)) for index in range(10)]
-    return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"), "merge_forms": merge_samples_forms},
+    return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"),
+                                                             "merge_forms": merge_samples_forms},
                               context_instance=RequestContext(request))
