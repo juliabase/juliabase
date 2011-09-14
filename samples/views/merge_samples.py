@@ -82,12 +82,11 @@ class MergeSamplesForm(forms.Form):
         return from_sample
 
     def clean(self):
-        def has_process(sample, process_cls):
-            for process in models.Process.objects.filter(samples=sample):
-                process = process.actual_instance
-                if isinstance(process, process_cls):
-                    return process
-            return None
+        def get_first_process(sample, process_cls):
+            try:
+                return models.process_cls.objects.filter(samples=sample)[0]
+            except process_cls.DoesNotExist:
+                return None
 
         cleaned_data = self.cleaned_data
         from_sample = cleaned_data.get("from_sample")
@@ -101,9 +100,9 @@ class MergeSamplesForm(forms.Form):
                 append_error(self, _(u"You can't merge a sample into itself."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
-            sample_death = has_process(to_sample, models.SampleDeath)
-            sample_split = has_process(to_sample, models.SampleSplit)
-            latest_process = models.Process.objects.filter(samples=from_sample).order_by("timestamp").reverse()[0]
+            sample_death = get_first_process(to_sample, models.SampleDeath)
+            sample_split = get_first_process(to_sample, models.SampleSplit)
+            latest_process = from_sample.processes.reverse()[0]
             if sample_death and sample_death.timestamp <= latest_process.timestamp:
                 append_error(self, _(u"One or more processes would be after sample death of {to_sample}.").format(
                         to_sample=to_sample.name))
