@@ -167,14 +167,21 @@ def is_referentially_valid(merge_samples_forms):
     """
     referentially_valid = True
     from_samples = set()
+    to_samples = set()
     for merge_samples_form in merge_samples_forms:
         if merge_samples_form.is_valid():
             from_sample = merge_samples_form.cleaned_data["from_sample"]
-            if from_sample in from_samples:
+            if from_sample in from_samples or to_sample in from_samples:
                 append_error(merge_samples_form, _(u"You can merge a sample only once."))
                 referentially_valid = False
-            elif from_sample:
+            if from_sample in to_samples:
+                append_error(merge_samples_form,
+                             _(u"You can't merge a sample which was merged shortly before.  Do this in a separate call."))
+                referentially_valid = False
+            if from_sample:
                 from_samples.add(from_sample)
+            if to_sample:
+                to_samples.add(from_sample)
     if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
             and not from_samples:
         append_error(merge_samples_forms[0], _(u"No samples selected."))
