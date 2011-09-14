@@ -149,6 +149,9 @@ def append_error(form, error_message, fieldname="__all__"):
 
     See, for example, `split_after_deposition.is_referentially_valid`.
 
+    FixMe: Possibly this function will be superseeded by
+    <https://code.djangoproject.com/ticket/5335>.
+
     :Parameters:
       - `form`: the form to which the erroneous field belongs
       - `error_message`: the message to be presented to the user
