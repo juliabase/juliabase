@@ -31,31 +31,6 @@ import settings
 from django.core.urlresolvers import get_callable
 
 
-def extract_preset_sample_by_name(request, name):
-    u"""Extracts a sample from the request dictionary.
-    I can't use the `extract_preset_sample` method from samples.utils
-    because i have two different samples per `MergeSamplesForm`
-    in the request dictionary.
-
-    :Parameters:
-      - `request`: the current HTTP Request object.
-      - `name`: the name of the sample with the index of the `MergeSamplesForm` as prefix.
-
-    :type request: ``HttpRequest``
-    :type name: str
-
-    :Returns:
-      the sample given in the query string, if any.
-
-    :rtype: `models.Sample` or ``NoneType``
-    """
-    query_string_dict = utils.parse_query_string(request)
-    if name in query_string_dict:
-        try:
-            return models.Sample.objects.get(name=query_string_dict[name])
-        except models.Sample.DoesNotExist:
-            pass
-
 class MergeSamplesForm(forms.Form):
     u"""The merge samples form class.
     """
@@ -63,16 +38,11 @@ class MergeSamplesForm(forms.Form):
     from_sample = form_utils.SampleField(label=_(u"merge sample"), required=False)
     to_sample = form_utils.SampleField(label=_(u"into sample"), required=False)
 
-    def __init__(self, user, from_sample_preset, to_sample_preset, *args, **kwargs):
+    def __init__(self, user, my_samples, *args, **kwargs):
         super(MergeSamplesForm, self).__init__(*args, **kwargs)
         self.user = user
-        samples = list(user.my_samples.all())
-        if from_sample_preset:
-            self.fields["from_sample"].initial = from_sample_preset.pk
-        if to_sample_preset:
-            self.fields["to_sample"].initial = to_sample_preset.pk
-        self.fields["from_sample"].set_samples(samples, user)
-        self.fields["to_sample"].set_samples(samples, user)
+        self.fields["from_sample"].set_samples(my_samples, user)
+        self.fields["to_sample"].set_samples(my_samples, user)
 
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
@@ -190,24 +160,6 @@ def is_referentially_valid(merge_samples_forms):
         referentially_valid = False
     return referentially_valid
 
-def from_post_data(request):
-    u"""Interpret the POST data sent by the user through his browser and create
-    forms from it.
-
-    :Parameters:
-     - `request`: the current HTTP Request object.
-
-    :type request: ``HttpRequest``
-
-    :Return:
-      The list of the `merge_samples_forms`
-
-    :rtype: list of `MergeSamplesForm`
-    """
-    return [MergeSamplesForm(request.user, extract_preset_sample_by_name(request,
-                            "{0}_from_sample".format(index)),
-                            extract_preset_sample_by_name(request, "{0}_to_sample".format(index)),
-                            request.POST, prefix=str(index)) for index in range(10)]
 
 @login_required
 def merge(request):
@@ -225,8 +177,10 @@ def merge(request):
 
     :rtype: ``HttpResponse``
     """
+    my_samples = list(request.user.my_samples.all())
     if request.method == "POST":
-        merge_samples_forms = from_post_data(request)
+        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, request.POST, prefix=str(index))
+                               for index in range(10)]
         all_valid = all([merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms])
         referentially_valid = is_referentially_valid(merge_samples_forms)
         if all_valid and referentially_valid:
@@ -237,10 +191,7 @@ def merge(request):
                     merge_samples(from_sample, to_sample)
             return utils.successful_response(request, _(u"Samples were successfully merged."))
     else:
-        merge_samples_forms = [MergeSamplesForm(request.user,
-                                                extract_preset_sample_by_name(request, "{0}_from_sample".format(index)),
-                                                extract_preset_sample_by_name(request, "{0}_to_sample".format(index)),
-                                                prefix=str(index)) for index in range(10)]
+        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index)) for index in range(10)]
     return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"),
                                                              "merge_forms": merge_samples_forms},
                               context_instance=RequestContext(request))
