@@ -76,9 +76,10 @@ class MergeSamplesForm(forms.Form):
 
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
-        if from_sample and from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample):
+        if from_sample and (from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample).exists()
+                            or models.SampleDeath.objects.filter(samples=from_sample).exists()):
             raise ValidationError(
-                _(u"It is not possible to merge a sample that was split or is a result of a split process."))
+                _(u"It is not possible to merge a sample that was split, killed, or is the result of a sample split."))
         return from_sample
 
     def clean(self):
