@@ -38,12 +38,11 @@ class MergeSamplesForm(forms.Form):
     from_sample = form_utils.SampleField(label=_(u"merge sample"), required=False)
     to_sample = form_utils.SampleField(label=_(u"into sample"), required=False)
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, my_samples, *args, **kwargs):
         super(MergeSamplesForm, self).__init__(*args, **kwargs)
         self.user = user
-        samples = list(user.my_samples.all())
-        self.fields["from_sample"].set_samples(samples, user)
-        self.fields["to_sample"].set_samples(samples, user)
+        self.fields["from_sample"].set_samples(my_samples, user)
+        self.fields["to_sample"].set_samples(my_samples, user)
 
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
@@ -178,8 +177,10 @@ def merge(request):
 
     :rtype: ``HttpResponse``
     """
+    my_samples = list(request.user.my_samples.all())
     if request.method == "POST":
-        merge_samples_forms = [MergeSamplesForm(request.user, request.POST, prefix=str(index)) for index in range(10)]
+        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, request.POST, prefix=str(index))
+                               for index in range(10)]
         all_valid = all([merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms])
         referentially_valid = is_referentially_valid(merge_samples_forms)
         if all_valid and referentially_valid:
@@ -190,7 +191,7 @@ def merge(request):
                     merge_samples(from_sample, to_sample)
             return utils.successful_response(request, _(u"Samples were successfully merged."))
     else:
-        merge_samples_forms = [MergeSamplesForm(request.user, prefix=str(index)) for index in range(10)]
+        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index)) for index in range(10)]
     return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"),
                                                              "merge_forms": merge_samples_forms},
                               context_instance=RequestContext(request))
