@@ -31,7 +31,7 @@ copyright holder, you must destroy it immediately and completely.
       {% error_list merge_form _("General error") "<tr>" %}
       <tr>
         <td>{{ merge_form.from_sample }}</td>
-        <td width="100mm" ><img style="display: block;margin-left: auto; margin-right: auto" src="{{ STATIC_URL }}samples/red_arrow.png" alt="{% trans 'red arrow' %}" width="50" height="43"/></td>
+        <td><img style="display: block" src="{{ STATIC_URL }}samples/red_arrow.png" alt="{% trans 'red arrow' %}"/></td>
         <td>{{ merge_form.to_sample }}</td>
       </tr>
     {% endfor %}
