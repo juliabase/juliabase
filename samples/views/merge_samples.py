@@ -161,6 +161,8 @@ def is_referentially_valid(merge_samples_forms):
     return referentially_valid
 
 
+number_of_pairs = 6
+
 @login_required
 def merge(request):
     u"""The merging of the samples is handled in this function.
@@ -180,7 +182,7 @@ def merge(request):
     my_samples = list(request.user.my_samples.all())
     if request.method == "POST":
         merge_samples_forms = [MergeSamplesForm(request.user, my_samples, request.POST, prefix=str(index))
-                               for index in range(10)]
+                               for index in range(number_of_pairs)]
         all_valid = all([merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms])
         referentially_valid = is_referentially_valid(merge_samples_forms)
         if all_valid and referentially_valid:
@@ -191,7 +193,8 @@ def merge(request):
                     merge_samples(from_sample, to_sample)
             return utils.successful_response(request, _(u"Samples were successfully merged."))
     else:
-        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index)) for index in range(10)]
+        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index))
+                               for index in range(number_of_pairs)]
     return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"),
                                                              "merge_forms": merge_samples_forms},
                               context_instance=RequestContext(request))
