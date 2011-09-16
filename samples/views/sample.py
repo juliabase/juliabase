@@ -277,7 +277,12 @@ class SamplesAndProcesses(object):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
-                samples_and_processes.user = unlazy_object(samples_and_processes.user)
+                # FixMe: Remove try block when it is clear that request.user is
+                # a SimpleLazyObject which is not pickable.
+                try:
+                    samples_and_processes.user = unlazy_object(samples_and_processes.user)
+                except AttributeError:
+                    pass
                 cache.set(cache_key, samples_and_processes)
             samples_and_processes.remove_noncleared_process_contexts(user, clearance)
         else:
