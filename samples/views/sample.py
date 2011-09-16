@@ -36,7 +36,7 @@ from django.contrib import messages
 from django.utils.http import urlquote_plus
 import django.core.urlresolvers
 from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache
+    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, unlazy_object
 from chantal_common.signals import storage_changed
 from samples.views import utils, form_utils, feed_utils, table_export
 import chantal_common.search
@@ -277,6 +277,12 @@ class SamplesAndProcesses(object):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
+                # FixMe: Remove try block when it is clear that request.user is
+                # a SimpleLazyObject which is not pickable.
+                try:
+                    samples_and_processes.user = unlazy_object(samples_and_processes.user)
+                except AttributeError:
+                    pass
                 cache.set(cache_key, samples_and_processes)
             samples_and_processes.remove_noncleared_process_contexts(user, clearance)
         else:
