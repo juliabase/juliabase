@@ -278,7 +278,9 @@ class SamplesAndProcesses(object):
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 # FixMe: Remove try block when it is clear that request.user is
-                # a SimpleLazyObject which is not pickable.
+                # a SimpleLazyObject which is not pickable.  Maybe this can be
+                # removed completely if
+                # https://code.djangoproject.com/ticket/16563 is fixed.
                 try:
                     samples_and_processes.user = unlazy_object(samples_and_processes.user)
                 except AttributeError:
