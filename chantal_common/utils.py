@@ -711,3 +711,23 @@ def cache_hit_rate():
         return None
     else:
         return hits / (hits + misses)
+
+
+def unlazy_object(lazy_object):
+    u"""Returns the actual (wrapped) instance of a lazy object.  Note that the
+    lazy object may be changed by this function: Afterwards, it definitely
+    contains the wrapped instance.
+
+    :Parameters:
+      - `lazy_object`: the lazy object
+
+    :type lazy_object: ``django.utils.functional.LazyObject``
+
+    :Return:
+      the actual object
+
+    :rtype: object
+    """
+    if lazy_object._wrapped is None:
+        lazy_object._setup()
+    return lazy_object._wrapped
