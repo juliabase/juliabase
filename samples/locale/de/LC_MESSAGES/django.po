@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-18 14:15+0200\n"
-"PO-Revision-Date: 2011-09-18 14:16+0200\n"
+"POT-Creation-Date: 2011-09-18 14:19+0200\n"
+"PO-Revision-Date: 2011-09-18 14:19+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1669,6 +1669,10 @@ msgstr "Einen neuen Anspruch auf Proben einreichen"
 #: templates/samples/list_claims.html:32
 msgid "Claims with you being the reviewer"
 msgstr "Ansprüche, die Sie überprüfen sollen"
+
+#: templates/samples/list_crawlers.html:24
+msgid "No crawler logs available."
+msgstr "Keine Crawler-Logs vorhanden."
 
 #: templates/samples/list_permissions.html:21
 msgid ""

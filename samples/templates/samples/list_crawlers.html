@@ -20,6 +20,8 @@ copyright holder, you must destroy it immediately and completely.
 <ul>
   {% for crawler_verbose_name, crawler_name in crawlers %}
     <li><a href="{{ crawler_name }}">{{ crawler_verbose_name }}</a></li>
+  {% empty %}
+    <p>{% trans "No crawler logs available." %}</p>
   {% endfor %}
 </ul>
 
