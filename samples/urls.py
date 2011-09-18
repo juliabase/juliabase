@@ -149,4 +149,7 @@ urlpatterns = patterns("samples.views",
                        (r"^folded_processes/(?P<sample_id>.+)", "json_client.get_folded_processes"),
 
                        (r"^merge_samples$", "merge_samples.merge"),
+
+                       (r"crawler_logs/$", "log_viewer.list"),
+                       (r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)", "log_viewer.view"),
                        )

@@ -156,9 +156,9 @@ copyright holder, you must destroy it immediately and completely.
       <a href="{% url samples.views.feed.show username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/flag_blue.png")'>
       <a href="{% url samples.views.claim.list_ username=user.username %}">{% trans 'Sample claims' %}</a></li>
-    <!-- FixMe: These menu items must not be links from here but from another menue page. -->
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/exclamation.png")'>
-      <a href="{% url chantal_ipv.views.samples.log_viewer.list %}">{% trans 'Inspect crawler logs' %}</a></li>
+      <a href="{% url samples.views.log_viewer.list %}">{% trans 'Inspect crawler logs' %}</a></li>
+    <!-- FixMe: These menu items must not be links from here but from another menue page. -->
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/server_lightning.png")'>
       <a href="{% url chantal_ipv.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/server_chart.png")'>
