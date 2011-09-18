@@ -101,7 +101,10 @@ def list(request):
     crawlers = []
     for process_class in permissions.get_all_addable_physical_process_models().iterkeys():
         if permissions.has_permission_to_add_physical_process(request.user, process_class):
-            crawlers.append((process_class._meta.verbose_name_plural, camel_case_to_underscores(process_class.__name__)))
+            process_class_name = camel_case_to_underscores(process_class.__name__)
+            filepath = os.path.join(settings.CRAWLER_LOGS_ROOT, process_class_name + ".log")
+            if os.path.exists(filepath):
+                crawlers.append((process_class._meta.verbose_name_plural, process_class_name))
     crawlers.sort()
     return render_to_response("samples/list_crawlers.html", {"title": _(u"Crawler logs"), "crawlers": crawlers},
                               context_instance=RequestContext(request))
