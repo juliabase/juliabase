@@ -72,7 +72,12 @@ def view(request, process_class_name):
             break
     else:
         raise Http404(u"Process class not found.")
-    permissions.assert_can_add_physical_process(request.user, process_class)
+    try:
+        logs_whitelist = settings.CRAWLER_LOGS_WHITELIST
+    except AttributeError:
+        logs_whitelist = set()
+    if process_class.__name__ not in logs_whitelist:
+        permissions.assert_can_add_physical_process(request.user, process_class)
     assert u"." not in process_class_name and u"/" not in process_class_name
     filepath = os.path.join(settings.CRAWLER_LOGS_ROOT, process_class_name + ".log")
     log_content, log_timestamp = read_crawler_log(filepath)
@@ -98,9 +103,14 @@ def list(request):
 
     :rtype: ``HttpResponse``
     """
+    try:
+        logs_whitelist = settings.CRAWLER_LOGS_WHITELIST
+    except AttributeError:
+        logs_whitelist = set()
     crawlers = []
     for process_class in permissions.get_all_addable_physical_process_models().iterkeys():
-        if permissions.has_permission_to_add_physical_process(request.user, process_class):
+        if process_class.__name__ in logs_whitelist or \
+                permissions.has_permission_to_add_physical_process(request.user, process_class):
             process_class_name = camel_case_to_underscores(process_class.__name__)
             filepath = os.path.join(settings.CRAWLER_LOGS_ROOT, process_class_name + ".log")
             if os.path.exists(filepath):
