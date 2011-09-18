@@ -17,12 +17,14 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 
-<ul>
-  {% for crawler_verbose_name, crawler_name in crawlers %}
-    <li><a href="{{ crawler_name }}">{{ crawler_verbose_name }}</a></li>
-  {% empty %}
-    <p>{% trans "No crawler logs available." %}</p>
-  {% endfor %}
-</ul>
+{% if crawlers %}
+  <ul>
+    {% for crawler_verbose_name, crawler_name in crawlers %}
+      <li><a href="{{ crawler_name }}">{{ crawler_verbose_name }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>{% trans "No crawler logs available." %}</p>
+{% endif %}
 
 {% endblock %}
