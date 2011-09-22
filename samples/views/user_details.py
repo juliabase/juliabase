@@ -86,7 +86,8 @@ class UserDetailsForm(forms.ModelForm):
 
     class Meta:
         model = models.UserDetails
-        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds", "default_folded_process_classes")
+        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",
+                  "default_folded_process_classes")
 
 
 @login_required
@@ -119,13 +120,13 @@ def edit_preferences(request, login_name):
     def __change_folded_processes(default_folded_process_classes, user):
         u"""Creates the new exceptional processes dictionary and saves it into the user details.
         """
-        old_default_classes = set(ContentType.objects.filter(dont_show_to_user=user.samples_user_details))
-        new_default_classes = set(default_folded_process_classes)
+        old_default_classes = set(cls.id for cls in ContentType.objects.filter(dont_show_to_user=user.samples_user_details))
+        new_default_classes = set(map(int, default_folded_process_classes))
         differences = old_default_classes ^ new_default_classes
         exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
         for process_id_list in exceptional_processes_dict.itervalues():
             for process_id in copy.copy(process_id_list):
-                if models.Process.objects.get(pk=process_id).content_type in differences:
+                if models.Process.objects.get(pk=process_id).content_type.id in differences:
                     process_id_list.remove(process_id)
         user.samples_user_details.folded_processes = json.dumps(exceptional_processes_dict)
         user.samples_user_details.save()
