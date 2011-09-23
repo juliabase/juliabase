@@ -225,7 +225,11 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
         sample = original_data_form.cleaned_data["sample"]
         new_name = original_data_form.cleaned_data["new_name"]
         if new_name != sample.name:
-            if not sample.name.startswith("*"):
+            # FixMe: Once we have assured that split-after-deposition is only
+            # called once per deposition, the second condition (after the
+            # "and") is superfluous.
+            if not sample.name.startswith("*") and \
+                    not models.SampleAlias.objects.filter(name=sample.name, sample=sample).exists():
                 models.SampleAlias(name=sample.name, sample=sample).save()
             sample.name = new_name
             sample.save()
