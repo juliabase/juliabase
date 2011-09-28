@@ -77,7 +77,7 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
 
       <div class="screen-only" style="float: right"><a
-              href="{% url samples.views.sample.data_matrix_code %}?data={{ sample.sample.id|urlquote_plus }}"
+              href="{% url samples.views.sample.qr_code %}?data={{ sample.sample.id|urlquote_plus }}"
                                                        ><img width="40" height="40" style="display: block"
               alt="{% trans 'Data Matrix code' %}" src="{{ STATIC_URL }}samples/qrcode.png"/></a></div>
       {% block sample_details %}{# This block can be overridden in derived templates #}{% endblock %}
