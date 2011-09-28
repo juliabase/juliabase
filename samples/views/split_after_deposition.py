@@ -92,15 +92,16 @@ class OriginalDataForm(Form):
         if "new_name" in self.cleaned_data:
             new_name = self.cleaned_data["new_name"]
             sample = self.cleaned_data.get("sample")
-            old_sample_name_format = utils.sample_name_format(sample.name)
-            if old_sample_name_format == "new":
-                if not new_name.startswith(sample.name):
-                    append_error(self, _(u"The new name must begin with the old name."), "new_name")
-                    del self.cleaned_data["new_name"]
-            elif sample and sample.name != new_name:
-                if not new_name.startswith(self.new_name):
-                    append_error(self, _(u"The new name must begin with the deposition number."), "new_name")
-                    del self.cleaned_data["new_name"]
+            if sample:
+                old_sample_name_format = utils.sample_name_format(sample.name)
+                if old_sample_name_format == "new":
+                    if not new_name.startswith(sample.name):
+                        append_error(self, _(u"The new name must begin with the old name."), "new_name")
+                        del self.cleaned_data["new_name"]
+                elif sample and sample.name != new_name:
+                    if not new_name.startswith(self.new_name):
+                        append_error(self, _(u"The new name must begin with the deposition number."), "new_name")
+                        del self.cleaned_data["new_name"]
         return self.cleaned_data
 
 
