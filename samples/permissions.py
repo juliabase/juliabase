@@ -284,10 +284,20 @@ def get_sample_clearance(user, sample):
       - `PermissionError`: raised if the user is not allowed to view the
         sample.
     """
+    from samples.views.utils import enforce_clearance
     clearance = None
     try:
         assert_can_fully_view_sample(user, sample)
     except PermissionError as error:
+        try:
+            tasks = samples.models.Task.objects.filter(samples=sample)
+        except samples.models.Task.DoesNotExist:
+            pass
+        else:
+            for task in tasks:
+                process_class = task.process_content_type.model_class()
+                if has_permission_to_add_physical_process(user, process_class):
+                    enforce_clearance(task.costumer, samples.models.clearance_sets.get(process_class) or (), user, sample)
         try:
             clearance = samples.models.Clearance.objects.get(user=user, sample=sample)
         except samples.models.Clearance.DoesNotExist:

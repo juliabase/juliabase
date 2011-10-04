@@ -665,3 +665,11 @@ def lab_notebook_comments(process, position):
         .format(markdown_samples(process.comments[start_index: end_index].strip()))
     return mark_safe(notebook_comment)
 
+
+@register.filter
+def task_color(task):
+    u"""Returns the colour which is associated with the status of the task.
+    The returned string is ready-to-be-used in CSS directives as
+    a colour name.
+    """
+    return {0: "#D0D0D0", 1: "#ADD8E6", 2: "#FFCC66", 3: "#90EE90"}[task.status_id]

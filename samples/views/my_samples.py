@@ -30,7 +30,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 import chantal_common.utils
 from chantal_common.utils import append_error, get_really_full_name
-from samples import models, permissions
+from samples import permissions
 from samples.views import utils, form_utils, feed_utils
 
 

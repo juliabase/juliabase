@@ -1407,6 +1407,9 @@ class UserDetails(models.Model):
     folded_processes = models.TextField(_(u"folded processes"), blank=True, help_text=_(u"in JSON format"),
                                         default="{}")
 
+    visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
+                                                verbose_name=_(u"visible task lists"), blank=True)
+
     class Meta:
         verbose_name = _(u"user details")
         verbose_name_plural = _(u"user details")
@@ -1462,3 +1465,48 @@ class StatusMessage(models.Model):
     def __unicode__(self):
         _ = ugettext
         return _(u"status message #{number}").format(number=self.pk)
+
+
+status_choices = (
+    (0, _(u"new")),
+    (1, _(u"accepted")),
+    (2, _(u"in progress")),
+    (3, _(u"finished"))
+)
+priority_choices = (
+    (0, _(u"critical")),
+    (1, _(u"high")),
+    (2, _(u"normal")),
+    (3, _(u"low"))
+)
+
+class Task(models.Model):
+    u"""
+    """
+    status = models.PositiveSmallIntegerField(_(u"status"), choices=status_choices, default=0)
+    costumer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks",
+                                 verbose_name=_(u"costumer"), null=True)
+    creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
+                                               auto_now_add=True, editable=False)
+    creating_inaccuracy = models.PositiveSmallIntegerField(_("creating inaccuracy"),
+                                                           choices=timestamp_inaccuracy_choices, default=0)
+    last_modified = models.DateTimeField(_(u"last modified"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
+                                             auto_now=True, auto_now_add=True, editable=False)
+    last_modified_inaccuracy = models.PositiveSmallIntegerField(_("last modified inaccuracy"),
+                                                           choices=timestamp_inaccuracy_choices, default=0)
+    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
+                                 verbose_name=_(u"operator"), null=True, blank=True)
+    process_content_type = models.ForeignKey(ContentType, related_name="tasks")
+    finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True)
+    samples = models.ManyToManyField(Sample, related_name="task")
+    comments = models.TextField(_(u"comments"), blank=True)
+    priority = models.PositiveSmallIntegerField(_(u"priority"), choices=priority_choices, default=2, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u"task")
+        verbose_name_plural = _(u"tasks")
+
+    def __unicode__(self):
+        _ = ugettext
+        return _(u"task of {process_class} from {datetime}". format(process_class=self.process_content_type.name,
+                                                                    datetime=self.creating_timestamp))
