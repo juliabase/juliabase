@@ -68,13 +68,9 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
-        clearance_sets = sorted((utils.capitalize_first_letter(name), models) for name, models in models.clearance_sets)
-        clearance_sets = [(str(i),) + clearance_set for i, clearance_set in enumerate(clearance_sets, 2)]
         self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
                                             ("1", _(u"all processes up to now"))]
-        self.fields["clearance"].choices.extend((i, name) for i, name, __ in clearance_sets)
         self.clearance_choices = {"": None, "0": (), "1": "all"}
-        self.clearance_choices.update((i, models) for i, __, models in clearance_sets)
 
     def clean_comment(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -151,53 +147,10 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 except permissions.PermissionError:
                     failed_samples.append(sample)
             if failed_samples:
-                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples:") + u" " +
+                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples:") + u" " + 
                              utils.format_enumeration(failed_samples), "samples")
                 referentially_valid = False
     return referentially_valid
-
-
-def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
-    u"""Unblocks specified processes of a sample for a given user.
-
-    :Parameters:
-      - `user`: the user who unblocks the processes
-      - `clearance_processes`: all process classes that the destination user
-        should be able to see; ``"all"`` means all processes
-      - `destination_user`: the user for whom the sample should be unblocked
-      - `sample`: the sample to be unblocked
-      - `clearance`: The current clearance to which further unblocked processes
-        should be added.  This is only used in the internal recursion of this
-        routine in order to traverse through sample splits upwards.
-      - `cutoff_timestamp`: The timestamp after which no processes in the
-        sample should be unblocked.  This is only used in the internal
-        recursion of this routine in order to traverse through sample splits
-        upwards.  It is a similar algorithm as the one used in
-        `samples.views.sample.SamplesAndProcesses`.
-
-    :type user: ``django.contrib.auth.models.User``
-    :type clearance_processes: tuple of `models.Process`, or str
-    :type destination_user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
-    :type clearance: `models.Clearance`
-    :type cutoff_timestamp: ``datetime.datetime``
-    """
-    if not clearance:
-        clearance, __ = models.Clearance.objects.get_or_create(user=destination_user, sample=sample)
-    base_query = sample.processes.filter(finished=True)
-    processes = base_query if not cutoff_timestamp else base_query.filter(timestamp__lte=cutoff_timestamp)
-    for process in processes:
-        process = process.actual_instance
-        if isinstance(process, models.Result) and permissions.has_permission_to_view_result_process(user, process):
-            clearance.processes.add(process)
-        elif isinstance(process, models.PhysicalProcess) and \
-                permissions.has_permission_to_view_physical_process(user, process):
-            if clearance_processes == "all" or isinstance(process, clearance_processes):
-                clearance.processes.add(process)
-    split_origin = sample.split_origin
-    if split_origin:
-        enforce_clearance(user, clearance_processes, destination_user, split_origin.parent, clearance,
-                          split_origin.timestamp)
 
 
 def save_to_database(user, my_samples_form, action_form):
@@ -245,7 +198,7 @@ def save_to_database(user, my_samples_form, action_form):
         if action_data["copy_to_user"]:
             recipient_my_samples.add(sample)
             if action_data["clearance"] is not None:
-                enforce_clearance(user, action_data["clearance"], action_data["copy_to_user"], sample)
+                utils.enforce_clearance(user, action_data["clearance"], action_data["copy_to_user"], sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
     feed_reporter = feed_utils.Reporter(user)
