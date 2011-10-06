@@ -25,7 +25,7 @@ import django.contrib.auth.models
 from django.core.cache import cache
 from django.db.models import get_models, get_app
 from django.conf import settings
-from django.utils.encoding import iri_to_uri
+from django.utils.encoding import iri_to_uri, smart_str
 from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -226,8 +226,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         # in daemon mode.  Then, Trac (or whatever) seems to set the LANG
         # environ variable to an invalid value, causing os.stat (which is
         # called by isdir) to fail.
-        if isinstance(absolute_filepath, unicode):
-            absolute_filepath = absolute_filepath.encode("utf-8")
+        absolute_filepath = smart_str(absolute_filepath)
         if os.path.isdir(absolute_filepath):
             if not may_be_directory:
                 raise_inaccessible_exception()
