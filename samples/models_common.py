@@ -1468,24 +1468,24 @@ class StatusMessage(models.Model):
 
 
 status_choices = (
-    (0, _(u"new")),
-    (1, _(u"accepted")),
-    (2, _(u"in progress")),
-    (3, _(u"finished"))
+    ("new", _(u"new")),
+    ("accepted", _(u"accepted")),
+    ("in progress", _(u"in progress")),
+    ("finished", _(u"finished"))
 )
 priority_choices = (
-    (0, _(u"critical")),
-    (1, _(u"high")),
-    (2, _(u"normal")),
-    (3, _(u"low"))
+    ("critical", _(u"critical")),
+    ("high", _(u"high")),
+    ("normal", _(u"normal")),
+    ("low", _(u"low"))
 )
 
 class Task(models.Model):
     u"""
     """
-    status = models.PositiveSmallIntegerField(_(u"status"), choices=status_choices, default=0)
-    costumer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks",
-                                 verbose_name=_(u"costumer"), null=True)
+    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="new")
+    customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks",
+                                 verbose_name=_(u"customer"), null=True)
     creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
                                                auto_now_add=True, editable=False)
     creating_inaccuracy = models.PositiveSmallIntegerField(_("creating inaccuracy"),
@@ -1500,7 +1500,7 @@ class Task(models.Model):
     finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True)
     samples = models.ManyToManyField(Sample, related_name="task")
     comments = models.TextField(_(u"comments"), blank=True)
-    priority = models.PositiveSmallIntegerField(_(u"priority"), choices=priority_choices, default=2, null=True, blank=True)
+    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="normal", blank=True)
 
     class Meta:
         verbose_name = _(u"task")

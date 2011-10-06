@@ -31,7 +31,7 @@ copyright holder, you must destroy it immediately and completely.
           <a class="edit-icon" href="/task_lists/edit/{{ task.id }}" style="position:relative; top:30px; left:37%">
              <img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
              width="16" height="16"/></a>
-         {% if user == task.costumer %}
+         {% if user == task.customer %}
              <a class="edit-icon" href="/task_lists/remove/{{ task.id }}" style="position:relative; top:30px; left:36.5%">
                <img src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="remove icon" title="{% trans 'remove task' %}"
                width="16" height="16"/></a>
@@ -42,8 +42,8 @@ copyright holder, you must destroy it immediately and completely.
             <span class="label">{% verbose_name Task.status %}:</span>{{ task.status }}<br/>
             <span class="label">{% verbose_name Task.operator %}:</span>
             {{ task.operator|get_really_full_name|default_if_none:" " }}<br/>
-            <span class="label">{% verbose_name Task.costumer %}:</span>
-            <a href="{{ task.costumer.get_absolute_url }}">{{ task.costumer|get_really_full_name }}</a><br/>
+            <span class="label">{% verbose_name Task.customer %}:</span>
+            <a href="{{ task.customer.get_absolute_url }}">{{ task.customer|get_really_full_name }}</a><br/>
             <span class="label">{% verbose_name Task.samples %}:</span>
             <ul class="sample-list">
 	        {% for  sample in task.samples %}

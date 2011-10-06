@@ -155,6 +155,6 @@ urlpatterns = patterns("samples.views",
 
                        (r"^task_lists/$", "task_lists.show"),
                        (r"^task_lists/add/$", "task_lists.edit", {"task_id": None}),
-                       (r"^task_lists/edit/(?P<task_id>\d+)$", "task_lists.edit"),
-                       (r"^task_lists/remove/(?P<task_id>\d+)$", "task_lists.remove"),
+                       (r"^task_lists/(?P<task_id>\d+)/edit/$", "task_lists.edit"),
+                       (r"^task_lists/(?P<task_id>\d+)/remove/$", "task_lists.remove"),
                        )

@@ -62,7 +62,6 @@ admin.site.register(FeedChangedTopic)
 admin.site.register(FeedStatusMessage)
 
 
-
 if settings.TESTING:
     from samples.models_test import TestPhysicalProcess
     admin.site.register(TestPhysicalProcess)

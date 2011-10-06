@@ -297,7 +297,7 @@ def get_sample_clearance(user, sample):
             for task in tasks:
                 process_class = task.process_content_type.model_class()
                 if has_permission_to_add_physical_process(user, process_class):
-                    enforce_clearance(task.costumer, samples.models.clearance_sets.get(process_class) or (), user, sample)
+                    enforce_clearance(task.customer, samples.models.clearance_sets.get(process_class, ()), user, sample)
         try:
             clearance = samples.models.Clearance.objects.get(user=user, sample=sample)
         except samples.models.Clearance.DoesNotExist:

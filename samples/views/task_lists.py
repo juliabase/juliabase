@@ -62,16 +62,16 @@ class TaskForm(forms.ModelForm):
         self.user = user
         self.fields["process_content_type"].choices = form_utils.choices_of_content_types(
                                            list(get_all_addable_physical_process_models()))
-        if self.task and self.user == self.task.costumer:
+        if self.task and self.user == self.task.customer:
             self.fields["priority"].widget.attrs.update({"disabled": "disabled"})
         if self.task and self.user == self.task.operator:
             self.fields["finished_process"].choices = [(process.actual_instance, process.actual_instance._meta.verbose_name)
                 for process in models.Process.objects.filter(operator=self.user).order_by("-timestamp")[:10]]
-        if not self.task or self.user == self.task.costumer:
+        if not self.task or self.user == self.task.customer:
             self.fields["finished_process"].widget.attrs.update({"disabled": "disabled"})
 
     def clean_priority(self):
-        if self.task and self.user == self.task.costumer:
+        if self.task and self.user == self.task.customer:
             priority = self.task.priority
         else:
             priority = self.cleaned_data["priority"]
@@ -81,16 +81,16 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = models.Task
-        exclude = ("samples", "costumer")
+        exclude = ("samples", "customer")
 
 
 def save_to_database(task_form, samples, user):
     task = task_form.save()
     task.samples = samples
-    if not task.costumer:
-        task.costumer = user
-    if task.status == "accepted" and not task.operqator:
-        task.operqator = user
+    if not task.customer:
+        task.customer = user
+    if task.status == "accepted" and not task.operator:
+        task.operator = user
         user.my_samples.add(*samples)
     task.save()
 
@@ -147,7 +147,7 @@ class TaskForTemplate(object):
         self.status = task.get_status_display()
         self.status_id = task.status
         self.priority = task.get_priority_display()
-        self.costumer = task.costumer
+        self.customer = task.customer
         self.last_modified = task.last_modified
         self.creating_timestamp = task.creating_timestamp
         self.operator = task.operator
@@ -158,9 +158,8 @@ class TaskForTemplate(object):
                                                                                    task.process_content_type.model_class()))
                         else _(u"confidential sample") for sample in task.samples.all()]
         self.comments = task.comments
-        self.user_can_edit = user == task.costumer or permissions.has_permission_to_add_edit_physical_process(user,
+        self.user_can_edit = user == task.customer or permissions.has_permission_to_add_edit_physical_process(user,
                                                     self.finished_process, task.process_content_type.model_class())
-
 
 
 @login_required
@@ -180,10 +179,11 @@ def show(request):
                                                                "task_lists": task_lists},
                               context_instance=RequestContext(request))
 
+
 @login_required
 def remove(request, task_id):
     task = get_object_or_404(models.Task, id=utils.convert_id_to_int(task_id))
-    if task.costumer == request.user:
+    if task.customer == request.user:
         task.delete()
     else:
         raise permissions.PermissionError(request.user, u"You cannot remove this task.")
