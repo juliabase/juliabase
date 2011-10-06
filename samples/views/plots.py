@@ -25,6 +25,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.utils.encoding import smart_str
 from samples import models, permissions
 from samples.views import utils
 import chantal_common.utils
@@ -64,6 +65,11 @@ def show_plot(request, process_id, plot_id, thumbnail):
     timestamps.append(process.last_modified)
     if datafile_name:
         datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
+        # FixMe: This is only necessary as long as we don't have WSGI running
+        # in daemon mode.  Then, Trac (or whatever) seems to set the LANG
+        # environ variable to an invalid value, causing os.stat (which is
+        # called by isdir) to fail.
+        datafile_names = map(smart_str, datafile_names)
         if not all(os.path.exists(filename) for filename in datafile_names):
             raise Http404(u"One of the raw datafiles was not found.")
         update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, datafile_names, timestamps)
