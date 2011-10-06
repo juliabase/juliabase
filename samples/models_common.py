@@ -257,7 +257,8 @@ class Process(PolymorphicModel):
         :Parameters:
           - `plot_id`: the ID of the plot.  For most models offering plots,
             this can only be the empty string and as such is not used it all in
-            this method.
+            this method.  Note that you must not assume that its value is
+            valid.
 
         :type plot_id: unicode
 
@@ -285,7 +286,7 @@ class Process(PolymorphicModel):
         :Parameters:
           - `plot_id`: the ID of the plot.  For most models offering plots,
             this can only be zero and as such is not used it all in this
-            method.
+            method.  Note that you must not assume that its value is valid.
 
         :type plot_id: unicode
 
