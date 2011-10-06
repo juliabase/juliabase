@@ -670,6 +670,6 @@ def lab_notebook_comments(process, position):
 def task_color(task):
     u"""Returns the colour which is associated with the status of the task.
     The returned string is ready-to-be-used in CSS directives as
-    a colour name.
+    a colour hex code.
     """
-    return {0: "#D0D0D0", 1: "#ADD8E6", 2: "#FFCC66", 3: "#90EE90"}[task.status_id]
+    return {"0_new": "#D0D0D0", "1_accepted": "#ADD8E6", "2_in progress": "#FFCC66", "3_finished": "#90EE90"}[task.status_id]

@@ -1468,22 +1468,22 @@ class StatusMessage(models.Model):
 
 
 status_choices = (
-    ("new", _(u"new")),
-    ("accepted", _(u"accepted")),
-    ("in progress", _(u"in progress")),
-    ("finished", _(u"finished"))
+    ("0_new", _(u"new")),
+    ("1_accepted", _(u"accepted")),
+    ("2_in progress", _(u"in progress")),
+    ("3_finished", _(u"finished"))
 )
 priority_choices = (
-    ("critical", _(u"critical")),
-    ("high", _(u"high")),
-    ("normal", _(u"normal")),
-    ("low", _(u"low"))
+    ("0_critical", _(u"critical")),
+    ("1_high", _(u"high")),
+    ("2_normal", _(u"normal")),
+    ("3_low", _(u"low"))
 )
 
 class Task(models.Model):
     u"""
     """
-    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="new")
+    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="0_new")
     customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks",
                                  verbose_name=_(u"customer"), null=True)
     creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
@@ -1500,7 +1500,7 @@ class Task(models.Model):
     finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True)
     samples = models.ManyToManyField(Sample, related_name="task")
     comments = models.TextField(_(u"comments"), blank=True)
-    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="normal", blank=True)
+    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2_normal", blank=True)
 
     class Meta:
         verbose_name = _(u"task")

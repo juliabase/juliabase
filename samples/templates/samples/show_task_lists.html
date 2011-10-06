@@ -28,11 +28,11 @@ copyright holder, you must destroy it immediately and completely.
     <ul>
     {% for task in task_list %}
         {% if task.user_can_edit %}
-          <a class="edit-icon" href="/task_lists/edit/{{ task.id }}" style="position:relative; top:30px; left:37%">
+          <a class="edit-icon" href="/task_lists/{{ task.id }}/edit/" style="position:relative; top:30px; left:37%">
              <img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
              width="16" height="16"/></a>
          {% if user == task.customer %}
-             <a class="edit-icon" href="/task_lists/remove/{{ task.id }}" style="position:relative; top:30px; left:36.5%">
+             <a class="edit-icon" href="/task_lists/{{ task.id }}/remove/" style="position:relative; top:30px; left:36.5%">
                <img src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="remove icon" title="{% trans 'remove task' %}"
                width="16" height="16"/></a>
           {% endif %}

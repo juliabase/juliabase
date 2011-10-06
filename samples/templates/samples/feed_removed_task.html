@@ -1,0 +1,37 @@
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+
+{% with entry.samples.all as samples %}
+  <p>
+    {% blocktrans count samples|length as counter with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
+      {{ originator }} has removed a <a href="{{ link }}">task</a> for the sample:
+    {% plural %}
+      {{ originator }} has removed a <a href="{{ link }}">task</a> for the samples:
+    {% endblocktrans %}
+  </p>
+
+  <ul>
+    {% for sample in entry.samples.all %}
+      {% if sample.topic.confidential and sample.currently_responsible_person == user %}
+        <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
+      {% else %}{% if not sample.topic.confidential %}
+        <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
+      {% else %}
+      <li>confidential sample</li>
+      {% endif %}{% endif %}
+    {% endfor %}
+  </ul>
+{% endwith %}

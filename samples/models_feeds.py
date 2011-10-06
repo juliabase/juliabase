@@ -24,16 +24,17 @@ entries are self-contained.
 """
 
 from __future__ import absolute_import
-
-import hashlib
-import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from django.db import models
-import django.core.urlresolvers
 from chantal_common.models import Topic, PolymorphicModel
 from chantal_common.utils import get_really_full_name
-from samples.models_common import Sample, UserDetails, Process, Result, SampleSplit, SampleSeries, StatusMessage
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from samples.models_common import Sample, UserDetails, Process, Result, \
+    SampleSplit, SampleSeries, StatusMessage, Task
+import django.contrib.auth.models
+import django.core.urlresolvers
+import hashlib
+
 
 
 class FeedEntry(PolymorphicModel):
@@ -394,7 +395,7 @@ class FeedMovedSampleSeries(FeedEntry):
         metadata["link"] = self.sample_series.get_absolute_url()
         return metadata
 
-    def get_additional_template_context(self, user_details):
+    def get_additional_template_context(self, user):
         return {"subscribed": self.subscribers.filter(pk=user.pk).exists()}
 
 
@@ -464,4 +465,65 @@ class FeedWithdrawnStatusMessage(FeedEntry):
             process=self.process.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "withdrawn status message"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
+        return metadata
+
+
+class FeedNewTask(FeedEntry):
+    u"""Model for feed entries for new tasks for physical processes.
+    """
+    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_new_tasks")
+
+    class Meta(FeedEntry.Meta):
+        verbose_name = _(u"new task feed entry")
+        verbose_name_plural = _(u"new task feed entries")
+
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"New task for {process}").format(
+            process=self.process.model_class()._meta.verbose_name)
+        metadata["category term"] = metadata["category label"] = "new task"
+        metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
+        return metadata
+
+
+class FeedEditedTask(FeedEntry):
+    u"""Model for feed entries for new tasks for physical processes.
+    """
+    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_edited_tasks")
+    description = models.TextField(_(u"description"))
+
+    class Meta(FeedEntry.Meta):
+        verbose_name = _(u"edited task feed entry")
+        verbose_name_plural = _(u"edited task feed entries")
+
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Edited task for {process}").format(
+            process=self.process.model_class()._meta.verbose_name)
+        metadata["category term"] = metadata["category label"] = "edited task"
+        metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
+        return metadata
+
+
+class FeedRemovedTask(FeedEntry):
+    u"""Model for feed entries for removing tasks.
+    """
+    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
+
+    class Meta(FeedEntry.Meta):
+        verbose_name = _(u"removed task feed entry")
+        verbose_name_plural = _(u"removed task feed entries")
+
+    def get_metadata(self):
+        _ = ugettext
+        metadata = {}
+        metadata["title"] = _(u"Removed a task for {process}").format(
+            process=self.process.model_class()._meta.verbose_name)
+        metadata["category term"] = metadata["category label"] = "removed task"
+        metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
         return metadata
