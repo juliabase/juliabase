@@ -546,7 +546,7 @@ class Reporter(object):
                                                   task=task)
 
     def __edited_task(self, task, physical_process_content_type, edit_description):
-        u"""Generate a feed entry for a edited task. It also adds the costumer of the task to the
+        u"""Generate a feed entry for a edited task. It also adds the customer of the task to the
         interested users.
 
         :Parameters:
@@ -567,7 +567,7 @@ class Reporter(object):
 
         :rtype: `models.FeedEditedTask``
         """
-        self.interested_users.add(task.costumer)
+        self.interested_users.add(task.customer)
         important = edit_description["important"]
         return models.FeedEditedTask.objects.create(originator=self.originator, process=physical_process_content_type, task=task,
                 description=edit_description["description"], important=important)

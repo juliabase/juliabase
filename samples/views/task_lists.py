@@ -216,7 +216,7 @@ def show(request):
     if request.method == "POST":
         choose_task_lists_form = ChooseTaskListsForm(request.user, request.POST)
         if choose_task_lists_form.is_valid():
-            request.user.samples_user_details.visible_task_lists = [ContentType.objects.get_for_id(id) for id
+            request.user.samples_user_details.visible_task_lists = [ContentType.objects.get_for_id(id_) for id_
                                         in map(int, choose_task_lists_form.cleaned_data["visible_task_lists"])]
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
