@@ -22,8 +22,8 @@ copyright holder, you must destroy it immediately and completely.
 $(function() {
     $('form[method="get"]').submit(function(event) {
         var $target = $(event.target);
-        $target.find("input").each(function() {
-            if ($(this).attr("type") != "hidden" && $(this).val() == "") $(this).attr("disabled", "disabled")
+        $target.find("input,select,textarea").each(function() {
+            if ($(this).val() == "") $(this).attr("disabled", "disabled")
         })
     })
  });
