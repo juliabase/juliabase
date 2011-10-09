@@ -16,6 +16,21 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 {% load samples_extras %}
 
+{% block local_scripts %}
+<script type="text/javascript">
+// <![CDATA[
+$(function() {
+    $('form[method="get"]').submit(function(event) {
+        var $target = $(event.target);
+        $target.find("input,select,textarea").each(function() {
+            if ($(this).val() == "") $(this).attr("disabled", "disabled")
+        })
+    })
+ });
+// ]]>
+</script>
+{% endblock %}
+
 {% block frame_content %}
 <form method="get" action="">
   {{ search_root.as_p }}
