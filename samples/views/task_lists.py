@@ -58,6 +58,13 @@ class TaskForm(forms.ModelForm):
 
     def __init__(self, user, data=None, **kwargs):
         self.task = kwargs.get("instance")
+        try:
+            process_content_type_pk = kwargs.get("initial")["process_content_type"]
+        except TypeError:
+            try:
+                process_content_type_pk = self.task.process_content_type.pk
+            except AttributeError:
+                process_content_type_pk = None
         super(TaskForm, self).__init__(data, **kwargs)
         self.user = user
         self.fields["process_content_type"].choices = form_utils.choices_of_content_types(
@@ -67,7 +74,8 @@ class TaskForm(forms.ModelForm):
         if self.task and self.user == self.task.operator:
             self.fields["finished_process"].choices = [("", "----------")]
             self.fields["finished_process"].choices.extend([(process.pk, process.actual_instance._meta.verbose_name)
-                for process in Process.objects.filter(operator=self.user).order_by("-timestamp")[:10]])
+                for process in Process.objects.filter(operator=self.user,
+                                                      content_type__pk=process_content_type_pk).order_by("-timestamp")[:10]])
         if not self.task or (self.user == self.task.customer and self.user != self.task.operator):
             self.fields["finished_process"].widget.attrs.update({"disabled": "disabled"})
         self.fields["operator"].initial = self.task.operator.pk if self.task and self.task.operator else None
@@ -157,7 +165,6 @@ def save_to_database(task_form, samples, user, finished_process):
         task.operator = user
         user.my_samples.add(*samples)
     elif task.status == "3_finished" and finished_process:
-        print type(finished_process)
         task.finished_process = finished_process
     task.save()
     return task
