@@ -19,7 +19,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from samples import models, permissions
+from samples import permissions
+from samples .models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.utils.text import capfirst
@@ -53,19 +54,23 @@ class TaskForm(forms.ModelForm):
     """
     _ = ugettext_lazy
 
+    finished_process = forms.ChoiceField(label=capfirst(_(u"finished process")), required=False)
+
     def __init__(self, user, data=None, **kwargs):
         self.task = kwargs.get("instance")
         super(TaskForm, self).__init__(data, **kwargs)
         self.user = user
         self.fields["process_content_type"].choices = form_utils.choices_of_content_types(
                                            list(get_all_addable_physical_process_models()))
-        if self.task and self.user == self.task.customer:
+        if self.task and (self.user == self.task.customer and self.user != self.task.operator):
             self.fields["priority"].widget.attrs.update({"disabled": "disabled"})
         if self.task and self.user == self.task.operator:
-            self.fields["finished_process"].choices = [(process.actual_instance, process.actual_instance._meta.verbose_name)
-                for process in models.Process.objects.filter(operator=self.user).order_by("-timestamp")[:10]]
-        if not self.task or self.user == self.task.customer:
+            self.fields["finished_process"].choices = [("", "----------")]
+            self.fields["finished_process"].choices.extend([(process.pk, process.actual_instance._meta.verbose_name)
+                for process in Process.objects.filter(operator=self.user).order_by("-timestamp")[:10]])
+        if not self.task or (self.user == self.task.customer and self.user != self.task.operator):
             self.fields["finished_process"].widget.attrs.update({"disabled": "disabled"})
+        self.fields["operator"].initial = self.task.operator.pk if self.task and self.task.operator else None
 
     def clean_priority(self):
         if self.task and self.user == self.task.customer:
@@ -76,9 +81,14 @@ class TaskForm(forms.ModelForm):
             raise ValidationError(_(u"This field is required."))
         return priority
 
+    def clean_finished_process(self):
+        finished_process_pk = self.cleaned_data.get("finished_process")
+        if finished_process_pk:
+            return Process.objects.get(pk=int(finished_process_pk))
+
     class Meta:
-        model = models.Task
-        exclude = ("samples", "customer")
+        model = Task
+        exclude = ("samples", "customer", "finished_process")
 
 
 class ChooseTaskListsForm(forms.Form):
@@ -118,7 +128,7 @@ class TaskForTemplate(object):
                                                     self.finished_process, task.process_content_type.model_class())
 
 
-def save_to_database(task_form, samples, user):
+def save_to_database(task_form, samples, user, finished_process):
     u"""Saves the data for a task into the database.
     All validation checks must have done befor calling
     this function.
@@ -143,9 +153,12 @@ def save_to_database(task_form, samples, user):
     task.samples = samples
     if not task.customer:
         task.customer = user
-    if task.status == "accepted" and not task.operator:
+    if task.status == "1_accepted" and not task.operator:
         task.operator = user
         user.my_samples.add(*samples)
+    elif task.status == "3_finished" and finished_process:
+        print type(finished_process)
+        task.finished_process = finished_process
     task.save()
     return task
 
@@ -166,7 +179,7 @@ def edit(request, task_id):
 
     :rtype: ``HttpResponse``
     """
-    task = get_object_or_404(models.Task, id=utils.convert_id_to_int(task_id)) \
+    task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) \
         if task_id is not None else None
     user = request.user
     preset_sample = utils.extract_preset_sample(request) if not task else None
@@ -177,7 +190,9 @@ def edit(request, task_id):
         edit_description_form_is_valid = edit_description_form.is_valid() if edit_description_form else True
         if task_form.is_valid() and samples_form.is_valid() and edit_description_form_is_valid:
             samples = samples_form.cleaned_data["sample_list"]
-            task = save_to_database(task_form, samples, user)
+            finished_process = task_form.cleaned_data.get("finished_process")
+
+            task = save_to_database(task_form, samples, user, finished_process)
             feed_utils.Reporter(request.user).report_task(task,
                 edit_description_form.cleaned_data if edit_description_form else None)
             next_view = "samples.views.task_lists.show"
@@ -187,7 +202,8 @@ def edit(request, task_id):
         samples_form = SamplesForm(user, preset_sample, task)
         initial = {}
         if task:
-            initial["process_content_type"] = task.process_content_type.id
+            initial["process_content_type"] = task.process_content_type.pk
+            initial["finished_process"] = task.finished_process.pk if task.finished_process else None
         elif request.GET.get("process_class"):
             initial["process_content_type"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
@@ -241,7 +257,7 @@ def remove(request, task_id):
 
     :rtype: ``HttpResponse``
     """
-    task = get_object_or_404(models.Task, id=utils.convert_id_to_int(task_id))
+    task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
     if task.customer == request.user:
         physical_process_content_type = task.process_content_type
         samples = list(task.samples.all())
