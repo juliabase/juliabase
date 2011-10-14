@@ -66,10 +66,12 @@ table.headbar {
     font-size: small;
     color: white;
     background-color: #045078;
-    padding: 0.3ex 25px 0.5ex;
+    width: 100%;
+    border-collapse: collapse
 }
 
 table.headbar a { color: white }
+table.headbar td { padding: 0.3ex 25px 0.5ex }
 table.headbar td.login-data { text-align: right }
 table.headbar td.info { text-align: left }
 
@@ -119,3 +121,7 @@ span.markdown-hint { font-size: small }
 
 ul.radio-select { list-style-type: none; display: inline; margin-left: 0; padding-left:0 }
 ul.radio-select li { display: inline; margin-right: 1em }
+
+table.tight-fullwidth { border-collapse: collapse; width: 100% }
+
+table.padding th, table.padding td { padding: 10px }
