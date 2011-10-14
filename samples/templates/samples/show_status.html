@@ -17,18 +17,27 @@ copyright holder, you must destroy it immediately and completely.
 {% load chantal %}
 {% load samples_extras %}
 
+{% block css %}
+<style type="text/css">
+  table.padding td, table.padding th { padding: 3px }
+</style>
+{% endblock %}
+
 {% block frame_content %}
 {% if status_messages %}
-  <table cellpadding="3" border="1">
-       <tr style="vertical-align: top; font-weight:bold">
-          <td>{% trans 'Process' %}</td>
-          <td>{% verbose_name StatusMessage.message %}</td>
-          <td>{% verbose_name StatusMessage.status_level %}</td>
-          <td>{% verbose_name StatusMessage.begin %}</td>
-          <td>{% verbose_name StatusMessage.end %}</td>
-          <td>{% verbose_name StatusMessage.operator %}</td>
-          <td>{% trans 'posted at' %}</td>
+  <table class="padding" border="1">
+     <thead>
+       <tr style="vertical-align: top">
+          <th>{% trans 'Process' %}</th>
+          <th>{% verbose_name StatusMessage.message %}</th>
+          <th>{% verbose_name StatusMessage.status_level %}</th>
+          <th>{% verbose_name StatusMessage.begin %}</th>
+          <th>{% verbose_name StatusMessage.end %}</th>
+          <th>{% verbose_name StatusMessage.operator %}</th>
+          <th>{% trans 'posted at' %}</th>
        </tr>
+     </thead>
+     <tbody>
       {% for status_message, process_name in status_messages %}
            <tr style="vertical-align: top">
               <td>{{ process_name|first_upper }}</td>
@@ -59,6 +68,7 @@ copyright holder, you must destroy it immediately and completely.
               </td>
            </tr>
       {% endfor %}
+     </tbody>
   </table>
 {% else %}
   <p>{% trans 'There are no current status messages.' %}</p>
@@ -73,16 +83,19 @@ copyright holder, you must destroy it immediately and completely.
 {% if further_status_messages %}
   <h2>{% trans "Further status messages" %}</h2>
 
-  <table cellpadding="3" border="1">
+  <table class="padding" border="1">
+    <thead>
        <tr style="vertical-align: top; font-weight:bold">
-          <td>{% trans 'Process' %}</td>
-          <td>{% verbose_name StatusMessage.message %}</td>
-          <td>{% verbose_name StatusMessage.status_level %}</td>
-          <td>{% verbose_name StatusMessage.begin %}</td>
-          <td>{% verbose_name StatusMessage.end %}</td>
-          <td>{% verbose_name StatusMessage.operator %}</td>
-          <td>{% trans 'posted at' %}</td>
+          <th>{% trans 'Process' %}</th>
+          <th>{% verbose_name StatusMessage.message %}</th>
+          <th>{% verbose_name StatusMessage.status_level %}</th>
+          <th>{% verbose_name StatusMessage.begin %}</th>
+          <th>{% verbose_name StatusMessage.end %}</th>
+          <th>{% verbose_name StatusMessage.operator %}</th>
+          <th>{% trans 'posted at' %}</th>
        </tr>
+    </thead>
+    <tbody>
       {% for process_name, status_messages in further_status_messages %}
            {% for status_message in status_messages %}
              <tr style="vertical-align: top">
@@ -117,6 +130,7 @@ copyright holder, you must destroy it immediately and completely.
              </tr>
           {% endfor %}
       {% endfor %}
+    </tbody>
   </table>
 
 {% endif %}

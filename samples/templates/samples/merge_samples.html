@@ -26,7 +26,8 @@ copyright holder, you must destroy it immediately and completely.
   {% endblocktrans %}
 </p>
 <form method="post" action="">
-  <table cellspacing="10">
+  <table class="padding5">
+    <tbody>
     <tr>
       <th>{{ merge_forms.0.from_sample.label }}</th>
       <th></th>
@@ -41,6 +42,7 @@ copyright holder, you must destroy it immediately and completely.
         <td>{{ merge_form.to_sample }}</td>
       </tr>
     {% endfor %}
+    </tbody>
   </table>
   <p class="submit-button"><input type="submit"/></p>
 </form>

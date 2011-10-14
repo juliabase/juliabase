@@ -16,6 +16,7 @@ copyright holder, you must destroy it immediately and completely.
   {% load chantal %}
   {% load samples_extras %}
   <table class="edit-description">
+    <tbody>
     {% error_list edit_description _("General error") "<tr>" %}
     <tr>
       <td>
@@ -32,5 +33,6 @@ copyright holder, you must destroy it immediately and completely.
 	       >{{ edit_description.important.label }}:</label>
       {{ edit_description.important }}</td>
     </tr>
+    </tbody>
   </table>
 {% endif %}

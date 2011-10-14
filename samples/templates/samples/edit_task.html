@@ -22,7 +22,8 @@ copyright holder, you must destroy it immediately and completely.
   {% error_list task _("Error in deposition") %}
   {% error_list samples _("Error in sample list") %}
 
-    <table cellpadding="5">
+    <table class="padding5">
+    <tbody>
     <tr>
         <td style="vertical-align: top; padding-left: 2em">
 	      <label for="id_{{ task.status.html_name }}">{{ task.status.label }}:</label>
@@ -55,6 +56,7 @@ copyright holder, you must destroy it immediately and completely.
                           {{ task.comments }}
                       </td>
     </tr>
+    </tbody>
   </table>
 
   <div style="display: none">

@@ -21,9 +21,11 @@ copyright holder, you must destroy it immediately and completely.
 <form method="post" action="">
   {% error_list sample_death _("General error") %}
   <table>
+    <tbody>
     <tr>
       {% input_field sample_death.reason %}
     </tr>
+    </tbody>
   </table>
 
   <p class="submit-button"><input type="submit"/></p>

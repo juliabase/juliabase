@@ -21,7 +21,8 @@ copyright holder, you must destroy it immediately and completely.
   <p>{% trans 'This claim was either approved or withdrawn.' %}</p>
 {% else %}
   <p>{% trans 'This claim is active and needs now to be approved by the reviewer or withdrawn by the requester.' %}</p>
-  <table cellpadding="5">
+  <table class="padding5">
+    <tbody>
     <tr>
       <td>{% trans "Requester" %}:</td>
       <td>{{ claim.requester|get_really_full_name }}</td>
@@ -30,13 +31,15 @@ copyright holder, you must destroy it immediately and completely.
       <td>{% trans "Reviewer" %}:</td>
       <td>{{ claim.reviewer|get_really_full_name }}</td>
     </tr>
+    </tbody>
   </table>
   <p style="margin-top: 4ex">
     {% blocktrans with claim.requester|get_really_full_name as name %}
       {{ name }} wishes to become the new “responsible person” of the following samples:
     {% endblocktrans %}
   </p>
-  <table border="1" cellpadding="10" style="margin-bottom: 4ex">
+  <table border="1" class="padding10" style="margin-bottom: 4ex">
+    <thead>
     <tr>
       <th>{% trans "sample" %}</th>
       {% if is_reviewer %}
@@ -45,6 +48,8 @@ copyright holder, you must destroy it immediately and completely.
         <th>{% trans "topic" %}</th>
       {% endif %}
     </tr>
+    </thead>
+    <tbody>
     {% for sample in claim.samples.all %}
       <tr>
         <td><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></td>
@@ -55,11 +60,13 @@ copyright holder, you must destroy it immediately and completely.
         {% endif %}
       </tr>
     {% endfor %}
+    </tbody>
   </table>
   <form method="post" action="">
     {% error_list approve _("General error") %}
     {% error_list withdraw _("General error") %}
     <table>
+      <tbody>
       {% if is_reviewer %}
         <tr>
           {% input_field approve.close %}
@@ -70,6 +77,7 @@ copyright holder, you must destroy it immediately and completely.
           {% input_field withdraw.close %}
         </tr>
       {% endif %}
+      </tbody>
     </table>
     <p class="submit-button" style="clear: both"><input type="submit"/></p>
   </form>

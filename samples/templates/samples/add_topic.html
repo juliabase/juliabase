@@ -21,12 +21,14 @@ copyright holder, you must destroy it immediately and completely.
 <form method="post" action="">
   {% error_list new_topic _("New topic") %}
   <table>
+    <tbody>
     <tr>
       {% input_field new_topic.new_topic_name %}
     </tr>
     <tr>
       {% input_field new_topic.confidential %}
     </tr>
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

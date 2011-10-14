@@ -20,6 +20,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
 <form method="post" action="">
   <table>
+    <tbody>
     <tr>
       <th>{{ my_layers.0.nickname.label }}</th>
       <th>{{ my_layers.0.deposition_and_layer.label }}</th>
@@ -33,6 +34,7 @@ copyright holder, you must destroy it immediately and completely.
         <td>{{ layer.delete }}</td>
       </tr>
     {% endfor %}
+    </tbody>
   </table>
   <p class="submit-button"><input type="submit"/></p>
 </form>

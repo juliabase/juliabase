@@ -21,6 +21,7 @@ copyright holder, you must destroy it immediately and completely.
 <form method="post" action="">
   {% error_list external_operator _("Error in external operator") %}
   <table>
+    <tbody>
     <tr>
       {% input_field external_operator.name %}
     </tr><tr>
@@ -42,7 +43,7 @@ copyright holder, you must destroy it immediately and completely.
         {% input_field initials.initials %}
       </tr>
     {% endif %}    
-    </tr>
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

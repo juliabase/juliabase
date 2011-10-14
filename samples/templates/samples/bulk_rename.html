@@ -19,6 +19,8 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block css %}
 <style type="text/css">
+  table.padding { border-spacing: 0pt }
+  table.padding th, table.padding td { padding: 3px }
   td.row, td.last { border-top: solid 1px black }
   td.last { border-bottom: solid 1px black }
 </style>
@@ -26,7 +28,8 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 <form method="post" action="">
-  <table cellspacing="0" cellpadding="3">
+  <table class="padding">
+    <tbody>
     <tr>
       <td> </td>
       <td>
@@ -53,6 +56,7 @@ copyright holder, you must destroy it immediately and completely.
         </td>
       </tr>
     {% endfor %}
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
