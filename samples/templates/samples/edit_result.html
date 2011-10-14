@@ -18,7 +18,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form enctype="multipart/form-data" method="post" action="">
+<form enctype="multipart/form-data" method="post">
   {% error_list result _("Error in result") %}
   {% error_list related_data _("General error") %}
   <table class="padding5">

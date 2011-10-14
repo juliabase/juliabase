@@ -32,7 +32,7 @@ copyright holder, you must destroy it immediately and completely.
         title="{% trans 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1>{% endblock %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
   {% error_list year_month _("Error in date") %}
   <div style="text-align: center">
     {{ year_month.year.label }}/{{ year_month.month.label }}<br/>

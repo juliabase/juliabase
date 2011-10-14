@@ -32,7 +32,7 @@ $(function() {
 {% endblock %}
 
 {% block frame_content %}
-<form method="get" action="">
+<form method="get">
   {{ search_root.as_p }}
   {% if search_tree %}
     {% display_search_tree search_tree %}
@@ -48,7 +48,7 @@ $(function() {
       {% endblocktrans %}
     {% endif %}
   </p>
-  <form method="post" action="">
+  <form method="post">
     {% if results %}
       {% if something_to_add %}
         <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
