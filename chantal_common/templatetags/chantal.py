@@ -202,7 +202,7 @@ def input_field(field):
 
 
 @register.inclusion_tag("error_list.html")
-def error_list(form, form_error_title, outest_tag=u"<table>"):
+def error_list(form, form_error_title, outest_tag=u"<table>", colspan=1):
     u"""Includes a comprehensive error list for one particular form into the
     page.  It is an HTML table, so take care that the tags are nested
     properly.  Its template can be found in the file ``"error_list.html"``.
@@ -217,12 +217,18 @@ def error_list(form, form_error_title, outest_tag=u"<table>"):
       - `outest_tag`: May be ``"<table>"`` or ``"<tr>"``, with ``"<table>"`` as
         the default.  It is the outmost HTML tag which is generated for the
         error list.
+      - `colspan`: the width of the table in the number of columns; necessary
+        because those &%$# guys of WHATWG have dropped colspan="0"; see
+        http://www.w3.org/Bugs/Public/show_bug.cgi?id=13770
 
     :type form: ``forms.Form``
     :type form_error_title: unicode
     :type outest_tag: unicode
+    :type colspan: int
     """
-    return {"form": form, "form_error_title": form_error_title, "outest_tag": outest_tag}
+    if outest_tag == u"<table>":
+        assert colspan == 1
+    return {"form": form, "form_error_title": form_error_title, "colspan": colspan, "outest_tag": outest_tag}
 
 
 @register.simple_tag
