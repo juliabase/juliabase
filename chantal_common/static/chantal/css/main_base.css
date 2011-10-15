@@ -123,6 +123,7 @@ ul.radio-select { list-style-type: none; display: inline; margin-left: 0; paddin
 ul.radio-select li { display: inline; margin-right: 1em }
 
 table.tight-fullwidth { border-collapse: collapse; width: 100% }
+table.tight-fullwidth td { padding: 0pt }
 table.padding5 th, table.padding5 td { padding: 5px }
 table.padding8 th, table.padding8 td { padding: 8px }
 table.padding10 th, table.padding10 td { padding: 10px }
