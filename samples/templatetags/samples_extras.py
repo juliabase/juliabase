@@ -403,7 +403,7 @@ class ValueFieldNode(template.Node):
             unit = None
         elif self.unit == "sccm_collapse":
             if not field:
-                return u"""<td colspan="2"/>"""
+                return u"""<td colspan="2"></td>"""
             unit = "sccm"
         elif not field and field != 0:
             unit = None
@@ -507,7 +507,7 @@ class ValueSplitFieldNode(template.Node):
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
-                return u"""<td colspan="2"/>"""
+                return u"""<td colspan="2"></td>"""
             unit = "sccm"
         else:
             unit = self.unit
