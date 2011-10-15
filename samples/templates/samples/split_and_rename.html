@@ -41,7 +41,7 @@ copyright holder, you must destroy it immediately and completely.
       {% endfor %}
     {% endif %}
     {% for number, new_name in new_names %}
-      {% error_list new_name _("Error in new name") "<tr>" %}
+      {% error_list new_name _("Error in new name") "<tr>" 4 %}
       <tr {% if forloop.last %}style="background-color: darkgray"{% endif %}>
         <td style="text-align: center">
           {% if forloop.last %}

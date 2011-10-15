@@ -30,7 +30,7 @@ copyright holder, you must destroy it immediately and completely.
     </thead>
     <tbody>
     {% for sample, new_names in samples %}
-      {% error_list sample _("Error in sample name") "<tr>" %}
+      {% error_list sample _("Error in sample name") "<tr>" 4 %}
       <tr>
         <td style="vertical-align: top">
           {{ sample.sample }}

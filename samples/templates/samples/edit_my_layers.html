@@ -27,7 +27,7 @@ copyright holder, you must destroy it immediately and completely.
       <th>{{ my_layers.0.delete.label }}</th>
     </tr>
     {% for layer in my_layers %}
-      {% error_list layer _("Error in My Layer") "<tr>" %}
+      {% error_list layer _("Error in My Layer") "<tr>" 3 %}
       <tr>
         <td>{{ layer.nickname }}</td>
         <td>{{ layer.deposition_and_layer }}</td>

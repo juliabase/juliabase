@@ -34,7 +34,7 @@ copyright holder, you must destroy it immediately and completely.
       <th>{{ merge_forms.0.to_sample.label }}</th>
     </tr>
     {% for merge_form in merge_forms %}
-      {% error_list merge_form _("General error") "<tr>" %}
+      {% error_list merge_form _("General error") "<tr>" 3 %}
       <tr>
         <td>{{ merge_form.from_sample }}</td>
         <td><img style="display: block; margin-left: 1em; margin-right: 1em" src="{{ STATIC_URL }}samples/red_arrow.png"
