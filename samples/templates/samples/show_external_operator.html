@@ -25,7 +25,8 @@ copyright holder, you must destroy it immediately and completely.
            width="16" height="16"/></a>{% endif %}</h1>{% endblock %}
 
 {% block frame_content %}
-<table cellspacing="10" style="margin-bottom: 2ex">
+<table class="padding5" style="margin-bottom: 2ex">
+  <tbody>
   <tr>
     {% value_field external_operator.name %}
   </tr>
@@ -59,6 +60,7 @@ copyright holder, you must destroy it immediately and completely.
       <td class="value">{{ initials }}</td>
     </tr>
   {% endif %}
+  </tbody>
 </table>
 
 {% if external_operator.confidential %}

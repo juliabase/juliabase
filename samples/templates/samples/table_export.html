@@ -18,10 +18,11 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="get" action="">
+<form method="get">
 
   {% if column_groups %}
     <table style="float: left">
+      <tbody>
       <tr>
         <td><label for="id_{{ column_groups.column_groups.html_name }}">{{ column_groups.column_groups.label }}:</label></td>
       </tr>
@@ -29,11 +30,13 @@ copyright holder, you must destroy it immediately and completely.
       <tr>
         <td>{{ column_groups.column_groups }}</td>
       </tr>
+      </tbody>
     </table>
   {% endif %}
 
   {% if columns.fields.columns.choices %}
     <table style="float: left; margin-right: 2em">
+      <tbody>
       <tr>
         <td><label for="id_{{ columns.columns.html_name }}">{{ columns.columns.label }}:</label></td>
       </tr>
@@ -41,10 +44,12 @@ copyright holder, you must destroy it immediately and completely.
       <tr>
         <td>{{ columns.columns }}</td>
       </tr>
+      </tbody>
     </table>
 
     {% if rows %}
       <table>
+        <tbody>
         <tr><td>
           {% blocktrans %}
             <p>Below, you see a preview of the table.  If you export it by
@@ -63,20 +68,24 @@ copyright holder, you must destroy it immediately and completely.
               extension <tt>".txt"</tt> before importing it.</p>
           {% endblocktrans %}
         </td></tr>
+        </tbody>
       </table>
     {% endif %}
   {% endif %}
 
   <table style="display: none">
+    <tbody>
     {{ old_data }}
+    </tbody>
   </table>
 
   {% if rows %}
     <table border="1" style="clear: left; margin-top: 2ex; margin-left: auto; margin-right: auto">
+      <tbody>
       {% for row, switch_row in rows %}
         <tr>
           {% if forloop.first %}
-            <td/>
+            <td></td>
           {% else %}
             <td>{{ switch_row.active }}</td>
           {% endif %}
@@ -89,6 +98,7 @@ copyright holder, you must destroy it immediately and completely.
           {% endfor %}
         </tr>
       {% endfor %}
+      </tbody>
     </table>
   {% endif %}
   {% if backlink %}

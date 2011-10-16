@@ -17,16 +17,18 @@ copyright holder, you must destroy it immediately and completely.
 {% load chantal %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
   {% error_list samples _("General error") %}
   {% error_list reviewer _("General error") %}
   <table>
+    <tbody>
     <tr>
       {% input_field samples.samples %}
     </tr>
     <tr>
       {% input_field reviewer.reviewer %}
     </tr>
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

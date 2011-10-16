@@ -16,9 +16,11 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 
 {% block frame_content %}
-<form method="get" action="">
+<form method="get">
   <table>
+    <tbody>
     {{ search_depositions }}
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
 </form>

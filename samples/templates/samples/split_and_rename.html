@@ -18,15 +18,18 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
   {% error_list global_data _("General error") %}
-  <table style="margin-left: auto; margin-right: auto; margin-bottom: 2ex" cellpadding="10" border="1">
+  <table style="margin-left: auto; margin-right: auto; margin-bottom: 2ex" class="padding10" border="1">
+    <thead>
     <tr>
       <th>{% trans 'Piece number' %}</th>
       <th>{{ new_names.0.1.new_name.label }}</th>
       <th>{{ new_names.0.1.new_purpose.label }}</th>
       <th>{{ new_names.0.1.delete.label }}</th>
     </tr>
+    </thead>
+    <tbody>
     {% if old_split %}
       {% for piece in old_split.pieces.all %}
         <tr>
@@ -38,7 +41,7 @@ copyright holder, you must destroy it immediately and completely.
       {% endfor %}
     {% endif %}
     {% for number, new_name in new_names %}
-      {% error_list new_name _("Error in new name") "<tr>" %}
+      {% error_list new_name _("Error in new name") "<tr>" 4 %}
       <tr {% if forloop.last %}style="background-color: darkgray"{% endif %}>
         <td style="text-align: center">
           {% if forloop.last %}
@@ -61,6 +64,7 @@ copyright holder, you must destroy it immediately and completely.
         <td style="text-align: center">{{ new_name.delete }}</td>
       </tr>
     {% endfor %}
+    </tbody>
   </table>
 
   <p>

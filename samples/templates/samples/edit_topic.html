@@ -18,15 +18,17 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
   {% error_list edit_topic _("Error in topic data") %}
   <table>
+    <tbody>
     <tr>
       {% input_field edit_topic.members %}
     </tr>
     <tr>
       {% input_field edit_topic.confidential %}
     </tr>
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

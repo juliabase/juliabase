@@ -58,13 +58,15 @@ copyright holder, you must destroy it immediately and completely.
     </ul>
 {% endfor %}
 <div>
-<form method="POST" action="">
+<form method="POST">
 	{% error_list chose_task_lists _("General error") %}
 	<table>
+        <tbody>
         <tr>
 	       <td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
 	       <td class="input">{{ chose_task_lists.visible_task_lists }}</td>
 	   </tr>
+        </tbody>
 	</table>
 	<p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

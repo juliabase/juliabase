@@ -147,7 +147,6 @@ class RelatedDataForm(forms.Form):
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
         self.fields["samples"].set_samples(samples, user)
-        self.fields["image_file"].widget.attrs["size"] = 60
 
     def clean(self):
         u"""Global clean method for the related data.  I check whether at least

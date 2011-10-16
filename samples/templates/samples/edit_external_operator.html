@@ -18,9 +18,10 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
   {% error_list external_operator _("Error in external operator") %}
   <table>
+    <tbody>
     <tr>
       {% input_field external_operator.name %}
     </tr><tr>
@@ -35,14 +36,14 @@ copyright holder, you must destroy it immediately and completely.
       {% input_field external_operator.confidential %}
     </tr>
     {% if initials %}
-      {% error_list initials _("Error in initials") "<tr>" %}
+      {% error_list initials _("Error in initials") "<tr>" 2 %}
       <tr>
         {% input_field external_operator.contact_person %}
       </tr><tr>
         {% input_field initials.initials %}
       </tr>
     {% endif %}    
-    </tr>
+    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

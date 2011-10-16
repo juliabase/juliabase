@@ -18,11 +18,12 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
 
   {% error_list sample_series _("Error in sample series") %}
 
-  <table cellpadding="5" style="float: left; margin-bottom: 3ex; width: 45%">
+  <table class="padding5" style="float: left; margin-bottom: 3ex; width: 45%">
+    <tbody>
     {% if is_new %}
       <tr>
         <td class="label"><label for="id_{{ sample_series.short_name.html_name }}"
@@ -41,6 +42,7 @@ copyright holder, you must destroy it immediately and completely.
            >{{ sample_series.description.label }}:</label><br/>{% markdown_hint %}</td>
       <td class="input">{{ sample_series.description }}</td>
     </tr>
+    </tbody>
   </table>
 
   <div style="float: left; margin-left: 5em; margin-bottom: 3ex">

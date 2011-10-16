@@ -18,9 +18,10 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post" action="">
+<form method="post">
   {% error_list sample _("Error in sample") %}
   <table>
+    <tbody>
     <tr>
       {% input_field sample.current_location %}
     </tr><tr>
@@ -32,6 +33,7 @@ copyright holder, you must destroy it immediately and completely.
     </tr><tr>
       {% input_field sample.topic %}
     </tr>
+    </tbody>
   </table>
 
   {% block sample_details %}{# This block can be overridden in derived templates #}{% endblock %}

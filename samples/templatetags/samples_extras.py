@@ -403,7 +403,7 @@ class ValueFieldNode(template.Node):
             unit = None
         elif self.unit == "sccm_collapse":
             if not field:
-                return u"""<td colspan="2"/>"""
+                return u"""<td colspan="2"></td>"""
             unit = "sccm"
         elif not field and field != 0:
             unit = None
@@ -507,7 +507,7 @@ class ValueSplitFieldNode(template.Node):
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
-                return u"""<td colspan="2"/>"""
+                return u"""<td colspan="2"></td>"""
             unit = "sccm"
         else:
             unit = self.unit
@@ -572,7 +572,7 @@ def display_search_tree(tree):
     used only in the advanced search.  It walks through the search node tree
     and displays the seach fields.
     """
-    result = u"""<table style="border: 2px solid black; padding-left: 3em">"""
+    result = u"""<table style="border: 2px solid black; padding-left: 3em"><tbody>"""
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", context_instance=template.Context(error_context))
@@ -609,7 +609,7 @@ def display_search_tree(tree):
             if i < len(tree.children) - 1:
                 result += u"""</td></tr><tr><td colspan="2">"""
         result += u"</td></tr>"
-    result += u"</table>"
+    result += u"</tbody></table>"
     return result
 
 

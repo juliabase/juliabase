@@ -18,10 +18,11 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form enctype="multipart/form-data" method="post" action="">
+<form enctype="multipart/form-data" method="post">
   {% error_list result _("Error in result") %}
   {% error_list related_data _("General error") %}
-  <table cellpadding="5">
+  <table class="padding5">
+    <tbody>
     <tr>
       {% input_field result.title %}
       <td rowspan="2" style="vertical-align: top"><label for="id_{{ related_data.samples.html_name }}"
@@ -39,21 +40,21 @@ copyright holder, you must destroy it immediately and completely.
     <tr>
       <td class="label"><label for="id_{{ related_data.image_file.html_name }}"
                  >{{ related_data.image_file.label }}:</label></td>
-      <td class="input" colspan="100">{{ related_data.image_file }}</td>
+      <td class="input" colspan="3">{{ related_data.image_file }}</td>
     </tr>
-    {% error_list dimensions _("Error in dimensions") "<tr>" %}
+    {% error_list dimensions _("Error in dimensions") "<tr>" 2 %}
     <tr>
       <td class="label"><label for="id_{{ dimensions.number_of_quantities.html_name }}"
                  >{% trans 'Number of quantities × values' %}:</label></td>
-      <td class="input" colspan="100">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
+      <td class="input" colspan="3">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
     </tr>
+    </tbody>
   </table>
 
   <div style="display: none">{{ previous_dimensions.number_of_quantities }}{{ previous_dimensions.number_of_values }}</div>
 
   {% if quantities and value_lists %}
-    <table style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 2ex" 
-           cellspacing="0" cellpadding="0">
+    <table style="margin-left: auto; margin-right: auto; text-align: center; margin-top: 2ex; border-collapse: collapse">
       <thead>
         <tr>
           {% for quantity in quantities %}
