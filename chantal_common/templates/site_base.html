@@ -12,14 +12,14 @@ received a copy of this software without the explicit permission of the
 copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang='{{ LANGUAGE_CODE|default:"en" }}' 
   xml:lang='{{ LANGUAGE_CODE|default:"en" }}' {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{{ title }}{% endblock %}</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-{% block css %}{% endblock %}
+<meta charset="UTF-8"/>
 {% block extrahead %}{% endblock %}
+{% block css %}{% endblock %}
 </head>
 <body>
   {% block content %}{% endblock %}

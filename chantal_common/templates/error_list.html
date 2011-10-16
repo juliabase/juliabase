@@ -15,10 +15,10 @@ copyright holder, you must destroy it immediately and completely.
 {% if form %}
   {% if form.errors or form.non_field_errors %}
     {% ifequal outest_tag "<table>" %}
-      <table width="100%" cellspacing="0" cellpadding="0">
+      <table class="tight-fullwidth"><tbody>
     {% endifequal %}
     <tr>
-      <td class="error-messages" colspan="100">
+      <td class="error-messages"{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}>
 	{% for field in form %}
 	  {% if field.errors %}<p>{{ field.label|safe }}</p>{{ field.errors }}{% endif %}
 	{% endfor %}
@@ -28,7 +28,7 @@ copyright holder, you must destroy it immediately and completely.
       </td>
     </tr>
     {% ifequal outest_tag "<table>" %}
-      </table>
+      </tbody></table>
     {% endifequal %}
   {% endif %}
 {% endif %}

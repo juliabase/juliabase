@@ -66,10 +66,12 @@ table.headbar {
     font-size: small;
     color: white;
     background-color: #045078;
-    padding: 0.3ex 25px 0.5ex;
+    width: 100%;
+    border-collapse: collapse
 }
 
 table.headbar a { color: white }
+table.headbar td { padding: 0.3ex 25px 0.5ex }
 table.headbar td.login-data { text-align: right }
 table.headbar td.info { text-align: left }
 
@@ -92,7 +94,7 @@ td.label { text-align: right; vertical-align: text-top; padding-right: 0.3em }
 span.help { font-size: small; font-weight: normal }
 
 /* MESSAGES & ERRORS */
-div.errorlist, td.error-messages { text-align: left; font-size: x-small }
+div.errorlist, td.error-messages { text-align: left; font-size: x-small; padding: 0pt }
 div.errorlist, td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
 				     color:white; background-color: maroon; font-weight: bold }
 ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon; font-weight: normal }
@@ -119,3 +121,11 @@ span.markdown-hint { font-size: small }
 
 ul.radio-select { list-style-type: none; display: inline; margin-left: 0; padding-left:0 }
 ul.radio-select li { display: inline; margin-right: 1em }
+
+table.tight-fullwidth { border-collapse: collapse; width: 100% }
+table.padding5 th, table.padding5 td { padding: 5px }
+table.padding8 th, table.padding8 td { padding: 8px }
+table.padding10 th, table.padding10 td { padding: 10px }
+
+table.lab-notebook { margin-top: 2ex; border-collapse: collapse }
+table.lab-notebook th, table.lab-notebook td { padding: 6px }

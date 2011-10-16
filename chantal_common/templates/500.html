@@ -26,7 +26,8 @@ copyright holder, you must destroy it immediately and completely.
 {% block title %}{% trans 'Internal Chantal error' %}{% endblock %}
 
 {% block content %}
-  <table class="headbar" width="100%" cellspacing="0" cellpadding="0">
+  <table class="headbar">
+    <tbody>
     <tr>
       <td class="info">
       </td>
@@ -35,6 +36,7 @@ copyright holder, you must destroy it immediately and completely.
                          width="16" height="16"/></a>
       </td>
     </tr>
+    </tbody>
   </table>
 
   <div class="main">
@@ -52,8 +54,7 @@ eliminating the bug.  Typically, they will contact you as soon as the problem
 is tackled.
 {% endblocktrans %}</p>
 <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
-<div style="clear: both"/>
-        <div style="clear: both"/>
+        <div style="clear: both"></div>
       </div>
     </div>
   </div>
