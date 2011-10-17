@@ -18,29 +18,34 @@ u"""All views and helper routines directly connected with samples themselves
 """
 
 from __future__ import absolute_import
-
-import time, copy, hashlib, urllib, os.path
 from cStringIO import StringIO
-import PIL, PIL.ImageOps
-from django.views.decorators.http import condition
-from django.db.models import Q
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
-from django.conf import settings
-from django.http import Http404
-import django.forms as forms
-from django.core.cache import cache
-from samples import models, permissions
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.utils.http import urlquote_plus
-import django.core.urlresolvers
-from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, unlazy_object
 from chantal_common.signals import storage_changed
-from samples.views import utils, form_utils, feed_utils, table_export
-import chantal_common.search
+from chantal_common.utils import append_error, HttpResponseSeeOther, \
+    adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
+    mkdirs, cache_key_locked, get_from_cache, unlazy_object
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.db.models import Q
+from django.http import Http404, HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
+from django.views.decorators.http import condition
+from samples import models, permissions
+from samples.views import utils, form_utils, feed_utils
+import PIL
+import PIL.ImageOps
+import chantal_common.search
+import django.core.urlresolvers
+import django.forms as forms
+import hashlib
+import os.path
+import time
+import urllib
+
 
 
 class IsMySampleForm(forms.Form):
@@ -716,7 +721,7 @@ def by_id(request, sample_id, path_suffix):
             raise
     query_string = request.META["QUERY_STRING"] or u""
     return HttpResponseSeeOther(
-        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
+        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix + 
         ("?" + query_string if query_string else u""))
 
 
@@ -849,7 +854,7 @@ def advanced_search(request):
                 base_query = utils.restricted_samples_query(request.user)
             elif search_tree.model_class == models.SampleSeries:
                 base_query = models.SampleSeries.objects.filter(
-                    Q(topic__confidential=False) | Q(topic__members=request.user) |
+                    Q(topic__confidential=False) | Q(topic__members=request.user) | 
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
@@ -895,7 +900,19 @@ def export(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request.user)
-    return table_export.export(request, sample.get_data_for_table_export(), _(u"process"))
+    data = sample.get_data_for_table_export()
+    result = utils.table_export(request, data, _(u"process"))
+    if isinstance(result, tuple):
+        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
+    elif isinstance(result, HttpResponse):
+        return result
+    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
+                              context_instance=RequestContext(request))
 
 
 def qr_code(request):

@@ -22,21 +22,23 @@ be changed once they have been created.
 """
 
 from __future__ import absolute_import
-
-import datetime
-from django.views.decorators.http import condition
-from django.template import RequestContext
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
-from samples import models, permissions
-from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
-from django.forms.util import ValidationError
-import django.contrib.auth.models
-from django.utils.http import urlquote_plus
-import chantal_common.utils
 from chantal_common.utils import append_error, adjust_timezone_information
-from samples.views import utils, form_utils, feed_utils, table_export
+from django import forms
+from django.contrib.auth.decorators import login_required
+from django.forms.util import ValidationError
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils.http import urlquote_plus
+from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
+from django.views.decorators.http import condition
+from samples import models, permissions
+from samples.views import utils, form_utils, feed_utils
+import chantal_common.utils
+import datetime
+import django.contrib.auth.models
+import hashlib
+
 
 
 class SampleSeriesForm(forms.ModelForm):
@@ -218,7 +220,7 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
     referentially_valid = True
     if sample_series_form.is_valid() and edit_description_form.is_valid() and \
             (sample_series_form.cleaned_data["topic"] != sample_series.topic or
-             sample_series_form.cleaned_data["currently_responsible_person"] !=
+             sample_series_form.cleaned_data["currently_responsible_person"] != 
              sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
@@ -350,4 +352,18 @@ def export(request, name):
     permissions.assert_can_view_sample_series(request.user, sample_series)
     for sample in sample_series.samples.all():
         permissions.assert_can_fully_view_sample(request.user, sample)
-    return table_export.export(request, sample_series.get_data_for_table_export(), _(u"sample"))
+
+    data = sample_series.get_data_for_table_export()
+    result = utils.table_export(request, data, _(u"sample"))
+    if isinstance(result, tuple):
+        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
+    elif isinstance(result, HttpResponse):
+        return result
+    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
+                              context_instance=RequestContext(request))
+

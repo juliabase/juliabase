@@ -17,20 +17,27 @@ u"""Views for editing and creating results (aka result processes).
 """
 
 from __future__ import absolute_import
-
-import datetime, os, os.path, re, json, subprocess
-from django.template import RequestContext
-import django.forms as forms
-from django.shortcuts import render_to_response, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy, pgettext_lazy
-from django.conf import settings
-from django.db.models import Q
-import chantal_common.utils
-from chantal_common.utils import append_error, static_file_response, is_update_necessary, mkdirs
 from chantal_common.signals import storage_changed
+from chantal_common.utils import append_error, static_file_response, \
+    is_update_necessary, mkdirs
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils.translation import ugettext as _, ugettext_lazy, pgettext_lazy
 from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils, table_export
+from samples.views import utils, form_utils, feed_utils
+import chantal_common.utils
+import datetime
+import os
+import os.path
+import re
+import json
+import subprocess
+import django.forms as forms
+
 
 
 def save_image_file(image_data, result, related_data_form):
@@ -128,7 +135,7 @@ class RelatedDataForm(forms.Form):
             samples.extend(old_result.samples.all())
             self.fields["sample_series"].queryset = \
                 models.SampleSeries.objects.filter(
-                Q(samples__watchers=user) | ( Q(currently_responsible_person=user) &
+                Q(samples__watchers=user) | (Q(currently_responsible_person=user) & 
                                               Q(timestamp__range=(three_months_ago, now)))
                 | Q(pk__in=old_result.sample_series.values_list("pk", flat=True))).distinct()
             self.fields["samples"].initial = old_result.samples.values_list("pk", flat=True)
@@ -139,8 +146,8 @@ class RelatedDataForm(forms.Form):
                 self.fields["samples"].initial = [preset_sample.pk]
                 samples.append(preset_sample)
             self.fields["sample_series"].queryset = \
-                models.SampleSeries.objects.filter(Q(samples__watchers=user) |
-                                                   ( Q(currently_responsible_person=user) &
+                models.SampleSeries.objects.filter(Q(samples__watchers=user) | 
+                                                   (Q(currently_responsible_person=user) & 
                                                      Q(timestamp__range=(three_months_ago, now)))
                                                    | Q(name=query_string_dict.get("sample_series", u""))).distinct()
             if "sample_series" in query_string_dict:
@@ -239,7 +246,7 @@ class FormSet(object):
       to distinguish between editing or creating.
 
     :ivar result_form: the form with the result process
-      
+
     :ivar related_data_form: the form with all samples and sample series the
       result should be connected with
 
@@ -274,7 +281,7 @@ class FormSet(object):
 
     def __init__(self, request, process_id):
         u"""Class constructor.
-        
+
         :Parameters:
           - `request`: the current HTTP Request object
           - `process_id`: the ID of the result to be edited; ``None`` if we
@@ -641,5 +648,17 @@ def export(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
+    data = result.get_data_for_table_export()
     # Translators: In a table
-    return table_export.export(request, result.get_data_for_table_export(), _(u"row"))
+    result = utils.table_export(request, data, _(u"row"))
+    if isinstance(result, tuple):
+        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
+    elif isinstance(result, HttpResponse):
+        return result
+    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
+                              context_instance=RequestContext(request))

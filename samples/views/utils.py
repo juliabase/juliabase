@@ -19,20 +19,28 @@ views package.  All symbols from `shared_utils` are also available here.  So
 """
 
 from __future__ import absolute_import
-
-import re, string, datetime
-from django.http import Http404
+from chantal_common import mimeparse
+from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
-from django.conf import settings
+from django.http import Http404, HttpResponse
+from django.shortcuts import render_to_response
+from django.template import Context, RequestContext
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from functools import update_wrapper
-from django.template import Context, RequestContext
-from django.shortcuts import render_to_response
-import chantal_common.utils
 from samples import models, permissions
 from samples.views.shared_utils import *
+from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
+    ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm, \
+    defaultfilters, UnicodeWriter
+import chantal_common.utils
+import datetime
+import copy
+import json
+import re
+import string
+
 
 
 old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$")
@@ -593,8 +601,8 @@ def restricted_samples_query(user):
     """
     if user.is_staff:
         return models.Sample.objects.all()
-    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
-                                        Q(currently_responsible_person=user) | Q(clearances__user=user) |
+    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) | 
+                                        Q(currently_responsible_person=user) | Q(clearances__user=user) | 
                                         Q(topic__isnull=True)).distinct()
 
 
@@ -658,3 +666,85 @@ def enforce_clearance(user, clearance_processes, destination_user, sample, clear
     if split_origin:
         enforce_clearance(user, clearance_processes, destination_user, split_origin.parent, clearance,
                           split_origin.timestamp)
+
+
+def table_export(request, data, label_column_heading):
+    u"""Helper function which does almost all work needed for a CSV table
+    export view.  This is not a view per se, however, it is called by views,
+    which have to do almost nothing anymore by themselves.  See for example
+    `sample.export`.
+
+    This function return the data in JSON format if this is requested by the
+    ``Accept`` header field in the HTTP request.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `data`: the root node of the data tree
+      - `label_column_heading`: Description of the very first column with the
+        table row headings, see `generate_table_rows`.
+
+    :type request: ``HttpRequest``
+    :type data: `DataNode`
+    :type label_column_heading: unicode
+
+    :Returns:
+      the HTTP response object or a tuple with all needed forms to create the export view
+
+    :rtype: ``HttpResponse`` or tuple of ``django.forms.Form``
+    """
+    if not data.children:
+        # We have no rows (e.g. a result process with only one row), so let's
+        # turn the root into the only row.
+        root_without_children = copy.copy(data)
+        # Remove the label column (the zeroth column)
+        root_without_children.descriptive_name = None
+        data.children = [root_without_children]
+    get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
+    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
+    data.find_unambiguous_names()
+    data.complete_items_in_children()
+    column_groups, columns = build_column_group_list(data)
+    single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
+    table = switch_row_forms = None
+    selected_column_groups = set(single_column_group)
+    selected_columns = set()
+    column_groups_form = ColumnGroupsForm(column_groups, get_data) if not single_column_group else None
+    previous_data_form = OldDataForm(get_data)
+    if previous_data_form.is_valid():
+        previous_column_groups = previous_data_form.cleaned_data["column_groups"]
+        previous_columns = previous_data_form.cleaned_data["columns"]
+    else:
+        previous_column_groups = previous_columns = frozenset()
+    columns_form = ColumnsForm(column_groups, columns, previous_column_groups, get_data)
+    if single_column_group or column_groups_form.is_valid():
+        selected_column_groups = single_column_group or column_groups_form.cleaned_data["column_groups"]
+        if columns_form.is_valid():
+            selected_columns = columns_form.cleaned_data["columns"]
+            label_column = [row.descriptive_name for row in data.children]
+            table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["columns"],
+                                        label_column, label_column_heading)
+            start_column_index = 1 if any(label_column) else 0
+            if not(previous_columns) and selected_columns:
+                switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[start_column_index:])})
+                                    for i, row in enumerate(table)]
+            else:
+                switch_row_forms = [SwitchRowForm(get_data, prefix=str(i)) for i in range(len(table))]
+            all_switch_row_forms_valid = all([switch_row_form.is_valid() for switch_row_form in switch_row_forms])
+            if all_switch_row_forms_valid and \
+                    previous_column_groups == selected_column_groups and previous_columns == selected_columns:
+                reduced_table = [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
+                if requested_mime_type == "application/json":
+                    data = [dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
+                            for row in reduced_table[1:]]
+                    return chantal_common.utils.respond_in_json(data)
+                else:
+                    response = HttpResponse(content_type="text/csv; charset=utf-8")
+                    response['Content-Disposition'] = \
+                        "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
+                    writer = UnicodeWriter(response)
+                    writer.writerows(reduced_table)
+                return response
+    if selected_column_groups != previous_column_groups:
+        columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
+    old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
+    return (column_groups_form, columns_form, table, switch_row_forms, old_data_form)
