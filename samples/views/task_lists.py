@@ -246,9 +246,9 @@ def show(request):
     task_lists = dict([(content_type, [TaskForTemplate(task, request.user)
                                        for task in content_type.tasks.order_by("-status", "priority", "last_modified")])
                        for content_type in request.user.samples_user_details.visible_task_lists.iterator()])
-    return render_to_response("samples/show_task_lists.html", {"title": "Task lists",
-                                                               "chose_task_lists": choose_task_lists_form,
-                                                               "task_lists": task_lists},
+    return render_to_response("samples/task_lists.html", {"title": "Task lists",
+                                                          "chose_task_lists": choose_task_lists_form,
+                                                          "task_lists": task_lists},
                               context_instance=RequestContext(request))
 
 @login_required
