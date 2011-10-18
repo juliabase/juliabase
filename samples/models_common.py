@@ -1497,9 +1497,10 @@ class Task(models.Model):
                                                            choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
                                  verbose_name=_(u"operator"), null=True, blank=True)
-    process_content_type = models.ForeignKey(ContentType, related_name="tasks")
-    finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True)
-    samples = models.ManyToManyField(Sample, related_name="task")
+    process_content_type = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_(u"process class"))
+    finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True,
+                                         verbose_name=_(u"finished process"))
+    samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_(u"samples"))
     comments = models.TextField(_(u"comments"), blank=True)
     priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2_normal", blank=True)
 

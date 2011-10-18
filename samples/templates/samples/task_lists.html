@@ -19,49 +19,80 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 {% for process_class, task_list in task_lists.iteritems %}
-    <div><h2>{{ process_class.name|capfirst }}</h2>
-        <form method="get" action="/task_lists/add/" style="display: inline">
-          <input type="hidden" name="process_class" value="{{ process_class.id }}"/>
-	       <input type="submit" value="Add new task"/>
-	    </form>
-	</div>
-    <ul>
+    <h2>{{ process_class|contenttype_name|capfirst }}</h2>
+
+    <form method="get" action="/task_lists/add/" style="margin-bottom: 3ex">
+      <input type="hidden" name="process_class" value="{{ process_class.id }}"/>
+      <input type="submit" value="{% trans 'Add task' %}"/>
+    </form>
+
     {% for task in task_list %}
+    <div>
+      <div style="border-style: solid; border-color: black; border-width: thin;
+                  background-color: {{ task.task|task_color }}; display: inline-block; padding: 1ex">
+        <div style="float: right">
         {% if task.user_can_edit %}
-          <a class="edit-icon" href="/task_lists/{{ task.id }}/edit/" style="position:relative; top:30px; left:37%">
+          <a class="edit-icon" href="/task_lists/{{ task.task.id }}/edit/">
              <img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
              width="16" height="16"/></a>
-         {% if user == task.customer %}
-             <a class="edit-icon" href="/task_lists/{{ task.id }}/remove/" style="position:relative; top:30px; left:36.5%">
-               <img src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="remove icon" title="{% trans 'remove task' %}"
-               width="16" height="16"/></a>
+         {% if user == task.task.customer %}
+            <form method="post" 
+      action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={% url samples.views.task_lists.show %}"
+                  style="display: inline">
+              <input type="image" src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="{% trans 'remove task' %}"
+                     title="{% trans 'remove task' %}"/>
+            </form>
           {% endif %}
         {% endif %}
-        <li style="border-style: solid; border-color: black; border-width: thin; width:40%; margin-top:0px; padding:5px; background-color: {{ task|task_color }}">
-            <span class="label">{% verbose_name Task.priority %}:</span>{{ task.priority }}<br/>
-            <span class="label">{% verbose_name Task.status %}:</span>{{ task.status }}<br/>
-            <span class="label">{% verbose_name Task.operator %}:</span>
-            {{ task.operator|get_really_full_name|default_if_none:" " }}<br/>
-            <span class="label">{% verbose_name Task.customer %}:</span>
-            <a href="{{ task.customer.get_absolute_url }}">{{ task.customer|get_really_full_name }}</a><br/>
-            <span class="label">{% verbose_name Task.samples %}:</span>
-            <ul class="sample-list">
-	        {% for  sample in task.samples %}
-	            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
-	        {% endfor %}
-	        </ul>
-	        <span class="label">{% verbose_name Task.creating_timestamp %}:</span>{{ task.creating_timestamp }}<br/>
-	        <span class="label">{% verbose_name Task.last_modified %}:</span>{{ task.last_modified }}<br/>
-	        <span class="label">{% verbose_name Task.comments %}:</span>{{ task.comments }}
-       </li>
+        </div>
+        {% with task.task as task_instance %}
+        <table style="margin-right: 5em">
+          <tr>
+            <td class="label">{% verbose_name Task.priority %}:</td>
+            <td class="value">{{ task_instance.get_priority_display }}</td>
+            <td class="label" style="padding-left: 3em">{% verbose_name Task.samples %}:</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.status %}:</td>
+            <td class="value">{{ task_instance.get_status_display }}</td>
+            <td rowspan="6" style="vertical-align: top; padding-left: 3em">
+              <ul class="sample-list" style="margin-top: 0pt">
+                {% for sample in task.samples %}
+                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.operator %}:</td>
+            <td class="value">{{ task_instance.operator|get_really_full_name|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.customer %}:</td>
+            <td class="value">{{ task_instance.customer|get_really_full_name }}</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.creating_timestamp %}:</td>
+            <td class="value">{{ task_instance.creating_timestamp|date:"Y-m-d H:i:s" }}</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.last_modified %}:</td>
+            <td class="value">{{ task_instance.last_modified|date:"Y-m-d H:i:s" }}</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.comments %}:</td>
+            <td class="value" style="font-weight: normal">{{ task_instance.comments|markdown_samples:"collapse" }}</td>
+          </tr>
+        </table>
+        {% endwith %}
+       </div>
+    </div>
     {% endfor %}
-    </ul>
 {% endfor %}
-<div>
-<form method="POST">
-	{% error_list chose_task_lists _("General error") %}
-	<table>
+<form method="POST" style="margin-top: 5ex">
+	<table style="float: right">
         <tbody>
+	{% error_list chose_task_lists _("General error") "<tr>" 2 %}
         <tr>
 	       <td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
 	       <td class="input">{{ chose_task_lists.visible_task_lists }}</td>
@@ -70,5 +101,4 @@ copyright holder, you must destroy it immediately and completely.
 	</table>
 	<p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
-</div>
 {% endblock %}

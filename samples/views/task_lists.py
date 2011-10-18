@@ -18,6 +18,7 @@ from django.forms.util import ValidationError
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
 from samples import permissions
 from samples .models import Process, Task
@@ -117,23 +118,14 @@ class TaskForTemplate(object):
     u"""Class for preparing the tasks for the show template.
     """
     def __init__(self, task, user):
-        self.id = task.id
-        self.status = task.get_status_display()
-        self.status_id = task.status
-        self.priority = task.get_priority_display()
-        self.customer = task.customer
-        self.last_modified = task.last_modified
-        self.creating_timestamp = task.creating_timestamp
-        self.operator = task.operator
-        self.finished_process = task.finished_process
+        self.task = task
         self.samples = [sample if (sample.topic and not sample.topic.confidential)
-                        or (permissions.has_permission_to_fully_view_sample(user, sample)
-                        or permissions.has_permission_to_add_edit_physical_process(user, self.finished_process,
-                                                                                   task.process_content_type.model_class()))
+                        or (permissions.has_permission_to_fully_view_sample(user, sample) or
+                            permissions.has_permission_to_add_edit_physical_process(user, self.finished_process,
+                                                                                    task.process_content_type.model_class()))
                         else _(u"confidential sample") for sample in task.samples.all()]
-        self.comments = task.comments
-        self.user_can_edit = user == task.customer or permissions.has_permission_to_add_edit_physical_process(user,
-                                                    self.finished_process, task.process_content_type.model_class())
+        self.user_can_edit = user == task.customer or permissions.has_permission_to_add_edit_physical_process(
+            user, self.finished_process, task.process_content_type.model_class())
 
 
 def save_to_database(task_form, samples, user, finished_process):
@@ -169,6 +161,7 @@ def save_to_database(task_form, samples, user, finished_process):
     task.save()
     return task
 
+
 @login_required
 def edit(request, task_id):
     u"""Edit or create a task.
@@ -186,8 +179,7 @@ def edit(request, task_id):
 
     :rtype: ``HttpResponse``
     """
-    task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) \
-        if task_id is not None else None
+    task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id is not None else None
     user = request.user
     preset_sample = utils.extract_preset_sample(request) if not task else None
     if request.method == "POST":
@@ -202,9 +194,8 @@ def edit(request, task_id):
             task = save_to_database(task_form, samples, user, finished_process)
             feed_utils.Reporter(request.user).report_task(task,
                 edit_description_form.cleaned_data if edit_description_form else None)
-            next_view = "samples.views.task_lists.show"
-            message = _(u"Task was {verb} successfully.".format(verb="edited" if task_id else "added"))
-            return utils.successful_response(request, message, next_view, forced=next_view is not None, json_response=True)
+            message = _(u"Task was {verb} successfully.").format(verb=u"edited" if task_id else u"added")
+            return utils.successful_response(request, message, "samples.views.task_lists.show")
     else:
         samples_form = SamplesForm(user, preset_sample, task)
         initial = {}
@@ -239,8 +230,11 @@ def show(request):
     if request.method == "POST":
         choose_task_lists_form = ChooseTaskListsForm(request.user, request.POST)
         if choose_task_lists_form.is_valid():
-            request.user.samples_user_details.visible_task_lists = [ContentType.objects.get_for_id(id_) for id_
-                                        in map(int, choose_task_lists_form.cleaned_data["visible_task_lists"])]
+            request.user.samples_user_details.visible_task_lists = \
+                [ContentType.objects.get_for_id(int(id_))
+                 for id_ in choose_task_lists_form.cleaned_data["visible_task_lists"]]
+            # In order to have a GET instead of a POST as the last request
+            return utils.successful_response(request, view=show)
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
     task_lists = dict([(content_type, [TaskForTemplate(task, request.user)
@@ -251,7 +245,9 @@ def show(request):
                                                           "task_lists": task_lists},
                               context_instance=RequestContext(request))
 
+
 @login_required
+@require_http_methods(["POST"])
 def remove(request, task_id):
     u"""Deletes a task from the database.
 
@@ -272,4 +268,4 @@ def remove(request, task_id):
         feed_utils.Reporter(request.user).report_removed_task(physical_process_content_type, samples)
     else:
         raise permissions.PermissionError(request.user, u"You cannot remove this task.")
-    return utils.successful_response(request, _(u"The task was successfully remove."), show)
+    return utils.successful_response(request, _(u"The task was successfully removed."), show)
