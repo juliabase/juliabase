@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-18 16:01+0200\n"
-"PO-Revision-Date: 2011-10-18 16:01+0200\n"
+"PO-Revision-Date: 2011-10-18 16:02+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2019,7 +2019,7 @@ msgstr "Proben verschmelzen"
 
 #: templates/samples/main_menu.html:152 views/task_lists.py:247
 msgid "Task lists"
-msgstr "Aufträgeliste"
+msgstr "Auftragslisten"
 
 #: templates/samples/main_menu.html:155
 msgid "Change password"
