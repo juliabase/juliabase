@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-18 16:11+0200\n"
-"PO-Revision-Date: 2011-10-18 16:11+0200\n"
+"POT-Creation-Date: 2011-10-19 02:36+0200\n"
+"PO-Revision-Date: 2011-10-19 02:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -111,7 +111,7 @@ msgstr "Zeitstempel-Unsicherheit"
 msgid "operator"
 msgstr "Operateur"
 
-#: models_common.py:109 models_common.py:348 models_common.py:1503
+#: models_common.py:109 models_common.py:348 models_common.py:1504
 #: models_feeds.py:263
 msgid "comments"
 msgstr "Kommentare"
@@ -191,8 +191,8 @@ msgid "sample"
 msgstr "Probe"
 
 #: models_common.py:573 models_common.py:976 models_common.py:1232
-#: models_feeds.py:125 models_feeds.py:152 models_feeds.py:262
-#: models_feeds.py:285 models_feeds.py:516
+#: models_common.py:1503 models_feeds.py:125 models_feeds.py:152
+#: models_feeds.py:262 models_feeds.py:285 models_feeds.py:516
 msgid "samples"
 msgstr "Proben"
 
@@ -439,19 +439,19 @@ msgstr "Benutzerdetails"
 msgid "Can edit permissions for all physical processes"
 msgstr "Darf die Berechtigungen für alle physikalischen Prozesse ändern"
 
-#: models_common.py:1437 templates/samples/show_status.html:108
+#: models_common.py:1437 templates/samples/show_status.html:109
 msgid "undefined"
 msgstr "undefiniert"
 
-#: models_common.py:1438 templates/samples/show_status.html:110
+#: models_common.py:1438 templates/samples/show_status.html:111
 msgid "red"
 msgstr "rot"
 
-#: models_common.py:1439 templates/samples/show_status.html:112
+#: models_common.py:1439 templates/samples/show_status.html:113
 msgid "yellow"
 msgstr "gelb"
 
-#: models_common.py:1440 templates/samples/show_status.html:114
+#: models_common.py:1440 templates/samples/show_status.html:115
 msgid "green"
 msgstr "grün"
 
@@ -552,19 +552,27 @@ msgstr "Zeitstempel-Unsicherheit des Einstellens"
 msgid "last modified inaccuracy"
 msgstr "Zeitstempel-Unsicherheit des Veränderns"
 
-#: models_common.py:1504
+#: models_common.py:1500
+msgid "process class"
+msgstr "Prozessart"
+
+#: models_common.py:1502 views/task_lists.py:58
+msgid "finished process"
+msgstr "abgeschlossener Prozess"
+
+#: models_common.py:1505
 msgid "priority"
 msgstr "Priorität"
 
-#: models_common.py:1507 models_feeds.py:475 models_feeds.py:495
+#: models_common.py:1508 models_feeds.py:475 models_feeds.py:495
 msgid "task"
 msgstr "Auftrag"
 
-#: models_common.py:1508
+#: models_common.py:1509
 msgid "tasks"
 msgstr "Aufträge"
 
-#: models_common.py:1512
+#: models_common.py:1513
 msgid "task of {process_class} from {datetime}"
 msgstr "Auftrag für {process_class} von {datetime}"
 
@@ -1112,7 +1120,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/merge_samples.html:37
 #: templates/samples/show_claim.html:66 templates/samples/show_claim.html:67
 #: templates/samples/split_and_rename.html:22
-#: templates/samples/task_lists.html:62 templatetags/samples_extras.py:577
+#: templates/samples/task_lists.html:97 templatetags/samples_extras.py:577
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -1323,10 +1331,6 @@ msgstr "Fehler in der Deposition"
 #: templates/samples/edit_task.html:23
 msgid "Error in sample list"
 msgstr "Fehler in Probenliste"
-
-#: templates/samples/edit_task.html:38
-msgid "Process to add"
-msgstr "zu hinzugügender Prozess"
 
 #: templates/samples/edit_topic.html:22
 msgid "Error in topic data"
@@ -1929,7 +1933,7 @@ msgid "Add things"
 msgstr "Dinge hinzufügen"
 
 #: templates/samples/main_menu.html:75 views/form_utils.py:587
-#: views/result.py:107 views/sample_series.py:49 views/task_lists.py:34
+#: views/result.py:107 views/sample_series.py:49 views/task_lists.py:35
 msgid "Samples"
 msgstr "Proben"
 
@@ -2017,7 +2021,7 @@ msgstr "„Meine Schichten“ ändern"
 msgid "Merge samples"
 msgstr "Proben verschmelzen"
 
-#: templates/samples/main_menu.html:152 views/task_lists.py:247
+#: templates/samples/main_menu.html:152 views/task_lists.py:243
 msgid "Task lists"
 msgstr "Auftragslisten"
 
@@ -2357,37 +2361,37 @@ msgstr[1] ""
 msgid "Edit this result"
 msgstr "Ergebnis ändern"
 
-#: templates/samples/show_status.html:31 templates/samples/show_status.html:89
+#: templates/samples/show_status.html:32 templates/samples/show_status.html:90
 msgid "Process"
 msgstr "Prozess"
 
-#: templates/samples/show_status.html:37 templates/samples/show_status.html:95
+#: templates/samples/show_status.html:38 templates/samples/show_status.html:96
 msgid "posted at"
 msgstr "eingestellt am"
 
-#: templates/samples/show_status.html:64
-#: templates/samples/show_status.html:125
+#: templates/samples/show_status.html:65
+#: templates/samples/show_status.html:126
 msgid "cancel"
 msgstr "entfernen"
 
-#: templates/samples/show_status.html:65
-#: templates/samples/show_status.html:126
+#: templates/samples/show_status.html:66
+#: templates/samples/show_status.html:127
 msgid "withdraw this status message for all processes"
 msgstr "diese Statusmeldung für alle Prozesse zurückziehen"
 
-#: templates/samples/show_status.html:74
+#: templates/samples/show_status.html:75
 msgid "There are no current status messages."
 msgstr "Es sind keine aktuellen Statusmeldungen vorhanden."
 
-#: templates/samples/show_status.html:78
+#: templates/samples/show_status.html:79
 msgid "Add a status message"
 msgstr "Statusmeldung hinzufügen"
 
-#: templates/samples/show_status.html:80
+#: templates/samples/show_status.html:81
 msgid "Subscribe to status messages"
 msgstr "Statusmeldungen abonnieren"
 
-#: templates/samples/show_status.html:84
+#: templates/samples/show_status.html:85
 msgid "Further status messages"
 msgstr "Weitere Statusmeldungen"
 
@@ -2463,15 +2467,19 @@ msgstr ""
 msgid "Go back"
 msgstr "Zurück"
 
-#: templates/samples/task_lists.html:25
-msgid "Add new task"
+#: templates/samples/task_lists.html:26
+msgid "No current tasks."
+msgstr "Keine aktuellen Aufträge."
+
+#: templates/samples/task_lists.html:29 views/task_lists.py:209
+msgid "Add task"
 msgstr "Auftrag hinzufügen"
 
-#: templates/samples/task_lists.html:32
+#: templates/samples/task_lists.html:38
 msgid "edit task"
 msgstr "Auftrag ändern"
 
-#: templates/samples/task_lists.html:36
+#: templates/samples/task_lists.html:44 templates/samples/task_lists.html:45
 msgid "remove task"
 msgstr "Auftrag entfernen"
 
@@ -3460,36 +3468,28 @@ msgstr "Spalten"
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
 
-#: views/task_lists.py:57
-msgid "finished process"
-msgstr "abgeschlossener Prozess"
-
-#: views/task_lists.py:89
+#: views/task_lists.py:90
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: views/task_lists.py:105
+#: views/task_lists.py:106
 msgid "show task lists for"
 msgstr "zeige Auftragslisten für"
 
-#: views/task_lists.py:133
+#: views/task_lists.py:126
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
 
-#: views/task_lists.py:204
+#: views/task_lists.py:197
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
 
-#: views/task_lists.py:216
+#: views/task_lists.py:209
 msgid "Edit task"
 msgstr "Auftrag ändern"
 
-#: views/task_lists.py:216
-msgid "Add task"
-msgstr "Auftrag hinzufügen"
-
-#: views/task_lists.py:273
-msgid "The task was successfully remove."
+#: views/task_lists.py:271
+msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
 #: views/topic.py:42
@@ -3561,6 +3561,12 @@ msgstr " und "
 #: views/utils.py:531
 msgid " and "
 msgstr " und "
+
+#~ msgid "Process to add"
+#~ msgstr "hinzufügen zu Prozess"
+
+#~ msgid "Add new task"
+#~ msgstr "Auftrag hinzufügen"
 
 #~ msgid "Merge Samples"
 #~ msgstr "Proben verschmelzen"

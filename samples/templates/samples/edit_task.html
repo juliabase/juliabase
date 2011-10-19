@@ -35,7 +35,7 @@ copyright holder, you must destroy it immediately and completely.
     </tr>
     <tr>
       <td style="vertical-align: top; padding-left: 2em">
-          <label for="id_{{ task.process_content_type.html_name }}">{% trans 'Process to add' %}:</label>
+          <label for="id_{{ task.process_content_type.html_name }}">{{ task.process_content_type.label }}:</label>
             <span class="value">{{ task.process_content_type }}</span>
        </td>
     </tr>
