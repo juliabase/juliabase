@@ -22,13 +22,17 @@ copyright holder, you must destroy it immediately and completely.
 {% for process_class, task_list in task_lists.iteritems %}
     <h2>{{ process_class|contenttype_name|capfirst }}</h2>
 
-    <p style="margin-bottom: 3ex"><a href="{% url samples.views.task_lists.edit %}?next={{ next_url|urlquote_plus }}&process_class={{ process_class.id }}">{% trans 'Add task' %}</a></p>
+    {% if not task_list %}
+      <p>{% trans 'No current tasks.' %}</p>
+    {% endif %}
+
+    <p class="screen-only" style="margin-bottom: 3ex"><a href="{% url samples.views.task_lists.edit %}?next={{ next_url|urlquote_plus }}&process_class={{ process_class.id }}">{% trans 'Add task' %}</a></p>
 
     {% for task in task_list %}
     <div>
       <div style="border-style: solid; border-color: black; border-width: thin;
                   background-color: {{ task.task|task_color }}; display: inline-block; padding: 1ex">
-        <div style="float: right">
+        <div style="float: right" class="screen-only">
         {% if task.user_can_edit %}
           <a class="edit-icon" href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
              <img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
@@ -87,7 +91,7 @@ copyright holder, you must destroy it immediately and completely.
     </div>
     {% endfor %}
 {% endfor %}
-<form method="POST" style="margin-top: 5ex">
+<form method="POST" style="margin-top: 5ex" class="screen-only">
 	<table style="float: right">
         <tbody>
 	{% error_list chose_task_lists _("General error") "<tr>" 2 %}
