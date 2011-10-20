@@ -160,6 +160,15 @@ def fancy_bool(boolean):
 
 
 @register.filter
+def contenttype_name(contenttype):
+    u"""Filter for getting the verbose name of the contenttype's model class.
+    FixMe: This is superfluous if #16803 is resolved.  Then, you can simply use
+    a field of the contettype instance.
+    """
+    return mark_safe(contenttype.model_class()._meta.verbose_name)
+
+
+@register.filter
 @stringfilter
 def urlquote(value):
     u"""Filter for quoting strings so that they can be used as parts of URLs.
