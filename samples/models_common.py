@@ -1488,13 +1488,9 @@ class Task(models.Model):
     customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks",
                                  verbose_name=_(u"customer"), null=True)
     creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
-                                               auto_now_add=True, editable=False)
-    creating_inaccuracy = models.PositiveSmallIntegerField(_("creating inaccuracy"),
-                                                           choices=timestamp_inaccuracy_choices, default=0)
+                                              auto_now_add=True, editable=False)
     last_modified = models.DateTimeField(_(u"last modified"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
-                                             auto_now=True, auto_now_add=True, editable=False)
-    last_modified_inaccuracy = models.PositiveSmallIntegerField(_("last modified inaccuracy"),
-                                                           choices=timestamp_inaccuracy_choices, default=0)
+                                         auto_now=True, auto_now_add=True, editable=False)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
                                  verbose_name=_(u"operator"), null=True, blank=True)
     process_content_type = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_(u"process class"))

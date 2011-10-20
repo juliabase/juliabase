@@ -97,7 +97,7 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        exclude = ("samples", "customer", "finished_process")
+        exclude = ("samples", "customer")
 
 
 class ChooseTaskListsForm(forms.Form):
@@ -189,8 +189,6 @@ def edit(request, task_id):
         edit_description_form_is_valid = edit_description_form.is_valid() if edit_description_form else True
         if task_form.is_valid() and samples_form.is_valid() and edit_description_form_is_valid:
             samples = samples_form.cleaned_data["sample_list"]
-            finished_process = task_form.cleaned_data.get("finished_process")
-
             task = save_to_database(task_form, samples, user, finished_process)
             feed_utils.Reporter(request.user).report_task(task,
                 edit_description_form.cleaned_data if edit_description_form else None)
