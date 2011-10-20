@@ -21,7 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
 from samples import permissions
-from samples .models import Process, Task
+from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.utils.text import capfirst
@@ -185,14 +185,27 @@ def edit(request, task_id):
     if request.method == "POST":
         task_form = TaskForm(user, request.POST, instance=task)
         samples_form = SamplesForm(user, preset_sample, task, request.POST)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST) if task else None
-        edit_description_form_is_valid = edit_description_form.is_valid() if edit_description_form else True
-        if task_form.is_valid() and samples_form.is_valid() and edit_description_form_is_valid:
+        if task_form.is_valid() and samples_form.is_valid():
             samples = samples_form.cleaned_data["sample_list"]
-            task = save_to_database(task_form, samples, user, finished_process)
-            feed_utils.Reporter(request.user).report_task(task,
-                edit_description_form.cleaned_data if edit_description_form else None)
-            message = _(u"Task was {verb} successfully.").format(verb=u"edited" if task_id else u"added")
+            new_task = save_to_database(task_form, samples, user, finished_process)
+            if task:
+                edit_description = {"important": True, "description": u""}
+                if task.status != new_task.status:
+                    edit_description["description"] += \
+                        _(u"* Status is now {new_status}.\n").format(new_status=new_task.status)
+                if task.priority != new_task.priority:
+                    edit_description["description"] += \
+                        _(u"* Priority is now {new_priority}.").format(new_priority=new_task.priority)
+                if task.finished_process != new_task.finished_process:
+                    edit_description["description"] += _(u"* Connected process.")
+                if set(task.samples) != set(new_task.samples):
+                    edit_description["description"] += u"* {0}.".format(utils.capitalize_first_letter(_(u"samples")))
+                if task.comments != new_task.comments:
+                    edit_description["description"] += u"* {0}.".format(utils.capitalize_first_letter(_(u"comments")))
+            else:
+                edit_description = None
+            feed_utils.Reporter(request.user).report_task(new_task, edit_description)
+            message = _(u"Task was {verb} successfully.").format(verb=u"edited" if task else u"added")
             return utils.successful_response(request, message, "samples.views.task_lists.show")
     else:
         samples_form = SamplesForm(user, preset_sample, task)
@@ -203,12 +216,10 @@ def edit(request, task_id):
         elif request.GET.get("process_class"):
             initial["process_content_type"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
-        edit_description_form = form_utils.EditDescriptionForm() if task else None
     title = _(u"Edit task") if task else _(u"Add task")
     return render_to_response("samples/edit_task.html", {"title": title,
                                                          "task": task_form,
-                                                         "samples": samples_form,
-                                                         "edit_description": edit_description_form},
+                                                         "samples": samples_form},
                               context_instance=RequestContext(request))
 
 @login_required
