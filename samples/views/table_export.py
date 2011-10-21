@@ -572,6 +572,14 @@ class OldDataForm(forms.Form):
             self.fields["column_groups"].initial = u"\t".join(column_group for column_group in initial["column_groups"])
         if "columns" in initial:
             self.fields["columns"].initial = u" ".join(str(i) for i in initial["columns"])
+        for fieldname in ["column_groups", "columns"]:
+            attributes = self.fields[fieldname].widget.attrs
+            if "class" not in attributes:
+                attributes["class"] = u"submit-always"
+            else:
+                if attributes["class"].strip():
+                    attributes["class"] += u" "
+                attributes["class"] += "submit-always"
 
     def clean_column_groups(self):
         return set(self.cleaned_data["column_groups"].split("\t"))
