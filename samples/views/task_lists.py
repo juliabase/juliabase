@@ -128,7 +128,7 @@ class TaskForTemplate(object):
             user, self.finished_process, task.process_content_type.model_class())
 
 
-def save_to_database(task_form, samples, user, finished_process):
+def save_to_database(task_form, samples, user):
     u"""Saves the data for a task into the database.
     All validation checks must have done befor calling
     this function.
@@ -156,8 +156,6 @@ def save_to_database(task_form, samples, user, finished_process):
     if task.status == "1_accepted" and not task.operator:
         task.operator = user
         user.my_samples.add(*samples)
-    elif task.status == "3_finished" and finished_process:
-        task.finished_process = finished_process
     task.save()
     return task
 
@@ -187,7 +185,7 @@ def edit(request, task_id):
         samples_form = SamplesForm(user, preset_sample, task, request.POST)
         if task_form.is_valid() and samples_form.is_valid():
             samples = samples_form.cleaned_data["sample_list"]
-            new_task = save_to_database(task_form, samples, user, finished_process)
+            new_task = save_to_database(task_form, samples, user)
             if task:
                 edit_description = {"important": True, "description": u""}
                 if task.status != new_task.status:
@@ -198,7 +196,7 @@ def edit(request, task_id):
                         _(u"* Priority is now {new_priority}.").format(new_priority=new_task.priority)
                 if task.finished_process != new_task.finished_process:
                     edit_description["description"] += _(u"* Connected process.")
-                if set(task.samples) != set(new_task.samples):
+                if set(task.samples.all()) != set(new_task.samples.all()):
                     edit_description["description"] += u"* {0}.".format(utils.capitalize_first_letter(_(u"samples")))
                 if task.comments != new_task.comments:
                     edit_description["description"] += u"* {0}.".format(utils.capitalize_first_letter(_(u"comments")))
