@@ -22,47 +22,42 @@ copyright holder, you must destroy it immediately and completely.
   {% error_list task _("Error in deposition") %}
   {% error_list samples _("Error in sample list") %}
 
-    <table class="padding5">
+    <table class="padding5" style="float: left">
     <tbody>
     <tr>
-        <td style="vertical-align: top; padding-left: 2em">
-	      <label for="id_{{ task.status.html_name }}">{{ task.status.label }}:</label>
-	        <span class="value">{{ task.status }}</span>
-	   </td>
-      <td rowspan="4" style="padding-left: 2em">
-        <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
-                             >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
+      <td class="label"><label for="id_{{ task.status.html_name }}">{{ task.status.label }}:</label></td>
+      <td class="input">{{ task.status }}</td>
     </tr>
     <tr>
-      <td style="vertical-align: top; padding-left: 2em">
-          <label for="id_{{ task.process_content_type.html_name }}">{{ task.process_content_type.label }}:</label>
-            <span class="value">{{ task.process_content_type }}</span>
-       </td>
+      <td class="label">
+        <label for="id_{{ task.process_content_type.html_name }}">{{ task.process_content_type.label }}:</label>
+      </td>
+      <td class="input">{{ task.process_content_type }}</td>
     </tr>
     <tr>
-      <td style="vertical-align: top; padding-left: 2em">
-          <label for="id_{{ task.priority.html_name }}">{{ task.priority.label }}:</label>
-            <span class="value">{{ task.priority }}</span>
-       </td>
+      <td class="label"><label for="id_{{ task.priority.html_name }}">{{ task.priority.label }}:</label></td>
+      <td class="input">{{ task.priority }}</td>
     </tr>
-    <td style="vertical-align: top; padding-left: 2em">
-          <label for="id_{{ task.process.html_name }}">{{ task.finished_process.label }}:</label>
-            <span class="value">{{ task.finished_process }}</span>
-       </td>
     <tr>
-      <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex; width: 20%">
-                        <div><label for="id_{{ task.comments.html_name }}">{{ task.comments.label }}:<br/>
-                            {% markdown_hint %}</label></div>
-                          {{ task.comments }}
-                      </td>
+      <td class="label"><label for="id_{{ task.finished_process.html_name }}">{{ task.finished_process.label }}:</label></td>
+      <td class="input">{{ task.finished_process }}</td>
+    </tr>
+    <tr>
+      <td class="label"><label for="id_{{ task.operator.html_name }}">{{ task.operator.label }}:</label></td>
+      <td class="input">{{ task.operator }}</td>
+    <tr>
+      <td class="label"><label for="id_{{ task.comments.html_name }}"
+           >{{ task.comments.label }}:</label><br/>{% markdown_hint %}</td>
+      <td class="input">{{ task.comments }}</td>
     </tr>
     </tbody>
   </table>
 
-  <div style="display: none">
-    {{ task.operator }}
+  <div style="float: left; margin-left: 5em; margin-bottom: 3ex">
+    <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
+           >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}
   </div>
 
-  <p class="submit-button"><input type="submit"/></p>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
 {% endblock %}

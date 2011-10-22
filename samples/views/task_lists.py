@@ -14,18 +14,20 @@
 
 
 from django import forms
-from django.forms.util import ValidationError
+from django.contrib.auth.models import User, Permission
+from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
-from samples import permissions
-from samples.models import Process, Task
-from samples.views import utils, feed_utils, form_utils
-from samples.permissions import get_all_addable_physical_process_models
 from django.utils.text import capfirst
 from django.contrib.contenttypes.models import ContentType
+from chantal_common import utils as common_utils
+from samples.models import Process, Task
+from samples.views import utils, feed_utils, form_utils
+from samples import permissions
 
 
 class SamplesForm(forms.Form):
@@ -36,9 +38,14 @@ class SamplesForm(forms.Form):
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
         samples = list(user.my_samples.all())
+        self.savable = True
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
-            super(SamplesForm, self).__init__(data, **kwargs)
+            if user != task.customer or task.status != u"0_new":
+                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+                super(SamplesForm, self).__init__(**kwargs)
+            else:
+                super(SamplesForm, self).__init__(data, **kwargs)
             samples.extend(task.samples.all())
         else:
             super(SamplesForm, self).__init__(data, **kwargs)
@@ -55,49 +62,114 @@ class TaskForm(forms.ModelForm):
     """
     _ = ugettext_lazy
 
+    operator = forms.ChoiceField(label=capfirst(_(u"operator")), required=False)
+    process_content_type = forms.ChoiceField(label=capfirst(_(u"process class")))
     finished_process = forms.ChoiceField(label=capfirst(_(u"finished process")), required=False)
 
     def __init__(self, user, data=None, **kwargs):
         self.task = kwargs.get("instance")
-        try:
-            process_content_type_pk = kwargs.get("initial")["process_content_type"]
-        except TypeError:
-            try:
-                process_content_type_pk = self.task.process_content_type.pk
-            except AttributeError:
-                process_content_type_pk = None
         super(TaskForm, self).__init__(data, **kwargs)
         self.user = user
+        self.fields["customer"].required = False
+        self.fields["operator"].choices = [(u"", u"---------")]
+        if self.task:
+            permission_codename = "add_{0}".format(
+                utils.camel_case_to_underscores(self.task.process_content_type.model_class().__name__))
+            try:
+                add_permission = Permission.objects.get(codename=permission_codename)
+            except Permission.DoesNotExist:
+                add_permission = None
+            eligible_operators = User.objects.filter(is_active=True, chantal_user_details__is_administrative=False). \
+                filter(Q(groups__permissions=add_permission) |
+                       Q(user_permissions=add_permission)).distinct()
+            self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
+                                                   for user in utils.sorted_users(eligible_operators))
         self.fields["process_content_type"].choices = form_utils.choices_of_content_types(
-                                           list(get_all_addable_physical_process_models()))
-        if self.task and (self.user == self.task.customer and self.user != self.task.operator):
-            self.fields["priority"].widget.attrs.update({"disabled": "disabled"})
-        if self.task and self.user == self.task.operator:
-            self.fields["finished_process"].choices = [("", "----------")]
-            self.fields["finished_process"].choices.extend([(process.pk, process.actual_instance._meta.verbose_name)
-                for process in Process.objects.filter(operator=self.user,
-                                                      content_type__pk=process_content_type_pk).order_by("-timestamp")[:10]])
-        if not self.task or (self.user == self.task.customer and self.user != self.task.operator):
-            self.fields["finished_process"].widget.attrs.update({"disabled": "disabled"})
-        self.fields["operator"].initial = self.task.operator.pk if self.task and self.task.operator else None
+            permissions.get_all_addable_physical_process_models())
+        self.fields["finished_process"].choices = [(u"", u"---------")]
+        if self.task:
+            old_finished_process_pk = self.task.finished_process.pk if self.task.finished_process else None
+            if self.user == self.task.operator:
+                self.fields["finished_process"].choices.extend(
+                    [(process.pk, process.actual_instance)
+                     for process in Process.objects.filter(
+                            Q(operator=self.user, content_type=self.task.process_content_type) |
+                            Q(pk=old_finished_process_pk)).order_by("-timestamp")[:10]])
+            elif old_finished_process_pk:
+                self.fields["finished_process"].append((old_finished_process_pk, self.task.finished_process))
+        self.fields["comments"].widget.attrs["cols"] = 30
+        self.fields["comments"].widget.attrs["rows"] = 5
+        self.fixed_fields = set()
+        if self.task:
+            self.fixed_fields.add("process_content_type")
+            if self.task.status == u"0_new":
+                self.fixed_fields.add("finished_process")
+            elif self.task.status in [u"1_accepted", u"2_in progress"]:
+                if self.user != self.task.operator:
+                    self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
+                    if self.user != self.task.customer:
+                        self.fixed_fields.add("comments")
+            else:
+                self.fixed_fields.update(["priority", "finished_process", "operator"])
+                if self.user != self.task.operator:
+                    self.fixed_fields.add("status")
+                    if self.user != self.task.customer:
+                        self.fixed_fields.add("comments")
+        else:
+            self.fixed_fields.update(["status", "finished_process", "operator"])
+        # for field_name in self.fixed_fields:
+        #     self.fields[field_name].widget.attrs["disabled"] = "disabled"
+
+    def clean_status(self):
+        if "status" in self.fixed_fields:
+            return self.task.status if self.task else u"0_new"
+        return self.cleaned_data["status"]
+
+    def clean_process_content_type(self):
+        if "process_content_type" in self.fixed_fields:
+            return self.task.process_content_type
+        pk = self.cleaned_data.get("process_content_type")
+        if pk:
+            return ContentType.objects.get(pk=int(pk))
 
     def clean_priority(self):
-        if self.task and self.user == self.task.customer:
-            priority = self.task.priority
-        else:
-            priority = self.cleaned_data["priority"]
-        if not priority:
-            raise ValidationError(_(u"This field is required."))
-        return priority
+        if "priority" in self.fixed_fields:
+            return self.task.priority
+        return self.cleaned_data["priority"]
 
     def clean_finished_process(self):
-        finished_process_pk = self.cleaned_data.get("finished_process")
-        if finished_process_pk:
-            return Process.objects.get(pk=int(finished_process_pk))
+        if "finished_process" in self.fixed_fields:
+            return self.task.finished_process if self.task else None
+        pk = self.cleaned_data.get("finished_process")
+        if pk:
+            return Process.objects.get(pk=int(pk))
+
+    def clean_comments(self):
+        if "comments" in self.fixed_fields:
+            return self.task.comments
+        return self.cleaned_data["comments"]
+
+    def clean_customer(self):
+        return self.task.customer if self.task else self.user
+
+    def clean_operator(self):
+        if "operator" in self.fixed_fields:
+            return self.task.operator if self.task else None
+        pk = self.cleaned_data.get("operator")
+        if pk:
+            return User.objects.get(pk=int(pk))
+
+    def clean(self):
+        _ = ugettext
+        cleaned_data = super(TaskForm, self).clean()
+        if cleaned_data.get("status") in [u"1_accepted", u"2_in progress", u"3_finished"]:
+            if not cleaned_data.get("operator"):
+                common_utils.append_error(self, _(u"With this status, you must set an operator."), "operator")
+        return cleaned_data
 
     class Meta:
         model = Task
-        exclude = ("samples", "customer")
+        exclude = ("samples")
 
 
 class ChooseTaskListsForm(forms.Form):
@@ -108,7 +180,7 @@ class ChooseTaskListsForm(forms.Form):
     def __init__(self, user, data=None, **kwargs):
         super(ChooseTaskListsForm, self).__init__(data, **kwargs)
         self.fields["visible_task_lists"].choices = form_utils.choices_of_content_types(
-            list(get_all_addable_physical_process_models()))
+            list(permissions.get_all_addable_physical_process_models()))
         self.fields["visible_task_lists"].initial = [content_type.id for content_type
                                                      in user.samples_user_details.visible_task_lists.iterator()]
         self.fields["visible_task_lists"].widget.attrs["size"] = "15"
@@ -128,21 +200,23 @@ class TaskForTemplate(object):
             user, self.finished_process, task.process_content_type.model_class())
 
 
-def save_to_database(task_form, samples, user):
-    u"""Saves the data for a task into the database.
-    All validation checks must have done befor calling
-    this function.
+def save_to_database(task_form, samples_form, user, old_task):
+    u"""Saves the data for a task into the database.  All validation checks
+    must have done before calling this function.
 
     :Parameters:
-     - `task_form`: a bound and valid task form
-     - `samples`: a list of samples who should processed
-     - `user`: the user who has created or edited the task.
-     it can be the customer or the operator of the physical
-     process.
+      - `task_form`: a bound and valid task form
+      - `samples_form`: a bound and valid samples form iff we create a new
+        task, or an unbound samples form
+      - `user`: the user who has created or edited the task.  It can be the
+        customer or the operator of the physical process.
+      - `old_task`: the old task instance, which is ``None`` if we newly create
+        one
 
-     :type task_form: `TaskForm`
-     :type samples: list of `models.Sample`
-     :type user: ``django.contrib.auth.models.User``
+    :type task_form: `TaskForm`
+    :type samples_form: `SamplesForm`
+    :type user: ``django.contrib.auth.models.User``
+    :type old_task: `Task`
 
     :Returns:
      the saved task database object.
@@ -150,13 +224,10 @@ def save_to_database(task_form, samples, user):
     :rtype: `samples.models.Task`
     """
     task = task_form.save()
-    task.samples = samples
-    if not task.customer:
-        task.customer = user
-    if task.status == "1_accepted" and not task.operator:
-        task.operator = user
-        user.my_samples.add(*samples)
-    task.save()
+    if samples_form.is_bound:
+        task.samples = samples_form.cleaned_data["sample_list"]
+    if old_task and old_task.status == "0_new" and task.status == "1_accepted":
+        user.my_samples.add(*task.samples.all())
     return task
 
 
@@ -179,13 +250,14 @@ def edit(request, task_id):
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id is not None else None
     user = request.user
+    if task and user != task.customer:
+        permissions.assert_can_add_physical_process(request.user, task.process_content_type.model_class())
     preset_sample = utils.extract_preset_sample(request) if not task else None
     if request.method == "POST":
         task_form = TaskForm(user, request.POST, instance=task)
         samples_form = SamplesForm(user, preset_sample, task, request.POST)
-        if task_form.is_valid() and samples_form.is_valid():
-            samples = samples_form.cleaned_data["sample_list"]
-            new_task = save_to_database(task_form, samples, user)
+        if task_form.is_valid() and (not samples_form.is_bound or samples_form.is_valid()):
+            new_task = save_to_database(task_form, samples_form, user, old_task=task)
             if task:
                 edit_description = {"important": True, "description": u""}
                 if task.status != new_task.status:
@@ -211,7 +283,7 @@ def edit(request, task_id):
         if task:
             initial["process_content_type"] = task.process_content_type.pk
             initial["finished_process"] = task.finished_process.pk if task.finished_process else None
-        elif request.GET.get("process_class"):
+        elif "process_class" in request.GET:
             initial["process_content_type"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
     title = _(u"Edit task") if task else _(u"Add task")

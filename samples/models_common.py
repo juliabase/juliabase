@@ -1485,8 +1485,7 @@ class Task(models.Model):
     u"""
     """
     status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="0_new")
-    customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks",
-                                 verbose_name=_(u"customer"), null=True)
+    customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_(u"customer"))
     creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
                                               auto_now_add=True, editable=False)
     last_modified = models.DateTimeField(_(u"last modified"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
@@ -1498,7 +1497,7 @@ class Task(models.Model):
                                          verbose_name=_(u"finished process"))
     samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_(u"samples"))
     comments = models.TextField(_(u"comments"), blank=True)
-    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2_normal", blank=True)
+    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2_normal")
 
     class Meta:
         verbose_name = _(u"task")
