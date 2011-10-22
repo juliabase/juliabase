@@ -79,9 +79,11 @@ class TaskForm(forms.ModelForm):
                 add_permission = Permission.objects.get(codename=permission_codename)
             except Permission.DoesNotExist:
                 add_permission = None
-            eligible_operators = User.objects.filter(is_active=True, chantal_user_details__is_administrative=False). \
-                filter(Q(groups__permissions=add_permission) |
-                       Q(user_permissions=add_permission)).distinct()
+            eligible_operators = set(User.objects.filter(is_active=True, chantal_user_details__is_administrative=False).
+                                     filter(Q(groups__permissions=add_permission) |
+                                            Q(user_permissions=add_permission)).distinct())
+            if self.task.operator:
+                eligible_operators.add(self.task.operator)
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
                                                    for user in utils.sorted_users(eligible_operators))
         self.fields["process_content_type"].choices = form_utils.choices_of_content_types(
