@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-19 02:36+0200\n"
-"PO-Revision-Date: 2011-10-19 02:37+0200\n"
+"POT-Creation-Date: 2011-10-22 17:28+0200\n"
+"PO-Revision-Date: 2011-10-22 17:31+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -106,18 +106,18 @@ msgstr "Zeitstempel"
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: models_common.py:106 models_common.py:347 models_common.py:1499
-#: views/status.py:54
+#: models_common.py:106 models_common.py:347 models_common.py:1494
+#: views/status.py:54 views/task_lists.py:65
 msgid "operator"
 msgstr "Operateur"
 
-#: models_common.py:109 models_common.py:348 models_common.py:1504
-#: models_feeds.py:263
+#: models_common.py:109 models_common.py:348 models_common.py:1499
+#: models_feeds.py:263 views/task_lists.py:274
 msgid "comments"
 msgstr "Kommentare"
 
 #: models_common.py:110 models_common.py:569 models_common.py:959
-#: models_common.py:1235 models_common.py:1494
+#: models_common.py:1235 models_common.py:1491
 msgid "last modified"
 msgstr "zuletzt geändert"
 
@@ -191,8 +191,9 @@ msgid "sample"
 msgstr "Probe"
 
 #: models_common.py:573 models_common.py:976 models_common.py:1232
-#: models_common.py:1503 models_feeds.py:125 models_feeds.py:152
+#: models_common.py:1498 models_feeds.py:125 models_feeds.py:152
 #: models_feeds.py:262 models_feeds.py:285 models_feeds.py:516
+#: views/task_lists.py:272
 msgid "samples"
 msgstr "Proben"
 
@@ -459,8 +460,8 @@ msgstr "grün"
 msgid "begin"
 msgstr "Anfang"
 
-#: models_common.py:1451 models_common.py:1452 models_common.py:1490
-#: models_common.py:1494 views/status.py:58 views/status.py:60
+#: models_common.py:1451 models_common.py:1452 models_common.py:1489
+#: models_common.py:1491 views/status.py:58 views/status.py:60
 msgid "YYYY-MM-DD HH:MM:SS"
 msgstr "JJJJ-MM-TT HH:MM:SS"
 
@@ -536,43 +537,35 @@ msgstr "niedrig"
 msgid "status"
 msgstr "Status"
 
-#: models_common.py:1489
+#: models_common.py:1488
 msgid "customer"
 msgstr "Kunde"
 
-#: models_common.py:1490
+#: models_common.py:1489
 msgid "created at"
 msgstr "eingestellt um"
 
-#: models_common.py:1492
-msgid "creating inaccuracy"
-msgstr "Zeitstempel-Unsicherheit des Einstellens"
-
-#: models_common.py:1496
-msgid "last modified inaccuracy"
-msgstr "Zeitstempel-Unsicherheit des Veränderns"
-
-#: models_common.py:1500
+#: models_common.py:1495 views/task_lists.py:66
 msgid "process class"
 msgstr "Prozessart"
 
-#: models_common.py:1502 views/task_lists.py:58
+#: models_common.py:1497 views/task_lists.py:67
 msgid "finished process"
 msgstr "abgeschlossener Prozess"
 
-#: models_common.py:1505
+#: models_common.py:1500
 msgid "priority"
 msgstr "Priorität"
 
-#: models_common.py:1508 models_feeds.py:475 models_feeds.py:495
+#: models_common.py:1503 models_feeds.py:475 models_feeds.py:495
 msgid "task"
 msgstr "Auftrag"
 
-#: models_common.py:1509
+#: models_common.py:1504
 msgid "tasks"
 msgstr "Aufträge"
 
-#: models_common.py:1513
+#: models_common.py:1508
 msgid "task of {process_class} from {datetime}"
 msgstr "Auftrag für {process_class} von {datetime}"
 
@@ -1120,7 +1113,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/merge_samples.html:37
 #: templates/samples/show_claim.html:66 templates/samples/show_claim.html:67
 #: templates/samples/split_and_rename.html:22
-#: templates/samples/task_lists.html:97 templatetags/samples_extras.py:577
+#: templates/samples/task_lists.html:99 templatetags/samples_extras.py:577
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -1432,6 +1425,7 @@ msgstr "Die Änderung war kleinerer Natur."
 #: templates/samples/feed_edited_physical_process.html:40
 #: templates/samples/feed_edited_sample_series.html:39
 #: templates/samples/feed_edited_samples.html:50
+#: templates/samples/feed_edited_task.html:20
 #: templates/samples/feed_result.html:53
 msgid "Description of the change:"
 msgstr "Beschreibung der Änderung:"
@@ -1492,12 +1486,12 @@ msgstr[1] ""
 #, python-format
 msgid ""
 "\n"
-"  %(originator)s has set a <a href=\"%(link)s\">task</a> to %(status)s\n"
+"  %(originator)s has changed a <a href=\"%(link)s\">task</a> for "
+"%(process_name)s.\n"
 "  "
 msgstr ""
 "\n"
-"  %(originator)s hat einen <a href=\"%(link)s\">Auftrag</a> auf %(status)s "
-"gesetzt\n"
+"  %(originator)s hat einen <a href=\"%(link)s\">Auftrag</a> für %(process_name)s geändert.\n"
 "  "
 
 #: templates/samples/feed_moved_sample_series.html:18
@@ -1932,8 +1926,8 @@ msgstr ""
 msgid "Add things"
 msgstr "Dinge hinzufügen"
 
-#: templates/samples/main_menu.html:75 views/form_utils.py:587
-#: views/result.py:107 views/sample_series.py:49 views/task_lists.py:35
+#: templates/samples/main_menu.html:75 views/form_utils.py:584
+#: views/result.py:107 views/sample_series.py:49 views/task_lists.py:37
 msgid "Samples"
 msgstr "Proben"
 
@@ -2009,7 +2003,7 @@ msgstr "Einstellungen ändern"
 msgid "My topics and permissions"
 msgstr "Meine Themen und Berechtigungen"
 
-#: templates/samples/main_menu.html:146 views/permissions.py:212
+#: templates/samples/main_menu.html:146 views/permissions.py:194
 msgid "Permissions to processes"
 msgstr "Berechtigungen für Prozesse"
 
@@ -2021,7 +2015,7 @@ msgstr "„Meine Schichten“ ändern"
 msgid "Merge samples"
 msgstr "Proben verschmelzen"
 
-#: templates/samples/main_menu.html:152 views/task_lists.py:243
+#: templates/samples/main_menu.html:152 views/task_lists.py:322
 msgid "Task lists"
 msgstr "Auftragslisten"
 
@@ -2467,19 +2461,19 @@ msgstr ""
 msgid "Go back"
 msgstr "Zurück"
 
-#: templates/samples/task_lists.html:26
-msgid "No current tasks."
-msgstr "Keine aktuellen Aufträge."
-
-#: templates/samples/task_lists.html:29 views/task_lists.py:209
+#: templates/samples/task_lists.html:26 views/task_lists.py:289
 msgid "Add task"
 msgstr "Auftrag hinzufügen"
 
-#: templates/samples/task_lists.html:38
+#: templates/samples/task_lists.html:30
+msgid "No current tasks."
+msgstr "Keine aktuellen Aufträge."
+
+#: templates/samples/task_lists.html:40
 msgid "edit task"
 msgstr "Auftrag ändern"
 
-#: templates/samples/task_lists.html:44 templates/samples/task_lists.html:45
+#: templates/samples/task_lists.html:46 templates/samples/task_lists.html:47
 msgid "remove task"
 msgstr "Auftrag entfernen"
 
@@ -2833,37 +2827,37 @@ msgstr "Beschreibung der Änderung"
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: views/form_utils.py:623
+#: views/form_utils.py:620
 msgid "Remove processed sample(s) from My Samples"
 msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 
-#: views/form_utils.py:654
+#: views/form_utils.py:651
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: views/form_utils.py:658
+#: views/form_utils.py:655
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: views/form_utils.py:687
+#: views/form_utils.py:684
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: views/form_utils.py:719
+#: views/form_utils.py:716
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: views/form_utils.py:725
+#: views/form_utils.py:722
 msgid "The unit is invalid.  Valid units are: {units}"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: {units}"
 
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: views/form_utils.py:755
+#: views/form_utils.py:752
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr ""
 "Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
 
-#: views/form_utils.py:758 views/form_utils.py:762
+#: views/form_utils.py:755 views/form_utils.py:759
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Depositionsbuchstabe muss ein großes „{letter}“ sein."
 
@@ -3107,15 +3101,15 @@ msgstr "Erfolgreich „Meine Proben“ verarbeitet."
 msgid "Edit “My Samples” of {user_name}"
 msgstr "„Meine Proben“ von {user_name} ändern"
 
-#: views/permissions.py:258
+#: views/permissions.py:240
 msgid "Is topic manager"
 msgstr "Ist ein Themenmanager"
 
-#: views/permissions.py:319
+#: views/permissions.py:301
 msgid "The permissions of {name} were successfully changed."
 msgstr "Die Berechtigungen von {name} wurden erfolgreich geändert."
 
-#: views/permissions.py:326
+#: views/permissions.py:308
 msgid "Change permissions of {name}"
 msgstr "Die Berechtigungen von {name} ändern"
 
@@ -3468,27 +3462,39 @@ msgstr "Spalten"
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
 
-#: views/task_lists.py:90
-msgid "This field is required."
-msgstr "Dieses Feld ist erforderlich."
+#: views/task_lists.py:167
+msgid "With this status, you must set an operator."
+msgstr "Sie müssen bei diesem Status einen Operateur setzen."
 
-#: views/task_lists.py:106
+#: views/task_lists.py:178
 msgid "show task lists for"
 msgstr "zeige Auftragslisten für"
 
-#: views/task_lists.py:126
+#: views/task_lists.py:198
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
 
-#: views/task_lists.py:197
+#: views/task_lists.py:265
+msgid "* Status is now {new_status}.\n"
+msgstr "* Der Status is nun „{new_status}“.\n"
+
+#: views/task_lists.py:268
+msgid "* Priority is now {new_priority}."
+msgstr "* Die Priorität ist nun „{new_priority}“."
+
+#: views/task_lists.py:270
+msgid "* Connected process."
+msgstr "* Mit Prozess verbunden."
+
+#: views/task_lists.py:278
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
 
-#: views/task_lists.py:209
+#: views/task_lists.py:289
 msgid "Edit task"
 msgstr "Auftrag ändern"
 
-#: views/task_lists.py:271
+#: views/task_lists.py:350
 msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
@@ -3561,6 +3567,15 @@ msgstr " und "
 #: views/utils.py:531
 msgid " and "
 msgstr " und "
+
+#~ msgid "creating inaccuracy"
+#~ msgstr "Zeitstempel-Unsicherheit des Einstellens"
+
+#~ msgid "last modified inaccuracy"
+#~ msgstr "Zeitstempel-Unsicherheit des Veränderns"
+
+#~ msgid "This field is required."
+#~ msgstr "Dieses Feld ist erforderlich."
 
 #~ msgid "Process to add"
 #~ msgstr "hinzufügen zu Prozess"
