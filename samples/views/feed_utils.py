@@ -543,7 +543,7 @@ class Reporter(object):
         :rtype: `models.FeedNewTask``
         """
         return models.FeedNewTask.objects.create(originator=self.originator, process=physical_process_content_type,
-                                                  task=task)
+                                                 task=task)
 
     def __edited_task(self, task, physical_process_content_type, edit_description):
         u"""Generate a feed entry for a edited task. It also adds the customer of the task to the
