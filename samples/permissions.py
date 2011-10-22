@@ -202,6 +202,37 @@ def get_allowed_physical_processes(user):
     return allowed_physical_processes
 
 
+def get_all_adders(process_class):
+    u"""Returns all operators for a given process class.  “Operators” means
+    people who are allowed to add new processes of this class.  Note that if
+    there is not “add_...” permission for the process class, i.e. everyone can
+    add such processes, this routine returns none.  This may sound strange but
+    it is very helpful in most cases.
+
+    :Parameters:
+      - `process_class`: the process class for which the operators should be
+        found
+
+    :type process_class: ``type`` (class ``models.Process``)
+
+    :Return:
+      all active users that are allowed to add processes for this class; if the
+      process class is not resticted to certain users, this function returns an
+      empty query set
+
+    :rtype: ``QuerySet``
+    """
+    permission_codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    try:
+        add_permission = Permission.objects.get(codename=permission_codename)
+    except Permission.DoesNotExist:
+        return django.contrib.auth.models.User.objects.none()
+    else:
+        return django.contrib.auth.models.User.objects.filter(
+            is_active=True, chantal_user_details__is_administrative=False). \
+            filter(Q(groups__permissions=add_permission) | Q(user_permissions=add_permission)).distinct()
+
+
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
 

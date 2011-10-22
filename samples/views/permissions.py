@@ -27,7 +27,7 @@ from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal_common.utils import get_really_full_name, get_all_models
-from samples import models
+from samples import models, permissions
 from samples.views import utils
 
 
@@ -120,9 +120,7 @@ class PhysicalProcess(object):
         permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
                                                Q(user_permissions=self.edit_permissions_permission)).distinct() \
                                                if self.edit_permissions_permission else []
-        adders = base_query.filter(Q(groups__permissions=self.add_permission) |
-                                   Q(user_permissions=self.add_permission)).distinct() \
-                                   if self.add_permission else []
+        adders = permissions.get_all_adders(physical_process_class)
         full_viewers = base_query.filter(Q(groups__permissions=self.view_all_permission) |
                                          Q(user_permissions=self.view_all_permission)).distinct() \
                                    if self.view_all_permission else []

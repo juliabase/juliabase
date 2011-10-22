@@ -73,15 +73,7 @@ class TaskForm(forms.ModelForm):
         self.fields["customer"].required = False
         self.fields["operator"].choices = [(u"", u"---------")]
         if self.task:
-            permission_codename = "add_{0}".format(
-                utils.camel_case_to_underscores(self.task.process_content_type.model_class().__name__))
-            try:
-                add_permission = Permission.objects.get(codename=permission_codename)
-            except Permission.DoesNotExist:
-                add_permission = None
-            eligible_operators = set(User.objects.filter(is_active=True, chantal_user_details__is_administrative=False).
-                                     filter(Q(groups__permissions=add_permission) |
-                                            Q(user_permissions=add_permission)).distinct())
+            eligible_operators = set(permissions.get_all_adders(self.task.process_content_type.model_class()))
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))

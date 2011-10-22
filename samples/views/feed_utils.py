@@ -569,8 +569,9 @@ class Reporter(object):
         """
         self.interested_users.add(task.customer)
         important = edit_description["important"]
-        return models.FeedEditedTask.objects.create(originator=self.originator, process=physical_process_content_type, task=task,
-                description=edit_description["description"], important=important)
+        return models.FeedEditedTask.objects.create(originator=self.originator, process=physical_process_content_type,
+                                                    task=task, description=edit_description["description"],
+                                                    important=important)
 
     def report_task(self, task, edit_description=None):
         u"""Generate one feed entry for a new task or an edited task.
@@ -588,11 +589,7 @@ class Reporter(object):
         :type edit_description: dict mapping str to ``object`` or ``None``
         """
         physical_process_content_type = task.process_content_type
-        try:
-            permission = Permission.objects.filter(content_type=physical_process_content_type, codename__icontains="add")[0]
-        except IndexError:
-            raise Exception(u"{process} has no add-permission".format(process=physical_process_content_type.name))
-        self.interested_users = set(permission.user_set.iterator())
+        self.interested_users = set(permissions.get_all_adders(task.process_content_type.get_model()))
         entry = self.__edited_task(task, physical_process_content_type, edit_description) if edit_description \
             else self.__new_task(task, physical_process_content_type)
         self.__connect_with_users(entry)
