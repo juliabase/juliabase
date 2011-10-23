@@ -16,10 +16,10 @@ copyright holder, you must destroy it immediately and completely.
 
 {% with entry.samples.all as samples %}
   <p>
-    {% blocktrans count samples|length as counter with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
-      {{ originator }} has removed a <a href="{{ link }}">task</a> for the sample:
+    {% blocktrans count samples|length as counter with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link task_id=entry.old_id %}
+      {{ originator }} has removed <a href="{{ link }}">task #{{ task_id }}</a> for the sample:
     {% plural %}
-      {{ originator }} has removed a <a href="{{ link }}">task</a> for the samples:
+      {{ originator }} has removed <a href="{{ link }}">task #{{ task_id }}</a> for the samples:
     {% endblocktrans %}
   </p>
 

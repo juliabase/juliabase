@@ -521,48 +521,8 @@ class Reporter(object):
         self.interested_users = set(user_details.user for user_details in process_class.subscribed_users.all())
         self.__connect_with_users(entry)
 
-    def __new_task(self, task):
-        u"""Generate a feed entry for a new task.
-
-        :Parameters:
-          - `task`: the task that was created or edited
-
-        :type task: `models.Task`
-
-        :Returns:
-          a Feed object for the new task.
-
-        :rtype: `models.FeedNewTask``
-        """
-        return models.FeedNewTask.objects.create(originator=self.originator, task=task)
-
-    def __edited_task(self, task, edit_description):
-        u"""Generate a feed entry for a edited task. It also adds the customer of the task to the
-        interested users.
-
-        :Parameters:
-          - `task`: the task that was created or edited
-          - `edit_description`: The dictionary containing data about what was
-             edited in the task.  Its keys correspond to the fields of
-             `form_utils.EditDescriptionForm`.
-
-        :type task: `models.Task`
-        :type edit_description: dict mapping str to ``object``
-
-        :Returns:
-          a Feed object for the edited task.
-
-        :rtype: `models.FeedEditedTask``
-        """
-        self.interested_users.add(task.customer)
-        important = edit_description["important"]
-        return models.FeedEditedTask.objects.create(originator=self.originator, task=task,
-                                                    description=edit_description["description"], important=important)
-
     def report_task(self, task, edit_description=None):
         u"""Generate one feed entry for a new task or an edited task.
-        Only the interested users are set here. The feed entries themselves
-        will created in specific methods.
 
         :Parameters:
          - `task`: the task that was created or edited
@@ -576,21 +536,29 @@ class Reporter(object):
         """
         process_class = task.process_class
         self.interested_users = set(permissions.get_all_adders(task.process_class.model_class()))
-        entry = self.__edited_task(task, edit_description) if edit_description is not None else self.__new_task(task)
+        if edit_description is None:
+            entry = models.FeedNewTask.objects.create(originator=self.originator, task=task)
+        else:
+            self.interested_users.add(task.customer)
+            important = edit_description["important"]
+            entry = models.FeedEditedTask.objects.create(originator=self.originator, task=task,
+                                                         description=edit_description["description"], important=important)
         self.__connect_with_users(entry)
 
-    def report_removed_task(self, process_class, samples):
+    def report_removed_task(self, id_, process_class, samples):
         u"""Generate one feed for a removed task.
 
         :Parameters:
+          - `id_`: the ID (number) of the removed task
           - `process_class`: the content type of the physical process of whose
             task was removed.
           - `samples`: list of samples who should be processed
 
+        :type id_: int
         :type process_class: ``django.contrib.contenttypes.models.ContentType``
         :type samples: list of `models.Sample`
         """
         self.interested_users = set(permissions.get_all_adders(process_class.model_class()))
-        entry = models.FeedRemovedTask.objects.create(originator=self.originator, process_class=process_class)
+        entry = models.FeedRemovedTask.objects.create(old_id=id_, originator=self.originator, process_class=process_class)
         entry.samples = samples
         self.__connect_with_users(entry)

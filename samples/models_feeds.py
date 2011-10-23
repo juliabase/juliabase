@@ -510,6 +510,7 @@ class FeedEditedTask(FeedEntry):
 class FeedRemovedTask(FeedEntry):
     u"""Model for feed entries for removing tasks.
     """
+    old_id = models.PositiveIntegerField(_(u"number"), unique=True)
     process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
 
