@@ -13,6 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
+import copy
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -38,12 +39,11 @@ class SamplesForm(forms.Form):
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
         samples = list(user.my_samples.all())
-        self.savable = True
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
             if user != task.customer or task.status != u"0_new":
-                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
                 super(SamplesForm, self).__init__(**kwargs)
+                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             else:
                 super(SamplesForm, self).__init__(data, **kwargs)
             samples.extend(task.samples.all())
@@ -111,8 +111,9 @@ class TaskForm(forms.ModelForm):
                         self.fixed_fields.add("comments")
         else:
             self.fixed_fields.update(["status", "finished_process", "operator"])
-        # for field_name in self.fixed_fields:
-        #     self.fields[field_name].widget.attrs["disabled"] = "disabled"
+        for field_name in self.fixed_fields:
+            self.fields[field_name].widget.attrs["disabled"] = "disabled"
+            self.fields[field_name].required = False
 
     def clean_status(self):
         if "status" in self.fixed_fields:
@@ -242,34 +243,37 @@ def edit(request, task_id):
 
     :rtype: ``HttpResponse``
     """
-    task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id is not None else None
+    task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id else None
     user = request.user
     if task and user != task.customer:
         permissions.assert_can_add_physical_process(request.user, task.process_content_type.model_class())
-    preset_sample = utils.extract_preset_sample(request) if not task else None
+    preset_sample = utils.extract_preset_sample(request) if not task_id else None
     if request.method == "POST":
         task_form = TaskForm(user, request.POST, instance=task)
         samples_form = SamplesForm(user, preset_sample, task, request.POST)
+        if task_id:
+            old_task = copy.copy(task)
+            old_samples = set(task.samples.all())
         if task_form.is_valid() and (not samples_form.is_bound or samples_form.is_valid()):
-            new_task = save_to_database(task_form, samples_form, user, old_task=task)
-            if task:
+            task = save_to_database(task_form, samples_form, user, old_task=task)
+            if task_id:
                 edit_description = {"important": True, "description": u""}
-                if task.status != new_task.status:
+                if old_task.status != task.status:
                     edit_description["description"] += \
-                        _(u"* Status is now “{new_status}”.\n").format(new_status=new_task.status)
-                if task.priority != new_task.priority:
+                        _(u"* Status is now “{new_status}”.\n").format(new_status=task.get_status_display())
+                if old_task.priority != task.priority:
                     edit_description["description"] += \
-                        _(u"* Priority is now “{new_priority}̣”.\n").format(new_priority=new_task.priority)
-                if task.finished_process != new_task.finished_process:
+                        _(u"* Priority is now “{new_priority}̣”.\n").format(new_priority=task.get_priority_display())
+                if old_task.finished_process != task.finished_process:
                     edit_description["description"] += _(u"* Connected process.\n")
-                if set(task.samples.all()) != set(new_task.samples.all()):
+                if old_samples != set(task.samples.all()):
                     edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"samples")))
-                if task.comments != new_task.comments:
+                if old_task.comments != task.comments:
                     edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"comments")))
             else:
                 edit_description = None
-            feed_utils.Reporter(request.user).report_task(new_task, edit_description)
-            message = _(u"Task was {verb} successfully.").format(verb=u"edited" if task else u"added")
+            feed_utils.Reporter(request.user).report_task(task, edit_description)
+            message = _(u"Task was {verb} successfully.").format(verb=u"edited" if task_id else u"added")
             return utils.successful_response(request, message, "samples.views.task_lists.show")
     else:
         samples_form = SamplesForm(user, preset_sample, task)

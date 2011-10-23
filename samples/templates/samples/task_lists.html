@@ -20,89 +20,91 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
 {% url samples.views.task_lists.show as next_url %}
 {% for process_class, task_list in task_lists.iteritems %}
+  {% spaceless %}
     <h2>{{ process_class|contenttype_name|capfirst }}<a
        class="edit-icon"
        href="{% url samples.views.task_lists.edit %}?next={{ next_url|urlquote_plus }}&process_class={{ process_class.id }}">
         <img src="{{ STATIC_URL }}chantal/icons/layout_add.png" alt="add icon" title="{% trans 'Add task' %}"
              width="16" height="16"/></a></h2>
+  {% endspaceless %}
 
-    {% if not task_list %}
-      <p>{% trans 'No current tasks.' %}</p>
-    {% endif %}
+  {% if not task_list %}
+    <p>{% trans 'No current tasks.' %}</p>
+  {% endif %}
 
-    {% for task in task_list %}
-    <div>
-      <div style="border-style: solid; border-color: black; border-width: thin;
-                  background-color: {{ task.task|task_color }}; display: inline-block; padding: 1ex">
-        <div style="float: right" class="screen-only">
-        {% if task.user_can_edit %}
-          <a class="edit-icon" href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
-             <img src="{{ STATIC_URL }}chantal/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
-             width="16" height="16"/></a>
-         {% if user == task.task.customer %}
-            <form method="post" 
-      action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={{ next_url|urlquote_plus }}"
-                  style="display: inline">
-              <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
-                     title="{% trans 'remove task' %}"/>
-            </form>
-          {% endif %}
+  {% for task in task_list %}
+  <div>
+    <div style="border-style: solid; border-color: black; border-width: thin;
+                background-color: {{ task.task|task_color }}; display: inline-block; padding: 1ex">
+      <div style="float: right" class="screen-only">
+      {% if task.user_can_edit %}
+        <a class="edit-icon" href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
+           <img src="{{ STATIC_URL }}chantal/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
+           width="16" height="16"/></a>
+       {% if user == task.task.customer %}
+          <form method="post" 
+    action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={{ next_url|urlquote_plus }}"
+                style="display: inline">
+            <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
+                   title="{% trans 'remove task' %}"/>
+          </form>
         {% endif %}
-        </div>
-        {% with task.task as task_instance %}
-        <table style="margin-right: 5em">
-          <tr>
-            <td class="label">{% verbose_name Task.priority %}:</td>
-            <td class="value">{{ task_instance.get_priority_display }}</td>
-            <td class="label" style="padding-left: 3em">{% verbose_name Task.samples %}:</td>
-          </tr>
-          <tr>
-            <td class="label">{% verbose_name Task.status %}:</td>
-            <td class="value">{{ task_instance.get_status_display }}</td>
-            <td rowspan="6" style="vertical-align: top; padding-left: 3em">
-              <ul class="sample-list" style="margin-top: 0pt">
-                {% for sample in task.samples %}
-                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-          <tr>
-            <td class="label">{% verbose_name Task.operator %}:</td>
-            <td class="value">{{ task_instance.operator|get_really_full_name|default:"—" }}</td>
-          </tr>
-          <tr>
-            <td class="label">{% verbose_name Task.customer %}:</td>
-            <td class="value">{{ task_instance.customer|get_really_full_name }}</td>
-          </tr>
-          <tr>
-            <td class="label">{% verbose_name Task.creating_timestamp %}:</td>
-            <td class="value">{{ task_instance.creating_timestamp|date:"Y-m-d H:i:s" }}</td>
-          </tr>
-          <tr>
-            <td class="label">{% verbose_name Task.last_modified %}:</td>
-            <td class="value">{{ task_instance.last_modified|date:"Y-m-d H:i:s" }}</td>
-          </tr>
-          <tr>
-            <td class="label">{% verbose_name Task.comments %}:</td>
-            <td class="value" style="font-weight: normal">{{ task_instance.comments|markdown_samples:"collapse" }}</td>
-          </tr>
-        </table>
-        {% endwith %}
-       </div>
-    </div>
-    {% endfor %}
+      {% endif %}
+      </div>
+      {% with task.task as task_instance %}
+      <table style="margin-right: 5em">
+        <tr>
+          <td class="label">{% verbose_name Task.priority %}:</td>
+          <td class="value">{{ task_instance.get_priority_display }}</td>
+          <td class="label" style="padding-left: 3em">{% verbose_name Task.samples %}:</td>
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name Task.status %}:</td>
+          <td class="value">{{ task_instance.get_status_display }}</td>
+          <td rowspan="6" style="vertical-align: top; padding-left: 3em">
+            <ul class="sample-list" style="margin-top: 0pt">
+              {% for sample in task.samples %}
+                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name Task.operator %}:</td>
+          <td class="value">{{ task_instance.operator|get_really_full_name|default:"—" }}</td>
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name Task.customer %}:</td>
+          <td class="value">{{ task_instance.customer|get_really_full_name }}</td>
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name Task.creating_timestamp %}:</td>
+          <td class="value">{{ task_instance.creating_timestamp|date:"Y-m-d H:i:s" }}</td>
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name Task.last_modified %}:</td>
+          <td class="value">{{ task_instance.last_modified|date:"Y-m-d H:i:s" }}</td>
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name Task.comments %}:</td>
+          <td class="value" style="font-weight: normal">{{ task_instance.comments|markdown_samples:"collapse" }}</td>
+        </tr>
+      </table>
+      {% endwith %}
+     </div>
+  </div>
+  {% endfor %}
 {% endfor %}
 <form method="POST" style="margin-top: 5ex" class="screen-only">
-	<table style="float: right">
-        <tbody>
-	{% error_list chose_task_lists _("General error") "<tr>" 2 %}
-        <tr>
-	       <td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
-	       <td class="input">{{ chose_task_lists.visible_task_lists }}</td>
-	   </tr>
-        </tbody>
-	</table>
-	<p class="submit-button" style="clear: both"><input type="submit"/></p>
+  <table style="float: right">
+    <tbody>
+      {% error_list chose_task_lists _("General error") "<tr>" 2 %}
+      <tr>
+	<td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
+	<td class="input">{{ chose_task_lists.visible_task_lists }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>
 {% endblock %}
