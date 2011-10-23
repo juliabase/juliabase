@@ -255,7 +255,7 @@ def edit(request, task_id):
             old_task = copy.copy(task)
             old_samples = set(task.samples.all())
         if task_form.is_valid() and (not samples_form.is_bound or samples_form.is_valid()):
-            task = save_to_database(task_form, samples_form, old_task=old_task)
+            task = save_to_database(task_form, samples_form, old_task=old_task if task_id else None)
             if task_id:
                 edit_description = {"important": True, "description": u""}
                 if old_task.status != task.status:
