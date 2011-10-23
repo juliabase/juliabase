@@ -12,10 +12,12 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
+{% load chantal %}
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
-  {{ originator }} has added a <a href="{{ link }}">new task</a>
+  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link task_id=entry.task.id process_name=entry.process_class|contenttype_name %}
+    {{ originator }} has added <a href="{{ link }}">new task #{{ task_id }}</a>
+    for {{ process_name }}.
   {% endblocktrans %}
 </p>
