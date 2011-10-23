@@ -471,7 +471,6 @@ class FeedWithdrawnStatusMessage(FeedEntry):
 class FeedNewTask(FeedEntry):
     u"""Model for feed entries for new tasks for physical processes.
     """
-    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
     task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_new_tasks")
 
     class Meta(FeedEntry.Meta):
@@ -491,7 +490,6 @@ class FeedNewTask(FeedEntry):
 class FeedEditedTask(FeedEntry):
     u"""Model for feed entries for new tasks for physical processes.
     """
-    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
     task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_edited_tasks")
     description = models.TextField(_(u"description"))
 

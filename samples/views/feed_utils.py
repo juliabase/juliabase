@@ -521,38 +521,32 @@ class Reporter(object):
         self.interested_users = set(user_details.user for user_details in process_class.subscribed_users.all())
         self.__connect_with_users(entry)
 
-    def __new_task(self, task, process_class):
+    def __new_task(self, task):
         u"""Generate a feed entry for a new task.
 
         :Parameters:
           - `task`: the task that was created or edited
-          - `process_class`: the content type of the physical process who
-            should applied in the task.
 
         :type task: `models.Task`
-        :type process_class: ``django.contrib.contenttypes.models.ContentType``
 
         :Returns:
           a Feed object for the new task.
 
         :rtype: `models.FeedNewTask``
         """
-        return models.FeedNewTask.objects.create(originator=self.originator, process_class=process_class, task=task)
+        return models.FeedNewTask.objects.create(originator=self.originator, task=task)
 
-    def __edited_task(self, task, process_class, edit_description):
+    def __edited_task(self, task, edit_description):
         u"""Generate a feed entry for a edited task. It also adds the customer of the task to the
         interested users.
 
         :Parameters:
           - `task`: the task that was created or edited
-          - `process_class`: the content type of the physical process who
-            should applied in the task.
           - `edit_description`: The dictionary containing data about what was
              edited in the task.  Its keys correspond to the fields of
              `form_utils.EditDescriptionForm`.
 
         :type task: `models.Task`
-        :type process_class: ``django.contrib.contenttypes.models.ContentType``
         :type edit_description: dict mapping str to ``object``
 
         :Returns:
@@ -562,9 +556,8 @@ class Reporter(object):
         """
         self.interested_users.add(task.customer)
         important = edit_description["important"]
-        return models.FeedEditedTask.objects.create(originator=self.originator, process_class=process_class,
-                                                    task=task, description=edit_description["description"],
-                                                    important=important)
+        return models.FeedEditedTask.objects.create(originator=self.originator, task=task,
+                                                    description=edit_description["description"], important=important)
 
     def report_task(self, task, edit_description=None):
         u"""Generate one feed entry for a new task or an edited task.
@@ -583,8 +576,7 @@ class Reporter(object):
         """
         process_class = task.process_class
         self.interested_users = set(permissions.get_all_adders(task.process_class.model_class()))
-        entry = self.__edited_task(task, process_class, edit_description) if edit_description is not None \
-            else self.__new_task(task, process_class)
+        entry = self.__edited_task(task, edit_description) if edit_description is not None else self.__new_task(task)
         self.__connect_with_users(entry)
 
     def report_removed_task(self, process_class, samples):
@@ -598,11 +590,7 @@ class Reporter(object):
         :type process_class: ``django.contrib.contenttypes.models.ContentType``
         :type samples: list of `models.Sample`
         """
+        self.interested_users = set(permissions.get_all_adders(process_class.model_class()))
         entry = models.FeedRemovedTask.objects.create(originator=self.originator, process_class=process_class)
         entry.samples = samples
-        try:
-            permission = Permission.objects.filter(content_type=process_class, codename__icontains="add")[0]
-        except IndexError:
-            raise Exception(u"{process_class} has no add-permission".format(process_class=process_class.name))
-        self.interested_users = set(permission.user_set.iterator())
         self.__connect_with_users(entry)
