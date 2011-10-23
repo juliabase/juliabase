@@ -41,7 +41,7 @@ class SamplesForm(forms.Form):
         samples = list(user.my_samples.all())
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
-            if user != task.customer or task.status != u"0_new":
+            if user != task.customer or task.status != u"0 new":
                 super(SamplesForm, self).__init__(**kwargs)
                 self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             else:
@@ -63,7 +63,7 @@ class TaskForm(forms.ModelForm):
     _ = ugettext_lazy
 
     operator = forms.ChoiceField(label=capfirst(_(u"operator")), required=False)
-    process_content_type = forms.ChoiceField(label=capfirst(_(u"process class")))
+    process_class = forms.ChoiceField(label=capfirst(_(u"process class")))
     finished_process = forms.ChoiceField(label=capfirst(_(u"finished process")), required=False)
 
     def __init__(self, user, data=None, **kwargs):
@@ -73,12 +73,12 @@ class TaskForm(forms.ModelForm):
         self.fields["customer"].required = False
         self.fields["operator"].choices = [(u"", u"---------")]
         if self.task:
-            eligible_operators = set(permissions.get_all_adders(self.task.process_content_type.model_class()))
+            eligible_operators = set(permissions.get_all_adders(self.task.process_class.model_class()))
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
                                                    for user in utils.sorted_users(eligible_operators))
-        self.fields["process_content_type"].choices = form_utils.choices_of_content_types(
+        self.fields["process_class"].choices = form_utils.choices_of_content_types(
             permissions.get_all_addable_physical_process_models())
         self.fields["finished_process"].choices = [(u"", u"---------")]
         if self.task:
@@ -87,7 +87,7 @@ class TaskForm(forms.ModelForm):
                 self.fields["finished_process"].choices.extend(
                     [(process.pk, process.actual_instance)
                      for process in Process.objects.filter(
-                            Q(operator=self.user, content_type=self.task.process_content_type) |
+                            Q(operator=self.user, content_type=self.task.process_class) |
                             Q(pk=old_finished_process_pk)).order_by("-timestamp")[:10]])
             elif old_finished_process_pk:
                 self.fields["finished_process"].append((old_finished_process_pk, self.task.finished_process))
@@ -95,10 +95,10 @@ class TaskForm(forms.ModelForm):
         self.fields["comments"].widget.attrs["rows"] = 5
         self.fixed_fields = set()
         if self.task:
-            self.fixed_fields.add("process_content_type")
-            if self.task.status == u"0_new":
+            self.fixed_fields.add("process_class")
+            if self.task.status == u"0 new":
                 self.fixed_fields.add("finished_process")
-            elif self.task.status in [u"1_accepted", u"2_in progress"]:
+            elif self.task.status in [u"1 accepted", u"2 in progress"]:
                 if self.user != self.task.operator:
                     self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
                     if self.user != self.task.customer:
@@ -117,13 +117,13 @@ class TaskForm(forms.ModelForm):
 
     def clean_status(self):
         if "status" in self.fixed_fields:
-            return self.task.status if self.task else u"0_new"
+            return self.task.status if self.task else u"0 new"
         return self.cleaned_data["status"]
 
-    def clean_process_content_type(self):
-        if "process_content_type" in self.fixed_fields:
-            return self.task.process_content_type
-        pk = self.cleaned_data.get("process_content_type")
+    def clean_process_class(self):
+        if "process_class" in self.fixed_fields:
+            return self.task.process_class
+        pk = self.cleaned_data.get("process_class")
         if pk:
             return ContentType.objects.get(pk=int(pk))
 
@@ -157,7 +157,7 @@ class TaskForm(forms.ModelForm):
     def clean(self):
         _ = ugettext
         cleaned_data = super(TaskForm, self).clean()
-        if cleaned_data.get("status") in [u"1_accepted", u"2_in progress", u"3_finished"]:
+        if cleaned_data.get("status") in [u"1 accepted", u"2 in progress", u"3 finished"]:
             if not cleaned_data.get("operator"):
                 common_utils.append_error(self, _(u"With this status, you must set an operator."), "operator")
         return cleaned_data
@@ -189,10 +189,10 @@ class TaskForTemplate(object):
         self.samples = [sample if (sample.topic and not sample.topic.confidential)
                         or (permissions.has_permission_to_fully_view_sample(user, sample) or
                             permissions.has_permission_to_add_edit_physical_process(user, self.finished_process,
-                                                                                    task.process_content_type.model_class()))
+                                                                                    task.process_class.model_class()))
                         else _(u"confidential sample") for sample in task.samples.all()]
         self.user_can_edit = user == task.customer or permissions.has_permission_to_add_edit_physical_process(
-            user, self.finished_process, task.process_content_type.model_class())
+            user, self.finished_process, task.process_class.model_class())
 
 
 def save_to_database(task_form, samples_form, user, old_task):
@@ -221,7 +221,7 @@ def save_to_database(task_form, samples_form, user, old_task):
     task = task_form.save()
     if samples_form.is_bound:
         task.samples = samples_form.cleaned_data["sample_list"]
-    if old_task and old_task.status == "0_new" and task.status == "1_accepted":
+    if old_task and old_task.status == "0 new" and task.status == "1 accepted":
         user.my_samples.add(*task.samples.all())
     return task
 
@@ -246,7 +246,7 @@ def edit(request, task_id):
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id else None
     user = request.user
     if task and user != task.customer:
-        permissions.assert_can_add_physical_process(request.user, task.process_content_type.model_class())
+        permissions.assert_can_add_physical_process(request.user, task.process_class.model_class())
     preset_sample = utils.extract_preset_sample(request) if not task_id else None
     if request.method == "POST":
         task_form = TaskForm(user, request.POST, instance=task)
@@ -279,10 +279,10 @@ def edit(request, task_id):
         samples_form = SamplesForm(user, preset_sample, task)
         initial = {}
         if task:
-            initial["process_content_type"] = task.process_content_type.pk
+            initial["process_class"] = task.process_class.pk
             initial["finished_process"] = task.finished_process.pk if task.finished_process else None
         elif "process_class" in request.GET:
-            initial["process_content_type"] = request.GET["process_class"]
+            initial["process_class"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
     title = _(u"Edit task") if task else _(u"Add task")
     return render_to_response("samples/edit_task.html", {"title": title,
@@ -339,10 +339,10 @@ def remove(request, task_id):
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
     if task.customer == request.user:
-        physical_process_content_type = task.process_content_type
+        physical_process_class = task.process_class
         samples = list(task.samples.all())
         task.delete()
-        feed_utils.Reporter(request.user).report_removed_task(physical_process_content_type, samples)
+        feed_utils.Reporter(request.user).report_removed_task(physical_process_class, samples)
     else:
         raise permissions.PermissionError(request.user, u"You cannot remove this task.")
     return utils.successful_response(request, _(u"The task was successfully removed."), show)

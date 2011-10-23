@@ -1469,22 +1469,22 @@ class StatusMessage(models.Model):
 
 
 status_choices = (
-    ("0_new", _(u"new")),
-    ("1_accepted", _(u"accepted")),
-    ("2_in progress", _(u"in progress")),
-    ("3_finished", _(u"finished"))
+    ("0 new", _(u"new")),
+    ("1 accepted", _(u"accepted")),
+    ("2 in progress", _(u"in progress")),
+    ("3 finished", _(u"finished"))
 )
 priority_choices = (
-    ("0_critical", _(u"critical")),
-    ("1_high", _(u"high")),
-    ("2_normal", _(u"normal")),
-    ("3_low", _(u"low"))
+    ("0 critical", _(u"critical")),
+    ("1 high", _(u"high")),
+    ("2 normal", _(u"normal")),
+    ("3 low", _(u"low"))
 )
 
 class Task(models.Model):
     u"""
     """
-    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="0_new")
+    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="0 new")
     customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_(u"customer"))
     creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
                                               auto_now_add=True, editable=False)
@@ -1492,12 +1492,12 @@ class Task(models.Model):
                                          auto_now=True, auto_now_add=True, editable=False)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
                                  verbose_name=_(u"operator"), null=True, blank=True)
-    process_content_type = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_(u"process class"))
+    process_class = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_(u"process class"))
     finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True,
                                          verbose_name=_(u"finished process"))
     samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_(u"samples"))
     comments = models.TextField(_(u"comments"), blank=True)
-    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2_normal")
+    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2 normal")
 
     class Meta:
         verbose_name = _(u"task")
@@ -1505,5 +1505,5 @@ class Task(models.Model):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"task of {process_class} from {datetime}". format(process_class=self.process_content_type.name,
-                                                                    datetime=self.creating_timestamp))
+        return _(u"task of {process_class} from {datetime}". format(
+                process_class=self.process_class.name, datetime=self.creating_timestamp))

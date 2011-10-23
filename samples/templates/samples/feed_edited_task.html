@@ -16,7 +16,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link process_name=entry.task.process_content_type|contenttype_name %}
+  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link process_name=entry.task.process_class|contenttype_name %}
   {{ originator }} has changed a <a href="{{ link }}">task</a> for {{ process_name }}.
   {% endblocktrans %}{% trans 'Description of the change:' %}
 </p>

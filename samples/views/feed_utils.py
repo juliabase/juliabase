@@ -487,54 +487,54 @@ class Reporter(object):
         self.interested_users = set(users)
         self.__connect_with_users(entry, chantal_common.models.Topic)
 
-    def report_status_message(self, physical_process_content_type, status_message):
+    def report_status_message(self, physical_process_class, status_message):
         u"""Generate one feed entry for new status messages for physical
         processes.
 
         :Parameters:
-          - `physical_process_content_type`: the content type of the physical
+          - `physical_process_class`: the content type of the physical
             process whose status has changed
           - `status_message`: the status message for the physical process
 
-        :type physical_process_content_type:
+        :type physical_process_class:
           ``django.contrib.contenttypes.models.ContentType``
         :type status_message: ``samples.models_common.StatusMessage``
         """
-        entry = models.FeedStatusMessage.objects.create(originator=self.originator, process=physical_process_content_type,
+        entry = models.FeedStatusMessage.objects.create(originator=self.originator, process=physical_process_class,
                                                         status=status_message)
         self.interested_users = set(user_details.user
-                                    for user_details in physical_process_content_type.subscribed_users.all())
+                                    for user_details in physical_process_class.subscribed_users.all())
         self.__connect_with_users(entry)
 
-    def report_withdrawn_status_message(self, physical_process_content_type, status_message):
+    def report_withdrawn_status_message(self, physical_process_class, status_message):
         u"""Generate one feed entry for a withdrawn status message for physical
         processes.
 
         :Parameters:
-          - `physical_process_content_type`: the content type of the physical
+          - `physical_process_class`: the content type of the physical
             process one of whose statuses was withdrawn
           - `status_message`: the status message for the physical process
 
-        :type physical_process_content_type:
+        :type physical_process_class:
           ``django.contrib.contenttypes.models.ContentType``
         :type status_message: ``samples.models_common.StatusMessage``
         """
         entry = models.FeedWithdrawnStatusMessage.objects.create(
-            originator=self.originator, process=physical_process_content_type, status=status_message)
+            originator=self.originator, process=physical_process_class, status=status_message)
         self.interested_users = set(user_details.user
-                                    for user_details in physical_process_content_type.subscribed_users.all())
+                                    for user_details in physical_process_class.subscribed_users.all())
         self.__connect_with_users(entry)
 
-    def __new_task(self, task, physical_process_content_type):
+    def __new_task(self, task, physical_process_class):
         u"""Generate a feed entry for a new task.
 
         :Parameters:
          - `task`: the task that was created or edited
-         - `physical_process_content_type`: the content type of the physical
+         - `physical_process_class`: the content type of the physical
             process who should applied in the task.
 
         :type task: `models.Task`
-        :type physical_process_content_type:
+        :type physical_process_class:
           ``django.contrib.contenttypes.models.ContentType``
 
         :Returns:
@@ -542,23 +542,23 @@ class Reporter(object):
 
         :rtype: `models.FeedNewTask``
         """
-        return models.FeedNewTask.objects.create(originator=self.originator, process=physical_process_content_type,
+        return models.FeedNewTask.objects.create(originator=self.originator, process=physical_process_class,
                                                  task=task)
 
-    def __edited_task(self, task, physical_process_content_type, edit_description):
+    def __edited_task(self, task, physical_process_class, edit_description):
         u"""Generate a feed entry for a edited task. It also adds the customer of the task to the
         interested users.
 
         :Parameters:
          - `task`: the task that was created or edited
-         - `physical_process_content_type`: the content type of the physical
+         - `physical_process_class`: the content type of the physical
             process who should applied in the task.
          - `edit_description`: The dictionary containing data about what was
             edited in the task.  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.
 
         :type task: `models.Task`
-        :type physical_process_content_type:
+        :type physical_process_class:
           ``django.contrib.contenttypes.models.ContentType``
         :type edit_description: dict mapping str to ``object``
 
@@ -569,7 +569,7 @@ class Reporter(object):
         """
         self.interested_users.add(task.customer)
         important = edit_description["important"]
-        return models.FeedEditedTask.objects.create(originator=self.originator, process=physical_process_content_type,
+        return models.FeedEditedTask.objects.create(originator=self.originator, process=physical_process_class,
                                                     task=task, description=edit_description["description"],
                                                     important=important)
 
@@ -588,29 +588,29 @@ class Reporter(object):
         :type task: `models.Task`
         :type edit_description: dict mapping str to ``object`` or ``None``
         """
-        physical_process_content_type = task.process_content_type
-        self.interested_users = set(permissions.get_all_adders(task.process_content_type.model_class()))
-        entry = self.__edited_task(task, physical_process_content_type, edit_description) if edit_description \
-            else self.__new_task(task, physical_process_content_type)
+        physical_process_class = task.process_class
+        self.interested_users = set(permissions.get_all_adders(task.process_class.model_class()))
+        entry = self.__edited_task(task, physical_process_class, edit_description) if edit_description \
+            else self.__new_task(task, physical_process_class)
         self.__connect_with_users(entry)
 
-    def report_removed_task(self, physical_process_content_type, samples):
+    def report_removed_task(self, physical_process_class, samples):
         u"""Generate one feed for a removed task.
 
         :Parameters:
-         - `physical_process_content_type`: the content type of the physical
+         - `physical_process_class`: the content type of the physical
             process of whose task was removed.
          - `samples`: list of samples who should be processed
 
-        :type physical_process_content_type:
+        :type physical_process_class:
           ``django.contrib.contenttypes.models.ContentType``
         :type samples: list of `models.Sample`
         """
-        entry = models.FeedRemovedTask.objects.create(originator=self.originator, process=physical_process_content_type)
+        entry = models.FeedRemovedTask.objects.create(originator=self.originator, process=physical_process_class)
         entry.samples = samples
         try:
-            permission = Permission.objects.filter(content_type=physical_process_content_type, codename__icontains="add")[0]
+            permission = Permission.objects.filter(content_type=physical_process_class, codename__icontains="add")[0]
         except IndexError:
-            raise Exception(u"{process} has no add-permission".format(process=physical_process_content_type.name))
+            raise Exception(u"{process} has no add-permission".format(process=physical_process_class.name))
         self.interested_users = set(permission.user_set.iterator())
         self.__connect_with_users(entry)
