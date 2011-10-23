@@ -191,7 +191,7 @@ class TaskForTemplate(object):
                             permissions.has_permission_to_add_edit_physical_process(user, self.finished_process,
                                                                                     self.task.process_class.model_class()))
                         else _(u"confidential sample") for sample in self.task.samples.all()]
-        self.user_can_edit = user == self.task.customer or \
+        self.user_can_see_everything = self.user_can_edit = user == self.task.customer or \
             permissions.has_permission_to_add_physical_process(user, task.process_class.model_class())
         self.user_can_delete = user == self.task.customer
 

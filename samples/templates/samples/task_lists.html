@@ -23,7 +23,7 @@ copyright holder, you must destroy it immediately and completely.
   {% spaceless %}
     <h2>{{ process_class|contenttype_name|capfirst }}<a
        class="edit-icon"
-       href="{% url samples.views.task_lists.edit %}?next={{ next_url|urlquote_plus }}&process_class={{ process_class.id }}">
+       href="{% url samples.views.task_lists.edit %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
         <img src="{{ STATIC_URL }}chantal/icons/layout_add.png" alt="add icon" title="{% trans 'Add task' %}"
              width="16" height="16"/></a></h2>
   {% endspaceless %}
@@ -39,12 +39,13 @@ copyright holder, you must destroy it immediately and completely.
          id="task_{{ task.task.id }}">
       <div style="float: right" class="screen-only">
       {% if task.user_can_edit %}
-        <a class="edit-icon" href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
+        <a class="edit-icon"
+           href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
            <img src="{{ STATIC_URL }}chantal/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
            width="16" height="16"/></a>
       {% endif %}
       {% if task.user_can_delete %}
-        <form method="post" 
+        <form method="post"
               action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={{ next_url|urlquote_plus }}"
               style="display: inline">
           <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
@@ -56,24 +57,26 @@ copyright holder, you must destroy it immediately and completely.
       <table style="margin-right: 5em">
         <tr>
           <td class="label">{{ _("number")|capfirst }}:</td>
-          <td class="value" colspan="2">{{ task_instance.id }}</td>
+          <td class="value"{% if task.user_can_see_everything %} colspan="2"{% endif %}>{{ task_instance.id }}</td>
         </tr>
-        <tr>
-          <td class="label">{% verbose_name Task.priority %}:</td>
-          <td class="value">{{ task_instance.get_priority_display }}</td>
-          <td class="label" style="padding-left: 3em">{% verbose_name Task.samples %}:</td>
-        </tr>
-        <tr>
-          <td class="label">{% verbose_name Task.status %}:</td>
-          <td class="value">{{ task_instance.get_status_display }}</td>
-          <td rowspan="6" style="vertical-align: top; padding-left: 3em">
-            <ul class="sample-list" style="margin-top: 0pt">
-              {% for sample in task.samples %}
-                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
-              {% endfor %}
-            </ul>
-          </td>
-        </tr>
+        {% if task.user_can_see_everything %}
+          <tr>
+            <td class="label">{% verbose_name Task.priority %}:</td>
+            <td class="value">{{ task_instance.get_priority_display }}</td>
+            <td class="label" style="padding-left: 3em">{% verbose_name Task.samples %}:</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.status %}:</td>
+            <td class="value">{{ task_instance.get_status_display }}</td>
+            <td rowspan="6" style="vertical-align: top; padding-left: 3em">
+              <ul class="sample-list" style="margin-top: 0pt">
+                {% for sample in task.samples %}
+                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% endif %}
         <tr>
           <td class="label">{% verbose_name Task.operator %}:</td>
           <td class="value">{{ task_instance.operator|get_really_full_name|default:"—" }}</td>
@@ -82,18 +85,20 @@ copyright holder, you must destroy it immediately and completely.
           <td class="label">{% verbose_name Task.customer %}:</td>
           <td class="value">{{ task_instance.customer|get_really_full_name }}</td>
         </tr>
-        <tr>
-          <td class="label">{% verbose_name Task.creating_timestamp %}:</td>
-          <td class="value">{{ task_instance.creating_timestamp|date:"Y-m-d H:i:s" }}</td>
-        </tr>
-        <tr>
-          <td class="label">{% verbose_name Task.last_modified %}:</td>
-          <td class="value">{{ task_instance.last_modified|date:"Y-m-d H:i:s" }}</td>
-        </tr>
-        <tr>
-          <td class="label">{% verbose_name Task.comments %}:</td>
-          <td class="value" style="font-weight: normal">{{ task_instance.comments|markdown_samples:"collapse" }}</td>
-        </tr>
+        {% if task.user_can_see_everything %}
+          <tr>
+            <td class="label">{% verbose_name Task.creating_timestamp %}:</td>
+            <td class="value">{{ task_instance.creating_timestamp|date:"Y-m-d H:i:s" }}</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.last_modified %}:</td>
+            <td class="value">{{ task_instance.last_modified|date:"Y-m-d H:i:s" }}</td>
+          </tr>
+          <tr>
+            <td class="label">{% verbose_name Task.comments %}:</td>
+            <td class="value" style="font-weight: normal">{{ task_instance.comments|markdown_samples:"collapse" }}</td>
+          </tr>
+        {% endif %}
       </table>
       {% endwith %}
      </div>
