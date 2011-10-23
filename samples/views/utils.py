@@ -658,3 +658,20 @@ def enforce_clearance(user, clearance_processes, destination_user, sample, clear
     if split_origin:
         enforce_clearance(user, clearance_processes, destination_user, split_origin.parent, clearance,
                           split_origin.timestamp)
+
+
+def sorted_users(users):
+    u"""Return a list of users sorted by family name.  In particular, it sorts
+    case-insensitively.
+
+    :Parameters:
+      - `users`: the users to be sorted; it may also be a ``QuerySet``
+
+    :type users: an iterable of ``django.contrib.auth.models.User``
+
+    :Return:
+      the sorted users
+
+    :rtype: list of ``django.contrib.auth.models.User``
+    """
+    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)

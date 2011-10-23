@@ -58,7 +58,7 @@ class StatusForm(forms.ModelForm):
                           help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     end = DateTimeField(label=capfirst(_(u"end")), start=False, required=False, with_inaccuracy=True,
                         help_text=_(u"YYYY-MM-DD HH:MM:SS"))
-    processes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
+    process_classes = forms.MultipleChoiceField(label=capfirst(_(u"process classes")))
 
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
@@ -66,10 +66,10 @@ class StatusForm(forms.ModelForm):
         self.fields["operator"].set_operator(user, user.is_staff)
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
-        self.fields["processes"].choices = form_utils.choices_of_content_types(
+        self.fields["process_classes"].choices = form_utils.choices_of_content_types(
             cls for cls in get_all_addable_physical_process_models()
             if (cls._meta.app_label, cls._meta.module_name) not in settings.PHYSICAL_PROCESS_BLACKLIST)
-        self.fields["processes"].widget.attrs["size"] = 24
+        self.fields["process_classes"].widget.attrs["size"] = 24
 
     def clean_message(self):
         u"""Forbid image and headings syntax in Markdown markup.
@@ -125,8 +125,8 @@ def add(request):
         status_form = StatusForm(request.user, request.POST)
         if status_form.is_valid():
             status = status_form.save()
-            for physical_process in status.processes.all():
-                feed_utils.Reporter(request.user).report_status_message(physical_process, status)
+            for process_class in status.process_classes.all():
+                feed_utils.Reporter(request.user).report_status_message(process_class, status)
             return utils.successful_response(request, _(u"The status message was successfully added to the database."))
     else:
         status_form = StatusForm(request.user)
@@ -138,7 +138,7 @@ def add(request):
 @login_required
 def show(request):
     u"""This function shows the current status messages for the physical
-    processes.
+    process classes.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -152,20 +152,20 @@ def show(request):
     """
     now = datetime.datetime.now()
     eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now)
-    process_types = set()
+    process_classes = set()
     for status_message in eligible_status_messages:
-        process_types |= set(status_message.processes.all())
+        process_classes |= set(status_message.process_classes.all())
     status_messages = []
-    for process_type in process_types:
-        current_status = eligible_status_messages.filter(processes=process_type).order_by("-begin", "-timestamp")[0]
-        status_messages.append((current_status, process_type.model_class()._meta.verbose_name))
+    for process_class in process_classes:
+        current_status = eligible_status_messages.filter(process_classes=process_class).order_by("-begin", "-timestamp")[0]
+        status_messages.append((current_status, process_class.model_class()._meta.verbose_name))
     consumed_status_message_ids = set(item[0].id for item in status_messages)
     status_messages.sort(key=lambda item: item[1].lower())
     further_status_messages = {}
     for status_message in models.StatusMessage.objects.filter(withdrawn=False, end__gt=now).exclude(
         id__in=consumed_status_message_ids).order_by("end"):
-        for process_type in status_message.processes.all():
-            further_status_messages.setdefault(process_type.model_class()._meta.verbose_name, []).append(status_message)
+        for process_class in status_message.process_classes.all():
+            further_status_messages.setdefault(process_class.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
     return render_to_response("samples/show_status.html", {"title": _(u"Status messages"),
                                                            "status_messages": status_messages,
@@ -196,6 +196,6 @@ def withdraw(request, id_):
         raise PermissionError(request.user, u"You cannot withdraw status messages of another user.")
     status_message.withdrawn = True
     status_message.save()
-    for physical_process in status_message.processes.all():
-        feed_utils.Reporter(request.user).report_withdrawn_status_message(physical_process, status_message)
+    for process_class in status_message.process_classes.all():
+        feed_utils.Reporter(request.user).report_withdrawn_status_message(process_class, status_message)
     return utils.successful_response(request, _(u"The status message was successfully withdrawn."), show)

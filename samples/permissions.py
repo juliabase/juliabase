@@ -36,8 +36,9 @@ permission just means that e.g. a link is not generated (for example, in the
 from __future__ import absolute_import
 
 import hashlib
+from django.db.models import Q
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
-import django.contrib.auth.models
+from django.contrib.auth.models import User, Permission
 from django.conf import settings
 from settings import WITH_EPYDOC
 if not WITH_EPYDOC:
@@ -66,8 +67,8 @@ def translate_permission(permission_codename):
     """
     permission_codename = permission_codename.partition(".")[2]
     try:
-        return ugettext(django.contrib.auth.models.Permission.objects.get(codename=permission_codename).name)
-    except django.contrib.auth.models.Permission.DoesNotExist:
+        return ugettext(Permission.objects.get(codename=permission_codename).name)
+    except Permission.DoesNotExist:
         return _(u"[not available]")
 
 
@@ -90,7 +91,7 @@ def get_user_permissions(user):
     """
     has = []
     has_not = []
-    for permission in django.contrib.auth.models.Permission.objects.all():
+    for permission in Permission.objects.all():
         if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
             full_permission_name = permission.content_type.app_label + "." + permission.codename
             if user.has_perm(full_permission_name):
@@ -202,6 +203,37 @@ def get_allowed_physical_processes(user):
     return allowed_physical_processes
 
 
+def get_all_adders(process_class):
+    u"""Returns all operators for a given process class.  “Operators” means
+    people who are allowed to add new processes of this class.  Note that if
+    there is not “add_...” permission for the process class, i.e. everyone can
+    add such processes, this routine returns none.  This may sound strange but
+    it is very helpful in most cases.
+
+    :Parameters:
+      - `process_class`: the process class for which the operators should be
+        found
+
+    :type process_class: ``type`` (class ``models.Process``)
+
+    :Return:
+      all active users that are allowed to add processes for this class; if the
+      process class is not resticted to certain users, this function returns an
+      empty query set
+
+    :rtype: ``QuerySet``
+    """
+    permission_codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    try:
+        add_permission = Permission.objects.get(codename=permission_codename)
+    except Permission.DoesNotExist:
+        return User.objects.none()
+    else:
+        return User.objects.filter(
+            is_active=True, chantal_user_details__is_administrative=False). \
+            filter(Q(groups__permissions=add_permission) | Q(user_permissions=add_permission)).distinct()
+
+
 class PermissionError(Exception):
     u"""Common class for all permission exceptions.
 
@@ -295,7 +327,7 @@ def get_sample_clearance(user, sample):
             pass
         else:
             for task in tasks:
-                process_class = task.process_content_type.model_class()
+                process_class = task.process_class.model_class()
                 if has_permission_to_add_physical_process(user, process_class):
                     enforce_clearance(task.customer, samples.models.clearance_sets.get(process_class, ()), user, sample)
         try:
@@ -321,7 +353,7 @@ def assert_can_add_physical_process(user, process_class):
       - `PermissionError`: raised if the user is not allowed to add a process.
     """
     codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
-    if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
             description = _(u"You are not allowed to add {process_plural_name} because you don't have the "
@@ -353,7 +385,7 @@ def assert_can_edit_physical_process(user, process):
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
-    if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename).exists():
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     else:
@@ -413,7 +445,7 @@ def assert_can_view_lab_notebook(user, process_class):
     """
     codename = "view_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
-    if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
     else:
         has_view_all_permission = user.is_superuser
@@ -447,7 +479,7 @@ def assert_can_view_physical_process(user, process):
     process_class = process.content_type.model_class()
     codename = "view_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
-    if django.contrib.auth.models.Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
     else:
         has_view_all_permission = user.is_superuser

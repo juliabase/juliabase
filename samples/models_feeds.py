@@ -430,7 +430,7 @@ class FeedChangedTopic(FeedEntry):
 class FeedStatusMessage(FeedEntry):
     u"""Model for feed entries for new status messages from physical processes.
     """
-    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
     status = models.ForeignKey(StatusMessage, verbose_name=_(u"status message"), related_name="feed_entries")
 
     class Meta(FeedEntry.Meta):
@@ -440,8 +440,8 @@ class FeedStatusMessage(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New status message for {process}").format(
-            process=self.process.model_class()._meta.verbose_name)
+        metadata["title"] = _(u"New status message for {process_class}").format(
+            process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new status message"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
         return metadata
@@ -451,7 +451,7 @@ class FeedWithdrawnStatusMessage(FeedEntry):
     u"""Model for feed entries for withdrawn status messages from physical
     processes.
     """
-    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
     status = models.ForeignKey(StatusMessage, verbose_name=_(u"status message"), related_name="feed_entries_for_withdrawal")
 
     class Meta(FeedEntry.Meta):
@@ -461,8 +461,8 @@ class FeedWithdrawnStatusMessage(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Withdrawn status message for {process}").format(
-            process=self.process.model_class()._meta.verbose_name)
+        metadata["title"] = _(u"Withdrawn status message for {process_class}").format(
+            process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "withdrawn status message"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
         return metadata
@@ -471,7 +471,6 @@ class FeedWithdrawnStatusMessage(FeedEntry):
 class FeedNewTask(FeedEntry):
     u"""Model for feed entries for new tasks for physical processes.
     """
-    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
     task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_new_tasks")
 
     class Meta(FeedEntry.Meta):
@@ -481,17 +480,16 @@ class FeedNewTask(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New task for {process}").format(
-            process=self.process.model_class()._meta.verbose_name)
+        metadata["title"] = _(u"New task for {process_class}").format(
+            process_class=self.task.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new task"
-        metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
+        metadata["link"] = self.task.get_absolute_url()
         return metadata
 
 
 class FeedEditedTask(FeedEntry):
     u"""Model for feed entries for new tasks for physical processes.
     """
-    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
     task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_edited_tasks")
     description = models.TextField(_(u"description"))
 
@@ -502,17 +500,18 @@ class FeedEditedTask(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Edited task for {process}").format(
-            process=self.process.model_class()._meta.verbose_name)
+        metadata["title"] = _(u"Edited task for {process_class}").format(
+            process_class=self.task.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "edited task"
-        metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
+        metadata["link"] = self.task.get_absolute_url()
         return metadata
 
 
 class FeedRemovedTask(FeedEntry):
     u"""Model for feed entries for removing tasks.
     """
-    process = models.ForeignKey(ContentType, verbose_name=_(u"process"))
+    old_id = models.PositiveIntegerField(_(u"number"), unique=True)
+    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
     samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
 
     class Meta(FeedEntry.Meta):
@@ -522,8 +521,8 @@ class FeedRemovedTask(FeedEntry):
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Removed a task for {process}").format(
-            process=self.process.model_class()._meta.verbose_name)
+        metadata["title"] = _(u"Removed a task for {process_class}").format(
+            process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "removed task"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
         return metadata

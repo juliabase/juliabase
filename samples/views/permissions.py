@@ -27,27 +27,8 @@ from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal_common.utils import get_really_full_name, get_all_models
-from samples import models
+from samples import models, permissions
 from samples.views import utils
-
-
-def sorted_users(users):
-    u"""Return a list of users sorted by family name.  In particular, it sorts
-    case-insensitively.
-
-    :Parameters:
-      - `users`: the users to be sorted; it may also be a ``QuerySet``
-
-    :type users: an iterable of ``django.contrib.auth.models.User``
-
-    :Return:
-      the sorted users
-
-    :rtype: list of ``django.contrib.auth.models.User``
-    """
-    # FixMe: This should be moved to shared_utils.py or something like this,
-    # and used also by form_utils.py.
-    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
 
 
 class PhysicalProcess(object):
@@ -139,20 +120,18 @@ class PhysicalProcess(object):
         permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
                                                Q(user_permissions=self.edit_permissions_permission)).distinct() \
                                                if self.edit_permissions_permission else []
-        adders = base_query.filter(Q(groups__permissions=self.add_permission) |
-                                   Q(user_permissions=self.add_permission)).distinct() \
-                                   if self.add_permission else []
+        adders = permissions.get_all_adders(physical_process_class)
         full_viewers = base_query.filter(Q(groups__permissions=self.view_all_permission) |
                                          Q(user_permissions=self.view_all_permission)).distinct() \
                                    if self.view_all_permission else []
         full_editors = base_query.filter(Q(groups__permissions=self.edit_all_permission) |
                                          Q(user_permissions=self.edit_all_permission)).distinct() \
                                    if self.edit_all_permission else []
-        self.permission_editors = sorted_users(permission_editors)
-        self.adders = sorted_users(adders)
-        self.full_viewers = sorted_users(full_viewers)
-        self.full_editors = sorted_users(full_editors)
-        self.all_users = sorted_users(set(adders) | set(permission_editors))
+        self.permission_editors = utils.sorted_users(permission_editors)
+        self.adders = utils.sorted_users(adders)
+        self.full_viewers = utils.sorted_users(full_viewers)
+        self.full_editors = utils.sorted_users(full_editors)
+        self.all_users = utils.sorted_users(set(adders) | set(permission_editors))
 
 
 def get_physical_processes():
@@ -198,13 +177,14 @@ def list_(request):
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
     if can_edit_permissions:
-        user_list = sorted_users(User.objects.filter(is_active=True, chantal_user_details__is_administrative=False))
+        user_list = utils.sorted_users(User.objects.filter(is_active=True, chantal_user_details__is_administrative=False))
     else:
         user_list = []
     if user.has_perm("chantal_common.can_edit_all_topics"):
-        topic_managers = sorted_users(User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
-                                      .filter(Q(groups__permissions=PhysicalProcess.topic_manager_permission) |
-                                              Q(user_permissions=PhysicalProcess.topic_manager_permission)).distinct())
+        topic_managers = utils.sorted_users(
+            User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
+            .filter(Q(groups__permissions=PhysicalProcess.topic_manager_permission) |
+                    Q(user_permissions=PhysicalProcess.topic_manager_permission)).distinct())
     else:
         topic_managers = None
     return render_to_response(
