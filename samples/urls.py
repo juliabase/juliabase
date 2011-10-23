@@ -153,8 +153,8 @@ urlpatterns = patterns("samples.views",
                        (r"crawler_logs/$", "log_viewer.list"),
                        (r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)", "log_viewer.view"),
 
-                       (r"^task_lists/$", "task_lists.show"),
-                       (r"^task_lists/add/$", "task_lists.edit", {"task_id": None}),
-                       (r"^task_lists/(?P<task_id>\d+)/edit/$", "task_lists.edit"),
-                       (r"^task_lists/(?P<task_id>\d+)/remove/$", "task_lists.remove"),
+                       (r"^tasks/$", "task_lists.show"),
+                       (r"^tasks/add/$", "task_lists.edit", {"task_id": None}),
+                       (r"^tasks/(?P<task_id>\d+)/edit/$", "task_lists.edit"),
+                       (r"^tasks/(?P<task_id>\d+)/remove/$", "task_lists.remove"),
                        )
