@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-23 13:54+0200\n"
-"PO-Revision-Date: 2011-10-23 13:56+0200\n"
+"POT-Creation-Date: 2011-10-23 16:21+0200\n"
+"PO-Revision-Date: 2011-10-23 16:21+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -592,7 +592,7 @@ msgid "deposition {number}"
 msgstr "Deposition {number}"
 
 #: models_depositions.py:88 models_depositions.py:154 models_feeds.py:513
-#: templates/samples/task_lists.html:58
+#: templates/samples/task_lists.html:59
 msgid "number"
 msgstr "Nummer"
 
@@ -810,7 +810,7 @@ msgstr "Feed-Einträge für verschobene Probenserien"
 msgid "Sample series {sample_series} was moved to topic “{topic}”"
 msgstr "Probenserie „{sample_series}“ wurde zum Thema „{topic}“ verschoben"
 
-#: models_feeds.py:403
+#: models_feeds.py:403 views/task_lists.py:277
 msgid "added"
 msgstr "hinzugefügt"
 
@@ -1116,7 +1116,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/merge_samples.html:37
 #: templates/samples/show_claim.html:66 templates/samples/show_claim.html:67
 #: templates/samples/split_and_rename.html:22
-#: templates/samples/task_lists.html:106 templatetags/samples_extras.py:577
+#: templates/samples/task_lists.html:111 templatetags/samples_extras.py:577
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -1698,7 +1698,8 @@ msgstr[0] ""
 "  "
 msgstr[1] ""
 "\n"
-"  %(originator)s hat <a href=\"%(link)s\">Auftrag #%(task_id)s</a> für die folgenden Proben entfernt:\n"
+"  %(originator)s hat <a href=\"%(link)s\">Auftrag #%(task_id)s</a> für die "
+"folgenden Proben entfernt:\n"
 "  "
 
 #: templates/samples/feed_result.html:19
@@ -2473,11 +2474,11 @@ msgstr "Auftrag hinzufügen"
 msgid "No current tasks."
 msgstr "Keine aktuellen Aufträge."
 
-#: templates/samples/task_lists.html:43
+#: templates/samples/task_lists.html:44
 msgid "edit task"
 msgstr "Auftrag ändern"
 
-#: templates/samples/task_lists.html:50 templates/samples/task_lists.html:51
+#: templates/samples/task_lists.html:51 templates/samples/task_lists.html:52
 msgid "remove task"
 msgstr "Auftrag entfernen"
 
@@ -3493,6 +3494,10 @@ msgstr "* Mit Prozess verbunden.\n"
 #: views/task_lists.py:277
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
+
+#: views/task_lists.py:277
+msgid "edited"
+msgstr "geändert"
 
 #: views/task_lists.py:288
 msgid "Edit task"

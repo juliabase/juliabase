@@ -274,7 +274,7 @@ def edit(request, task_id):
             else:
                 edit_description = None
             feed_utils.Reporter(request.user).report_task(task, edit_description)
-            message = _(u"Task was {verb} successfully.").format(verb=u"edited" if task_id else u"added")
+            message = _(u"Task was {verb} successfully.").format(verb=_(u"edited") if task_id else _(u"added"))
             return utils.successful_response(request, message, "samples.views.task_lists.show")
     else:
         samples_form = SamplesForm(user, preset_sample, task)
