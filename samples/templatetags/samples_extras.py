@@ -672,4 +672,4 @@ def task_color(task):
     The returned string is ready-to-be-used in CSS directives as
     a colour hex code.
     """
-    return {"0 new": "#D0D0D0", "1 accepted": "#ADD8E6", "2 in progress": "#FFCC66", "3 finished": "#90EE90"}[task.status]
+    return {"0 finished": "#90EE90", "1 new": "#D0D0D0", "2 accepted": "#ADD8E6", "3 in progress": "#FFCC66"}[task.status]

@@ -41,7 +41,7 @@ class SamplesForm(forms.Form):
         samples = list(user.my_samples.all())
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
-            if user != task.customer or task.status != u"0 new":
+            if user != task.customer or task.status != u"1 new":
                 super(SamplesForm, self).__init__(**kwargs)
                 self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             else:
@@ -96,11 +96,11 @@ class TaskForm(forms.ModelForm):
         self.fixed_fields = set()
         if self.task:
             self.fixed_fields.add("process_class")
-            if self.task.status == u"0 new":
+            if self.task.status == u"1 new":
                 self.fixed_fields.add("finished_process")
                 if self.user == self.task.customer:
                     self.fixed_fields.add("operator")
-            elif self.task.status in [u"1 accepted", u"2 in progress"]:
+            elif self.task.status in [u"2 accepted", u"3 in progress"]:
                 if self.user != self.task.operator:
                     self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
                     if self.user != self.task.customer:
@@ -119,7 +119,7 @@ class TaskForm(forms.ModelForm):
 
     def clean_status(self):
         if "status" in self.fixed_fields:
-            return self.task.status if self.task else u"0 new"
+            return self.task.status if self.task else u"1 new"
         return self.cleaned_data["status"]
 
     def clean_process_class(self):
@@ -159,7 +159,7 @@ class TaskForm(forms.ModelForm):
     def clean(self):
         _ = ugettext
         cleaned_data = super(TaskForm, self).clean()
-        if cleaned_data.get("status") in [u"1 accepted", u"2 in progress", u"3 finished"]:
+        if cleaned_data.get("status") in [u"2 accepted", u"3 in progress", u"0 finished"]:
             if not cleaned_data.get("operator"):
                 common_utils.append_error(self, _(u"With this status, you must set an operator."), "operator")
         return cleaned_data
@@ -221,7 +221,7 @@ def save_to_database(task_form, samples_form, old_task):
     task = task_form.save()
     if samples_form.is_bound:
         task.samples = samples_form.cleaned_data["sample_list"]
-    if old_task and old_task.status == "0 new" and task.status == "1 accepted":
+    if old_task and old_task.status == "1 new" and task.status == "2 accepted":
         task.operator.my_samples.add(*task.samples.all())
     return task
 
@@ -324,7 +324,7 @@ def show(request):
     task_lists = {}
     for process_class in request.user.samples_user_details.visible_task_lists.all():
         active_tasks = process_class.tasks.order_by("-status", "priority", "last_modified"). \
-            exclude(Q(status=u"3 finished") & Q(last_modified__lt=one_week_ago))
+            exclude(Q(status=u"0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_class] = [TaskForTemplate(task, request.user) for task in active_tasks]
     return render_to_response("samples/task_lists.html", {"title": _(u"Task lists"),
                                                           "chose_task_lists": choose_task_lists_form,

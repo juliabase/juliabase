@@ -1469,10 +1469,10 @@ class StatusMessage(models.Model):
 
 
 status_choices = (
-    ("0 new", _(u"new")),
-    ("1 accepted", _(u"accepted")),
-    ("2 in progress", _(u"in progress")),
-    ("3 finished", _(u"finished"))
+    ("0 finished", _(u"finished")),
+    ("1 new", _(u"new")),
+    ("2 accepted", _(u"accepted")),
+    ("3 in progress", _(u"in progress"))
 )
 priority_choices = (
     ("0 critical", _(u"critical")),
@@ -1484,7 +1484,7 @@ priority_choices = (
 class Task(models.Model):
     u"""
     """
-    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="0 new")
+    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="1 new")
     customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_(u"customer"))
     creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
                                               auto_now_add=True, editable=False)
