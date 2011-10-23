@@ -341,6 +341,6 @@ def remove(request, task_id):
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
     if task.customer != request.user:
         raise permissions.PermissionError(request.user, _(u"You are not the customer of this task."))
-    feed_utils.Reporter(request.user).report_removed_task(task.process_class, list(task.samples.all()))
+    feed_utils.Reporter(request.user).report_removed_task(task)
     task.delete()
     return utils.successful_response(request, _(u"The task was successfully removed."), show)

@@ -525,11 +525,11 @@ class Reporter(object):
         u"""Generate one feed entry for a new task or an edited task.
 
         :Parameters:
-         - `task`: the task that was created or edited
-         - `edit_description`: The dictionary containing data about what was
+          - `task`: the task that was created or edited
+          - `edit_description`: The dictionary containing data about what was
             edited in the task.  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`. ``None`` if the task was
-            newly created.
+            `form_utils.EditDescriptionForm`. ``None`` if the task was newly
+            created.
 
         :type task: `models.Task`
         :type edit_description: dict mapping str to ``object`` or ``None``
@@ -545,20 +545,18 @@ class Reporter(object):
                                                          description=edit_description["description"], important=important)
         self.__connect_with_users(entry)
 
-    def report_removed_task(self, id_, process_class, samples):
-        u"""Generate one feed for a removed task.
+    def report_removed_task(self, task):
+        u"""Generate one feed for a removed task.  It is called immediately
+        before the task is actually deleted.
 
         :Parameters:
-          - `id_`: the ID (number) of the removed task
-          - `process_class`: the content type of the physical process of whose
-            task was removed.
-          - `samples`: list of samples who should be processed
+          - `task`: the to-be-deleted task
 
-        :type id_: int
-        :type process_class: ``django.contrib.contenttypes.models.ContentType``
-        :type samples: list of `models.Sample`
+        :type task: `models.Task`
         """
-        self.interested_users = set(permissions.get_all_adders(process_class.model_class()))
-        entry = models.FeedRemovedTask.objects.create(old_id=id_, originator=self.originator, process_class=process_class)
-        entry.samples = samples
+        self.interested_users = set(permissions.get_all_adders(task.process_class.model_class()))
+        self.interested_users.add(task.customer)
+        entry = models.FeedRemovedTask.objects.create(old_id=task.id, originator=self.originator,
+                                                      process_class=task.process_class)
+        entry.samples = task.samples.all()
         self.__connect_with_users(entry)
