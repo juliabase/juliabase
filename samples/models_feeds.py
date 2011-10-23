@@ -481,7 +481,7 @@ class FeedNewTask(FeedEntry):
         _ = ugettext
         metadata = {}
         metadata["title"] = _(u"New task for {process_class}").format(
-            process_class=self.process_class.model_class()._meta.verbose_name)
+            process_class=self.task.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new task"
         metadata["link"] = self.task.get_absolute_url()
         return metadata
@@ -501,7 +501,7 @@ class FeedEditedTask(FeedEntry):
         _ = ugettext
         metadata = {}
         metadata["title"] = _(u"Edited task for {process_class}").format(
-            process_class=self.process_class.model_class()._meta.verbose_name)
+            process_class=self.task.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "edited task"
         metadata["link"] = self.task.get_absolute_url()
         return metadata

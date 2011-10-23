@@ -98,6 +98,8 @@ class TaskForm(forms.ModelForm):
             self.fixed_fields.add("process_class")
             if self.task.status == u"0 new":
                 self.fixed_fields.add("finished_process")
+                if self.user == self.task.customer:
+                    self.fixed_fields.add("operator")
             elif self.task.status in [u"1 accepted", u"2 in progress"]:
                 if self.user != self.task.operator:
                     self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
@@ -267,6 +269,12 @@ def edit(request, task_id):
                         _(u"* Priority is now “{new_priority}̣”.\n").format(new_priority=task.get_priority_display())
                 if old_task.finished_process != task.finished_process:
                     edit_description["description"] += _(u"* Connected process.\n")
+                if old_task.operator != task.operator:
+                    if task.operator:
+                        edit_description["description"] += _(u"* Operator is now {operator}.\n").format(
+                            operator=common_utils.get_really_full_name(task.operator))
+                    else:
+                        edit_description["description"] += _(u"* No operator is set anymore.\n")
                 if old_samples != set(task.samples.all()):
                     edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"samples")))
                 if old_task.comments != task.comments:

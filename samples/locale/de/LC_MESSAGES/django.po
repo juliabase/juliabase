@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-23 16:21+0200\n"
-"PO-Revision-Date: 2011-10-23 16:21+0200\n"
+"POT-Creation-Date: 2011-10-23 16:41+0200\n"
+"PO-Revision-Date: 2011-10-23 16:41+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -112,7 +112,7 @@ msgid "operator"
 msgstr "Operateur"
 
 #: models_common.py:109 models_common.py:348 models_common.py:1499
-#: models_feeds.py:263 views/task_lists.py:273
+#: models_feeds.py:263 views/task_lists.py:281
 msgid "comments"
 msgstr "Kommentare"
 
@@ -190,7 +190,7 @@ msgstr "Probe"
 #: models_common.py:573 models_common.py:976 models_common.py:1232
 #: models_common.py:1498 models_feeds.py:125 models_feeds.py:152
 #: models_feeds.py:262 models_feeds.py:285 models_feeds.py:515
-#: views/task_lists.py:271
+#: views/task_lists.py:279
 msgid "samples"
 msgstr "Proben"
 
@@ -810,7 +810,7 @@ msgstr "Feed-Einträge für verschobene Probenserien"
 msgid "Sample series {sample_series} was moved to topic “{topic}”"
 msgstr "Probenserie „{sample_series}“ wurde zum Thema „{topic}“ verschoben"
 
-#: models_feeds.py:403 views/task_lists.py:277
+#: models_feeds.py:403 views/task_lists.py:285
 msgid "added"
 msgstr "hinzugefügt"
 
@@ -2020,7 +2020,7 @@ msgstr "„Meine Schichten“ ändern"
 msgid "Merge samples"
 msgstr "Proben verschmelzen"
 
-#: templates/samples/main_menu.html:152 views/task_lists.py:321
+#: templates/samples/main_menu.html:152 views/task_lists.py:329
 msgid "Task lists"
 msgstr "Auftragslisten"
 
@@ -2466,7 +2466,7 @@ msgstr ""
 msgid "Go back"
 msgstr "Zurück"
 
-#: templates/samples/task_lists.html:27 views/task_lists.py:288
+#: templates/samples/task_lists.html:27 views/task_lists.py:296
 msgid "Add task"
 msgstr "Auftrag hinzufügen"
 
@@ -3467,47 +3467,55 @@ msgstr "Spalten"
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
 
-#: views/task_lists.py:162
+#: views/task_lists.py:164
 msgid "With this status, you must set an operator."
 msgstr "Sie müssen bei diesem Status einen Operateur setzen."
 
-#: views/task_lists.py:173
+#: views/task_lists.py:175
 msgid "show task lists for"
 msgstr "zeige Auftragslisten für"
 
-#: views/task_lists.py:193
+#: views/task_lists.py:195
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
 
-#: views/task_lists.py:264
+#: views/task_lists.py:266
 msgid "* Status is now “{new_status}”.\n"
-msgstr "* Der Status is nun „{new_status}“.\n"
+msgstr "* Der Status ist nun „{new_status}“.\n"
 
-#: views/task_lists.py:267
+#: views/task_lists.py:269
 msgid "* Priority is now “{new_priority}̣”.\n"
 msgstr "* Die Priorität ist nun „{new_priority}“.\n"
 
-#: views/task_lists.py:269
+#: views/task_lists.py:271
 msgid "* Connected process.\n"
 msgstr "* Mit Prozess verbunden.\n"
 
+#: views/task_lists.py:274
+msgid "* Operator is now {operator}.\n"
+msgstr "* Der Operateur ist nun {operator}.\n"
+
 #: views/task_lists.py:277
+msgid "* No operator is set anymore.\n"
+msgstr "* Es ist kein Operateur mehr gesetzt.\n"
+
+#: views/task_lists.py:285
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
 
-#: views/task_lists.py:277
+#: views/task_lists.py:285
 msgid "edited"
 msgstr "geändert"
 
-#: views/task_lists.py:288
+#: views/task_lists.py:296
 msgid "Edit task"
 msgstr "Auftrag ändern"
 
-#: views/task_lists.py:343
+#: views/task_lists.py:351
 msgid "You are not the customer of this task."
 msgstr "Sie sind nicht der Auftraggeber dieses Auftrags."
 
-#: views/task_lists.py:346
+#: views/task_lists.py:354
 msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
