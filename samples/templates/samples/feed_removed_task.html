@@ -25,13 +25,7 @@ copyright holder, you must destroy it immediately and completely.
 
   <ul>
     {% for sample in entry.samples.all %}
-      {% if sample.topic.confidential and sample.currently_responsible_person == user %}
-        <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
-      {% else %}{% if not sample.topic.confidential %}
-        <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
-      {% else %}
-      <li>confidential sample</li>
-      {% endif %}{% endif %}
+      <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
     {% endfor %}
   </ul>
 {% endwith %}
