@@ -1446,7 +1446,7 @@ class StatusMessage(models.Model):
     It provides a many to many relationship between the status messages and the
     processes.
     """
-    processes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_(u"processes"))
+    process_classes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_(u"process classes"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
