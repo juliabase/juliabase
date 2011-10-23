@@ -256,16 +256,16 @@ def edit(request, task_id):
                 edit_description = {"important": True, "description": u""}
                 if task.status != new_task.status:
                     edit_description["description"] += \
-                        _(u"* Status is now {new_status}.\n").format(new_status=new_task.status)
+                        _(u"* Status is now “{new_status}”.\n").format(new_status=new_task.status)
                 if task.priority != new_task.priority:
                     edit_description["description"] += \
-                        _(u"* Priority is now {new_priority}.").format(new_priority=new_task.priority)
+                        _(u"* Priority is now “{new_priority}̣”.\n").format(new_priority=new_task.priority)
                 if task.finished_process != new_task.finished_process:
-                    edit_description["description"] += _(u"* Connected process.")
+                    edit_description["description"] += _(u"* Connected process.\n")
                 if set(task.samples.all()) != set(new_task.samples.all()):
-                    edit_description["description"] += u"* {0}.".format(utils.capitalize_first_letter(_(u"samples")))
+                    edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"samples")))
                 if task.comments != new_task.comments:
-                    edit_description["description"] += u"* {0}.".format(utils.capitalize_first_letter(_(u"comments")))
+                    edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"comments")))
             else:
                 edit_description = None
             feed_utils.Reporter(request.user).report_task(new_task, edit_description)
