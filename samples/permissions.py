@@ -166,7 +166,7 @@ def get_all_addable_physical_process_models():
             if issubclass(process_class, samples.models.PhysicalProcess):
                 try:
                     url = process_class.get_add_link()
-                except NotImplementedError, AttributeError:
+                except (NotImplementedError, AttributeError):
                     continue
                 all_addable_physical_process_models[process_class] = {
                     "url": process_class.get_add_link(), "label": process_class._meta.verbose_name,

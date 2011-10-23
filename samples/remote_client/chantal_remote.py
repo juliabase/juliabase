@@ -66,7 +66,7 @@ class ChantalConnection(object):
                 max_cycles -= 1
                 try:
                     response = self.opener.open(root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
-                except urllib2.HTTPError, e:
+                except urllib2.HTTPError as e:
                     if max_cycles == 0:
                         text = e.read()
                         logfile = open("chantal_remote.html", "wb")

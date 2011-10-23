@@ -22,7 +22,7 @@ copyright holder, you must destroy it immediately and completely.
 $(function() {
     $('form[method="get"]').submit(function(event) {
         var $target = $(event.target);
-        $target.find("input,select,textarea").each(function() {
+        $target.find("input:not(.submit-always),select:not(.submit-always),textarea:not(.submit-always)").each(function() {
             if ($(this).val() == "") $(this).attr("disabled", "disabled")
         })
     })
