@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-10-23 16:41+0200\n"
-"PO-Revision-Date: 2011-10-23 16:41+0200\n"
+"PO-Revision-Date: 2011-10-23 18:42+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -544,7 +544,7 @@ msgstr "Kunde"
 
 #: models_common.py:1489
 msgid "created at"
-msgstr "eingestellt um"
+msgstr "eingestellt"
 
 #: models_common.py:1495 models_feeds.py:433 models_feeds.py:454
 #: models_feeds.py:514 views/task_lists.py:66
