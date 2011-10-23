@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-10-23 08:23+0200\n"
-"PO-Revision-Date: 2011-10-23 08:23+0200\n"
+"POT-Creation-Date: 2011-10-23 12:36+0200\n"
+"PO-Revision-Date: 2011-10-23 12:39+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -112,7 +112,7 @@ msgid "operator"
 msgstr "Operateur"
 
 #: models_common.py:109 models_common.py:348 models_common.py:1499
-#: models_feeds.py:263 views/task_lists.py:268
+#: models_feeds.py:263 views/task_lists.py:272
 msgid "comments"
 msgstr "Kommentare"
 
@@ -126,14 +126,11 @@ msgid "finished"
 msgstr "abgeschlossen"
 
 #: models_common.py:124 models_feeds.py:178 models_feeds.py:201
-#: models_feeds.py:433 models_feeds.py:454 models_feeds.py:474
-#: models_feeds.py:494 models_feeds.py:515 views/lab_notebook.py:210
-#: views/sample.py:898
+#: views/lab_notebook.py:210 views/sample.py:898
 msgid "process"
 msgstr "Prozess"
 
 #: models_common.py:125 models_common.py:567 models_common.py:958
-#: models_common.py:1449 views/status.py:61
 msgid "processes"
 msgstr "Prozesse"
 
@@ -193,7 +190,7 @@ msgstr "Probe"
 #: models_common.py:573 models_common.py:976 models_common.py:1232
 #: models_common.py:1498 models_feeds.py:125 models_feeds.py:152
 #: models_feeds.py:262 models_feeds.py:285 models_feeds.py:516
-#: views/task_lists.py:266
+#: views/task_lists.py:270
 msgid "samples"
 msgstr "Proben"
 
@@ -456,6 +453,10 @@ msgstr "gelb"
 msgid "green"
 msgstr "grün"
 
+#: models_common.py:1449 views/status.py:61
+msgid "process classes"
+msgstr "Prozessarten"
+
 #: models_common.py:1451 views/status.py:57
 msgid "begin"
 msgstr "Anfang"
@@ -545,7 +546,9 @@ msgstr "Kunde"
 msgid "created at"
 msgstr "eingestellt um"
 
-#: models_common.py:1495 views/task_lists.py:66
+#: models_common.py:1495 models_feeds.py:433 models_feeds.py:454
+#: models_feeds.py:474 models_feeds.py:494 models_feeds.py:515
+#: views/task_lists.py:66
 msgid "process class"
 msgstr "Prozessart"
 
@@ -590,6 +593,7 @@ msgid "deposition {number}"
 msgstr "Deposition {number}"
 
 #: models_depositions.py:88 models_depositions.py:154
+#: templates/samples/task_lists.html:58
 msgid "number"
 msgstr "Nummer"
 
@@ -845,8 +849,8 @@ msgid "status message feed entries"
 msgstr "Feed-Einträge für Statusmeldungen"
 
 #: models_feeds.py:443
-msgid "New status message for {process}"
-msgstr "Neue Statusmeldung für {process}"
+msgid "New status message for {process_class}"
+msgstr "Neue Statusmeldung für {process_class}"
 
 #: models_feeds.py:458
 msgid "withdrawn status message feed entry"
@@ -857,8 +861,8 @@ msgid "withdrawn status message feed entries"
 msgstr "Feed-Einträge für zurückgezogene Statusmeldungen"
 
 #: models_feeds.py:464
-msgid "Withdrawn status message for {process}"
-msgstr "Zurückgezogene Statusmeldung für {process}"
+msgid "Withdrawn status message for {process_class}"
+msgstr "Zurückgezogene Statusmeldung für {process_class}"
 
 #: models_feeds.py:478
 msgid "new task feed entry"
@@ -869,8 +873,8 @@ msgid "new task feed entries"
 msgstr "Feed-Einträge für neue Aufträge"
 
 #: models_feeds.py:484
-msgid "New task for {process}"
-msgstr "Neuer Auftrag für {process}"
+msgid "New task for {process_class}"
+msgstr "Neuer Auftrag für {process_class}"
 
 #: models_feeds.py:499
 msgid "edited task feed entry"
@@ -881,8 +885,8 @@ msgid "edited task feed entries"
 msgstr "Feed-Einträge für geänderte Aufträge"
 
 #: models_feeds.py:505
-msgid "Edited task for {process}"
-msgstr "Geänderter Auftrag für {process}"
+msgid "Edited task for {process_class}"
+msgstr "Geänderter Auftrag für {process_class}"
 
 #: models_feeds.py:519
 msgid "removed task feed entry"
@@ -893,8 +897,8 @@ msgid "removed task feed entries"
 msgstr "Feed-Einträge für verschobene Aufträge"
 
 #: models_feeds.py:525
-msgid "Removed a task for {process}"
-msgstr "Entfernter Auftrag {process}"
+msgid "Removed a task for {process_class}"
+msgstr "Entfernter Auftrag {process_class}"
 
 #: permissions.py:72
 msgid "[not available]"
@@ -1113,7 +1117,7 @@ msgstr "Mehrdeutiger Probenname"
 #: templates/samples/merge_samples.html:37
 #: templates/samples/show_claim.html:66 templates/samples/show_claim.html:67
 #: templates/samples/split_and_rename.html:22
-#: templates/samples/task_lists.html:99 templatetags/samples_extras.py:577
+#: templates/samples/task_lists.html:106 templatetags/samples_extras.py:577
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -1425,7 +1429,7 @@ msgstr "Die Änderung war kleinerer Natur."
 #: templates/samples/feed_edited_physical_process.html:40
 #: templates/samples/feed_edited_sample_series.html:39
 #: templates/samples/feed_edited_samples.html:50
-#: templates/samples/feed_edited_task.html:20
+#: templates/samples/feed_edited_task.html:21
 #: templates/samples/feed_result.html:53
 msgid "Description of the change:"
 msgstr "Beschreibung der Änderung:"
@@ -1482,17 +1486,16 @@ msgstr[1] ""
 "    %(originator)s änderte die folgenden Proben: <!-- %(first_url)s "
 "%(first_sample)s (to appease gettext) -->"
 
-#: templates/samples/feed_edited_task.html:18
+#: templates/samples/feed_edited_task.html:19
 #, python-format
 msgid ""
 "\n"
-"  %(originator)s has changed a <a href=\"%(link)s\">task</a> for "
+"  %(originator)s has changed <a href=\"%(link)s\">task #%(task_id)s</a> for "
 "%(process_name)s.\n"
 "  "
 msgstr ""
 "\n"
-"  %(originator)s hat einen <a href=\"%(link)s\">Auftrag</a> für "
-"%(process_name)s geändert.\n"
+"  %(originator)s hat <a href=\"%(link)s\">Auftrag #%(task_id)s</a> für %(process_name)s geändert.\n"
 "  "
 
 #: templates/samples/feed_moved_sample_series.html:18
@@ -1663,16 +1666,16 @@ msgstr[1] ""
 msgid "The given purpose is “%(purpose)s”."
 msgstr "Der angegebene Zweck ist „%(purpose)s“."
 
-#: templates/samples/feed_new_task.html:18
+#: templates/samples/feed_new_task.html:19
 #, python-format
 msgid ""
 "\n"
-"  %(originator)s has added a <a href=\"%(link)s\">new task</a>\n"
+"    %(originator)s has added <a href=\"%(link)s\">new task #%(task_id)s</a>\n"
+"    for %(process_name)s.\n"
 "  "
 msgstr ""
 "\n"
-"  %(originator)s hat einen <a href=\"%(link)s\">neuen Auftrag</a> "
-"hinzugefügt\n"
+"  %(originator)s hat den <a href=\"%(link)s\">neuen Auftrag #%(task_id)s</a> für %(process_name)s eingereiht.\n"
 "  "
 
 #: templates/samples/feed_removed_task.html:19
@@ -1928,7 +1931,7 @@ msgid "Add things"
 msgstr "Dinge hinzufügen"
 
 #: templates/samples/main_menu.html:75 views/form_utils.py:584
-#: views/result.py:107 views/sample_series.py:49 views/task_lists.py:37
+#: views/result.py:107 views/sample_series.py:49 views/task_lists.py:38
 msgid "Samples"
 msgstr "Proben"
 
@@ -2016,7 +2019,7 @@ msgstr "„Meine Schichten“ ändern"
 msgid "Merge samples"
 msgstr "Proben verschmelzen"
 
-#: templates/samples/main_menu.html:152 views/task_lists.py:316
+#: templates/samples/main_menu.html:152 views/task_lists.py:320
 msgid "Task lists"
 msgstr "Auftragslisten"
 
@@ -2462,19 +2465,19 @@ msgstr ""
 msgid "Go back"
 msgstr "Zurück"
 
-#: templates/samples/task_lists.html:26 views/task_lists.py:283
+#: templates/samples/task_lists.html:27 views/task_lists.py:287
 msgid "Add task"
 msgstr "Auftrag hinzufügen"
 
-#: templates/samples/task_lists.html:30
+#: templates/samples/task_lists.html:32
 msgid "No current tasks."
 msgstr "Keine aktuellen Aufträge."
 
-#: templates/samples/task_lists.html:40
+#: templates/samples/task_lists.html:43
 msgid "edit task"
 msgstr "Auftrag ändern"
 
-#: templates/samples/task_lists.html:46 templates/samples/task_lists.html:47
+#: templates/samples/task_lists.html:49 templates/samples/task_lists.html:50
 msgid "remove task"
 msgstr "Auftrag entfernen"
 
@@ -3463,39 +3466,39 @@ msgstr "Spalten"
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
 
-#: views/task_lists.py:161
+#: views/task_lists.py:162
 msgid "With this status, you must set an operator."
 msgstr "Sie müssen bei diesem Status einen Operateur setzen."
 
-#: views/task_lists.py:172
+#: views/task_lists.py:173
 msgid "show task lists for"
 msgstr "zeige Auftragslisten für"
 
-#: views/task_lists.py:192
+#: views/task_lists.py:193
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
 
-#: views/task_lists.py:259
+#: views/task_lists.py:263
 msgid "* Status is now “{new_status}”.\n"
 msgstr "* Der Status is nun „{new_status}“.\n"
 
-#: views/task_lists.py:262
+#: views/task_lists.py:266
 msgid "* Priority is now “{new_priority}̣”.\n"
 msgstr "* Die Priorität ist nun „{new_priority}“.\n"
 
-#: views/task_lists.py:264
+#: views/task_lists.py:268
 msgid "* Connected process.\n"
 msgstr "* Mit Prozess verbunden.\n"
 
-#: views/task_lists.py:272
+#: views/task_lists.py:276
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
 
-#: views/task_lists.py:283
+#: views/task_lists.py:287
 msgid "Edit task"
 msgstr "Auftrag ändern"
 
-#: views/task_lists.py:344
+#: views/task_lists.py:348
 msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
@@ -3568,6 +3571,16 @@ msgstr " und "
 #: views/utils.py:531
 msgid " and "
 msgstr " und "
+
+#~ msgid ""
+#~ "\n"
+#~ "  %(originator)s has added a <a href=\"%(link)s\">new task</a>\n"
+#~ "  "
+#~ msgstr ""
+#~ "\n"
+#~ "  %(originator)s hat einen <a href=\"%(link)s\">neuen Auftrag</a> "
+#~ "hinzugefügt\n"
+#~ "  "
 
 #~ msgid "creating inaccuracy"
 #~ msgstr "Zeitstempel-Unsicherheit des Einstellens"
