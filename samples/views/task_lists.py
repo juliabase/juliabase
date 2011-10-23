@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-import copy
+import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -320,9 +320,12 @@ def show(request):
             return utils.successful_response(request, view=show)
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
-    task_lists = dict([(content_type, [TaskForTemplate(task, request.user)
-                                       for task in content_type.tasks.order_by("-status", "priority", "last_modified")])
-                       for content_type in request.user.samples_user_details.visible_task_lists.iterator()])
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+    task_lists = {}
+    for process_class in request.user.samples_user_details.visible_task_lists.all():
+        active_tasks = process_class.tasks.order_by("-status", "priority", "last_modified"). \
+            exclude(Q(status=u"3 finished") & Q(last_modified__lt=one_week_ago))
+        task_lists[process_class] = [TaskForTemplate(task, request.user) for task in active_tasks]
     return render_to_response("samples/task_lists.html", {"title": _(u"Task lists"),
                                                           "chose_task_lists": choose_task_lists_form,
                                                           "task_lists": task_lists},
