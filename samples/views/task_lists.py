@@ -198,7 +198,7 @@ class TaskForTemplate(object):
         self.user_can_delete = user == self.task.customer
 
 
-def save_to_database(task_form, samples_form, user, old_task):
+def save_to_database(task_form, samples_form, old_task):
     u"""Saves the data for a task into the database.  All validation checks
     must have done before calling this function.
 
@@ -206,14 +206,11 @@ def save_to_database(task_form, samples_form, user, old_task):
       - `task_form`: a bound and valid task form
       - `samples_form`: a bound and valid samples form iff we create a new
         task, or an unbound samples form
-      - `user`: the user who has created or edited the task.  It can be the
-        customer or the operator of the physical process.
       - `old_task`: the old task instance, which is ``None`` if we newly create
         one
 
     :type task_form: `TaskForm`
     :type samples_form: `SamplesForm`
-    :type user: ``django.contrib.auth.models.User``
     :type old_task: `Task`
 
     :Returns:
@@ -225,7 +222,7 @@ def save_to_database(task_form, samples_form, user, old_task):
     if samples_form.is_bound:
         task.samples = samples_form.cleaned_data["sample_list"]
     if old_task and old_task.status == "0 new" and task.status == "1 accepted":
-        user.my_samples.add(*task.samples.all())
+        task.operator.my_samples.add(*task.samples.all())
     return task
 
 
@@ -258,7 +255,7 @@ def edit(request, task_id):
             old_task = copy.copy(task)
             old_samples = set(task.samples.all())
         if task_form.is_valid() and (not samples_form.is_bound or samples_form.is_valid()):
-            task = save_to_database(task_form, samples_form, user, old_task=task)
+            task = save_to_database(task_form, samples_form, old_task=old_task)
             if task_id:
                 edit_description = {"important": True, "description": u""}
                 if old_task.status != task.status:
