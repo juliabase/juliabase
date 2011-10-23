@@ -191,8 +191,9 @@ class TaskForTemplate(object):
                             permissions.has_permission_to_add_edit_physical_process(user, self.finished_process,
                                                                                     self.task.process_class.model_class()))
                         else _(u"confidential sample") for sample in self.task.samples.all()]
-        self.user_can_edit = user == self.task.customer or permissions.has_permission_to_add_edit_physical_process(
-            user, self.task.finished_process, self.task.process_class.model_class())
+        self.user_can_edit = user == self.task.customer or \
+            permissions.has_permission_to_add_physical_process(user, task.process_class.model_class())
+        self.user_can_delete = user == self.task.customer
 
 
 def save_to_database(task_form, samples_form, user, old_task):
@@ -338,11 +339,8 @@ def remove(request, task_id):
     :rtype: ``HttpResponse``
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
-    if task.customer == request.user:
-        physical_process_class = task.process_class
-        samples = list(task.samples.all())
-        task.delete()
-        feed_utils.Reporter(request.user).report_removed_task(physical_process_class, samples)
-    else:
-        raise permissions.PermissionError(request.user, u"You cannot remove this task.")
+    if task.customer != request.user:
+        raise permissions.PermissionError(request.user, _(u"You are not the customer of this task."))
+    feed_utils.Reporter(request.user).report_removed_task(task.process_class, list(task.samples.all()))
+    task.delete()
     return utils.successful_response(request, _(u"The task was successfully removed."), show)

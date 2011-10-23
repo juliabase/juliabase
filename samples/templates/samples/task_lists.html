@@ -42,14 +42,14 @@ copyright holder, you must destroy it immediately and completely.
         <a class="edit-icon" href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
            <img src="{{ STATIC_URL }}chantal/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
            width="16" height="16"/></a>
-       {% if user == task.task.customer %}
-          <form method="post" 
-    action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={{ next_url|urlquote_plus }}"
-                style="display: inline">
-            <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
-                   title="{% trans 'remove task' %}"/>
-          </form>
-        {% endif %}
+      {% endif %}
+      {% if task.user_can_delete %}
+        <form method="post" 
+              action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={{ next_url|urlquote_plus }}"
+              style="display: inline">
+          <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
+                 title="{% trans 'remove task' %}"/>
+        </form>
       {% endif %}
       </div>
       {% with task.task as task_instance %}
