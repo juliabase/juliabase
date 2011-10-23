@@ -35,7 +35,8 @@ copyright holder, you must destroy it immediately and completely.
   {% for task in task_list %}
   <div>
     <div style="border-style: solid; border-color: black; border-width: thin;
-                background-color: {{ task.task|task_color }}; display: inline-block; padding: 1ex">
+                background-color: {{ task.task|task_color }}; display: inline-block; padding: 1ex"
+         id="task_{{ task.task.id }}">
       <div style="float: right" class="screen-only">
       {% if task.user_can_edit %}
         <a class="edit-icon" href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ next_url|urlquote_plus }}">
@@ -53,6 +54,10 @@ copyright holder, you must destroy it immediately and completely.
       </div>
       {% with task.task as task_instance %}
       <table style="margin-right: 5em">
+        <tr>
+          <td class="label">{{ _("number")|capfirst }}:</td>
+          <td class="value" colspan="2">{{ task_instance.id }}</td>
+        </tr>
         <tr>
           <td class="label">{% verbose_name Task.priority %}:</td>
           <td class="value">{{ task_instance.get_priority_display }}</td>

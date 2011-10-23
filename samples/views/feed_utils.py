@@ -598,11 +598,11 @@ class Reporter(object):
         :type process_class: ``django.contrib.contenttypes.models.ContentType``
         :type samples: list of `models.Sample`
         """
-        entry = models.FeedRemovedTask.objects.create(originator=self.originator, process=process_class)
+        entry = models.FeedRemovedTask.objects.create(originator=self.originator, process_class=process_class)
         entry.samples = samples
         try:
             permission = Permission.objects.filter(content_type=process_class, codename__icontains="add")[0]
         except IndexError:
-            raise Exception(u"{process} has no add-permission".format(process=process_class.name))
+            raise Exception(u"{process_class} has no add-permission".format(process_class=process_class.name))
         self.interested_users = set(permission.user_set.iterator())
         self.__connect_with_users(entry)
