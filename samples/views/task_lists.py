@@ -78,7 +78,7 @@ class TaskForm(forms.ModelForm):
             if self.task.status == u"1 new":
                 self.fixed_fields.add("finished_process")
                 if self.user not in eligible_operators:
-                    self.fixed_fields.add("operator")
+                    self.fixed_fields.update(["operator", "status"])
             elif self.task.status in [u"2 accepted", u"3 in progress"]:
                 if self.user != self.task.operator:
                     self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
