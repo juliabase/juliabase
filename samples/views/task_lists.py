@@ -190,7 +190,7 @@ class TaskForTemplate(object):
         self.task = task
         self.samples = [sample if (sample.topic and not sample.topic.confidential)
                         or (permissions.has_permission_to_fully_view_sample(user, sample) or
-                            permissions.has_permission_to_add_edit_physical_process(user, self.finished_process,
+                            permissions.has_permission_to_add_edit_physical_process(user, self.task.finished_process,
                                                                                     self.task.process_class.model_class()))
                         else _(u"confidential sample") for sample in self.task.samples.all()]
         self.user_can_see_everything = self.user_can_edit = user == self.task.customer or \
