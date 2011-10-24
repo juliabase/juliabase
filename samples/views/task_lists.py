@@ -68,14 +68,42 @@ class TaskForm(forms.ModelForm):
 
     def __init__(self, user, data=None, **kwargs):
         self.task = kwargs.get("instance")
-        super(TaskForm, self).__init__(data, **kwargs)
         self.user = user
-        self.fields["customer"].required = False
-        self.fields["operator"].choices = [(u"", u"---------")]
+        self.fixed_fields = set()
         if self.task:
             eligible_operators = set(permissions.get_all_adders(self.task.process_class.model_class()))
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
+            self.fixed_fields.add("process_class")
+            if self.task.status == u"1 new":
+                self.fixed_fields.add("finished_process")
+                if self.user not in eligible_operators:
+                    self.fixed_fields.update(["operator", "status"])
+            elif self.task.status in [u"2 accepted", u"3 in progress"]:
+                if self.user != self.task.operator:
+                    self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
+                    if self.user != self.task.customer:
+                        self.fixed_fields.add("comments")
+            else:
+                self.fixed_fields.update(["priority", "finished_process", "operator"])
+                if self.user != self.task.operator:
+                    self.fixed_fields.add("status")
+                    if self.user != self.task.customer:
+                        self.fixed_fields.add("comments")
+        else:
+            self.fixed_fields.update(["status", "finished_process", "operator"])
+        if data is not None:
+            data = data.copy()
+            if self.task:
+                data.update(forms.model_to_dict(self.task, self.fixed_fields))
+            else:
+                initial = kwargs.get("initial", {})
+                initial.update({"status": u"1 new"})
+                data.update(initial)
+        super(TaskForm, self).__init__(data, **kwargs)
+        self.fields["customer"].required = False
+        self.fields["operator"].choices = [(u"", u"---------")]
+        if self.task:
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
                                                    for user in utils.sorted_users(eligible_operators))
         self.fields["process_class"].choices = form_utils.choices_of_content_types(
@@ -93,26 +121,6 @@ class TaskForm(forms.ModelForm):
                 self.fields["finished_process"].append((old_finished_process_pk, self.task.finished_process))
         self.fields["comments"].widget.attrs["cols"] = 30
         self.fields["comments"].widget.attrs["rows"] = 5
-        self.fixed_fields = set()
-        if self.task:
-            self.fixed_fields.add("process_class")
-            if self.task.status == u"1 new":
-                self.fixed_fields.add("finished_process")
-                if self.user not in eligible_operators:
-                    self.fixed_fields.add("operator")
-            elif self.task.status in [u"2 accepted", u"3 in progress"]:
-                if self.user != self.task.operator:
-                    self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
-                    if self.user != self.task.customer:
-                        self.fixed_fields.add("comments")
-            else:
-                self.fixed_fields.update(["priority", "finished_process", "operator"])
-                if self.user != self.task.operator:
-                    self.fixed_fields.add("status")
-                    if self.user != self.task.customer:
-                        self.fixed_fields.add("comments")
-        else:
-            self.fixed_fields.update(["status", "finished_process", "operator"])
         for field_name in self.fixed_fields:
             self.fields[field_name].widget.attrs["disabled"] = "disabled"
             self.fields[field_name].required = False
@@ -284,10 +292,7 @@ def edit(request, task_id):
     else:
         samples_form = SamplesForm(user, preset_sample, task)
         initial = {}
-        if task:
-            initial["process_class"] = task.process_class.pk
-            initial["finished_process"] = task.finished_process.pk if task.finished_process else None
-        elif "process_class" in request.GET:
+        if "process_class" in request.GET:
             initial["process_class"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
     title = _(u"Edit task") if task else _(u"Add task")
