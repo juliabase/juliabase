@@ -210,7 +210,7 @@ class RangeSearchField(SearchField):
     timestamps and numerical fields.  It is an abstract class.  At the same
     time, it is an example of a search field with more than one form field.
     """
-    
+
     def get_values(self, query_paths={}):
         result = {}
         min_value = self.form.cleaned_data[self.field.name + "_min"]
@@ -275,7 +275,7 @@ class IntegerSearchField(SearchField):
     u"""Class for search fields containing integer values for which from–to
     ranges don't make sense.
     """
-    
+
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name] = forms.IntegerField(label=unicode(self.field.verbose_name), required=False,
@@ -287,7 +287,7 @@ class IntervalSearchField(RangeSearchField):
     float).  Its peculiarity is that it exposes a minimal and a maximal value.
     The user can fill out one of them, or both, or none.
     """
-    
+
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name + "_min"] = forms.DecimalField(
@@ -417,9 +417,13 @@ class SearchModelForm(forms.Form):
     We also store the previously selected model here in order to know whether
     the following form fields (in the GET parameters) can be parsed into a
     bound form or whether we have to create an unbound new one.
+
+    In the third field we can store a hash value from the input values to
+    specify whether the user has changed something in the search view.
     """
     _model = forms.ChoiceField(label=_(u"containing"), required=False)
     _old_model = forms.CharField(widget=forms.HiddenInput, required=False)
+    _search_parameters_hash = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
@@ -505,7 +509,7 @@ def get_search_results(search_tree, max_results, base_query=None):
     if isinstance(search_tree, AbstractSearchTreeNode):
         results = [result.actual_instance for result in results]
     return results, too_many_results
-    
+
 
 class SearchTreeNode(object):
     u"""Class which represents one node in the seach tree.  It is associated
