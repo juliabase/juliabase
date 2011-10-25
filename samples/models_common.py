@@ -1510,3 +1510,4 @@ class Task(models.Model):
 
     def get_absolute_url(self):
         return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples.views.task_lists.show"), self.id)
+

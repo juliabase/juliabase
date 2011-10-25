@@ -55,7 +55,7 @@ however in theory, it doesn't matter really.
 
 The second data structure for columns is simply called ``columns``, and it is
 built parallely to ``column_groups`` in `build_column_group_list`.  Whenever a
-new column groups is added, its keys (from the key–value items ot its node) are
+new column groups is added, its keys (from the key–value items or its node) are
 appended to the list of columns.  The resulting indices in ``columns`` are
 saved in the column group attribute `ColumnGroup.key_indices`.  This is a
 dictionary, mapping key names to their index in the ``columns`` list.
@@ -64,7 +64,7 @@ The web view
 ............
 
 Now the user comes into play.  He is presented the column groups and their keys
-in an HTML multiple selection widget.  The values are simply the indices in
+in a HTML multiple selection widget.  The values are simply the indices in
 ``columns``.  Therefore, they are the result sent back to the server as a list
 of integers.  Duplicates are dropped (they may occur due to shared columns, see
 below).
@@ -105,20 +105,18 @@ strightforward).
 """
 
 from __future__ import absolute_import
-
-import csv, cStringIO, codecs, copy, json
-from django.template import RequestContext
-import django.core.urlresolvers
-from django.shortcuts import render_to_response
-from django.http import HttpResponse
-import django.forms as forms
 from django.forms.util import ValidationError
-from django.template import defaultfilters
+from django.shortcuts import render_to_response
+from django.template import RequestContext, defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
-from samples.views import utils
 from samples.data_tree import DataNode
-from chantal_common import mimeparse
 import chantal_common.utils
+import csv
+import cStringIO
+import codecs
+import django.core.urlresolvers
+import django.forms as forms
+
 
 
 class UnicodeWriter(object):
@@ -303,7 +301,7 @@ class Column(object):
           - `column_group_name`: the name of the column group this column is
             found in as a shared key
 
-        :type column_group_name: unicode 
+        :type column_group_name: unicode
         """
         self.column_group_names.append(column_group_name)
 
@@ -525,6 +523,7 @@ class ColumnGroupsForm(forms.Form):
     column_groups = forms.MultipleChoiceField(label=_(u"Column groups"))
 
     def __init__(self, column_groups, *args, **kwargs):
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__"
         super(ColumnGroupsForm, self).__init__(*args, **kwargs)
         self.fields["column_groups"].choices = ((column_group.name, column_group.name) for column_group in column_groups)
         self.fields["column_groups"].widget.attrs["size"] = "10"
@@ -541,6 +540,7 @@ class ColumnsForm(forms.Form):
     columns = forms.MultipleChoiceField(label=_(u"Columns"))
 
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__"
         super(ColumnsForm, self).__init__(*args, **kwargs)
         self.fields["columns"].choices = \
             ((column_group.name, [(i, columns[i].key) for i in sorted(column_group.key_indices.values())])
@@ -566,7 +566,7 @@ class OldDataForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.pop("initial", {})
-        kwargs["prefix"] = "old_data"
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__old_data"
         super(OldDataForm, self).__init__(*args, **kwargs)
         if "column_groups" in initial:
             self.fields["column_groups"].initial = u"\t".join(column_group for column_group in initial["column_groups"])
@@ -598,90 +598,6 @@ class SwitchRowForm(forms.Form):
     """
     active = forms.BooleanField(required=False)
 
-
-def export(request, data, label_column_heading):
-    u"""Helper function which does almost all work needed for a CSV table
-    export view.  This is not a view per se, however, it is called by views,
-    which have to do almost nothing anymore by themselves.  See for example
-    `sample.export`.
-
-    This function return the data in JSON format if this is requested by the
-    ``Accept`` header field in the HTTP request.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `data`: the root node of the data tree
-      - `label_column_heading`: Description of the very first column with the
-        table row headings, see `generate_table_rows`.
-
-    :type request: ``HttpRequest``
-    :type data: `DataNode`
-    :type label_column_heading: unicode
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    if not data.children:
-        # We have no rows (e.g. a result process with only one row), so let's
-        # turn the root into the only row.
-        root_without_children = copy.copy(data)
-        # Remove the label column (the zeroth column)
-        root_without_children.descriptive_name = None
-        data.children = [root_without_children]
-    get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
-    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
-    data.find_unambiguous_names()
-    data.complete_items_in_children()
-    column_groups, columns = build_column_group_list(data)
-    single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
-    table = None
-    selected_column_groups = set(single_column_group)
-    selected_columns = set()
-    column_groups_form = ColumnGroupsForm(column_groups, get_data) if not single_column_group else None
-    previous_data_form = OldDataForm(get_data)
-    if previous_data_form.is_valid():
-        previous_column_groups = previous_data_form.cleaned_data["column_groups"]
-        previous_columns = previous_data_form.cleaned_data["columns"]
-    else:
-        previous_column_groups = previous_columns = frozenset()
-    columns_form = ColumnsForm(column_groups, columns, previous_column_groups, get_data)
-    if single_column_group or column_groups_form.is_valid():
-        selected_column_groups = single_column_group or column_groups_form.cleaned_data["column_groups"]
-        if columns_form.is_valid():
-            selected_columns = columns_form.cleaned_data["columns"]
-            label_column = [row.descriptive_name for row in data.children]
-            table = generate_table_rows(flatten_tree(data), columns, columns_form.cleaned_data["columns"],
-                                        label_column, label_column_heading)
-            start_column_index = 1 if any(label_column) else 0
-            if not(previous_columns) and selected_columns:
-                switch_row_forms = [SwitchRowForm(prefix=str(i), initial={"active": any(row[start_column_index:])})
-                                    for i, row in enumerate(table)]
-            else:
-                switch_row_forms = [SwitchRowForm(get_data, prefix=str(i)) for i in range(len(table))]
-            all_switch_row_forms_valid = all([switch_row_form.is_valid() for switch_row_form in switch_row_forms])
-            if all_switch_row_forms_valid and \
-                    previous_column_groups == selected_column_groups and previous_columns == selected_columns:
-                reduced_table = [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
-                if requested_mime_type == "application/json":
-                    data = [dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
-                            for row in reduced_table[1:]]
-                    return chantal_common.utils.respond_in_json(data)
-                else:
-                    response = HttpResponse(content_type="text/csv; charset=utf-8")
-                    response['Content-Disposition'] = \
-                        "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
-                    writer = UnicodeWriter(response)
-                    writer.writerows(reduced_table)
-                return response
-    if selected_column_groups != previous_column_groups:
-        columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
-    old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
-    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
-                                                            "columns": columns_form,
-                                                            "rows": zip(table, switch_row_forms) if table else None,
-                                                            "old_data": old_data_form,
-                                                            "backlink": request.GET.get("next", "")},
-                              context_instance=RequestContext(request))
+    def __init__(self, *args, **kwargs):
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__"
+        super(SwitchRowForm, self).__init__(*args, **kwargs)

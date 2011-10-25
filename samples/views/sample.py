@@ -18,29 +18,35 @@ u"""All views and helper routines directly connected with samples themselves
 """
 
 from __future__ import absolute_import
-
-import time, copy, hashlib, urllib, os.path
 from cStringIO import StringIO
-import PIL, PIL.ImageOps
-from django.views.decorators.http import condition
-from django.db.models import Q
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
-from django.conf import settings
-from django.http import Http404
-import django.forms as forms
-from django.core.cache import cache
-from samples import models, permissions
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.utils.http import urlquote_plus
-import django.core.urlresolvers
-from chantal_common.utils import append_error, HttpResponseSeeOther, adjust_timezone_information, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, unlazy_object
 from chantal_common.signals import storage_changed
-from samples.views import utils, form_utils, feed_utils, table_export
-import chantal_common.search
+from chantal_common.utils import append_error, HttpResponseSeeOther, \
+    adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
+    mkdirs, cache_key_locked, get_from_cache, unlazy_object
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.db.models import Q
+from django.http import Http404, HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
+from django.views.decorators.http import condition
+from samples import models, permissions, data_tree
+from samples.views import utils, form_utils, feed_utils
+import PIL
+import PIL.ImageOps
+import chantal_common.search
+import django.core.urlresolvers
+import django.forms as forms
+import hashlib
+import os.path
+import time
+import urllib
+import json
+
 
 
 class IsMySampleForm(forms.Form):
@@ -840,6 +846,9 @@ def advanced_search(request):
     too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
+    _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
+                                                    if not "__" in key and key != "_search_parameters_hash").items()))).hexdigest()
+    column_groups_form = columns_form = table = switch_row_forms = old_data_form = None
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
         search_tree = get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
         parse_tree = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
@@ -865,15 +874,26 @@ def advanced_search(request):
                              for sample in results]
             else:
                 add_forms = len(results) * [None]
+            if results and root_form.cleaned_data["_search_parameters_hash"] == _search_parameters_hash:
+                data_node = data_tree.DataNode(_(u"search results"))
+                data_node.children.extend(result.get_data_for_table_export() for result in results)
+                export_result = utils.table_export(request, data_node, "")
+                if isinstance(export_result, tuple):
+                    column_groups_form, columns_form, table, switch_row_forms, old_data_form = export_result
+                elif isinstance(export_result, HttpResponse):
+                    return export_result
             search_performed = True
         root_form = chantal_common.search.SearchModelForm(
-            model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"]})
+            model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"],
+                                 "_search_parameters_hash": _search_parameters_hash})
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
     content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "search_tree": search_tree,
                     "results": zip(results, add_forms), "search_performed": search_performed,
-                    "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results}
+                    "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results,
+                    "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
+                    "rows": zip(table, switch_row_forms) if table else None}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 
@@ -895,7 +915,19 @@ def export(request, sample_name):
     :rtype: ``HttpResponse``
     """
     sample = utils.lookup_sample(sample_name, request.user)
-    return table_export.export(request, sample.get_data_for_table_export(), _(u"process"))
+    data = sample.get_data_for_table_export()
+    result = utils.table_export(request, data, _(u"process"))
+    if isinstance(result, tuple):
+        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
+    elif isinstance(result, HttpResponse):
+        return result
+    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
+                              context_instance=RequestContext(request))
 
 
 def qr_code(request):

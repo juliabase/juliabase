@@ -37,7 +37,7 @@ $(function() {
   {% if search_tree %}
     {% display_search_tree search_tree %}
   {% endif %}
-  <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
+  {% include "samples/table_export_content_block.html" %}
 </form>
 
 {% if search_performed %}
@@ -68,6 +68,7 @@ $(function() {
 
     <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'add samples' %}"/></p>
   </form>
+
 {% else %}
   <p>{% trans 'No search was performed yet.' %}</p>
 {% endif %}
