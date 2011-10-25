@@ -601,8 +601,8 @@ def restricted_samples_query(user):
     """
     if user.is_staff:
         return models.Sample.objects.all()
-    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) | 
-                                        Q(currently_responsible_person=user) | Q(clearances__user=user) | 
+    return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
+                                        Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).distinct()
 
 
@@ -699,7 +699,7 @@ def table_export(request, data, label_column_heading):
         # Remove the label column (the zeroth column)
         root_without_children.descriptive_name = None
         data.children = [root_without_children]
-    get_data = request.GET if any(key.startswith("old_data") for key in request.GET) else None
+    get_data = request.GET if any(key.startswith("__old_data") for key in request.GET) else None
     requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
     data.find_unambiguous_names()
     data.complete_items_in_children()

@@ -105,17 +105,18 @@ strightforward).
 """
 
 from __future__ import absolute_import
-
-import csv, cStringIO, codecs
-from django.template import RequestContext
-import django.core.urlresolvers
-from django.shortcuts import render_to_response
-import django.forms as forms
 from django.forms.util import ValidationError
-from django.template import defaultfilters
+from django.shortcuts import render_to_response
+from django.template import RequestContext, defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.data_tree import DataNode
 import chantal_common.utils
+import csv
+import cStringIO
+import codecs
+import django.core.urlresolvers
+import django.forms as forms
+
 
 
 class UnicodeWriter(object):
@@ -522,6 +523,7 @@ class ColumnGroupsForm(forms.Form):
     column_groups = forms.MultipleChoiceField(label=_(u"Column groups"))
 
     def __init__(self, column_groups, *args, **kwargs):
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__"
         super(ColumnGroupsForm, self).__init__(*args, **kwargs)
         self.fields["column_groups"].choices = ((column_group.name, column_group.name) for column_group in column_groups)
         self.fields["column_groups"].widget.attrs["size"] = "10"
@@ -538,6 +540,7 @@ class ColumnsForm(forms.Form):
     columns = forms.MultipleChoiceField(label=_(u"Columns"))
 
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__"
         super(ColumnsForm, self).__init__(*args, **kwargs)
         self.fields["columns"].choices = \
             ((column_group.name, [(i, columns[i].key) for i in sorted(column_group.key_indices.values())])
@@ -563,12 +566,20 @@ class OldDataForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.pop("initial", {})
-        kwargs["prefix"] = "old_data"
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__old_data"
         super(OldDataForm, self).__init__(*args, **kwargs)
         if "column_groups" in initial:
             self.fields["column_groups"].initial = u"\t".join(column_group for column_group in initial["column_groups"])
         if "columns" in initial:
             self.fields["columns"].initial = u" ".join(str(i) for i in initial["columns"])
+        for fieldname in ["column_groups", "columns"]:
+            attributes = self.fields[fieldname].widget.attrs
+            if "class" not in attributes:
+                attributes["class"] = u"submit-always"
+            else:
+                if attributes["class"].strip():
+                    attributes["class"] += u" "
+                attributes["class"] += "submit-always"
 
     def clean_column_groups(self):
         return set(self.cleaned_data["column_groups"].split("\t"))
@@ -586,3 +597,7 @@ class SwitchRowForm(forms.Form):
     is checked, the respective row is included into the CSV export.
     """
     active = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        kwargs["prefix"] = kwargs.get("prefix", "") + "__"
+        super(SwitchRowForm, self).__init__(*args, **kwargs)

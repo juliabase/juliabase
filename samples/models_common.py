@@ -1509,5 +1509,5 @@ class Task(models.Model):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"task of {process_class} from {datetime}". format(process_class=self.process_content_type.name,
+        return _(u"task of {process_class} from {datetime}".format(process_class=self.process_content_type.name,
                                                                     datetime=self.creating_timestamp))

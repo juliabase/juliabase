@@ -34,7 +34,7 @@ from django.template import RequestContext
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
-from samples import models, permissions
+from samples import models, permissions, data_tree
 from samples.views import utils, form_utils, feed_utils
 import PIL
 import PIL.ImageOps
@@ -45,6 +45,7 @@ import hashlib
 import os.path
 import time
 import urllib
+import json
 
 
 
@@ -721,7 +722,7 @@ def by_id(request, sample_id, path_suffix):
             raise
     query_string = request.META["QUERY_STRING"] or u""
     return HttpResponseSeeOther(
-        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix + 
+        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else u""))
 
 
@@ -845,6 +846,9 @@ def advanced_search(request):
     too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
+    _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
+                                                    if not "__" in key and key != "_search_parameters_hash").items()))).hexdigest()
+    column_groups_form = columns_form = table = switch_row_forms = old_data_form = None
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
         search_tree = get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
         parse_tree = root_form.cleaned_data["_model"] == root_form.cleaned_data["_old_model"]
@@ -854,7 +858,7 @@ def advanced_search(request):
                 base_query = utils.restricted_samples_query(request.user)
             elif search_tree.model_class == models.SampleSeries:
                 base_query = models.SampleSeries.objects.filter(
-                    Q(topic__confidential=False) | Q(topic__members=request.user) | 
+                    Q(topic__confidential=False) | Q(topic__members=request.user) |
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
@@ -870,15 +874,26 @@ def advanced_search(request):
                              for sample in results]
             else:
                 add_forms = len(results) * [None]
+            if results and root_form.cleaned_data["_search_parameters_hash"] == _search_parameters_hash:
+                data_node = data_tree.DataNode(_(u"search results"))
+                data_node.children.extend(result.get_data_for_table_export() for result in results)
+                export_result = utils.table_export(request, data_node, "")
+                if isinstance(export_result, tuple):
+                    column_groups_form, columns_form, table, switch_row_forms, old_data_form = export_result
+                elif isinstance(export_result, HttpResponse):
+                    return export_result
             search_performed = True
         root_form = chantal_common.search.SearchModelForm(
-            model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"]})
+            model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"],
+                                 "_search_parameters_hash": _search_parameters_hash})
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = u""
     content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "search_tree": search_tree,
                     "results": zip(results, add_forms), "search_performed": search_performed,
-                    "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results}
+                    "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results,
+                    "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
+                    "rows": zip(table, switch_row_forms) if table else None}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 
