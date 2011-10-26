@@ -846,6 +846,7 @@ def advanced_search(request):
     too_many_results = False
     root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
+    no_permission_message = None
     _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
                                                     if not "__" in key and key != "_search_parameters_hash").items()))).hexdigest()
     column_groups_form = columns_form = table = switch_row_forms = old_data_form = None
@@ -876,12 +877,30 @@ def advanced_search(request):
                 add_forms = len(results) * [None]
             if results and root_form.cleaned_data["_search_parameters_hash"] == _search_parameters_hash:
                 data_node = data_tree.DataNode(_(u"search results"))
-                data_node.children.extend(result.get_data_for_table_export() for result in results)
-                export_result = utils.table_export(request, data_node, "")
-                if isinstance(export_result, tuple):
-                    column_groups_form, columns_form, table, switch_row_forms, old_data_form = export_result
-                elif isinstance(export_result, HttpResponse):
-                    return export_result
+                for result in results:
+                    insert = False
+                    if isinstance(result, models.PhysicalProcess) \
+                        and permissions.has_permission_to_view_physical_process(request.user, result):
+                            insert = True
+                    elif isinstance(result, models.Result) \
+                        and permissions.has_permission_to_view_result_process(request.user, result):
+                            insert = True
+                    elif isinstance(result, models.Sample) \
+                        and permissions.has_permission_to_fully_view_sample(request.user, result):
+                            insert = True
+                    elif isinstance(result, models.SampleSeries) \
+                        and permissions.has_permission_to_view_sample_series(request.user, result):
+                            insert = True
+                    if insert:
+                        data_node.children.append(result.get_data_for_table_export())
+                if len(data_node.children) == 0:
+                    no_permission_message = _(u"You don't have the permission to see any content of the search results.")
+                else:
+                    export_result = utils.table_export(request, data_node, "")
+                    if isinstance(export_result, tuple):
+                        column_groups_form, columns_form, table, switch_row_forms, old_data_form = export_result
+                    elif isinstance(export_result, HttpResponse):
+                        return export_result
             search_performed = True
         root_form = chantal_common.search.SearchModelForm(
             model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"],
@@ -893,7 +912,8 @@ def advanced_search(request):
                     "results": zip(results, add_forms), "search_performed": search_performed,
                     "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results,
                     "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
-                    "rows": zip(table, switch_row_forms) if table else None}
+                    "rows": zip(table, switch_row_forms) if table else None,
+                    "no_permission_message": no_permission_message}
     return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
 
 

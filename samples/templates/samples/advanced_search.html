@@ -37,6 +37,9 @@ $(function() {
   {% if search_tree %}
     {% display_search_tree search_tree %}
   {% endif %}
+  {% if no_permission_message %}
+    {{ no_permission_message }}
+  {% endif %}
   {% include "samples/table_export_content_block.html" %}
 </form>
 
