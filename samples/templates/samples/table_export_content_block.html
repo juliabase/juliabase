@@ -1,10 +1,8 @@
 {% load i18n %}
 {% load chantal %}
-{% load samples_extras %}
+
 
 {% block frame_content %}
-<form method="get">
-
   {% if column_groups %}
     <table style="float: left">
       <tbody>
@@ -93,7 +91,6 @@
   {% endif %}
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
-</form>
 
 {% if backlink %}
   <div style="text-align: right; margin-top: 1ex"><a href="{{ backlink }}">{% trans 'Go back' %}</a></div>

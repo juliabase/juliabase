@@ -18,5 +18,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-    {% include "samples/table_export_content_block.html" %}
+<form method="get">
+	{% include "samples/table_export_content_block.html" %}
+</form>
 {% endblock %}
