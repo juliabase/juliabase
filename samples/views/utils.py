@@ -406,6 +406,9 @@ class StructuredTopic(object):
     u"""Class that represents one topic which contains samples and sample
     series, used for `build_structured_sample_list`.
 
+    :ivar topic: the underlying Chantal topic which is represented by this
+      instance.
+
     :ivar topic_name: the underlying Chantal topic's name which is represented
       by this instance.  It may be a surrogate name if the user is not allowed
       to see the actual name.
@@ -422,8 +425,9 @@ class StructuredTopic(object):
     :type sample_series: list of `StructuredSeries`
     """
 
-    def __init__(self, topic_name):
-        self.topic_name = topic_name
+    def __init__(self, topic, user):
+        self.topic = topic
+        self.topic_name = topic.get_name_for_user(user)
         self.samples = []
         self.sample_series = []
 
@@ -466,18 +470,18 @@ def build_structured_sample_list(samples, user):
                     structured_series[series.name] = StructuredSeries(series)
                     topicname = series.topic.name
                     if topicname not in structured_topics:
-                        structured_topics[topicname] = StructuredTopic(series.topic.get_name_for_user(user))
+                        structured_topics[topicname] = StructuredTopic(series.topic, user)
                     structured_topics[topicname].sample_series.append(structured_series[series.name])
                 structured_series[series.name].append(sample)
         elif sample.topic:
             topicname = sample.topic.name
             if topicname not in structured_topics:
-                structured_topics[topicname] = StructuredTopic(sample.topic.get_name_for_user(user))
+                structured_topics[topicname] = StructuredTopic(sample.topic, user)
             structured_topics[topicname].samples.append(sample)
         else:
             topicless_samples.append(sample)
-    structured_topics = sorted(structured_topics.itervalues(),
-                                 key=lambda structured_topic: structured_topic.topic_name)
+    structured_topics = sorted(structured_topics.itervalues(), key=lambda structured_topic: structured_topic.topic.id,
+                               reverse=True)
     for structured_topic in structured_topics:
         structured_topic.sort_sample_series()
     return structured_topics, topicless_samples
