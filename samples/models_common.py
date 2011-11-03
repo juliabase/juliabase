@@ -1446,7 +1446,7 @@ class StatusMessage(models.Model):
     It provides a many to many relationship between the status messages and the
     processes.
     """
-    process_classes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_(u"process classes"))
+    process_classes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_(u"processes"))
     timestamp = models.DateTimeField(_(u"timestamp"))
     begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
@@ -1455,7 +1455,7 @@ class StatusMessage(models.Model):
     end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status_messages",
                                  verbose_name=_(u"reporter"))
-    message = models.TextField(_(u"message"))
+    message = models.TextField(_(u"message"), null=True, blank=True)
     status_level = models.CharField(_(u"level"), choices=status_level_choices, default="undefined", max_length=10)
     withdrawn = models.BooleanField(_(u"withdrawn"), default=False)
 

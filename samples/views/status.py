@@ -58,7 +58,7 @@ class StatusForm(forms.ModelForm):
                           help_text=_(u"YYYY-MM-DD HH:MM:SS"))
     end = DateTimeField(label=capfirst(_(u"end")), start=False, required=False, with_inaccuracy=True,
                         help_text=_(u"YYYY-MM-DD HH:MM:SS"))
-    process_classes = forms.MultipleChoiceField(label=capfirst(_(u"process classes")))
+    process_classes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
 
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
@@ -74,8 +74,9 @@ class StatusForm(forms.ModelForm):
     def clean_message(self):
         u"""Forbid image and headings syntax in Markdown markup.
         """
-        message = self.cleaned_data["message"]
-        check_markdown(message)
+        message = self.cleaned_data.get("message")
+        if message:
+            check_markdown(message)
         return message
 
     def clean_timestamp(self):
@@ -99,7 +100,9 @@ class StatusForm(forms.ModelForm):
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
         if cleaned_data["begin"] > cleaned_data["end"]:
             append_error(self, _(u"The begin must be before the end."), "begin")
-            del self.cleaned_data["begin"]
+            del cleaned_data["begin"]
+        if cleaned_data["status_level"] in ["red", "yellow"] and not cleaned_data.get("message"):
+            append_error(self, _(u"A message must be given when the status level is red or yellow."), "message")
         return cleaned_data
 
     class Meta:
