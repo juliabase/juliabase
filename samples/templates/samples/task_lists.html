@@ -71,7 +71,7 @@ copyright holder, you must destroy it immediately and completely.
             <td rowspan="7" style="vertical-align: top; padding-left: 3em">
               <ul class="sample-list" style="margin-top: 0pt">
                 {% for sample in task.samples %}
-                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+                  <li><a href="{{ sample.get_absolute_url }}" style="white-space: nowrap">{{ sample }}</a></li>
                 {% endfor %}
               </ul>
             </td>
