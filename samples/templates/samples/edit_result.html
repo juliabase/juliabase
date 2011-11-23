@@ -33,6 +33,22 @@ copyright holder, you must destroy it immediately and completely.
                                 >{{ related_data.sample_series.label }}:</label><br/>
         {{ related_data.sample_series }}
       </td>
+
+      {% if result.user.is_staff %}
+      <td rowspan="2" style="vertical-align: top"><label for="id_{{ result.operator.html_name }}"
+                                >{{ result.operator.label }}:</label><br/>
+        {{ result.operator }}
+      </td>
+      <td rowspan="2" style="vertical-align: top"><label for="id_{{ result.external_operator.html_name }}"
+                                >{{ result.external_operator.label }}:</label><br/>
+        {{ result.external_operator }}
+      </td>
+    {% else %}
+      <td>
+        {% input_field result.combined_operator %}
+      </td>
+    {% endif %}
+
     </tr>
     <tr>
       {% input_field result.comments %}

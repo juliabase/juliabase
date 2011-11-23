@@ -26,7 +26,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.utils.translation import ugettext as _, ugettext_lazy, pgettext_lazy
+from django.utils.translation import ugettext, ugettext_lazy, pgettext_lazy
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 import chantal_common.utils
@@ -38,7 +38,7 @@ import json
 import subprocess
 import django.forms as forms
 
-
+_ = ugettext
 
 def save_image_file(image_data, result, related_data_form):
     u"""Saves an uploaded image file stream to its final destination in
@@ -88,20 +88,55 @@ def save_image_file(image_data, result, related_data_form):
 class ResultForm(form_utils.ProcessForm):
     u"""Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
-
-    FixMe: Possibly, the external operator should be made editable for result
-    processes.
     """
     _ = ugettext_lazy
+    combined_operator = form_utils.OperatorField(label=_(u"Operator"))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(ResultForm, self).__init__(*args, **kwargs)
         self.fields["comments"].required = True
         self.fields["title"].widget.attrs["size"] = 40
+        self.old_result = kwargs.get("instance")
+        self.user = user
+        self.fields["combined_operator"].set_choices(user, self.old_result)
+        if not user.is_staff:
+            self.fields["external_operator"].choices = []
+            self.fields["operator"].choices = []
+            self.fields["operator"].required = False
+        else:
+            self.fields["combined_operator"].required = False
+
+    def clean(self):
+        _ = ugettext
+        cleaned_data = self.cleaned_data
+        if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
+            append_error(self, _(u"For a custom substrate, you must give substrate comments."), "comments")
+        # FixMe: The following could be done in ProcessForm.clean().
+        final_operator = self.cleaned_data.get("operator")
+        final_external_operator = self.cleaned_data.get("external_operator")
+        if self.cleaned_data.get("combined_operator"):
+            operator, external_operator = self.cleaned_data["combined_operator"]
+            if operator:
+                if final_operator and final_operator != operator:
+                    append_error(self, u"Your operator and combined operator didn't match.", "combined_operator")
+                else:
+                    final_operator = operator
+            if external_operator:
+                if final_external_operator and final_external_operator != external_operator:
+                    append_error(self, u"Your external operator and combined external operator didn't match.",
+                                 "combined_external_operator")
+                else:
+                    final_external_operator = external_operator
+        if not final_operator:
+            # Can only happen for non-staff.  I deliberately overwrite a
+            # previous operator because this way, we can log who changed it.
+            final_operator = self.user
+        self.cleaned_data["operator"], self.cleaned_data["external_operator"] = final_operator, final_external_operator
+        return cleaned_data
 
     class Meta:
         model = models.Result
-        exclude = ("timestamp", "timestamp_inaccuracy", "operator", "external_operator", "image_type",
+        exclude = ("timestamp", "timestamp_inaccuracy", "image_type",
                    "quantities_and_values")
 
 
@@ -135,7 +170,7 @@ class RelatedDataForm(forms.Form):
             samples.extend(old_result.samples.all())
             self.fields["sample_series"].queryset = \
                 models.SampleSeries.objects.filter(
-                Q(samples__watchers=user) | (Q(currently_responsible_person=user) & 
+                Q(samples__watchers=user) | (Q(currently_responsible_person=user) &
                                               Q(timestamp__range=(three_months_ago, now)))
                 | Q(pk__in=old_result.sample_series.values_list("pk", flat=True))).distinct()
             self.fields["samples"].initial = old_result.samples.values_list("pk", flat=True)
@@ -146,8 +181,8 @@ class RelatedDataForm(forms.Form):
                 self.fields["samples"].initial = [preset_sample.pk]
                 samples.append(preset_sample)
             self.fields["sample_series"].queryset = \
-                models.SampleSeries.objects.filter(Q(samples__watchers=user) | 
-                                                   (Q(currently_responsible_person=user) & 
+                models.SampleSeries.objects.filter(Q(samples__watchers=user) |
+                                                   (Q(currently_responsible_person=user) &
                                                      Q(timestamp__range=(three_months_ago, now)))
                                                    | Q(name=query_string_dict.get("sample_series", u""))).distinct()
             if "sample_series" in query_string_dict:
@@ -298,7 +333,7 @@ class FormSet(object):
         u"""Generate all forms from the database.  This is called when the HTTP
         GET method was sent with the request.
         """
-        self.result_form = ResultForm(instance=self.result)
+        self.result_form = ResultForm(self.user, instance=self.result)
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result)
         self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
         if self.result and self.result.quantities_and_values:
@@ -327,7 +362,7 @@ class FormSet(object):
         :type post_data: ``django.http.QueryDict``
         :type post_files: ``django.utils.datastructures.MultiValueDict``
         """
-        self.result_form = ResultForm(post_data, instance=self.result)
+        self.result_form = ResultForm(self.user, post_data, instance=self.result)
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result, post_data, post_files)
         self.dimensions_form = DimensionsForm(post_data)
         self.previous_dimensions_form = DimensionsForm(post_data, prefix="previous")
