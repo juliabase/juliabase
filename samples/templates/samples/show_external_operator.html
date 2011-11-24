@@ -17,42 +17,58 @@ copyright holder, you must destroy it immediately and completely.
 {% load chantal %}
 {% load samples_extras %}
 
-{% block content_title %}<h1
-    >{% blocktrans with external_operator.name as name %}External operator “{{ name }}”{% endblocktrans %}
+{% block content_title %}
+  <h1>
+  {% if external_operator %}
+    {% blocktrans with external_operator.name as name %}External operator “{{ name }}”{% endblocktrans %}
+  {% else %}
+    {{ title }}
+  {% endif %}
   {% if can_edit %}<a class="edit-icon"
-       href="{{ external_operator.get_absolute_url }}/edit/?next={{ external_operator.get_absolute_url|urlquote_plus }}"
-     ><img src="{{ STATIC_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
-           width="16" height="16"/></a>{% endif %}</h1>{% endblock %}
+	   href="{{ external_operator.get_absolute_url }}/edit/?next={{ external_operator.get_absolute_url|urlquote_plus }}"
+	 ><img src="{{ STATIC_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
+	       width="16" height="16"/></a>
+  {% endif %}
+  </h1>
+{% endblock %}
 
 {% block frame_content %}
 <table class="padding5" style="margin-bottom: 2ex">
   <tbody>
-  <tr>
-    {% value_field external_operator.name %}
-  </tr>
-  <tr>
-    {% value_field external_operator.institution %}
-  </tr>
-  <tr>
-    <td class="label">{% verbose_name ExternalOperator.email %}:</td>
-    <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.email }}"
-                                                     >{{ external_operator.email }}</a></td>
-  </tr>
-  {% if external_operator.alternative_email %}
-    <tr>
-      <td class="label">{% verbose_name ExternalOperator.alternative_email %}:</td>
-      <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.alternative_email }}"
-                                                       >{{ external_operator.alternative_email }}</a></td>
-    </tr>
+	  {% if external_operator %}
+	  <tr>
+	    {% value_field external_operator.name %}
+	  </tr>
+	  <tr>
+	    {% value_field external_operator.institution %}
+	  </tr>
+	  <tr>
+	    <td class="label">{% verbose_name ExternalOperator.email %}:</td>
+	    <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.email }}"
+	                                                     >{{ external_operator.email }}</a></td>
+	  </tr>
+	  {% if external_operator.alternative_email %}
+	    <tr>
+	      <td class="label">{% verbose_name ExternalOperator.alternative_email %}:</td>
+	      <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.alternative_email }}"
+	                                                       >{{ external_operator.alternative_email }}</a></td>
+	    </tr>
+	  {% endif %}
+	  {% if external_operator.phone %}
+	    <tr>
+	      {% value_field external_operator.phone %}
+	    </tr>
+	  {% endif %}
   {% endif %}
-  {% if external_operator.phone %}
-    <tr>
-      {% value_field external_operator.phone %}
-    </tr>
-  {% endif %}
   <tr>
-    <td class="label">{% verbose_name ExternalOperator.contact_person %}:</td>
-    <td class="value" style="font-weight: normal">{{ external_operator.contact_person|get_really_full_name }}</td>
+    <td class="label">{% verbose_name ExternalOperator.contact_persons %}:</td>
+    <td class="value" style="font-weight: normal">
+    <ul>
+    {% for person in contact_persons %}
+        <li>{{ person|get_really_full_name }}</li>
+    {% endfor %}
+    </ul>
+    </td>
   </tr>
   {% if initials %}
     <tr>
@@ -63,9 +79,9 @@ copyright holder, you must destroy it immediately and completely.
   </tbody>
 </table>
 
-{% if external_operator.confidential %}
+{% if not external_operator or external_operator.confidential %}
 <p>{% blocktrans %}
-  This external contact is <em>confidential</em>, which means that only the current contact person can
+  This external contact is <em>confidential</em>, which means that only the current contact persons can
   view its data.
 {% endblocktrans %}</p>
 

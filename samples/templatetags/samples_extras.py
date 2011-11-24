@@ -210,7 +210,7 @@ def get_safe_operator_name(user, autoescape=False):
     if autoescape:
         name = conditional_escape(name)
     return mark_safe(u'<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                "samples.views.user_details.show_user", kwargs={"login_name": user.contact_person.username}), name))
+                "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), name))
 
 get_safe_operator_name.needs_autoescape = True
 

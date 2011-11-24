@@ -115,7 +115,7 @@ def primary_keys(request):
         else:
             all_external_operators = set(external_operator for external_operator in models.ExternalOperator.objects.all()
                                          if not external_operator.confidential or
-                                         external_operator.contact_person == request.user)
+                                         request.user in external_operator.contact_persons.all())
         if query_dict["external_operators"] == "*":
             external_operators = all_external_operators
         else:
