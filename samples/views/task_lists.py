@@ -229,7 +229,7 @@ def save_to_database(task_form, samples_form, old_task):
     task = task_form.save()
     if samples_form.is_bound:
         task.samples = samples_form.cleaned_data["sample_list"]
-    if old_task and old_task.status == "1 new" and task.status == "2 accepted":
+    if old_task and task.operator and old_task.operator != task.operator:
         task.operator.my_samples.add(*task.samples.all())
     return task
 
