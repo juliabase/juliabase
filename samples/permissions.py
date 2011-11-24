@@ -660,7 +660,7 @@ def assert_can_edit_external_operator(user, external_operator):
       - `PermissionError`: raised if the user is not allowed to edit an
         external operator.
     """
-    if external_operator.contact_person != user and not user.is_superuser:
+    if user not in external_operator.contact_persons.all() and not user.is_superuser:
         description = _(u"You are not allowed to edit this external operator because you aren't their "
                         u"current contact person.")
         raise PermissionError(user, description)
@@ -680,7 +680,7 @@ def assert_can_view_external_operator(user, external_operator):
       - `PermissionError`: raised if the user is not allowed to view an
         external operator.
     """
-    if external_operator.contact_person != user and not user.is_superuser:
+    if user not in external_operator.contact_persons.all() and not user.is_superuser:
         if external_operator.confidential:
             description = _(u"You are not allowed to view this external operator because you are not their "
                             u"current contact person.")

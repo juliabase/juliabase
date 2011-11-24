@@ -51,8 +51,8 @@ class ExternalOperator(models.Model):
     email = models.EmailField(_(u"email"))
     alternative_email = models.EmailField(_(u"alternative email"), blank=True)
     phone = models.CharField(_(u"phone"), max_length=30, blank=True)
-    contact_person = models.ForeignKey(django.contrib.auth.models.User, related_name="external_contacts",
-                                       verbose_name=_(u"contact person in the institute"))
+    contact_persons = models.ManyToManyField(django.contrib.auth.models.User, related_name="external_contacts",
+                                       verbose_name=_(u"contact persons in the institute"))
         # Translators: Topic which is not open to senior members
     confidential = models.BooleanField(_(u"confidential"), default=False)
 

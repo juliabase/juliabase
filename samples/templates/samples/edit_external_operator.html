@@ -38,11 +38,11 @@ copyright holder, you must destroy it immediately and completely.
     {% if initials %}
       {% error_list initials _("Error in initials") "<tr>" 2 %}
       <tr>
-        {% input_field external_operator.contact_person %}
+        {% input_field external_operator.contact_persons %}
       </tr><tr>
         {% input_field initials.initials %}
       </tr>
-    {% endif %}    
+    {% endif %}
     </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

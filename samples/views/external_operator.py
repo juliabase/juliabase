@@ -31,7 +31,7 @@ from samples.views import utils, form_utils
 
 class AddExternalOperatorForm(forms.ModelForm):
     u"""Model form for creating a new external operator.  The
-    ``contact_person`` is implicitly the currently logged-in user.
+    ``contact_persons`` is implicitly the currently logged-in user.
     """
     _ = ugettext_lazy
 
@@ -43,14 +43,13 @@ class AddExternalOperatorForm(forms.ModelForm):
         self.fields["institution"].widget.attrs["size"] = "60"
 
     def save(self):
-        external_operator = super(AddExternalOperatorForm, self).save(commit=False)
-        external_operator.contact_person = self.user
-        external_operator.save()
+        external_operator = super(AddExternalOperatorForm, self).save()
+        external_operator.contact_persons.add(self.user)
         return external_operator
 
     class Meta:
         model = models.ExternalOperator
-        exclude = ("contact_person",)
+        exclude = ("contact_persons",)
 
 
 @login_required
@@ -87,14 +86,15 @@ class EditExternalOperatorForm(forms.ModelForm):
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_person = form_utils.UserField(label=_(u"Contact person"))
+    contact_persons = form_utils.MultipleUsersField(label=_(u"Contact persons"))
 
     def __init__(self, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
+        self.external_operator = kwargs.get("instance")
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
-        self.fields["contact_person"].set_users()
+        self.fields["contact_persons"].set_users(self.external_operator.contact_persons.all())
 
     class Meta:
         model = models.ExternalOperator
@@ -157,15 +157,22 @@ def show(request, external_operator_id):
     :rtype: ``HttpResponse``
     """
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
-    permissions.assert_can_view_external_operator(request.user, external_operator)
-    try:
-        initials = external_operator.initials
-    except models.Initials.DoesNotExist:
+    contact_persons = external_operator.contact_persons.all()
+    if permissions.has_permission_to_view_external_operator(request.user, external_operator):
+        try:
+            initials = external_operator.initials
+        except models.Initials.DoesNotExist:
+            initials = None
+        title = _(u"External operator “{name}”").format(name=external_operator.name)
+    else:
+        title = _(u"Confidential operator #{number}").format(number=external_operator.pk)
+        external_operator = None
         initials = None
     return render_to_response("samples/show_external_operator.html",
-                              {"title": _(u"External operator “{name}”").format(name=external_operator.name),
+                              {"title": title,
                                "external_operator": external_operator, "initials": initials,
-                               "can_edit": request.user == external_operator.contact_person},
+                               "contact_persons" : contact_persons,
+                               "can_edit": request.user in contact_persons},
                               context_instance=RequestContext(request))
 
 
