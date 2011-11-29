@@ -14,6 +14,11 @@
 
 
 u"""Views for editing and creating results (aka result processes).
+
+FixMe: The save_to_database function triggers a signal in chantal_ipv
+when a new result process is connected to a sample.
+If you want to change the behavior of this function, keep in mind that
+you have to check the signal for modification purposes.
 """
 
 from __future__ import absolute_import
@@ -510,7 +515,6 @@ class FormSet(object):
                 result = self.result_form.save()
             else:
                 result = self.result_form.save(commit=False)
-                result.operator = self.user
                 result.timestamp = datetime.datetime.now()
             result.quantities_and_values = self.serialize_quantities_and_values()
             result.save()

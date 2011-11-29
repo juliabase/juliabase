@@ -871,7 +871,7 @@ class SampleAlias(models.Model):
     name.  Only if you look for the name by the search function, you also find
     aliases of the same name.
     """
-    name = models.CharField(_(u"name"), max_length=30)
+    name = models.CharField(_(u"name"), max_length=255)
     sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
 
     class Meta:
