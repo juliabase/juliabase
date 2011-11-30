@@ -69,15 +69,19 @@ def new(request):
     permissions.assert_can_add_external_operator(request.user)
     if request.method == "POST":
         external_operator_form = AddExternalOperatorForm(request.user, request.POST)
-        if external_operator_form.is_valid():
+        initials_form = form_utils.InitialsForm(person=None, initials_mandatory=True, data=request.POST)
+        if external_operator_form.is_valid() and initials_form.is_valid():
             external_operator = external_operator_form.save()
+            initials_form.save(external_operator)
             return utils.successful_response(
                 request,
                 _(u"The external operator “{operator}” was successfully added.".format(operator=external_operator.name)))
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
+        initials_form = form_utils.InitialsForm(person=None, initials_mandatory=True)
     return render_to_response("samples/edit_external_operator.html", {"title": _(u"Add external operator"),
-                                                                      "external_operator": external_operator_form},
+                                                                      "external_operator": external_operator_form,
+                                                                      "initials": initials_form},
                               context_instance=RequestContext(request))
 
 
@@ -121,16 +125,14 @@ def edit(request, external_operator_id):
     permissions.assert_can_edit_external_operator(request.user, external_operator)
     if request.method == "POST":
         external_operator_form = EditExternalOperatorForm(request.POST, instance=external_operator)
-        initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=False, data=request.POST)
-        if external_operator_form.is_valid() and initials_form.is_valid():
+        if external_operator_form.is_valid():
             external_operator = external_operator_form.save()
-            initials_form.save()
             return utils.successful_response(
                 request,
                 _(u"The external operator “{operator}” was successfully changed.").format(operator=external_operator.name))
     else:
         external_operator_form = EditExternalOperatorForm(instance=external_operator)
-        initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=False)
+    initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=True)
     return render_to_response("samples/edit_external_operator.html",
                               {"title": _(u"Edit external operator “{operator}”").format(operator=external_operator.name),
                                "external_operator": external_operator_form,

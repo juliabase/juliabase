@@ -31,6 +31,7 @@ from chantal_common.utils import get_really_full_name, check_markdown
 from chantal_common.models import Topic
 from samples import models, permissions
 from samples.views import utils
+from django.utils.text import capfirst
 
 
 # FixMe: Should this also contain "operator = OperatorField"?
@@ -180,48 +181,51 @@ class AddLayersForm(forms.Form):
 initials_pattern = re.compile(ur"[A-Z]{2,4}[0-9]*$")
 
 class InitialsForm(forms.Form):
-    u"""Form for a person's initials.  A “person” can be a user or an external
-    operator.  Initials are optional, however, if you choose them, you cannot
+    u"""Form for a person's initials.  A “person” can be a user, an external
+    operator, or `None`.  Initials are optional, however, if you choose them, you cannot
     change (or delete) them anymore.
     """
     _ = ugettext_lazy
-    # FixMe: Use lowercase form and .capitalize() to ease translating.
-    initials = forms.CharField(label=_(u"Initials"), max_length=4, required=False)
+    initials = forms.CharField(label=capfirst(_(u"initials")), max_length=4, required=False)
 
     def __init__(self, person, initials_mandatory, *args, **kwargs):
         super(InitialsForm, self).__init__(*args, **kwargs)
         self.fields["initials"].required = initials_mandatory
         self.person = person
         self.is_user = isinstance(person, django.contrib.auth.models.User)
-        try:
-            initials = person.initials
-            self.readonly = True
-        except models.Initials.DoesNotExist:
-            self.readonly = False
+        self.readonly = False
+        if person:
+            try:
+                initials = person.initials
+                self.readonly = True
+            except models.Initials.DoesNotExist:
+                pass
         if self.readonly:
             self.fields["initials"].widget.attrs["readonly"] = "readonly"
             self.fields["initials"].initial = initials
-        self.fields["initials"].min_length = 2 if self.is_user else 4
 
     def clean_initials(self):
         initials = self.cleaned_data["initials"]
         if not initials or self.readonly:
             return initials
-        # Note that minimal and maximal length are already checked.
-        if not initials_pattern.match(initials):
+        # Note that maximal length are already checked.
+        min_length = 2 if self.is_user else 4
+        if not initials_pattern.match(initials) or len(initials) < min_length:
             raise ValidationError(_(u"The initials must start with two uppercase letters.  "
-                                    u"They must contain uppercase letters and digits only.  Digits must be at the end."))
+                                    u"They must contain uppercase letters and digits only.  Digits must be at the end.  "
+                                    u"The minimum length must be {min_length}.").format(min_length=min_length))
         if models.Initials.objects.filter(initials=initials).exists():
             raise ValidationError(_(u"These initials are already used."))
         return initials
 
-    def save(self):
+    def save(self, person=None):
         u"""Although this is not a model form, I add a ``save()`` method in
         order to avoid code duplication.  Here, I test whether the “initials”
         field in the database is still empty, and if so, add it to the
         database.
         """
         initials = self.cleaned_data["initials"]
+        self.person = self.person or person
         if initials:
             if self.is_user:
                 if not models.Initials.objects.filter(user=self.person).exists():
@@ -282,10 +286,10 @@ class GeneralSampleField(object):
             seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
             self.choices.append((topic.topic_name, seriesless_samples))
             for series in topic.sample_series:
-                samples = [(sample.pk, 4*u" " + sample.name_with_tags(user)) for sample in series.samples]
-                self.choices.append((4*u" " + series.name, samples))
+                samples = [(sample.pk, 4 * u" " + sample.name_with_tags(user)) for sample in series.samples]
+                self.choices.append((4 * u" " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
-            self.choices.insert(0, (u"", 9*u"-"))
+            self.choices.insert(0, (u"", 9 * u"-"))
 
 
 class SampleField(GeneralSampleField, forms.ChoiceField):
@@ -333,7 +337,7 @@ class UserField(forms.ChoiceField):
 
         :type additional_user: ``django.contrib.auth.models.User``
         """
-        self.choices = [(u"", 9*u"-")]
+        self.choices = [(u"", 9 * u"-")]
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         if additional_user:
@@ -352,7 +356,7 @@ class UserField(forms.ChoiceField):
 
         :type excluded_user: ``django.contrib.auth.models.User``
         """
-        self.choices = [(u"", 9*u"-")]
+        self.choices = [(u"", 9 * u"-")]
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         users.discard(excluded_user)
@@ -387,7 +391,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users |= set(additional_users)
         self.choices = [(user.pk, get_really_full_name(user)) for user in utils.sorted_users(users)]
         if not self.choices:
-            self.choices = ((u"", 9*u"-"),)
+            self.choices = ((u"", 9 * u"-"),)
 
     def clean(self, value):
         if value == [u""]:
@@ -418,7 +422,7 @@ class TopicField(forms.ChoiceField):
         :type user: ``django.contrib.auth.models.User``
         :type additional_topic: ``chantal_common.models.Topic``
         """
-        self.choices = [(u"", 9*u"-")]
+        self.choices = [(u"", 9 * u"-")]
         all_topics = Topic.objects.filter(members__is_active=True).distinct()
         user_topics = user.topics.all()
         topics = \

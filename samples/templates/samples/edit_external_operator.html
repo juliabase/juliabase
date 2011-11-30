@@ -35,13 +35,14 @@ copyright holder, you must destroy it immediately and completely.
     </tr><tr>
       {% input_field external_operator.confidential %}
     </tr>
-    {% if initials %}
-      {% error_list initials _("Error in initials") "<tr>" 2 %}
+    {% error_list initials _("Error in initials") "<tr>" 2 %}
       <tr>
-        {% input_field external_operator.contact_persons %}
-      </tr><tr>
         {% input_field initials.initials %}
       </tr>
+    {% if external_operator.contact_persons %}
+    <tr>
+      {% input_field external_operator.contact_persons %}
+    </tr>
     {% endif %}
     </tbody>
   </table>
