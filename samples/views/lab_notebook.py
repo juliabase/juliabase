@@ -26,7 +26,7 @@ example.
 from __future__ import absolute_import
 
 import datetime, re
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
 from django.template import Context, loader, RequestContext
@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
 from samples import models, permissions
-from samples.views import utils, table_export
+from samples.views import utils
 from samples.data_tree import DataNode
 from chantal_common.utils import HttpResponseSeeOther, get_all_models
 
@@ -88,7 +88,7 @@ def get_previous_next_urls(process_name, year, month):
     u"""Determine the full relative URLs (i.e., only the domain is missing) of
     the previous and next month in the lab notebook, taking the current lab
     notebook view as the starting point.
-    
+
     :Parameters:
       - `process_name`: the class name of the model of the physical process,
         e.g. ``"LargeAreaDeposition"``
@@ -114,16 +114,16 @@ def get_previous_next_urls(process_name, year, month):
         previous_year -= 1
     if previous_year >= 1990:
         previous_url = django.core.urlresolvers.reverse(
-            "lab_notebook_"+process_name, kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
+            "lab_notebook_" + process_name, kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
     next_month += 1
     if next_month == 13:
         next_month = 1
         next_year += 1
     next_url = django.core.urlresolvers.reverse(
-        "lab_notebook_"+process_name, kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
+        "lab_notebook_" + process_name, kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
     return previous_url, next_url
 
-    
+
 @login_required
 def show(request, process_name, year_and_month):
     u"""View for showing one month of the lab notebook for a particular
@@ -156,7 +156,7 @@ def show(request, process_name, year_and_month):
         year_month_form = YearMonthForm(request.POST)
         if year_month_form.is_valid():
             return HttpResponseSeeOther(django.core.urlresolvers.reverse(
-                    "lab_notebook_"+process_name,
+                    "lab_notebook_" + process_name,
                     kwargs={"year_and_month": "{year}/{month}".format(**year_month_form.cleaned_data)}))
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
@@ -166,7 +166,7 @@ def show(request, process_name, year_and_month):
     previous_url, next_url = get_previous_next_urls(process_name, year, month)
     try:
         export_url = django.core.urlresolvers.reverse(
-            "export_lab_notebook_"+process_name,
+            "export_lab_notebook_" + process_name,
             kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)
     except django.core.urlresolvers.NoReverseMatch:
         export_url = None
@@ -186,7 +186,7 @@ def export(request, process_name, year_and_month):
     return value is not an HTML response but a CSV or JSON response.  In
     ``urls.py``, you must give the entry for this view the name
     ``"export_lab_notebook_<process_name>"``.
-    
+
     :Parameters:
       - `request`: the current HTTP Request object
       - `process_name`: the class name of the model of the physical process,
@@ -207,4 +207,15 @@ def export(request, process_name, year_and_month):
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
     data = process_class.get_lab_notebook_data(year, month)
-    return table_export.export(request, data, _(u"process"))
+    result = utils.table_export(request, data, _(u"process"))
+    if isinstance(result, tuple):
+        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
+    elif isinstance(result, HttpResponse):
+        return result
+    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                            "columns": columns_form,
+                                                            "rows": zip(table, switch_row_forms) if table else None,
+                                                            "old_data": old_data_form,
+                                                            "backlink": request.GET.get("next", "")},
+                              context_instance=RequestContext(request))
