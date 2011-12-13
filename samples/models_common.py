@@ -551,7 +551,7 @@ def get_all_searchable_physical_processes():
 class Sample(models.Model):
     u"""The model for samples.
     """
-    name = models.CharField(_(u"name"), max_length=30, unique=True, db_index=True)
+    name = models.CharField(_(u"name"), max_length=200, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_(u"watchers"))
         # Translators: location of a sample
