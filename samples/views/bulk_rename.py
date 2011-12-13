@@ -54,7 +54,7 @@ class NewNameForm(forms.Form):
     u"""Form for the new name of one sample.
     """
     _ = ugettext_lazy
-    name = forms.CharField(label=_(u"New name"), max_length=22)
+    name = forms.CharField(label=_(u"New name"), max_length=192)
 
     def __init__(self, prefix_, *args, **kwargs):
         u"""Class constructor.
@@ -145,7 +145,7 @@ def bulk_rename(request):
     # the remote client.
     if "numbers" in request.GET:
         numbers_list = request.GET.get("numbers", "")
-        samples = [get_object_or_404(models.Sample, name="*"+number.zfill(5)) for number in numbers_list.split(",")]
+        samples = [get_object_or_404(models.Sample, name="*" + number.zfill(5)) for number in numbers_list.split(",")]
     elif "ids" in request.GET:
         ids = request.GET["ids"].split(",")
         samples = [get_object_or_404(models.Sample, pk=utils.convert_id_to_int(id_)) for id_ in ids]
