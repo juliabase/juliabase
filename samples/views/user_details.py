@@ -126,8 +126,12 @@ def edit_preferences(request, login_name):
         exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
         for process_id_list in exceptional_processes_dict.itervalues():
             for process_id in copy.copy(process_id_list):
-                if models.Process.objects.get(pk=process_id).content_type.id in differences:
-                    process_id_list.remove(process_id)
+                try:
+                    if models.Process.objects.get(pk=process_id).content_type.id in differences:
+                        process_id_list.remove(process_id)
+                except models.Process.DoesNotExist:
+                    # FixMe: the missing process should be removed from the exceptional_processes_dict
+                    pass
         user.samples_user_details.folded_processes = json.dumps(exceptional_processes_dict)
         user.samples_user_details.save()
 
