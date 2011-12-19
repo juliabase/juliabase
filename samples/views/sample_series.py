@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Collected views for dealing with sample series.
+"""Collected views for dealing with sample series.
 
 Names of sample series are of the form ``originator-YY-name``, where
 ``originator`` is the person who created the sample series, and ``YY`` is the
@@ -21,7 +21,8 @@ year (two digits). ``name`` is almost arbitrary.  Names of sample series can't
 be changed once they have been created.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
 from chantal_common.utils import append_error, adjust_timezone_information
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -42,16 +43,16 @@ import hashlib
 
 
 class SampleSeriesForm(forms.ModelForm):
-    u"""Form for editing and creating sample series.
+    """Form for editing and creating sample series.
     """
     _ = ugettext_lazy
-    short_name = forms.CharField(label=_(u"Name"), max_length=50)
-    currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
-    topic = form_utils.TopicField(label=_(u"Topic"))
-    samples = form_utils.MultipleSamplesField(label=_(u"Samples"))
+    short_name = forms.CharField(label=_("Name"), max_length=50)
+    currently_responsible_person = form_utils.UserField(label=_("Currently responsible person"))
+    topic = form_utils.TopicField(label=_("Topic"))
+    samples = form_utils.MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, data=None, **kwargs):
-        u"""Form constructor.  I have to initialise the form here, especially
+        """Form constructor.  I have to initialise the form here, especially
         because the sample set to choose from must be found and the name of an
         existing series must not be changed.
         """
@@ -72,14 +73,14 @@ class SampleSeriesForm(forms.ModelForm):
         self.fields["topic"].set_topics(user, sample_series.topic if sample_series else None)
 
     def clean_description(self):
-        u"""Forbid image and headings syntax in Markdown markup.
+        """Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
         chantal_common.utils.check_markdown(description)
         return description
 
     def validate_unique(self):
-        u"""Overridden to disable Django's intrinsic test for uniqueness.  I
+        """Overridden to disable Django's intrinsic test for uniqueness.  I
         simply disable this inherited method completely because I do my own
         uniqueness test in the create view itself.  I cannot use Django's
         built-in test anyway because it leads to an error message in wrong
@@ -93,7 +94,7 @@ class SampleSeriesForm(forms.ModelForm):
 
 
 def embed_timestamp(request, name):
-    u"""Put a timestamp field in the request object that is used by both
+    """Put a timestamp field in the request object that is used by both
     `sample_series_timestamp` and `sample_series_etag`.  It's really a pity
     that you can't give *one* function for returning both with Django's API for
     conditional view processing.
@@ -122,7 +123,7 @@ def embed_timestamp(request, name):
 
 
 def sample_series_timestamp(request, name):
-    u"""Calculate the timestamp of a sample series.  See
+    """Calculate the timestamp of a sample series.  See
     `sample.sample_timestamp` for further information.
 
     :Parameters:
@@ -142,7 +143,7 @@ def sample_series_timestamp(request, name):
 
 
 def sample_series_etag(request, name):
-    u"""Calculate an ETag for the sample series page.  See
+    """Calculate an ETag for the sample series page.  See
     `sample.sample_timestamp` for further information.
 
     :Parameters:
@@ -168,7 +169,7 @@ def sample_series_etag(request, name):
 @login_required
 @condition(last_modified_func=sample_series_timestamp)
 def show(request, name):
-    u"""View for showing a sample series.  You can see a sample series if
+    """View for showing a sample series.  You can see a sample series if
     you're in its topic, or you're the currently responsible person for it,
     or if you can view all samples anyway.
 
@@ -191,7 +192,7 @@ def show(request, name):
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
     return render_to_response("samples/show_sample_series.html",
-                              {"title": _(u"Sample series “{name}”").format(name=sample_series.name),
+                              {"title": _("Sample series “{name}”").format(name=sample_series.name),
                                "can_edit": can_edit, "can_add_result": can_add_result,
                                "sample_series": sample_series,
                                "result_processes": result_processes},
@@ -199,7 +200,7 @@ def show(request, name):
 
 
 def is_referentially_valid(sample_series, sample_series_form, edit_description_form):
-    u"""Checks that the “important” checkbox is marked if the topic or the
+    """Checks that the “important” checkbox is marked if the topic or the
     currently responsible person were changed.
 
     :Parameters:
@@ -220,18 +221,18 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
     referentially_valid = True
     if sample_series_form.is_valid() and edit_description_form.is_valid() and \
             (sample_series_form.cleaned_data["topic"] != sample_series.topic or
-             sample_series_form.cleaned_data["currently_responsible_person"] != 
+             sample_series_form.cleaned_data["currently_responsible_person"] !=
              sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
         append_error(edit_description_form,
-                     _(u"Changing the topic or the responsible person must be marked as important."), "important")
+                     _("Changing the topic or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
 @login_required
 def edit(request, name):
-    u"""View for editing an existing sample series.  Only the currently
+    """View for editing an existing sample series.  Only the currently
     responsible person can edit a sample series.
 
     :Parameters:
@@ -266,7 +267,7 @@ def edit(request, name):
             feed_reporter.report_edited_sample_series(sample_series, edit_description)
             return utils.successful_response(
                 request,
-                _(u"Sample series {name} was successfully updated in the database.").format(name=sample_series.name))
+                _("Sample series {name} was successfully updated in the database.").format(name=sample_series.name))
     else:
         sample_series_form = \
             SampleSeriesForm(request.user, instance=sample_series,
@@ -276,7 +277,7 @@ def edit(request, name):
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
     return render_to_response("samples/edit_sample_series.html",
-                              {"title": _(u"Edit sample series “{name}”").format(name=sample_series.name),
+                              {"title": _("Edit sample series “{name}”").format(name=sample_series.name),
                                "sample_series": sample_series_form,
                                "is_new": False, "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
@@ -284,7 +285,7 @@ def edit(request, name):
 
 @login_required
 def new(request):
-    u"""View for creating a new sample series.  Note that you can add arbitrary
+    """View for creating a new sample series.  Note that you can add arbitrary
     samples to a sample series, even those you can't see.
 
     :Parameters:
@@ -301,7 +302,7 @@ def new(request):
         sample_series_form = SampleSeriesForm(request.user, request.POST)
         if sample_series_form.is_valid():
             timestamp = datetime.datetime.today()
-            full_name = u"{0}-{1}-{2}".format(
+            full_name = "{0}-{1}-{2}".format(
                 request.user.username, timestamp.strftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
                 append_error(sample_series_form, _("This sample series name is already given."), "short_name")
@@ -318,21 +319,21 @@ def new(request):
                 sample_series_form.save_m2m()
                 feed_utils.Reporter(request.user).report_new_sample_series(sample_series)
                 return utils.successful_response(
-                    request, _(u"Sample series {name} was successfully added to the database.").format(name=full_name))
+                    request, _("Sample series {name} was successfully added to the database.").format(name=full_name))
     else:
         sample_series_form = SampleSeriesForm(request.user)
     return render_to_response(
         "samples/edit_sample_series.html",
-        {"title": _(u"Create new sample series"),
+        {"title": _("Create new sample series"),
          "sample_series": sample_series_form,
          "is_new": True,
-         "name_prefix": u"{0}-{1}".format(request.user.username, datetime.datetime.today().strftime("%y"))},
+         "name_prefix": "{0}-{1}".format(request.user.username, datetime.datetime.today().strftime("%y"))},
         context_instance=RequestContext(request))
 
 
 @login_required
 def export(request, name):
-    u"""View for exporting sample series data in CSV or JSON format.  Thus, the
+    """View for exporting sample series data in CSV or JSON format.  Thus, the
     return value is not an HTML response.  Note that you must also be allowed
     to see all *samples* in this sample series for the export.
 
@@ -354,12 +355,12 @@ def export(request, name):
         permissions.assert_can_fully_view_sample(request.user, sample)
 
     data = sample_series.get_data_for_table_export()
-    result = utils.table_export(request, data, _(u"sample"))
+    result = utils.table_export(request, data, _("sample"))
     if isinstance(result, tuple):
         column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
     elif isinstance(result, HttpResponse):
         return result
-    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    title = _("Table export for “{name}”").format(name=data.descriptive_name)
     return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
                                                             "columns": columns_form,
                                                             "rows": zip(table, switch_row_forms) if table else None,

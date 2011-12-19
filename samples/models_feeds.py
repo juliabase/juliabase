@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Models for feed entries.
+"""Models for feed entries.
 
 It is important to note that in some case, you may wonder why certain fields
 are included into the model.  For example, if I report a new sample in the
@@ -23,7 +23,8 @@ afterwards which would render old feed entries incorrect.  Therefore, the feed
 entries are self-contained.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
 from chantal_common.models import Topic, PolymorphicModel
 from chantal_common.utils import get_really_full_name
 from django.contrib.contenttypes.models import ContentType
@@ -38,31 +39,31 @@ import hashlib
 
 
 class FeedEntry(PolymorphicModel):
-    u"""Abstract base model for newsfeed entries.  This is also not really
+    """Abstract base model for newsfeed entries.  This is also not really
     abstract as it has a table in the database, however, it is never
     instantiated itself.  Instead, see `PolymorphicModel.actual_instance` which
     is inherited by this class.
     """
-    originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"originator"))
-    users = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"users"), related_name="feed_entries",
+    originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("originator"))
+    users = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("users"), related_name="feed_entries",
                                    blank=True)
-    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
-    important = models.BooleanField(_(u"is important"), default=True)
-    sha1_hash = models.CharField(_(u"SHA1 hex digest"), max_length=40, blank=True, editable=False)
-    u"""You'll never calculate the SHA-1 hash yourself.  It is done in
+    timestamp = models.DateTimeField(_("timestamp"), auto_now_add=True)
+    important = models.BooleanField(_("is important"), default=True)
+    sha1_hash = models.CharField(_("SHA1 hex digest"), max_length=40, blank=True, editable=False)
+    """You'll never calculate the SHA-1 hash yourself.  It is done in
     `save`."""
 
     class Meta:
-        verbose_name = _(u"feed entry")
-        verbose_name_plural = _(u"feed entries")
+        verbose_name = _("feed entry")
+        verbose_name_plural = _("feed entries")
         ordering = ["-timestamp"]
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"feed entry #{number}").format(number=self.pk)
+        return _("feed entry #{number}").format(number=self.pk)
 
     def save(self, *args, **kwargs):
-        u"""Before saving the feed entry, I calculate an unsalted SHA-1 from
+        """Before saving the feed entry, I calculate an unsalted SHA-1 from
         the timestamp, the username of the originator, the object's ID, and the
         link (if given).  It is used for the GUID of this entry.
 
@@ -81,7 +82,7 @@ class FeedEntry(PolymorphicModel):
         super(FeedEntry, self).save()
 
     def get_metadata(self):
-        u"""Return the title of this feed entry, as a plain string (no HTML),
+        """Return the title of this feed entry, as a plain string (no HTML),
         and the categorisation (see the Atom feed specification, :RFC:`4646`,
         section 4.2.2).  It also returns a link if approriate (without domain
         but with the leading ``/``).
@@ -95,7 +96,7 @@ class FeedEntry(PolymorphicModel):
         raise NotImplementedError
 
     def get_additional_template_context(self, user):
-        u"""Return a dictionary with additional context that should be
+        """Return a dictionary with additional context that should be
         available in the template.  It is similar to
         `models_depositions.SixChamberDeposition.get_additional_template_context`.
         However, in contrast to this other method, the feed version is
@@ -119,24 +120,24 @@ class FeedEntry(PolymorphicModel):
 
 
 class FeedNewSamples(FeedEntry):
-    u"""Model for feed entries about new samples having been added to the
+    """Model for feed entries about new samples having been added to the
     database.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
-    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="new_samples_news")
-    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
-    auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
+    samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
+    topic = models.ForeignKey(Topic, verbose_name=_("topic"), related_name="new_samples_news")
+    purpose = models.CharField(_("purpose"), max_length=80, blank=True)
+    auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("auto adders"), blank=True)
 
     class Meta(FeedEntry.Meta):
         # FixMe: The labels are gramatically unfortunate.  “feed entry for new
         # samples” is better.
-        verbose_name = _(u"new samples feed entry")
-        verbose_name_plural = _(u"new samples feed entries")
+        verbose_name = _("new samples feed entry")
+        verbose_name_plural = _("new samples feed entries")
 
     def get_metadata(self):
         _ = ugettext
         result = {}
-        result["title"] = ungettext(u"New sample in “{topic}”", u"New samples in “{topic}”", self.samples.count()).format(
+        result["title"] = ungettext("New sample in “{topic}”", "New samples in “{topic}”", self.samples.count()).format(
             topic=self.topic)
         result["category term"] = "new samples"
         result["category label"] = "new samples"
@@ -147,22 +148,22 @@ class FeedNewSamples(FeedEntry):
 
 
 class FeedMovedSamples(FeedEntry):
-    u"""Model for feed entries about samples moved to a new topic.
+    """Model for feed entries about samples moved to a new topic.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
-    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"), related_name="moved_samples_news")
-    old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True)
-    auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"auto adders"), blank=True)
-    description = models.TextField(_(u"description"))
+    samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
+    topic = models.ForeignKey(Topic, verbose_name=_("topic"), related_name="moved_samples_news")
+    old_topic = models.ForeignKey(Topic, verbose_name=_("old topic"), null=True, blank=True)
+    auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("auto adders"), blank=True)
+    description = models.TextField(_("description"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"moved samples feed entry")
-        verbose_name_plural = _(u"moved samples feed entries")
+        verbose_name = _("moved samples feed entry")
+        verbose_name_plural = _("moved samples feed entries")
 
     def get_metadata(self):
         _ = ugettext
         result = {}
-        result["title"] = ungettext(u"New sample moved to “{topic}”", u"New samples moved to “{topic}”",
+        result["title"] = ungettext("New sample moved to “{topic}”", "New samples moved to “{topic}”",
                                     self.samples.count()).format(topic=self.topic)
         result["category term"] = "moved samples"
         result["category label"] = "moved samples"
@@ -173,19 +174,19 @@ class FeedMovedSamples(FeedEntry):
 
 
 class FeedNewPhysicalProcess(FeedEntry):
-    u"""Model for feed entries about new physical processes.
+    """Model for feed entries about new physical processes.
     """
-    process = models.OneToOneField(Process, verbose_name=_(u"process"))
+    process = models.OneToOneField(Process, verbose_name=_("process"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"new physical process feed entry")
-        verbose_name_plural = _(u"new physical process feed entries")
+        verbose_name = _("new physical process feed entry")
+        verbose_name_plural = _("new physical process feed entries")
 
     def get_metadata(self):
         _ = ugettext
         result = {}
         process = self.process.actual_instance
-        result["title"] = _(u"New {process}").format(process=process)
+        result["title"] = _("New {process}").format(process=process)
         result["category term"] = "new physical process"
         result["category label"] = "new physical process"
         result["link"] = process.get_absolute_url()
@@ -196,20 +197,20 @@ class FeedNewPhysicalProcess(FeedEntry):
 
 
 class FeedEditedPhysicalProcess(FeedEntry):
-    u"""Model for feed entries about edited physical processes.
+    """Model for feed entries about edited physical processes.
     """
-    process = models.ForeignKey(Process, verbose_name=_(u"process"))
-    description = models.TextField(_(u"description"))
+    process = models.ForeignKey(Process, verbose_name=_("process"))
+    description = models.TextField(_("description"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"edited physical process feed entry")
-        verbose_name_plural = _(u"edited physical process feed entries")
+        verbose_name = _("edited physical process feed entry")
+        verbose_name_plural = _("edited physical process feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
         process = self.process.actual_instance
-        metadata["title"] = _(u"Edited {process}").format(process=process)
+        metadata["title"] = _("Edited {process}").format(process=process)
         metadata["category term"] = "new physical process"
         metadata["category label"] = "new physical process"
         metadata["link"] = process.get_absolute_url()
@@ -220,28 +221,28 @@ class FeedEditedPhysicalProcess(FeedEntry):
 
 
 class FeedResult(FeedEntry):
-    u"""Model for feed entries about new or edited result processes.  Note that
+    """Model for feed entries about new or edited result processes.  Note that
     this model doesn't care whether the result is connected with samples or
     sample series or both.  This is distinguished in the HTML template.
     """
         # Translators: experimental result
-    result = models.ForeignKey(Result, verbose_name=_(u"result"))
-    description = models.TextField(_(u"description"), blank=True)
-    is_new = models.BooleanField(_(u"result is new"))
+    result = models.ForeignKey(Result, verbose_name=_("result"))
+    description = models.TextField(_("description"), blank=True)
+    is_new = models.BooleanField(_("result is new"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"result feed entry")
-        verbose_name_plural = _(u"result feed entries")
+        verbose_name = _("result feed entry")
+        verbose_name_plural = _("result feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
         if self.is_new:
-            metadata["title"] = _(u"New: {result_title}").format(result_title=self.result.title)
+            metadata["title"] = _("New: {result_title}").format(result_title=self.result.title)
             metadata["category term"] = "new result"
             metadata["category label"] = "new result"
         else:
-            metadata["title"] = _(u"Edited: {result_title}").format(result_title=self.result.title)
+            metadata["title"] = _("Edited: {result_title}").format(result_title=self.result.title)
             metadata["category term"] = "edited result"
             metadata["category label"] = "edited result"
         metadata["link"] = self.result.get_absolute_url()
@@ -256,90 +257,90 @@ class FeedResult(FeedEntry):
 
 
 class FeedCopiedMySamples(FeedEntry):
-    u"""Model for feed entries about samples copied from one user to the “My
+    """Model for feed entries about samples copied from one user to the “My
     Samples” list of another user.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
-    comments = models.TextField(_(u"comments"))
+    samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
+    comments = models.TextField(_("comments"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"copied My Samples feed entry")
-        verbose_name_plural = _(u"copied My Samples feed entries")
+        verbose_name = _("copied My Samples feed entry")
+        verbose_name_plural = _("copied My Samples feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"{name} copied samples to you").format(name=get_really_full_name(self.originator))
+        metadata["title"] = _("{name} copied samples to you").format(name=get_really_full_name(self.originator))
         metadata["category term"] = "copied samples"
         metadata["category label"] = "copied My Samples"
         return metadata
 
 
 class FeedEditedSamples(FeedEntry):
-    u"""Model for feed entries for edited samples.  This includes changed
+    """Model for feed entries for edited samples.  This includes changed
     currently responsible persons.  The respective view generates three entries
     for that, however, see `samples.views.sample.edit`.
 
     FixMe: This should also include sample deaths.
     """
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
-    description = models.TextField(_(u"description"))
-    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False)
+    samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
+    description = models.TextField(_("description"))
+    responsible_person_changed = models.BooleanField(_("has responsible person changed"), default=False)
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"edited samples feed entry")
-        verbose_name_plural = _(u"edited samples feed entries")
+        verbose_name = _("edited samples feed entry")
+        verbose_name_plural = _("edited samples feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
         if self.samples.count() == 1:
-            metadata["title"] = _(u"Sample {sample} was edited").format(sample=self.samples.get())
+            metadata["title"] = _("Sample {sample} was edited").format(sample=self.samples.get())
         else:
-            metadata["title"] = _(u"Samples were edited")
+            metadata["title"] = _("Samples were edited")
         metadata["category term"] = "edited samples"
         metadata["category label"] = "edited samples"
         return metadata
 
 
 class FeedSampleSplit(FeedEntry):
-    u"""Model for feed entries for sample splits.
+    """Model for feed entries for sample splits.
     """
-    sample_split = models.ForeignKey(SampleSplit, verbose_name=_(u"sample split"))
-    sample_completely_split = models.BooleanField(_(u"sample was completely split"), default=False)
+    sample_split = models.ForeignKey(SampleSplit, verbose_name=_("sample split"))
+    sample_completely_split = models.BooleanField(_("sample was completely split"), default=False)
 
     class Meta(FeedEntry.Meta):
             # Translators: Feed entry for a split of a sample
-        verbose_name = _(u"sample split feed entry")
+        verbose_name = _("sample split feed entry")
             # Translators: Feed entries for splits of samples
-        verbose_name_plural = _(u"sample split feed entries")
+        verbose_name_plural = _("sample split feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample “{parent_sample}” was split").format(parent_sample=self.sample_split.parent)
+        metadata["title"] = _("Sample “{parent_sample}” was split").format(parent_sample=self.sample_split.parent)
         metadata["category term"] = "split sample"
         metadata["category label"] = "split sample"
         return metadata
 
 
 class FeedEditedSampleSeries(FeedEntry):
-    u"""Model for feed entries for edited sample series.  This includes changed
+    """Model for feed entries for edited sample series.  This includes changed
     currently responsible persons.  The respective view generates two entries
     for that, however, see `samples.views.sample_series.edit`.
     """
-    sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
-    description = models.TextField(_(u"description"))
-    responsible_person_changed = models.BooleanField(_(u"has responsible person changed"), default=False)
+    sample_series = models.ForeignKey(SampleSeries, verbose_name=_("sample series"))
+    description = models.TextField(_("description"))
+    responsible_person_changed = models.BooleanField(_("has responsible person changed"), default=False)
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"edited sample series feed entry")
-        verbose_name_plural = _(u"edited sample series feed entries")
+        verbose_name = _("edited sample series feed entry")
+        verbose_name_plural = _("edited sample series feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample series {name} was edited").format(name=self.sample_series)
+        metadata["title"] = _("Sample series {name} was edited").format(name=self.sample_series)
         metadata["category term"] = "edited sample series"
         metadata["category label"] = "edited sample series"
         metadata["link"] = self.sample_series.get_absolute_url()
@@ -347,20 +348,20 @@ class FeedEditedSampleSeries(FeedEntry):
 
 
 class FeedNewSampleSeries(FeedEntry):
-    u"""Model for feed entries for new sample series.
+    """Model for feed entries for new sample series.
     """
-    sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
-    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
-    subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"subscribers"), blank=True)
+    sample_series = models.ForeignKey(SampleSeries, verbose_name=_("sample series"))
+    topic = models.ForeignKey(Topic, verbose_name=_("topic"))
+    subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("subscribers"), blank=True)
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"new sample series feed entry")
-        verbose_name_plural = _(u"new sample series feed entries")
+        verbose_name = _("new sample series feed entry")
+        verbose_name_plural = _("new sample series feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New sample series “{sample_series}” in topic “{topic}”").format(
+        metadata["title"] = _("New sample series “{sample_series}” in topic “{topic}”").format(
             sample_series=self.sample_series, topic=self.topic)
         metadata["category term"] = "new sample series"
         metadata["category label"] = "new sample series"
@@ -372,23 +373,23 @@ class FeedNewSampleSeries(FeedEntry):
 
 
 class FeedMovedSampleSeries(FeedEntry):
-    u"""Model for feed entries for sample series moved to a new topic.
+    """Model for feed entries for sample series moved to a new topic.
     """
-    sample_series = models.ForeignKey(SampleSeries, verbose_name=_(u"sample series"))
-    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
-    old_topic = models.ForeignKey(Topic, verbose_name=_(u"old topic"), null=True, blank=True,
+    sample_series = models.ForeignKey(SampleSeries, verbose_name=_("sample series"))
+    topic = models.ForeignKey(Topic, verbose_name=_("topic"))
+    old_topic = models.ForeignKey(Topic, verbose_name=_("old topic"), null=True, blank=True,
                                   related_name="news_ex_sample_series")
-    description = models.TextField(_(u"description"))
-    subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_(u"subscribers"), blank=True)
+    description = models.TextField(_("description"))
+    subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("subscribers"), blank=True)
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"moved sample series feed entry")
-        verbose_name_plural = _(u"moved sample series feed entries")
+        verbose_name = _("moved sample series feed entry")
+        verbose_name_plural = _("moved sample series feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Sample series {sample_series} was moved to topic “{topic}”").format(
+        metadata["title"] = _("Sample series {sample_series} was moved to topic “{topic}”").format(
             sample_series=self.sample_series, topic=self.topic)
         metadata["category term"] = "moved sample series"
         metadata["category label"] = "moved sample series"
@@ -400,47 +401,47 @@ class FeedMovedSampleSeries(FeedEntry):
 
 
 changed_topic_action_choices = (
-    ("added", _(u"added")),
-    ("removed", _(u"removed")),
+    ("added", _("added")),
+    ("removed", _("removed")),
     )
 
 class FeedChangedTopic(FeedEntry):
-    u"""Model for feed entries for sample series moved to a new topic.
+    """Model for feed entries for sample series moved to a new topic.
     """
-    topic = models.ForeignKey(Topic, verbose_name=_(u"topic"))
+    topic = models.ForeignKey(Topic, verbose_name=_("topic"))
         # Translators: Action is either addition or removal
     action = models.CharField(_("action"), max_length=7, choices=changed_topic_action_choices)
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"changed topic feed entry")
-        verbose_name_plural = _(u"changed topic feed entries")
+        verbose_name = _("changed topic feed entry")
+        verbose_name_plural = _("changed topic feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
         if self.action == "added":
-            metadata["title"] = _(u"Now in topic “{name}”").format(name=self.topic)
+            metadata["title"] = _("Now in topic “{name}”").format(name=self.topic)
         else:
-            metadata["title"] = _(u"Not anymore in topic “{name}”").format(name=self.topic)
+            metadata["title"] = _("Not anymore in topic “{name}”").format(name=self.topic)
         metadata["category term"] = "changed topic membership"
         metadata["category label"] = "changed topic membership"
         return metadata
 
 
 class FeedStatusMessage(FeedEntry):
-    u"""Model for feed entries for new status messages from physical processes.
+    """Model for feed entries for new status messages from physical processes.
     """
-    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
-    status = models.ForeignKey(StatusMessage, verbose_name=_(u"status message"), related_name="feed_entries")
+    process_class = models.ForeignKey(ContentType, verbose_name=_("process class"))
+    status = models.ForeignKey(StatusMessage, verbose_name=_("status message"), related_name="feed_entries")
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"status message feed entry")
-        verbose_name_plural = _(u"status message feed entries")
+        verbose_name = _("status message feed entry")
+        verbose_name_plural = _("status message feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New status message for {process_class}").format(
+        metadata["title"] = _("New status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new status message"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
@@ -448,20 +449,20 @@ class FeedStatusMessage(FeedEntry):
 
 
 class FeedWithdrawnStatusMessage(FeedEntry):
-    u"""Model for feed entries for withdrawn status messages from physical
+    """Model for feed entries for withdrawn status messages from physical
     processes.
     """
-    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
-    status = models.ForeignKey(StatusMessage, verbose_name=_(u"status message"), related_name="feed_entries_for_withdrawal")
+    process_class = models.ForeignKey(ContentType, verbose_name=_("process class"))
+    status = models.ForeignKey(StatusMessage, verbose_name=_("status message"), related_name="feed_entries_for_withdrawal")
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"withdrawn status message feed entry")
-        verbose_name_plural = _(u"withdrawn status message feed entries")
+        verbose_name = _("withdrawn status message feed entry")
+        verbose_name_plural = _("withdrawn status message feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Withdrawn status message for {process_class}").format(
+        metadata["title"] = _("Withdrawn status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "withdrawn status message"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
@@ -469,18 +470,18 @@ class FeedWithdrawnStatusMessage(FeedEntry):
 
 
 class FeedNewTask(FeedEntry):
-    u"""Model for feed entries for new tasks for physical processes.
+    """Model for feed entries for new tasks for physical processes.
     """
-    task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_new_tasks")
+    task = models.ForeignKey(Task, verbose_name=_("task"), related_name="feed_entries_for_new_tasks")
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"new task feed entry")
-        verbose_name_plural = _(u"new task feed entries")
+        verbose_name = _("new task feed entry")
+        verbose_name_plural = _("new task feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"New task for {process_class}").format(
+        metadata["title"] = _("New task for {process_class}").format(
             process_class=self.task.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new task"
         metadata["link"] = self.task.get_absolute_url()
@@ -488,19 +489,19 @@ class FeedNewTask(FeedEntry):
 
 
 class FeedEditedTask(FeedEntry):
-    u"""Model for feed entries for new tasks for physical processes.
+    """Model for feed entries for new tasks for physical processes.
     """
-    task = models.ForeignKey(Task, verbose_name=_(u"task"), related_name="feed_entries_for_edited_tasks")
-    description = models.TextField(_(u"description"))
+    task = models.ForeignKey(Task, verbose_name=_("task"), related_name="feed_entries_for_edited_tasks")
+    description = models.TextField(_("description"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"edited task feed entry")
-        verbose_name_plural = _(u"edited task feed entries")
+        verbose_name = _("edited task feed entry")
+        verbose_name_plural = _("edited task feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Edited task for {process_class}").format(
+        metadata["title"] = _("Edited task for {process_class}").format(
             process_class=self.task.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "edited task"
         metadata["link"] = self.task.get_absolute_url()
@@ -508,20 +509,20 @@ class FeedEditedTask(FeedEntry):
 
 
 class FeedRemovedTask(FeedEntry):
-    u"""Model for feed entries for removing tasks.
+    """Model for feed entries for removing tasks.
     """
-    old_id = models.PositiveIntegerField(_(u"number"), unique=True)
-    process_class = models.ForeignKey(ContentType, verbose_name=_(u"process class"))
-    samples = models.ManyToManyField(Sample, verbose_name=_(u"samples"))
+    old_id = models.PositiveIntegerField(_("number"), unique=True)
+    process_class = models.ForeignKey(ContentType, verbose_name=_("process class"))
+    samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
 
     class Meta(FeedEntry.Meta):
-        verbose_name = _(u"removed task feed entry")
-        verbose_name_plural = _(u"removed task feed entries")
+        verbose_name = _("removed task feed entry")
+        verbose_name_plural = _("removed task feed entries")
 
     def get_metadata(self):
         _ = ugettext
         metadata = {}
-        metadata["title"] = _(u"Removed a task for {process_class}").format(
+        metadata["title"] = _("Removed a task for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "removed task"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")

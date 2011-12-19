@@ -13,12 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views for editing Chantal topics in various ways.  You may add topics,
+"""Views for editing Chantal topics in various ways.  You may add topics,
 get a list of them, and change user memberships in topics.  The list of
 topics is actually only a stepping stone to the membership edit view.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404
@@ -35,27 +35,27 @@ from samples.views import utils, feed_utils, form_utils
 
 
 class NewTopicForm(forms.Form):
-    u"""Form for adding a new topic.  I need only its new name and restriction
+    """Form for adding a new topic.  I need only its new name and restriction
     status.
     """
     _ = ugettext_lazy
-    new_topic_name = forms.CharField(label=_(u"Name of new topic"), max_length=80)
+    new_topic_name = forms.CharField(label=_("Name of new topic"), max_length=80)
     # Translators: Topic which is not open to senior members
-    confidential = forms.BooleanField(label=_(u"confidential"), required=False)
+    confidential = forms.BooleanField(label=_("confidential"), required=False)
     def __init__(self, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
         self.fields["new_topic_name"].widget.attrs["size"] = 40
     def clean_new_topic_name(self):
         topic_name = self.cleaned_data["new_topic_name"]
-        topic_name = u" ".join(topic_name.split())
+        topic_name = " ".join(topic_name.split())
         if Topic.objects.filter(name=topic_name).exists():
-            raise ValidationError(_(u"This topic name is already used."))
+            raise ValidationError(_("This topic name is already used."))
         return topic_name
 
 
 @login_required
 def add(request):
-    u"""View for adding a new topic.  This action is only allowed to the heads
+    """View for adding a new topic.  This action is only allowed to the heads
     of institute groups.  The name of topics may contain arbitrary characters.
 
     :Parameters:
@@ -78,17 +78,17 @@ def add(request):
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
             return utils.successful_response(
-                request, _(u"Topic {name} was successfully created.").format(name=new_topic.name),
+                request, _("Topic {name} was successfully created.").format(name=new_topic.name),
                 "samples.views.topic.edit", kwargs={"name": django.utils.http.urlquote(new_topic.name, safe="")})
     else:
         new_topic_form = NewTopicForm()
-    return render_to_response("samples/add_topic.html", {"title": _(u"Add new topic"), "new_topic": new_topic_form},
+    return render_to_response("samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form},
                               context_instance=RequestContext(request))
 
 
 @login_required
 def list_(request):
-    u"""View for a complete list of all topics that the user can edit.  The
+    """View for a complete list of all topics that the user can edit.  The
     user may select one, which leads him to the membership view for this topic.
     If the user can't edit any topic, a 404 is raised.
 
@@ -107,18 +107,18 @@ def list_(request):
     user_topics = user.topics.all()
     topics = set(topic for topic in all_topics if permissions.has_permission_to_edit_topic(user, topic))
     if not topics:
-        raise Http404(u"Can't find any topic that you can edit.")
-    return render_to_response("samples/list_topics.html", {"title": _(u"List of all topics"), "topics": topics},
+        raise Http404("Can't find any topic that you can edit.")
+    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"), "topics": topics},
                               context_instance=RequestContext(request))
 
 
 class EditTopicForm(forms.Form):
-    u"""Form for the member list of a topic.  Note that it is allowed to have
+    """Form for the member list of a topic.  Note that it is allowed to have
     no members at all in a topic.  However, if the topic is confidential, the
     currently logged-in user must remain a member of the topic.
     """
-    members = form_utils.MultipleUsersField(label=_(u"Members"), required=False)
-    confidential = forms.BooleanField(label=_(u"confidential"), required=False)
+    members = form_utils.MultipleUsersField(label=_("Members"), required=False)
+    confidential = forms.BooleanField(label=_("confidential"), required=False)
 
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)
@@ -133,13 +133,13 @@ class EditTopicForm(forms.Form):
         if "members" in cleaned_data and "confidential" in cleaned_data:
             if cleaned_data["confidential"] and \
                     not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):
-                append_error(self, _(u"In confidential topics, at least one member must have permission to edit the topic."),
+                append_error(self, _("In confidential topics, at least one member must have permission to edit the topic."),
                              "members")
         return cleaned_data
 
 @login_required
 def edit(request, name):
-    u"""View for changing the members of a particular topic, and to set the
+    """View for changing the members of a particular topic, and to set the
     restriction status.  This is only allowed to heads of institute groups and
     topic managers.
 
@@ -180,11 +180,11 @@ def edit(request, name):
             if removed_members:
                 feed_utils.Reporter(request.user).report_changed_topic_membership(removed_members, topic, "removed")
             return utils.successful_response(
-                request, _(u"Members of topic “{name}” were successfully updated.").format(name=topic.name))
+                request, _("Members of topic “{name}” were successfully updated.").format(name=topic.name))
     else:
         edit_topic_form = \
             EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True)})
     return render_to_response("samples/edit_topic.html",
-                              {"title": _(u"Change topic memberships of “%s”") % name,
+                              {"title": _("Change topic memberships of “%s”") % name,
                                "edit_topic": edit_topic_form},
                               context_instance=RequestContext(request))

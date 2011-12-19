@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import locale, re
 from django.utils.cache import patch_vary_headers
@@ -29,14 +29,14 @@ from django.utils.translation import ugettext as _
 import django.http
 from django.shortcuts import render_to_response
 
-u"""Middleware for handling samples-database-specific exceptions.
+"""Middleware for handling samples-database-specific exceptions.
 """
 
 
 # FixMe: A JSON client should see JSON responses.
 
 class ExceptionsMiddleware(object):
-    u"""Middleware for catching Chantal-samples-specific exceptions raised by
+    """Middleware for catching Chantal-samples-specific exceptions raised by
     views.  I handle only `PermissionError` and `AmbiguityException` here.
     These exceptions mean a redirect in one way or another.
 
@@ -50,7 +50,7 @@ class ExceptionsMiddleware(object):
         if isinstance(exception, PermissionError):
             return HttpResponseUnauthorized(
                 loader.render_to_string("samples/permission_error.html",
-                                        {"title": _(u"Access denied"), "exception": exception},
+                                        {"title": _("Access denied"), "exception": exception},
                                         context_instance=RequestContext(request)))
         elif isinstance(exception, utils.AmbiguityException):
             return render_to_response("samples/disambiguation.html",

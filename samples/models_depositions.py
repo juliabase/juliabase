@@ -13,14 +13,14 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Models for depositions.  This includes the deposition models themselves as
+"""Models for depositions.  This includes the deposition models themselves as
 well as models for layers.
 
 :type default_location_of_deposited_samples: dict mapping `Deposition` to
   string.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
@@ -31,7 +31,7 @@ from samples.data_tree import DataNode, DataItem
 from chantal_common import search
 
 default_location_of_deposited_samples = {}
-u"""Dictionary mapping process classes to strings which contain the default
+"""Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
 This is used in
 `samples.views.split_after_deposition.GlobalNewDataForm.__init__`.
@@ -39,7 +39,7 @@ This is used in
 
 
 class Deposition(PhysicalProcess):
-    u"""The base class for deposition processes.  Note that, like `Process`,
+    """The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
     class from it.  (By the way, this is the reason why this class needn't
     define a ``get_add_link`` method.)
@@ -57,14 +57,14 @@ class Deposition(PhysicalProcess):
     split-after-deposition view so that it offers input fields for it if it is
     applicable.  (For example, this can be given in the query string.)
     """
-    number = models.CharField(_(u"deposition number"), max_length=15, unique=True, db_index=True)
-    sample_positions = models.TextField(_(u"sample positions"), blank=True)
+    number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
+    sample_positions = models.TextField(_("sample positions"), blank=True)
     """In JSON format, mapping sample IDs to positions.  Positions can be
     numbers or strings."""
 
     class Meta(PhysicalProcess.Meta):
-        verbose_name = _(u"deposition")
-        verbose_name_plural = _(u"depositions")
+        verbose_name = _("deposition")
+        verbose_name_plural = _("depositions")
 
     @models.permalink
     def get_absolute_url(self):
@@ -72,12 +72,12 @@ class Deposition(PhysicalProcess):
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"deposition {number}").format(number=self.number)
+        return _("deposition {number}").format(number=self.number)
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
         data_node = super(Deposition, self).get_data()
-        data_node.items.append(DataItem(u"number", self.number, "deposition"))
+        data_node.items.append(DataItem("number", self.number, "deposition"))
         data_node.children = [layer.get_data() for layer in self.layers.all()]
         return data_node
 
@@ -85,13 +85,13 @@ class Deposition(PhysicalProcess):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = super(Deposition, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_(u"number"), self.number, "deposition"))
+        data_node.items.append(DataItem(_("number"), self.number, "deposition"))
         data_node.children = [layer.get_data_for_table_export() for layer in self.layers.all()]
         return data_node
 
     @classmethod
     def get_search_tree_node(cls):
-        u"""Class method for generating the search tree node for this model
+        """Class method for generating the search tree node for this model
         instance.
 
         :Return:
@@ -108,7 +108,7 @@ class Deposition(PhysicalProcess):
 
 
 class Layer(models.Model):
-    u"""This is an abstract base model for deposition layers.  Now, this is the
+    """This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a
     number, because at least the MyLayers infrastructure relies on this.  (See
@@ -133,30 +133,30 @@ class Layer(models.Model):
         class Meta(Layer.Meta):
             unique_together = ("deposition", "number")
     """
-    number = models.PositiveIntegerField(_(u"layer number"))
+    number = models.PositiveIntegerField(_("layer number"))
 
     class Meta:
         abstract = True
         ordering = ["number"]
-        verbose_name = _(u"layer")
-        verbose_name_plural = _(u"layers")
+        verbose_name = _("layer")
+        verbose_name_plural = _("layers")
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
-        data_node = DataNode(u"layer {0}".format(self.number))
-        data_node.items = [DataItem(u"number", self.number, "layer")]
+        data_node = DataNode("layer {0}".format(self.number))
+        data_node.items = [DataItem("number", self.number, "layer")]
         return data_node
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
-        data_node = DataNode(self, _(u"layer {number}").format(number=self.number))
-        data_node.items = [DataItem(_(u"number"), self.number, "layer")]
+        data_node = DataNode(self, _("layer {number}").format(number=self.number))
+        data_node.items = [DataItem(_("number"), self.number, "layer")]
         return data_node
 
     @classmethod
     def get_search_tree_node(cls):
-        u"""Class method for generating the search tree node for this model
+        """Class method for generating the search tree node for this model
         instance.
 
         :Return:

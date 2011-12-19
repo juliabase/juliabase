@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+from __future__ import unicode_literals
 
 import urllib, urllib2, cookielib, json, logging
 import datetime, re, time, random
@@ -29,7 +30,7 @@ __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamber
 
 def quote_header(value):
     if isinstance(value, bool):
-        return u"on" if value else None
+        return "on" if value else None
     return unicode(value).encode("utf-8")
 
 
@@ -65,19 +66,19 @@ class ChantalConnection(object):
             while max_cycles > 0:
                 max_cycles -= 1
                 try:
-                    response = self.opener.open(root_url+relative_url, urllib.urlencode(cleaned_data, doseq=True))
+                    response = self.opener.open(root_url + relative_url, urllib.urlencode(cleaned_data, doseq=True))
                 except urllib2.HTTPError as e:
                     if max_cycles == 0:
                         text = e.read()
                         logfile = open("chantal_remote.html", "wb")
-                        print>>logfile, text
+                        print >> logfile, text
                         logfile.close()
                         raise
                     time.sleep(3 * random.random())
                 else:
                     break
         else:
-            response = self.opener.open(root_url+relative_url)
+            response = self.opener.open(root_url + relative_url)
         is_pickled = response.info()["Content-Type"].startswith("application/json")
         if is_pickled:
             return json.loads(response.read())
@@ -116,7 +117,7 @@ def logout():
     logging.info("Successfully logged-out.")
 
 
-def new_samples(number_of_samples, current_location, substrate=u"asahi-u", timestamp=None, timestamp_inaccuracy=None,
+def new_samples(number_of_samples, current_location, substrate="asahi-u", timestamp=None, timestamp_inaccuracy=None,
                 purpose=None, tags=None, topic=None, substrate_comments=None):
     samples = connection.open("samples/add/",
                               {"number_of_samples": number_of_samples,
@@ -149,7 +150,7 @@ class SixChamberDeposition(object):
         if not self.operator:
             self.operator = connection.username
         if self.number is None:
-            self.number = json.loads(self.opener.open(self.root_url+"next_deposition_number/B").read())
+            self.number = json.loads(self.opener.open(self.root_url + "next_deposition_number/B").read())
         data = {"number": self.number,
                 "carrier": self.carrier,
                 "operator": connection.primary_keys["users"][self.operator],
@@ -179,24 +180,24 @@ class SixChamberLayer(object):
 
     def get_data(self, layer_index):
         prefix = unicode(layer_index) + "-"
-        data = {prefix+"number": layer_index + 1,
-                prefix+"chamber": self.chamber,
-                prefix+"pressure": self.pressure,
-                prefix+"time": self.time,
-                prefix+"substrate_electrode_distance": self.substrate_electrode_distance,
-                prefix+"comments": self.comments,
-                prefix+"transfer_in_chamber": self.transfer_in_chamber,
-                prefix+"pre_heat": self.pre_heat,
-                prefix+"gas_pre_heat_gas": self.gas_pre_heat_gas,
-                prefix+"gas_pre_heat_pressure": self.gas_pre_heat_pressure,
-                prefix+"gas_pre_heat_time": self.gas_pre_heat_time,
-                prefix+"heating_temperature": self.heating_temperature,
-                prefix+"transfer_out_of_chamber": self.transfer_out_of_chamber,
-                prefix+"plasma_start_power": self.plasma_start_power,
-                prefix+"plasma_start_with_carrier": self.plasma_start_with_carrier,
-                prefix+"deposition_frequency": self.deposition_frequency,
-                prefix+"deposition_power": self.deposition_power,
-                prefix+"base_pressure": self.base_pressure}
+        data = {prefix + "number": layer_index + 1,
+                prefix + "chamber": self.chamber,
+                prefix + "pressure": self.pressure,
+                prefix + "time": self.time,
+                prefix + "substrate_electrode_distance": self.substrate_electrode_distance,
+                prefix + "comments": self.comments,
+                prefix + "transfer_in_chamber": self.transfer_in_chamber,
+                prefix + "pre_heat": self.pre_heat,
+                prefix + "gas_pre_heat_gas": self.gas_pre_heat_gas,
+                prefix + "gas_pre_heat_pressure": self.gas_pre_heat_pressure,
+                prefix + "gas_pre_heat_time": self.gas_pre_heat_time,
+                prefix + "heating_temperature": self.heating_temperature,
+                prefix + "transfer_out_of_chamber": self.transfer_out_of_chamber,
+                prefix + "plasma_start_power": self.plasma_start_power,
+                prefix + "plasma_start_with_carrier": self.plasma_start_with_carrier,
+                prefix + "deposition_frequency": self.deposition_frequency,
+                prefix + "deposition_power": self.deposition_power,
+                prefix + "base_pressure": self.base_pressure}
         for channel_index, channel in enumerate(self.channels):
             data.update(channel.get_data(layer_index, channel_index))
         return data
@@ -211,13 +212,13 @@ class SixChamberChannel(object):
 
     def get_data(self, layer_index, channel_index):
         prefix = "%d_%d-" % (layer_index, channel_index)
-        return {prefix+"number": self.number, prefix+"gas": self.gas, prefix+"flow_rate": self.flow_rate}
+        return {prefix + "number": self.number, prefix + "gas": self.gas, prefix + "flow_rate": self.flow_rate}
 
 
 
 class LargeAreaDeposition(object):
-    deposition_prefix = u"%02dL-" % (datetime.date.today().year % 100)
-    deposition_number_pattern = re.compile(ur"\d\dL-(?P<number>\d+)$")
+    deposition_prefix = "%02dL-" % (datetime.date.today().year % 100)
+    deposition_number_pattern = re.compile(r"\d\dL-(?P<number>\d+)$")
 
     def __init__(self, sample_ids):
         self.sample_ids = sample_ids
@@ -234,7 +235,7 @@ class LargeAreaDeposition(object):
         if self.number is None:
             next_number = connection.open("next_deposition_number/L")
             number_base = int(self.deposition_number_pattern.match(next_number).group("number")) - 1
-            self.number = self.deposition_prefix + u"%03d" % (number_base + len(self.layers))
+            self.number = self.deposition_prefix + "%03d" % (number_base + len(self.layers))
         else:
             number_base = int(self.deposition_number_pattern.match(self.number).group("number")) - 1
         data = {"number": self.number,
@@ -245,7 +246,7 @@ class LargeAreaDeposition(object):
                 "sample_list": self.sample_ids,
                 "remove_deposited_from_my_samples": True}
         for layer_index, layer in enumerate(self.layers):
-            data.update(layer.get_data(layer_index+number_base+1, layer_index))
+            data.update(layer.get_data(layer_index + number_base + 1, layer_index))
         result = connection.open("large-area_depositions/add/", data)
         logging.info("Successfully added large area deposition %s." % self.number)
         return result
@@ -262,24 +263,24 @@ class LargeAreaLayer(object):
 
     def get_data(self, layer_number, layer_index):
         prefix = unicode(layer_index) + "-"
-        data = {prefix+"number": self.number or layer_number,
-                prefix+"date": self.date,
-                prefix+"layer_type": self.layer_type,
-                prefix+"station": self.station,
-                prefix+"sih4": self.sih4,
-                prefix+"h2": self.h2,
-                prefix+"tmb": self.tmb,
-                prefix+"ch4": self.ch4,
-                prefix+"co2": self.co2,
-                prefix+"ph3": self.ph3,
-                prefix+"power": self.power,
-                prefix+"pressure": self.pressure,
-                prefix+"temperature": self.temperature,
-                prefix+"hf_frequency": self.hf_frequency,
-                prefix+"time": self.time,
-                prefix+"dc_bias": self.dc_bias,
-                prefix+"electrode": self.electrode,
-                prefix+"electrodes_distance": self.electrodes_distance}
+        data = {prefix + "number": self.number or layer_number,
+                prefix + "date": self.date,
+                prefix + "layer_type": self.layer_type,
+                prefix + "station": self.station,
+                prefix + "sih4": self.sih4,
+                prefix + "h2": self.h2,
+                prefix + "tmb": self.tmb,
+                prefix + "ch4": self.ch4,
+                prefix + "co2": self.co2,
+                prefix + "ph3": self.ph3,
+                prefix + "power": self.power,
+                prefix + "pressure": self.pressure,
+                prefix + "temperature": self.temperature,
+                prefix + "hf_frequency": self.hf_frequency,
+                prefix + "time": self.time,
+                prefix + "dc_bias": self.dc_bias,
+                prefix + "electrode": self.electrode,
+                prefix + "electrodes_distance": self.electrodes_distance}
         return data
 
 
@@ -328,34 +329,34 @@ class SmallClusterToolHotwireLayer(object):
 
     def get_data(self, layer_index):
         prefix = unicode(layer_index) + "-"
-        data = {prefix+"layer_type": "hotwire",
-                prefix+"pressure": self.pressure,
-                prefix+"time": self.time,
-                prefix+"substrate_wire_distance": self.substrate_wire_distance,
-                prefix+"comments": self.comments,
-                prefix+"transfer_in_chamber": self.transfer_in_chamber,
-                prefix+"pre_heat": self.pre_heat,
-                prefix+"gas_pre_heat_gas": self.gas_pre_heat_gas,
-                prefix+"gas_pre_heat_pressure": self.gas_pre_heat_pressure,
-                prefix+"gas_pre_heat_time": self.gas_pre_heat_time,
-                prefix+"heating_temperature": self.heating_temperature,
-                prefix+"transfer_out_of_chamber": self.transfer_out_of_chamber,
-                prefix+"wire_material": self.wire_material,
-                prefix+"voltage": self.voltage,
-                prefix+"filament_temperature": self.filament_temperature,
-                prefix+"current": self.current,
-                prefix+"base_pressure": self.base_pressure,
-                prefix+"sih4": self.sih4,
-                prefix+"h2": self.h2,
-                prefix+"ph3_sih4": self.ph3_sih4,
-                prefix+"tmb_he": self.tmb_he,
-                prefix+"b2h6_h2": self.b2h6_h2,
-                prefix+"ch4": self.ch4,
-                prefix+"co2": self.co2,
-                prefix+"geh4": self.geh4,
-                prefix+"ar": self.ar,
-                prefix+"si2h6": self.si2h6,
-                prefix+"ph3_h2": self.ph3_h2}
+        data = {prefix + "layer_type": "hotwire",
+                prefix + "pressure": self.pressure,
+                prefix + "time": self.time,
+                prefix + "substrate_wire_distance": self.substrate_wire_distance,
+                prefix + "comments": self.comments,
+                prefix + "transfer_in_chamber": self.transfer_in_chamber,
+                prefix + "pre_heat": self.pre_heat,
+                prefix + "gas_pre_heat_gas": self.gas_pre_heat_gas,
+                prefix + "gas_pre_heat_pressure": self.gas_pre_heat_pressure,
+                prefix + "gas_pre_heat_time": self.gas_pre_heat_time,
+                prefix + "heating_temperature": self.heating_temperature,
+                prefix + "transfer_out_of_chamber": self.transfer_out_of_chamber,
+                prefix + "wire_material": self.wire_material,
+                prefix + "voltage": self.voltage,
+                prefix + "filament_temperature": self.filament_temperature,
+                prefix + "current": self.current,
+                prefix + "base_pressure": self.base_pressure,
+                prefix + "sih4": self.sih4,
+                prefix + "h2": self.h2,
+                prefix + "ph3_sih4": self.ph3_sih4,
+                prefix + "tmb_he": self.tmb_he,
+                prefix + "b2h6_h2": self.b2h6_h2,
+                prefix + "ch4": self.ch4,
+                prefix + "co2": self.co2,
+                prefix + "geh4": self.geh4,
+                prefix + "ar": self.ar,
+                prefix + "si2h6": self.si2h6,
+                prefix + "ph3_h2": self.ph3_h2}
         return data
 
 
@@ -374,35 +375,35 @@ class SmallClusterToolPECVDLayer(object):
 
     def get_data(self, layer_index):
         prefix = unicode(layer_index) + "-"
-        data = {prefix+"layer_type": "PECVD",
-                prefix+"chamber": self.chamber,
-                prefix+"pressure": self.pressure,
-                prefix+"time": self.time,
-                prefix+"substrate_electrode_distance": self.substrate_electrode_distance,
-                prefix+"comments": self.comments,
-                prefix+"transfer_in_chamber": self.transfer_in_chamber,
-                prefix+"pre_heat": self.pre_heat,
-                prefix+"gas_pre_heat_gas": self.gas_pre_heat_gas,
-                prefix+"gas_pre_heat_pressure": self.gas_pre_heat_pressure,
-                prefix+"gas_pre_heat_time": self.gas_pre_heat_time,
-                prefix+"heating_temperature": self.heating_temperature,
-                prefix+"transfer_out_of_chamber": self.transfer_out_of_chamber,
-                prefix+"plasma_start_power": self.plasma_start_power,
-                prefix+"plasma_start_with_carrier": self.plasma_start_with_carrier,
-                prefix+"deposition_frequency": self.deposition_frequency,
-                prefix+"deposition_power": self.deposition_power,
-                prefix+"base_pressure": self.base_pressure,
-                prefix+"sih4": self.sih4,
-                prefix+"h2": self.h2,
-                prefix+"ph3_sih4": self.ph3_sih4,
-                prefix+"tmb_he": self.tmb_he,
-                prefix+"b2h6_h2": self.b2h6_h2,
-                prefix+"ch4": self.ch4,
-                prefix+"co2": self.co2,
-                prefix+"geh4": self.geh4,
-                prefix+"ar": self.ar,
-                prefix+"si2h6": self.si2h6,
-                prefix+"ph3_h2": self.ph3_h2}
+        data = {prefix + "layer_type": "PECVD",
+                prefix + "chamber": self.chamber,
+                prefix + "pressure": self.pressure,
+                prefix + "time": self.time,
+                prefix + "substrate_electrode_distance": self.substrate_electrode_distance,
+                prefix + "comments": self.comments,
+                prefix + "transfer_in_chamber": self.transfer_in_chamber,
+                prefix + "pre_heat": self.pre_heat,
+                prefix + "gas_pre_heat_gas": self.gas_pre_heat_gas,
+                prefix + "gas_pre_heat_pressure": self.gas_pre_heat_pressure,
+                prefix + "gas_pre_heat_time": self.gas_pre_heat_time,
+                prefix + "heating_temperature": self.heating_temperature,
+                prefix + "transfer_out_of_chamber": self.transfer_out_of_chamber,
+                prefix + "plasma_start_power": self.plasma_start_power,
+                prefix + "plasma_start_with_carrier": self.plasma_start_with_carrier,
+                prefix + "deposition_frequency": self.deposition_frequency,
+                prefix + "deposition_power": self.deposition_power,
+                prefix + "base_pressure": self.base_pressure,
+                prefix + "sih4": self.sih4,
+                prefix + "h2": self.h2,
+                prefix + "ph3_sih4": self.ph3_sih4,
+                prefix + "tmb_he": self.tmb_he,
+                prefix + "b2h6_h2": self.b2h6_h2,
+                prefix + "ch4": self.ch4,
+                prefix + "co2": self.co2,
+                prefix + "geh4": self.geh4,
+                prefix + "ar": self.ar,
+                prefix + "si2h6": self.si2h6,
+                prefix + "ph3_h2": self.ph3_h2}
         return data
 
 
@@ -412,7 +413,7 @@ def rename_after_deposition(deposition_number, samples):
         data["%d-sample" % i] = id_
         data["%d-number_of_pieces" % i] = 1
         data["0-new_name"] = data["%d_0-new_name" % i] = samples[id_]
-    return connection.open("depositions/split_and_rename_samples/"+deposition_number, data)
+    return connection.open("depositions/split_and_rename_samples/" + deposition_number, data)
 
 
 class PDSMeasurement(object):
@@ -452,19 +453,19 @@ class QuirkySampleError(Exception):
     pass
 
 
-quirky_deposition_number_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
-                                              ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
-quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)-(?P<initials>[A-Za-z]{2}(?:[A-Za-z]{0,2}|[A-Za-z]\d|\d{0,2}))-"
+quirky_deposition_number_pattern = re.compile(r"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
+                                              r"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
+quirky_sample_name_pattern = re.compile(r"(?P<year>\d\d)-(?P<initials>[A-Za-z]{2}(?:[A-Za-z]{0,2}|[A-Za-z]\d|\d{0,2}))-"
 
-                                        ur"(?P<suffix>[A-Za-z0-9][-A-Za-z_/0-9]*)?$")
+                                        r"(?P<suffix>[A-Za-z0-9][-A-Za-z_/0-9]*)?$")
 def normalize_sample_name(sample_name):
     result_dict = {}
     match = quirky_deposition_number_pattern.match(sample_name)
     if match:
-        parts = match.groupdict(u"")
+        parts = match.groupdict("")
         parts["number"] = int(parts["number"])
         parts["letter"] = parts["letter"].upper()
-        deposition_number = u"%(year)s%(letter)s-%(number)03d" % parts
+        deposition_number = "%(year)s%(letter)s-%(number)03d" % parts
         result_dict.update({"year": add_century(parts["year"]), "letter": parts["letter"], "number": parts["number"],
                             "deposition_number": deposition_number})
         if parts["suffix"]:
@@ -473,13 +474,13 @@ def normalize_sample_name(sample_name):
     else:
         match = quirky_sample_name_pattern.match(sample_name)
         if match:
-            parts = match.groupdict(u"")
+            parts = match.groupdict("")
             parts["number"] = int(parts["number"])
             parts["initials"] = parts["initials"].upper()
             result_dict.update({"year": add_century(parts["year"]), "initials": parts["initials"]})
             if parts["suffix"]:
                 result_dict["suffix"] = parts["suffix"]
-            sample_name = u"%(year)s-%(initials)s-%(suffix)s" % parts
+            sample_name = "%(year)s-%(initials)s-%(suffix)s" % parts
         else:
             raise QuirkySampleError("Sample name is too quirky to normalize")
     return sample_name, result_dict

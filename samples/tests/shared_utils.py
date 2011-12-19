@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+from __future__ import unicode_literals
 
 from django.test import TestCase
 import samples.views.shared_utils
@@ -20,5 +21,5 @@ import samples.views.shared_utils
 class SharedUtilsTest(TestCase):
 
     def test_capitalize_first_letter(self):
-        self.assertEqual(samples.views.shared_utils.capitalize_first_letter(u"hello World"), u"Hello World")
-        self.assertEqual(samples.views.shared_utils.capitalize_first_letter(u"ärgerlich"), u"Ärgerlich")
+        self.assertEqual(samples.views.shared_utils.capitalize_first_letter("hello World"), "Hello World")
+        self.assertEqual(samples.views.shared_utils.capitalize_first_letter("ärgerlich"), "Ärgerlich")

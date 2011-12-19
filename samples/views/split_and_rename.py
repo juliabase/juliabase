@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Here are the views for an ordinary sample split.
+"""Here are the views for an ordinary sample split.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.shortcuts import render_to_response, get_object_or_404
@@ -32,12 +32,12 @@ from samples.views import utils, feed_utils
 
 
 class NewNameForm(forms.Form):
-    u"""Form for data of one new sample piece.
+    """Form for data of one new sample piece.
     """
     _ = ugettext_lazy
-    new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
-    new_purpose = forms.CharField(label=_(u"New sample purpose"), max_length=80, required=False)
-    delete = forms.BooleanField(label=_(u"Delete"), required=False)
+    new_name = forms.CharField(label=_("New sample name"), max_length=30)
+    new_purpose = forms.CharField(label=_("New sample purpose"), max_length=80, required=False)
+    delete = forms.BooleanField(label=_("Delete"), required=False)
 
     def __init__(self, parent_name, *args, **kwargs):
         super(NewNameForm, self).__init__(*args, **kwargs)
@@ -47,23 +47,23 @@ class NewNameForm(forms.Form):
         new_name = self.cleaned_data["new_name"]
         sample_name_format = utils.sample_name_format(new_name)
         if not sample_name_format:
-            raise ValidationError(_(u"The sample name has an invalid format."))
+            raise ValidationError(_("The sample name has an invalid format."))
         elif sample_name_format == "old":
             if not new_name.startswith(self.parent_name):
-                raise ValidationError(_(u"The new sample name must start with the parent sample's name."))
+                raise ValidationError(_("The new sample name must start with the parent sample's name."))
         if utils.does_sample_exist(new_name):
-            raise ValidationError(_(u"Name does already exist in database."))
+            raise ValidationError(_("Name does already exist in database."))
         return new_name
 
 
 class GlobalDataForm(forms.Form):
-    u"""Form for general data for a split as a whole, and for the “finished”
+    """Form for general data for a split as a whole, and for the “finished”
     checkbox.
     """
     _ = ugettext_lazy
-    finished = forms.BooleanField(label=_(u"All pieces completely entered"), required=False)
-    sample_completely_split = forms.BooleanField(label=_(u"Sample was completely split"), initial=True, required=False)
-    sample_series = forms.ModelChoiceField(label=_(u"Sample series"), queryset=None, required=False)
+    finished = forms.BooleanField(label=_("All pieces completely entered"), required=False)
+    sample_completely_split = forms.BooleanField(label=_("Sample was completely split"), initial=True, required=False)
+    sample_series = forms.ModelChoiceField(label=_("Sample series"), queryset=None, required=False)
 
     def __init__(self, parent, user_details, data=None, **kwargs):
         super(GlobalDataForm, self).__init__(data, **kwargs)
@@ -73,7 +73,7 @@ class GlobalDataForm(forms.Form):
 
 
 def forms_from_post_data(post_data, parent, user_details):
-    u"""Interpret the POST data sent by the user through his browser and create
+    """Interpret the POST data sent by the user through his browser and create
     forms from it.  This function also performs the so-called “structural
     changes”, namely adding and deleting pieces.
 
@@ -123,7 +123,7 @@ def forms_from_post_data(post_data, parent, user_details):
 
 
 def forms_from_database(parent, user_details):
-    u"""Generate pristine forms for the given parent.  In particular, this
+    """Generate pristine forms for the given parent.  In particular, this
     returns an empty list of ``new_name_forms``.
 
     :Parameters:
@@ -144,7 +144,7 @@ def forms_from_database(parent, user_details):
 
 
 def is_all_valid(new_name_forms, global_data_form):
-    u"""Tests the “inner” validity of all forms belonging to this view.  This
+    """Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
@@ -167,7 +167,7 @@ def is_all_valid(new_name_forms, global_data_form):
 
 
 def is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces):
-    u"""Test whether all forms are consistent with each other and with the
+    """Test whether all forms are consistent with each other and with the
     database.  For example, no piece name must occur twice, and the piece names
     must not exist within the database.
 
@@ -189,25 +189,25 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     """
     referentially_valid = global_data_form.cleaned_data["finished"]
     if not new_name_forms:
-        append_error(global_data_form, _(u"You must split into at least one piece."))
+        append_error(global_data_form, _("You must split into at least one piece."))
         referentially_valid = False
     if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and \
             number_of_old_pieces + len(new_name_forms) < 2:
-        append_error(global_data_form, _(u"You must split into at least two pieces if the split is complete."))
+        append_error(global_data_form, _("You must split into at least two pieces if the split is complete."))
         referentially_valid = False
     new_names = set()
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
             if new_name in new_names or utils.does_sample_exist(new_name):
-                append_error(new_name_form, _(u"Name is already given."))
+                append_error(new_name_form, _("Name is already given."))
                 referentially_valid = False
             new_names.add(new_name)
     return referentially_valid
 
 
 def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
-    u"""Save all form data to the database.  If `sample_split` is not ``None``,
+    """Save all form data to the database.  If `sample_split` is not ``None``,
     modify it instead of appending a new one.  Warning: For this, the old split
     process must be the last process at all for the parental sample!  This must
     be checked before this routine is called.
@@ -260,7 +260,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
             sample_series.samples.add(child)
     if global_data_form.cleaned_data["sample_completely_split"]:
         parent.watchers.clear()
-        death = models.SampleDeath(timestamp=now+datetime.timedelta(seconds=5), operator=user, reason="split")
+        death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
         death.save()
         parent.processes.add(death)
     return sample_split, new_pieces
@@ -268,7 +268,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
 
 @login_required
 def split_and_rename(request, parent_name=None, old_split_id=None):
-    u"""Both splitting of a sample and re-split of an already existing split
+    """Both splitting of a sample and re-split of an already existing split
     are handled here.  *Either* ``parent_name`` *or* ``old_split`` are unequal
     to ``None``.
 
@@ -295,7 +295,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         parent = old_split.parent
         permissions.assert_can_edit_sample(request.user, parent)
         if parent.last_process_if_split() != old_split:
-            raise Http404(u"This split is not the last one in the sample's process list.")
+            raise Http404("This split is not the last one in the sample's process list.")
     user_details = request.user.samples_user_details
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
     if request.method == "POST":
@@ -308,7 +308,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
             feed_utils.Reporter(request.user).report_sample_split(
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
-                request, _(u"Sample “{sample}” was successfully split.").format(sample=parent),
+                request, _("Sample “{sample}” was successfully split.").format(sample=parent),
                 "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
         new_name_forms, global_data_form = forms_from_database(parent, user_details)
@@ -316,9 +316,9 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=next_prefix))
     return render_to_response("samples/split_and_rename.html",
-                              {"title": _(u"Split sample “{sample}”").format(sample=parent),
-                               "new_names": zip(range(number_of_old_pieces+1,
-                                                      number_of_old_pieces+1+len(new_name_forms)),
+                              {"title": _("Split sample “{sample}”").format(sample=parent),
+                               "new_names": zip(range(number_of_old_pieces + 1,
+                                                      number_of_old_pieces + 1 + len(new_name_forms)),
                                                 new_name_forms),
                                "global_data": global_data_form,
                                "old_split": old_split},
@@ -327,7 +327,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
 
 @login_required
 def latest_split(request, sample_name):
-    u"""Get the database ID of the latest split of a sample, if it is also the
+    """Get the database ID of the latest split of a sample, if it is also the
     very latest process for that sample.  In all other cases, return ``None``
     (or an error HTML page if the sample didn't exist).
 

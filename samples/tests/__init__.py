@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings
 from .shared_utils import *

@@ -12,10 +12,10 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-u"""The view for merging samples together.
+"""The view for merging samples together.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
@@ -32,11 +32,11 @@ from django.core.urlresolvers import get_callable
 
 
 class MergeSamplesForm(forms.Form):
-    u"""The merge samples form class.
+    """The merge samples form class.
     """
     _ = ugettext_lazy
-    from_sample = form_utils.SampleField(label=_(u"merge sample"), required=False)
-    to_sample = form_utils.SampleField(label=_(u"into sample"), required=False)
+    from_sample = form_utils.SampleField(label=_("merge sample"), required=False)
+    to_sample = form_utils.SampleField(label=_("into sample"), required=False)
 
     def __init__(self, user, my_samples, *args, **kwargs):
         super(MergeSamplesForm, self).__init__(*args, **kwargs)
@@ -49,7 +49,7 @@ class MergeSamplesForm(forms.Form):
         if from_sample and (from_sample.split_origin or models.SampleSplit.objects.filter(parent=from_sample).exists()
                             or models.SampleDeath.objects.filter(samples=from_sample).exists()):
             raise ValidationError(
-                _(u"It is not possible to merge a sample that was split, killed, or is the result of a sample split."))
+                _("It is not possible to merge a sample that was split, killed, or is the result of a sample split."))
         return from_sample
 
     def clean(self):
@@ -63,17 +63,17 @@ class MergeSamplesForm(forms.Form):
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
         if from_sample and not to_sample:
-            append_error(self, _(u"You must select a target sample."))
+            append_error(self, _("You must select a target sample."))
         elif not from_sample and to_sample:
-            append_error(self, _(u"You must select a source sample."))
+            append_error(self, _("You must select a source sample."))
         elif from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user) \
                     and not self.user.is_staff:
-                append_error(self, _(u"You must be the currently responsible person of both samples."))
+                append_error(self, _("You must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
-                append_error(self, _(u"You can't merge a sample into itself."))
+                append_error(self, _("You can't merge a sample into itself."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             sample_death = get_first_process(to_sample, models.SampleDeath)
@@ -85,18 +85,18 @@ class MergeSamplesForm(forms.Form):
                     pass
                 else:
                     if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                        append_error(self, _(u"One or more processes would be after sample death of {to_sample}.").format(
+                        append_error(self, _("One or more processes would be after sample death of {to_sample}.").format(
                                 to_sample=to_sample.name))
                         cleaned_data.pop(from_sample, None)
                     if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                        append_error(self, _(u"One or more processes would be after sample split of {to_sample}.").format(
+                        append_error(self, _("One or more processes would be after sample split of {to_sample}.").format(
                                 to_sample=to_sample.name))
                         cleaned_data.pop(from_sample, None)
         return cleaned_data
 
 
 def merge_samples(from_sample, to_sample):
-    u"""Copies all processes from one sample to another sample.
+    """Copies all processes from one sample to another sample.
     The fist sample will be erased afterwards.
 
     :Parameters:
@@ -124,7 +124,7 @@ def merge_samples(from_sample, to_sample):
     from_sample.delete()
 
 def is_referentially_valid(merge_samples_forms):
-    u"""Test whether all forms are consistent with each other.
+    """Test whether all forms are consistent with each other.
 
     :Parameters:
       - `merge_samples_forms`: all “merge samples forms”
@@ -144,11 +144,11 @@ def is_referentially_valid(merge_samples_forms):
             from_sample = merge_samples_form.cleaned_data["from_sample"]
             to_sample = merge_samples_form.cleaned_data["to_sample"]
             if from_sample in from_samples or to_sample in from_samples:
-                append_error(merge_samples_form, _(u"You can merge a sample only once."))
+                append_error(merge_samples_form, _("You can merge a sample only once."))
                 referentially_valid = False
             if from_sample in to_samples:
                 append_error(merge_samples_form,
-                             _(u"You can't merge a sample which was merged shortly before.  Do this in a separate call."))
+                             _("You can't merge a sample which was merged shortly before.  Do this in a separate call."))
                 referentially_valid = False
             if from_sample:
                 from_samples.add(from_sample)
@@ -156,7 +156,7 @@ def is_referentially_valid(merge_samples_forms):
                 to_samples.add(to_sample)
     if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
             and not from_samples:
-        append_error(merge_samples_forms[0], _(u"No samples selected."))
+        append_error(merge_samples_forms[0], _("No samples selected."))
         referentially_valid = False
     return referentially_valid
 
@@ -165,7 +165,7 @@ number_of_pairs = 6
 
 @login_required
 def merge(request):
-    u"""The merging of the samples is handled in this function.
+    """The merging of the samples is handled in this function.
     It creates the necessary forms, initiates the merging
     and returns the ``HttpResponse`` to the web browser.
 
@@ -191,10 +191,10 @@ def merge(request):
                 to_sample = merge_samples_form.cleaned_data.get("to_sample")
                 if from_sample and to_sample:
                     merge_samples(from_sample, to_sample)
-            return utils.successful_response(request, _(u"Samples were successfully merged."))
+            return utils.successful_response(request, _("Samples were successfully merged."))
     else:
         merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index))
                                for index in range(number_of_pairs)]
-    return render_to_response("samples/merge_samples.html", {"title": _(u"Merge samples"),
+    return render_to_response("samples/merge_samples.html", {"title": _("Merge samples"),
                                                              "merge_forms": merge_samples_forms},
                               context_instance=RequestContext(request))

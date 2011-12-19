@@ -52,8 +52,8 @@ source_suffix = '.rst'
 master_doc = 'handbuch'
 
 # General information about the project.
-project = u'remote-client'
-copyright = u'2009, Torsten Bronger'
+project = 'remote-client'
+copyright = '2009, Torsten Bronger'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -179,8 +179,8 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('handbuch', 'remote-client.tex', ur'Der Chantal Remote-Client',
-   ur'Torsten Bronger', 'howto'),
+  ('handbuch', 'remote-client.tex', r'Der Chantal Remote-Client',
+   r'Torsten Bronger', 'howto'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

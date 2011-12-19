@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Mapping URL patterns to function calls.  This is the local URL dispatch of
+"""Mapping URL patterns to function calls.  This is the local URL dispatch of
 the Django application “samples”, which is the actual sample database and the
 heart of Chantal.
 
@@ -52,7 +52,7 @@ configuration file, though.
 
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls.defaults import *
 from django.conf import settings
@@ -100,11 +100,11 @@ urlpatterns = patterns("samples.views",
 
                        url(r"^plots/thumbnails/(?P<process_id>\d+)/(?P<plot_id>.+)", "plots.show_plot",
                            {"thumbnail": True}, "process_plot_thumbnail"),
-                       url(r"^plots/thumbnails/(?P<process_id>\d+)", "plots.show_plot", {"plot_id": u"", "thumbnail": True},
+                       url(r"^plots/thumbnails/(?P<process_id>\d+)", "plots.show_plot", {"plot_id": "", "thumbnail": True},
                            "default_process_plot_thumbnail"),
                        url(r"^plots/(?P<process_id>\d+)/(?P<plot_id>.+)", "plots.show_plot", {"thumbnail": False},
                            "process_plot"),
-                       url(r"^plots/(?P<process_id>\d+)", "plots.show_plot", {"plot_id": u"", "thumbnail": False},
+                       url(r"^plots/(?P<process_id>\d+)", "plots.show_plot", {"plot_id": "", "thumbnail": False},
                            "default_process_plot"),
 
                        (r"^external_operators/add/$", "external_operator.new"),

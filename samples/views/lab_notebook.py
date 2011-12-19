@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""View for the lab notebooks for physical processes.  This is a generic view.
+"""View for the lab notebooks for physical processes.  This is a generic view.
 The concrete data extraction work is done in the ``get_lab_notebook_context``
 methods of physical process models, and the layout work is done in the
 ``lab_notebook_<class_name_of_process>.html`` templates.
@@ -23,7 +23,7 @@ explicitly to ``urls.py``.  Look at the large-area deposition entry as an
 example.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime, re
 from django.http import Http404, HttpResponse
@@ -41,12 +41,12 @@ from chantal_common.utils import HttpResponseSeeOther, get_all_models
 
 
 class YearMonthForm(forms.Form):
-    u"""Form for the year/month fields in which the user can see which month is
+    """Form for the year/month fields in which the user can see which month is
     currently selected, and also change it.
     """
     _ = ugettext_lazy
-    year = forms.IntegerField(label=_(u"year"), min_value=1990)
-    month = forms.IntegerField(label=_(u"month"), min_value=1, max_value=12)
+    year = forms.IntegerField(label=_("year"), min_value=1990)
+    month = forms.IntegerField(label=_("month"), min_value=1, max_value=12)
 
     def __init__(self, *args, **kwargs):
         super(YearMonthForm, self).__init__(*args, **kwargs)
@@ -56,7 +56,7 @@ class YearMonthForm(forms.Form):
 
 year_and_month_pattern = re.compile(r"(?P<year>\d{4})/(?P<month>\d{1,2})$")
 def parse_year_and_month(year_and_month):
-    u"""Parse the URL suffix in the lab notebook URL which is supposed to
+    """Parse the URL suffix in the lab notebook URL which is supposed to
     contain year and month.
 
     :Parameters:
@@ -85,7 +85,7 @@ def parse_year_and_month(year_and_month):
 
 
 def get_previous_next_urls(process_name, year, month):
-    u"""Determine the full relative URLs (i.e., only the domain is missing) of
+    """Determine the full relative URLs (i.e., only the domain is missing) of
     the previous and next month in the lab notebook, taking the current lab
     notebook view as the starting point.
 
@@ -126,7 +126,7 @@ def get_previous_next_urls(process_name, year, month):
 
 @login_required
 def show(request, process_name, year_and_month):
-    u"""View for showing one month of the lab notebook for a particular
+    """View for showing one month of the lab notebook for a particular
     physical process.  In ``urls.py``, you must give the entry for this view
     the name ``"lab_notebook_<process_name>"``.
 
@@ -172,7 +172,7 @@ def show(request, process_name, year_and_month):
         export_url = None
     return render_to_response(
         "samples/lab_notebook.html",
-        {"title": utils.capitalize_first_letter(_(u"lab notebook for {process_name}")
+        {"title": utils.capitalize_first_letter(_("lab notebook for {process_name}")
                                                 .format(process_name=process_class._meta.verbose_name_plural)),
          "year": year, "month": month, "year_month": year_month_form,
          "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
@@ -182,7 +182,7 @@ def show(request, process_name, year_and_month):
 
 @login_required
 def export(request, process_name, year_and_month):
-    u"""View for exporting the data of a month of a lab notebook.  Thus, the
+    """View for exporting the data of a month of a lab notebook.  Thus, the
     return value is not an HTML response but a CSV or JSON response.  In
     ``urls.py``, you must give the entry for this view the name
     ``"export_lab_notebook_<process_name>"``.
@@ -207,12 +207,12 @@ def export(request, process_name, year_and_month):
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     year, month = parse_year_and_month(year_and_month)
     data = process_class.get_lab_notebook_data(year, month)
-    result = utils.table_export(request, data, _(u"process"))
+    result = utils.table_export(request, data, _("process"))
     if isinstance(result, tuple):
         column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
     elif isinstance(result, HttpResponse):
         return result
-    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    title = _("Table export for “{name}”").format(name=data.descriptive_name)
     return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
                                                             "columns": columns_form,
                                                             "rows": zip(table, switch_row_forms) if table else None,

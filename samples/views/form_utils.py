@@ -13,11 +13,11 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Helper classes and function which have something to do with form generation
+"""Helper classes and function which have something to do with form generation
 and validation.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re, os.path, datetime, json
 from django.forms.util import ErrorList, ValidationError
@@ -37,7 +37,7 @@ from django.utils.text import capfirst
 # FixMe: Should this also contain "operator = OperatorField"?
 
 class ProcessForm(ModelForm):
-    u"""Abstract model form class for processes.  It ensures that timestamps
+    """Abstract model form class for processes.  It ensures that timestamps
     are not in the future, and that comments contain only allowed Markdown
     syntax.
     """
@@ -52,28 +52,28 @@ class ProcessForm(ModelForm):
             self.fields["finished"].widget.attrs["disabled"] = "disabled"
 
     def clean_comments(self):
-        u"""Forbid image and headings syntax in Markdown markup.
+        """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
         check_markdown(comments)
         return comments
 
     def clean_timestamp(self):
-        u"""Forbid timestamps that are in the future.
+        """Forbid timestamps that are in the future.
         """
         timestamp = self.cleaned_data["timestamp"]
         if timestamp > datetime.datetime.now():
-            raise ValidationError(_(u"The timestamp must not be in the future."))
+            raise ValidationError(_("The timestamp must not be in the future."))
         if self.unfinished and self.process.timestamp > timestamp:
             self.data = self.data.copy()
             self.data["timestamp"] = datetime.datetime.now()
-            raise ValidationError(_(u"The timestamp was older than the one in the database.  Probably someone else has "
-                                    u"edited the process by now.  If so, open the process in another tab and combine the "
-                                    u"changes."))
+            raise ValidationError(_("The timestamp was older than the one in the database.  Probably someone else has "
+                                    "edited the process by now.  If so, open the process in another tab and combine the "
+                                    "changes."))
         return timestamp
 
     def clean_finished(self):
-        u"""Return ``True`` always.  If you want to implement the
+        """Return ``True`` always.  If you want to implement the
         “unfinished-process” functionality in your process class, you must
         override this method.
         """
@@ -82,7 +82,7 @@ class ProcessForm(ModelForm):
 
 class DataModelForm(ModelForm):
     _ = ugettext_lazy
-    u"""Model form class for accessing the data fields of a bound form, whether
+    """Model form class for accessing the data fields of a bound form, whether
     it is valid or not.  This is sometimes useful if you want to do structural
     changes to the forms in a view, and you don't want to do that only if the
     data the user has given is totally valid.
@@ -93,7 +93,7 @@ class DataModelForm(ModelForm):
     """
 
     def uncleaned_data(self, fieldname):
-        u"""Get the field value of a *bound* form, even if it is invalid.
+        """Get the field value of a *bound* form, even if it is invalid.
 
         :Parameters:
           - `fieldname`: name (=key) of the field
@@ -109,7 +109,7 @@ class DataModelForm(ModelForm):
 
 
 def get_my_layers(user_details, deposition_model):
-    u"""Parse the ``my_layers`` string of a user and convert it to valid input
+    """Parse the ``my_layers`` string of a user and convert it to valid input
     for a form selection field (``ChoiceField``).  Notethat the user is not
     forced to select a layer.  Instead, the result always includes a “nothing
     selected” option.
@@ -129,7 +129,7 @@ def get_my_layers(user_details, deposition_model):
 
     :rtype: list of (MyLayer-ID, nickname)
     """
-    choices = [(u"", u"---------")]
+    choices = [("", "---------")]
     if user_details.my_layers:
         for nickname, process_id, layer_number in json.loads(user_details.my_layers):
             try:
@@ -144,15 +144,15 @@ def get_my_layers(user_details, deposition_model):
             # and layer number, so that change_structure() doesn't have to re-parse
             # it.  In other words: Maybe the first element of the tuples can be of
             # any type and needn't be strings.
-            choices.append((u"{0}-{1}".format(process_id, layer_number), nickname))
+            choices.append(("{0}-{1}".format(process_id, layer_number), nickname))
     return choices
 
 
 class AddLayersForm(forms.Form):
     _ = ugettext_lazy
-    number_of_layers_to_add = forms.IntegerField(label=_(u"Number of layers to be added"), min_value=0, max_value=10,
+    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
                                                  required=False)
-    my_layer_to_be_added = forms.ChoiceField(label=_(u"Nickname of My Layer to be added"), required=False)
+    my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
 
     def __init__(self, user_details, model, data=None, **kwargs):
         super(AddLayersForm, self).__init__(data, **kwargs)
@@ -178,15 +178,15 @@ class AddLayersForm(forms.Form):
                     return layer_query.values()[0]
 
 
-initials_pattern = re.compile(ur"[A-Z]{2,4}[0-9]*$")
+initials_pattern = re.compile(r"[A-Z]{2,4}[0-9]*$")
 
 class InitialsForm(forms.Form):
-    u"""Form for a person's initials.  A “person” can be a user, an external
+    """Form for a person's initials.  A “person” can be a user, an external
     operator, or `None`.  Initials are optional, however, if you choose them, you cannot
     change (or delete) them anymore.
     """
     _ = ugettext_lazy
-    initials = forms.CharField(label=capfirst(_(u"initials")), max_length=4, required=False)
+    initials = forms.CharField(label=capfirst(_("initials")), max_length=4, required=False)
 
     def __init__(self, person, initials_mandatory, *args, **kwargs):
         super(InitialsForm, self).__init__(*args, **kwargs)
@@ -211,15 +211,15 @@ class InitialsForm(forms.Form):
         # Note that maximal length are already checked.
         min_length = 2 if self.is_user else 4
         if not initials_pattern.match(initials) or len(initials) < min_length:
-            raise ValidationError(_(u"The initials must start with two uppercase letters.  "
-                                    u"They must contain uppercase letters and digits only.  Digits must be at the end.  "
-                                    u"The minimum length must be {min_length}.").format(min_length=min_length))
+            raise ValidationError(_("The initials must start with two uppercase letters.  "
+                                    "They must contain uppercase letters and digits only.  Digits must be at the end.  "
+                                    "The minimum length must be {min_length}.").format(min_length=min_length))
         if models.Initials.objects.filter(initials=initials).exists():
-            raise ValidationError(_(u"These initials are already used."))
+            raise ValidationError(_("These initials are already used."))
         return initials
 
     def save(self, person=None):
-        u"""Although this is not a model form, I add a ``save()`` method in
+        """Although this is not a model form, I add a ``save()`` method in
         order to avoid code duplication.  Here, I test whether the “initials”
         field in the database is still empty, and if so, add it to the
         database.
@@ -237,8 +237,8 @@ class InitialsForm(forms.Form):
 
 class EditDescriptionForm(forms.Form):
     _ = ugettext_lazy
-    description = forms.CharField(label=_(u"Description of edit"), widget=forms.Textarea)
-    important = forms.BooleanField(label=_(u"Important edit"), required=False)
+    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea)
+    important = forms.BooleanField(label=_("Important edit"), required=False)
 
     def __init__(self, *args, **kwargs):
         kwargs["prefix"] = "edit_description"
@@ -246,7 +246,7 @@ class EditDescriptionForm(forms.Form):
         self.fields["description"].widget.attrs["rows"] = 3
 
     def clean_description(self):
-        u"""Forbid image and headings syntax in Markdown markup.
+        """Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
         check_markdown(description)
@@ -254,7 +254,7 @@ class EditDescriptionForm(forms.Form):
 
 
 class GeneralSampleField(object):
-    u"""Mixin class for the samples selection box.  It is used in the two form
+    """Mixin class for the samples selection box.  It is used in the two form
     field classes `SampleField` and `MultipleSamplesField`.  Never instantiate
     this class.
 
@@ -264,7 +264,7 @@ class GeneralSampleField(object):
     """
 
     def set_samples(self, samples, user):
-        u"""Set the sample list shown in the widget.  You *must* call this
+        """Set the sample list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.
 
@@ -286,14 +286,14 @@ class GeneralSampleField(object):
             seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
             self.choices.append((topic.topic_name, seriesless_samples))
             for series in topic.sample_series:
-                samples = [(sample.pk, 4 * u" " + sample.name_with_tags(user)) for sample in series.samples]
-                self.choices.append((4 * u" " + series.name, samples))
+                samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
+                self.choices.append((4 * " " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
-            self.choices.insert(0, (u"", 9 * u"-"))
+            self.choices.insert(0, ("", 9 * "-"))
 
 
 class SampleField(GeneralSampleField, forms.ChoiceField):
-    u"""Form field class for sample selection boxes where you can select a
+    """Form field class for sample selection boxes where you can select a
     single sample.  This is typically used in measurement forms because
     normally, one measures only *one* sample at a time.
     """
@@ -305,26 +305,26 @@ class SampleField(GeneralSampleField, forms.ChoiceField):
 
 
 class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
-    u"""Form field class for sample selection boxes where you can select many
+    """Form field class for sample selection boxes where you can select many
     samples at once.  This is typically used in deposition forms because most
     deposition systems can deposit more than one sample in a single run.
     """
 
     def clean(self, value):
-        if value == [u""]:
+        if value == [""]:
             value = []
         value = super(MultipleSamplesField, self).clean(value)
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
 class UserField(forms.ChoiceField):
-    u"""Form field class for the selection of a single user.  This can be the
+    """Form field class for the selection of a single user.  This can be the
     new currently responsible person for a sample, or the person you wish to
     send “My Samples” to.
     """
 
     def set_users(self, additional_user=None):
-        u"""Set the user list shown in the widget.  You *must* call this method
+        """Set the user list shown in the widget.  You *must* call this method
         (or `set_users_without`) in the constructor of the form in which you
         use this field, otherwise the selection box will remain emtpy.  The
         selection list will consist of all currently active users, plus the
@@ -337,7 +337,7 @@ class UserField(forms.ChoiceField):
 
         :type additional_user: ``django.contrib.auth.models.User``
         """
-        self.choices = [(u"", 9 * u"-")]
+        self.choices = [("", 9 * "-")]
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         if additional_user:
@@ -345,7 +345,7 @@ class UserField(forms.ChoiceField):
         self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users(users))
 
     def set_users_without(self, excluded_user):
-        u"""Set the user list shown in the widget.  You *must* call this method
+        """Set the user list shown in the widget.  You *must* call this method
         (or `set_users`) in the constructor of the form in which you use this
         field, otherwise the selection box will remain emtpy.  The selection
         list will consist of all currently active users, minus the given user.
@@ -356,7 +356,7 @@ class UserField(forms.ChoiceField):
 
         :type excluded_user: ``django.contrib.auth.models.User``
         """
-        self.choices = [(u"", 9 * u"-")]
+        self.choices = [("", 9 * "-")]
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         users.discard(excluded_user)
@@ -369,12 +369,12 @@ class UserField(forms.ChoiceField):
 
 
 class MultipleUsersField(forms.MultipleChoiceField):
-    u"""Form field class for the selection of zero or more users.  This can be
+    """Form field class for the selection of zero or more users.  This can be
     the set of members for a particular topic.
     """
 
     def set_users(self, additional_users=[]):
-        u"""Set the user list shown in the widget.  You *must* call this method
+        """Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
         the selection box will remain emtpy.  The selection list will consist
         of all currently active users, plus the given additional users if any.
@@ -391,22 +391,22 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users |= set(additional_users)
         self.choices = [(user.pk, get_really_full_name(user)) for user in utils.sorted_users(users)]
         if not self.choices:
-            self.choices = ((u"", 9 * u"-"),)
+            self.choices = (("", 9 * "-"),)
 
     def clean(self, value):
-        if value == [u""]:
+        if value == [""]:
             value = []
         value = super(MultipleUsersField, self).clean(value)
         return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
 class TopicField(forms.ChoiceField):
-    u"""Form field class for the selection of a single topic.  This can be
+    """Form field class for the selection of a single topic.  This can be
     the topic for a sample or a sample series, for example.
     """
 
     def set_topics(self, user, additional_topic=None):
-        u"""Set the topic list shown in the widget.  You *must* call this
+        """Set the topic list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.  The selection list will
         consist of all currently active topics, plus the given additional
@@ -422,7 +422,7 @@ class TopicField(forms.ChoiceField):
         :type user: ``django.contrib.auth.models.User``
         :type additional_topic: ``chantal_common.models.Topic``
         """
-        self.choices = [(u"", 9 * u"-")]
+        self.choices = [("", 9 * "-")]
         all_topics = Topic.objects.filter(members__is_active=True).distinct()
         user_topics = user.topics.all()
         topics = \
@@ -439,7 +439,7 @@ class TopicField(forms.ChoiceField):
 
 
 class FixedOperatorField(forms.ChoiceField):
-    u"""Form field class for the *fixed* selection of a single user.  This is
+    """Form field class for the *fixed* selection of a single user.  This is
     intended for edit-process views when the operator must be the currently
     logged-in user, or the previous operator.  In other words, it must be
     impossible to change it.  Then, you can use this form field for the
@@ -450,7 +450,7 @@ class FixedOperatorField(forms.ChoiceField):
     """
 
     def set_operator(self, operator, is_staff=False):
-        u"""Set the user list shown in the widget.  You *must* call this method
+        """Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
         the selection box will remain emtpy.  The selection list will consist
         only of the given operator, with no other choice (not even the empty
@@ -476,7 +476,7 @@ class FixedOperatorField(forms.ChoiceField):
 
 
 class OperatorField(forms.ChoiceField):
-    u"""Form field class for the selection of a single operator.  This is
+    """Form field class for the selection of a single operator.  This is
     intended for edit-process views when the operator must be the currently
     logged-in user, an external contact of that user, or the previous
     (external) operator.  It can be used in model forms.
@@ -514,7 +514,7 @@ class OperatorField(forms.ChoiceField):
     """
 
     def set_choices(self, user, old_process):
-        u"""Set the operator list shown in the widget.  It combines selectable
+        """Set the operator list shown in the widget.  It combines selectable
         users and external operators.  You *must* call this method in the
         constructor of the form in which you use this field, otherwise the
         selection box will remain emtpy.  It works even for staff users, which
@@ -552,7 +552,7 @@ class OperatorField(forms.ChoiceField):
             self.choices.append(("extern-{0}".format(external_operator.pk), external_operator.name))
 
     def clean(self, value):
-        u"""Return the selected operator.  Additionally, it sets the attribute
+        """Return the selected operator.  Additionally, it sets the attribute
         `external_operator` if the user selected one (it sets it to ``None``
         otherwise).  If an external operator was selected, this routine returns
         the currently logged-in user.
@@ -580,15 +580,15 @@ class OperatorField(forms.ChoiceField):
 # refactoring should be done because it is used for substrates, too.
 
 class DepositionSamplesForm(forms.Form):
-    u"""Form for the list selection of samples that took part in the
+    """Form for the list selection of samples that took part in the
     deposition.  Depositions need a special form class for this because it must
     be disabled when editing an *existing* deposition.
     """
     _ = ugettext_lazy
-    sample_list = MultipleSamplesField(label=_(u"Samples"))
+    sample_list = MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, deposition, data=None, **kwargs):
-        u"""Class constructor.  Note that I have to distinguish clearly here
+        """Class constructor.  Note that I have to distinguish clearly here
         between new and existing depositions.
         """
         samples = list(user.my_samples.all())
@@ -617,19 +617,19 @@ class DepositionSamplesForm(forms.Form):
 
 
 class RemoveFromMySamplesForm(forms.Form):
-    u"""Form for the question whether the user wants to remove the samples
+    """Form for the question whether the user wants to remove the samples
     from the “My Samples” list after the process.
     """
     _ = ugettext_lazy
-    remove_from_my_samples = forms.BooleanField(label=_(u"Remove processed sample(s) from My Samples"),
+    remove_from_my_samples = forms.BooleanField(label=_("Remove processed sample(s) from My Samples"),
                                                 required=False, initial=False)
 
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
-u"""Standard regular expression pattern for time durations in Chantal:
+"""Standard regular expression pattern for time durations in Chantal:
 HH:MM:SS, where hours can also be 3-digit and are optional."""
 def clean_time_field(value):
-    u"""General helper function for use in the ``clean_...`` methods in forms.
+    """General helper function for use in the ``clean_...`` methods in forms.
     It tests whether the time format is correct, and normalises the duration so
     that minutes and seconds are 2-digit, and leading zeros are eliminated from
     the hours.
@@ -652,11 +652,11 @@ def clean_time_field(value):
         return ""
     match = time_pattern.match(value)
     if not match:
-        raise ValidationError(_(u"Time must be given in the form HH:MM:SS."))
+        raise ValidationError(_("Time must be given in the form HH:MM:SS."))
     hours, minutes, seconds = match.group("H"), int(match.group("M")), int(match.group("S"))
     hours = int(hours) if hours is not None else 0
     if minutes >= 60 or seconds >= 60:
-        raise ValidationError(_(u"Minutes and seconds must be smaller than 60."))
+        raise ValidationError(_("Minutes and seconds must be smaller than 60."))
     if not hours:
         return "{0}:{1:02}".format(minutes, seconds)
     else:
@@ -664,7 +664,7 @@ def clean_time_field(value):
 
 
 def clean_date_field(value):
-    u"""General helper function for use in the ``clean_...`` methods in forms.
+    """General helper function for use in the ``clean_...`` methods in forms.
     It tests whether the given date is not in the future.
     It is a small an trivial test, but it is used in the most layer forms.
 
@@ -685,14 +685,14 @@ def clean_date_field(value):
         -`ValidationError`: if the specified date lies in the future.
     """
     if value > datetime.date.today():
-        raise ValidationError(_(u"The date must not be in the future."))
+        raise ValidationError(_("The date must not be in the future."))
     return value
 
 
-quantity_pattern = re.compile(ur"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
-u"""Regular expression pattern for valid physical quantities."""
+quantity_pattern = re.compile(r"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
+"""Regular expression pattern for valid physical quantities."""
 def clean_quantity_field(value, units):
-    u"""General helper function for use in the ``clean_...`` methods in forms.
+    """General helper function for use in the ``clean_...`` methods in forms.
     It tests whether the format of the physical quantity is correct, and
     normalises it so that it only contains decimal points (no commas), a proper
     »µ«, and exactly one space sign between value and unit.
@@ -714,22 +714,22 @@ def clean_quantity_field(value, units):
     """
     if not value:
         return ""
-    value = unicode(value).replace(",", ".").replace(u"μ", u"µ")  # No, these µ are not the same!
+    value = unicode(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
     match = quantity_pattern.match(value)
     if not match:
-        raise ValidationError(_(u"Must be a physical quantity with number and unit."))
+        raise ValidationError(_("Must be a physical quantity with number and unit."))
     original_unit = match.group("unit").lower()
     for unit in units:
         if unit.lower() == original_unit.lower():
             break
     else:
-        raise ValidationError(_(u"The unit is invalid.  Valid units are: {units}").format(units=", ".join(units)))
+        raise ValidationError(_("The unit is invalid.  Valid units are: {units}").format(units=", ".join(units)))
     return match.group("number") + " " + unit
 
 
 deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
 def clean_deposition_number_field(value, letter):
-    u"""Checks wheter a deposition number given by the user in a form is a
+    """Checks wheter a deposition number given by the user in a form is a
     valid one.  Note that it does not check whether a deposition with this
     number already exists in the database.  It just checks the syntax of the
     number.
@@ -753,19 +753,19 @@ def clean_deposition_number_field(value, letter):
     """
     if not deposition_number_pattern.match(value):
         # Translators: “YY” is year, “L” is letter, and “NNN” is number
-        raise ValidationError(_(u"Invalid deposition number.  It must be of the form YYL-NNN."))
+        raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."))
     if isinstance(letter, list):
         if value[2] not in letter:
-            raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(
-                    letter=u", ".join(letter)))
+            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(
+                    letter=", ".join(letter)))
     else:
         if value[2] != letter:
-            raise ValidationError(_(u"The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
+            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
     return value
 
 
-def collect_subform_indices(post_data, subform_key="number", prefix=u""):
-    u"""Find all indices of subforms of a certain type (e.g. layers) and return
+def collect_subform_indices(post_data, subform_key="number", prefix=""):
+    """Find all indices of subforms of a certain type (e.g. layers) and return
     them so that the objects (e.g. layers) have a sensible order (e.g. sorted
     by layer number).  This is necessary because indices are used as form
     prefixes and cannot be changed easily, even if the layers are rearranged,
@@ -787,7 +787,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
 
     :rtype: list of int
     """
-    subform_name_pattern = re.compile(re.escape(prefix) + ur"(?P<index>\d+)(_\d+)*-(?P<key>.+)")
+    subform_name_pattern = re.compile(re.escape(prefix) + r"(?P<index>\d+)(_\d+)*-(?P<key>.+)")
     values = {}
     for key, value in post_data.iteritems():
         match = subform_name_pattern.match(key)
@@ -807,10 +807,10 @@ def collect_subform_indices(post_data, subform_key="number", prefix=u""):
     return sorted(values, key=lambda index: values[index])
 
 
-level0_pattern = re.compile(ur"(?P<level0_index>\d+)-(?P<id>.+)")
-level1_pattern = re.compile(ur"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
+level0_pattern = re.compile(r"(?P<level0_index>\d+)-(?P<id>.+)")
+level1_pattern = re.compile(r"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
 def normalize_prefixes(post_data):
-    u"""Manipulates the prefixes of POST data keys for bringing them in
+    """Manipulates the prefixes of POST data keys for bringing them in
     consecutive order.  It only works for at most two-level numeric prefixes,
     which is sufficient for most purposes.  For example, in the 6-chamber
     deposition view, top-level is the layer index, and second-level is the
@@ -874,7 +874,7 @@ def normalize_prefixes(post_data):
 
 
 def dead_samples(samples, timestamp):
-    u"""Determine all samples from ``samples`` which are already dead at the
+    """Determine all samples from ``samples`` which are already dead at the
     given ``timestamp``.
 
     :Parameters:
@@ -900,7 +900,7 @@ def dead_samples(samples, timestamp):
 
 
 def choices_of_content_types(classes):
-    u"""Returns the ``choices`` field for a ``MultipleChoiceField`` which
+    """Returns the ``choices`` field for a ``MultipleChoiceField`` which
     contains content types.  Typically, the `classes` are process classes that
     can be picked by the user.
 

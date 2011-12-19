@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""General helper functions.  This is for low-level stuff.  Never import other
+"""General helper functions.  This is for low-level stuff.  Never import other
 Chantal modules here, and avoid using Django, too.  The reason is that I'd like
 to avoid cyclic imports, and I'd like to avoid being forced to ship the whole
 of Django with the Remove Client (which uses this module).
@@ -26,14 +26,14 @@ part of the institute-specific package.  So synchronise it now and then with
 its copy there.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re, string, codecs, os, os.path
 
 
 def int_or_zero(number):
-    u"""Converts ``number`` to an integer.  If this doesn't work, return ``0``.
-    
+    """Converts ``number`` to an integer.  If this doesn't work, return ``0``.
+
     :Parameters:
       - `number`: a string that is supposed to contain an integer number
 
@@ -52,7 +52,7 @@ def int_or_zero(number):
 
 
 def camel_case_to_underscores(name):
-    u"""Converts a CamelCase identifier to one using underscores.  For example,
+    """Converts a CamelCase identifier to one using underscores.  For example,
     ``"MySamples"`` is converted to ``"my_samples"``, and ``"PDSMeasurement"``
     to ``"pds_measurement"``.
 
@@ -77,7 +77,7 @@ def camel_case_to_underscores(name):
 
 
 def camel_case_to_human_text(name):
-    u"""Converts a CamelCase identifier to one intended to be read by humans.
+    """Converts a CamelCase identifier to one intended to be read by humans.
     For example, ``"MySamples"`` is converted to ``"my samples"``, and
     ``"PDSMeasurement"`` to ``"PDS measurement"``.
 
@@ -101,10 +101,10 @@ def camel_case_to_human_text(name):
     return "".join(result)
 
 
-quirky_sample_name_pattern = re.compile(ur"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
-                                        ur"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
+quirky_sample_name_pattern = re.compile(r"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
+                                        r"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
 def normalize_legacy_sample_name(sample_name):
-    u"""Convert an old, probably not totally correct sample name to a valid
+    """Convert an old, probably not totally correct sample name to a valid
     sample name.  For example, a missing dash after the deposition letter is
     added, and the deposition letter is converted to uppercase.
 
@@ -124,21 +124,21 @@ def normalize_legacy_sample_name(sample_name):
     match = quirky_sample_name_pattern.match(sample_name)
     if not match:
         raise ValueError("Sample name is too quirky to normalize")
-    parts = match.groupdict(u"")
+    parts = match.groupdict("")
     parts["number"] = int(parts["number"])
     parts["letter"] = parts["letter"].upper()
-    return u"{year}{letter}-{number:03}{suffix}".format(**parts)
+    return "{year}{letter}-{number:03}{suffix}".format(**parts)
 
 
 class PlotError(Exception):
-    u"""Raised if an error occurs while generating a plot.  Usually, it is
+    """Raised if an error occurs while generating a plot.  Usually, it is
     raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
     """
     pass
 
 
 def __read_plot_file(filename, columns, start_value, end_value="", separator=None):
-    u"""Read a datafile and return the content of selected columns.
+    """Read a datafile and return the content of selected columns.
     You shouldn't use this function directly. Use the specific functions instead.
 
     :Parameters:
@@ -194,7 +194,7 @@ def __read_plot_file(filename, columns, start_value, end_value="", separator=Non
 
 
 def read_techplot_file(filename, columns=(0, 1)):
-    u"""Read a datafile in TechPlot format and return the content of selected
+    """Read a datafile in TechPlot format and return the content of selected
     columns.
 
     :Parameters:
@@ -221,7 +221,7 @@ def read_techplot_file(filename, columns=(0, 1)):
 # FixMe: This should be moved to ``chantal_ipv``.
 
 def read_solarsimulator_plot_file(filename, columns=(0, 1)):
-    u"""Read a datafile from a solarsimulator measurement and return the content of selected
+    """Read a datafile from a solarsimulator measurement and return the content of selected
     columns.
 
     :Parameters:
@@ -246,7 +246,7 @@ def read_solarsimulator_plot_file(filename, columns=(0, 1)):
 
 
 def mkdirs(path):
-    u"""Creates a directory and all of its parents if necessary.  If the given
+    """Creates a directory and all of its parents if necessary.  If the given
     path doesn't end with a slash, it's interpreted as a filename and removed.
     If the directory already exists, nothing is done.  (In particular, no
     exception is raised.)
@@ -263,7 +263,7 @@ def mkdirs(path):
 
 
 def remove_file(path):
-    u"""Removes the file.  If the file didn't exist, this is a no-op.
+    """Removes the file.  If the file didn't exist, this is a no-op.
 
     :Parameters:
       - `path`: absolute path to the file to be removed
@@ -284,7 +284,7 @@ def remove_file(path):
 
 
 def capitalize_first_letter(text):
-    u"""Capitalise the first letter of the given string.
+    """Capitalise the first letter of the given string.
 
     :Parameters:
       - `text`: text whose first letter should be capitalised
@@ -299,11 +299,11 @@ def capitalize_first_letter(text):
     if text:
         return text[0].upper() + text[1:]
     else:
-        return u""
+        return ""
 
 
 def sanitize_for_markdown(text):
-    u"""Convert a raw string to Markdown syntax.  This is used when external
+    """Convert a raw string to Markdown syntax.  This is used when external
     (legacy) strings are imported.  For example, comments found in data files
     must be sent through this function before being stored in the database.
 
@@ -317,16 +317,16 @@ def sanitize_for_markdown(text):
 
     :rtype: unicode
     """
-    text = text.replace(u"\r\n", u"\n").replace(u"\r", u"\n").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`"). \
+    text = text.replace("\r\n", "\n").replace("\r", "\n").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`"). \
         replace("\n#", "\n\\#").replace("\n>", "\n\\>").replace("\n+", "\n\\+").replace("\n-", "\n\\-")
     if text.startswith(tuple("#>+-")):
-        text = u"\\" + text
+        text = "\\" + text
     # FixMe: Add ``flags=re.UNICODE`` with Python 2.7+
-    paragraphs = re.split(ur"\n\s*\n", text)
+    paragraphs = re.split(r"\n\s*\n", text)
     for i, paragraph in enumerate(paragraphs):
         lines = paragraph.split("\n")
         for j, line in enumerate(lines):
             if len(line) < 70:
                 lines[j] += "  "
-        paragraphs[i] = u"\n".join(lines)
-    return u"\n\n".join(paragraphs) + "\n"
+        paragraphs[i] = "\n".join(lines)
+    return "\n\n".join(paragraphs) + "\n"

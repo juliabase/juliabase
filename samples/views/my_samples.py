@@ -13,12 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""View for doing various this with selected samples from “My Samples”.  For
+"""View for doing various this with selected samples from “My Samples”.  For
 example, copying them to the “My Samples” list of another user, or simply
 removing them from the list.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -36,7 +36,7 @@ from samples.views import utils, form_utils, feed_utils
 
 class MySamplesForm(forms.Form):
     _ = ugettext_lazy
-    samples = form_utils.MultipleSamplesField(label=_(u"My Samples"))
+    samples = form_utils.MultipleSamplesField(label=_("My Samples"))
 
     def __init__(self, user, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
@@ -45,19 +45,19 @@ class MySamplesForm(forms.Form):
 
 
 class ActionForm(forms.Form):
-    u"""Form for all the things you can do with the selected samples.
+    """Form for all the things you can do with the selected samples.
     """
     _ = ugettext_lazy
-    new_currently_responsible_person = form_utils.UserField(label=_(u"New currently responsible person"), required=False)
-    new_topic = form_utils.TopicField(label=_(u"New Topic"), required=False)
-    new_current_location = forms.CharField(label=_(u"New current location"), required=False, max_length=50)
-    copy_to_user = form_utils.UserField(label=_(u"Copy to user"), required=False)
+    new_currently_responsible_person = form_utils.UserField(label=_("New currently responsible person"), required=False)
+    new_topic = form_utils.TopicField(label=_("New Topic"), required=False)
+    new_current_location = forms.CharField(label=_("New current location"), required=False, max_length=50)
+    copy_to_user = form_utils.UserField(label=_("Copy to user"), required=False)
     clearance = forms.ChoiceField(label=_("Clearance"), required=False)
-    comment = forms.CharField(label=_(u"Comment for recipient"), widget=forms.Textarea, required=False)
-    remove_from_my_samples = forms.BooleanField(label=_(u"Remove from “My Samples”"), required=False)
+    comment = forms.CharField(label=_("Comment for recipient"), widget=forms.Textarea, required=False)
+    remove_from_my_samples = forms.BooleanField(label=_("Remove from “My Samples”"), required=False)
 
     def __init__(self, user, *args, **kwargs):
-        u"""Form constructor.
+        """Form constructor.
 
         :Parameters:
           - `user`: the user whose “My Samples” list should be generated
@@ -68,12 +68,12 @@ class ActionForm(forms.Form):
         self.fields["new_currently_responsible_person"].set_users(user)
         self.fields["copy_to_user"].set_users_without(user)
         self.fields["new_topic"].set_topics(user)
-        self.fields["clearance"].choices = [("", u"---------"), ("0", _(u"sample only")),
-                                            ("1", _(u"all processes up to now"))]
+        self.fields["clearance"].choices = [("", "---------"), ("0", _("sample only")),
+                                            ("1", _("all processes up to now"))]
         self.clearance_choices = {"": None, "0": (), "1": "all"}
 
     def clean_comment(self):
-        u"""Forbid image and headings syntax in Markdown markup.
+        """Forbid image and headings syntax in Markdown markup.
         """
         comment = self.cleaned_data["comment"]
         chantal_common.utils.check_markdown(comment)
@@ -86,19 +86,19 @@ class ActionForm(forms.Form):
         cleaned_data = self.cleaned_data
         if cleaned_data["copy_to_user"]:
             if not cleaned_data["comment"]:
-                append_error(self, _(u"If you copy samples over to another person, you must enter a short comment."),
+                append_error(self, _("If you copy samples over to another person, you must enter a short comment."),
                              "comment")
         if cleaned_data["clearance"] is not None and not cleaned_data.get("copy_to_user"):
-            append_error(self, _(u"If you set a clearance, you must copy samples to another user."), "copy_to_user")
+            append_error(self, _("If you set a clearance, you must copy samples to another user."), "copy_to_user")
             del cleaned_data["clearance"]
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
-            raise ValidationError(_(u"If you edit samples, you must enter a short comment."))
+            raise ValidationError(_("If you edit samples, you must enter a short comment."))
         return cleaned_data
 
 
 def is_referentially_valid(current_user, my_samples_form, action_form):
-    u"""Test whether all forms are consistent with each other and with the
+    """Test whether all forms are consistent with each other and with the
     database.  For example, you must not change data for samples for which
     you're not the currently responsible person.
 
@@ -128,7 +128,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                         permissions.assert_can_edit_sample(current_user, sample)
                 except permissions.PermissionError:
                     append_error(action_form,
-                                 _(u"You must be the currently responsible person for samples you'd like to change."))
+                                 _("You must be the currently responsible person for samples you'd like to change."))
                     referentially_valid = False
         if action_data["clearance"] is None and action_data["copy_to_user"] and \
                 action_data["new_currently_responsible_person"] != action_data["copy_to_user"]:
@@ -136,8 +136,8 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 for sample in my_samples_form.cleaned_data["samples"]:
                     permissions.assert_can_fully_view_sample(action_data["copy_to_user"], sample)
             except permissions.PermissionError:
-                append_error(action_form, _(u"If you copy samples over to another person who cannot fully view one of the "
-                                            u"samples, you must select a clearance option."), "clearance")
+                append_error(action_form, _("If you copy samples over to another person who cannot fully view one of the "
+                                            "samples, you must select a clearance option."), "clearance")
                 referentially_valid = False
         if action_data["clearance"] is not None:
             failed_samples = []
@@ -147,14 +147,14 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 except permissions.PermissionError:
                     failed_samples.append(sample)
             if failed_samples:
-                append_error(my_samples_form, _(u"You cannot grant clearances for the following samples:") + u" " +
+                append_error(my_samples_form, _("You cannot grant clearances for the following samples:") + " " +
                              utils.format_enumeration(failed_samples), "samples")
                 referentially_valid = False
     return referentially_valid
 
 
 def save_to_database(user, my_samples_form, action_form):
-    u"""Execute the things that should be done with the selected “My Samples”.
+    """Execute the things that should be done with the selected “My Samples”.
     I do also the feed generation here.
 
     :Parameters:
@@ -216,7 +216,7 @@ def save_to_database(user, my_samples_form, action_form):
 
 @login_required
 def edit(request, username):
-    u"""View for doing various things with the samples listed under “My
+    """View for doing various things with the samples listed under “My
     Samples”.  For example, copying them to the “My Samples” list of another
     user, or simply removing them from the list.
 
@@ -243,18 +243,18 @@ def edit(request, username):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if not request.user.is_staff and request.user != user:
-        raise permissions.PermissionError(request.user, _(u"You can't access the “My Samples” section of another user."))
+        raise permissions.PermissionError(request.user, _("You can't access the “My Samples” section of another user."))
     if request.method == "POST":
         my_samples_form = MySamplesForm(user, request.POST)
         action_form = ActionForm(user, request.POST)
         referentially_valid = is_referentially_valid(request.user, my_samples_form, action_form)
         if my_samples_form.is_valid() and action_form.is_valid() and referentially_valid:
             save_to_database(user, my_samples_form, action_form)
-            return utils.successful_response(request, _(u"Successfully processed “My Samples”."))
+            return utils.successful_response(request, _("Successfully processed “My Samples”."))
     else:
         my_samples_form = MySamplesForm(user)
         action_form = ActionForm(user)
     return render_to_response("samples/edit_my_samples.html",
-                              {"title": _(u"Edit “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
+                              {"title": _("Edit “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
                                "my_samples": my_samples_form, "action": action_form},
                               context_instance=RequestContext(request))

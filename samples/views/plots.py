@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""View for showing a plot as a PDF file.
+"""View for showing a plot as a PDF file.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import os.path
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -34,7 +34,7 @@ from chantal_common.signals import storage_changed
 
 @login_required
 def show_plot(request, process_id, plot_id, thumbnail):
-    u"""Shows a particular plot.  Although its response is a bitmap rather than
+    """Shows a particular plot.  Although its response is a bitmap rather than
     an HTML file, it is served by Django in order to enforce user permissions.
 
     :Parameters:
@@ -60,7 +60,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
     plot_filepath = process.calculate_plot_locations(plot_id)["thumbnail_file" if thumbnail else "plot_file"]
     datafile_name = process.get_datafile_name(plot_id)
     if datafile_name is None:
-        raise Http404(u"No such plot available.")
+        raise Http404("No such plot available.")
     timestamps = [] if thumbnail else [sample.last_modified for sample in process.samples.all()]
     timestamps.append(process.last_modified)
     if datafile_name:
@@ -71,7 +71,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
         # called by isdir) to fail.
         datafile_names = map(smart_str, datafile_names)
         if not all(os.path.exists(filename) for filename in datafile_names):
-            raise Http404(u"One of the raw datafiles was not found.")
+            raise Http404("One of the raw datafiles was not found.")
         update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, datafile_names, timestamps)
     else:
         update_necessary = chantal_common.utils.is_update_necessary(plot_filepath, timestamps=timestamps)
@@ -97,6 +97,6 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
         except utils.PlotError as e:
-            raise Http404(unicode(e) or u"Plot could not be generated.")
+            raise Http404(unicode(e) or "Plot could not be generated.")
     return chantal_common.utils.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")

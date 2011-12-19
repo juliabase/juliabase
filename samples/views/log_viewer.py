@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""A view for log files of crawlers.
+"""A view for log files of crawlers.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime, re, os.path, codecs
 from django.http import Http404
@@ -31,7 +31,7 @@ from samples.views.shared_utils import camel_case_to_underscores
 from chantal_ipv import models
 
 
-start_pattern = re.compile(ur"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d INFO     started crawling")
+start_pattern = re.compile(r"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d INFO     started crawling")
 
 def read_crawler_log(filepath):
     try:
@@ -43,7 +43,7 @@ def read_crawler_log(filepath):
         start_index -= 1
     if start_index < 0:
         return None, None
-    content = u""
+    content = ""
     for i in xrange(start_index, len(lines)):
         content += lines[i][20:]
     return content, datetime.datetime.strptime(lines[start_index][:19], "%Y-%m-%d %H:%M:%S")
@@ -52,7 +52,7 @@ def read_crawler_log(filepath):
 @login_required
 @require_http_methods(["GET"])
 def view(request, process_class_name):
-    u"""View for log files of crawlers.
+    """View for log files of crawlers.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -71,18 +71,18 @@ def view(request, process_class_name):
         if camel_case_to_underscores(process_class.__name__) == process_class_name:
             break
     else:
-        raise Http404(u"Process class not found.")
+        raise Http404("Process class not found.")
     try:
         logs_whitelist = settings.CRAWLER_LOGS_WHITELIST
     except AttributeError:
         logs_whitelist = set()
     if process_class.__name__ not in logs_whitelist:
         permissions.assert_can_add_physical_process(request.user, process_class)
-    assert u"." not in process_class_name and u"/" not in process_class_name
+    assert "." not in process_class_name and "/" not in process_class_name
     filepath = os.path.join(settings.CRAWLER_LOGS_ROOT, process_class_name + ".log")
     log_content, log_timestamp = read_crawler_log(filepath)
     return render_to_response("samples/log_viewer.html",
-                              {"title": _(u"Log of crawler “{process_class_name}”").format(
+                              {"title": _("Log of crawler “{process_class_name}”").format(
                                   process_class_name=process_class._meta.verbose_name_plural),
                                "log_content": log_content, "log_timestamp": log_timestamp},
                               context_instance=RequestContext(request))
@@ -91,7 +91,7 @@ def view(request, process_class_name):
 @login_required
 @require_http_methods(["GET"])
 def list(request):
-    u"""List all crawlers and link to their log files.
+    """List all crawlers and link to their log files.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -116,5 +116,5 @@ def list(request):
             if os.path.exists(filepath):
                 crawlers.append((process_class._meta.verbose_name_plural, process_class_name))
     crawlers.sort()
-    return render_to_response("samples/list_crawlers.html", {"title": _(u"Crawler logs"), "crawlers": crawlers},
+    return render_to_response("samples/list_crawlers.html", {"title": _("Crawler logs"), "crawlers": crawlers},
                               context_instance=RequestContext(request))

@@ -13,11 +13,11 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Code for generating feed entries.  They are called by views shortly after
+"""Code for generating feed entries.  They are called by views shortly after
 the database was changed in one way or another.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
@@ -28,7 +28,7 @@ from samples import permissions
 
 
 class Reporter(object):
-    u"""This class contains all feed-generating routines as methods.  Their
+    """This class contains all feed-generating routines as methods.  Their
     names start with ``report_...``.  The main reason for putting them into a
     class is that this class assures that no user gets two feed entries.
     Therefore, if you want to report a certain database change to the users,
@@ -72,7 +72,7 @@ class Reporter(object):
     """
 
     def __init__(self, originator):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `originator`: the user who did the database change to be reported;
@@ -85,7 +85,7 @@ class Reporter(object):
         self.originator = originator
 
     def __connect_with_users(self, entry, sending_model=None):
-        u"""Take an already generated feed entry and set its recipients to all
+        """Take an already generated feed entry and set its recipients to all
         users that are probably interested in this news (and allowed to see
         it).  This method ensures that neither the originator, nor users who
         have already received another feed entry get the current ``entry``.
@@ -114,7 +114,7 @@ class Reporter(object):
         self.interested_users = set()
 
     def __add_interested_users(self, samples, important=True):
-        u"""Add users interested in news about the given samples.  These are
+        """Add users interested in news about the given samples.  These are
         all users that have one of ``samples`` on their “My Samples” list,
         *and* the level of importance is enough.  They are added to the set of
         users connected with the next generated feed entry by `__connect_with_users`.
@@ -134,7 +134,7 @@ class Reporter(object):
                     self.interested_users.add(user)
 
     def __add_watchers(self, process_or_sample_series, important=True):
-        u"""Add users interested in news about the given process or sample
+        """Add users interested in news about the given process or sample
         series.  They are added to the set of users connected with the next
         generated feed entry by `__connect_with_users`.  The odd unification of
         processes and sample series stems from the fact that both share the
@@ -154,7 +154,7 @@ class Reporter(object):
         self.__add_interested_users(process_or_sample_series.samples.all(), important)
 
     def __add_topic_members(self, topic):
-        u"""Add all members of the given topic to the set of users connected
+        """Add all members of the given topic to the set of users connected
         with the next generated feed entry by `__connect_with_users`.  However,
         only those members are added who wish to receive also non-important
         news.
@@ -169,7 +169,7 @@ class Reporter(object):
                                      if not user.samples_user_details.only_important_news)
 
     def __get_subscribers(self, sample_series):
-        u"""
+        """
         :Parameters:
           - `sample_series`: the sample series whose subscribers should be
             determined
@@ -192,7 +192,7 @@ class Reporter(object):
         return subscribers
 
     def report_new_samples(self, samples):
-        u"""Generate one feed entry for new samples.  If more than one sample
+        """Generate one feed entry for new samples.  If more than one sample
         is in the given list, they are assumed to have been generated at the
         same time, so they should share the same topic and purpose.
 
@@ -214,7 +214,7 @@ class Reporter(object):
             self.__connect_with_users(entry, chantal_common.models.Topic)
 
     def report_physical_process(self, process, edit_description=None):
-        u"""Generate a feed entry for a physical process (deposition,
+        """Generate a feed entry for a physical process (deposition,
         measurement, etching etc) which was recently edited or created.  If the
         process is still unfinished, nothing is done.
 
@@ -240,7 +240,7 @@ class Reporter(object):
             self.__connect_with_users(entry, process.__class__)
 
     def report_result_process(self, result, edit_description=None):
-        u"""Generate a feed entry for a result process which was recently
+        """Generate a feed entry for a result process which was recently
         edited or created.
 
         :Parameters:
@@ -266,7 +266,7 @@ class Reporter(object):
         self.__connect_with_users(entry)
 
     def report_copied_my_samples(self, samples, recipient, comments):
-        u"""Generate a feed entry for sample that one user has copied to
+        """Generate a feed entry for sample that one user has copied to
         another user's “My Samples” list.
 
         :Parameters:
@@ -284,7 +284,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.Sample)
 
     def report_new_responsible_person_samples(self, samples, edit_description):
-        u"""Generate a feed entry for samples that changed their currently
+        """Generate a feed entry for samples that changed their currently
         responsible person.  This feed entry is only sent to that new
         responsible person.  Note that it is possible that further things were
         changed in the sample(s) at the same time (topic, purpose …).  They
@@ -309,7 +309,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.Sample)
 
     def report_changed_sample_topic(self, samples, old_topic, edit_description):
-        u"""Generate a feed entry about a topic change for sample(s).  All
+        """Generate a feed entry about a topic change for sample(s).  All
         members of the former topic (if any) and the new topic are informed.
         Note that it is possible that further things were changed in the
         sample(s) at the same time (reponsible person, purpose …).  They should
@@ -340,7 +340,7 @@ class Reporter(object):
         self.__connect_with_users(entry, chantal_common.models.Topic)
 
     def report_edited_samples(self, samples, edit_description):
-        u"""Generate a feed entry about a general edit of sample(s).  All users
+        """Generate a feed entry about a general edit of sample(s).  All users
         who are allowed to see the sample and who have the sample on their “My
         Samples” list are informed.
 
@@ -361,7 +361,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.Sample)
 
     def report_sample_split(self, sample_split, sample_completely_split):
-        u"""Generate a feed entry for a sample split.
+        """Generate a feed entry for a sample split.
 
         :Parameters:
           - `sample_split`: sample split that is to be reported
@@ -379,7 +379,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.Sample)
 
     def report_edited_sample_series(self, sample_series, edit_description):
-        u"""Generate a feed entry about an edited of sample series.  All users
+        """Generate a feed entry about an edited of sample series.  All users
         who have watches samples in this series are informed, including the
         currently responsible person (in case that it is not the originator).
 
@@ -400,7 +400,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.SampleSeries)
 
     def report_new_responsible_person_sample_series(self, sample_series, edit_description):
-        u"""Generate a feed entry for a sample series that changed their
+        """Generate a feed entry for a sample series that changed their
         currently responsible person.  This feed entry is only sent to that new
         responsible person.  Note that it is possible that further things were
         changed in the sample series at the same time (topic, samples …).
@@ -425,7 +425,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.SampleSeries)
 
     def report_changed_sample_series_topic(self, sample_series, old_topic, edit_description):
-        u"""Generate a feed entry about a topic change for a sample series.
+        """Generate a feed entry about a topic change for a sample series.
         All members of the former topic and the new topic are informed.
         Note that it is possible that further things were changed in the sample
         series at the same time (reponsible person, samples …).  They should be
@@ -455,7 +455,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.SampleSeries)
 
     def report_new_sample_series(self, sample_series):
-        u"""Generate one feed entry for a new sample series.
+        """Generate one feed entry for a new sample series.
 
         :Parameters:
           - `sample_series`: the sample series that was added
@@ -470,7 +470,7 @@ class Reporter(object):
         self.__connect_with_users(entry, models.SampleSeries)
 
     def report_changed_topic_membership(self, users, topic, action):
-        u"""Generate one feed entry for changed topic memberships, i.e. added
+        """Generate one feed entry for changed topic memberships, i.e. added
         or removed users in a topic.
 
         :Parameters:
@@ -488,7 +488,7 @@ class Reporter(object):
         self.__connect_with_users(entry, chantal_common.models.Topic)
 
     def report_status_message(self, process_class, status_message):
-        u"""Generate one feed entry for new status messages for physical
+        """Generate one feed entry for new status messages for physical
         processes.
 
         :Parameters:
@@ -505,7 +505,7 @@ class Reporter(object):
         self.__connect_with_users(entry)
 
     def report_withdrawn_status_message(self, process_class, status_message):
-        u"""Generate one feed entry for a withdrawn status message for physical
+        """Generate one feed entry for a withdrawn status message for physical
         processes.
 
         :Parameters:
@@ -522,7 +522,7 @@ class Reporter(object):
         self.__connect_with_users(entry)
 
     def report_task(self, task, edit_description=None):
-        u"""Generate one feed entry for a new task or an edited task.
+        """Generate one feed entry for a new task or an edited task.
 
         :Parameters:
           - `task`: the task that was created or edited
@@ -546,7 +546,7 @@ class Reporter(object):
         self.__connect_with_users(entry)
 
     def report_removed_task(self, task):
-        u"""Generate one feed for a removed task.  It is called immediately
+        """Generate one feed for a removed task.  It is called immediately
         before the task is actually deleted.
 
         :Parameters:

@@ -14,10 +14,10 @@
 # Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
 
 
-u"""Root URL dispach for testing the “samples” app.
+"""Root URL dispach for testing the “samples” app.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls.defaults import *
 from django.conf import settings

@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+from __future__ import unicode_literals
 
 import xml.etree.cElementTree as ElementTree
 import cPickle as pickle, re, codecs, os.path
@@ -112,7 +113,7 @@ hours_pattern = re.compile(r"(?P<hours>\d+)\s*h$")
 minutes_pattern = re.compile(r"(?P<minutes>\d+)\s*min$")
 def format_pre_heat_time(time):
     if not time:
-        return u""
+        return ""
     if time in ["o.N.", "o.W."]:
         return ""
     if time == "kein pre heat":
@@ -132,17 +133,17 @@ quantity_pattern = re.compile(r"(?P<value>[-+0-9.,eE]+)?\s*(?P<unit>(Torr)|(mBar
 def normalize_quantity(quantity, base_pressure=False):
     quantity = quantity.strip().replace(",", ".")
     if not quantity:
-        return u""
+        return ""
     match = quantity_pattern.match(quantity)
     if match:
         if not match.group("value") or not match.group("value").strip():
-            return u""
+            return ""
         quantity = match.group("value").strip() + (" " + match.group("unit") if not base_pressure else "")
         return quantity.replace("mBar", "mbar")
     if base_pressure:
         return quantity
     print quantity + " could not be parsed as a quantity"
-    return u""
+    return ""
 
 gas_and_dilution = [None, "SiH4", "H2", "PH3+SiH4", "TMB", "B2H6", "CH4", "CO2", "", "GeH4", "Ar", "Si2H6", "PH3"]
 
@@ -150,7 +151,7 @@ depositions = pickle.load(open("6k.pickle", "rb"))
 
 chambers = set()
 outfile = codecs.open("6k_import.py", "w", "utf-8")
-print>>outfile, """#!/usr/bin/env python
+print >> outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from chantal_remote import *
@@ -177,7 +178,7 @@ for deposition_number in sorted(depositions):
         print deposition_number
         continue
     deposition_number = deposition_number[:3] + "-%03d" % int(match.group("number"))
-    print>>outfile, """
+    print >> outfile, """
 sample = new_samples(1, u"6-Kammer-Labor", timestamp="%(timestamp)s 12:00:00", timestamp_inaccuracy=3,
                      substrate="custom", substrate_comments=u"%(substrate_comments)s")
 
@@ -191,12 +192,12 @@ deposition.timestamp = u'%(timestamp)s 13:00:00'
 """ % {"deposition_number": deposition_number,
        "comments": deposition.get("comments", "").replace("\"", "\\\"").replace("\n", "\\n"),
        "timestamp": deposition["date"][:10], "carrier": deposition.get("carrier", ""),
-       "substrate_comments": deposition.get("substrate", "").replace("\"", "\\\"").replace("\n", "\\n") or u"unknown",
+       "substrate_comments": deposition.get("substrate", "").replace("\"", "\\\"").replace("\n", "\\n") or "unknown",
        "operator": operators[deposition.get("operator_initials", "AL")]}
     operator_username = operators[deposition.get("operator_initials", "AL")]
     for i, layer_number in enumerate(sorted(deposition["layers"])):
         layer = deposition["layers"][layer_number]
-        print>>outfile, """layer = SixChamberLayer(deposition)
+        print >> outfile, """layer = SixChamberLayer(deposition)
 layer.number = %(number)d
 layer.chamber = "#%(chamber)s"
 layer.pressure = "%(pressure)s"
@@ -215,7 +216,7 @@ layer.plasma_start_with_carrier = %(plasma_start_with_carrier)s
 layer.deposition_frequency = "%(deposition_frequency)s"
 layer.deposition_power = "%(deposition_power)s"
 layer.base_pressure = "%(base_pressure)s"
-""" % {"number": i+1, "chamber": layer.get("chamber", "1"), "pressure": normalize_quantity(layer.get("pressure")),
+""" % {"number": i + 1, "chamber": layer.get("chamber", "1"), "pressure": normalize_quantity(layer.get("pressure")),
        "time": layer.get("time", "")[11:],
        "substrate_electrode_distance": layer.get("substrate_electrode_distance", ""),
        "comments": layer.get("comments", "").replace("\"", "\\\"").replace("\n-", "\n\\-").replace("\n", "\\n"),
@@ -235,7 +236,7 @@ layer.base_pressure = "%(base_pressure)s"
         for channel in sorted(layer["channels"], key=lambda x: x["channel_number"]):
             gas = gas_and_dilution[int(channel["gas_and_dillution"])]
             if gas:
-                print>>outfile, """channel = SixChamberChannel(layer)
+                print >> outfile, """channel = SixChamberChannel(layer)
 channel.number = %(number)s
 channel.gas = "%(gas)s"
 channel.flow_rate = "%(flow_rate)s"
@@ -244,11 +245,11 @@ channel.flow_rate = "%(flow_rate)s"
                 print deposition_number, "has empty gas field"
 
 
-    print>>outfile, u"""
+    print >> outfile, """
 deposition_number = deposition.submit()
 
 rename_after_deposition(deposition_number, {sample[0]: deposition_number})
 
 """
 
-print>>outfile, "\n\nlogout()\n"
+print >> outfile, "\n\nlogout()\n"

@@ -13,12 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Here are the views for a split immediately after a deposition.  In contrast
+"""Here are the views for a split immediately after a deposition.  In contrast
 to the actual split view, you see all samples of the deposition at once, and
 you can rename and/or split them.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.http import Http404
@@ -36,14 +36,14 @@ from samples.views import utils, form_utils, feed_utils
 
 
 class OriginalDataForm(Form):
-    u"""Form holding the old sample, the new name for the unsplit sample, and
+    """Form holding the old sample, the new name for the unsplit sample, and
     the number of pieces it is about to be split into.
     """
     _ = ugettext_lazy
-    sample = forms.CharField(label=_(u"Old sample name"), max_length=30,
+    sample = forms.CharField(label=_("Old sample name"), max_length=30,
                              widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
-    new_name = forms.CharField(label=_(u"New name"), max_length=30)
-    number_of_pieces = forms.IntegerField(label=_(u"Pieces"), initial="1",
+    new_name = forms.CharField(label=_("New name"), max_length=30)
+    number_of_pieces = forms.IntegerField(label=_("Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
 
     def __init__(self, remote_client, new_name, post_data=None, *args, **kwargs):
@@ -62,30 +62,30 @@ class OriginalDataForm(Form):
             new_name_format = utils.sample_name_format(new_name)
             if new_name_format == "old" and new_name != self.cleaned_data["sample"].name and \
                     utils.does_sample_exist(new_name):
-                raise ValidationError(_(u"This sample name exists already."))
+                raise ValidationError(_("This sample name exists already."))
             elif new_name_format == "provisional":
-                raise ValidationError(_(u"You must get rid of the provisional sample name."))
+                raise ValidationError(_("You must get rid of the provisional sample name."))
             return new_name
 
     def clean_sample(self):
         if not self.remote_client:
             sample = utils.get_sample(self.cleaned_data["sample"])
             if sample is None:
-                raise ValidationError(_(u"No sample with this name found."))
+                raise ValidationError(_("No sample with this name found."))
             if isinstance(sample, list):
-                raise ValidationError(_(u"Alias is not unique."))
+                raise ValidationError(_("Alias is not unique."))
         else:
             try:
                 sample = models.Sample.objects.get(pk=int(self.cleaned_data["sample"]))
             except models.Sample.DoesNotExist:
-                raise ValidationError(_(u"No sample with this ID found."))
+                raise ValidationError(_("No sample with this ID found."))
             except ValueError:
-                raise ValidationError(_(u"Invalid ID format."))
+                raise ValidationError(_("Invalid ID format."))
         return sample
 
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
-            raise ValidationError(_(u"Must be at least 1."))
+            raise ValidationError(_("Must be at least 1."))
         return self.cleaned_data["number_of_pieces"]
 
     def clean(self):
@@ -96,20 +96,20 @@ class OriginalDataForm(Form):
                 old_sample_name_format = utils.sample_name_format(sample.name)
                 if old_sample_name_format == "new":
                     if not new_name.startswith(sample.name):
-                        append_error(self, _(u"The new name must begin with the old name."), "new_name")
+                        append_error(self, _("The new name must begin with the old name."), "new_name")
                         del self.cleaned_data["new_name"]
                 elif sample and sample.name != new_name:
                     if not new_name.startswith(self.new_name):
-                        append_error(self, _(u"The new name must begin with the deposition number."), "new_name")
+                        append_error(self, _("The new name must begin with the deposition number."), "new_name")
                         del self.cleaned_data["new_name"]
         return self.cleaned_data
 
 
 class NewNameForm(Form):
-    u"""Form holding the newly given name of a sample.
+    """Form holding the newly given name of a sample.
     """
     _ = ugettext_lazy
-    new_name = forms.CharField(label=_(u"New sample name"), max_length=30)
+    new_name = forms.CharField(label=_("New sample name"), max_length=30)
 
     def __init__(self, readonly, data=None, **kwargs):
         super(NewNameForm, self).__init__(data, **kwargs)
@@ -119,26 +119,26 @@ class NewNameForm(Form):
 
 
 class GlobalNewDataForm(Form):
-    u"""Form for holding new data which applies to all samples and overrides
+    """Form for holding new data which applies to all samples and overrides
     local settings.
     """
     _ = ugettext_lazy
-    new_location = forms.CharField(label=_(u"New current location"), max_length=50, required=False,
-                                   help_text=_(u"(for all samples; leave empty for no change)"))
+    new_location = forms.CharField(label=_("New current location"), max_length=50, required=False,
+                                   help_text=_("(for all samples; leave empty for no change)"))
 
     def __init__(self, data=None, **kwargs):
-        u"""Form constructor.  I have to initialise the field here, both their
+        """Form constructor.  I have to initialise the field here, both their
         value and their layout.
         """
         deposition_instance = kwargs.pop("deposition_instance")
         super(GlobalNewDataForm, self).__init__(data, **kwargs)
         self.fields["new_location"].initial = \
-            models.default_location_of_deposited_samples.get(deposition_instance.__class__, u"")
+            models.default_location_of_deposited_samples.get(deposition_instance.__class__, "")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})
 
 
 def is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form):
-    u"""Tests the “inner” validity of all forms belonging to this view.  This
+    """Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
@@ -164,7 +164,7 @@ def is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form)
 
 
 def change_structure(original_data_forms, new_name_form_lists):
-    u"""Add or delete new data form according to the new number of pieces
+    """Add or delete new data form according to the new number of pieces
     entered by the user.  While changes in form fields are performs by the form
     objects themselves, they can't change the *structure* of the view.  This is
     performed here.
@@ -200,7 +200,7 @@ def change_structure(original_data_forms, new_name_form_lists):
 
 
 def save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition):
-    u"""Performs all splits – if any – and renames the samples according to
+    """Performs all splits – if any – and renames the samples according to
     what was input by the user.
 
     :Parameters:
@@ -262,7 +262,7 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
 
 
 def is_referentially_valid(original_data_forms, new_name_form_lists, deposition):
-    u"""Test whether all forms are consistent with each other and with the
+    """Test whether all forms are consistent with each other and with the
     database.  For example, no sample name must occur twice, and the sample
     names must not exist within the database already.
 
@@ -289,13 +289,13 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
             if original_sample in original_samples:
-                append_error(original_data_form, _(u"Sample {sample} occurs multiple times.").format(sample=original_sample),
+                append_error(original_data_form, _("Sample {sample} occurs multiple times.").format(sample=original_sample),
                              "sample")
                 referentially_valid = False
             original_samples.add(original_sample)
             if original_sample not in samples:
                 append_error(original_data_form,
-                             _(u"Sample {sample} doesn't belong to this deposition.").format(sample=original_sample),
+                             _("Sample {sample} doesn't belong to this deposition.").format(sample=original_sample),
                              "sample")
                 referentially_valid = False
             new_name = original_data_form.cleaned_data["new_name"]
@@ -304,17 +304,17 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                 # to check for duplicates in the form only for deposition-style
                 # names.
                 if new_name in new_names:
-                    append_error(original_data_form, _(u"This sample name has been used already on this page."), "new_name")
+                    append_error(original_data_form, _("This sample name has been used already on this page."), "new_name")
                     referentially_valid = False
                 new_names.add(new_name)
             if more_than_one_piece and new_name == deposition.number:
-                append_error(original_data_form, _(u"Since there is more than one piece, the new name "
-                                                   u"must not be exactly the deposition's name."), "new_name")
+                append_error(original_data_form, _("Since there is more than one piece, the new name "
+                                                   "must not be exactly the deposition's name."), "new_name")
                 referentially_valid = False
     if all(original_data_form.is_valid() for original_data_form in original_data_forms):
         assert len(original_samples) <= len(samples)
         if len(original_samples) < len(samples):
-            append_error(original_data_form, _(u"At least one sample of the original deposition is missing."))
+            append_error(original_data_form, _("At least one sample of the original deposition is missing."))
             referentially_valid = False
     for new_name_forms, original_data_form in zip(new_name_form_lists, original_data_forms):
         if original_data_form.is_valid():
@@ -324,27 +324,27 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                     if original_data_form.cleaned_data["number_of_pieces"] == 1:
                         if new_name != original_data_form.cleaned_data["new_name"]:
                             append_error(
-                                new_name_form, _(u"If you don't split, you can't rename the single piece."), "new_name")
+                                new_name_form, _("If you don't split, you can't rename the single piece."), "new_name")
                             referentially_valid = False
                     else:
                         if new_name in new_names:
                             append_error(
-                                new_name_form, _(u"This sample name has been used already on this page."), "new_name")
+                                new_name_form, _("This sample name has been used already on this page."), "new_name")
                             referentially_valid = False
                         new_names.add(new_name)
                         if utils.sample_name_format(new_name) != "new" and \
                                 not new_name.startswith(original_data_form.cleaned_data["new_name"]):
-                            append_error(new_name_form, _(u"If you choose a deposition-style name, it must begin "
-                                                          u"with the parent's new name."), "new_name")
+                            append_error(new_name_form, _("If you choose a deposition-style name, it must begin "
+                                                          "with the parent's new name."), "new_name")
                             referentially_valid = False
                         if utils.does_sample_exist(new_name):
-                            append_error(new_name_form, _(u"This sample name exists already."), "new_name")
+                            append_error(new_name_form, _("This sample name exists already."), "new_name")
                             referentially_valid = False
     return referentially_valid
 
 
 def forms_from_post_data(post_data, deposition, remote_client):
-    u"""Intepret the POST data and create bound forms for old and new names and
+    """Intepret the POST data and create bound forms for old and new names and
     the global data.  The top-level new-data list has the same number of
     elements as the original-data list because they correspond to each other.
 
@@ -375,7 +375,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
         for new_name_index in range(list_of_number_of_new_names[sample_index]):
             prefix = "{0}_{1}".format(sample_index, new_name_index)
             new_name_form = \
-                NewNameForm(readonly=number_of_pieces==1, data=post_data, prefix=prefix)
+                NewNameForm(readonly=number_of_pieces == 1, data=post_data, prefix=prefix)
             if number_of_pieces == 1 and new_name_form.is_valid() and original_data_form.is_valid() \
                     and new_name_form.cleaned_data["new_name"] != original_data_form.cleaned_data["new_name"]:
                 piece_data = {}
@@ -388,7 +388,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
 
 
 def forms_from_database(deposition, remote_client, new_names):
-    u"""Take a deposition instance and construct forms from it for its old and
+    """Take a deposition instance and construct forms from it for its old and
     new data.  The top-level new data list has the same number of elements as
     the old data list because they correspond to each other.
 
@@ -431,7 +431,7 @@ def forms_from_database(deposition, remote_client, new_names):
 
 @login_required
 def split_and_rename_after_deposition(request, deposition_number):
-    u"""View for renaming and/or splitting samples immediately after they have
+    """View for renaming and/or splitting samples immediately after they have
     been deposited in the same run.
 
     Optionally, you can give query string parameters of the form
@@ -454,7 +454,7 @@ def split_and_rename_after_deposition(request, deposition_number):
     deposition = get_object_or_404(models.Deposition, number=deposition_number)
     permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
     if not deposition.finished:
-        raise Http404(u"This deposition is not finished yet.")
+        raise Http404("This deposition is not finished yet.")
     remote_client = is_json_requested(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \
@@ -466,7 +466,7 @@ def split_and_rename_after_deposition(request, deposition_number):
             sample_splits = save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition)
             for sample_split in sample_splits:
                 feed_utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
-            return utils.successful_response(request, _(u"Samples were successfully split and/or renamed."),
+            return utils.successful_response(request, _("Samples were successfully split and/or renamed."),
                                              json_response=True)
     else:
         new_names = dict((utils.int_or_zero(key[len("new-name-"):]), new_name)
@@ -475,7 +475,7 @@ def split_and_rename_after_deposition(request, deposition_number):
         original_data_forms, new_name_form_lists, global_new_data_form = \
             forms_from_database(deposition, remote_client, new_names)
     return render_to_response("samples/split_after_deposition.html",
-                              {"title": _(u"Bulk sample rename for {deposition}").format(deposition=deposition),
+                              {"title": _("Bulk sample rename for {deposition}").format(deposition=deposition),
                                "samples": zip(original_data_forms, new_name_form_lists),
                                "new_sample_data": global_new_data_form},
                               context_instance=RequestContext(request))

@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+from __future__ import unicode_literals
 
 import xml.etree.cElementTree as ElementTree
 import cPickle as pickle
@@ -151,7 +152,7 @@ number_of_outfiles = 6
 outfiles = [codecs.open("la_import_{0}.py".format(i), "w", encoding="utf-8") for i in range(number_of_outfiles)]
 
 for i, outfile in enumerate(outfiles):
-    print>>outfile, """#!/usr/bin/env python
+    print >> outfile, """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from chantal_remote import *
@@ -168,7 +169,7 @@ for deposition, outfile in itertools.izip(depositions, itertools.cycle(outfiles)
         continue
     match = legacy_deposition_number_pattern.match(deposition_number)
     deposition_number = deposition_number[:4] + "%03d" % int(match.group("number"))
-    comments = u"\\n".join(layer.fields["comments"] for layer in deposition)
+    comments = "\\n".join(layer.fields["comments"] for layer in deposition)
     while comments[-4:] == "\\n\\n":
         comments = comments[:-2]
     while comments[:2] == "\\n":
@@ -181,7 +182,7 @@ for deposition, outfile in itertools.izip(depositions, itertools.cycle(outfiles)
         hour += 1
     assert hour < 24
     last_date = date
-    print>>outfile, u"""sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00", timestamp_inaccuracy=3)
+    print >> outfile, """sample = new_samples(1, u"Großflächige-Labor", timestamp="%s 12:00:00", timestamp_inaccuracy=3)
 
 deposition = LargeAreaDeposition(sample)
 deposition.number = u"%s"
@@ -189,7 +190,7 @@ deposition.comments = u"%s"
 deposition.timestamp_inaccuracy = 3
 deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments, date, hour)
     for layer in deposition:
-        print>>outfile, "\nlayer = LargeAreaLayer(deposition)"
+        print >> outfile, "\nlayer = LargeAreaLayer(deposition)"
         for key, value in layer.fields.iteritems():
             if key != "__" and key != "comments":
                 if key == "date":
@@ -214,12 +215,12 @@ deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments,
                 if key == "number":
                     value = value[4:]
                 if value:
-                    print>>outfile, u"layer.%s = u\"%s\"" % (key, value.replace('"', '\\"'))
-    print>>outfile, u"""
+                    print >> outfile, "layer.%s = u\"%s\"" % (key, value.replace('"', '\\"'))
+    print >> outfile, """
 deposition_number = deposition.submit()
 
 rename_after_deposition(deposition_number, {sample[0]: deposition_number})
 
 """
 
-print>>outfile, "\n\nlogout()\n"
+print >> outfile, "\n\nlogout()\n"

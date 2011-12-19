@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+from __future__ import absolute_import, unicode_literals
 
 import copy, datetime
 from django import forms
@@ -32,16 +33,16 @@ from samples import permissions
 
 
 class SamplesForm(forms.Form):
-    u"""Form for the list selection of samples.
+    """Form for the list selection of samples.
     """
     _ = ugettext_lazy
-    sample_list = form_utils.MultipleSamplesField(label=_(u"Samples"))
+    sample_list = form_utils.MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
         samples = list(user.my_samples.all())
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
-            if user != task.customer or task.status != u"1 new":
+            if user != task.customer or task.status != "1 new":
                 super(SamplesForm, self).__init__(**kwargs)
                 self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             else:
@@ -58,13 +59,13 @@ class SamplesForm(forms.Form):
 
 
 class TaskForm(forms.ModelForm):
-    u"""Model form for a task.
+    """Model form for a task.
     """
     _ = ugettext_lazy
 
-    operator = forms.ChoiceField(label=capfirst(_(u"operator")), required=False)
-    process_class = forms.ChoiceField(label=capfirst(_(u"process class")))
-    finished_process = forms.ChoiceField(label=capfirst(_(u"finished process")), required=False)
+    operator = forms.ChoiceField(label=capfirst(_("operator")), required=False)
+    process_class = forms.ChoiceField(label=capfirst(_("process class")))
+    finished_process = forms.ChoiceField(label=capfirst(_("finished process")), required=False)
 
     def __init__(self, user, data=None, **kwargs):
         self.task = kwargs.get("instance")
@@ -75,11 +76,11 @@ class TaskForm(forms.ModelForm):
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
             self.fixed_fields.add("process_class")
-            if self.task.status == u"1 new":
+            if self.task.status == "1 new":
                 self.fixed_fields.add("finished_process")
                 if self.user not in eligible_operators:
                     self.fixed_fields.update(["operator", "status"])
-            elif self.task.status in [u"2 accepted", u"3 in progress"]:
+            elif self.task.status in ["2 accepted", "3 in progress"]:
                 if self.user != self.task.operator:
                     self.fixed_fields.update(["status", "priority", "finished_process", "operator"])
                     if self.user != self.task.customer:
@@ -98,17 +99,17 @@ class TaskForm(forms.ModelForm):
                 data.update(forms.model_to_dict(self.task, self.fixed_fields))
             else:
                 initial = kwargs.get("initial", {})
-                initial.update({"status": u"1 new"})
+                initial.update({"status": "1 new"})
                 data.update(initial)
         super(TaskForm, self).__init__(data, **kwargs)
         self.fields["customer"].required = False
-        self.fields["operator"].choices = [(u"", u"---------")]
+        self.fields["operator"].choices = [("", "---------")]
         if self.task:
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
                                                    for user in utils.sorted_users(eligible_operators))
         self.fields["process_class"].choices = form_utils.choices_of_content_types(
             permissions.get_all_addable_physical_process_models())
-        self.fields["finished_process"].choices = [(u"", u"---------")]
+        self.fields["finished_process"].choices = [("", "---------")]
         if self.task:
             old_finished_process_pk = self.task.finished_process.pk if self.task.finished_process else None
             if self.user == self.task.operator:
@@ -127,7 +128,7 @@ class TaskForm(forms.ModelForm):
 
     def clean_status(self):
         if "status" in self.fixed_fields:
-            return self.task.status if self.task else u"1 new"
+            return self.task.status if self.task else "1 new"
         return self.cleaned_data["status"]
 
     def clean_process_class(self):
@@ -167,9 +168,9 @@ class TaskForm(forms.ModelForm):
     def clean(self):
         _ = ugettext
         cleaned_data = super(TaskForm, self).clean()
-        if cleaned_data.get("status") in [u"2 accepted", u"3 in progress", u"0 finished"]:
+        if cleaned_data.get("status") in ["2 accepted", "3 in progress", "0 finished"]:
             if not cleaned_data.get("operator"):
-                common_utils.append_error(self, _(u"With this status, you must set an operator."), "operator")
+                common_utils.append_error(self, _("With this status, you must set an operator."), "operator")
         return cleaned_data
 
     class Meta:
@@ -178,9 +179,9 @@ class TaskForm(forms.ModelForm):
 
 
 class ChooseTaskListsForm(forms.Form):
-    u"""Form for the task lists multiple selection list.
+    """Form for the task lists multiple selection list.
     """
-    visible_task_lists = forms.MultipleChoiceField(label=capfirst(_(u"show task lists for")), required=False)
+    visible_task_lists = forms.MultipleChoiceField(label=capfirst(_("show task lists for")), required=False)
 
     def __init__(self, user, data=None, **kwargs):
         super(ChooseTaskListsForm, self).__init__(data, **kwargs)
@@ -192,7 +193,7 @@ class ChooseTaskListsForm(forms.Form):
 
 
 class TaskForTemplate(object):
-    u"""Class for preparing the tasks for the show template.
+    """Class for preparing the tasks for the show template.
     """
     def __init__(self, task, user):
         self.task = task
@@ -200,14 +201,14 @@ class TaskForTemplate(object):
                         or (permissions.has_permission_to_fully_view_sample(user, sample) or
                             permissions.has_permission_to_add_edit_physical_process(user, self.task.finished_process,
                                                                                     self.task.process_class.model_class()))
-                        else _(u"confidential sample") for sample in self.task.samples.all()]
+                        else _("confidential sample") for sample in self.task.samples.all()]
         self.user_can_see_everything = self.user_can_edit = user == self.task.customer or \
             permissions.has_permission_to_add_physical_process(user, task.process_class.model_class())
         self.user_can_delete = user == self.task.customer
 
 
 def save_to_database(task_form, samples_form, old_task):
-    u"""Saves the data for a task into the database.  All validation checks
+    """Saves the data for a task into the database.  All validation checks
     must have done before calling this function.
 
     :Parameters:
@@ -236,7 +237,7 @@ def save_to_database(task_form, samples_form, old_task):
 
 @login_required
 def edit(request, task_id):
-    u"""Edit or create a task.
+    """Edit or create a task.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -265,29 +266,29 @@ def edit(request, task_id):
         if task_form.is_valid() and (not samples_form.is_bound or samples_form.is_valid()):
             task = save_to_database(task_form, samples_form, old_task=old_task if task_id else None)
             if task_id:
-                edit_description = {"important": True, "description": u""}
+                edit_description = {"important": True, "description": ""}
                 if old_task.status != task.status:
                     edit_description["description"] += \
-                        _(u"* Status is now “{new_status}”.\n").format(new_status=task.get_status_display())
+                        _("* Status is now “{new_status}”.\n").format(new_status=task.get_status_display())
                 if old_task.priority != task.priority:
                     edit_description["description"] += \
-                        _(u"* Priority is now “{new_priority}̣”.\n").format(new_priority=task.get_priority_display())
+                        _("* Priority is now “{new_priority}̣”.\n").format(new_priority=task.get_priority_display())
                 if old_task.finished_process != task.finished_process:
-                    edit_description["description"] += _(u"* Connected process.\n")
+                    edit_description["description"] += _("* Connected process.\n")
                 if old_task.operator != task.operator:
                     if task.operator:
-                        edit_description["description"] += _(u"* Operator is now {operator}.\n").format(
+                        edit_description["description"] += _("* Operator is now {operator}.\n").format(
                             operator=common_utils.get_really_full_name(task.operator))
                     else:
-                        edit_description["description"] += _(u"* No operator is set anymore.\n")
+                        edit_description["description"] += _("* No operator is set anymore.\n")
                 if old_samples != set(task.samples.all()):
-                    edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"samples")))
+                    edit_description["description"] += "* {0}.\n".format(utils.capitalize_first_letter(_("samples")))
                 if old_task.comments != task.comments:
-                    edit_description["description"] += u"* {0}.\n".format(utils.capitalize_first_letter(_(u"comments")))
+                    edit_description["description"] += "* {0}.\n".format(utils.capitalize_first_letter(_("comments")))
             else:
                 edit_description = None
             feed_utils.Reporter(request.user).report_task(task, edit_description)
-            message = _(u"Task was {verb} successfully.").format(verb=_(u"edited") if task_id else _(u"added"))
+            message = _("Task was {verb} successfully.").format(verb=_("edited") if task_id else _("added"))
             return utils.successful_response(request, message, "samples.views.task_lists.show")
     else:
         samples_form = SamplesForm(user, preset_sample, task)
@@ -295,7 +296,7 @@ def edit(request, task_id):
         if "process_class" in request.GET:
             initial["process_class"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
-    title = _(u"Edit task") if task else _(u"Add task")
+    title = _("Edit task") if task else _("Add task")
     return render_to_response("samples/edit_task.html", {"title": title,
                                                          "task": task_form,
                                                          "samples": samples_form},
@@ -303,7 +304,7 @@ def edit(request, task_id):
 
 @login_required
 def show(request):
-    u"""Shows the task lists the user wants to see.
+    """Shows the task lists the user wants to see.
     It also provides the multiple choice list to select the task lists
     for the user.
 
@@ -329,9 +330,9 @@ def show(request):
     task_lists = {}
     for process_class in request.user.samples_user_details.visible_task_lists.all():
         active_tasks = process_class.tasks.order_by("-status", "priority", "last_modified"). \
-            exclude(Q(status=u"0 finished") & Q(last_modified__lt=one_week_ago))
+            exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_class] = [TaskForTemplate(task, request.user) for task in active_tasks]
-    return render_to_response("samples/task_lists.html", {"title": _(u"Task lists"),
+    return render_to_response("samples/task_lists.html", {"title": _("Task lists"),
                                                           "chose_task_lists": choose_task_lists_form,
                                                           "task_lists": task_lists},
                               context_instance=RequestContext(request))
@@ -340,7 +341,7 @@ def show(request):
 @login_required
 @require_http_methods(["POST"])
 def remove(request, task_id):
-    u"""Deletes a task from the database.
+    """Deletes a task from the database.
 
     :Paramerters:
      - `request`: the current HTTP Request object
@@ -353,7 +354,7 @@ def remove(request, task_id):
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
     if task.customer != request.user:
-        raise permissions.PermissionError(request.user, _(u"You are not the customer of this task."))
+        raise permissions.PermissionError(request.user, _("You are not the customer of this task."))
     feed_utils.Reporter(request.user).report_removed_task(task)
     task.delete()
-    return utils.successful_response(request, _(u"The task was successfully removed."), show)
+    return utils.successful_response(request, _("The task was successfully removed."), show)

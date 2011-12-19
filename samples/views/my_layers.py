@@ -13,11 +13,11 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""View for editing the “My Layers” structure.  See
+"""View for editing the “My Layers” structure.  See
 ``models.UserDetails.my_layers`` for the syntax of the “My Layers” field.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re, json
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -34,39 +34,39 @@ from django.contrib import messages
 
 
 class MyLayerForm(forms.Form):
-    u"""Form for editing the “My Layers” structure.
+    """Form for editing the “My Layers” structure.
     """
     _ = ugettext_lazy
-    nickname = forms.CharField(label=_(u"Nickname"))
-    deposition_and_layer = forms.CharField(label=_(u"Layer identifier"),
-                                           help_text=_(u"in the form \"deposition number\"-\"layer number\""))
-    delete = forms.BooleanField(label=_(u"Delete"), required=False)
+    nickname = forms.CharField(label=_("Nickname"))
+    deposition_and_layer = forms.CharField(label=_("Layer identifier"),
+                                           help_text=_("in the form \"deposition number\"-\"layer number\""))
+    delete = forms.BooleanField(label=_("Delete"), required=False)
 
     def clean_deposition_and_layer(self):
-        u"""Convert the notation ``<deposition number>-<layer number>`` to
+        """Convert the notation ``<deposition number>-<layer number>`` to
         ``(deposition ID, layer number)``.  Additionaly, do some validity
         tests.
         """
         if "-" not in self.cleaned_data["deposition_and_layer"]:
-            raise ValidationError(_(u"Deposition and layer number must be separated by \"-\"."))
+            raise ValidationError(_("Deposition and layer number must be separated by \"-\"."))
         deposition_number, layer_number = self.cleaned_data["deposition_and_layer"].rsplit("-", 1)
         try:
             deposition = models.Deposition.objects.get(number=deposition_number).actual_instance
         except models.Deposition.DoesNotExist:
-            raise ValidationError(_(u"Deposition number doesn't exist."))
+            raise ValidationError(_("Deposition number doesn't exist."))
         try:
             layer_number = int(layer_number)
         except ValueError:
-            raise ValidationError(_(u"Layer number isn't a number."))
+            raise ValidationError(_("Layer number isn't a number."))
         # FixMe: Handle the case when there is no "layers" attribute
         if not deposition.layers.filter(number=layer_number).exists():
-            raise ValidationError(_(u"This layer does not exist in this deposition."))
+            raise ValidationError(_("This layer does not exist in this deposition."))
         return deposition.id, layer_number
 
 
-layer_item_pattern = re.compile(ur"\s*(?P<nickname>.+?)\s*:\s*(?P<raw_layer_identifier>.+?)\s*(?:,\s*|\Z)")
+layer_item_pattern = re.compile(r"\s*(?P<nickname>.+?)\s*:\s*(?P<raw_layer_identifier>.+?)\s*(?:,\s*|\Z)")
 def forms_from_database(user):
-    u"""Generate the “My Layers” forms for the current user.  Convert the
+    """Generate the “My Layers” forms for the current user.  Convert the
     notation ``<deposition ID>-<layer number>`` of the database to
     ``<deposition number>-<layer number>``.
 
@@ -84,14 +84,14 @@ def forms_from_database(user):
     if user.samples_user_details.my_layers:
         for nickname, process_id, layer_number in json.loads(user.samples_user_details.my_layers):
             deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
-            deposition_and_layer = u"{0}-{1}".format(deposition_number, layer_number)
+            deposition_and_layer = "{0}-{1}".format(deposition_number, layer_number)
             my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
                                               prefix=str(len(my_layer_forms))))
     return my_layer_forms
 
 
 def forms_from_post_data(post_data):
-    u"""Interpret the POST data and create bound forms for with the “My Layers”
+    """Interpret the POST data and create bound forms for with the “My Layers”
     from it.  This also includes the functionality of the ``change_structure``
     function found in other modules.
 
@@ -125,7 +125,7 @@ def forms_from_post_data(post_data):
 
 
 def is_referentially_valid(my_layer_forms):
-    u"""Test whether no nickname occurs twice.
+    """Test whether no nickname occurs twice.
 
     :Return:
       whether all nicknames are unique
@@ -138,7 +138,7 @@ def is_referentially_valid(my_layer_forms):
         if my_layer_form.is_valid():
             nickname = my_layer_form.cleaned_data["nickname"]
             if nickname in nicknames:
-                append_error(my_layer_form, _(u"Nickname is already given."))
+                append_error(my_layer_form, _("Nickname is already given."))
                 referentially_valid = False
             else:
                 nicknames.add(nickname)
@@ -146,7 +146,7 @@ def is_referentially_valid(my_layer_forms):
 
 
 def save_to_database(my_layer_forms, user):
-    u"""Save the new “My Layers” into the database.
+    """Save the new “My Layers” into the database.
     """
     user_details = user.samples_user_details
     old_layers = user_details.my_layers
@@ -155,13 +155,13 @@ def save_to_database(my_layer_forms, user):
 
     if not old_layers == user_details.my_layers:
         user_details.save()
-        return  _(u"Successfully changed “My Layers”")
+        return  _("Successfully changed “My Layers”")
     else:
-        return  _(u"Nothing changed.")
+        return  _("Nothing changed.")
 
 @login_required
 def edit(request, login_name):
-    u"""View for editing the “My Layers”.
+    """View for editing the “My Layers”.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -178,7 +178,7 @@ def edit(request, login_name):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
-        raise permissions.PermissionError(request.user, _(u"You can't access the “My Layers” section of another user."))
+        raise permissions.PermissionError(request.user, _("You can't access the “My Layers” section of another user."))
     if request.method == "POST":
         my_layer_forms, structure_changed = forms_from_post_data(request.POST)
         all_valid = all([my_layer_form.is_valid() for my_layer_form in my_layer_forms])
@@ -187,10 +187,10 @@ def edit(request, login_name):
             result = save_to_database(my_layer_forms, user)
             return utils.successful_response(request, result)
         elif all_valid and referentially_valid and structure_changed:
-            messages.error(request,_(u"Changes did not saved yet."))
+            messages.error(request, _("Changes did not saved yet."))
     else:
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
-    return render_to_response("samples/edit_my_layers.html", {"title": _(u"My Layers"), "my_layers": my_layer_forms},
+    return render_to_response("samples/edit_my_layers.html", {"title": _("My Layers"), "my_layers": my_layer_forms},
                               context_instance=RequestContext(request))
 

@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Main routines and all views for the data export.  Believe it or not, this
+"""Main routines and all views for the data export.  Believe it or not, this
 is probably the most complicated thing in Chantal.  The problem is that data in
 Chantal has a tree-like structure, which is completely incompatible with the
 table structure needed for CSV export.
@@ -104,7 +104,8 @@ database model classes will show you how to use it (they are all very
 strightforward).
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
 from django.forms.util import ValidationError
 from django.shortcuts import render_to_response
 from django.template import RequestContext, defaultfilters
@@ -120,12 +121,12 @@ import django.forms as forms
 
 
 class UnicodeWriter(object):
-    u"""Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
+    """Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
     string.  Inspired by <http://docs.python.org/library/csv.html#examples>.
     """
 
     def __init__(self, stream=None, dialect=csv.excel_tab, encoding="utf-8", **kwargs):
-        u"""Class constructor.  Additional keyword arguments are passed to the
+        """Class constructor.  Additional keyword arguments are passed to the
         ``csv.writer`` factory function in Python's ``csv`` module.  After
         having instantiated this class, you can use `writerow` and `writerows`
         to add data to it, and then extract it in the CSV format using
@@ -149,7 +150,7 @@ class UnicodeWriter(object):
         self.encoder = codecs.getincrementalencoder(encoding)()
 
     def writerow(self, row):
-        u"""Add the given row to the output.
+        """Add the given row to the output.
 
         :Parameters:
           - `row`: list of the table cells
@@ -159,7 +160,7 @@ class UnicodeWriter(object):
         output_row = []
         for s in row:
             if s is None:
-                output_row.append(u"")
+                output_row.append("")
             else:
                 output_row.append(unicode(s).encode("utf-8"))
         self.writer.writerow(output_row)
@@ -170,7 +171,7 @@ class UnicodeWriter(object):
         self.queue.truncate(0)
 
     def writerows(self, rows):
-        u"""Add the given rows to the output.
+        """Add the given rows to the output.
 
         :Parameters:
           - `rows`: list of rows; each row is a list of table cells
@@ -181,7 +182,7 @@ class UnicodeWriter(object):
             self.writerow(row)
 
     def getvalue(self):
-        u"""Get the output so far.  Normally, you will call this method after
+        """Get the output so far.  Normally, you will call this method after
         the instance was filled with all data.  Thus, after called this method,
         the instance of ``UnicodeWriter`` is no longer used.
 
@@ -194,7 +195,7 @@ class UnicodeWriter(object):
 
 
 class ColumnGroup(object):
-    u"""Class for representing of set of columns in the table output which
+    """Class for representing of set of columns in the table output which
     corresponds to one node type in the input tree.  In the output, the column
     groups are arranged next to each other to form the complete table.  The
     user doesn't notice that because the CSV format doesn't allow for visible
@@ -219,7 +220,7 @@ class ColumnGroup(object):
     """
 
     def __init__(self, name):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `name`: the name of the `DataNode` this column group represents
@@ -233,7 +234,7 @@ class ColumnGroup(object):
         return repr(self.name)
 
     def __eq__(self, other):
-        u"""Equation operator.  I need this function because in
+        """Equation operator.  I need this function because in
         `build_column_group_list`, I must be able to test easily whether a
         given column group is contained in a given list.
 
@@ -251,7 +252,7 @@ class ColumnGroup(object):
 
 
 class Column(object):
-    u"""Class for one column in the exported table.  The list of ``Column``
+    """Class for one column in the exported table.  The list of ``Column``
     instances is built in `build_column_group_list`.  It contains *all*
     columns, even those that the user doesn't choose for output.  The index in
     this list is stored in the values of `ColumnGroup.key_indices`.
@@ -276,7 +277,7 @@ class Column(object):
     """
 
     def __init__(self, column_group_name, key):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `column_group_name`: the name of the column group this column is
@@ -290,7 +291,7 @@ class Column(object):
         self.key = self.heading = key
 
     def append_name(self, column_group_name):
-        u"""Append the name of a column group with a shared key.  If the
+        """Append the name of a column group with a shared key.  If the
         current instance of ``Column`` is a shared key, you must call this
         method for each other column group which contains this shared key
         (instead of appending a new key to the ``columns`` list in
@@ -306,15 +307,15 @@ class Column(object):
         self.column_group_names.append(column_group_name)
 
     def disambig(self):
-        u"""Make the column heading unique.  Normally, the key is used directly
+        """Make the column heading unique.  Normally, the key is used directly
         for the column heading.  However, if the same key name is used in
         another column group, ``disambig_key_names`` calls this method to make
         it unique.
         """
-        self.heading = u"{0} {{{1}}}".format(self.key, u" / ".join(self.column_group_names))
+        self.heading = "{0} {{{1}}}".format(self.key, " / ".join(self.column_group_names))
 
     def get_value(self, row):
-        u"""Return the value of this column in the given row.
+        """Return the value of this column in the given row.
 
         :Parameters:
           - `row`: the row for which the value in this column should be
@@ -331,11 +332,11 @@ class Column(object):
         for column_group_name in self.column_group_names:
             if column_group_name in row:
                 return row[column_group_name][self.key]
-        return u""
+        return ""
 
 
 def build_column_group_list(root):
-    u"""Extract from the ``CVSNode`` tree the column group list and the column
+    """Extract from the ``CVSNode`` tree the column group list and the column
     list.  The column group list can be used to show the user the columns in a
     structured form, and to export the data in ODF or Excel format.  The
     columns are used for any export, ODF, Excel, and CSV.
@@ -355,7 +356,7 @@ def build_column_group_list(root):
     """
 
     def walk_row_tree(node, top_level=True):
-        u"""Extract all node names from a ``DataNode`` tree.  This routine calls
+        """Extract all node names from a ``DataNode`` tree.  This routine calls
         itself recursively to walk through the tree.  Note that the inner order
         of the nodes (e.g. the chronological order of processes) is preserved
         by this method.
@@ -377,7 +378,7 @@ def build_column_group_list(root):
         return name_list
 
     def disambig_key_names(columns):
-        u"""Helper function for making all column headings unambiguous.  When
+        """Helper function for making all column headings unambiguous.  When
         the columns list is complete, and shortly before it is returned by
         ``build_column_group_list``, it is manipulated so that all ``heading``
         attributes of the columns are unique in the whole table.
@@ -435,7 +436,7 @@ def build_column_group_list(root):
 
 
 def flatten_tree(root):
-    u"""Walk through a ``DataNode`` tree and convert it to a list of nested
+    """Walk through a ``DataNode`` tree and convert it to a list of nested
     dictionaries for easy cell value lookup.  The resulting data structure is
     used in `Column.get_value`.
 
@@ -457,7 +458,7 @@ def flatten_tree(root):
     """
 
     def flatten_row_tree(node):
-        name_dict = {node.name: dict((item.key, item.value if item.value is not None else u"") for item in node.items)}
+        name_dict = {node.name: dict((item.key, item.value if item.value is not None else "") for item in node.items)}
         for child in node.children:
             name_dict.update(flatten_row_tree(child))
         return name_dict
@@ -466,7 +467,7 @@ def flatten_tree(root):
 
 
 def generate_table_rows(flattened_tree, columns, selected_key_indices, label_column, label_column_heading):
-    u"""Generate the final table suited for CSV export and HTML preview.  Note
+    """Generate the final table suited for CSV export and HTML preview.  Note
     that for ODF or Excel output, you should also take the column group list
     into account for better formatting.
 
@@ -516,11 +517,11 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
 
 
 class ColumnGroupsForm(forms.Form):
-    u"""Form for the columns choice.  It has only one field, ``column_groups``,
+    """Form for the columns choice.  It has only one field, ``column_groups``,
     the result of which is a set with the selected column group names.
     """
     _ = ugettext_lazy
-    column_groups = forms.MultipleChoiceField(label=_(u"Column groups"))
+    column_groups = forms.MultipleChoiceField(label=_("Column groups"))
 
     def __init__(self, column_groups, *args, **kwargs):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__"
@@ -533,11 +534,11 @@ class ColumnGroupsForm(forms.Form):
 
 
 class ColumnsForm(forms.Form):
-    u"""Form for the columns choice.  It has only one field, ``columns``, the
+    """Form for the columns choice.  It has only one field, ``columns``, the
     result of which is a set with the selected column indices as ints.
     """
     _ = ugettext_lazy
-    columns = forms.MultipleChoiceField(label=_(u"Columns"))
+    columns = forms.MultipleChoiceField(label=_("Columns"))
 
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__"
@@ -552,11 +553,11 @@ class ColumnsForm(forms.Form):
             return set(int(i) for i in self.cleaned_data["columns"])
         except ValueError:
             # Untranslable because internal anyway
-            raise ValidationError(u"Invalid number in column indices list")
+            raise ValidationError("Invalid number in column indices list")
 
 
 class OldDataForm(forms.Form):
-    u"""Form which stores the user input of the previous run.  It is not
+    """Form which stores the user input of the previous run.  It is not
     intended for user interaction, in fact it is hidden in the HTML.  By
     comparing the user's input with what is stored here, `export` can detect
     whether the user has changed something.
@@ -569,16 +570,16 @@ class OldDataForm(forms.Form):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__old_data"
         super(OldDataForm, self).__init__(*args, **kwargs)
         if "column_groups" in initial:
-            self.fields["column_groups"].initial = u"\t".join(column_group for column_group in initial["column_groups"])
+            self.fields["column_groups"].initial = "\t".join(column_group for column_group in initial["column_groups"])
         if "columns" in initial:
-            self.fields["columns"].initial = u" ".join(str(i) for i in initial["columns"])
+            self.fields["columns"].initial = " ".join(str(i) for i in initial["columns"])
         for fieldname in ["column_groups", "columns"]:
             attributes = self.fields[fieldname].widget.attrs
             if "class" not in attributes:
-                attributes["class"] = u"submit-always"
+                attributes["class"] = "submit-always"
             else:
                 if attributes["class"].strip():
-                    attributes["class"] += u" "
+                    attributes["class"] += " "
                 attributes["class"] += "submit-always"
 
     def clean_column_groups(self):
@@ -589,11 +590,11 @@ class OldDataForm(forms.Form):
             return set(int(i) for i in self.cleaned_data["columns"].split())
         except ValueError:
             # Untranslable because internal anyway
-            raise ValidationError(u"Invalid number in column indices list")
+            raise ValidationError("Invalid number in column indices list")
 
 
 class SwitchRowForm(forms.Form):
-    u"""Form for the tick marks before every row in the preview table.  If it
+    """Form for the tick marks before every row in the preview table.  If it
     is checked, the respective row is included into the CSV export.
     """
     active = forms.BooleanField(required=False)

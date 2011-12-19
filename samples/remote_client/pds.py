@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+from __future__ import unicode_literals
 
 from chantal_remote import *
 import os, re, codecs, datetime
@@ -73,7 +74,7 @@ def extract_comments(filename):
             break
         if linenumber >= 5:
             comment_lines.append(line)
-    comments = u"\n".join(comment_lines) + "\n"
+    comments = "\n".join(comment_lines) + "\n"
     while "\n\n" in comments:
         comments = comments.replace("\n\n", "\n")
     if comments.startswith("\n"):
@@ -100,7 +101,7 @@ class LegacyPDSMeasurement(object):
             raise ValueError
         self.comments = extract_comments(self.path)
         if not self.comments.startswith(self.remarks):
-            self.comments = u"Abweichende Angaben in Datenbank und Messdatei!\n"
+            self.comments = "Abweichende Angaben in Datenbank und Messdatei!\n"
         self.evaluated_path = evaluated_data_files.get(self.number)
 
 

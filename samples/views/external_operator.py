@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views for showing, editing, and creating external operators.
+"""Views for showing, editing, and creating external operators.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -30,7 +30,7 @@ from samples.views import utils, form_utils
 
 
 class AddExternalOperatorForm(forms.ModelForm):
-    u"""Model form for creating a new external operator.  The
+    """Model form for creating a new external operator.  The
     ``contact_persons`` is implicitly the currently logged-in user.
     """
     _ = ugettext_lazy
@@ -54,7 +54,7 @@ class AddExternalOperatorForm(forms.ModelForm):
 
 @login_required
 def new(request):
-    u"""View for adding a new external operator.
+    """View for adding a new external operator.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -75,22 +75,22 @@ def new(request):
             initials_form.save(external_operator)
             return utils.successful_response(
                 request,
-                _(u"The external operator “{operator}” was successfully added.".format(operator=external_operator.name)))
+                _("The external operator “{operator}” was successfully added.".format(operator=external_operator.name)))
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
         initials_form = form_utils.InitialsForm(person=None, initials_mandatory=True)
-    return render_to_response("samples/edit_external_operator.html", {"title": _(u"Add external operator"),
+    return render_to_response("samples/edit_external_operator.html", {"title": _("Add external operator"),
                                                                       "external_operator": external_operator_form,
                                                                       "initials": initials_form},
                               context_instance=RequestContext(request))
 
 
 class EditExternalOperatorForm(forms.ModelForm):
-    u"""Model form for editing an existing external operator.  Here, you can
+    """Model form for editing an existing external operator.  Here, you can
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_persons = form_utils.MultipleUsersField(label=_(u"Contact persons"))
+    contact_persons = form_utils.MultipleUsersField(label=_("Contact persons"))
 
     def __init__(self, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
@@ -106,7 +106,7 @@ class EditExternalOperatorForm(forms.ModelForm):
 
 @login_required
 def edit(request, external_operator_id):
-    u"""View for editing existing external operators.  You can also give the
+    """View for editing existing external operators.  You can also give the
     operator initials here.
 
     :Parameters:
@@ -129,12 +129,12 @@ def edit(request, external_operator_id):
             external_operator = external_operator_form.save()
             return utils.successful_response(
                 request,
-                _(u"The external operator “{operator}” was successfully changed.").format(operator=external_operator.name))
+                _("The external operator “{operator}” was successfully changed.").format(operator=external_operator.name))
     else:
         external_operator_form = EditExternalOperatorForm(instance=external_operator)
     initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=True)
     return render_to_response("samples/edit_external_operator.html",
-                              {"title": _(u"Edit external operator “{operator}”").format(operator=external_operator.name),
+                              {"title": _("Edit external operator “{operator}”").format(operator=external_operator.name),
                                "external_operator": external_operator_form,
                                "initials": initials_form},
                               context_instance=RequestContext(request))
@@ -142,7 +142,7 @@ def edit(request, external_operator_id):
 
 @login_required
 def show(request, external_operator_id):
-    u"""View for displaying existing external operators.  Only users who are
+    """View for displaying existing external operators.  Only users who are
     allowed to see all samples, and the current contact person are allowed to
     see it.
 
@@ -165,9 +165,9 @@ def show(request, external_operator_id):
             initials = external_operator.initials
         except models.Initials.DoesNotExist:
             initials = None
-        title = _(u"External operator “{name}”").format(name=external_operator.name)
+        title = _("External operator “{name}”").format(name=external_operator.name)
     else:
-        title = _(u"Confidential operator #{number}").format(number=external_operator.pk)
+        title = _("Confidential operator #{number}").format(number=external_operator.pk)
         external_operator = None
         initials = None
     return render_to_response("samples/show_external_operator.html",
@@ -180,7 +180,7 @@ def show(request, external_operator_id):
 
 @login_required
 def list_(request):
-    u"""View for listing all external contacts of the currently logged-in user
+    """View for listing all external contacts of the currently logged-in user
     for selecting one to edit it.  If you have no external contacts, a 404 is
     generated.
 
@@ -198,5 +198,5 @@ def list_(request):
     if not external_operators:
         raise Http404("You have no external contacts.")
     return render_to_response("samples/list_external_operators.html",
-                              {"title": _(u"All you external contacts"), "external_operators": external_operators},
+                              {"title": _("All you external contacts"), "external_operators": external_operators},
                               context_instance=RequestContext(request))

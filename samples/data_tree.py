@@ -13,14 +13,15 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module with classes that are needed to build nested representations of the
+"""Module with classes that are needed to build nested representations of the
 data contain in a certain model instance.  Such tree-like representations are
 used e.g. for the CSV export of model instances.
 """
 
+from __future__ import unicode_literals
 
 class DataNode(object):
-    u"""Class for a node in a data tree intended to hold instance data.
+    """Class for a node in a data tree intended to hold instance data.
 
     :ivar name: name of this node; must be the same for node whose items carry
       the same semantics
@@ -42,8 +43,8 @@ class DataNode(object):
     :type childen: list of `DataNode`
     """
 
-    def __init__(self, instance, descriptive_name=u""):
-        u"""Class constructor.
+    def __init__(self, instance, descriptive_name=""):
+        """Class constructor.
 
         :Parameters:
           - `instance`: The model instance whose data is extracted, or the name
@@ -67,7 +68,7 @@ class DataNode(object):
         self.children = []
 
     def to_dict(self):
-        u"""Converts the data which this node holds to a dictionary.  The
+        """Converts the data which this node holds to a dictionary.  The
         dictionary maps the keys to the valus of each contained `DataItem`.
         Additionally, it maps node names of children to their dictionaries.
 
@@ -87,7 +88,7 @@ class DataNode(object):
         return data
 
     def find_unambiguous_names(self, renaming_offset=1):
-        u"""Make all names in the whole tree of this node instance
+        """Make all names in the whole tree of this node instance
         unambiguous.  This is done by two means:
 
         1. If two sister nodes share the same name, a number like ``" #1"`` is
@@ -108,13 +109,13 @@ class DataNode(object):
                 if names.count(child.name) > 1:
                     process_index = names[:i].count(child.name) + 1
                     if process_index > 1:
-                        child.name += u" #{0}".format(process_index)
+                        child.name += " #{0}".format(process_index)
                 if renaming_offset < 0:
                     child.name = self.name + ", " + child.name
             child.find_unambiguous_names(renaming_offset - 1)
 
     def complete_items_in_children(self, key_sets=None, item_cache=None):
-        u"""Assures that all decendents of this node that have the same node
+        """Assures that all decendents of this node that have the same node
         name also have the same item keys.  This is interesting for kinds of
         nodes which don't have a strict set of items.  An example are result
         processes: The user is completely free which items he gives them.  This
@@ -154,7 +155,7 @@ class DataNode(object):
         if key_sets is None:
             item_cache = {}
             def collect_key_sets(node):
-                u"""Collect all item keys of this node and its decentends.
+                """Collect all item keys of this node and its decentends.
                 This is the first phase of the process.  It returns a mapping
                 of node names (*not* node kinds) to item key sets.  We set both
                 the ``key_sets`` and the ``item_cache`` here.
@@ -168,7 +169,7 @@ class DataNode(object):
             key_sets = collect_key_sets(self)
         missing_items = key_sets[self.name] - item_cache[self]
         for key, origin in missing_items:
-            self.items.append(DataItem(key, u"", origin))
+            self.items.append(DataItem(key, "", origin))
         for child in self.children:
             child.complete_items_in_children(key_sets, item_cache)
 
@@ -177,7 +178,7 @@ class DataNode(object):
 
 
 class DataItem(object):
-    u"""This class represents a key–value pair, holding the actual data in a
+    """This class represents a key–value pair, holding the actual data in a
     `DataNode` tree.
 
     :ivar key: the key name of the data item
@@ -203,11 +204,11 @@ class DataItem(object):
 
     :type key: unicode
     :type value: object
-    :type origin: str or ``NoneType``
+    :type origin: unicode or ``NoneType``
     """
 
     def __init__(self, key, value, origin=None):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `key`: the key name of the data item
@@ -217,7 +218,7 @@ class DataItem(object):
 
         :type key: unicode
         :type value: object
-        :type origin: str or ``NoneType``
+        :type origin: unicode or ``NoneType``
         """
         assert isinstance(key, basestring)
         self.key, self.value, self.origin = key, value, origin

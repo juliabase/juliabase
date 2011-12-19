@@ -13,11 +13,11 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views for editing permissions for physical processes and to appoint topic
+"""Views for editing permissions for physical processes and to appoint topic
 managers.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -32,7 +32,7 @@ from samples.views import utils
 
 
 class PhysicalProcess(object):
-    u"""Class for holding the permissions status of a physical process class.
+    """Class for holding the permissions status of a physical process class.
 
     :ivar name: the verbose plural name of the process class
 
@@ -88,7 +88,7 @@ class PhysicalProcess(object):
     add_external_operators_permission = Permission.objects.get(codename="add_external_operator")
 
     def __init__(self, physical_process_class):
-        u"""
+        """
         :Parameters:
           - `physical_process_class`: the physical process class to which this
             instance belongs
@@ -135,7 +135,7 @@ class PhysicalProcess(object):
 
 
 def get_physical_processes():
-    u"""Return a list with all registered physical processes.  Their type is of
+    """Return a list with all registered physical processes.  Their type is of
     `PhysicalProcess`, which means that they contain information about the
     users who have permissions for that process.
 
@@ -149,7 +149,7 @@ def get_physical_processes():
 
 @login_required
 def list_(request):
-    u"""View for listing user permissions.  It shows who can add new processes
+    """View for listing user permissions.  It shows who can add new processes
     of all registered physical process classes.  It also shows who can change
     permissions for them (usually the person responsible for the respective
     apparatus).
@@ -189,20 +189,20 @@ def list_(request):
         topic_managers = None
     return render_to_response(
         "samples/list_permissions.html",
-        {"title": _(u"Permissions to processes"), "physical_processes": physical_processes,
+        {"title": _("Permissions to processes"), "physical_processes": physical_processes,
          "user_list": user_list, "topic_managers": topic_managers},
         context_instance=RequestContext(request))
 
 
 class PermissionsForm(forms.Form):
-    u"""Form class for setting the permission triplets of a single process
+    """Form class for setting the permission triplets of a single process
     class and a single user.  See `edit` for further information.
     """
     _ = ugettext_lazy
-    can_add = forms.BooleanField(label=u"Can add", required=False)
-    can_view_all = forms.BooleanField(label=u"Can view all", required=False)
-    can_edit_all = forms.BooleanField(label=u"Can edit all", required=False)
-    can_edit_permissions = forms.BooleanField(label=u"Can edit permissions", required=False)
+    can_add = forms.BooleanField(label="Can add", required=False)
+    can_view_all = forms.BooleanField(label="Can view all", required=False)
+    can_edit_all = forms.BooleanField(label="Can edit all", required=False)
+    can_edit_permissions = forms.BooleanField(label="Can edit permissions", required=False)
 
     def __init__(self, edited_user, process, *args, **kwargs):
         kwargs["initial"] = {"can_add": edited_user in process.adders,
@@ -220,7 +220,7 @@ class PermissionsForm(forms.Form):
             self.fields["can_edit_permissions"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
 
     def clean(self):
-        u"""Note that I don't check whether disabled fields were set
+        """Note that I don't check whether disabled fields were set
         nevertheless.  This means tampering but it is ignored in the view
         function anyway.  Moreover, superfluous values in the POST request are
         always ignored.
@@ -231,16 +231,16 @@ class PermissionsForm(forms.Form):
 
 
 class IsTopicManagerForm(forms.Form):
-    u"""Form class for setting whether a particular user is a “topic manager”.
+    """Form class for setting whether a particular user is a “topic manager”.
     It is used in `edit` but see `list_` for an explanation of this term.
     """
     _ = ugettext_lazy
-    is_topic_manager = forms.BooleanField(label=_(u"Is topic manager"), required=False)
+    is_topic_manager = forms.BooleanField(label=_("Is topic manager"), required=False)
 
 
 @login_required
 def edit(request, username):
-    u"""View for editing user permissions.  You can change two kinds of user
+    """View for editing user permissions.  You can change two kinds of user
     permissions here: The “add”, “view all”, and “edit permissions”
     permissions, as well as whether the user is a so-called “topic manager”.
     See `list_` for further information.
@@ -296,14 +296,14 @@ def edit(request, username):
             else:
                 edited_user.user_permissions.remove(PhysicalProcess.topic_manager_permission)
                 edited_user.user_permissions.remove(PhysicalProcess.add_external_operators_permission)
-            return utils.successful_response(request, _(u"The permissions of {name} were successfully changed."). \
+            return utils.successful_response(request, _("The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
     else:
         is_topic_manager_form = IsTopicManagerForm(
             initial={"is_topic_manager": PhysicalProcess.topic_manager_permission in edited_user.user_permissions.all()})
     return render_to_response(
         "samples/edit_permissions.html",
-        {"title": _(u"Change permissions of {name}").format(name=get_really_full_name(edited_user)),
+        {"title": _("Change permissions of {name}").format(name=get_really_full_name(edited_user)),
          "permissions_list": permissions_list,
          "is_topic_manager": is_topic_manager_form if can_appoint_topic_managers else None},
         context_instance=RequestContext(request))

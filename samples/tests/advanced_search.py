@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.test import TestCase
 from django.test.client import Client
@@ -37,24 +37,24 @@ class AdvancedSearchTest(TestCase):
 
     def test_empty_search(self):
         response = self.client.get("/advanced_search")
-        self.assertContains(response, u"No search was performed yet.", status_code=200)
+        self.assertContains(response, "No search was performed yet.", status_code=200)
         response = self.client.get("/advanced_search",
                                    {"_model": "Sample", "_old_model": "Sample", "name": "",
                                     "currently_responsible_person": "", "current_location": "", "purpose": "",
                                     "tags": "", "topic_main": "", "1-_model": "TestPhysicalProcess",
                                     "1-_old_model": ""})
-        self.assertContains(response, u"No search was performed yet.", status_code=200)
+        self.assertContains(response, "No search was performed yet.", status_code=200)
 
     def test_simple_search(self):
         response = self.client.get("/advanced_search", simple_search_data)
         self.assertEqual(
-            unicode(response.context["search_tree"]), u"""(Sample[AbstractMeasurement,Process,Result,"""
-            u"""TestPhysicalProcess]: "name","currently responsible person","current location","purpose","tags","topic";"""
-            u"""(TestPhysicalProcess[Sample]: "operator","external operator","timestamp","comments","""
-            u""""measurement number","raw data file","evaluated data file","apparatus";))""")
-        self.assertContains(response, u"10-TB-first", status_code=200)
-        self.assertContains(response, u"10-TB-third")
-        self.assertNotContains(response, u"10-TB-second")
+            unicode(response.context["search_tree"]), """(Sample[AbstractMeasurement,Process,Result,"""
+            """TestPhysicalProcess]: "name","currently responsible person","current location","purpose","tags","topic";"""
+            """(TestPhysicalProcess[Sample]: "operator","external operator","timestamp","comments","""
+            """"measurement number","raw data file","evaluated data file","apparatus";))""")
+        self.assertContains(response, "10-TB-first", status_code=200)
+        self.assertContains(response, "10-TB-third")
+        self.assertNotContains(response, "10-TB-second")
 
     def test_search_for_process(self):
         get_data = {"_model": "TestPhysicalProcess", "_old_model": "TestPhysicalProcess", "operator": "",
@@ -65,19 +65,19 @@ class AdvancedSearchTest(TestCase):
                     "1-1-_old_model": "", "2-_model": "", "2-_old_model": ""}
         get_data["1-name"] = "first"
         response = self.client.get("/advanced_search", get_data)
-        self.assertContains(response, u"Test measurement #1", status_code=200)
+        self.assertContains(response, "Test measurement #1", status_code=200)
         get_data["1-name"] = "second"
         response = self.client.get("/advanced_search", get_data)
-        self.assertContains(response, u"Nothing found.", status_code=200)
-        self.assertNotContains(response, u"Test measurement #", status_code=200)
+        self.assertContains(response, "Nothing found.", status_code=200)
+        self.assertNotContains(response, "Test measurement #", status_code=200)
 
     def test_search_for_currently_responsible_person(self):
         response = self.client.get("/advanced_search", {
                 "_model": "Sample", "_old_model": "Sample", "name": "", "currently_responsible_person": "testuser2",
                 "current_location": "", "purpose": "", "tags": "", "topic_main": "", "1-_model": "", "1-_old_model": ""})
-        self.assertNotContains(response, u"10-TB-first", status_code=200)
-        self.assertContains(response, u"10-TB-second")
-        self.assertNotContains(response, u"10-TB-third")
+        self.assertNotContains(response, "10-TB-first", status_code=200)
+        self.assertContains(response, "10-TB-second")
+        self.assertNotContains(response, "10-TB-third")
 
 
 class AdvancedSearchWithReducedPermissionsTest(TestCase):
@@ -90,9 +90,9 @@ class AdvancedSearchWithReducedPermissionsTest(TestCase):
 
     def test_simple_search(self):
         response = self.client.get("/advanced_search", simple_search_data)
-        self.assertContains(response, u"10-TB-first", status_code=200)
-        self.assertNotContains(response, u"10-TB-third")
-        self.assertNotContains(response, u"10-TB-second")
+        self.assertContains(response, "10-TB-first", status_code=200)
+        self.assertNotContains(response, "10-TB-third")
+        self.assertNotContains(response, "10-TB-second")
 
 
 class AdvancedSearchForAbstractModelTest(TestCase):
@@ -111,16 +111,16 @@ class AdvancedSearchForAbstractModelTest(TestCase):
                     "1-number_max": "", "1-1-_model": "", "1-1-_old_model": "", "2-_model": "", "2-_old_model": ""}
         get_data["1-derivative"] = ""
         response = self.client.get("/advanced_search", get_data)
-        self.assertContains(response, u"10-TB-first", status_code=200)
-        self.assertContains(response, u"10-TB-second")
-        self.assertNotContains(response, u"10-TB-third")
+        self.assertContains(response, "10-TB-first", status_code=200)
+        self.assertContains(response, "10-TB-second")
+        self.assertNotContains(response, "10-TB-third")
         get_data["1-derivative"] = "AbstractMeasurementOne"
         response = self.client.get("/advanced_search", get_data)
-        self.assertContains(response, u"10-TB-first", status_code=200)
-        self.assertNotContains(response, u"10-TB-second")
-        self.assertNotContains(response, u"10-TB-third")
+        self.assertContains(response, "10-TB-first", status_code=200)
+        self.assertNotContains(response, "10-TB-second")
+        self.assertNotContains(response, "10-TB-third")
         get_data["1-derivative"] = "AbstractMeasurementTwo"
         response = self.client.get("/advanced_search", get_data)
-        self.assertNotContains(response, u"10-TB-first", status_code=200)
-        self.assertContains(response, u"10-TB-second")
-        self.assertNotContains(response, u"10-TB-third")
+        self.assertNotContains(response, "10-TB-first", status_code=200)
+        self.assertContains(response, "10-TB-second")
+        self.assertNotContains(response, "10-TB-third")

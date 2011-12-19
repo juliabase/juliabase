@@ -13,13 +13,13 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views that are intended only for the Remote Client and AJAX code (called
+"""Views that are intended only for the Remote Client and AJAX code (called
 “JSON clients”).  While also users can visit these links with their browser
 directly, it is not really useful what they get there.  Note that the whole
 communication to the remote client happens in JSON format.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import sys, json
 from django.db.utils import IntegrityError
@@ -44,7 +44,7 @@ from django.contrib.contenttypes.models import ContentType
 @never_cache
 @require_http_methods(["GET"])
 def primary_keys(request):
-    u"""Return the mappings of names of database objects to primary keys.
+    """Return the mappings of names of database objects to primary keys.
     While this can be used by everyone by entering the URL directly, this view
     is intended to be used only by a JSON client program to get primary keys.
     The reason for this is simple: In forms, you have to give primary keys in
@@ -136,7 +136,7 @@ def primary_keys(request):
 @never_cache
 @require_http_methods(["GET"])
 def available_items(request, model_name):
-    u"""Returns the unique ids of all items that are already in the database
+    """Returns the unique ids of all items that are already in the database
     for this model.  The point is that it will almost never return primary
     keys.  Instead, it returns the “official” id of the respective model.  This
     may be the number of a deposition, or the sample for a measurement process,
@@ -156,7 +156,7 @@ def available_items(request, model_name):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        raise permissions.PermissionError(request.user, _(u"Only the administrator can access this resource."))
+        raise permissions.PermissionError(request.user, _("Only the administrator can access this resource."))
     for app_name in settings.INSTALLED_APPS:
         try:
             model = sys.modules[app_name + ".models"].__dict__[model_name]
@@ -177,7 +177,7 @@ def available_items(request, model_name):
 
 @require_http_methods(["POST"])
 def login_remote_client(request):
-    u"""Login for the Chantal Remote Client.  It only supports the HTTP POST
+    """Login for the Chantal Remote Client.  It only supports the HTTP POST
     method and expects ``username`` and ``password``.  AJAX code shouldn't need
     this because it has the cookie already.
 
@@ -207,7 +207,7 @@ def login_remote_client(request):
 @never_cache
 @require_http_methods(["GET"])
 def logout_remote_client(request):
-    u"""By requesting this view, the Chantal Remote Client can log out.  This
+    """By requesting this view, the Chantal Remote Client can log out.  This
     view can never fail.
 
     :Parameters:
@@ -228,7 +228,7 @@ def logout_remote_client(request):
 @never_cache
 @require_http_methods(["GET"])
 def next_deposition_number(request, letter):
-    u"""Send the next free deposition number to a JSON client.
+    """Send the next free deposition number to a JSON client.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -247,7 +247,7 @@ def next_deposition_number(request, letter):
 
 
 def get_next_quirky_name(sample_name, year_digits):
-    u"""Returns the next sample name for legacy samples that don't fit into any
+    """Returns the next sample name for legacy samples that don't fit into any
     known name scheme.
 
     :Parameters:
@@ -269,7 +269,7 @@ def get_next_quirky_name(sample_name, year_digits):
         prefix, __, original_name = name[len(legacy_prefix):].partition("-")
         if original_name == sample_name:
             prefixes.add(prefix)
-    free_prefix = u""
+    free_prefix = ""
     while free_prefix in prefixes:
         digits = [ord(digit) for digit in free_prefix]
         for i in range(len(digits) - 1, -1 , -1):
@@ -280,14 +280,14 @@ def get_next_quirky_name(sample_name, year_digits):
                 break
         else:
             digits[0:0] = [97]
-        free_prefix = u"".join(unichr(digit) for digit in digits)
-    return u"{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
+        free_prefix = "".join(chr(digit) for digit in digits)
+    return "{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
 
 
 @login_required
 @require_http_methods(["POST"])
 def add_sample(request):
-    u"""Adds a new sample to the database.  It is added without processes.
+    """Adds a new sample to the database.  It is added without processes.
     This view can only be used by admin accounts.  If the query string contains
     ``"legacy=True"``, the sample gets a quirky legacy name (and an appropriate
     alias).
@@ -307,16 +307,16 @@ def add_sample(request):
         return respond_in_json(False)
     try:
         name = request.POST["name"]
-        current_location = request.POST.get("current_location", u"")
+        current_location = request.POST.get("current_location", "")
         currently_responsible_person = request.POST.get("currently_responsible_person")
-        purpose = request.POST.get("purpose", u"")
-        tags = request.POST.get("tags", u"")
+        purpose = request.POST.get("purpose", "")
+        tags = request.POST.get("tags", "")
         topic = request.POST.get("topic")
     except KeyError:
         return respond_in_json(False)
     if len(name) > 30:
         return respond_in_json(False)
-    is_legacy_name = request.GET.get("legacy") == u"True"
+    is_legacy_name = request.GET.get("legacy") == "True"
     if is_legacy_name:
         year_digits = request.GET.get("timestamp", "")[2:4]
         try:
@@ -351,7 +351,7 @@ def add_sample(request):
 @login_required
 @require_http_methods(["POST"])
 def add_alias(request):
-    u"""Adds a new sample alias name to the database.  This view can only be
+    """Adds a new sample alias name to the database.  This view can only be
     used by admin accounts.
 
     :Parameters:
@@ -385,7 +385,7 @@ def add_alias(request):
 @login_required
 @require_http_methods(["POST"])
 def change_my_samples(request):
-    u"""Adds or remove samples from “My Samples”.
+    """Adds or remove samples from “My Samples”.
 
     :Parameters:
       - `request`: The current HTTP Request object.  It must contain the sample
@@ -422,7 +422,7 @@ def change_my_samples(request):
 
 
 def _is_folded(process_id, folded_process_classes, exceptional_processes, switch):
-    u"""Helper routine to determine whether the process is folded or not. Is the switch
+    """Helper routine to determine whether the process is folded or not. Is the switch
     parameter is ``True``, the new status is saved.
 
     :Parameters:
@@ -457,7 +457,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 @never_cache
 @require_http_methods(["GET"])
 def fold_process(request, sample_id):
-    u"""Fold a single process in one sample data sheet. The new behavior is also saved.
+    """Fold a single process in one sample data sheet. The new behavior is also saved.
 
     :Parameters:
      - `request`: The current HTTP Request object.  It must contain the process
@@ -490,7 +490,7 @@ def fold_process(request, sample_id):
 @never_cache
 @require_http_methods(["GET"])
 def get_folded_processes(request, sample_id):
-    u"""Get all the IDs from the processes, who have to be folded.
+    """Get all the IDs from the processes, who have to be folded.
 
     :Parameters:
      - `request`: The current HTTP Request object.  It must contain all the process

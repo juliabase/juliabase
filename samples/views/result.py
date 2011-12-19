@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views for editing and creating results (aka result processes).
+"""Views for editing and creating results (aka result processes).
 
 FixMe: The save_to_database function triggers a signal in chantal_ipv
 when a new result process is connected to a sample.
@@ -21,7 +21,8 @@ If you want to change the behavior of this function, keep in mind that
 you have to check the signal for modification purposes.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
 from chantal_common.signals import storage_changed
 from chantal_common.utils import append_error, static_file_response, \
     is_update_necessary, mkdirs
@@ -46,7 +47,7 @@ import django.forms as forms
 _ = ugettext
 
 def save_image_file(image_data, result, related_data_form):
-    u"""Saves an uploaded image file stream to its final destination in
+    """Saves an uploaded image file stream to its final destination in
     `settings.MEDIA_ROOT`.  If the given result has already an image connected
     with it, it is removed first.
 
@@ -75,7 +76,7 @@ def save_image_file(image_data, result, related_data_form):
             elif chunk.startswith("%PDF"):
                 new_image_type = "pdf"
             else:
-                append_error(related_data_form, _(u"Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
+                append_error(related_data_form, _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
                              "image_file")
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
@@ -91,11 +92,11 @@ def save_image_file(image_data, result, related_data_form):
 
 
 class ResultForm(form_utils.ProcessForm):
-    u"""Model form for a result process.  Note that I exclude many fields
+    """Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
     """
     _ = ugettext_lazy
-    combined_operator = form_utils.OperatorField(label=_(u"Operator"))
+    combined_operator = form_utils.OperatorField(label=_("Operator"))
 
     def __init__(self, user, *args, **kwargs):
         super(ResultForm, self).__init__(*args, **kwargs)
@@ -115,7 +116,7 @@ class ResultForm(form_utils.ProcessForm):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
-            append_error(self, _(u"For a custom substrate, you must give substrate comments."), "comments")
+            append_error(self, _("For a custom substrate, you must give substrate comments."), "comments")
         # FixMe: The following could be done in ProcessForm.clean().
         final_operator = self.cleaned_data.get("operator")
         final_external_operator = self.cleaned_data.get("external_operator")
@@ -123,12 +124,12 @@ class ResultForm(form_utils.ProcessForm):
             operator, external_operator = self.cleaned_data["combined_operator"]
             if operator:
                 if final_operator and final_operator != operator:
-                    append_error(self, u"Your operator and combined operator didn't match.", "combined_operator")
+                    append_error(self, "Your operator and combined operator didn't match.", "combined_operator")
                 else:
                     final_operator = operator
             if external_operator:
                 if final_external_operator and final_external_operator != external_operator:
-                    append_error(self, u"Your external operator and combined external operator didn't match.",
+                    append_error(self, "Your external operator and combined external operator didn't match.",
                                  "combined_external_operator")
                 else:
                     final_external_operator = external_operator
@@ -146,18 +147,18 @@ class ResultForm(form_utils.ProcessForm):
 
 
 class RelatedDataForm(forms.Form):
-    u"""Form for samples, sample series, and the image connected with this
+    """Form for samples, sample series, and the image connected with this
     result process.  Since all these things are not part of the result process
     model itself, they are in a form of its own.
     """
     _ = ugettext_lazy
-    samples = form_utils.MultipleSamplesField(label=_(u"Samples"), required=False)
-    sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", u"Sample series"), queryset=None,
+    samples = form_utils.MultipleSamplesField(label=_("Samples"), required=False)
+    sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", "Sample series"), queryset=None,
                                                    required=False)
-    image_file = forms.FileField(label=_(u"Image file"), required=False)
+    image_file = forms.FileField(label=_("Image file"), required=False)
 
     def __init__(self, user, query_string_dict, old_result, data=None, files=None, **kwargs):
-        u"""Form constructor.  I have to initialise a couple of things here in
+        """Form constructor.  I have to initialise a couple of things here in
         a non-trivial way.
 
         The most complicated thing is to find all sample series electable for
@@ -189,14 +190,14 @@ class RelatedDataForm(forms.Form):
                 models.SampleSeries.objects.filter(Q(samples__watchers=user) |
                                                    (Q(currently_responsible_person=user) &
                                                      Q(timestamp__range=(three_months_ago, now)))
-                                                   | Q(name=query_string_dict.get("sample_series", u""))).distinct()
+                                                   | Q(name=query_string_dict.get("sample_series", ""))).distinct()
             if "sample_series" in query_string_dict:
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
         self.fields["samples"].set_samples(samples, user)
 
     def clean(self):
-        u"""Global clean method for the related data.  I check whether at least
+        """Global clean method for the related data.  I check whether at least
         one sample or sample series was selected, and whether the user is
         allowed to add results to the selected objects.
         """
@@ -205,14 +206,14 @@ class RelatedDataForm(forms.Form):
         if samples is not None and sample_series is not None:
             for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
-                    append_error(self, _(u"You don't have the permission to add the result to all selected samples/series."))
+                    append_error(self, _("You don't have the permission to add the result to all selected samples/series."))
             if not samples and not sample_series:
-                append_error(self, _(u"You must select at least one samples/series."))
+                append_error(self, _("You must select at least one samples/series."))
         return self.cleaned_data
 
 
 class DimensionsForm(forms.Form):
-    u"""Model form for the number of quantities and values per quantity in the
+    """Model form for the number of quantities and values per quantity in the
     result values table.  In other words, it is the number or columns
     (``number_of_quantities``) and the number or rows (``number_of_values``) in
     this table.
@@ -224,8 +225,8 @@ class DimensionsForm(forms.Form):
     dimensions after all.)
     """
     _ = ugettext_lazy
-    number_of_quantities = forms.IntegerField(label=_(u"Number of quantities"), min_value=0, max_value=100)
-    number_of_values = forms.IntegerField(label=_(u"Number of values"), min_value=0, max_value=100)
+    number_of_quantities = forms.IntegerField(label=_("Number of quantities"), min_value=0, max_value=100)
+    number_of_values = forms.IntegerField(label=_("Number of values"), min_value=0, max_value=100)
 
     def __init__(self, *args, **kwargs):
         super(DimensionsForm, self).__init__(*args, **kwargs)
@@ -233,7 +234,7 @@ class DimensionsForm(forms.Form):
         self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
 
     def clean(self):
-        u"""If one of the two dimensions is set to zero, the other is set to
+        """If one of the two dimensions is set to zero, the other is set to
         zero, too.
         """
         cleaned_data = self.cleaned_data
@@ -244,7 +245,7 @@ class DimensionsForm(forms.Form):
 
 
 class QuantityForm(forms.Form):
-    u"""Form for one quantity field (i.e., one heading in the result values
+    """Form for one quantity field (i.e., one heading in the result values
     table).  All HTML entities in it are immediately converted to their unicode
     pendant (i.e., the conversion is not delayed until display, as with
     Markdown content).  Furthermore, all whitespace is normalised.
@@ -257,12 +258,12 @@ class QuantityForm(forms.Form):
         self.fields["quantity"].widget.attrs.update({"size": 10, "style": "font-weight: bold; text-align: center"})
 
     def clean_quantity(self):
-        quantity = u" ".join(self.cleaned_data["quantity"].split())
+        quantity = " ".join(self.cleaned_data["quantity"].split())
         return chantal_common.utils.substitute_html_entities(quantity)
 
 
 class ValueForm(forms.Form):
-    u"""Form for one value entry in the result values table.  Note that this is
+    """Form for one value entry in the result values table.  Note that this is
     a pure unicode field and not a number field, so you may enter whatever you
     like here.  Whitespace is not normalised, and no other conversion takes
     place.
@@ -276,7 +277,7 @@ class ValueForm(forms.Form):
 
 
 class FormSet(object):
-    u"""Class for holding all forms of the result views, and for all methods
+    """Class for holding all forms of the result views, and for all methods
     working on these forms.  The main advantage of putting all this into a big
     class is to avoid long parameter and return tuples because one can use
     instance attributes instead.
@@ -320,7 +321,7 @@ class FormSet(object):
     """
 
     def __init__(self, request, process_id):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `request`: the current HTTP Request object
@@ -335,7 +336,7 @@ class FormSet(object):
         self.query_string_dict = utils.parse_query_string(request) if not self.result else None
 
     def from_database(self):
-        u"""Generate all forms from the database.  This is called when the HTTP
+        """Generate all forms from the database.  This is called when the HTTP
         GET method was sent with the request.
         """
         self.result_form = ResultForm(self.user, instance=self.result)
@@ -355,7 +356,7 @@ class FormSet(object):
                                           for i, value in enumerate(value_list)])
 
     def from_post_data(self, post_data, post_files):
-        u"""Generate all forms from the database.  This is called when the HTTP
+        """Generate all forms from the database.  This is called when the HTTP
         POST method was sent with the request.
 
         :Parameters:
@@ -399,7 +400,7 @@ class FormSet(object):
         self.edit_description_form = form_utils.EditDescriptionForm(post_data) if self.result else None
 
     def _is_all_valid(self):
-        u"""Test whether all bound forms are valid.  This routine guarantees that
+        """Test whether all bound forms are valid.  This routine guarantees that
         all ``is_valid()`` methods are called, even if the first tested form is
         already invalid.
 
@@ -419,7 +420,7 @@ class FormSet(object):
         return all_valid
 
     def _is_referentially_valid(self):
-        u"""Test whether all forms are consistent with each other and with the
+        """Test whether all forms are consistent with each other and with the
         database.  In particular, I test here whether the “important” checkbox
         in marked if the user has added new samples or sample series to the
         result.  I also assure that no two quantities in the result table
@@ -436,7 +437,7 @@ class FormSet(object):
             new_related_objects = set(self.related_data_form.cleaned_data["samples"]) | \
                 set(self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
-                append_error(self.edit_description_form, _(u"Adding samples or sample series must be marked as important."),
+                append_error(self.edit_description_form, _("Adding samples or sample series must be marked as important."),
                              "important")
                 referentially_valid = False
         quantities = set()
@@ -444,13 +445,13 @@ class FormSet(object):
             if quantity_form.is_valid():
                 quantity = quantity_form.cleaned_data["quantity"]
                 if quantity in quantities:
-                    append_error(quantity_form, _(u"This quantity is already used in this table."), "quantity")
+                    append_error(quantity_form, _("This quantity is already used in this table."), "quantity")
                 else:
                     quantities.add(quantity)
         return referentially_valid
 
     def _is_structure_changed(self):
-        u"""Check whether the structure was changed by the user, i.e. whether
+        """Check whether the structure was changed by the user, i.e. whether
         the table dimensions were changed.  (In this case, the view has to be
         re-displayed instead of being written to the database.)
 
@@ -470,7 +471,7 @@ class FormSet(object):
             return True
 
     def serialize_quantities_and_values(self):
-        u"""Serialise the result table data (quantities and values) to a string
+        """Serialise the result table data (quantities and values) to a string
         which is ready to be written to the database.  See the
         ``quantities_and_values`` attribute of `samples.models.Result` for
         further information.
@@ -485,7 +486,7 @@ class FormSet(object):
         return json.dumps(result)
 
     def save_to_database(self, post_files):
-        u"""Save the forms to the database.  One peculiarity here is that I
+        """Save the forms to the database.  One peculiarity here is that I
         still check validity on this routine, namely whether the uploaded image
         data is correct.  If it is not, the error is written to the
         ``result_form`` and the result of this routine is ``None``.  I also
@@ -526,7 +527,7 @@ class FormSet(object):
                 return result
 
     def update_previous_dimensions_form(self):
-        u"""Set the form with the previous dimensions to the currently set
+        """Set the form with the previous dimensions to the currently set
         dimensions.
         """
         self.previous_dimensions_form = DimensionsForm(
@@ -534,7 +535,7 @@ class FormSet(object):
                      prefix="previous")
 
     def get_context_dict(self):
-        u"""Retrieve the context dictionary to be passed to the template.  This
+        """Retrieve the context dictionary to be passed to the template.  This
         context dictionary contains all forms in an easy-to-use format for the
         template code.
 
@@ -551,7 +552,7 @@ class FormSet(object):
 
 @login_required
 def edit(request, process_id):
-    u"""View for editing existing results, and for creating new ones.
+    """View for editing existing results, and for creating new ones.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -579,7 +580,7 @@ def edit(request, process_id):
     else:
         form_set.from_database()
     form_set.update_previous_dimensions_form()
-    title = _(u"Edit result") if form_set.result else _(u"New result")
+    title = _("Edit result") if form_set.result else _("New result")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
     return render_to_response("samples/edit_result.html", context_dict, context_instance=RequestContext(request))
@@ -587,7 +588,7 @@ def edit(request, process_id):
 
 @login_required
 def show(request, process_id):
-    u"""Shows a particular result process.  The main purpose of this view is to
+    """Shows a particular result process.  The main purpose of this view is to
     be able to visit a result directly from a feed entry about a new/edited
     result.
 
@@ -607,7 +608,7 @@ def show(request, process_id):
     permissions.assert_can_view_result_process(request.user, result)
     if chantal_common.utils.is_json_requested(request):
         return chantal_common.utils.respond_in_json(result.get_data().to_dict())
-    template_context = {"title": _(u"Result “{title}”").format(title=result.title), "result": result,
+    template_context = {"title": _("Result “{title}”").format(title=result.title), "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.digest_process(result, request.user))
     return render_to_response("samples/show_single_result.html", template_context, context_instance=RequestContext(request))
@@ -615,7 +616,7 @@ def show(request, process_id):
 
 @login_required
 def show_image(request, process_id):
-    u"""Shows a particular result image.  Although its response is an image
+    """Shows a particular result image.  Although its response is an image
     rather than an HTML file, it is served by Django in order to enforce user
     permissions.
 
@@ -639,7 +640,7 @@ def show_image(request, process_id):
 
 @login_required
 def show_thumbnail(request, process_id):
-    u"""Shows the thumnail of a particular result image.  Although its response
+    """Shows the thumnail of a particular result image.  Although its response
     is an image rather than an HTML file, it is served by Django in order to
     enforce user permissions.
 
@@ -670,7 +671,7 @@ def show_thumbnail(request, process_id):
 
 @login_required
 def export(request, process_id):
-    u"""View for exporting result process data in CSV or JSON format.  Thus,
+    """View for exporting result process data in CSV or JSON format.  Thus,
     the return value is not an HTML response.
 
     :Parameters:
@@ -689,12 +690,12 @@ def export(request, process_id):
     permissions.assert_can_view_result_process(request.user, result)
     data = result.get_data_for_table_export()
     # Translators: In a table
-    result = utils.table_export(request, data, _(u"row"))
+    result = utils.table_export(request, data, _("row"))
     if isinstance(result, tuple):
         column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
     elif isinstance(result, HttpResponse):
         return result
-    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    title = _("Table export for “{name}”").format(name=data.descriptive_name)
     return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
                                                             "columns": columns_form,
                                                             "rows": zip(table, switch_row_forms) if table else None,

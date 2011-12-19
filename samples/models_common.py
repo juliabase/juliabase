@@ -13,14 +13,14 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""The most basic models like ``Sample``, ``SampleSeries``, ``UserDetails``
+"""The most basic models like ``Sample``, ``SampleSeries``, ``UserDetails``
 etc.  It is important to see that this module is imported by almost all other
 models modules.  Therefore, you *must* *not* import any Chantal models module
 here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
 
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
@@ -42,23 +42,23 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class ExternalOperator(models.Model):
-    u"""Some samples and processes are not made in our institute but in external
+    """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
     field, which in turn contains `ExternalOperator`.
     """
-    name = models.CharField(_(u"name"), max_length=30)
-    institution = models.CharField(_(u"institution"), max_length=255)
-    email = models.EmailField(_(u"email"))
-    alternative_email = models.EmailField(_(u"alternative email"), blank=True)
-    phone = models.CharField(_(u"phone"), max_length=30, blank=True)
+    name = models.CharField(_("name"), max_length=30)
+    institution = models.CharField(_("institution"), max_length=255)
+    email = models.EmailField(_("email"))
+    alternative_email = models.EmailField(_("alternative email"), blank=True)
+    phone = models.CharField(_("phone"), max_length=30, blank=True)
     contact_persons = models.ManyToManyField(django.contrib.auth.models.User, related_name="external_contacts",
-                                       verbose_name=_(u"contact persons in the institute"))
+                                       verbose_name=_("contact persons in the institute"))
         # Translators: Topic which is not open to senior members
-    confidential = models.BooleanField(_(u"confidential"), default=False)
+    confidential = models.BooleanField(_("confidential"), default=False)
 
     class Meta:
-        verbose_name = _(u"external operator")
-        verbose_name_plural = _(u"external operators")
+        verbose_name = _("external operator")
+        verbose_name_plural = _("external operators")
         _ = lambda x: x
         permissions = (("add_external_operator", _("Can add an external operator")),
                        ("view_all_external_operators", _("Can view all external operators")))
@@ -78,17 +78,17 @@ class ExternalOperator(models.Model):
 
 timestamp_inaccuracy_choices = (
         # Translators: It's about timestamps
-    (0, _(u"totally accurate")),
-    (1, _(u"accurate to the minute")),
-    (2, _(u"accurate to the hour")),
-    (3, _(u"accurate to the day")),
-    (4, _(u"accurate to the month")),
-    (5, _(u"accurate to the year")),
-    (6, _(u"not even accurate to the year")),
+    (0, _("totally accurate")),
+    (1, _("accurate to the minute")),
+    (2, _("accurate to the hour")),
+    (3, _("accurate to the day")),
+    (4, _("accurate to the month")),
+    (5, _("accurate to the year")),
+    (6, _("not even accurate to the year")),
     )
 
 class Process(PolymorphicModel):
-    u"""This is the parent class of all processes and measurements.  Actually,
+    """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
     in the ``Meta`` subclass because I must be able to link to it with
@@ -100,16 +100,16 @@ class Process(PolymorphicModel):
         process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
         process = process.actual_instance
     """
-    timestamp = models.DateTimeField(_(u"timestamp"))
+    timestamp = models.DateTimeField(_("timestamp"))
     timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices,
                                                             default=0)
-    operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"operator"), related_name="processes")
+    operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("operator"), related_name="processes")
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
-    comments = models.TextField(_(u"comments"), blank=True)
-    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
-    finished = models.BooleanField(_(u"finished"), default=True)
-    u"""Whether the process is complete and can be displayed in sample data
+    comments = models.TextField(_("comments"), blank=True)
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True, editable=False)
+    finished = models.BooleanField(_("finished"), default=True)
+    """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
     ``True``.  However, depositions that are a work-in-progress, possibly by
     more than one person, profit from it.  If ``finished`` is ``False``,
@@ -121,11 +121,11 @@ class Process(PolymorphicModel):
     class Meta:
         ordering = ["timestamp"]
         get_latest_by = "timestamp"
-        verbose_name = _(u"process")
-        verbose_name_plural = _(u"processes")
+        verbose_name = _("process")
+        verbose_name_plural = _("processes")
 
     def save(self, *args, **kwargs):
-        u"""Saves the instance and clears stalled cache items.
+        """Saves the instance and clears stalled cache items.
 
         :Parameters:
           - `with_relations`: If ``True`` (default), also touch the related
@@ -155,7 +155,7 @@ class Process(PolymorphicModel):
 
     @models.permalink
     def get_absolute_url(self):
-        u"""Returns the relative URL (ie, without the domain name) of the
+        """Returns the relative URL (ie, without the domain name) of the
         database object.  Django calls this method ``get_absolute_url`` to make
         clear that *only* the domain part is missing.  Apart from that, it
         includes the full URL path to where the object can be seen.
@@ -172,8 +172,8 @@ class Process(PolymorphicModel):
         """
         return ("samples.views.main.show_process", [str(self.pk)])
 
-    def calculate_plot_locations(self, plot_id=u""):
-        u"""Get the location of a plot in the local filesystem as well as on
+    def calculate_plot_locations(self, plot_id=""):
+        """Get the location of a plot in the local filesystem as well as on
         the webpage.
 
         :Parameters:
@@ -215,7 +215,7 @@ class Process(PolymorphicModel):
                 "thumbnail_url": thumbnail_url}
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
-        u"""Generate a plot using Matplotlib commands.  You may do whatever you
+        """Generate a plot using Matplotlib commands.  You may do whatever you
         want here – but eventually, there must be a savable Matplotlib plot in
         the `axes`.  The ``filename`` parameter is not really necessary but it
         makes things a little bit faster and easier.
@@ -247,7 +247,7 @@ class Process(PolymorphicModel):
         raise NotImplementedError
 
     def get_datafile_name(self, plot_id):
-        u"""Get the name of the file with the original data for the plot with
+        """Get the name of the file with the original data for the plot with
         the given ``plot_id``.  It may also be a list of filenames if more than
         one file lead to the plot.
 
@@ -273,7 +273,7 @@ class Process(PolymorphicModel):
         raise NotImplementedError
 
     def get_plotfile_basename(self, plot_id):
-        u"""Get the name of the plot files with the given ``plot_id``.  For
+        """Get the name of the plot files with the given ``plot_id``.  For
         example, for the PDS measurement for the sample 01B410, this may be
         ``"pds_01B410"``.  It should be human-friendly and reasonable
         descriptive since this is the name that is used if the user wishes to
@@ -298,7 +298,7 @@ class Process(PolymorphicModel):
         raise NotImplementedError
 
     def get_data(self):
-        u"""Extract the data of this process as a tree of nodes (or a single
+        """Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for general data
         export.  In contrast to `get_data_for_table_export`, I export *all*
         attributes that may be interesting for the user, and even some related
@@ -317,18 +317,18 @@ class Process(PolymorphicModel):
         :rtype: `samples.data_tree.DataNode`
         """
         data_node = DataNode("process #{0}".format(self.pk))
-        data_node.items = [DataItem(u"type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
-                           DataItem(u"timestamp", self.timestamp, "process"),
-                           DataItem(u"timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
-                           DataItem(u"operator", self.operator, "process"),
-                           DataItem(u"external operator", self.external_operator, "process"),
-                           DataItem(u"finished", self.finished, "process"),
-                           DataItem(u"comments", self.comments.strip(), "process"),
-                           DataItem(u"sample IDs", self.samples.values_list("id", flat=True), "process")]
+        data_node.items = [DataItem("type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
+                           DataItem("timestamp", self.timestamp, "process"),
+                           DataItem("timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
+                           DataItem("operator", self.operator, "process"),
+                           DataItem("external operator", self.external_operator, "process"),
+                           DataItem("finished", self.finished, "process"),
+                           DataItem("comments", self.comments.strip(), "process"),
+                           DataItem("sample IDs", self.samples.values_list("id", flat=True), "process")]
         return data_node
 
     def get_data_for_table_export(self):
-        u"""Extract the data of this process as a tree of nodes (or a single
+        """Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
         data export.  See the `samples.views.table_export` module for all the
         glory details.
@@ -343,9 +343,9 @@ class Process(PolymorphicModel):
         """
         _ = ugettext
         data_node = DataNode(self)
-        data_node.items = [DataItem(_(u"timestamp"), self.timestamp, "process"),
-                           DataItem(_(u"operator"), get_really_full_name(self.operator), "process"),
-                           DataItem(_(u"comments"), self.comments.strip(), "process")]
+        data_node.items = [DataItem(_("timestamp"), self.timestamp, "process"),
+                           DataItem(_("operator"), get_really_full_name(self.operator), "process"),
+                           DataItem(_("comments"), self.comments.strip(), "process")]
         return data_node
 
     @classmethod
@@ -354,7 +354,7 @@ class Process(PolymorphicModel):
         return {"processes": processes}
 
     def get_cache_key(self, user_settings_hash, local_context):
-        u"""Calculate a cache key for this context instance of the process.
+        """Calculate a cache key for this context instance of the process.
         Note that there may be many cache items to one process, e. g. one for
         every language.  Each of them needs a unique cache key.  The only this
         that is *never* included in a cache key is the user himself because
@@ -380,7 +380,7 @@ class Process(PolymorphicModel):
         return "process:{0}-{1}".format(self.pk, user_settings_hash)
 
     def get_context_for_user(self, user, old_context):
-        u"""Create the context dict for this process, or fill missing fields,
+        """Create the context dict for this process, or fill missing fields,
         or adapt existing fields to the given user.  Note that adaption only
         happens to the current user and not to any settings like e.g. language.
         In other words, if a non-empty `old_context` is passed, the caller must
@@ -451,7 +451,7 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_search_tree_node(cls):
-        u"""Class method for generating the search tree node for this model
+        """Class method for generating the search tree node for this model
         instance.  This particular method is an example for generating this
         node automatically for this and all derived models.  If it raises a
         `NotImplementedError` or if the method doesn't exist at all, the
@@ -476,7 +476,7 @@ class Process(PolymorphicModel):
 
 
 class PhysicalProcess(Process):
-    u"""Abstract class for physical processes.  These processes are “real”
+    """Abstract class for physical processes.  These processes are “real”
     processes such as depositions, etching processes, measurements etc.  This
     class doesn't define anything.  Its main purpose is to bring structure to
     the class hierarchy by pooling all physical processes.
@@ -507,7 +507,7 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        u"""Returns the URL to the “add” view for this process.  This should be
+        """Returns the URL to the “add” view for this process.  This should be
         implemented in derived model classes which is actually instantiated
         unless this process class should not be explicitly added by users (but
         is created by the program somehow).
@@ -521,19 +521,19 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_lab_notebook_data(cls, year, month):
-        u"""Returns the data tree for all processes in the given month.  This
+        """Returns the data tree for all processes in the given month.  This
         is a default implementation which may be overridden in derived classes,
         in particular in classes with sub-objects.
         """
         measurements = cls.get_lab_notebook_context(year, month)["processes"]
-        data = DataNode(_(u"lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
+        data = DataNode(_("lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
         data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
         return data
 
 
 all_searchable_physical_processes = None
 def get_all_searchable_physical_processes():
-    u"""Returns all physical processes which have a ``get_search_tree_node``
+    """Returns all physical processes which have a ``get_search_tree_node``
     method.
 
     :Return:
@@ -549,35 +549,35 @@ def get_all_searchable_physical_processes():
 
 
 class Sample(models.Model):
-    u"""The model for samples.
+    """The model for samples.
     """
-    name = models.CharField(_(u"name"), max_length=200, unique=True, db_index=True)
+    name = models.CharField(_("name"), max_length=200, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
-                                      verbose_name=_(u"watchers"))
+                                      verbose_name=_("watchers"))
         # Translators: location of a sample
-    current_location = models.CharField(_(u"current location"), max_length=50)
+    current_location = models.CharField(_("current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
-                                                     verbose_name=_(u"currently responsible person"))
-    purpose = models.CharField(_(u"purpose"), max_length=80, blank=True)
+                                                     verbose_name=_("currently responsible person"))
+    purpose = models.CharField(_("purpose"), max_length=80, blank=True)
         # Translators: keywords for samples
-    tags = models.CharField(_(u"tags"), max_length=255, blank=True, help_text=_(u"separated with commas, no whitespace"))
+    tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
                                      # Translators: ID of mother sample
-                                     verbose_name=_(u"split origin"))
-    processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_(u"processes"))
-    topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_(u"topic"))
-    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
+                                     verbose_name=_("split origin"))
+    processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
+    topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True, editable=False)
 
     class Meta:
-        verbose_name = _(u"sample")
-        verbose_name_plural = _(u"samples")
+        verbose_name = _("sample")
+        verbose_name_plural = _("samples")
         ordering = ["name"]
         _ = lambda x: x
         permissions = (("view_all_samples", _("Can view all samples")),
                        ("adopt_samples", _("Can adopt samples")))
 
     def save(self, *args, **kwargs):
-        u"""Saves the instance and clears stalled cache items.
+        """Saves the instance and clears stalled cache items.
 
         It also touches all ancestors and children and the associated split
         processes.
@@ -623,7 +623,7 @@ class Sample(models.Model):
             self.split_origin.parent.save(with_relations=False)
 
     def __unicode__(self):
-        u"""Here, I realise the peculiar naming scheme of provisional sample
+        """Here, I realise the peculiar naming scheme of provisional sample
         names.  Provisional samples names always start with ``"*"``, followed
         by a number.  The problem is ordering:  This way, ``"*2"`` and
         ``"*10"`` are ordered ``("*10", "*2")``.  Therefore, I make all numbers
@@ -637,12 +637,12 @@ class Sample(models.Model):
         """
         name = self.name
         if name.startswith("*"):
-            return u"*" + name.lstrip("*0")
+            return "*" + name.lstrip("*0")
         else:
             return name
 
     def tags_suffix(self, user):
-        u"""Returns the shortened tags of the sample in parenthesis with a
+        """Returns the shortened tags of the sample in parenthesis with a
         non-breaking space before, of the empty string if the sample doesn't
         have tags.  The tags are pruned to 10 characters if necessary.
 
@@ -659,13 +659,13 @@ class Sample(models.Model):
         :rtype: unicode
         """
         if self.tags and permissions.has_permission_to_fully_view_sample(user, self):
-            tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + u"…"
-            return u" ({0})".format(tags)
+            tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
+            return " ({0})".format(tags)
         else:
-            return u""
+            return ""
 
     def name_with_tags(self, user):
-        u"""Returns the sample's name with possible tags attached.  This is a
+        """Returns the sample's name with possible tags attached.  This is a
         convenience method which simply combines `__unicode__` and
         `tags_suffix`.
 
@@ -691,7 +691,7 @@ class Sample(models.Model):
             return ("show_sample_by_name", [urlquote(self.name, safe="")])
 
     def duplicate(self):
-        u"""This is used to create a new `Sample` instance with the same data as
+        """This is used to create a new `Sample` instance with the same data as
         the current one.  Note that the `processes` field is not set because
         many-to-many fields can only be set after the object was saved.
 
@@ -708,7 +708,7 @@ class Sample(models.Model):
         return self.processes.filter(sampledeath__timestamp__isnull=False).exists()
 
     def last_process_if_split(self):
-        u"""Test whether the most recent process applied to the sample – except
+        """Test whether the most recent process applied to the sample – except
         for result processes – was a split.
 
         :Return:
@@ -725,7 +725,7 @@ class Sample(models.Model):
         return None
 
     def get_sample_details(self):
-        u"""Retreive the sample details of a sample.  Sample details are an
+        """Retreive the sample details of a sample.  Sample details are an
         optional feature that doesn't exist in chantal_samples itself.  It can
         be provided by an app built on top of it.
 
@@ -750,7 +750,7 @@ class Sample(models.Model):
             return None
 
     def get_data(self, only_processes=False):
-        u"""Extract the data of this sample as a tree of nodes (or a single
+        """Extract the data of this sample as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for general data
         export.  Every child of the top-level node is a process of the sample.
         In contrast to `get_data_for_table_export`, I export *all* attributes
@@ -786,20 +786,20 @@ class Sample(models.Model):
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
             data_node.children.extend(ancestor_data.children)
         data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
-        data_node.items = [DataItem(u"ID", self.pk),
-                           DataItem(u"name", self.name),
-                           DataItem(u"currently responsible person", self.currently_responsible_person),
-                           DataItem(u"current location", self.current_location),
-                           DataItem(u"purpose", self.purpose),
-                           DataItem(u"tags", self.tags),
-                           DataItem(u"split origin", self.split_origin and self.split_origin.id),
-                           DataItem(u"topic", self.topic)]
+        data_node.items = [DataItem("ID", self.pk),
+                           DataItem("name", self.name),
+                           DataItem("currently responsible person", self.currently_responsible_person),
+                           DataItem("current location", self.current_location),
+                           DataItem("purpose", self.purpose),
+                           DataItem("tags", self.tags),
+                           DataItem("split origin", self.split_origin and self.split_origin.id),
+                           DataItem("topic", self.topic)]
         if not only_processes and sample_details:
             data_node.items.extend(sample_details_data.items)
         return data_node
 
     def get_data_for_table_export(self, only_processes=False):
-        u"""Extract the data of this sample as a tree of nodes (or a single
+        """Extract the data of this sample as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
         data export.  Every child of the top-level node is a process of the
         sample.  See the `samples.views.table_export` module for all the glory
@@ -838,7 +838,7 @@ class Sample(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        u"""Class method for generating the search tree node for this model
+        """Class method for generating the search tree node for this model
         instance.
 
         :Return:
@@ -862,7 +862,7 @@ class Sample(models.Model):
 
 
 class SampleAlias(models.Model):
-    u"""Model for former names of samples.  If a sample gets renamed (for
+    """Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
     aliases needn't be unique.  Two old names may be the same.
 
@@ -871,16 +871,16 @@ class SampleAlias(models.Model):
     name.  Only if you look for the name by the search function, you also find
     aliases of the same name.
     """
-    name = models.CharField(_(u"name"), max_length=255)
-    sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="aliases")
+    name = models.CharField(_("name"), max_length=255)
+    sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="aliases")
 
     class Meta:
         unique_together = (("name", "sample"),)
-        verbose_name = _(u"name alias")
-        verbose_name_plural = _(u"name aliases")
+        verbose_name = _("name alias")
+        verbose_name_plural = _("name aliases")
 
     def save(self, *args, **kwargs):
-        u"""Saves the instance and touches the affected sample.
+        """Saves the instance and touches the affected sample.
         """
         super(SampleAlias, self).save(*args, **kwargs)
         self.sample.save(with_relations=False)
@@ -890,27 +890,27 @@ class SampleAlias(models.Model):
 
 
 class SampleSplit(Process):
-    u"""A process where a sample is split into many child samples.  The sample
+    """A process where a sample is split into many child samples.  The sample
     split itself is a process of the *parent*, whereas the children point to it
     through `Sample.split_origin`.  This way one can walk through the path of
     relationship in both directions.
     """
         # Translators: parent of a sample
-    parent = models.ForeignKey(Sample, verbose_name=_(u"parent"))
-    u"""This field exists just for a fast lookup.  Its existence is actually a
+    parent = models.ForeignKey(Sample, verbose_name=_("parent"))
+    """This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
 
     class Meta(Process.Meta):
-        verbose_name = _(u"sample split")
-        verbose_name_plural = _(u"sample splits")
+        verbose_name = _("sample split")
+        verbose_name_plural = _("sample splits")
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"split of {parent_name}").format(parent_name=self.parent.name)
+        return _("split of {parent_name}").format(parent_name=self.parent.name)
 
     def get_cache_key(self, user_settings_hash, local_context):
-        u"""Calculate a cache key for this context instance of the sample
+        """Calculate a cache key for this context instance of the sample
         split.  Here, I actually use `local_context` in order to generate
         different cached items for different positions of the sample split in
         the process list.  The underlying reason for it is that in contrast to
@@ -946,44 +946,44 @@ class SampleSplit(Process):
 
 
 class Clearance(models.Model):
-    u"""Model for clearances for specific samples to specific users.  Apart
+    """Model for clearances for specific samples to specific users.  Apart
     from unblocking the sample itself (at least, some fields), particular
     processes can be unblocked, too.
 
     Note that the processes needn't be processes connected with the sample.
     They may also belong to one of its ancestors.
     """
-    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"user"), related_name="clearances")
-    sample = models.ForeignKey(Sample, verbose_name=_(u"sample"), related_name="clearances")
-    processes = models.ManyToManyField(Process, verbose_name=_(u"processes"), related_name="clearances", blank=True)
-    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True)
+    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("user"), related_name="clearances")
+    sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="clearances")
+    processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True)
 
     class Meta:
         unique_together = ("user", "sample")
-        verbose_name = _(u"clearance")
-        verbose_name_plural = _(u"clearances")
+        verbose_name = _("clearance")
+        verbose_name_plural = _("clearances")
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
+        return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
 
 class SampleClaim(models.Model):
         # Translators: someone who assert a claim to samples
-    requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"requester"), related_name="claims")
-    reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_(u"reviewer"),
+    requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("requester"), related_name="claims")
+    reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("reviewer"),
                                  related_name="claims_as_reviewer")
-    samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_(u"samples"))
+    samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_("samples"))
         # Translators: "closed" claim to samples
-    closed = models.BooleanField(_(u"closed"), default=False)
+    closed = models.BooleanField(_("closed"), default=False)
 
     class Meta:
-        verbose_name = _(u"sample claim")
-        verbose_name_plural = _(u"sample claims")
+        verbose_name = _("sample claim")
+        verbose_name_plural = _("sample claims")
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"sample claim #{number}").format(number=self.pk)
+        return _("sample claim #{number}").format(number=self.pk)
 
     @models.permalink
     def get_absolute_url(self):
@@ -991,58 +991,58 @@ class SampleClaim(models.Model):
 
 
 sample_death_reasons = (
-    ("split", _(u"completely split")),
-    ("lost", _(u"lost and unfindable")),
-    ("destroyed", _(u"completely destroyed")),
+    ("split", _("completely split")),
+    ("lost", _("lost and unfindable")),
+    ("destroyed", _("completely destroyed")),
     )
-u"""Contains all possible choices for `SampleDeath.reason`.
+"""Contains all possible choices for `SampleDeath.reason`.
 """
 
 class SampleDeath(Process):
-    u"""This special process marks the end of the sample.  It can have various
+    """This special process marks the end of the sample.  It can have various
     reasons accoring to `sample_death_reasons`.  It is impossible to add
     processes to a sample if it has a `SampleDeath` process, and its timestamp
     must be the last.
     """
         # Translators: Of a sample
-    reason = models.CharField(_(u"cause of death"), max_length=50, choices=sample_death_reasons)
+    reason = models.CharField(_("cause of death"), max_length=50, choices=sample_death_reasons)
 
     class Meta(Process.Meta):
             # Translators: Of a sample
-        verbose_name = _(u"cease of existence")
+        verbose_name = _("cease of existence")
             # Translators: Of a sample
-        verbose_name_plural = _(u"ceases of existence")
+        verbose_name_plural = _("ceases of existence")
 
     def __unicode__(self):
         _ = ugettext
         try:
             # Translators: Of a sample
-            return _(u"cease of existence of {sample}").format(sample=self.samples.get())
+            return _("cease of existence of {sample}").format(sample=self.samples.get())
         except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
             # Translators: Of a sample
-            return _(u"cease of existence #{number}").format(number=self.pk)
+            return _("cease of existence #{number}").format(number=self.pk)
 
     @classmethod
     def get_search_tree_node(cls):
         raise NotImplementedError
 
 
-image_type_choices = (("none", _(u"none")),
+image_type_choices = (("none", _("none")),
                     ("pdf", "PDF"),
                     ("png", "PNG"),
                     ("jpeg", "JPEG"),
                     )
 
 class Result(Process):
-    u"""Adds a result to the history of a sample.  This may be just a comment,
+    """Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
         # Translators: Of a result
-    title = models.CharField(_(u"title"), max_length=50)
+    title = models.CharField(_("title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
         # Translators: Physical quantities are meant
-    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_(u"in JSON format"))
-    u"""This is a data structure, serialised in JSON.  If you de-serialise it,
+    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_("in JSON format"))
+    """This is a data structure, serialised in JSON.  If you de-serialise it,
     it is a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
     unicodes (the values; the table cells).  The outer list is the set of rows,
@@ -1053,12 +1053,12 @@ class Result(Process):
 
     class Meta(Process.Meta):
             # Translators: experimental result
-        verbose_name = _(u"result")
+        verbose_name = _("result")
             # Translators: experimental results
-        verbose_name_plural = _(u"results")
+        verbose_name_plural = _("results")
 
     def save(self, *args, **kwargs):
-        u"""Do everything in `Process.save`, plus touching all samples in all
+        """Do everything in `Process.save`, plus touching all samples in all
         connected sample series and the series themselves.
         """
         with_relations = kwargs.get("with_relations", True)
@@ -1071,21 +1071,21 @@ class Result(Process):
         _ = ugettext
         try:
             # Translators: experimental result
-            return _(u"result for {sample}").format(sample=self.samples.get())
+            return _("result for {sample}").format(sample=self.samples.get())
         except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
             try:
                 # Translators: experimental result
-                return _(u"result for {sample}").format(sample=self.sample_series.get())
+                return _("result for {sample}").format(sample=self.sample_series.get())
             except (SampleSeries.DoesNotExist, SampleSeries.MultipleObjectsReturned):
                 # Translators: experimental result
-                return _(u"result #{number}").format(number=self.pk)
+                return _("result #{number}").format(number=self.pk)
 
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.result.show", (self.pk,))
 
     def get_image_locations(self):
-        u"""Get the location of the image in the local filesystem as well
+        """Get the location of the image in the local filesystem as well
         as on the webpage.
 
         Every image exist twice on the local filesystem.  First, it is in
@@ -1149,7 +1149,7 @@ class Result(Process):
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
-        u"""Extract the data of this result process as a tree of nodes (or a
+        """Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for
         general data export.  In contrast to `get_data_for_table_export`, I
         export *all* attributes that may be interesting for the user, and even
@@ -1175,14 +1175,14 @@ class Result(Process):
         for i, quantity in enumerate(quantities):
             values = [values[i] for values in values_lists]
             quantities_and_values.append((quantity, values))
-        data_node.items.extend([DataItem(u"title", self.title),
-                                DataItem(u"image type", self.image_type),
-                                DataItem(u"quantities and values", quantities_and_values),
-                                DataItem(u"sample series", self.sample_series.values_list("name", flat=True))])
+        data_node.items.extend([DataItem("title", self.title),
+                                DataItem("image type", self.image_type),
+                                DataItem("quantities and values", quantities_and_values),
+                                DataItem("sample series", self.sample_series.values_list("name", flat=True))])
         return data_node
 
     def get_data_for_table_export(self):
-        u"""Extract the data of this result process as a tree of nodes (or a
+        """Extract the data of this result process as a tree of nodes (or a
         single node) with lists of key–value pairs, ready to be used for the
         table data export.  See the `samples.views.table_export` module for all
         the glory details.
@@ -1208,7 +1208,7 @@ class Result(Process):
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translators: In a table
-                child_node = DataNode(_(u"row"), _(u"row #{number}").format(number=i + 1))
+                child_node = DataNode(_("row"), _("row #{number}").format(number=i + 1))
                 child_node.items = [DataItem(quantities[j], value) for j, value in enumerate(value_list)]
                 data_node.children.append(child_node)
         elif len(value_lists) == 1:
@@ -1217,29 +1217,29 @@ class Result(Process):
 
 
 class SampleSeries(models.Model):
-    u"""A sample series groups together zero or more `Sample`.  It must belong
+    """A sample series groups together zero or more `Sample`.  It must belong
     to a topic, and it may contain processes, however, only *result processes*.
     The ``name`` and the ``timestamp`` of a sample series can never change
     after it has been created.
     """
-    name = models.CharField(_(u"name"), max_length=50, primary_key=True,
+    name = models.CharField(_("name"), max_length=50, primary_key=True,
                             # Translators: The “Y” stands for “year”
-                            help_text=_(u"must be of the form “originator-YY-name”"))
-    timestamp = models.DateTimeField(_(u"timestamp"))
+                            help_text=_("must be of the form “originator-YY-name”"))
+    timestamp = models.DateTimeField(_("timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
-                                                     verbose_name=_(u"currently responsible person"))
-    description = models.TextField(_(u"description"))
-    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_(u"samples"), related_name="series")
-    results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_(u"results"))
-    topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_(u"topic"))
-    last_modified = models.DateTimeField(_(u"last modified"), auto_now=True, auto_now_add=True, editable=False)
+                                                     verbose_name=_("currently responsible person"))
+    description = models.TextField(_("description"))
+    samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"), related_name="series")
+    results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_("results"))
+    topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_("topic"))
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True, editable=False)
 
     class Meta:
-        verbose_name = _(u"sample series")
-        verbose_name_plural = pgettext_lazy("plural", u"sample series")
+        verbose_name = _("sample series")
+        verbose_name_plural = pgettext_lazy("plural", "sample series")
 
     def save(self, *args, **kwargs):
-        u"""Saves the instance.
+        """Saves the instance.
 
         :Parameters:
           - `touch_samples`: If ``True``, also touch all samples in this
@@ -1263,7 +1263,7 @@ class SampleSeries(models.Model):
         return ("samples.views.sample_series.show", [urlquote(self.name, safe="")])
 
     def get_data(self):
-        u"""Extract the data of this sample series as a tree of nodes with
+        """Extract the data of this sample series as a tree of nodes with
         lists of key–value pairs, ready to be used for general data export.
         Every child of the top-level node is a sample of the sample series.  In
         contrast to `get_data_for_table_export`, I export *all* attributes that
@@ -1284,14 +1284,14 @@ class SampleSeries(models.Model):
         """
         data_node = DataNode(self.name)
         data_node.children.extend(sample.get_data() for sample in self.samples.all())
-        data_node.items = [DataItem(u"currently responsible person", self.currently_responsible_person),
-                           DataItem(u"timestamp", self.timestamp),
-                           DataItem(u"description", self.description),
-                           DataItem(u"topic", self.topic)]
+        data_node.items = [DataItem("currently responsible person", self.currently_responsible_person),
+                           DataItem("timestamp", self.timestamp),
+                           DataItem("description", self.description),
+                           DataItem("topic", self.topic)]
         return data_node
 
     def get_data_for_table_export(self):
-        u"""Extract the data of this sample series as a tree of nodes with
+        """Extract the data of this sample series as a tree of nodes with
         lists of key–value pairs, ready to be used for the data export.  Every
         child of the top-level node is a sample of the sample series.  See the
         `samples.views.table_export` module for all the glory details.
@@ -1310,7 +1310,7 @@ class SampleSeries(models.Model):
         return data_node
 
     def touch_samples(self):
-        u"""Touch all samples of this series for cache expiring.  This isn't
+        """Touch all samples of this series for cache expiring.  This isn't
         done in a custom ``save()`` method because sample don't store
         information about the sample series that may change (note that the
         sample series' name never changes).
@@ -1320,7 +1320,7 @@ class SampleSeries(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        u"""Class method for generating the search tree node for this model
+        """Class method for generating the search tree node for this model
         instance.
 
         :Return:
@@ -1337,7 +1337,7 @@ class SampleSeries(models.Model):
 
 
 class Initials(models.Model):
-    u"""Model for initials of people or external operators.  They are used to
+    """Model for initials of people or external operators.  They are used to
     build namespaces for sample names and sample series names.  They must match
     the regular expression ``"[A-Z]{2,4}[0-9]*"`` with the additional
     constraint to be no longer than 4 characters.
@@ -1349,49 +1349,49 @@ class Initials(models.Model):
     though.  “Should not” means here “to be done only by the administrator
     after thorough examination”.
     """
-    initials = models.CharField(_(u"initials"), max_length=4, primary_key=True)
-    user = models.OneToOneField(django.contrib.auth.models.User, verbose_name=_(u"user"),
+    initials = models.CharField(_("initials"), max_length=4, primary_key=True)
+    user = models.OneToOneField(django.contrib.auth.models.User, verbose_name=_("user"),
                                 related_name="initials", null=True, blank=True)
-    external_operator = models.OneToOneField(ExternalOperator, verbose_name=_(u"external operator"),
+    external_operator = models.OneToOneField(ExternalOperator, verbose_name=_("external operator"),
                                              related_name="initials", null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u"initials")
-        verbose_name_plural = pgettext_lazy("plural", u"initialses")
+        verbose_name = _("initials")
+        verbose_name_plural = pgettext_lazy("plural", "initialses")
 
     def __unicode__(self):
         return self.initials
 
 
 class UserDetails(models.Model):
-    u"""Model for further details about a user, beyond
+    """Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
                                 related_name="samples_user_details")
     auto_addition_topics = models.ManyToManyField(
-        Topic, blank=True, related_name="auto_adders", verbose_name=_(u"auto-addition topics"),
-        help_text=_(u"new samples in these topics are automatically added to “My Samples”"))
-    only_important_news = models.BooleanField(_(u"get only important news"), default=False)
-    my_layers = models.TextField(_(u"my layers"), blank=True, help_text=_(u"in JSON format"))
-    u"""This string is the JSON serialisation of the list with contains
+        Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
+        help_text=_("new samples in these topics are automatically added to “My Samples”"))
+    only_important_news = models.BooleanField(_("get only important news"), default=False)
+    my_layers = models.TextField(_("my layers"), blank=True, help_text=_("in JSON format"))
+    """This string is the JSON serialisation of the list with contains
     3-tuples of the the form ``(nickname, deposition, layer)``, where
     “deposition” is the *process id* (``Process.pk``, not the deposition
     number!) of the deposition, and “layer” is the layer number
     (`models_depositions.Layer.number`).
     """
-    display_settings_timestamp = models.DateTimeField(_(u"display settings last modified"), auto_now_add=True)
-    u"""This timestamp denotes when anything changed which influences the
+    display_settings_timestamp = models.DateTimeField(_("display settings last modified"), auto_now_add=True)
+    """This timestamp denotes when anything changed which influences the
     display of a sample, process, sample series etc which is not covered by
     other timestamps.  See `touch_display_settings`.
     """
-    my_samples_timestamp = models.DateTimeField(_(u"My Samples last modified"), auto_now_add=True)
-    u"""This timestamp denotes when My Samples were changed most recently.  It
+    my_samples_timestamp = models.DateTimeField(_("My Samples last modified"), auto_now_add=True)
+    """This timestamp denotes when My Samples were changed most recently.  It
     is used for expiring sample datasheet caching.
     """
-    idenfifying_data_hash = models.CharField(_(u"identifying data hash"), max_length=40)
-    u"""Contains the SHA1 hash of the username, first name, and family name of
+    idenfifying_data_hash = models.CharField(_("identifying data hash"), max_length=40)
+    """Contains the SHA1 hash of the username, first name, and family name of
     the user.  It is used for efficient caching.  If the name of the user
     changes, all connected processes, samples, and sample series must be
     expired in the cache.  If other things on the user data are changed (in
@@ -1400,20 +1400,20 @@ class UserDetails(models.Model):
     the old data here, for comparison.
     """
     subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users",
-                                              verbose_name=_(u"subscribed newsfeeds"), blank=True)
+                                              verbose_name=_("subscribed newsfeeds"), blank=True)
 
     default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
-                                              verbose_name=_(u"folded processes"), blank=True)
+                                              verbose_name=_("folded processes"), blank=True)
 
-    folded_processes = models.TextField(_(u"folded processes"), blank=True, help_text=_(u"in JSON format"),
+    folded_processes = models.TextField(_("folded processes"), blank=True, help_text=_("in JSON format"),
                                         default="{}")
 
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
-                                                verbose_name=_(u"visible task lists"), blank=True)
+                                                verbose_name=_("visible task lists"), blank=True)
 
     class Meta:
-        verbose_name = _(u"user details")
-        verbose_name_plural = _(u"user details")
+        verbose_name = _("user details")
+        verbose_name_plural = _("user details")
         _ = lambda x: x
         permissions = (("edit_permissions_for_all_physical_processes",
                         _("Can edit permissions for all physical processes")),)
@@ -1422,7 +1422,7 @@ class UserDetails(models.Model):
         return unicode(self.user)
 
     def touch_display_settings(self):
-        u"""Set the last modifications of sample settings to the current time.
+        """Set the last modifications of sample settings to the current time.
         This method must be called every time when something was changed which
         influences the display of a sample datasheet (and is not covered by
         other timestamps (``my_samples_timestamp``,
@@ -1434,78 +1434,78 @@ class UserDetails(models.Model):
 
 
 status_level_choices = (
-    ("undefined", _(u"undefined")),
-    ("red", _(u"red")),
-    ("yellow", _(u"yellow")),
-    ("green", _(u"green"))
+    ("undefined", _("undefined")),
+    ("red", _("red")),
+    ("yellow", _("yellow")),
+    ("green", _("green"))
 )
 
 class StatusMessage(models.Model):
-    u"""This class is for the current status of the processes.  The class
+    """This class is for the current status of the processes.  The class
     discusses whether the process is available, or is currently out of service.
     It provides a many to many relationship between the status messages and the
     processes.
     """
-    process_classes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_(u"processes"))
-    timestamp = models.DateTimeField(_(u"timestamp"))
-    begin = models.DateTimeField(_(u"begin"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
-    end = models.DateTimeField(_(u"end"), null=True, blank=True, help_text=_(u"YYYY-MM-DD HH:MM:SS"))
+    process_classes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_("processes"))
+    timestamp = models.DateTimeField(_("timestamp"))
+    begin = models.DateTimeField(_("begin"), null=True, blank=True, help_text=_("YYYY-MM-DD HH:MM:SS"))
+    end = models.DateTimeField(_("end"), null=True, blank=True, help_text=_("YYYY-MM-DD HH:MM:SS"))
     begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
                                                         default=0)
     end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status_messages",
-                                 verbose_name=_(u"reporter"))
-    message = models.TextField(_(u"message"), blank=True)
-    status_level = models.CharField(_(u"level"), choices=status_level_choices, default="undefined", max_length=10)
-    withdrawn = models.BooleanField(_(u"withdrawn"), default=False)
+                                 verbose_name=_("reporter"))
+    message = models.TextField(_("message"), blank=True)
+    status_level = models.CharField(_("level"), choices=status_level_choices, default="undefined", max_length=10)
+    withdrawn = models.BooleanField(_("withdrawn"), default=False)
 
     class Meta:
-        verbose_name = _(u"status message")
-        verbose_name_plural = _(u"status messages")
+        verbose_name = _("status message")
+        verbose_name_plural = _("status messages")
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"status message #{number}").format(number=self.pk)
+        return _("status message #{number}").format(number=self.pk)
 
 
 status_choices = (
-    ("0 finished", _(u"finished")),
-    ("1 new", _(u"new")),
-    ("2 accepted", _(u"accepted")),
-    ("3 in progress", _(u"in progress"))
+    ("0 finished", _("finished")),
+    ("1 new", _("new")),
+    ("2 accepted", _("accepted")),
+    ("3 in progress", _("in progress"))
 )
 priority_choices = (
-    ("0 critical", _(u"critical")),
-    ("1 high", _(u"high")),
-    ("2 normal", _(u"normal")),
-    ("3 low", _(u"low"))
+    ("0 critical", _("critical")),
+    ("1 high", _("high")),
+    ("2 normal", _("normal")),
+    ("3 low", _("low"))
 )
 
 class Task(models.Model):
-    u"""
     """
-    status = models.CharField(_(u"status"), max_length=15, choices=status_choices, default="1 new")
-    customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_(u"customer"))
-    creating_timestamp = models.DateTimeField(_(u"created at"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
+    """
+    status = models.CharField(_("status"), max_length=15, choices=status_choices, default="1 new")
+    customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_("customer"))
+    creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"),
                                               auto_now_add=True, editable=False)
-    last_modified = models.DateTimeField(_(u"last modified"), help_text=_(u"YYYY-MM-DD HH:MM:SS"),
+    last_modified = models.DateTimeField(_("last modified"), help_text=_("YYYY-MM-DD HH:MM:SS"),
                                          auto_now=True, auto_now_add=True, editable=False)
     operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
-                                 verbose_name=_(u"operator"), null=True, blank=True)
-    process_class = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_(u"process class"))
+                                 verbose_name=_("operator"), null=True, blank=True)
+    process_class = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_("process class"))
     finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True,
-                                         verbose_name=_(u"finished process"))
-    samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_(u"samples"))
-    comments = models.TextField(_(u"comments"), blank=True)
-    priority = models.CharField(_(u"priority"), max_length=15, choices=priority_choices, default="2 normal")
+                                         verbose_name=_("finished process"))
+    samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_("samples"))
+    comments = models.TextField(_("comments"), blank=True)
+    priority = models.CharField(_("priority"), max_length=15, choices=priority_choices, default="2 normal")
 
     class Meta:
-        verbose_name = _(u"task")
-        verbose_name_plural = _(u"tasks")
+        verbose_name = _("task")
+        verbose_name_plural = _("tasks")
 
     def __unicode__(self):
         _ = ugettext
-        return _(u"task of {process_class} from {datetime}". format(
+        return _("task of {process_class} from {datetime}". format(
                 process_class=self.process_class.name, datetime=self.creating_timestamp))
 
     def get_absolute_url(self):

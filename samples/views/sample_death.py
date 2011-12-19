@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""View for killing a sample.
+"""View for killing a sample.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.shortcuts import render_to_response
@@ -31,7 +31,7 @@ from samples.views import utils
 
 
 class SampleDeathForm(forms.ModelForm):
-    u"""Model form for a sample death.  I only use the ``reason`` field here.
+    """Model form for a sample death.  I only use the ``reason`` field here.
     Note that it is not possible to select a sample (or even more than a
     sample) here because the sample is already determinded by the URL of the
     request.
@@ -47,7 +47,7 @@ class SampleDeathForm(forms.ModelForm):
                     new_choices.append(choice)
             self.fields["reason"].choices = new_choices
     def clean_reason(self):
-        u"""Assure that if a sample was completely split, the most recent
+        """Assure that if a sample was completely split, the most recent
         process was indeed a split.
         """
         reason = self.cleaned_data["reason"]
@@ -61,7 +61,7 @@ class SampleDeathForm(forms.ModelForm):
 
 @login_required
 def new(request, sample_name):
-    u"""View for killing samples.  Note that it is not possible to re-kill an
+    """View for killing samples.  Note that it is not possible to re-kill an
     already dead sample.  Furthermore, you must be the currently responsible
     person to be able to kill a sample.
 
@@ -80,7 +80,7 @@ def new(request, sample_name):
     sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)
     if sample.is_dead():
-        raise Http404(u"Sample is already dead.")
+        raise Http404("Sample is already dead.")
     if request.method == "POST":
         sample_death_form = SampleDeathForm(sample, request.POST)
         if sample_death_form.is_valid():
@@ -90,10 +90,10 @@ def new(request, sample_name):
             sample_death.save()
             sample_death.samples = [sample]
             # FixMe: Feed entries
-            return utils.successful_response(request, _(u"Sample “{sample}” was killed.").format(sample=sample),
+            return utils.successful_response(request, _("Sample “{sample}” was killed.").format(sample=sample),
                                              "show_sample_by_name", {"sample_name": sample_name})
     else:
         sample_death_form = SampleDeathForm(sample)
-    return render_to_response("samples/edit_sample_death.html", {"title": _(u"Kill sample “{sample}”").format(sample=sample),
+    return render_to_response("samples/edit_sample_death.html", {"title": _("Kill sample “{sample}”").format(sample=sample),
                                                                  "sample_death": sample_death_form},
                               context_instance=RequestContext(request))

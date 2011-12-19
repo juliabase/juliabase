@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""This module is the connection to the database.  It contains the *models*,
+"""This module is the connection to the database.  It contains the *models*,
 i.e. Python classes which represent the tables in the relational database.
 Every class which inherits from ``models.Model`` is a PostgreSQL table at the
 same time, unless it has ``abstract = True`` set in their ``Meta`` subclass.
@@ -37,7 +37,7 @@ I can give the rest of Chantal's modules the illusion that all models are
 actually here.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import copy, inspect
 from django.conf import settings
@@ -47,7 +47,7 @@ from samples.models_feeds import *
 if settings.TESTING:
     from samples.models_test import *
 
-u"""
+"""
 
 :var clearance_sets: Dictionary of tupels mapping a ``Process`` subclass to tuples of
   ``Process`` subclasses.  This dictionary is used in the “get_sample_clearance“ method

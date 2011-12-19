@@ -13,12 +13,13 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""General helper functions for the views.  Try to avoid using it outside the
+"""General helper functions for the views.  Try to avoid using it outside the
 views package.  All symbols from `shared_utils` are also available here.  So
 `shared_utils` should be useful only for the Remote Client.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
 from chantal_common import mimeparse
 from django.conf import settings
 from django.core.cache import cache
@@ -49,7 +50,7 @@ new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]
                                          -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)
 provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)$")
 def sample_name_format(name):
-    u"""Determines which sample name format the given name has.  It doesn't
+    """Determines which sample name format the given name has.  It doesn't
     test whether the sample name is existing, nor if the initials are valid.
 
     :Parameters:
@@ -74,7 +75,7 @@ def sample_name_format(name):
 
 
 def get_sample(sample_name):
-    u"""Lookup a sample by name.  You may also give an alias.  If more than one
+    """Lookup a sample by name.  You may also give an alias.  If more than one
     sample is found (can only happen via aliases), it returns a list.  Matching
     is exact.
 
@@ -101,7 +102,7 @@ def get_sample(sample_name):
 
 
 def does_sample_exist(sample_name):
-    u"""Returns ``True`` if the sample name exists in the database.
+    """Returns ``True`` if the sample name exists in the database.
 
     :Parameters:
       - `sample_name`: the name or alias of the sample
@@ -141,10 +142,10 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
-deposition_index_pattern = re.compile(ur"\d{3,4}")
+deposition_index_pattern = re.compile(r"\d{3,4}")
 
 def get_next_deposition_number(letter):
-    u"""Find a good next deposition number.  For example, if the last run was
+    """Find a good next deposition number.  For example, if the last run was
     called “08B-045”, this routine yields “08B-046” (unless the new year has
     begun).
 
@@ -158,19 +159,19 @@ def get_next_deposition_number(letter):
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
-    prefix = ur"{0}{1}-".format(datetime.date.today().strftime(u"%y"), letter)
+    prefix = r"{0}{1}-".format(datetime.date.today().strftime("%y"), letter)
     prefix_length = len(prefix)
-    pattern_string = ur"^{0}[0-9]+".format(re.escape(prefix))
+    pattern_string = r"^{0}[0-9]+".format(re.escape(prefix))
     deposition_numbers = \
         models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
     numbers = [int(deposition_index_pattern.match(deposition_number[prefix_length:]).group())
                for deposition_number in deposition_numbers]
     next_number = max(numbers) + 1 if numbers else 1
-    return prefix + u"{0:03}".format(next_number)
+    return prefix + "{0:03}".format(next_number)
 
 
 class AmbiguityException(Exception):
-    u"""Exception if a sample lookup leads to more than one matching alias
+    """Exception if a sample lookup leads to more than one matching alias
     (remember that alias names needn't be unique).  It is raised in
     `lookup_sample` and typically caught in Chantal's own middleware.
     """
@@ -180,7 +181,7 @@ class AmbiguityException(Exception):
 
 
 def lookup_sample(sample_name, user, with_clearance=False):
-    u"""Looks up the ``sample_name`` in the database (also among the aliases),
+    """Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
     to view it.  Shortened provisional names like “*2” are also found.  If
     nothing is found or the permissions are not sufficient, it raises an
@@ -213,7 +214,7 @@ def lookup_sample(sample_name, user, with_clearance=False):
         sample_name = "*{0:05}".format(int(match.group("id")))
     sample = get_sample(sample_name)
     if not sample:
-        raise Http404(u"Sample {name} could not be found (neither as an alias).".format(name=sample_name))
+        raise Http404("Sample {name} could not be found (neither as an alias).".format(name=sample_name))
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
     if with_clearance:
@@ -225,7 +226,7 @@ def lookup_sample(sample_name, user, with_clearance=False):
 
 
 def convert_id_to_int(process_id):
-    u"""If the user gives a process ID via the browser, it must be converted to
+    """If the user gives a process ID via the browser, it must be converted to
     an integer because this is what's stored in the database.  (Well, actually
     SQL gives a string, too, but that's beside the point.)  This routine
     converts it to a real integer and tests also for validity (not for
@@ -252,13 +253,13 @@ def convert_id_to_int(process_id):
     try:
         return int(process_id)
     except ValueError:
-        raise Http404(u"Invalid ID: “{id}”".format(id=process_id))
+        raise Http404("Invalid ID: “{id}”".format(id=process_id))
 
 
 # FixMe: Possibly the whole function is superfluous because there is
 # "request.GET".
 def parse_query_string(request):
-    u"""Parses an URL query string.
+    """Parses an URL query string.
 
     :Parameters:
       - `request`: the current HTTP request object
@@ -272,22 +273,22 @@ def parse_query_string(request):
     """
     # FixMe: Use urlparse.parse_qs() for this
     def decode(string):
-        string = string.replace("+", " ")
-        string = re.sub('%(..)', lambda match: chr(int(match.group(1), 16)), string)
+        string = string.replace(b"+", b" ")
+        string = re.sub(b'%(..)', lambda match: chr(int(match.group(1), 16)), string)
         return string.decode("utf-8")
-    query_string = request.META["QUERY_STRING"] or u""
+    query_string = request.META["QUERY_STRING"] or ""
     items = [item.split("=", 1) for item in query_string.split("&")]
     result = []
     for item in items:
         if len(item) == 1:
-            item.append(u"")
+            item.append("")
         result.append((decode(item[0]), decode(item[1])))
     return dict(result)
 
 
-def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False,
+def successful_response(request, success_report=None, view=None, kwargs={}, query_string="", forced=False,
                         json_response=True):
-    u"""After a POST request was successfully processed, there is typically a
+    """After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
     add/edit request was started.
 
@@ -337,7 +338,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
 
 def remove_samples_from_my_samples(samples, user):
-    u"""Remove the given samples from the user's MySamples list
+    """Remove the given samples from the user's MySamples list
 
     :Parameters:
       - `samples`: the samples to be removed.  FixMe: How does it react if a
@@ -352,7 +353,7 @@ def remove_samples_from_my_samples(samples, user):
 
 
 class StructuredSeries(object):
-    u"""Helper class to pass sample series data to the main menu template.
+    """Helper class to pass sample series data to the main menu template.
     This is *not* a data strcuture for sample series.  It just stores all data
     needed to display a certain sample series to a certain user.  It is used in
     `StructuredTopic` and `build_structured_sample_list`.
@@ -383,7 +384,7 @@ class StructuredSeries(object):
         self.__is_complete = None
 
     def append(self, sample):
-        u"""Adds a sample to this sample series view.
+        """Adds a sample to this sample series view.
 
         :Parameters:
           - `sample`: the sample
@@ -403,7 +404,7 @@ class StructuredSeries(object):
 
 
 class StructuredTopic(object):
-    u"""Class that represents one topic which contains samples and sample
+    """Class that represents one topic which contains samples and sample
     series, used for `build_structured_sample_list`.
 
     :ivar topic: the underlying Chantal topic which is represented by this
@@ -436,7 +437,7 @@ class StructuredTopic(object):
 
 
 def build_structured_sample_list(samples, user):
-    u"""Generate a nested datastructure which contains the given samples in a
+    """Generate a nested datastructure which contains the given samples in a
     handy way to be layouted in a certain way.  This routine is used for the
     “My Samples” list in the main menu, and for the multiple-selection box for
     samples in various views.  It is a list of `StructuredTopic` at the
@@ -488,7 +489,7 @@ def build_structured_sample_list(samples, user):
 
 
 def extract_preset_sample(request):
-    u"""Extract a sample from a query string.  All physical processes as well
+    """Extract a sample from a query string.  All physical processes as well
     as result processes may have an optional parameter in the query string,
     namely the sample to which they should be applied (results even a sample
     series, too).  If such a parameter is present, the given sample – if
@@ -522,7 +523,7 @@ def extract_preset_sample(request):
 
 
 def format_enumeration(items):
-    u"""Generates a pretty-printed enumeration of all given names.  For
+    """Generates a pretty-printed enumeration of all given names.  For
     example, if the list contains ``["a", "b", "c"]``, it yields ``"a, b, and
     c"``.
 
@@ -538,15 +539,15 @@ def format_enumeration(items):
     """
     items = sorted(unicode(item) for item in items)
     if len(items) > 2:
-        return _(u", ").join(items[:-1]) + _(u", and ") + items[-1]
+        return _(", ").join(items[:-1]) + _(", and ") + items[-1]
     elif len(items) == 2:
-        return _(u" and ").join(items)
+        return _(" and ").join(items)
     else:
-        return u"".join(items)
+        return "".join(items)
 
 
 def digest_process(process, user, local_context={}):
-    u"""Convert a process to a process context.  This conversion extracts the
+    """Convert a process to a process context.  This conversion extracts the
     relevant information of the process and saves it in a form which can easily
     be processed in a template.
 
@@ -584,7 +585,7 @@ def digest_process(process, user, local_context={}):
 
 
 def get_physical_processes():
-    u"""Return a list with all registered physical processes, sorted by their name.
+    """Return a list with all registered physical processes, sorted by their name.
 
     :Return:
       all physical processes
@@ -598,7 +599,7 @@ def get_physical_processes():
 
 
 def restricted_samples_query(user):
-    u"""Returns a ``QuerySet`` which is restricted to samples the names of
+    """Returns a ``QuerySet`` which is restricted to samples the names of
     which the given user is allowed to see.  Note that this doesn't mean that
     the user is allowed to see all of the samples themselves necessarily.  It
     is only about the names.  See the `search` view for further information.
@@ -611,7 +612,7 @@ def restricted_samples_query(user):
 
 
 def round(value, digits):
-    u"""Method for rounding a numeric value to a fixed number of significant
+    """Method for rounding a numeric value to a fixed number of significant
     digits.
 
     :Parameters:
@@ -630,7 +631,7 @@ def round(value, digits):
 
 
 def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
-    u"""Unblocks specified processes of a sample for a given user.
+    """Unblocks specified processes of a sample for a given user.
 
     :Parameters:
       - `user`: the user who unblocks the processes
@@ -673,7 +674,7 @@ def enforce_clearance(user, clearance_processes, destination_user, sample, clear
 
 
 def sorted_users(users):
-    u"""Return a list of users sorted by family name.  In particular, it sorts
+    """Return a list of users sorted by family name.  In particular, it sorts
     case-insensitively.
 
     :Parameters:
@@ -690,7 +691,7 @@ def sorted_users(users):
 
 
 def table_export(request, data, label_column_heading):
-    u"""Helper function which does almost all work needed for a CSV table
+    """Helper function which does almost all work needed for a CSV table
     export view.  This is not a view per se, however, it is called by views,
     which have to do almost nothing anymore by themselves.  See for example
     `sample.export`.

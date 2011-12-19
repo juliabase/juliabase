@@ -12,11 +12,11 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-u"""Add and show status messages for the physical processes
+"""Add and show status messages for the physical processes
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.contrib.auth.decorators import login_required
@@ -43,22 +43,22 @@ import django.forms as forms
 
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
     def render(self):
-        return mark_safe(u"""<ul class="radio-select">\n{0}\n</ul>""".format(u"\n".join(
-                    u"<li>{0}</li>".format(force_unicode(w)) for w in self)))
+        return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
+                    "<li>{0}</li>".format(force_unicode(w)) for w in self)))
 
 
 class StatusForm(forms.ModelForm):
-    u"""The status message model form class.
+    """The status message model form class.
     """
     _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=capfirst(_(u"operator")))
-    status_level = forms.ChoiceField(label=capfirst(_(u"status level")), choices=models.status_level_choices,
+    operator = form_utils.FixedOperatorField(label=capfirst(_("operator")))
+    status_level = forms.ChoiceField(label=capfirst(_("status level")), choices=models.status_level_choices,
                                      widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
-    begin = DateTimeField(label=capfirst(_(u"begin")), start=True, required=False, with_inaccuracy=True,
-                          help_text=_(u"YYYY-MM-DD HH:MM:SS"))
-    end = DateTimeField(label=capfirst(_(u"end")), start=False, required=False, with_inaccuracy=True,
-                        help_text=_(u"YYYY-MM-DD HH:MM:SS"))
-    process_classes = forms.MultipleChoiceField(label=capfirst(_(u"processes")))
+    begin = DateTimeField(label=capfirst(_("begin")), start=True, required=False, with_inaccuracy=True,
+                          help_text=_("YYYY-MM-DD HH:MM:SS"))
+    end = DateTimeField(label=capfirst(_("end")), start=False, required=False, with_inaccuracy=True,
+                        help_text=_("YYYY-MM-DD HH:MM:SS"))
+    process_classes = forms.MultipleChoiceField(label=capfirst(_("processes")))
 
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
@@ -72,7 +72,7 @@ class StatusForm(forms.ModelForm):
         self.fields["process_classes"].widget.attrs["size"] = 24
 
     def clean_message(self):
-        u"""Forbid image and headings syntax in Markdown markup.
+        """Forbid image and headings syntax in Markdown markup.
         """
         message = self.cleaned_data.get("message")
         if message:
@@ -80,11 +80,11 @@ class StatusForm(forms.ModelForm):
         return message
 
     def clean_timestamp(self):
-        u"""Forbid timestamps that are in the future.
+        """Forbid timestamps that are in the future.
         """
         timestamp = self.cleaned_data["timestamp"]
         if timestamp > datetime.datetime.now():
-            raise ValidationError(_(u"The timestamp must not be in the future."))
+            raise ValidationError(_("The timestamp must not be in the future."))
         return timestamp
 
     def clean(self):
@@ -99,10 +99,10 @@ class StatusForm(forms.ModelForm):
         else:
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
         if cleaned_data["begin"] > cleaned_data["end"]:
-            append_error(self, _(u"The begin must be before the end."), "begin")
+            append_error(self, _("The begin must be before the end."), "begin")
             del cleaned_data["begin"]
         if cleaned_data["status_level"] in ["red", "yellow"] and not cleaned_data.get("message"):
-            append_error(self, _(u"A message must be given when the status level is red or yellow."), "message")
+            append_error(self, _("A message must be given when the status level is red or yellow."), "message")
         return cleaned_data
 
     class Meta:
@@ -111,7 +111,7 @@ class StatusForm(forms.ModelForm):
 
 @login_required
 def add(request):
-    u"""With this function, the messages are stored into the database.  It also
+    """With this function, the messages are stored into the database.  It also
     gets the information for displaying the "add_status_message" template.
 
     :Parameters:
@@ -130,17 +130,17 @@ def add(request):
             status = status_form.save()
             for process_class in status.process_classes.all():
                 feed_utils.Reporter(request.user).report_status_message(process_class, status)
-            return utils.successful_response(request, _(u"The status message was successfully added to the database."))
+            return utils.successful_response(request, _("The status message was successfully added to the database."))
     else:
         status_form = StatusForm(request.user)
-    title = _(u"Add status message")
+    title = _("Add status message")
     return render_to_response("samples/add_status_message.html", {"title": title, "status": status_form},
                               context_instance=RequestContext(request))
 
 
 @login_required
 def show(request):
-    u"""This function shows the current status messages for the physical
+    """This function shows the current status messages for the physical
     process classes.
 
     :Parameters:
@@ -170,7 +170,7 @@ def show(request):
         for process_class in status_message.process_classes.all():
             further_status_messages.setdefault(process_class.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
-    return render_to_response("samples/show_status.html", {"title": _(u"Status messages"),
+    return render_to_response("samples/show_status.html", {"title": _("Status messages"),
                                                            "status_messages": status_messages,
                                                            "further_status_messages": further_status_messages},
                               context_instance=RequestContext(request))
@@ -179,7 +179,7 @@ def show(request):
 @login_required
 @require_http_methods(["POST"])
 def withdraw(request, id_):
-    u"""This function withdraws a status message for good.  Note that it
+    """This function withdraws a status message for good.  Note that it
     withdraws it for all its connected process types.  It is idempotent.
 
     :Parameters:
@@ -196,9 +196,9 @@ def withdraw(request, id_):
     """
     status_message = get_object_or_404(models.StatusMessage, withdrawn=False, pk=utils.convert_id_to_int(id_))
     if request.user != status_message.operator:
-        raise PermissionError(request.user, u"You cannot withdraw status messages of another user.")
+        raise PermissionError(request.user, "You cannot withdraw status messages of another user.")
     status_message.withdrawn = True
     status_message.save()
     for process_class in status_message.process_classes.all():
         feed_utils.Reporter(request.user).report_withdrawn_status_message(process_class, status_message)
-    return utils.successful_response(request, _(u"The status message was successfully withdrawn."), show)
+    return utils.successful_response(request, _("The status message was successfully withdrawn."), show)

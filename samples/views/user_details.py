@@ -13,11 +13,11 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Views for showing and editing user data, i.e. real names, contact
+"""Views for showing and editing user data, i.e. real names, contact
 information, and preferences.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re, json, copy
 from django.template import RequestContext
@@ -41,7 +41,7 @@ from chantal_common.models import Topic
 
 @login_required
 def show_user(request, login_name):
-    u"""View for showing basic information about a user, like the email
+    """View for showing basic information about a user, like the email
     address.  Maybe this could be fleshed out with phone number, picture,
     position, and field of interest.
 
@@ -66,11 +66,11 @@ def show_user(request, login_name):
 
 
 class UserDetailsForm(forms.ModelForm):
-    u"""Model form for user preferences.
+    """Model form for user preferences.
     """
     _ = ugettext_lazy
-    subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_(u"subscribed newsfeeds")), required=False)
-    default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_(u"folded processes")), required=False)
+    subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_("subscribed newsfeeds")), required=False)
+    default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
@@ -92,7 +92,7 @@ class UserDetailsForm(forms.ModelForm):
 
 @login_required
 def edit_preferences(request, login_name):
-    u"""View for editing preferences of a user.  Note that by giving the
+    """View for editing preferences of a user.  Note that by giving the
     ``login_name`` explicitly, it is possible to edit the preferences of
     another user.  However, this is only allowed to staff.  The main reason for
     this explicitness is to be more “RESTful”.
@@ -118,7 +118,7 @@ def edit_preferences(request, login_name):
     :rtype: ``HttpResponse``
     """
     def __change_folded_processes(default_folded_process_classes, user):
-        u"""Creates the new exceptional processes dictionary and saves it into the user details.
+        """Creates the new exceptional processes dictionary and saves it into the user details.
         """
         old_default_classes = set(cls.id for cls in ContentType.objects.filter(dont_show_to_user=user.samples_user_details))
         new_default_classes = set(map(int, default_folded_process_classes))
@@ -137,7 +137,7 @@ def edit_preferences(request, login_name):
 
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
-        raise permissions.PermissionError(request.user, _(u"You can't access the preferences of another user."))
+        raise permissions.PermissionError(request.user, _("You can't access the preferences of another user."))
     initials_mandatory = utils.parse_query_string(request).get("initials_mandatory") == "True"
     user_details = user.samples_user_details
     if request.method == "POST":
@@ -147,13 +147,13 @@ def edit_preferences(request, login_name):
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
             user_details_form.save()
             initials_form.save()
-            return utils.successful_response(request, _(u"The preferences were successfully updated."))
+            return utils.successful_response(request, _("The preferences were successfully updated."))
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
         initials_form = form_utils.InitialsForm(user, initials_mandatory)
     return render_to_response(
         "samples/edit_preferences.html",
-        {"title": _(u"Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
+        {"title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
          "user_details": user_details_form, "initials": initials_form,
          "has_topics": user.topics.exists()},
         context_instance=RequestContext(request))
@@ -164,10 +164,10 @@ def topics_and_permissions(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(
-            request.user, _(u"You can't access the list of topics and permissions of another user."))
+            request.user, _("You can't access the list of topics and permissions of another user."))
     return render_to_response(
         "samples/topics_and_permissions.html",
-        {"title": _(u"Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
+        {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
          "topics": user.topics.all(), "permissions": permissions.get_user_permissions(user),
          "full_user_name": get_really_full_name(request.user),
          "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")},

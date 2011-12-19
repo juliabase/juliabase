@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Collection of tags and filters that I found useful for Chantal.
+"""Collection of tags and filters that I found useful for Chantal.
 """
 
-from __future__ import division
+from __future__ import division, unicode_literals
 import string, re, sys, decimal
 from django.template.defaultfilters import stringfilter
 from django import template
@@ -44,7 +44,7 @@ register = template.Library()
 
 @register.filter
 def round(value, digits):
-    u"""Filter for rounding a numeric value to a fixed number of significant
+    """Filter for rounding a numeric value to a fixed number of significant
     digits.  The result may be used for the `quantity` filter below.
     """
     return samples.views.utils.round(value, digits)
@@ -52,7 +52,7 @@ def round(value, digits):
 
 @register.filter
 def quantity(value, unit=None, autoescape=False):
-    u"""Filter for pretty-printing a physical quantity.  It converts 3.4e-3
+    """Filter for pretty-printing a physical quantity.  It converts 3.4e-3
     into 3.4·10⁻³.  The number is the part that is actually filtered, while the
     unit is the optional argument of this filter.  So, you may write::
 
@@ -62,54 +62,54 @@ def quantity(value, unit=None, autoescape=False):
     from–to notation.
     """
     def pretty_print_number(number):
-        u"""Pretty-print a single value.  For the from–to notation, this
+        """Pretty-print a single value.  For the from–to notation, this
         function is called twice.
         """
         if isinstance(number, float):
-            value_string = u"{0:g}".format(number)
+            value_string = "{0:g}".format(number)
         elif isinstance(number, decimal.Decimal):
-            value_string = u"{0:g}".format(float(number))
+            value_string = "{0:g}".format(float(number))
         else:
             value_string = unicode(number)
         if autoescape:
             value_string = conditional_escape(value_string)
-        result = u""
-        match = re.match(ur"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
-                         ur"([Ee](?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
-        match_dict = match.groupdict(u"")
-        result = match_dict["leading"] + match_dict["prepoint"].replace(u"-", u"−")
+        result = ""
+        match = re.match(r"(?P<leading>.*?)(?P<prepoint>[-+]?\d*)(\.(?P<postpoint>\d+))?"
+                         r"([Ee](?P<exponent>[-+]?\d+))?(?P<trailing>.*)", value_string)
+        match_dict = match.groupdict("")
+        result = match_dict["leading"] + match_dict["prepoint"].replace("-", "−")
         if match_dict["postpoint"]:
             result += "." + match_dict["postpoint"]
         if match_dict["exponent"]:
-            result += u" · 10<sup>"
-            match_exponent = re.match(ur"(?P<sign>[-+])?0*(?P<digits>\d+)", match_dict["exponent"])
+            result += " · 10<sup>"
+            match_exponent = re.match(r"(?P<sign>[-+])?0*(?P<digits>\d+)", match_dict["exponent"])
             if match_exponent.group("sign") == "-":
-                result += u"−"
+                result += "−"
             result += match_exponent.group("digits")
-            result += u"</sup>"
+            result += "</sup>"
         result += match_dict["trailing"]
         return result
 
     if value is None:
         return None
     if isinstance(value, (tuple, list)):
-        result = u"{0}–{1}".format(pretty_print_number(value[0]), pretty_print_number(value[1]))
+        result = "{0}–{1}".format(pretty_print_number(value[0]), pretty_print_number(value[1]))
     else:
         result = pretty_print_number(value)
     if autoescape:
         unit = conditional_escape(unit) if unit else None
     if unit:
         if unit[0] in "0123456789":
-            result += u" · " + unit
+            result += " · " + unit
         else:
-            result += u" " + unit
+            result += " " + unit
     return mark_safe(result)
 quantity.needs_autoescape = True
 
 
 @register.filter
 def should_show(operator):
-    u"""Filter to decide whether an operator should be shown.  The operator
+    """Filter to decide whether an operator should be shown.  The operator
     should not be shown if it is an administrative account, i.e. an account
     that should not be visible except for administrators.
     """
@@ -117,7 +117,7 @@ def should_show(operator):
 
 
 class VerboseNameNode(template.Node):
-    u"""Helper class for the tag `verbose_name`.  While `verbose_name` does the
+    """Helper class for the tag `verbose_name`.  While `verbose_name` does the
     parsing, this class does the actual processing.
     """
 
@@ -133,7 +133,7 @@ class VerboseNameNode(template.Node):
                 continue
             break
         else:
-            return u""
+            return ""
         verbose_name = unicode(model._meta.get_field(field).verbose_name)
         if verbose_name:
             verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
@@ -142,7 +142,7 @@ class VerboseNameNode(template.Node):
 
 @register.tag
 def verbose_name(parser, token):
-    u"""Tag for retrieving the descriptive name for an instance attribute.  For
+    """Tag for retrieving the descriptive name for an instance attribute.  For
     example::
 
         {% verbose_name Deposition.pressure %}
@@ -158,7 +158,7 @@ def verbose_name(parser, token):
 
 @register.filter
 def get_really_full_name(user, anchor_type="http", autoescape=False):
-    u"""Unfortunately, Django's get_full_name method for users returns the
+    """Unfortunately, Django's get_full_name method for users returns the
     empty string if the user has no first and surname set. However, it'd be
     sensible to use the login name as a fallback then. This is realised here.
     See also `samples.views.utils.get_really_full_name`.
@@ -184,50 +184,50 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         if autoescape:
             full_name = conditional_escape(full_name)
         if anchor_type == "http":
-            return mark_safe(u'<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
+            return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
                         "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), full_name))
         elif anchor_type == "mailto":
-            return mark_safe(u'<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
+            return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
         elif anchor_type == "plain":
             return mark_safe(full_name)
         else:
-            return u""
-    return u""
+            return ""
+    return ""
 
 get_really_full_name.needs_autoescape = True
 
 
 @register.filter
 def get_safe_operator_name(user, autoescape=False):
-    u"""Return the name of the operator (with the markup generated by
+    """Return the name of the operator (with the markup generated by
     `get_really_full_name` and the ``"http"`` option) unless it is a
     confidential external operator.
     """
     if isinstance(user, django.contrib.auth.models.User) or \
             (isinstance(user, samples.models.ExternalOperator) and not user.confidential):
         return get_really_full_name(user, "http", autoescape)
-    name = _(u"Confidential operator #{number}").format(number=user.pk)
+    name = _("Confidential operator #{number}").format(number=user.pk)
     if autoescape:
         name = conditional_escape(name)
-    return mark_safe(u'<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
+    return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
                 "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), name))
 
 get_safe_operator_name.needs_autoescape = True
 
 
-timestamp_formats = (u"%Y-%m-%d %H:%M:%S",
-                     u"%Y-%m-%d %H:%M",
+timestamp_formats = ("%Y-%m-%d %H:%M:%S",
+                     "%Y-%m-%d %H:%M",
                          # Translators: Only change the <sup>h</sup>!
-                     _(u"%Y-%m-%d %H<sup>h</sup>"),
-                     u"%Y-%m-%d",
+                     _("%Y-%m-%d %H<sup>h</sup>"),
+                     "%Y-%m-%d",
                          # Translators: Only change order and punctuation
-                     _(u"%b %Y"),
-                     u"%Y",
-                     _(u"date unknown"))
+                     _("%b %Y"),
+                     "%Y",
+                     _("date unknown"))
 
 @register.filter
 def timestamp(value, minimal_inaccuracy=0):
-    u"""Filter for formatting the timestamp of a process properly to reflect
+    """Filter for formatting the timestamp of a process properly to reflect
     the inaccuracy connected with this timestamp.
 
     :Parameters:
@@ -252,7 +252,7 @@ def timestamp(value, minimal_inaccuracy=0):
 
 @register.filter
 def status_timestamp(value, type_):
-    u"""Filter for formatting the timestamp of a status message properly to
+    """Filter for formatting the timestamp of a status message properly to
     reflect the inaccuracy connected with this timestamp.
 
     :Parameters:
@@ -280,16 +280,16 @@ def status_timestamp(value, type_):
 
 # FixMe: This pattern should probably be moved to settings.py.
 sample_name_pattern = \
-    re.compile(ur"""(\W|\A)(?P<name>[0-9][0-9][A-Z]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9#]*)?|  # old-style sample name
+    re.compile(r"""(\W|\A)(?P<name>[0-9][0-9][A-Z]-[0-9]{3,4}([-A-Za-z_/][-A-Za-z_/0-9#]*)?|  # old-style sample name
                             ([0-9][0-9]-([A-Z]{2}[0-9]{,2}|[A-Z]{3}[0-9]?|[A-Z]{4})|           # initials of a user
                             [A-Z]{2}[0-9][0-9]|[A-Z]{3}[0-9]|[A-Z]{4})                         # initials of an external
                             -[-A-Za-z_/0-9#]+)(\W|\Z)""", re.UNICODE | re.VERBOSE)
-sample_series_name_pattern = re.compile(ur"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A-Za-zÄÖÜäöüß_/0-9]+)(\W|\Z)", re.UNICODE)
+sample_series_name_pattern = re.compile(r"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A-Za-zÄÖÜäöüß_/0-9]+)(\W|\Z)", re.UNICODE)
 
 @register.filter
 @stringfilter
 def markdown_samples(value, margins="default"):
-    u"""Filter for formatting the value by assuming Markdown syntax.
+    """Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
     clickable links.  Embedded HTML tags are always escaped.  Warning: You need
     at least Python Markdown 1.7 or later so that this works.
@@ -303,7 +303,7 @@ def markdown_samples(value, margins="default"):
     value = chantal_common.templatetags.chantal.substitute_formulae(
         chantal_common.utils.substitute_html_entities(unicode(value)))
     position = 0
-    result = u""
+    result = ""
     while position < len(value):
         sample_match = sample_name_pattern.search(value, position)
         sample_series_match = sample_series_name_pattern.search(value, position)
@@ -332,16 +332,16 @@ def markdown_samples(value, margins="default"):
             result += value[position:]
             break
     result = markup.markdown(result)
-    if result.startswith(u"<p>"):
+    if result.startswith("<p>"):
         if margins == "collapse":
-            result = mark_safe(u"""<p style="margin: 0pt">""" + result[3:])
+            result = mark_safe("""<p style="margin: 0pt">""" + result[3:])
     return result
 
 
 @register.filter
 @stringfilter
 def prepend_domain(value):
-    u"""Prepend the domain to an absolute URL without domain.
+    """Prepend the domain to an absolute URL without domain.
     """
     assert value[0] == "/"
     prefix = "http://" + settings.DOMAIN_NAME
@@ -351,7 +351,7 @@ def prepend_domain(value):
 @register.filter
 @stringfilter
 def first_upper(value):
-    u"""Filter for formatting the value to set the first character to uppercase.
+    """Filter for formatting the value to set the first character to uppercase.
     """
     if value:
         return samples.views.utils.capitalize_first_letter(value)
@@ -359,8 +359,8 @@ def first_upper(value):
 
 @register.filter
 @stringfilter
-def flatten_multiline_text(value, separator=u" ● "):
-    u"""Converts a multiline string into a one-line string.  The lines are
+def flatten_multiline_text(value, separator=" ● "):
+    """Converts a multiline string into a one-line string.  The lines are
     separated by big bullets, however, you can change that with the optional
     parameter.
     """
@@ -370,14 +370,14 @@ def flatten_multiline_text(value, separator=u" ● "):
 
 @register.filter
 def sample_tags(sample, user):
-    u"""Shows the sample's tags.  The tags are shortened.  Moreover, they are
+    """Shows the sample's tags.  The tags are shortened.  Moreover, they are
     suppressed if the user is not allowed to view them.
     """
     return sample.tags_suffix(user)
 
 
 class ValueFieldNode(template.Node):
-    u"""Helper class to realise the `value_field` tag.
+    """Helper class to realise the `value_field` tag.
     """
 
     def __init__(self, field, unit, significant_digits):
@@ -403,22 +403,22 @@ class ValueFieldNode(template.Node):
             unit = None
         elif self.unit == "sccm_collapse":
             if not field:
-                return u"""<td colspan="2"></td>"""
+                return """<td colspan="2"></td>"""
             unit = "sccm"
         elif not field and field != 0:
             unit = None
-            field = u"—"
+            field = "—"
         else:
             unit = self.unit
-        if self.significant_digits and field != u"—":
+        if self.significant_digits and field != "—":
             field = round(field, self.significant_digits)
-        return u"""<td class="label">{label}:</td><td class="value">{value}</td>""".format(
+        return """<td class="label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
 
 @register.tag
 def value_field(parser, token):
-    u"""Tag for inserting a field value into an HTML table.  It consists of two
+    """Tag for inserting a field value into an HTML table.  It consists of two
     ``<td>`` elements, one for the label and one for the value, so it spans two
     columns.  This tag is primarily used in templates of show views, especially
     those used to compile the sample history.  Example::
@@ -462,7 +462,7 @@ def value_field(parser, token):
 
 @register.simple_tag
 def split_field(field1, field2, field3=None):
-    u"""Tag for combining two or three input fields wich have the same label
+    """Tag for combining two or three input fields wich have the same label
     and help text.  It consists of two or three ``<td>`` elements, one for the
     label and one for the input fields, so it spans multiple columns.  This tag
     is primarily used in templates of edit views.  Example::
@@ -476,18 +476,18 @@ def split_field(field1, field2, field3=None):
     ``"voltage 3"``.
     """
     from_to_field = not field3 and field2.html_name.endswith("_end")
-    separator = u" – " if from_to_field else u" / "
-    result = u"""<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
+    separator = " – " if from_to_field else " / "
+    result = """<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field1.html_name, label=field1.label if from_to_field else field1.label.rpartition(" ")[0])
-    help_text = u""" <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else u""
+    help_text = """ <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else ""
     fields = [field1, field2, field3]
-    result += u"""<td class="input">{fields_string}{help_text}</td>""".format(
+    result += """<td class="input">{fields_string}{help_text}</td>""".format(
         fields_string=separator.join(unicode(field) for field in fields if field), help_text=help_text)
     return result
 
 
 class ValueSplitFieldNode(template.Node):
-    u"""Helper class to realise the `value_split_field` tag.
+    """Helper class to realise the `value_split_field` tag.
     """
 
     def __init__(self, fields, unit):
@@ -507,39 +507,39 @@ class ValueSplitFieldNode(template.Node):
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
-                return u"""<td colspan="2"></td>"""
+                return """<td colspan="2"></td>"""
             unit = "sccm"
         else:
             unit = self.unit
         if self.from_to_field:
             if fields[0] is None and fields[1] is None:
-                values = u"—"
+                values = "—"
             elif fields[1] is None:
                 values = quantity(fields[0], unit)
             else:
                 values = quantity(fields, unit)
         else:
-            if verbose_name.endswith(u" 1"):
+            if verbose_name.endswith(" 1"):
                 verbose_name = verbose_name[:-2]
             for i in range(len(fields)):
                 if not fields[i] and fields[i] != 0:
-                    fields[i] = u"—"
-            if all(field == u"—" for field in fields):
+                    fields[i] = "—"
+            if all(field == "—" for field in fields):
                 unit = None
-            values = u""
+            values = ""
             for field in fields[:-1]:
-                if field == u"—":
-                    values += u"— / "
+                if field == "—":
+                    values += "— / "
                 else:
-                    values += quantity(field) + u" / "
+                    values += quantity(field) + " / "
             values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
-        return u"""<td class="label">{label}:</td><td class="value">{values}</td>""".format(
+        return """<td class="label">{label}:</td><td class="value">{values}</td>""".format(
             label=verbose_name, values=values)
 
 
 @register.tag
 def value_split_field(parser, token):
-    u"""Tag for combining two or more value fields wich have the same label and
+    """Tag for combining two or more value fields wich have the same label and
     help text.  It consists of two ``<td>`` elements, one for the label and one
     for the value fields, so it spans two columns.  This tag is primarily used
     in templates of show views, especially those used to compile the sample
@@ -568,55 +568,55 @@ def value_split_field(parser, token):
 
 @register.simple_tag
 def display_search_tree(tree):
-    u"""Tag for displaying the forms tree for the advanced search.  This tag is
+    """Tag for displaying the forms tree for the advanced search.  This tag is
     used only in the advanced search.  It walks through the search node tree
     and displays the seach fields.
     """
-    result = u"""<table style="border: 2px solid black; padding-left: 3em"><tbody>"""
+    result = """<table style="border: 2px solid black; padding-left: 3em"><tbody>"""
     for search_field in tree.search_fields:
-        error_context = {"form": search_field.form, "form_error_title": _(u"General error"), "outest_tag": "<tr>"}
+        error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", context_instance=template.Context(error_context))
         if isinstance(search_field, chantal_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
             field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
-            help_text = u""" <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else u""
-            result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
-                u"""<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
+            help_text = """ <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else ""
+            result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                """<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
                 help_text=help_text)
         elif isinstance(search_field, chantal_common.search.TextNullSearchField):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
-            help_text = u""" <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else u""
-            result += u"""<tr><td class="label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
-                u"""<td class="input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
-                u"""{field_null}{help_text}</td></tr>""".format(
+            help_text = """ <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else ""
+            result += """<tr><td class="label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
+                """<td class="input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
+                """{field_null}{help_text}</td></tr>""".format(
                 label_main=field_main.label, label_null=field_null.label,
                 html_name_main=field_main.html_name, html_name_null=field_null.html_name,
                 field_main=field_main, field_null=field_null, help_text=help_text)
         else:
             for field in search_field.form:
-                help_text = u""" <span class="help">({0})</span>""".format(field.help_text) if field.help_text else u""
-                result += u"""<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
-                    u"""<td class="input">{field}{help_text}</td></tr>""".format(
+                help_text = """ <span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
+                result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                    """<td class="input">{field}{help_text}</td></tr>""".format(
                     label=field.label, html_name=field.html_name, field=field, help_text=help_text)
     if tree.children:
-        result += u"""<tr><td colspan="2">"""
+        result += """<tr><td colspan="2">"""
         for i, child in enumerate(tree.children):
             result += unicode(child[0].as_p())
             if child[1]:
                 result += display_search_tree(child[1])
             if i < len(tree.children) - 1:
-                result += u"""</td></tr><tr><td colspan="2">"""
-        result += u"</td></tr>"
-    result += u"</tbody></table>"
+                result += """</td></tr><tr><td colspan="2">"""
+        result += "</td></tr>"
+    result += "</tbody></table>"
     return result
 
 
 @register.filter
 @stringfilter
 def hms_to_minutes(time_string):
-    u"""Converts ``"01:01:02"`` to ``"61.03"``.
+    """Converts ``"01:01:02"`` to ``"61.03"``.
     """
     match = time_pattern.match(time_string)
     if not match:
@@ -627,7 +627,7 @@ def hms_to_minutes(time_string):
 
 @register.simple_tag
 def lab_notebook_comments(process, position):
-    u"""This tag allows to set a stand-alone comment in a lab notebook.
+    """This tag allows to set a stand-alone comment in a lab notebook.
     The comment string will be extracted from the process comment and should be placed
     before or after the process.
     The argument ``position`` must be ``before`` or ``after`` to specify the position
@@ -661,14 +661,14 @@ def lab_notebook_comments(process, position):
         end_index = len(process.comments)
     else:
         return ""
-    notebook_comment = u"""<tr style="vertical-align: top"><td colspan="100" class="top" style="text-align: center">{0}</td></tr>""" \
+    notebook_comment = """<tr style="vertical-align: top"><td colspan="100" class="top" style="text-align: center">{0}</td></tr>""" \
         .format(markdown_samples(process.comments[start_index: end_index].strip()))
     return mark_safe(notebook_comment)
 
 
 @register.filter
 def task_color(task):
-    u"""Returns the colour which is associated with the status of the task.
+    """Returns the colour which is associated with the status of the task.
     The returned string is ready-to-be-used in CSS directives as
     a colour hex code.
     """

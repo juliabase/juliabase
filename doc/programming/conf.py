@@ -52,8 +52,8 @@ source_suffix = '.rst'
 master_doc = 'programming'
 
 # General information about the project.
-project = u'programming'
-copyright = u'2009, Torsten Bronger'
+project = 'programming'
+copyright = '2009, Torsten Bronger'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -179,8 +179,8 @@ latex_font_size = '11pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('programming', 'programming.tex', ur'Chantal programming guide',
-   ur'Torsten Bronger', 'manual'),
+  ('programming', 'programming.tex', r'Chantal programming guide',
+   r'Torsten Bronger', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

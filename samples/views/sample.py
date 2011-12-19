@@ -13,11 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""All views and helper routines directly connected with samples themselves
+"""All views and helper routines directly connected with samples themselves
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+
 from cStringIO import StringIO
 from chantal_common.signals import storage_changed
 from chantal_common.utils import append_error, HttpResponseSeeOther, \
@@ -50,21 +51,21 @@ import json
 
 
 class IsMySampleForm(forms.Form):
-    u"""Form class just for the checkbox marking that the current sample is
+    """Form class just for the checkbox marking that the current sample is
     amongst “My Samples”.
     """
     _ = ugettext_lazy
-    is_my_sample = forms.BooleanField(label=_(u"is amongst My Samples"), required=False)
+    is_my_sample = forms.BooleanField(label=_("is amongst My Samples"), required=False)
 
 
 class SampleForm(forms.ModelForm):
-    u"""Model form class for a sample.  All unusual I do here is overwriting
+    """Model form class for a sample.  All unusual I do here is overwriting
     `models.Sample.currently_responsible_person` in oder to be able to see
     *full* person names (not just the login name).
     """
     _ = ugettext_lazy
-    currently_responsible_person = form_utils.UserField(label=_(u"Currently responsible person"))
-    topic = form_utils.TopicField(label=_(u"Topic"), required=False)
+    currently_responsible_person = form_utils.UserField(label=_("Currently responsible person"))
+    topic = form_utils.TopicField(label=_("Topic"), required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
@@ -78,7 +79,7 @@ class SampleForm(forms.ModelForm):
 
 
 def is_referentially_valid(sample, sample_form, edit_description_form):
-    u"""Checks that the “important” checkbox is marked if the topic or the
+    """Checks that the “important” checkbox is marked if the topic or the
     currently responsible person were changed.
 
     :Parameters:
@@ -103,13 +104,13 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
         append_error(edit_description_form,
-                     _(u"Changing the topic or the responsible person must be marked as important."), "important")
+                     _("Changing the topic or the responsible person must be marked as important."), "important")
     return referentially_valid
 
 
 @login_required
 def edit(request, sample_name):
-    u"""View for editing existing samples.  You can't use it to add new
+    """View for editing existing samples.  You can't use it to add new
     samples.
 
     :Parameters:
@@ -154,20 +155,20 @@ def edit(request, sample_name):
                 feed_reporter.report_changed_sample_topic([sample], old_topic, edit_description_form.cleaned_data)
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
             return utils.successful_response(
-                request, _(u"Sample {sample} was successfully changed in the database.").format(sample=sample),
-                by_id, {"sample_id": sample.id, "path_suffix": u""})
+                request, _("Sample {sample} was successfully changed in the database.").format(sample=sample),
+                by_id, {"sample_id": sample.id, "path_suffix": ""})
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = form_utils.EditDescriptionForm()
         sample_details_context = sample_details.process_get(request.user) if sample_details else {}
-    context = {"title": _(u"Edit sample “{sample}”").format(sample=sample), "sample": sample_form,
+    context = {"title": _("Edit sample “{sample}”").format(sample=sample), "sample": sample_form,
                "edit_description": edit_description_form}
     context.update(sample_details_context)
     return render_to_response("samples/edit_sample.html", context, context_instance=RequestContext(request))
 
 
 def get_allowed_processes(user, sample):
-    u"""Return all processes the user is allowed to add to the sample.
+    """Return all processes the user is allowed to add to the sample.
 
     :Parameters:
       - `user`: the current user
@@ -197,9 +198,9 @@ def get_allowed_processes(user, sample):
     """
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
-        sample_processes.append({"label": _(u"split"), "url": sample.get_absolute_url() + "-/split/", "type": "split"})
+        sample_processes.append({"label": _("split"), "url": sample.get_absolute_url() + "-/split/", "type": "split"})
         # Translators: Of a sample
-        sample_processes.append({"label": _(u"cease of existence"), "url": sample.get_absolute_url() + "-/kill/",
+        sample_processes.append({"label": _("cease of existence"), "url": sample.get_absolute_url() + "-/kill/",
                                  "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
@@ -207,15 +208,15 @@ def get_allowed_processes(user, sample):
                                   "url": django.core.urlresolvers.reverse("add_result")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:
-        raise permissions.PermissionError(user, _(u"You are not allowed to add any processes to the sample {sample} "
-                                                  u"because neither are you its currently responsible person, "
-                                                  u"nor in its topic, nor do you have special permissions for a "
-                                                  u"physical process.").format(sample=sample), new_topic_would_help=True)
+        raise permissions.PermissionError(user, _("You are not allowed to add any processes to the sample {sample} "
+                                                  "because neither are you its currently responsible person, "
+                                                  "nor in its topic, nor do you have special permissions for a "
+                                                  "physical process.").format(sample=sample), new_topic_would_help=True)
     return sample_processes, general_processes
 
 
 class SamplesAndProcesses(object):
-    u"""This is a container data structure for holding (almost) all data for
+    """This is a container data structure for holding (almost) all data for
     the “show sample” template.  It represents one sample.  By nesting it,
     child samples can be embedded, too.
 
@@ -250,7 +251,7 @@ class SamplesAndProcesses(object):
 
     @staticmethod
     def samples_and_processes(sample_name, user, post_data=None):
-        u"""Returns the data structure used in the template to display the
+        """Returns the data structure used in the template to display the
         sample with all its processes.
 
         :Parameters:
@@ -298,7 +299,7 @@ class SamplesAndProcesses(object):
         return samples_and_processes
 
     def __init__(self, sample, clearance, user, post_data):
-        u"""
+        """
         :Parameters:
           - `sample`: the sample to which the processes belong
           - `clearance`: the clearance object that was used to show the sample,
@@ -318,7 +319,7 @@ class SamplesAndProcesses(object):
         self.process_contexts = []
         self.process_ids = set()
         def collect_process_contexts(local_context=None):
-            u"""Constructs the list of process context dictionaries.  This
+            """Constructs the list of process context dictionaries.  This
             internal helper function directly populates
             ``self.process_contexts``.  It consists of three parts: First, we
             ascend through the ancestors of the sample to the first parent.
@@ -361,7 +362,7 @@ class SamplesAndProcesses(object):
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
-        u"""Updates the sample data in this data structure according to the
+        """Updates the sample data in this data structure according to the
         current user.  If the ``SamplesAndProcesses`` object was taken from the
         cache, it was probably for another user, so I must modify the
         user-dependent fields.  In particular, the “is-my-sample” checkboxes
@@ -406,7 +407,7 @@ class SamplesAndProcesses(object):
             self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
 
     def remove_noncleared_process_contexts(self, user, clearance):
-        u"""Removes all items from ``self.process_contexts`` which the `user`
+        """Removes all items from ``self.process_contexts`` which the `user`
         is not allowed to see due to the `clearance`.  Obviously, this routine
         is a no-op if `clearance` is ``None``.
 
@@ -431,7 +432,7 @@ class SamplesAndProcesses(object):
             self.process_contexts = viewable_process_contexts
 
     def personalize(self, user, clearance, post_data):
-        u"""Change the ``SamplesAndProcesses`` object so that it is suitable
+        """Change the ``SamplesAndProcesses`` object so that it is suitable
         for the current user.  If the object was taken from the cache, it was
         probably for another user, so many things need to be adapted.  Here, I
         walk through all processes to change them.  In particular, the
@@ -457,7 +458,7 @@ class SamplesAndProcesses(object):
             process_list.personalize(user, clearance, post_data)
 
     def __iter__(self):
-        u"""Returns an iterator over all samples and processes.  It is used in
+        """Returns an iterator over all samples and processes.  It is used in
         the template to generate the whole page.  Note that because no
         recursion is allowed in Django's template language, this generator
         method must flatten the nested structure, and it must return sample and
@@ -493,7 +494,7 @@ class SamplesAndProcesses(object):
                 yield sample_start, sample_context, process_context
 
     def is_valid(self):
-        u"""Checks whether all “is My Sample” forms of the “show sample” view
+        """Checks whether all “is My Sample” forms of the “show sample” view
         are valid.  Actually, this method is rather silly because the forms
         consist only of checkboxes and they can never be invalid.  But sticking
         to rituals reduces errors …
@@ -508,7 +509,7 @@ class SamplesAndProcesses(object):
         return all_valid
 
     def save_to_database(self):
-        u"""Changes the members of the “My Samples” list according to what the
+        """Changes the members of the “My Samples” list according to what the
         user selected.
 
         :Return:
@@ -532,7 +533,7 @@ class SamplesAndProcesses(object):
         return added, removed
 
     def get_all_process_ids(self):
-        u"""Returns all process IDs of this sample.  When child samples are
+        """Returns all process IDs of this sample.  When child samples are
         shown on the sample's data sheet, too, also their process IDs are
         included.
 
@@ -548,7 +549,7 @@ class SamplesAndProcesses(object):
 
 
 def embed_timestamp(request, sample_name):
-    u"""Put a timestamp field in the request object that is used by both
+    """Put a timestamp field in the request object that is used by both
     `sample_timestamp` and `sample_etag`.  It's really a pity that you can't
     give *one* function for returning both with Django's API for conditional
     view processing.
@@ -582,7 +583,7 @@ def embed_timestamp(request, sample_name):
 
 
 def sample_timestamp(request, sample_name):
-    u"""Calculate the timestamp of a sample.  For this, the timestamp of last
+    """Calculate the timestamp of a sample.  For this, the timestamp of last
     modification of the sample is taken, and that of other things that
     influence the sample datasheet (language, “My Samples”).  The latest
     timestamp is chosen and returned.
@@ -604,7 +605,7 @@ def sample_timestamp(request, sample_name):
 
 
 def sample_etag(request, sample_name):
-    u"""Calculate an ETag for the sample datasheet.  For this, the timestamp of
+    """Calculate an ETag for the sample datasheet.  For this, the timestamp of
     last modification of the sample is taken, and the primary key of the
     current user.  The checksum of both is returned.
 
@@ -636,7 +637,7 @@ def sample_etag(request, sample_name):
 @login_required
 @condition(sample_etag, sample_timestamp)
 def show(request, sample_name):
-    u"""A view for showing existing samples.
+    """A view for showing existing samples.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -658,19 +659,19 @@ def show(request, sample_name):
             if is_json_requested(request):
                 return respond_in_json(True)
             if added:
-                success_message = ungettext(u"Sample {samples} was added to My Samples.",
-                                            u"Samples {samples} were added to My Samples.",
+                success_message = ungettext("Sample {samples} was added to My Samples.",
+                                            "Samples {samples} were added to My Samples.",
                                             len(added)).format(samples=utils.format_enumeration(added))
             else:
-                success_message = u""
+                success_message = ""
             if removed:
                 if added:
-                    success_message += u"  "
-                success_message += ungettext(u"Sample {samples} was removed from My Samples.",
-                                             u"Samples {samples} were removed from My Samples.",
+                    success_message += "  "
+                success_message += ungettext("Sample {samples} was removed from My Samples.",
+                                             "Samples {samples} were removed from My Samples.",
                                              len(removed)).format(samples=utils.format_enumeration(removed))
             elif not added:
-                success_message = _(u"Nothing was changed.")
+                success_message = _("Nothing was changed.")
             messages.success(request, success_message)
     else:
         if is_json_requested(request):
@@ -680,14 +681,14 @@ def show(request, sample_name):
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render_to_response(
         "samples/show_sample.html",
-        {"title": _(u"Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
+        {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
          "samples_and_processes": samples_and_processes},
         context_instance=RequestContext(request))
 
 
 @login_required
 def by_id(request, sample_id, path_suffix):
-    u"""Pure re-direct view in case a sample is accessed by ID instead of by
+    """Pure re-direct view in case a sample is accessed by ID instead of by
     name.  It redirects to the URL with the name.  The query string, if given,
     is passed, too.
 
@@ -720,15 +721,15 @@ def by_id(request, sample_id, path_suffix):
     except permissions.PermissionError:
         if not models.Clearance.objects.filter(user=request.user, sample=sample).exists():
             raise
-    query_string = request.META["QUERY_STRING"] or u""
+    query_string = request.META["QUERY_STRING"] or ""
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
-        ("?" + query_string if query_string else u""))
+        ("?" + query_string if query_string else ""))
 
 
 @login_required
 def add_process(request, sample_name):
-    u"""View for appending a new process to the process list of a sample.
+    """View for appending a new process to the process list of a sample.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -747,18 +748,18 @@ def add_process(request, sample_name):
     for process in general_processes:
         process["url"] += "?sample={0}&next={1}".format(urlquote_plus(sample_name), sample.get_absolute_url())
     return render_to_response("samples/add_process.html",
-                              {"title": _(u"Add process to sample “{sample}”").format(sample=sample),
+                              {"title": _("Add process to sample “{sample}”").format(sample=sample),
                                "processes": sample_processes + general_processes},
                               context_instance=RequestContext(request))
 
 
 class SearchSamplesForm(forms.Form):
-    u"""Form for searching for samples.  So far, you can only enter a name
+    """Form for searching for samples.  So far, you can only enter a name
     substring for looking for samples.
     """
     _ = ugettext_lazy
-    name_pattern = forms.CharField(label=_(u"Name pattern"), max_length=30, required=False)
-    aliases = forms.BooleanField(label=_(u"Include alias names"), required=False)
+    name_pattern = forms.CharField(label=_("Name pattern"), max_length=30, required=False)
+    aliases = forms.BooleanField(label=_("Include alias names"), required=False)
 
 
 class AddToMySamplesForm(forms.Form):
@@ -769,7 +770,7 @@ class AddToMySamplesForm(forms.Form):
 max_results = 50
 @login_required
 def search(request):
-    u"""View for searching for samples.  The rule is: Everyone can see the
+    """View for searching for samples.  The rule is: Everyone can see the
     *names* (not the data sheets) of all samples, unless they are in a
     confidential topic, unless the user is a member in that topic, its
     currently responsible person, or you have a clearance for the sample.
@@ -805,12 +806,12 @@ def search(request):
     my_samples = request.user.my_samples.all()
     if request.method == "POST":
         sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
-                         if value == u"on")
+                         if value == "on")
         samples = base_query.in_bulk(sample_ids).values()
         request.user.my_samples.add(*samples)
     add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
                                for sample in found_samples]
-    return render_to_response("samples/search_samples.html", {"title": _(u"Search for sample"),
+    return render_to_response("samples/search_samples.html", {"title": _("Search for sample"),
                                                               "search_samples": search_samples_form,
                                                               "found_samples": zip(found_samples, add_to_my_samples_forms),
                                                               "too_many_results": too_many_results,
@@ -820,7 +821,7 @@ def search(request):
 
 @login_required
 def advanced_search(request):
-    u"""View for searching for samples, sample series, physical processes, and
+    """View for searching for samples, sample series, physical processes, and
     results.  The visibility rules of the search results are the same as for
     the sample search.  Additionally, you can only see sample series you are
     the currently responsible person of or that are in one of your topics.
@@ -867,7 +868,7 @@ def advanced_search(request):
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
-                                     if value == u"on")
+                                     if value == "on")
                     samples = base_query.in_bulk(sample_ids).values()
                     request.user.my_samples.add(*samples)
                 my_samples = request.user.my_samples.all()
@@ -876,7 +877,7 @@ def advanced_search(request):
             else:
                 add_forms = len(results) * [None]
             if results and root_form.cleaned_data["_search_parameters_hash"] == _search_parameters_hash:
-                data_node = data_tree.DataNode(_(u"search results"))
+                data_node = data_tree.DataNode(_("search results"))
                 for result in results:
                     insert = False
                     if isinstance(result, models.PhysicalProcess) \
@@ -894,7 +895,7 @@ def advanced_search(request):
                     if insert:
                         data_node.children.append(result.get_data_for_table_export())
                 if len(data_node.children) == 0:
-                    no_permission_message = _(u"You don't have the permission to see any content of the search results.")
+                    no_permission_message = _("You don't have the permission to see any content of the search results.")
                 else:
                     export_result = utils.table_export(request, data_node, "")
                     if isinstance(export_result, tuple):
@@ -907,8 +908,8 @@ def advanced_search(request):
                                  "_search_parameters_hash": _search_parameters_hash})
     else:
         root_form = chantal_common.search.SearchModelForm(model_list)
-    root_form.fields["_model"].label = u""
-    content_dict = {"title": _(u"Advanced search"), "search_root": root_form, "search_tree": search_tree,
+    root_form.fields["_model"].label = ""
+    content_dict = {"title": _("Advanced search"), "search_root": root_form, "search_tree": search_tree,
                     "results": zip(results, add_forms), "search_performed": search_performed,
                     "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results,
                     "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
@@ -919,7 +920,7 @@ def advanced_search(request):
 
 @login_required
 def export(request, sample_name):
-    u"""View for exporting sample data in CSV or JSON format.  Thus, the return
+    """View for exporting sample data in CSV or JSON format.  Thus, the return
     value is not an HTML response.
 
     :Parameters:
@@ -936,12 +937,12 @@ def export(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request.user)
     data = sample.get_data_for_table_export()
-    result = utils.table_export(request, data, _(u"process"))
+    result = utils.table_export(request, data, _("process"))
     if isinstance(result, tuple):
         column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
     elif isinstance(result, HttpResponse):
         return result
-    title = _(u"Table export for “{name}”").format(name=data.descriptive_name)
+    title = _("Table export for “{name}”").format(name=data.descriptive_name)
     return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
                                                             "columns": columns_form,
                                                             "rows": zip(table, switch_row_forms) if table else None,
@@ -951,7 +952,7 @@ def export(request, sample_name):
 
 
 def qr_code(request):
-    u"""Generates the QR representation of the given data.  The data is given
+    """Generates the QR representation of the given data.  The data is given
     in the ``data`` query string parameter.
 
     :Parameters:
@@ -968,12 +969,12 @@ def qr_code(request):
         data = request.GET["data"]
     except KeyError:
         raise Http404('GET parameter "data" missing.')
-    return render_to_response("samples/qr_code.html", {"title": _(u"QR code"), "data": data},
+    return render_to_response("samples/qr_code.html", {"title": _("QR code"), "data": data},
                               context_instance=RequestContext(request))
 
 
 def data_matrix_code(request):
-    u"""Generates the Data Matrix representation of the given data.  The data
+    """Generates the Data Matrix representation of the given data.  The data
     is given in the ``data`` query string parameter.
 
     :Parameters:
@@ -999,10 +1000,10 @@ def data_matrix_code(request):
         mkdirs(filepath)
         image = PIL.Image.open(StringIO(urllib.urlopen(
                     "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
-                    u"MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
+                    "MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
         image = image.crop((38, 3, 118, 83))
         image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
         image.save(filepath)
         storage_changed.send(data_matrix_code)
-    return render_to_response("samples/data_matrix_code.html", {"title": _(u"Data Matrix code"), "url": url, "data": data},
+    return render_to_response("samples/data_matrix_code.html", {"title": _("Data Matrix code"), "url": url, "data": data},
                               context_instance=RequestContext(request))

@@ -12,7 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-u"""This program removes the finished tasks from the database which are older
+"""This program removes the finished tasks from the database which are older
 then a week.
 It should be called once a day at night as a cron job.
 Maybe run it after the postgresql_backup script to have a

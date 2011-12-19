@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Generating an Atom 1.0 feed with the user's news.
+"""Generating an Atom 1.0 feed with the user's news.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime, time
 import xml.etree.ElementTree as ElementTree
@@ -57,12 +57,12 @@ def indent(elem, level=0):
 
     :rtype: xml.etree.ElementTree.Element
     """
-    i = "\n" + level*"  "
+    i = "\n" + level * "  "
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         for elem in elem:
-            indent(elem, level+1)
+            indent(elem, level + 1)
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
     else:
@@ -71,7 +71,7 @@ def indent(elem, level=0):
 
 
 def get_timezone_string(timestamp=None):
-    u"""Claculate the timezone string (e.g. ``"+02:00"``) for a given point in
+    """Claculate the timezone string (e.g. ``"+02:00"``) for a given point in
     time for the local machine.  Believe it or not, Python makes it really hard
     to deal with dates timezone-independently.  Thus, the given timestamp must
     refer to the local machine's timezone.  If you omit it, the routine assumes
@@ -98,18 +98,18 @@ def get_timezone_string(timestamp=None):
     elif isinstance(timestamp, datetime.datetime):
         timestamp = time.mktime(timestamp.timetuple())
     timedelta = datetime.timedelta(seconds=timestamp - time.mktime(time.gmtime(timestamp)[:8] + (-1,)))
-    seconds = timedelta.days*24*3600 + timedelta.seconds
+    seconds = timedelta.days * 24 * 3600 + timedelta.seconds
     if abs(seconds) < 60:
         return "Z"
     sign = "-" if seconds < 0 else "+"
     seconds = abs(seconds)
     hours = seconds // 3600
-    minutes = (seconds-hours*3600) // 60
+    minutes = (seconds - hours * 3600) // 60
     return "{0}{1:02}:{2:02}".format(sign, hours, minutes)
 
 
 def format_timestamp(timestamp):
-    u"""Convert a timestamp to an Atom-1.0-compatible string.
+    """Convert a timestamp to an Atom-1.0-compatible string.
 
     :Parameters:
       - `timestamp`: the timestamp to be converted
@@ -126,7 +126,7 @@ def format_timestamp(timestamp):
 
 @cache_page(600)
 def show(request, username, user_hash):
-    u"""View which doesn't generate an HTML page but an Atom 1.0 feed with
+    """View which doesn't generate an HTML page but an Atom 1.0 feed with
     current news for the user.
 
     The problem we have to deal with here is that the feed-reading program
@@ -160,7 +160,7 @@ def show(request, username, user_hash):
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = \
-        _(u"Chantal news for {user_name}").format(user_name=get_really_full_name(user))
+        _("Chantal news for {user_name}").format(user_name=get_really_full_name(user))
     entries = [entry.actual_instance for entry in user.feed_entries.all()]
     if entries:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)
@@ -213,4 +213,4 @@ def show(request, username, user_hash):
         content.text = template.render(Context(context_dict))
         content.attrib["type"] = "html"
 #    indent(feed)
-    return HttpResponse(ElementTree.tostring(feed,"utf-8"), content_type="application/atom+xml; charset=utf-8")
+    return HttpResponse(ElementTree.tostring(feed, "utf-8"), content_type="application/atom+xml; charset=utf-8")

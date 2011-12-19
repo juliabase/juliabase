@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""The samples database app.  This module contains the signal listeners.  Most
+"""The samples database app.  This module contains the signal listeners.  Most
 of them are for cache expiring, but `expire_feed_entries` cleans up the feed
 entries queue.
 
@@ -158,7 +158,7 @@ is greater than 1:
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime, hashlib
 from django.db.models import signals
@@ -170,7 +170,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch the “My Samples modified” field in the ``UserDetails``.  This
+    """Touch the “My Samples modified” field in the ``UserDetails``.  This
     function is called whenever the “My Samples” of the user change.  It
     assures that when a sample datasheet is displayed next time, it is not
     taken from the browser cache because the “is among My Samples” may be
@@ -202,7 +202,7 @@ signals.m2m_changed.connect(touch_my_samples, sender=samples_app.Sample.watchers
 
 
 def get_identifying_data_hash(user):
-    u"""Return the hash of username, firstname, and lastname.  See the
+    """Return the hash of username, firstname, and lastname.  See the
     ``idenfifying_data_hash`` field in ``UserDetails`` for further information.
 
     :Parameters:
@@ -225,7 +225,7 @@ def get_identifying_data_hash(user):
 
 
 def add_user_details(sender, instance, created, **kwargs):
-    u"""Create ``UserDetails`` for every newly created user.
+    """Create ``UserDetails`` for every newly created user.
     """
     if created:
         user_details, __ = samples_app.UserDetails.objects.get_or_create(
@@ -238,7 +238,7 @@ signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.Us
 
 
 def touch_user_samples_and_processes(sender, instance, created, **kwargs):
-    u"""Removes all cached items of samples, sample series, and processes which
+    """Removes all cached items of samples, sample series, and processes which
     are connected with a user.  This is done because the user's name may have
     changed.
     """
@@ -257,7 +257,7 @@ signals.post_save.connect(touch_user_samples_and_processes, sender=django.contri
 
 
 def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch samples and processes when the relation between both changes.
+    """Touch samples and processes when the relation between both changes.
     For example, if the samples connected with a process are changed, both the
     process and all affected samples are marked as “modified”.
     """
@@ -284,7 +284,7 @@ signals.m2m_changed.connect(touch_process_samples, sender=samples_app.Sample.pro
 
 
 def touch_sample_series_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch samples and sample series when the relation between both changes.
+    """Touch samples and sample series when the relation between both changes.
     For example, if the members of a sample series are changed, all affected
     samples are marked as “modified”.
     """
@@ -311,7 +311,7 @@ signals.m2m_changed.connect(touch_sample_series_samples, sender=samples_app.Samp
 
 
 def touch_sample_series_results(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch sample series when the relation between both changes.  Note that
+    """Touch sample series when the relation between both changes.  Note that
     we never touch results here because they don't cache information about
     their relationship to series.
     """
@@ -331,7 +331,7 @@ signals.m2m_changed.connect(touch_sample_series_results, sender=samples_app.Samp
 
 
 def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch the display settings of all users for which the topics have
+    """Touch the display settings of all users for which the topics have
     changed because we must invalidate the browser cache for those users (the
     permissions may have changed).
     """
@@ -351,7 +351,7 @@ signals.m2m_changed.connect(touch_display_settings_by_topic, sender=chantal_comm
 
 
 def touch_display_settings_by_group_or_permission(sender, instance, action, reverse, model, pk_set, **kwargs):
-    u"""Touch the sample settings of all users for which the groups or
+    """Touch the sample settings of all users for which the groups or
     permissions have changed because we must invalidate the browser cache for
     those users.
     """
@@ -375,7 +375,7 @@ signals.m2m_changed.connect(touch_display_settings_by_group_or_permission,
 
 
 def expire_feed_entries(sender, **kwargs):
-    u"""Deletes all feed entries which are older than six weeks.
+    """Deletes all feed entries which are older than six weeks.
     """
     now = datetime.datetime.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
