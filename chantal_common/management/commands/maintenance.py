@@ -13,13 +13,13 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module which defines the command ``maintenance``.  It should be called
+"""Module which defines the command ``maintenance``.  It should be called
 nightly as a cronjob.  For example, one line in the crontab may read::
 
     0 3 * * * /home/chantal/chantal/manage.py maintenance
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.core.management.base import BaseCommand
 from chantal_common.signals import maintain

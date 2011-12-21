@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module for hooks into the ``User`` model.  They assure that every time a
+"""Module for hooks into the ``User`` model.  They assure that every time a
 user is added, ``UserDetails`` are added.
 
 Additionally, there is a hook to purge too old error pages.
@@ -31,7 +31,7 @@ The error codes for a JSON client are the following:
     ======= ===============================================
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime
 import django.contrib.auth.models
@@ -41,7 +41,7 @@ from .signals import maintain
 
 
 def add_user_details(sender, instance, created=True, **kwargs):
-    u"""Adds a `models.UserDetails` instance for every newly-created Django
+    """Adds a `models.UserDetails` instance for every newly-created Django
     user.  However, you can also call it for existing users (``management.py``
     does it) because this function is idempotent.
 
@@ -62,7 +62,7 @@ django_signals.post_save.connect(add_user_details, sender=django.contrib.auth.mo
 
 
 def expire_error_pages(sender, **kwargs):
-    u"""Deletes all error pages which are older than six weeks.
+    """Deletes all error pages which are older than six weeks.
     """
     now = datetime.datetime.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)

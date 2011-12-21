@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.template import RequestContext
 from django.http import HttpResponse
@@ -26,22 +26,22 @@ from .utils import help_link
 
 
 class SandboxForm(forms.Form):
-    u"""Form for entering Markdown markup just for testing it.
+    """Form for entering Markdown markup just for testing it.
     """
     _ = ugettext_lazy
-    sandbox = forms.CharField(label=_(u"Sandbox"), widget=forms.Textarea, required=False)
+    sandbox = forms.CharField(label=_("Sandbox"), widget=forms.Textarea, required=False)
 
     def clean_sandbox(self):
-        u"""Forbid image and headings syntax in Markdown markup.
+        """Forbid image and headings syntax in Markdown markup.
         """
         sandbox = self.cleaned_data["sandbox"]
         utils.check_markdown(sandbox)
         return sandbox
 
 
-@help_link(_(u"MarkdownMarkup"))
+@help_link(_("MarkdownMarkup"))
 def markdown_sandbox(request):
-    u"""View so that the user can test Markdown syntax.  I deliberately decided
+    """View so that the user can test Markdown syntax.  I deliberately decided
     not to *explain* Markdown on this page.  Rather, I recommend the help page
     in the Wiki.
 
@@ -63,14 +63,14 @@ def markdown_sandbox(request):
     else:
         sandbox_form = SandboxForm()
     return render_to_response("chantal_common/markdown_sandbox.html",
-                              {"title": _(u"Markdown sandbox"), "sandbox": sandbox_form,
+                              {"title": _("Markdown sandbox"), "sandbox": sandbox_form,
                                "extracted_content": extracted_content},
                               context_instance=RequestContext(request))
 
 
 @login_required
 def switch_language(request):
-    u"""This view parses the query string and extracts a language code from it,
+    """This view parses the query string and extracts a language code from it,
     then switches the current user's prefered language to that language, and
     then goes back to the last URL.  This is used for realising the language
     switching by the flags on the top left.
@@ -94,7 +94,7 @@ def switch_language(request):
 
 
 def show_error_page(request, hash_value):
-    u"""Shows an error page.  See `models.ErrorPage` for further information.
+    """Shows an error page.  See `models.ErrorPage` for further information.
 
     :Parameters:
       - `request`: the current HTTP Request object

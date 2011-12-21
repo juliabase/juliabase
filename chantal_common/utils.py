@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import, division
+from __future__ import absolute_import, division, unicode_literals
 
 import codecs, re, os, os.path, time, json, decimal, datetime, copy, mimetypes
 from contextlib import contextmanager
@@ -36,7 +36,7 @@ from . import mimeparse
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
-    u"""The response sent back in case of a permission error.  This is another
+    """The response sent back in case of a permission error.  This is another
     missing response class in Django.  I have no clue why they leave out such
     trivial code.
     """
@@ -44,7 +44,7 @@ class HttpResponseUnauthorized(django.http.HttpResponse):
 
 
 class HttpResponseSeeOther(django.http.HttpResponse):
-    u"""Response class for HTTP 303 redirects.  Unfortunately, Django does the
+    """Response class for HTTP 303 redirects.  Unfortunately, Django does the
     same wrong thing as most other web frameworks: it knows only one type of
     redirect, with the HTTP status code 302.  However, this is very often not
     desirable.  In Django-RefDB, we've frequently the use case where an HTTP
@@ -62,7 +62,7 @@ class HttpResponseSeeOther(django.http.HttpResponse):
 
 
 class JSONRequestException(Exception):
-    u"""Exception which is raised if a JSON response was requested and an error
+    """Exception which is raised if a JSON response was requested and an error
     in the submitted data occured.  This will result in an HTTP 422 response in
     Chantal-common's middleware.
 
@@ -93,7 +93,7 @@ for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"),
 entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
 
 def substitute_html_entities(text):
-    u"""Searches for all ``&entity;`` named entities in the input and replaces
+    """Searches for all ``&entity;`` named entities in the input and replaces
     them by their unicode counterparts.  For example, ``&alpha;``
     becomes ``α``.  Escaping is not possible unless you spoil the pattern with
     a character that is later removed.  But this routine doesn't have an
@@ -109,13 +109,13 @@ def substitute_html_entities(text):
 
     :rtype: unicode
     """
-    result = u""
+    result = ""
     position = 0
     while position < len(text):
         match = entity_pattern.search(text, position)
         if match:
             start, end = match.span()
-            character = entities.get(text[start+1:end-1])
+            character = entities.get(text[start + 1:end - 1])
             result += text[position:start] + character if character else text[position:end]
             position = end
         else:
@@ -125,7 +125,7 @@ def substitute_html_entities(text):
 
 
 def get_really_full_name(user):
-    u"""Unfortunately, Django's ``get_full_name`` method for users returns the
+    """Unfortunately, Django's ``get_full_name`` method for users returns the
     empty string if the user has no first and surname set.  However, it'd be
     sensible to use the login name as a fallback then.  This is realised here.
 
@@ -142,7 +142,7 @@ def get_really_full_name(user):
 
 
 def append_error(form, error_message, fieldname="__all__"):
-    u"""This function is called if a validation error is found in form data
+    """This function is called if a validation error is found in form data
     which cannot be found by the ``is_valid`` method itself.  The reason is
     very simple: For many types of invalid data, you must take other forms in
     the same view into account.
@@ -171,7 +171,7 @@ def append_error(form, error_message, fieldname="__all__"):
 
 dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r](-+|=+)\s*$")
 def check_markdown(text):
-    u"""Checks whether the Markdown input by the user contains only permitted
+    """Checks whether the Markdown input by the user contains only permitted
     syntax elements.  I forbid images and headings so far.
 
     :Parameters:
@@ -182,11 +182,11 @@ def check_markdown(text):
         elements.
     """
     if dangerous_markup_pattern.search(text):
-        raise ValidationError(_(u"You mustn't use image and headings syntax in Markdown markup."))
+        raise ValidationError(_("You mustn't use image and headings syntax in Markdown markup."))
 
 
 def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_directory=False):
-    u"""Test whether a certain file is openable by Chantal.
+    """Test whether a certain file is openable by Chantal.
 
     :Parameters:
     - `filepath`: Path to the file to be tested.  This may be absolute or
@@ -213,7 +213,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
     """
     if filepath:
         def raise_inaccessible_exception():
-            raise ValidationError(_(u"Couldn't open {filename}.").format(filename=filepath))
+            raise ValidationError(_("Couldn't open {filename}.").format(filename=filepath))
         filepath = os.path.normpath(filepath)
         assert os.path.isabs(default_root)
         assert all(os.path.isabs(path) for path in allowed_roots)
@@ -232,7 +232,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
                 raise_inaccessible_exception()
             absolute_filepath = os.path.join(absolute_filepath, ".")
         if not any(os.path.commonprefix([absolute_filepath, path]) for path in allowed_roots):
-            raise ValidationError(_(u"This file is not in an allowed directory."))
+            raise ValidationError(_("This file is not in an allowed directory."))
         if not os.path.exists(absolute_filepath):
             raise_inaccessible_exception()
         if os.path.isfile(absolute_filepath):
@@ -242,11 +242,11 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
                 raise_inaccessible_exception()
         return filepath
     else:
-        return u""
+        return ""
 
 
 class _AddHelpLink(object):
-    u"""Internal helper class in order to realise the `help_link` function
+    """Internal helper class in order to realise the `help_link` function
     decorator.
     """
 
@@ -261,7 +261,7 @@ class _AddHelpLink(object):
 
 
 def help_link(link):
-    u"""Function decorator for views functions to set a help link for the view.
+    """Function decorator for views functions to set a help link for the view.
     The help link is embedded into the top line in the layout, see the template
     ``base.html``.  Currently, it is prepended with ``"/trac/chantal/wiki/"``.
 
@@ -282,8 +282,8 @@ if settings.WITH_EPYDOC:
     help_link = lambda x: lambda y: y
 
 
-def successful_response(request, success_report=None, view=None, kwargs={}, query_string=u"", forced=False):
-    u"""After a POST request was successfully processed, there is typically a
+def successful_response(request, success_report=None, view=None, kwargs={}, query_string="", forced=False):
+    """After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
     add/edit request was started.
 
@@ -344,7 +344,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
 
 def unicode_strftime(timestamp, format_string):
-    u"""Formats a timestamp to a string.  Unfortunately, the built-in method
+    """Formats a timestamp to a string.  Unfortunately, the built-in method
     ``strftime`` of ``datetime.datetime`` objects is not unicode-safe.
     Therefore, I have to do a conversion into an UTF-8 intermediate
     representation.  In Python 3.0, this problem is probably gone.
@@ -368,7 +368,7 @@ def unicode_strftime(timestamp, format_string):
 
 
 def adjust_timezone_information(timestamp):
-    u"""Adds proper timezone information to the timestamp.  It assumes that the
+    """Adds proper timezone information to the timestamp.  It assumes that the
     timestamp has no previous ``tzinfo`` set, but it refers to the
     ``TIME_ZONE`` Django setting.  This is the case with the PostgreSQL backend
     as long as http://code.djangoproject.com/ticket/2626 is not fixed.
@@ -389,7 +389,7 @@ def adjust_timezone_information(timestamp):
 
 
 def send_email(subject, content, recipients, format_dict=None):
-    u"""Sends one email to a user.  Both subject and content are translated to
+    """Sends one email to a user.  Both subject and content are translated to
     the recipient's language.  To make this work, you must tag the original
     text with a dummy ``_`` function in the calling content, e.g.::
 
@@ -443,7 +443,7 @@ def send_email(subject, content, recipients, format_dict=None):
 
 
 def is_json_requested(request):
-    u"""Tests whether the current request should be answered in JSON format
+    """Tests whether the current request should be answered in JSON format
     instead of HTML.  Typically this means that the request was made by the
     CHantal Remote Client or by JavaScript code.
 
@@ -463,7 +463,7 @@ def is_json_requested(request):
 
 
 def respond_in_json(value):
-    u"""The communication with the Chantal Remote Client or to AJAX clients
+    """The communication with the Chantal Remote Client or to AJAX clients
     should be done without generating HTML pages in order to have better
     performance.  Thus, all responses are Python objects, serialised in JSON
     notation.
@@ -495,7 +495,7 @@ def respond_in_json(value):
 
 all_models = None
 def get_all_models(app_label=None):
-    u"""Returns all model classes of all apps, including registered abstract
+    """Returns all model classes of all apps, including registered abstract
     ones.  The resulting data structure is a dictionary which maps the class
     names to the model classes.  Note that every app must have a ``models.py``
     module.  This ``models.py`` may be empty, though.
@@ -524,7 +524,7 @@ def get_all_models(app_label=None):
 
 abstract_models = set()
 def register_abstract_model(abstract_model):
-    u"""Register an abstract model class.  This way, it is returned by
+    """Register an abstract model class.  This way, it is returned by
     `get_all_models`.  In particular, it means that the model can be search for
     in the advanced search.
 
@@ -537,7 +537,7 @@ def register_abstract_model(abstract_model):
 
 
 def is_update_necessary(destination, source_files=[], timestamps=[], additional_inaccuracy=0):
-    u"""Returns whether the destination file needs to be re-created from the
+    """Returns whether the destination file needs to be re-created from the
     sources.  It bases of the timestamps of last file modification.  If the
     union of `source_files` and `timestamps` is empty, the function returns
     ``False``.
@@ -577,7 +577,7 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
 
 
 def format_lazy(string, *args, **kwargs):
-    u"""Implements a lazy variant of the ``format`` string method.  For
+    """Implements a lazy variant of the ``format`` string method.  For
     example, you might say::
 
         verbose_name = format_lazy(_(u"Raman {0} measurement"), 1)
@@ -589,7 +589,7 @@ format_lazy = allow_lazy(format_lazy, unicode)
 
 
 def static_file_response(filepath, served_filename=None):
-    u"""Serves a file of the local file system.
+    """Serves a file of the local file system.
 
     :Parameters:
       - `filepath`: the absolute path to the file to be served
@@ -613,7 +613,7 @@ def static_file_response(filepath, served_filename=None):
 
 
 def mkdirs(path):
-    u"""Creates a directory and all of its parents if necessary.  If the given
+    """Creates a directory and all of its parents if necessary.  If the given
     path doesn't end with a slash, it's interpreted as a filename and removed.
     If the directory already exists, nothing is done.  (In particular, no
     exception is raised.)
@@ -631,7 +631,7 @@ def mkdirs(path):
 
 @contextmanager
 def cache_key_locked(key):
-    u"""Locks the `key` in the cache.  If `key` already exists, it waits for
+    """Locks the `key` in the cache.  If `key` already exists, it waits for
     max. 6 seconds.  If it's still not released, the whole cache is cleared.
     In all cases, `key` is hold in the context.  After the context is left
     (even via an exception), the key is deleted, i.e. the lock is removed.  Use
@@ -657,7 +657,7 @@ def cache_key_locked(key):
 
 
 class MyNone:
-    u"""Singleton class for detecting cache misses in `get_from_cache`
+    """Singleton class for detecting cache misses in `get_from_cache`
     reliably.
     """
     pass
@@ -666,7 +666,7 @@ my_none = MyNone()
 
 
 def _incr_cache_item(key, increment):
-    u"""Internal routine for incrementing a cache value, or creating it if
+    """Internal routine for incrementing a cache value, or creating it if
     non-existing.
     """
     try:
@@ -676,7 +676,7 @@ def _incr_cache_item(key, increment):
 
 
 def get_from_cache(key, default=None, hits=1, misses=1):
-    u"""Gets an item from the cache and records statistics for
+    """Gets an item from the cache and records statistics for
     `cache_hit_rate`.  The semantics of this routine are the same as for
     Django's `cache.get`.  So, you can use it as a drop-in replacement for it.
 
@@ -696,7 +696,7 @@ def get_from_cache(key, default=None, hits=1, misses=1):
 
 
 def cache_hit_rate():
-    u"""Returns the current cache hit rate.  This value is between 0 and 1.  It
+    """Returns the current cache hit rate.  This value is between 0 and 1.  It
     returns ``None`` is no such value could be calculated.
 
     :Return:
@@ -713,7 +713,7 @@ def cache_hit_rate():
 
 
 def unlazy_object(lazy_object):
-    u"""Returns the actual (wrapped) instance of a lazy object.  Note that the
+    """Returns the actual (wrapped) instance of a lazy object.  Note that the
     lazy object may be changed by this function: Afterwards, it definitely
     contains the wrapped instance.
 

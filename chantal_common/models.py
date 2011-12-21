@@ -13,10 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Models in the relational database for Chantal-Common.
+"""Models in the relational database for Chantal-Common.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import hashlib, datetime
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
@@ -27,32 +27,32 @@ import chantal_common.search
 
 
 languages = (
-    ("en", u"English"),
-    ("de", u"Deutsch"),
+    ("en", "English"),
+    ("de", "Deutsch"),
     )
-u"""Contains all possible choices for `UserDetails.language`.
+"""Contains all possible choices for `UserDetails.language`.
 """
 
 class UserDetails(models.Model):
-    u"""Model for further details about a user, beyond
+    """Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_(u"user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
                                 related_name="chantal_user_details")
-    department = models.CharField(_(u"department"), max_length=30, blank=True)
-    language = models.CharField(_(u"language"), max_length=10, choices=languages, default="de")
-    browser_system = models.CharField(_(u"operating system"), max_length=10, default="windows")
-    layout_last_modified = models.DateTimeField(_(u"layout last modified"), auto_now_add=True)
+    department = models.CharField(_("department"), max_length=30, blank=True)
+    language = models.CharField(_("language"), max_length=10, choices=languages, default="de")
+    browser_system = models.CharField(_("operating system"), max_length=10, default="windows")
+    layout_last_modified = models.DateTimeField(_("layout last modified"), auto_now_add=True)
     """Timestamp at which the settings which affect appearance of the HTML were
     changed for the last time."""
-    is_administrative = models.BooleanField(_(u"is administrative"), default=False)
+    is_administrative = models.BooleanField(_("is administrative"), default=False)
     """``True`` if the account doesn't belong to an actual user, and thus
     shouldn't be eligible for things like "currently_responsible_person"."""
 
     class Meta:
-        verbose_name = _(u"user details")
-        verbose_name_plural = _(u"user details")
+        verbose_name = _("user details")
+        verbose_name_plural = _("user details")
 
     def __init__(self, *args, **kwargs):
         super(UserDetails, self).__init__(*args, **kwargs)
@@ -67,7 +67,7 @@ class UserDetails(models.Model):
         super(UserDetails, self).save(*args, **kwargs)
 
     def get_data_hash(self):
-        u"""Get the hash of all fields that change the HTML's appearance,
+        """Get the hash of all fields that change the HTML's appearance,
         e.g. language, skin, browser type etc.  This hash is used to decide
         whether a cached sample instance of another user can be used for this
         one.
@@ -85,7 +85,7 @@ class UserDetails(models.Model):
 
 
 class Topic(models.Model):
-    u"""Model for topics of the institution (institute/company).  Every sample
+    """Model for topics of the institution (institute/company).  Every sample
     belongs to at most one topic.  Every user can be in an arbitrary number of
     topics.  The most important purpose of topics is to define permissions.
     Roughly speaking, a user can view samples of their topics.
@@ -96,13 +96,13 @@ class Topic(models.Model):
     possible).
     """
     name = models.CharField(_("name"), max_length=80, unique=True)
-    members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_(u"members"),
+    members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_("members"),
                                      related_name="topics")
-    confidential = models.BooleanField(_(u"confidential"), default=False)
+    confidential = models.BooleanField(_("confidential"), default=False)
 
     class Meta:
-        verbose_name = _(u"topic")
-        verbose_name_plural = _(u"topics")
+        verbose_name = _("topic")
+        verbose_name_plural = _("topics")
         _ = lambda x: x
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
@@ -112,7 +112,7 @@ class Topic(models.Model):
 
     @classmethod
     def get_search_tree_node(cls):
-        u"""Class method for generating the search tree node for this model
+        """Class method for generating the search tree node for this model
         instance.
 
         :Return:
@@ -125,7 +125,7 @@ class Topic(models.Model):
         return chantal_common.search.SearchTreeNode(cls, related_models, search_fields)
 
     def get_name_for_user(self, user):
-        u"""Determine the topic's name that can be shown to a certain user.  If
+        """Determine the topic's name that can be shown to a certain user.  If
         the topic is confidential and the user is not a memeber of the project,
         he must not read the actual topic name.  Therefore, a generic name is
         generated.  This is used e.g. for the “My Samples” list on the main
@@ -137,13 +137,13 @@ class Topic(models.Model):
         :type user: ``django.contrib.auth.models.User``
         """
         if self.confidential and not self.members.filter(pk=user.pk).exists():
-            return _(u"topic #{number} (confidential)").format(number=self.id)
+            return _("topic #{number} (confidential)").format(number=self.id)
         else:
             return self.name
 
 
 class PolymorphicModel(models.Model):
-    u"""Abstract model class, which provides the attribute ``actual_instance``.
+    """Abstract model class, which provides the attribute ``actual_instance``.
     This solves the problem that Django's ORM does not implement automatic
     resolution of polymorphy.  For example, if you get a list of Toppings,
     they're just Toppings.  However sometimes, you must have the actual object,
@@ -158,7 +158,7 @@ class PolymorphicModel(models.Model):
     actual_instance = generic.GenericForeignKey("content_type", "actual_object_id")
 
     def save(self, *args, **kwargs):
-        u"""Saves the instance and assures that `actual_instance` is set.
+        """Saves the instance and assures that `actual_instance` is set.
         """
         super(PolymorphicModel, self).save(*args, **kwargs)
         if not self.actual_object_id:
@@ -170,18 +170,18 @@ class PolymorphicModel(models.Model):
 
 
 class ErrorPage(models.Model):
-    u"""Model for storing HTML pages which contain error messages.  This is
+    """Model for storing HTML pages which contain error messages.  This is
     intended for connections with non-browser agents which request for JSON
     responses.  If the request fails, the resulting JSON contains a link to
     view the full error page.  Such pages are expired after some time.
     """
     hash_value = models.CharField(_("hash value"), max_length=40, primary_key=True)
-    user = models.ForeignKey(django.contrib.auth.models.User, null=True, blank=True, verbose_name=_(u"user"),
+    user = models.ForeignKey(django.contrib.auth.models.User, null=True, blank=True, verbose_name=_("user"),
                              related_name="error_pages")
     requested_url = models.TextField(_("requested URL"), blank=True)
     html = models.TextField("HTML")
-    timestamp = models.DateTimeField(_(u"timestamp"), auto_now_add=True)
+    timestamp = models.DateTimeField(_("timestamp"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _(u"error page")
-        verbose_name_plural = _(u"error pages")
+        verbose_name = _("error page")
+        verbose_name_plural = _("error pages")

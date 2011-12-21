@@ -13,12 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Additional context processors for Chantal.  There functions must be added
+"""Additional context processors for Chantal.  There functions must be added
 to `settings.TEMPLATE_CONTEXT_PROCESSORS`.  They add further data to the
 dictionary passed to the templates.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _
 
 
 def default(request):
-    u"""Injects some session data into the template context.
+    """Injects some session data into the template context.
 
     The help link on the top (see the `samples.views.utils.help_link`
     decorator) is added to the context by extracting it (and removing it from)
@@ -53,7 +53,7 @@ def default(request):
         del request.chantal_help_link
     # Now for the flags for the language switching
     if request.method == "GET" and request.user.is_authenticated():
-        old_query_string = request.META["QUERY_STRING"] or u""
+        old_query_string = request.META["QUERY_STRING"] or ""
         if old_query_string:
             old_query_string = "?" + old_query_string
         def get_language_url(language_code):
@@ -62,13 +62,13 @@ def default(request):
             url += urlquote_plus(request.path + old_query_string)
             return url
         trac_url = "https://chantal.ipv.kfa-juelich.de/trac/wiki/TranslateChantal"
-        result["translation_flags"] = (("de", _(u"German"), get_language_url("de")),
-                                       ("en", _(u"English"), get_language_url("en")),
-                                       ("zh_CN", _(u"Chinese"), trac_url),
-                                       ("uk", _(u"Ukrainian"), trac_url),
-                                       ("ru", _(u"Russian"), trac_url),
-                                       ("fr", _(u"French"), trac_url),
-                                       ("nl", _(u"Dutch"), trac_url),
+        result["translation_flags"] = (("de", _("German"), get_language_url("de")),
+                                       ("en", _("English"), get_language_url("en")),
+                                       ("zh_CN", _("Chinese"), trac_url),
+                                       ("uk", _("Ukrainian"), trac_url),
+                                       ("ru", _("Russian"), trac_url),
+                                       ("fr", _("French"), trac_url),
+                                       ("nl", _("Dutch"), trac_url),
                                        )
     else:
         result["translation_flags"] = ()

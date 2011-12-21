@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import locale, re, json, hashlib, random, time
 from django.contrib.messages.storage import default_storage
@@ -30,14 +30,14 @@ import django.http
 from django.shortcuts import render_to_response
 
 
-u"""Middleware for setting the current language to what can be found in
+"""Middleware for setting the current language to what can be found in
 `models.UserDetails` and for cache-disabling in presence of temporary messages.
 Additionally, I convert responses into JSON format if this was requested.
 """
 
 
 class LocaleMiddleware(object):
-    u"""This is a simple middleware that parses a request and decides what
+    """This is a simple middleware that parses a request and decides what
     translation object to install in the current thread context depending on
     what's found in `models.UserDetails`. This allows pages to be dynamically
     translated to the language the user desires (if the language is available,
@@ -82,7 +82,7 @@ class LocaleMiddleware(object):
 
 
 class MessageMiddleware(object):
-    u"""Middleware that handles temporary messages.  It is a copy of Django's
+    """Middleware that handles temporary messages.  It is a copy of Django's
     original ``MessageMiddleware`` but it adds cache disabling.  This way,
     pages with messages are never cached by the browser, so that the messages
     don't get persistent.
@@ -119,7 +119,7 @@ class HttpResponseUnprocessableEntity(django.http.HttpResponse):
 
 
 class JSONClientMiddleware(object):
-    u"""Middleware to convert responses to JSON if this was requested by the
+    """Middleware to convert responses to JSON if this was requested by the
     client.
 
     It is important that this class comes after all non-Chantal middleware in
@@ -129,7 +129,7 @@ class JSONClientMiddleware(object):
     """
 
     def process_response(self, request, response):
-        u"""Return a HTTP 422 response if a JSON response was requested and an
+        """Return a HTTP 422 response if a JSON response was requested and an
         HTML page with form errors is returned.
         """
         if is_json_requested(request) and response._headers["content-type"][1].startswith("text/html") and \
@@ -153,7 +153,7 @@ class JSONClientMiddleware(object):
 
 
     def process_exception(self, request, exception):
-        u"""Convert response to exceptions to JSONised version if the response
+        """Convert response to exceptions to JSONised version if the response
         is requested to be JSON.
         """
         if isinstance(exception, django.http.Http404):

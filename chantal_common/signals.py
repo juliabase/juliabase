@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Module for providing the Chantal signals.
+"""Module for providing the Chantal signals.
 
 :ivar maintain: This is sent in regular time intervals (e.g., every night), so
   that various subsystems can use it for maintenance work.  You can use this
@@ -31,7 +31,7 @@ u"""Module for providing the Chantal signals.
   sychronisation of both nodes.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import django.dispatch
 

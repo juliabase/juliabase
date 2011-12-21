@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Functions and classes for the advanced search.
+"""Functions and classes for the advanced search.
 
 FixMe: For some reason now obscure to me, ``.values("pk")`` is used throughout
 this module although
@@ -22,7 +22,7 @@ is superfluous.  It doesn't have any bad functionality/performance impact
 though.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import re, datetime, calendar, copy
 from django import forms
 from django.utils.safestring import mark_safe
@@ -35,7 +35,7 @@ from . import utils
 
 
 def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
-    u"""Generates search fields for (almost) all fields of the given model
+    """Generates search fields for (almost) all fields of the given model
     class.  This is to be used in a ``get_search_tree_node`` method.  It can
     only convert character/text fields, numerical fields, boolean fields, and
     fields with choices.
@@ -77,7 +77,7 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
 
 
 class SearchField(object):
-    u"""Class representing one field in the advanced search.  This is an
+    """Class representing one field in the advanced search.  This is an
     abstract base class for such fields.  It is instantiated in the
     ``get_search_tree_node`` methods in the models.
 
@@ -102,7 +102,7 @@ class SearchField(object):
     """
 
     def __init__(self, cls, field_or_field_name, additional_query_path=""):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `cls`: model class to which the original model field belongs to;
@@ -127,7 +127,7 @@ class SearchField(object):
             self.query_path = None
 
     def parse_data(self, data, prefix):
-        u"""Create the web form representing this search field.  If ``data`` is
+        """Create the web form representing this search field.  If ``data`` is
         not ``None``, it will be a bound form.
 
         :Parameters:
@@ -141,7 +141,7 @@ class SearchField(object):
         raise NotImplementedError
 
     def get_query_path(self, query_paths):
-        u"""Returns the query path for the ``filter`` method call of a
+        """Returns the query path for the ``filter`` method call of a
         ``QuerySet`` for the model field of this `SearchField`.  Normally, the
         query path is simply the field name, possibly extended by the
         ``additional_query_path`` parameter of ``__init__``.  However, if the
@@ -162,7 +162,7 @@ class SearchField(object):
         return query_paths.get(self.field.name) or self.query_path or self.field.name
 
     def get_values(self, query_paths={}):
-        u"""Returns keyword arguments for a ``filter`` call on a ``QuerySet``.
+        """Returns keyword arguments for a ``filter`` call on a ``QuerySet``.
         Note that this implies that all keyword arguments returned here are
         “anded”.
 
@@ -187,7 +187,7 @@ class SearchField(object):
         return {self.get_query_path(query_paths): result} if result is not None else {}
 
     def is_valid(self):
-        u"""Retuns whether the form within this search field is bound and
+        """Retuns whether the form within this search field is bound and
         valid.
 
         :Return:
@@ -198,15 +198,15 @@ class SearchField(object):
         return self.form.is_valid()
 
     def __unicode__(self):
-        u"""Returns a unicode representation of this search field.  It is only
+        """Returns a unicode representation of this search field.  It is only
         useful for debugging purposes.  Note that if a derived class doesn't
         store a model field in ``self.field``, this must be overridden.
         """
-        return u'"{0}"'.format(unicode(self.field.verbose_name))
+        return '"{0}"'.format(unicode(self.field.verbose_name))
 
 
 class RangeSearchField(SearchField):
-    u"""Class for search fields with a from–to structure.  This is used for
+    """Class for search fields with a from–to structure.  This is used for
     timestamps and numerical fields.  It is an abstract class.  At the same
     time, it is an example of a search field with more than one form field.
     """
@@ -226,7 +226,7 @@ class RangeSearchField(SearchField):
 
 
 class TextSearchField(SearchField):
-    u"""Class for search fields containing text.  The match is case-insensitive,
+    """Class for search fields containing text.  The match is case-insensitive,
     and partial matches are allowed, too.
     """
 
@@ -241,7 +241,7 @@ class TextSearchField(SearchField):
 
 
 class TextNullSearchField(SearchField):
-    u"""Class for search fields containing text.  The match is
+    """Class for search fields containing text.  The match is
     case-insensitive, and partial matches are allowed, too.  Additionally, you
     may search for explicitly empty fields.
     """
@@ -251,14 +251,14 @@ class TextNullSearchField(SearchField):
             text = [value for key, value in self.cleaned_data.iteritems() if key.endswith("_main")][0]
             explicitly_empty = [value for key, value in self.cleaned_data.iteritems() if key.endswith("_null")][0]
             if explicitly_empty and text:
-                raise forms.ValidationError(_(u"You can't search for empty values while giving a non-empty value."))
+                raise forms.ValidationError(_("You can't search for empty values while giving a non-empty value."))
             return self.cleaned_data
 
     def parse_data(self, data, prefix):
         self.form = self.TextNullForm(data, prefix=prefix)
         self.form.fields[self.field.name + "_main"] = forms.CharField(label=unicode(self.field.verbose_name), required=False,
                                                                       help_text=self.field.help_text)
-        self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_(u"explicitly empty"), required=False)
+        self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_("explicitly empty"), required=False)
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name + "_main"]
@@ -272,7 +272,7 @@ class TextNullSearchField(SearchField):
 
 
 class IntegerSearchField(SearchField):
-    u"""Class for search fields containing integer values for which from–to
+    """Class for search fields containing integer values for which from–to
     ranges don't make sense.
     """
 
@@ -283,7 +283,7 @@ class IntegerSearchField(SearchField):
 
 
 class IntervalSearchField(RangeSearchField):
-    u"""Class for search fields containing numerical values (integer, decimal,
+    """Class for search fields containing numerical values (integer, decimal,
     float).  Its peculiarity is that it exposes a minimal and a maximal value.
     The user can fill out one of them, or both, or none.
     """
@@ -297,7 +297,7 @@ class IntervalSearchField(RangeSearchField):
 
 
 class ChoiceSearchField(SearchField):
-    u"""Class for search fields containing character/text fields with choices.
+    """Class for search fields containing character/text fields with choices.
 
     FixMe: This could be changed to a ``MultipleChoiceField`` sometime.
     """
@@ -305,7 +305,7 @@ class ChoiceSearchField(SearchField):
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         field = forms.ChoiceField(label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
-        field.choices = [("", u"---------")] + list(self.field.choices)
+        field.choices = [("", "---------")] + list(self.field.choices)
         self.form.fields[self.field.name] = field
 
     def get_values(self, query_paths={}):
@@ -314,7 +314,7 @@ class ChoiceSearchField(SearchField):
 
 
 class DateTimeField(forms.Field):
-    u"""Custom form field for timestamps that can be given blurrily.  For
+    """Custom form field for timestamps that can be given blurrily.  For
     example, you can just give a year, or a year and a month.  You just can't
     start in the middle of a full timestamp.  You must pass the boolean
     ``start`` keyword argument to this field so that it know whether it should
@@ -339,7 +339,7 @@ class DateTimeField(forms.Field):
             return None
         match = self.datetime_pattern.match(value)
         if not match:
-            raise forms.ValidationError(_(u"The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."))
+            raise forms.ValidationError(_("The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."))
         year, month, day, hour, minute, second = match.groups()
         if self.with_inaccuracy:
             if month is None:
@@ -367,12 +367,12 @@ class DateTimeField(forms.Field):
         try:
             timestamp = datetime.datetime(year, month, day, hour, minute, second)
         except ValueError:
-            raise forms.ValidationError(_(u"Invalid date or time."))
+            raise forms.ValidationError(_("Invalid date or time."))
         return (timestamp, inaccuracy) if self.with_inaccuracy else timestamp
 
 
 class DateTimeSearchField(RangeSearchField):
-    u"""Class for search fields containing timestamps.  It also exposes two
+    """Class for search fields containing timestamps.  It also exposes two
     fields for the user to give a range of dates.
     """
 
@@ -385,21 +385,21 @@ class DateTimeSearchField(RangeSearchField):
 
 
 class BooleanSearchField(SearchField):
-    u"""Class for search fields containing boolean values.  The peculiarity of
+    """Class for search fields containing boolean values.  The peculiarity of
     this field is that it gives the user three choices: yes, no, and “doesn't
     matter”.
     """
 
     class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
         def render(self):
-            return mark_safe(u"""<ul class="radio-select">\n{0}\n</ul>""".format(u"\n".join(
-                        u"<li>{0}</li>".format(force_unicode(w)) for w in self)))
+            return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
+                        "<li>{0}</li>".format(force_unicode(w)) for w in self)))
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name] = forms.ChoiceField(
             label=unicode(self.field.verbose_name), required=False,
-            choices=(("", _(u"doesn't matter")), ("yes", _(u"yes")), ("no", _(u"no"))),
+            choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
             widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer), help_text=self.field.help_text)
 
     def get_values(self, query_paths={}):
@@ -408,7 +408,7 @@ class BooleanSearchField(SearchField):
 
 
 class SearchModelForm(forms.Form):
-    u"""Form for selecting the model which is contained in the current model.
+    """Form for selecting the model which is contained in the current model.
     For example, you may select a process class which is connected with a
     sample.  Every node is associated with such a form, although it is kept
     with the node in a tuple by the parent node instead of in an attribute of
@@ -421,7 +421,7 @@ class SearchModelForm(forms.Form):
     In the third field we can store a hash value from the input values to
     specify whether the user has changed something in the search view.
     """
-    _model = forms.ChoiceField(label=_(u"containing"), required=False)
+    _model = forms.ChoiceField(label=_("containing"), required=False)
     _old_model = forms.CharField(widget=forms.HiddenInput, required=False)
     _search_parameters_hash = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -429,11 +429,11 @@ class SearchModelForm(forms.Form):
         super(SearchModelForm, self).__init__(data, **kwargs)
         choices = [(model.__name__, model._meta.verbose_name) for model in models]
         choices.sort(key=lambda choice: unicode(choice[1]).lower())
-        self.fields["_model"].choices = [("", u"---------")] + choices
+        self.fields["_model"].choices = [("", "---------")] + choices
 
 
 class SetLockedException(Exception):
-    u"""Exception class raised when `all_searchable_models` is accessed
+    """Exception class raised when `all_searchable_models` is accessed
     although it is not completely built yet.  This is only an internal
     exception class.  This way, I can call the ``get_search_tree_node`` method
     in `get_all_searchable_models` in order to detect whether a model is
@@ -447,7 +447,7 @@ class SetLockedException(Exception):
 
 all_searchable_models = None
 def get_all_searchable_models():
-    u"""Returns all model classes which have a ``get_search_tree_node`` method.
+    """Returns all model classes which have a ``get_search_tree_node`` method.
 
     :Return:
       all searchable model classes
@@ -474,7 +474,7 @@ def get_all_searchable_models():
 
 
 def get_search_results(search_tree, max_results, base_query=None):
-    u"""Returns all found model instances for the given search.  It is a
+    """Returns all found model instances for the given search.  It is a
     wrapper around the ``get_query_set`` method of the top-level node in the
     search tree, and it serves three purposes:
 
@@ -512,7 +512,7 @@ def get_search_results(search_tree, max_results, base_query=None):
 
 
 class SearchTreeNode(object):
-    u"""Class which represents one node in the seach tree.  It is associated
+    """Class which represents one node in the seach tree.  It is associated
     with a model class.
 
     :ivar related_models: All model classes which are offered as candidates for
@@ -541,7 +541,7 @@ class SearchTreeNode(object):
     """
 
     def __init__(self, model_class, related_models, search_fields):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `model_class`: the model class associated with this node
@@ -562,7 +562,7 @@ class SearchTreeNode(object):
         self.search_fields = search_fields
 
     def parse_data(self, data, prefix):
-        u"""Create all forms associated with this node (all the seach fields,
+        """Create all forms associated with this node (all the seach fields,
         and the `SearchModelForm` for all children), and create recursively the
         tree by creating the children.
 
@@ -610,7 +610,7 @@ class SearchTreeNode(object):
             self.children.append((SearchModelForm(self.related_models.keys(), prefix=new_prefix), None))
 
     def get_query_set(self, base_query=None):
-        u"""Returns all model instances matching the search.
+        """Returns all model instances matching the search.
 
         :Parameters:
           - `base_query`: the query set to be used as the starting point of the
@@ -639,7 +639,7 @@ class SearchTreeNode(object):
         return result.values("pk")
 
     def is_valid(self):
-        u"""Returns whether the whole tree contains only bound and valid
+        """Returns whether the whole tree contains only bound and valid
         forms.  Note that the last children of each node – or, more precisely,
         the one without a `SearchTreeNode` in the tuple – is excluded from the
         test because it is always unbound.
@@ -659,19 +659,19 @@ class SearchTreeNode(object):
         return is_all_valid
 
     def __unicode__(self):
-        u"""Returns a unicode representation of this node and its subtree.  It
+        """Returns a unicode representation of this node and its subtree.  It
         is only useful for debugging purposes.
         """
         choices_last_child = self.children[-1][0].fields["_model"].choices if self.children else []
-        return u"({0}[{1}]: {2};{3})".format(
+        return "({0}[{1}]: {2};{3})".format(
             self.model_class.__name__,
-            u",".join(choice[0] for choice in choices_last_child if choice[0]),
-            u",".join(unicode(search_field) for search_field in self.search_fields),
-            u",".join(unicode(child[1]) for child in self.children if child[1]))
+            ",".join(choice[0] for choice in choices_last_child if choice[0]),
+            ",".join(unicode(search_field) for search_field in self.search_fields),
+            ",".join(unicode(child[1]) for child in self.children if child[1]))
 
 
 class AbstractSearchTreeNode(SearchTreeNode):
-    u"""Class representing a search tree node which is not connected with a
+    """Class representing a search tree node which is not connected with a
     particular model.  This way, similar models can be combined to one
     selection in the advanced search.  They must share a common set of fields
     though, and these fields must have the same names in the models.  If you
@@ -702,7 +702,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
     """
 
     class ChoiceSearchField(SearchField):
-        u"""Class for a special search field for selecting a derivative.
+        """Class for a special search field for selecting a derivative.
 
         FixMe: This could be changed to a ``MultipleChoiceField`` sometime.
         """
@@ -715,7 +715,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
         def parse_data(self, data, prefix):
             self.form = forms.Form(data, prefix=prefix)
             field = forms.ChoiceField(label=self.field_label, required=False, help_text=self.help_text)
-            field.choices = [("", u"---------")] + self.choices
+            field.choices = [("", "---------")] + self.choices
             self.form.fields["derivative"] = field
 
         def get_values(self, query_paths={}):
@@ -726,7 +726,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
 
     def __init__(self, common_base_class, related_models, search_fields, derivatives,
                  choice_field_label=None, choice_field_help_text=None):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `common_base_class`: the model which is a common base class for all
@@ -758,13 +758,13 @@ class AbstractSearchTreeNode(SearchTreeNode):
             node.children = self.children
             self.derivatives.append(node)
         self.derivative_choice = \
-            self.ChoiceSearchField(choice_field_label or _(u"restrict to"), derivatives, choice_field_help_text)
+            self.ChoiceSearchField(choice_field_label or _("restrict to"), derivatives, choice_field_help_text)
         # Note that this is not appended to the ``search_fields`` of the
         # derivatives because they have copies of ``self.search_fields``.
         self.search_fields.append(self.derivative_choice)
 
     def get_query_set(self, base_query=None):
-        u"""Returns all model instances matching the search.  This is heavily
+        """Returns all model instances matching the search.  This is heavily
         changed from `SearchTreeNode.get_query_set`.  By and large it only
         “or”s the returned search results from the derivatives.
 
@@ -799,7 +799,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
 
 
 class DetailsSearchTreeNode(SearchTreeNode):
-    u"""Class representing a search tree node which represents a model which is
+    """Class representing a search tree node which represents a model which is
     extended with a “details” model through a O2O relationship.  If you use an
     ordinary `SearchTreeNode` for this, you get an extra nesting level because
     the user first have to choose the details model, and then he gets its
@@ -815,7 +815,7 @@ class DetailsSearchTreeNode(SearchTreeNode):
     """
 
     def __init__(self, model_class, related_models, search_fields, details_model_attribute):
-        u"""Class constructor.
+        """Class constructor.
 
         :Parameters:
           - `model_class`: the model class associated with this node
