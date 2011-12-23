@@ -69,11 +69,11 @@ def save_image_file(image_data, result, related_data_form):
     """
     for i, chunk in enumerate(image_data.chunks()):
         if i == 0:
-            if chunk.startswith("\211PNG\r\n\032\n"):
+            if chunk.startswith(b"\211PNG\r\n\032\n"):
                 new_image_type = "png"
-            elif chunk.startswith("\xff\xd8\xff"):
+            elif chunk.startswith(b"\xff\xd8\xff"):
                 new_image_type = "jpeg"
-            elif chunk.startswith("%PDF"):
+            elif chunk.startswith(b"%PDF"):
                 new_image_type = "pdf"
             else:
                 append_error(related_data_form, _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
