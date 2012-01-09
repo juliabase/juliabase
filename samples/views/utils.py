@@ -770,3 +770,27 @@ def table_export(request, data, label_column_heading):
         columns_form = ColumnsForm(column_groups, columns, selected_column_groups, initial={"columns": selected_columns})
     old_data_form = OldDataForm(initial={"column_groups": selected_column_groups, "columns": selected_columns})
     return (column_groups_form, columns_form, table, switch_row_forms, old_data_form)
+
+
+def median(numeric_values):
+    """Calculates the median from
+    a list of numeric values.
+
+    :Parameters:
+     - `numeric_values`: a list with numeric values
+
+    :type numeric_values:  list
+
+    :Retrun:
+     The median of the given values
+
+    :rtype: int or float
+    """
+    values = sorted(numeric_values)
+
+    if len(values) % 2 == 1:
+        return values[(len(values) + 1) / 2 - 1]
+    else:
+        lower = values[len(values) / 2 - 1]
+        upper = values[len(values) / 2]
+        return (float(lower + upper)) / 2
