@@ -627,7 +627,17 @@ def round(value, digits):
 
     :rtype: `str`
     """
-    return "{{0:.{0}g}}".format(digits).format(float(value))
+    try:
+        value = float(value)
+    except (ValueError, TypeError):
+        pass
+    else:
+        try:
+            digits = int(digits)
+        except (ValueError, TypeError):
+            pass
+        else:
+            return "{{0:.{0}g}}".format(digits).format(float(value))
 
 
 def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
@@ -786,11 +796,29 @@ def median(numeric_values):
 
     :rtype: int or float
     """
-    values = sorted(numeric_values)
+    if isinstance(numeric_values, (tuple, list)) and len(numeric_values) == 0:
+        values = sorted(numeric_values)
+        if len(values) % 2 == 1:
+            return values[(len(values) + 1) / 2 - 1]
+        else:
+            lower = values[len(values) / 2 - 1]
+            upper = values[len(values) / 2]
+            return (float(lower + upper)) / 2
 
-    if len(values) % 2 == 1:
-        return values[(len(values) + 1) / 2 - 1]
-    else:
-        lower = values[len(values) / 2 - 1]
-        upper = values[len(values) / 2]
-        return (float(lower + upper)) / 2
+
+def average(numeric_values):
+    """Calculates the average value from
+    a list of numeric values.
+
+    :Parameters:
+     - `numeric_values`: a list with numeric values
+
+    :type numeric_values:  list
+
+    :Retrun:
+     The average value of the given values
+
+    :rtype: float
+    """
+    if isinstance(numeric_values, (tuple, list)) and len(numeric_values) == 0:
+        return sum(map(float, numeric_values)) / len(numeric_values)
