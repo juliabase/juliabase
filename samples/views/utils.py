@@ -796,7 +796,7 @@ def median(numeric_values):
 
     :rtype: int or float
     """
-    if isinstance(numeric_values, (tuple, list)) and len(numeric_values) == 0:
+    if isinstance(numeric_values, (tuple, list)) and len(numeric_values) > 0:
         values = sorted(numeric_values)
         if len(values) % 2 == 1:
             return values[(len(values) + 1) / 2 - 1]
@@ -820,5 +820,5 @@ def average(numeric_values):
 
     :rtype: float
     """
-    if isinstance(numeric_values, (tuple, list)) and len(numeric_values) == 0:
+    if isinstance(numeric_values, (tuple, list)) and len(numeric_values) > 0:
         return sum(map(float, numeric_values)) / len(numeric_values)
