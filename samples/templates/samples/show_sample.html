@@ -180,6 +180,10 @@ $(function() {chantal.request("{% url samples.views.json_client.get_folded_proce
                ><img src="{{ STATIC_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}
+            <a class="edit-icon"
+                href="{{ process.process.get_absolute_url|urlquote_plus }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+            ><img src="{{ STATIC_URL }}chantal/icons/zoom.png" alt="show icon" title="{% trans 'show process' %}"
+                width="16" height="16"/></a>
             {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
