@@ -51,6 +51,9 @@ copyright holder, you must destroy it immediately and completely.
 
     </tr>
     <tr>
+      {% input_field result.timestamp %}
+    </tr>
+    <tr>
       {% input_field result.comments %}
     </tr>
     <tr>
@@ -94,6 +97,10 @@ copyright holder, you must destroy it immediately and completely.
       </tbody>
     </table>
   {% endif %}
+
+  <div style="display: none">
+    {{ result.timestamp_inaccuracy }}
+  </div>
 
   {% include "samples/edit_description.html" %}
 

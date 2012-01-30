@@ -111,6 +111,8 @@ class ResultForm(form_utils.ProcessForm):
             self.fields["operator"].required = False
         else:
             self.fields["combined_operator"].required = False
+        self.fields["timestamp"].initial = datetime.datetime.now()
+
 
     def clean(self):
         _ = ugettext
@@ -142,8 +144,7 @@ class ResultForm(form_utils.ProcessForm):
 
     class Meta:
         model = models.Result
-        exclude = ("timestamp", "timestamp_inaccuracy", "image_type",
-                   "quantities_and_values")
+        exclude = ("image_type", "quantities_and_values")
 
 
 class RelatedDataForm(forms.Form):
