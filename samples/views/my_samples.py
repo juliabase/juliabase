@@ -51,7 +51,7 @@ class ActionForm(forms.Form):
     new_currently_responsible_person = form_utils.UserField(label=_("New currently responsible person"), required=False)
     new_topic = form_utils.TopicField(label=_("New Topic"), required=False)
     new_current_location = forms.CharField(label=_("New current location"), required=False, max_length=50)
-    copy_to_user = form_utils.UserField(label=_("Copy to user"), required=False)
+    copy_to_user = form_utils.MultipleUsersField(label=_("Copy to user"), required=False)
     clearance = forms.ChoiceField(label=_("Clearance"), required=False)
     comment = forms.CharField(label=_("Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_("Remove from “My Samples”"), required=False)
@@ -66,7 +66,11 @@ class ActionForm(forms.Form):
         """
         super(ActionForm, self).__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].set_users(user)
-        self.fields["copy_to_user"].set_users_without(user)
+        self.fields["copy_to_user"].set_users()
+        try:
+            self.fields["copy_to_user"].choices.remove((user.id, get_really_full_name(user)))
+        except ValueError:
+            pass
         self.fields["new_topic"].set_topics(user)
         self.fields["clearance"].choices = [("", "---------"), ("0", _("sample only")),
                                             ("1", _("all processes up to now"))]
@@ -130,11 +134,15 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     append_error(action_form,
                                  _("You must be the currently responsible person for samples you'd like to change."))
                     referentially_valid = False
-        if action_data["clearance"] is None and action_data["copy_to_user"] and \
-                action_data["new_currently_responsible_person"] != action_data["copy_to_user"]:
+        if action_data["clearance"] is None and action_data["copy_to_user"]:
+            try:
+                action_data["copy_to_user"].remove(action_data["new_currently_responsible_person"])
+            except ValueError:
+                pass
             try:
                 for sample in my_samples_form.cleaned_data["samples"]:
-                    permissions.assert_can_fully_view_sample(action_data["copy_to_user"], sample)
+                    for user in action_data["copy_to_user"]:
+                        permissions.assert_can_fully_view_sample(user, sample)
             except permissions.PermissionError:
                 append_error(action_form, _("If you copy samples over to another person who cannot fully view one of the "
                                             "samples, you must select a clearance option."), "clearance")
@@ -168,8 +176,6 @@ def save_to_database(user, my_samples_form, action_form):
     :type action_form: `ActionForm`
     """
     action_data = action_form.cleaned_data
-    if action_data["copy_to_user"]:
-        recipient_my_samples = action_data["copy_to_user"].my_samples
     if action_data["remove_from_my_samples"]:
         current_user_my_samples = user.my_samples
     samples = my_samples_form.cleaned_data["samples"]
@@ -196,9 +202,10 @@ def save_to_database(user, my_samples_form, action_form):
         if sample.currently_responsible_person != old_responsible_person:
             sample.currently_responsible_person.my_samples.add(sample)
         if action_data["copy_to_user"]:
-            recipient_my_samples.add(sample)
-            if action_data["clearance"] is not None:
-                utils.enforce_clearance(user, action_data["clearance"], action_data["copy_to_user"], sample)
+            for copy_user in action_data["copy_to_user"]:
+                copy_user.my_samples.add(sample)
+                if action_data["clearance"] is not None:
+                    utils.enforce_clearance(user, action_data["clearance"], copy_user, sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
     feed_reporter = feed_utils.Reporter(user)
@@ -211,7 +218,8 @@ def save_to_database(user, my_samples_form, action_form):
         feed_reporter.report_edited_samples(samples, edit_description)
     # Now a separate(!) message for copied samples
     if action_data["copy_to_user"]:
-        feed_utils.Reporter(user).report_copied_my_samples(samples, action_data["copy_to_user"], action_data["comment"])
+        for copy_user in action_data["copy_to_user"]:
+            feed_utils.Reporter(user).report_copied_my_samples(samples, copy_user, action_data["comment"])
 
 
 @login_required
