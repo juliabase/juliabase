@@ -25,7 +25,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
 from django.utils.text import capfirst
-from django.contrib.contenttypes.models import ContentType
 from chantal_common import utils as common_utils
 from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
@@ -202,8 +201,10 @@ class TaskForTemplate(object):
                             permissions.has_permission_to_add_edit_physical_process(user, self.task.finished_process,
                                                                                     self.task.process_class.model_class()))
                         else _("confidential sample") for sample in self.task.samples.all()]
-        self.user_can_see_everything = self.user_can_edit = user == self.task.customer or \
+        self.user_can_edit = user == self.task.customer or \
             permissions.has_permission_to_add_physical_process(user, task.process_class.model_class())
+        self.user_can_see_everything = self.user_can_edit or \
+            all([permissions.has_permission_to_fully_view_sample(user, sample) for sample in self.samples])
         self.user_can_delete = user == self.task.customer
 
 
