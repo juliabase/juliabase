@@ -204,7 +204,7 @@ class TaskForTemplate(object):
         self.user_can_edit = user == self.task.customer or \
             permissions.has_permission_to_add_physical_process(user, task.process_class.model_class())
         self.user_can_see_everything = self.user_can_edit or \
-            all([permissions.has_permission_to_fully_view_sample(user, sample) for sample in self.samples])
+            all([permissions.has_permission_to_fully_view_sample(user, sample) for sample in self.task.samples.all()])
         self.user_can_delete = user == self.task.customer
 
 
