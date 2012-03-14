@@ -33,6 +33,7 @@ from django.forms.util import ValidationError
 from chantal_common.utils import append_error, HttpResponseSeeOther, is_json_requested
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
+from django.contrib import messages
 
 
 class OriginalDataForm(Form):
@@ -258,6 +259,8 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
             if global_new_location:
                 sample.current_location = global_new_location
             sample.save()
+    deposition.split_done = True
+    deposition.save()
     return sample_splits
 
 
@@ -455,6 +458,9 @@ def split_and_rename_after_deposition(request, deposition_number):
     permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
     if not deposition.finished:
         raise Http404("This deposition is not finished yet.")
+    if deposition.split_done:
+        messages.error(request, _("You can use the split and rename function only once after a deposition."))
+        return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
     remote_client = is_json_requested(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \

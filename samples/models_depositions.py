@@ -61,6 +61,7 @@ class Deposition(PhysicalProcess):
     sample_positions = models.TextField(_("sample positions"), blank=True)
     """In JSON format, mapping sample IDs to positions.  Positions can be
     numbers or strings."""
+    split_done = models.BooleanField(_("split after deposition done"), default=False)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("deposition")
