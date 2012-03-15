@@ -34,6 +34,7 @@ from chantal_common.utils import append_error, HttpResponseSeeOther, is_json_req
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 
 
 class OriginalDataForm(Form):
@@ -321,28 +322,35 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
             referentially_valid = False
     for new_name_forms, original_data_form in zip(new_name_form_lists, original_data_forms):
         if original_data_form.is_valid():
-            for new_name_form in new_name_forms:
-                if new_name_form.is_valid():
-                    new_name = new_name_form.cleaned_data["new_name"]
-                    if original_data_form.cleaned_data["number_of_pieces"] == 1:
-                        if new_name != original_data_form.cleaned_data["new_name"]:
-                            append_error(
-                                new_name_form, _("If you don't split, you can't rename the single piece."), "new_name")
-                            referentially_valid = False
-                    else:
-                        if new_name in new_names:
-                            append_error(
-                                new_name_form, _("This sample name has been used already on this page."), "new_name")
-                            referentially_valid = False
-                        new_names.add(new_name)
-                        if utils.sample_name_format(new_name) != "new" and \
-                                not new_name.startswith(original_data_form.cleaned_data["new_name"]):
-                            append_error(new_name_form, _("If you choose a deposition-style name, it must begin "
-                                                          "with the parent's new name."), "new_name")
-                            referentially_valid = False
-                        if utils.does_sample_exist(new_name):
-                            append_error(new_name_form, _("This sample name exists already."), "new_name")
-                            referentially_valid = False
+            original_sample = original_data_form.cleaned_data["sample"]
+            if not deposition == original_sample.processes.exclude(content_type=ContentType.objects.get_for_model(models.Result)) \
+                .order_by("-timestamp")[0].actual_instance and original_data_form.cleaned_data["number_of_pieces"] > 1:
+                append_error(original_data_form,
+                     _("The sample can't be split, because the deposition is not the latest process."), "sample")
+                referentially_valid = False
+            else:
+                for new_name_form in new_name_forms:
+                    if new_name_form.is_valid():
+                        new_name = new_name_form.cleaned_data["new_name"]
+                        if original_data_form.cleaned_data["number_of_pieces"] == 1:
+                            if new_name != original_data_form.cleaned_data["new_name"]:
+                                append_error(
+                                    new_name_form, _("If you don't split, you can't rename the single piece."), "new_name")
+                                referentially_valid = False
+                        else:
+                            if new_name in new_names:
+                                append_error(
+                                    new_name_form, _("This sample name has been used already on this page."), "new_name")
+                                referentially_valid = False
+                            new_names.add(new_name)
+                            if utils.sample_name_format(new_name) != "new" and \
+                                    not new_name.startswith(original_data_form.cleaned_data["new_name"]):
+                                append_error(new_name_form, _("If you choose a deposition-style name, it must begin "
+                                                              "with the parent's new name."), "new_name")
+                                referentially_valid = False
+                            if utils.does_sample_exist(new_name):
+                                append_error(new_name_form, _("This sample name exists already."), "new_name")
+                                referentially_valid = False
     return referentially_valid
 
 
