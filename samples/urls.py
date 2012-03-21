@@ -157,4 +157,7 @@ urlpatterns = patterns("samples.views",
                        (r"^tasks/add/$", "task_lists.edit", {"task_id": None}),
                        (r"^tasks/(?P<task_id>\d+)/edit/$", "task_lists.edit"),
                        (r"^tasks/(?P<task_id>\d+)/remove/$", "task_lists.remove"),
-                       )
+
+                       (r"^fold_main_menu_element/", "json_client.fold_main_menu_element"),
+                       (r"^folded_main_menu_elements/", "json_client.get_folded_main_menu_elements"),
+                      )

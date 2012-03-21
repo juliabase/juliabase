@@ -72,6 +72,14 @@ class SampleSeriesForm(forms.ModelForm):
             self.fields["currently_responsible_person"].choices = ((user.pk, unicode(user)),)
         self.fields["topic"].set_topics(user, sample_series.topic if sample_series else None)
 
+    def clean_short_name(self):
+        """Prevents users from just adding whitespaces.
+        """
+        short_name = self.cleaned_data["short_name"].strip()
+        if not short_name:
+            raise ValidationError(_("This field is requierd."))
+        return short_name
+
     def clean_description(self):
         """Forbid image and headings syntax in Markdown markup.
         """

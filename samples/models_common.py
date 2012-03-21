@@ -1411,6 +1411,12 @@ class UserDetails(models.Model):
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
                                                 verbose_name=_("visible task lists"), blank=True)
 
+    folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
+                                     default="[]")
+
+    folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
+                                     default="[]")
+
     class Meta:
         verbose_name = _("user details")
         verbose_name_plural = _("user details")

@@ -517,3 +517,65 @@ def get_folded_processes(request, sample_id):
         if _is_folded(process_id, folded_process_classes, exceptional_processes_by_sample_id, switch=False):
             folded_process_ids.append(process_id)
     return respond_in_json(folded_process_ids)
+
+
+@login_required
+@never_cache
+@require_http_methods(["GET"])
+def fold_main_menu_element(request):
+    """Fold a single topic or sample series from the main menu.
+
+    :Parameters:
+     - `request`: The current HTTP Request object.  It must contain the the topic ID or
+        sample series name.
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+     True when the topic or sample series is now folded else False
+
+    :rtype: ``HttpResponse``
+    """
+    def fold_element(element_id, folded_elements):
+        folded_elements = json.loads(folded_elements)
+        if element_id in folded_elements:
+            folded_elements.remove(element_id)
+            is_folded = False
+        else:
+            folded_elements.append(element_id)
+            is_folded = True
+        folded_elements = json.dumps(folded_elements)
+        return is_folded, folded_elements
+
+    element_id = utils.int_or_zero(request.GET["element_id"])
+    if not element_id:
+        element_id = request.GET["element_id"]
+        element_is_folded, request.user.samples_user_details.folded_series = \
+            fold_element(element_id, request.user.samples_user_details.folded_series)
+    else:
+        element_is_folded, request.user.samples_user_details.folded_topics = \
+            fold_element(element_id, request.user.samples_user_details.folded_topics)
+    request.user.samples_user_details.save()
+    return respond_in_json(element_is_folded)
+
+
+@login_required
+@never_cache
+@require_http_methods(["GET"])
+def get_folded_main_menu_elements(request):
+    """Get all IDs or names from the folded topics or sample series.
+
+    :Parameters:
+     - `request`: The current HTTP Request object.
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+     The topic IDs and sample series names, who have to be folded on the main menu.
+
+    :rtype: ``HttpResponse``
+    """
+    folded_elements = []
+    folded_elements.extend(json.loads(request.user.samples_user_details.folded_series))
+    folded_elements.extend(json.loads(request.user.samples_user_details.folded_topics))
+    return respond_in_json(folded_elements)

@@ -16,6 +16,38 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 {% load samples_extras %}
 
+{% block local_scripts %}
+<script type="text/javascript">
+// <![CDATA[
+$(function() { chantal.request("{% url samples.views.json_client.get_folded_main_menu_elements %}",
+                               function(data) { for (var i=0; i < data.length; i++)
+                                                { if (!isNaN(data[i])) {
+                                                    $("#topic-" + data[i]).hide();
+                                                  } else {
+                                                    $("#sample-series-" + data[i]).hide();
+                                                  }
+                                               }
+                               });
+               $("img[alt='topic icon'], img[alt='sample series icon']").click(
+                    function(event) { var id = event.target.id.split('_')[2];
+                                      if(!isNaN(id)){
+                                        var target = "#topic-";
+                                      } else {
+                                        var target = "#sample-series-";
+                                      }
+                                      chantal.request("{% url samples.views.json_client.fold_main_menu_element %}?element_id=" + id,
+                                                     function(data) { if (data) {
+                                                                        $(target + id).hide("fast");
+                                                                      } else {
+                                                                        $(target + id).show("fast")
+                                                                      };
+                                                                     });
+                                    })
+              });
+// ]]>
+</script>
+{% endblock %}
+
 {% block frame_content %}
   {% if topicless_samples or my_topics %}
     <div class="my-samples">
@@ -35,32 +67,35 @@ copyright holder, you must destroy it immediately and completely.
         {% for topic in my_topics %}
 
           <h3><img src="{{ STATIC_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em"
-                   width="16" height="16"/>{{ topic.topic_name }}</h3>
-
-          {% if topic.samples %}
-            <ul class="sample-list">
-              {% for sample in topic.samples %}
-                <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-
-          <div class="my-samples-series">
-            {% for series in topic.sample_series %}
-
-              <h4><img src="{{ STATIC_URL }}chantal/icons/chart_organisation.png" alt="sample series icon"
-                       style="margin-right: 0.5em" width="16" height="16"
-                       /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
-
-              {% if not series.is_complete %}
-                <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
-              {% endif %}
+                   width="16" height="16" id="topic_image_{{ topic.topic.id }}"/>{{ topic.topic_name }}</h3>
+          <div id="topic-{{ topic.topic.id }}">
+            {% if topic.samples %}
               <ul class="sample-list">
-                {% for sample in series.samples %}
+                {% for sample in topic.samples %}
                   <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
                 {% endfor %}
               </ul>
-            {% endfor %}
+            {% endif %}
+
+            <div class="my-samples-series">
+              {% for series in topic.sample_series %}
+
+                <h4><img src="{{ STATIC_URL }}chantal/icons/chart_organisation.png" alt="sample series icon"
+                         style="margin-right: 0.5em" width="16" height="16" id="series_image_{{ series.name }}"
+                         /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
+                <div id="sample-series-{{ series.name }}">
+
+                  {% if not series.is_complete %}
+                    <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
+                  {% endif %}
+                  <ul class="sample-list">
+                    {% for sample in series.samples %}
+                      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endfor %}
+            </div>
           </div>
         {% endfor %}
       </div>
