@@ -676,7 +676,7 @@ def task_color(task):
 
 
 @register.filter
-def replace_dot_with_underscore(string):
-    """Replaces all dots with underscores.
+def get_hash_value(instance):
     """
-    return string.replace(".", "_")
+    """
+    return instance.get_hash_value()

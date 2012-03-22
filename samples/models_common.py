@@ -1335,6 +1335,16 @@ class SampleSeries(models.Model):
         related_models = {Sample: "samples", Result: "results"}
         return search.SearchTreeNode(cls, related_models, search_fields)
 
+    def get_hash_value(self):
+        """Calculates a sha1 hash value out of the sample series name
+
+        :Return:
+         sha1 hash hex value
+
+        :rtype: str
+        """
+        return hashlib.sha1(self.name).hexdigest()
+
 
 class Initials(models.Model):
     """Model for initials of people or external operators.  They are used to
