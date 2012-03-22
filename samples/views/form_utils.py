@@ -290,7 +290,7 @@ class GeneralSampleField(object):
                 seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
                 self.choices.append((topic.topic_name, seriesless_samples))
                 for series in topic.sample_series:
-                    if not series.name in folded_topics_and_sample_series:
+                    if not series.sample_series.get_hash_value() in folded_topics_and_sample_series:
                         samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
                         self.choices.append((4 * " " + series.name, samples))
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
