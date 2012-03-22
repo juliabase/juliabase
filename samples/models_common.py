@@ -1343,7 +1343,7 @@ class SampleSeries(models.Model):
 
         :rtype: str
         """
-        return hashlib.sha1(self.name).hexdigest()
+        return hashlib.sha1(self.name.encode("utf-8")).hexdigest()
 
 
 class Initials(models.Model):
