@@ -76,7 +76,7 @@ class SampleSeriesForm(forms.ModelForm):
         """Prevents users from just adding whitespaces.
         """
         short_name = self.cleaned_data["short_name"].strip()
-        if not short_name:
+        if not short_name and self.fields["short_name"].required:
             raise ValidationError(_("This field is requierd."))
         return short_name
 
@@ -98,7 +98,7 @@ class SampleSeriesForm(forms.ModelForm):
 
     class Meta:
         model = models.SampleSeries
-        exclude = ("timestamp", "results", "name")
+        exclude = ("timestamp", "results", "name", "id")
 
 
 def embed_timestamp(request, name):
