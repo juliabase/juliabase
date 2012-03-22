@@ -30,6 +30,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
                                });
                $("img[alt='topic icon'], img[alt='sample series icon']").click(
                     function(event) { var id = event.target.id.split('_')[2];
+                                      id = id.replace(".", "_")
                                       if(!isNaN(id)){
                                         var target = "#topic-";
                                       } else {
@@ -83,7 +84,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
                 <h4><img src="{{ STATIC_URL }}chantal/icons/chart_organisation.png" alt="sample series icon"
                          style="margin-right: 0.5em" width="16" height="16" id="series_image_{{ series.name }}"
                          /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
-                <div id="sample-series-{{ series.name }}">
+                <div id="sample-series-{{ series.name|replace_dot_with_underscore }}">
 
                   {% if not series.is_complete %}
                     <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>

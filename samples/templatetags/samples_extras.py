@@ -673,3 +673,10 @@ def task_color(task):
     a colour hex code.
     """
     return {"0 finished": "#90EE90", "1 new": "#D0D0D0", "2 accepted": "#ADD8E6", "3 in progress": "#FFCC66"}[task.status]
+
+
+@register.filter
+def replace_dot_with_underscore(string):
+    """Replaces all dots with underscores.
+    """
+    return string.replace(".", "_")
