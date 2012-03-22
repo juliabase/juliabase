@@ -521,8 +521,8 @@ def get_folded_processes(request, sample_id):
 
 @login_required
 @never_cache
-@require_http_methods(["GET"])
-def fold_main_menu_element(request, element_id):
+@require_http_methods(["POST"])
+def fold_main_menu_element(request):
     """Fold a single topic or sample series from the main menu.
 
     :Parameters:
@@ -548,8 +548,10 @@ def fold_main_menu_element(request, element_id):
         folded_elements = json.dumps(folded_elements)
         return is_folded, folded_elements
 
-    element_id = utils.int_or_zero(element_id)
+    element_id = utils.int_or_zero(request.POST["element_id"])
+
     if not element_id:
+        element_id = request.POST["element_id"]
         element_is_folded, request.user.samples_user_details.folded_series = \
             fold_element(element_id, request.user.samples_user_details.folded_series)
     else:

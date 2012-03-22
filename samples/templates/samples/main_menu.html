@@ -35,7 +35,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
                                       } else {
                                         var target = "#sample-series-";
                                       }
-                                      chantal.request("{% url samples.views.json_client.fold_main_menu_element element_id=" + id +" %}",
+                                      $.post("{% url samples.views.json_client.fold_main_menu_element %}", {element_id: id},
                                                      function(data) { if (data) {
                                                                         $(target + id).hide("fast");
                                                                       } else {
