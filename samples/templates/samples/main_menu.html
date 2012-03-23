@@ -20,28 +20,27 @@ copyright holder, you must destroy it immediately and completely.
 <script type="text/javascript">
 // <![CDATA[
 $(function() { chantal.request("{% url samples.views.json_client.get_folded_main_menu_elements %}",
-                               function(data) { for (var i=0; i < data.length; i++)
-                                                { if (!isNaN(data[i])) {
-                                                    $("#topic-" + data[i]).hide();
-                                                  } else {
-                                                    $("#sample-series-" + data[i]).hide();
-                                                  }
-                                               }
-                               });
-               $("img[alt='topic icon'], img[alt='sample series icon']").click(
+                               function(data) { for (var i=0; i < data[0].length; i++)
+                                                    $("#topic-" + data[0][i]).hide();
+                                                for (var i=0; i < data[1].length; i++)
+                                                    $("#sample-series-" + data[1][i]).hide();
+                                              }
+                               );
+               $("img.topics, img.sample-series").click(
                     function(event) { var id = event.target.id.split('-')[2];
-                                      if(!isNaN(id)){
+                                      if ( event.target.className=="topics" ) {
                                         var target = "#topic-";
                                       } else {
                                         var target = "#sample-series-";
                                       }
-                                      $.post("{% url samples.views.json_client.fold_main_menu_element %}", {element_id: id},
+                                      chantal.request("{% url samples.views.json_client.fold_main_menu_element %}",
                                                      function(data) { if (data) {
                                                                         $(target + id).hide("fast");
                                                                       } else {
-                                                                        $(target + id).show("fast")
-                                                                      };
-                                                                     });
+                                                                        $(target + id).show("fast");
+                                                                      }
+                                                                     },
+                                                     {element_id: id}, "POST");
                                     })
               });
 // ]]>
@@ -66,7 +65,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
       <div class="my-samples-topics">
         {% for topic in my_topics %}
 
-          <h3><img src="{{ STATIC_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em"
+          <h3><img src="{{ STATIC_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em" class="topics"
                    width="16" height="16" id="topic-image-{{ topic.topic.id }}"/>{{ topic.topic_name }}</h3>
           <div id="topic-{{ topic.topic.id }}">
             {% if topic.samples %}
@@ -80,7 +79,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
             <div class="my-samples-series">
               {% for series in topic.sample_series %}
 
-                <h4><img src="{{ STATIC_URL }}chantal/icons/chart_organisation.png" alt="sample series icon"
+                <h4><img src="{{ STATIC_URL }}chantal/icons/chart_organisation.png" alt="sample series icon" class="sample-series"
                          style="margin-right: 0.5em" width="16" height="16" id="series-image-{{ series.sample_series|get_hash_value }}"
                          /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
                 <div id="sample-series-{{ series.sample_series|get_hash_value }}">

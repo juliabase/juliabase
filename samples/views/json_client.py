@@ -455,7 +455,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 
 @login_required
 @never_cache
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def fold_process(request, sample_id):
     """Fold a single process in one sample data sheet. The new behavior is also saved.
 
@@ -476,7 +476,7 @@ def fold_process(request, sample_id):
         int(sample_id)
     except ValueError:
         raise JSONRequestException(5, 'invalid "sample_id"')
-    process_id = utils.int_or_zero(request.GET["process_id"])
+    process_id = utils.int_or_zero(request.POST["process_id"])
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
     folded_processes = json.loads(request.user.samples_user_details.folded_processes)
     exceptional_processes = folded_processes.setdefault(sample_id, [])
@@ -577,7 +577,7 @@ def get_folded_main_menu_elements(request):
 
     :rtype: ``HttpResponse``
     """
-    folded_elements = []
-    folded_elements.extend(json.loads(request.user.samples_user_details.folded_series))
-    folded_elements.extend(json.loads(request.user.samples_user_details.folded_topics))
+    folded_elements = (json.loads(request.user.samples_user_details.folded_topics),
+                       json.loads(request.user.samples_user_details.folded_series))
+    print folded_elements
     return respond_in_json(folded_elements)
