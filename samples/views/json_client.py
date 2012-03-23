@@ -579,5 +579,4 @@ def get_folded_main_menu_elements(request):
     """
     folded_elements = (json.loads(request.user.samples_user_details.folded_topics),
                        json.loads(request.user.samples_user_details.folded_series))
-    print folded_elements
     return respond_in_json(folded_elements)
