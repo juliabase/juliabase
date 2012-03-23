@@ -517,7 +517,6 @@ class FormSet(object):
                 result = self.result_form.save()
             else:
                 result = self.result_form.save(commit=False)
-                result.timestamp = datetime.datetime.now()
             result.quantities_and_values = self.serialize_quantities_and_values()
             result.save()
             if self.related_data_form.cleaned_data["image_file"]:
