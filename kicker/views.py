@@ -25,6 +25,7 @@ from django.template import RequestContext
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext as _
@@ -101,6 +102,7 @@ def get_old_stock_value(player):
 
 
 @login_required
+@require_http_methods(["POST"])
 def edit_match(request, id_=None):
     match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
@@ -214,6 +216,7 @@ def edit_match(request, id_=None):
 
 
 @login_required
+@require_http_methods(["POST"])
 def cancel_match(request, id_):
     match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
@@ -225,6 +228,7 @@ def cancel_match(request, id_):
 
 
 @login_required
+@require_http_methods(["POST"])
 def set_start_kicker_number(request, username):
     if request.user.username != "kicker":
         raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
@@ -305,6 +309,7 @@ def update_plot():
 
 
 @login_required
+@require_http_methods(["GET"])
 def summary(request):
     update_plot()
     eligible_players = get_eligible_players()
@@ -358,6 +363,7 @@ def edit_user_details(request, username):
 
 
 @login_required
+@require_http_methods(["GET"])
 def get_player(request):
     try:
         user_details = models.UserDetails.objects.get(shortkey=request.GET.get("shortkey", u""))
