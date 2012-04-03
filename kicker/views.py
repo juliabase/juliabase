@@ -46,6 +46,15 @@ def get_current_kicker_number(player):
         raise NoKickerNumber
 
 
+def get_elo_delta(goals_a, gloals_b, number_player_b_1, number_player_b_2, number_player_a_1, number_player_a_2,
+                  seconds, two_player_game):
+    average_goal_frequency = 7 / 300 if two_player_game else 7 / 300
+    S = 1/2 + 1/2 * (match.goals_a - match.goals_b) / (match.seconds * average_goal_frequency)
+    E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
+    delta = S - E
+    return delta
+
+
 def get_current_kicker_number_or_estimate(player):
     try:
         return get_current_kicker_number(player)
@@ -75,9 +84,9 @@ def get_current_kicker_number_or_estimate(player):
                         else preliminary_kicker_number
                 except NoKickerNumber:
                     continue
-                S = 1/2 + 90/7 * (match.goals_a - match.goals_b) / match.seconds
-                E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
-                delta = S - E
+                delta = get_elo_delta(match.goals_a, match.goals_b,
+                                      number_player_b_1, number_player_b_2, number_player_a_1, number_player_a_2,
+                                      match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
                 delta_player = 40 * delta
                 if player in [match.player_b_1, match.player_b_2]:
                     delta_player = - delta_player
@@ -174,9 +183,9 @@ def edit_match(request, id_=None):
         if seconds <= 0:
             raise JSONRequestException(5, u"Seconds must be positive.")
         if numbers_available:
-            S = 1/2 + 150/7 * (goals_a - goals_b) / seconds
-            E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
-            delta = S - E
+            delta = get_elo_delta(goals_a, goals_b,
+                                  number_player_b_1, number_player_b_2, number_player_a_1, number_player_a_2,
+                                  seconds, two_player_game=player_a_1 == player_a_2)
             delta_a_1 = get_k(player_a_1) * delta
             delta_a_2 = get_k(player_a_2) * delta
             delta_b_1 = - get_k(player_b_1) * delta
