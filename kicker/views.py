@@ -46,13 +46,19 @@ def get_current_kicker_number(player):
         raise NoKickerNumber
 
 
-def get_elo_delta(goals_a, gloals_b, number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
+def average_goal_frequency(two_player_game):
+    return 0.0310 if two_player_game else 0.0253
+
+
+def average_match_duration(two_player_game):
+    return 226 if two_player_game else 261
+
+
+def get_elo_delta(goals_a, goals_b, number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
                   seconds, two_player_game):
-    average_goal_frequency = 0.0310 if two_player_game else 0.0253
-    average_match_duration = 226 if two_player_game else 261
-    S = 1/2 + 1/2 * (match.goals_a - match.goals_b) / (match.seconds * average_goal_frequency)
+    S = 1/2 + 1/2 * (goals_a - goals_b) / (seconds * average_goal_frequency(two_player_game))
     E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
-    delta = math.sqrt(seconds / average_match_duration) * (S - E)
+    delta = math.sqrt(seconds / average_match_duration(two_player_game)) * (S - E)
     return delta
 
 
@@ -120,12 +126,12 @@ def add_kicker_numbers(match):
         number_player_a_2 = get_current_kicker_number_or_estimate(match.player_a_2)
         number_player_b_1 = get_current_kicker_number_or_estimate(match.player_b_1)
         number_player_b_2 = get_current_kicker_number_or_estimate(match.player_b_2)
-        numbers_available = True
     except NoKickerNumber:
-        numbers_available = False
+        return
+    two_player_game = match.player_a_1 == match.player_a_2
     delta = get_elo_delta(match.goals_a, match.goals_b,
                           number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
-                          match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
+                          match.seconds, two_player_game)
     delta_a_1 = get_k(match.player_a_1) * delta
     delta_a_2 = get_k(match.player_a_2) * delta
     delta_b_1 = - get_k(match.player_b_1) * delta
@@ -138,9 +144,9 @@ def add_kicker_numbers(match):
                                        timestamp=match.timestamp)
     models.KickerNumber.objects.create(player=match.player_b_2, number=number_player_b_2 + delta_b_2,
                                        timestamp=match.timestamp)
-    if numbers_available:
-        B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
-        expected_goal_difference = (int(round(6 / (1 + B))), int(round(6 / (1 + 1 / B))))
+    B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
+    expected_goal_difference = \
+        (1 / (1 + B) - 1/2) * 2 * average_goal_frequency(two_player_game) * average_match_duration(two_player_game)
 
 
 @login_required
@@ -419,22 +425,24 @@ start_number = 1500
 
 def get_start_numbers():
     players = {}
+    # FixMe: Exclude all matches for which is not 0 < S < 1 because they thwart
+    # convergence.  They should be only a few.
     for i, match in enumerate(models.Match.objects.all()[:50]):
-        players[match.player_a_1] = players[match.player_a_2] = players[match.player_b_1] = players[match.player_b_2] = \
-            start_number
+        players[match.player_a_1] = players[match.player_a_2] = \
+            players[match.player_b_1] = players[match.player_b_2] = start_number
         if i / len(players) > 7:
             break
     if i / len(players) <= 7 and i < 49:
         return
-    matches = list(models.Match.objects.all()[:i])
+    matches = list(models.Match.objects.all()[:i + 1])
     cycles_left = 1000
     while cycles_left:
         cycles_left -= 1
         old_players = players.copy()
         for match in matches:
             delta = get_elo_delta(match.goals_a, match.goals_b,
-                                  players[match.player_a_1], players[match.player_a_1], players[match.player_b_1],
-                                  players[match.player_b_1],
+                                  players[match.player_a_1], players[match.player_a_2], players[match.player_b_1],
+                                  players[match.player_b_2],
                                   match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
             delta_player = 40 * delta
             players[match.player_a_1] += delta_player
@@ -458,4 +466,4 @@ def replay():
         models.KickerNumber.objects.create(player=player, number=start_number, timestamp=zero_timestamp)
 
     for match in models.Match.objects.iterator():
-        
+        add_kicker_numbers(match)
