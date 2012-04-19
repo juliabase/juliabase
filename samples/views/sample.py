@@ -19,7 +19,10 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import hashlib, os.path, time, urllib, json
 from cStringIO import StringIO
+import PIL
+import PIL.ImageOps
 from chantal_common.signals import storage_changed
 from chantal_common.utils import append_error, HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
@@ -27,6 +30,8 @@ from chantal_common.utils import append_error, HttpResponseSeeOther, \
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import django.core.urlresolvers
+import django.forms as forms
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
@@ -35,18 +40,9 @@ from django.template import RequestContext
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
+import chantal_common.search
 from samples import models, permissions, data_tree
 from samples.views import utils, form_utils, feed_utils
-import PIL
-import PIL.ImageOps
-import chantal_common.search
-import django.core.urlresolvers
-import django.forms as forms
-import hashlib
-import os.path
-import time
-import urllib
-import json
 
 
 
@@ -716,11 +712,7 @@ def by_id(request, sample_id, path_suffix):
         else:  # FixMe: More path_suffixes should be tested
             return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
-    try:
-        permissions.assert_can_fully_view_sample(request.user, sample)
-    except permissions.PermissionError:
-        if not models.Clearance.objects.filter(user=request.user, sample=sample).exists():
-            raise
+    permissions.get_sample_clearance(request.user, sample)
     query_string = request.META["QUERY_STRING"] or ""
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
