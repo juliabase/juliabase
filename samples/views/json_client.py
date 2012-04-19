@@ -465,17 +465,13 @@ def fold_process(request, sample_id):
      - `sample_id`: The sample ID represent the data sheet where the process has to be changed.
 
     :type request: ``HttpRequest``
-    :type sample_id: int
+    :type sample_id: unicode
 
     :Returns:
-     True when the process is now folded else False.
+      True when the process is now folded else False.
 
     :rtype: ``HttpResponse``
     """
-    try:
-        int(sample_id)
-    except ValueError:
-        raise JSONRequestException(5, 'invalid "sample_id"')
     process_id = utils.int_or_zero(request.POST["process_id"])
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
     folded_processes = json.loads(request.user.samples_user_details.folded_processes)
@@ -498,7 +494,7 @@ def get_folded_processes(request, sample_id):
      - `sample_id`: The sample ID represent the data sheet the user wants to see.
 
     :type request: ``HttpRequest``
-    :type sample_id: int
+    :type sample_id: unicode
 
     :Returns:
      The process IDs of the processes, who have to be folded on the samples data sheet.
