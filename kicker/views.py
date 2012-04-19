@@ -14,7 +14,7 @@
 
 from __future__ import division, absolute_import
 
-import datetime, time, socket, os, subprocess
+import datetime, time, socket, os, subprocess, math
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
@@ -46,12 +46,13 @@ def get_current_kicker_number(player):
         raise NoKickerNumber
 
 
-def get_elo_delta(goals_a, gloals_b, number_player_b_1, number_player_b_2, number_player_a_1, number_player_a_2,
+def get_elo_delta(goals_a, gloals_b, number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
                   seconds, two_player_game):
-    average_goal_frequency = 7 / 300 if two_player_game else 7 / 300
+    average_goal_frequency = 0.0310 if two_player_game else 0.0253
+    average_match_duration = 226 if two_player_game else 261
     S = 1/2 + 1/2 * (match.goals_a - match.goals_b) / (match.seconds * average_goal_frequency)
     E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
-    delta = S - E
+    delta = math.sqrt(seconds / average_match_duration) * (S - E)
     return delta
 
 
@@ -85,7 +86,7 @@ def get_current_kicker_number_or_estimate(player):
                 except NoKickerNumber:
                     continue
                 delta = get_elo_delta(match.goals_a, match.goals_b,
-                                      number_player_b_1, number_player_b_2, number_player_a_1, number_player_a_2,
+                                      number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
                                       match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
                 delta_player = 40 * delta
                 if player in [match.player_b_1, match.player_b_2]:
@@ -108,6 +109,38 @@ def get_old_stock_value(player):
         return models.StockValue.objects.filter(gambler=player).latest("timestamp")
     except models.StockValue.DoesNotExist:
         return 100
+
+
+def add_kicker_numbers(match):
+    """This assumes that the given match is the latest of all matches that are
+    currently in the database.
+    """
+    try:
+        number_player_a_1 = get_current_kicker_number_or_estimate(match.player_a_1)
+        number_player_a_2 = get_current_kicker_number_or_estimate(match.player_a_2)
+        number_player_b_1 = get_current_kicker_number_or_estimate(match.player_b_1)
+        number_player_b_2 = get_current_kicker_number_or_estimate(match.player_b_2)
+        numbers_available = True
+    except NoKickerNumber:
+        numbers_available = False
+    delta = get_elo_delta(match.goals_a, match.goals_b,
+                          number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
+                          match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
+    delta_a_1 = get_k(match.player_a_1) * delta
+    delta_a_2 = get_k(match.player_a_2) * delta
+    delta_b_1 = - get_k(match.player_b_1) * delta
+    delta_b_2 = - get_k(match.player_b_2) * delta
+    models.KickerNumber.objects.create(player=match.player_a_1, number=number_player_a_1 + delta_a_1,
+                                       timestamp=match.timestamp)
+    models.KickerNumber.objects.create(player=match.player_a_2, number=number_player_a_2 + delta_a_2,
+                                       timestamp=match.timestamp)
+    models.KickerNumber.objects.create(player=match.player_b_1, number=number_player_b_1 + delta_b_1,
+                                       timestamp=match.timestamp)
+    models.KickerNumber.objects.create(player=match.player_b_2, number=number_player_b_2 + delta_b_2,
+                                       timestamp=match.timestamp)
+    if numbers_available:
+        B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
+        expected_goal_difference = (int(round(6 / (1 + B))), int(round(6 / (1 + 1 / B))))
 
 
 @login_required
@@ -184,7 +217,7 @@ def edit_match(request, id_=None):
             raise JSONRequestException(5, u"Seconds must be positive.")
         if numbers_available:
             delta = get_elo_delta(goals_a, goals_b,
-                                  number_player_b_1, number_player_b_2, number_player_a_1, number_player_a_2,
+                                  number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
                                   seconds, two_player_game=player_a_1 == player_a_2)
             delta_a_1 = get_k(player_a_1) * delta
             delta_a_2 = get_k(player_a_2) * delta
@@ -380,3 +413,49 @@ def get_player(request):
         raise Http404(u"User not found.")
     return respond_in_json(
         (user_details.user.username, user_details.nickname or user_details.user.first_name or user_details.user.username))
+
+
+start_number = 1500
+
+def get_start_numbers():
+    players = {}
+    for i, match in enumerate(models.Match.objects.all()[:50]):
+        players[match.player_a_1] = players[match.player_a_2] = players[match.player_b_1] = players[match.player_b_2] = \
+            start_number
+        if i / len(players) > 7:
+            break
+    if i / len(players) <= 7 and i < 49:
+        return
+    matches = list(models.Match.objects.all()[:i])
+    cycles_left = 1000
+    while cycles_left:
+        cycles_left -= 1
+        old_players = players.copy()
+        for match in matches:
+            delta = get_elo_delta(match.goals_a, match.goals_b,
+                                  players[match.player_a_1], players[match.player_a_1], players[match.player_b_1],
+                                  players[match.player_b_1],
+                                  match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
+            delta_player = 40 * delta
+            players[match.player_a_1] += delta_player
+            players[match.player_a_2] += delta_player
+            players[match.player_b_1] -= delta_player
+            players[match.player_b_2] -= delta_player
+        if all(abs(players[player] - old_players[player]) < 1 for player in players):
+            break
+    else:
+        return
+    return players
+
+
+def replay():
+    models.KickerNumber.objects.all().delete()
+    players = get_start_numbers()
+    if not players:
+        return
+    zero_timestamp = models.Match.objects.all()[0].timestamp - datetime.timedelta(seconds=1)
+    for player, start_number in players.items():
+        models.KickerNumber.objects.create(player=player, number=start_number, timestamp=zero_timestamp)
+
+    for match in models.Match.objects.iterator():
+        
