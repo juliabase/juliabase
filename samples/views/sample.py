@@ -712,11 +712,7 @@ def by_id(request, sample_id, path_suffix):
         else:  # FixMe: More path_suffixes should be tested
             return show(request, sample.name)
     # Necessary so that the sample's name isn't exposed through the URL
-    try:
-        permissions.assert_can_fully_view_sample(request.user, sample)
-    except permissions.PermissionError:
-        if not models.Clearance.objects.filter(user=request.user, sample=sample).exists():
-            raise
+    permissions.get_sample_clearance(request.user, sample)
     query_string = request.META["QUERY_STRING"] or ""
     return HttpResponseSeeOther(
         django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
