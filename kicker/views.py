@@ -412,7 +412,7 @@ def get_player(request):
         (user_details.user.username, user_details.nickname or user_details.user.first_name or user_details.user.username))
 
 
-start_number = 1500
+start_number = 1300
 
 def get_start_numbers():
     players = {}
