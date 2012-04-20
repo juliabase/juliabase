@@ -244,12 +244,15 @@ def edit_match(request, id_=None):
             player_a_1=player_a_1, player_a_2=player_a_2, player_b_1=player_b_1, player_b_2=player_b_2,
             goals_a=goals_a, goals_b=goals_b, timestamp=timestamp, finished=finished, seconds=seconds,
             reporter=request.user)
-    match_result = MatchResult(match)
     if match.finished:
         if seconds <= 0:
             raise JSONRequestException(5, "Seconds must be positive.")
+        match_result = MatchResult(match)
         match_result.add_kicker_numbers()
         match_result.add_stock_values()
+    else:
+        match.seconds = average_match_duration(player_a_1 == player_a_2)
+        match_result = MatchResult(match)
     return respond_in_json((match.pk, match_result.estimated_win_team_1 if match.finished else
                             match_result.expected_goal_difference))
 
