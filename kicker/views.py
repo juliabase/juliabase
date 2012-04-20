@@ -117,36 +117,69 @@ def get_old_stock_value(player):
         return 100
 
 
-def add_kicker_numbers(match):
-    """This assumes that the given match is the latest of all matches that are
-    currently in the database.
-    """
-    try:
-        number_player_a_1 = get_current_kicker_number_or_estimate(match.player_a_1)
-        number_player_a_2 = get_current_kicker_number_or_estimate(match.player_a_2)
-        number_player_b_1 = get_current_kicker_number_or_estimate(match.player_b_1)
-        number_player_b_2 = get_current_kicker_number_or_estimate(match.player_b_2)
-    except NoKickerNumber:
-        return
-    two_player_game = match.player_a_1 == match.player_a_2
-    delta = get_elo_delta(match.goals_a, match.goals_b,
-                          number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
-                          match.seconds, two_player_game)
-    delta_a_1 = get_k(match.player_a_1) * delta
-    delta_a_2 = get_k(match.player_a_2) * delta
-    delta_b_1 = - get_k(match.player_b_1) * delta
-    delta_b_2 = - get_k(match.player_b_2) * delta
-    models.KickerNumber.objects.create(player=match.player_a_1, number=number_player_a_1 + delta_a_1,
-                                       timestamp=match.timestamp)
-    models.KickerNumber.objects.create(player=match.player_a_2, number=number_player_a_2 + delta_a_2,
-                                       timestamp=match.timestamp)
-    models.KickerNumber.objects.create(player=match.player_b_1, number=number_player_b_1 + delta_b_1,
-                                       timestamp=match.timestamp)
-    models.KickerNumber.objects.create(player=match.player_b_2, number=number_player_b_2 + delta_b_2,
-                                       timestamp=match.timestamp)
-    B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
-    expected_goal_difference = \
-        (1 / (1 + B) - 1/2) * 2 * average_goal_frequency(two_player_game) * average_match_duration(two_player_game)
+class MatchResult(object):
+
+    def __init__(self, match):
+        self.player_a_1, self.player_a_2, self.player_b_1, self.player_b_2 = \
+            match.player_a_1, match.player_a_2, match.player_b_1, match.player_b_2
+        self.timestamp = match.timestamp
+        self.two_player_game = match.player_a_1 == match.player_a_2
+        try:
+            self.number_player_a_1 = get_current_kicker_number_or_estimate(self.player_a_1)
+            self.number_player_a_2 = get_current_kicker_number_or_estimate(self.player_a_2)
+            self.number_player_b_1 = get_current_kicker_number_or_estimate(self.player_b_1)
+            self.number_player_b_2 = get_current_kicker_number_or_estimate(self.player_b_2)
+        except NoKickerNumber:
+            self.result_available = False
+            self.expected_goal_difference = self.estimated_win_team_1 = None
+        else:
+            self.result_available = True
+            delta = get_elo_delta(match.goals_a, match.goals_b,
+                                  number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
+                                  match.seconds, self.two_player_game)
+            self.delta_a_1 = get_k(match.player_a_1) * delta
+            self.delta_a_2 = get_k(match.player_a_2) * delta
+            self.delta_b_1 = - get_k(match.player_b_1) * delta
+            self.delta_b_2 = - get_k(match.player_b_2) * delta
+            self.new_number_a_1 = self.number_player_a_1 + self.delta_a_1
+            self.new_number_a_2 = self.number_player_a_2 + self.delta_a_2
+            self.new_number_b_1 = self.number_player_b_1 + self.delta_b_1
+            self.new_number_b_2 = self.number_player_b_2 + self.delta_b_2
+            B = 10**((self.number_player_b_1 + self.number_player_b_2 - self.number_player_a_1 - self.number_player_a_2)
+                     / 800)
+            self.expected_goal_difference = (1 / (1 + B) - 1/2) * \
+                2 * average_goal_frequency(self.two_player_game) * average_match_duration(self.two_player_game)
+            self.estimated_win_team_1 = get_k() * delta
+
+    def add_kicker_numbers(self):
+        if self.result_available:
+            models.KickerNumber.objects.create(player=self.player_a_1, number=self.new_number_a_1, timestamp=self.timestamp)
+            models.KickerNumber.objects.create(player=self.player_a_2, number=self.new_number_a_2, timestamp=self.timestamp)
+            models.KickerNumber.objects.create(player=self.player_b_1, number=self.new_number_b_1, timestamp=self.timestamp)
+            models.KickerNumber.objects.create(player=self.player_b_2, number=self.new_number_b_2, timestamp=self.timestamp)
+
+    def add_stock_values(self):
+        if self.result_available:
+            for shares in player_a_1.sold_shares.all():
+                models.StockValue.objects.create(
+                    gambler=shares.owner,
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_a_1,
+                    timestamp=match.timestamp)
+            for shares in player_a_2.sold_shares.all():
+                models.StockValue.objects.create(
+                    gambler=shares.owner,
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_a_2,
+                    timestamp=match.timestamp)
+            for shares in player_b_1.sold_shares.all():
+                models.StockValue.objects.create(
+                    gambler=shares.owner,
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_b_1,
+                    timestamp=match.timestamp)
+            for shares in player_b_2.sold_shares.all():
+                models.StockValue.objects.create(
+                    gambler=shares.owner,
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_b_2,
+                    timestamp=match.timestamp)
 
 
 @login_required
@@ -210,57 +243,14 @@ def edit_match(request, id_=None):
             player_a_1=player_a_1, player_a_2=player_a_2, player_b_1=player_b_1, player_b_2=player_b_2,
             goals_a=goals_a, goals_b=goals_b, timestamp=timestamp, finished=finished, seconds=seconds,
             reporter=request.user)
-    try:
-        number_player_a_1 = get_current_kicker_number_or_estimate(player_a_1)
-        number_player_a_2 = get_current_kicker_number_or_estimate(player_a_2)
-        number_player_b_1 = get_current_kicker_number_or_estimate(player_b_1)
-        number_player_b_2 = get_current_kicker_number_or_estimate(player_b_2)
-        numbers_available = True
-    except NoKickerNumber:
-        numbers_available = False
     if match.finished:
         if seconds <= 0:
             raise JSONRequestException(5, u"Seconds must be positive.")
-        if numbers_available:
-            delta = get_elo_delta(goals_a, goals_b,
-                                  number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
-                                  seconds, two_player_game=player_a_1 == player_a_2)
-            delta_a_1 = get_k(player_a_1) * delta
-            delta_a_2 = get_k(player_a_2) * delta
-            delta_b_1 = - get_k(player_b_1) * delta
-            delta_b_2 = - get_k(player_b_2) * delta
-            models.KickerNumber.objects.create(player=player_a_1, number=number_player_a_1 + delta_a_1,
-                                               timestamp=match.timestamp)
-            models.KickerNumber.objects.create(player=player_a_2, number=number_player_a_2 + delta_a_2,
-                                               timestamp=match.timestamp)
-            models.KickerNumber.objects.create(player=player_b_1, number=number_player_b_1 + delta_b_1,
-                                               timestamp=match.timestamp)
-            models.KickerNumber.objects.create(player=player_b_2, number=number_player_b_2 + delta_b_2,
-                                               timestamp=match.timestamp)
-        for shares in player_a_1.sold_shares.all():
-            models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_a_1,
-                timestamp=match.timestamp)
-        for shares in player_a_2.sold_shares.all():
-            models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_a_2,
-                timestamp=match.timestamp)
-        for shares in player_b_1.sold_shares.all():
-            models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_1,
-                timestamp=match.timestamp)
-        for shares in player_b_2.sold_shares.all():
-            models.StockValue.objects.create(
-                gambler=shares.owner, value=get_old_stock_value(shares.owner) + shares.number/100 * delta_b_2,
-                timestamp=match.timestamp)
-    else:
-        if numbers_available:
-            B = 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800)
-            expected_score = (int(round(6 / (1 + B))), int(round(6 / (1 + 1 / B))))
-    if numbers_available:
-        return respond_in_json((match.pk, get_k() * delta if match.finished else expected_score))
-    else:
-        return respond_in_json((match.pk, None))
+        match_result = MatchResult(match)
+        match_result.add_kicker_numbers()
+        match_result.add_stock_values()
+    return respond_in_json((match.pk, match_result.estimated_win_team_1 if match.finished else
+                            match_result.expected_goal_difference))
 
 
 @login_required
@@ -464,6 +454,5 @@ def replay():
     zero_timestamp = models.Match.objects.all()[0].timestamp - datetime.timedelta(seconds=1)
     for player, start_number in players.items():
         models.KickerNumber.objects.create(player=player, number=start_number, timestamp=zero_timestamp)
-
     for match in models.Match.objects.iterator():
-        add_kicker_numbers(match)
+        MatchResult(match).add_kicker_numbers()
