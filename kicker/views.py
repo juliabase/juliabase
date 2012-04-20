@@ -161,26 +161,22 @@ class MatchResult(object):
 
     def add_stock_values(self):
         if self.result_available:
-            for shares in player_a_1.sold_shares.all():
+            for shares in self.player_a_1.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_a_1,
-                    timestamp=match.timestamp)
-            for shares in player_a_2.sold_shares.all():
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_a_1, timestamp=self.timestamp)
+            for shares in self.player_a_2.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_a_2,
-                    timestamp=match.timestamp)
-            for shares in player_b_1.sold_shares.all():
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_a_2, timestamp=self.timestamp)
+            for shares in self.player_b_1.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_b_1,
-                    timestamp=match.timestamp)
-            for shares in player_b_2.sold_shares.all():
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_b_1, timestamp=self.timestamp)
+            for shares in self.player_b_2.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * match_result.delta_b_2,
-                    timestamp=match.timestamp)
+                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_b_2, timestamp=self.timestamp)
 
 
 @login_required
