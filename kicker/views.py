@@ -12,7 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-from __future__ import division, absolute_import
+from __future__ import division, absolute_import, unicode_literals
 
 import datetime, time, socket, os, subprocess, math
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -134,9 +134,10 @@ class MatchResult(object):
             self.expected_goal_difference = self.estimated_win_team_1 = None
         else:
             self.result_available = True
-            delta = get_elo_delta(match.goals_a, match.goals_b,
-                                  number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
-                                  match.seconds, self.two_player_game)
+            delta = get_elo_delta(
+                match.goals_a, match.goals_b,
+                self.number_player_a_1, self.number_player_a_2, self.number_player_b_1, self.number_player_b_2,
+                match.seconds, self.two_player_game)
             self.delta_a_1 = get_k(match.player_a_1) * delta
             self.delta_a_2 = get_k(match.player_a_2) * delta
             self.delta_b_1 = - get_k(match.player_b_1) * delta
@@ -187,7 +188,7 @@ class MatchResult(object):
 def edit_match(request, id_=None):
     match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
-        raise JSONRequestException(3005, u"You must be the original reporter of this match.")
+        raise JSONRequestException(3005, "You must be the original reporter of this match.")
     try:
         if not match:
             player_a_1 = get_object_or_404(django.contrib.auth.models.User, username=request.POST["player_a_1"])
@@ -205,26 +206,26 @@ def edit_match(request, id_=None):
         raise JSONRequestException(5, error.args[0])
     if not match:
         if player_a_1 == player_a_2 and player_b_1 != player_b_2 or player_a_1 != player_a_2 and player_b_1 == player_b_2:
-            raise JSONRequestException(3000, u"Games with three players can't be processed.")
+            raise JSONRequestException(3000, "Games with three players can't be processed.")
         if player_a_1 == player_a_2 == player_b_1 == player_b_2:
-            raise JSONRequestException(3001, u"All players are the same person.")
+            raise JSONRequestException(3001, "All players are the same person.")
         unfinished_matches = models.Match.objects.filter(finished=False)
         if unfinished_matches.exists():
             if unfinished_matches.exclude(reporter=request.user).exists():
                 raise JSONRequestException(3004,
-                                           u"You can't add a match if another one of another reporter is not yet finished.")
+                                           "You can't add a match if another one of another reporter is not yet finished.")
             for match in unfinished_matches.all():
                 match.delete()
     else:
         if match.finished:
-            raise JSONRequestException(3003, u"A finished match can't be edited anymore.")
+            raise JSONRequestException(3003, "A finished match can't be edited anymore.")
         player_a_1 = match.player_a_1
         player_a_2 = match.player_a_2
         player_b_1 = match.player_b_1
         player_b_2 = match.player_b_2
     try:
         if models.Match.objects.latest("timestamp").timestamp >= timestamp:
-            raise JSONRequestException(3002, u"This game is not the most recent one.")
+            raise JSONRequestException(3002, "This game is not the most recent one.")
     except models.Match.DoesNotExist:
         pass
     if match:
@@ -245,7 +246,7 @@ def edit_match(request, id_=None):
             reporter=request.user)
     if match.finished:
         if seconds <= 0:
-            raise JSONRequestException(5, u"Seconds must be positive.")
+            raise JSONRequestException(5, "Seconds must be positive.")
         match_result = MatchResult(match)
         match_result.add_kicker_numbers()
         match_result.add_stock_values()
@@ -258,9 +259,9 @@ def edit_match(request, id_=None):
 def cancel_match(request, id_):
     match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
-        raise JSONRequestException(3005, u"You must be the original reporter of this match.")
+        raise JSONRequestException(3005, "You must be the original reporter of this match.")
     if match.finished:
-        raise JSONRequestException(3003, u"A finished match can't be canceled.")
+        raise JSONRequestException(3003, "A finished match can't be canceled.")
     match.delete()
     return respond_in_json(True)
 
@@ -269,7 +270,7 @@ def cancel_match(request, id_):
 @require_http_methods(["POST"])
 def set_start_kicker_number(request, username):
     if request.user.username != "kicker":
-        raise JSONRequestException(3005, u"You must be the user \"kicker\" to use this function.")
+        raise JSONRequestException(3005, "You must be the user \"kicker\" to use this function.")
     try:
         start_kicker_number = int(request.POST["start_kicker_number"])
         timestamp = datetime.datetime.strptime(request.POST["timestamp"], "%Y-%m-%d %H:%M:%S")
@@ -282,7 +283,7 @@ def set_start_kicker_number(request, username):
         player.set_unusable_password()
         player.save()
     if models.KickerNumber.objects.filter(player=player).exists():
-        raise JSONRequestException(3006, u"There are already kicker numbers stored for this user.")
+        raise JSONRequestException(3006, "There are already kicker numbers stored for this user.")
     models.KickerNumber.objects.create(player=player, number=start_kicker_number, timestamp=timestamp)
     return respond_in_json(True)
 
@@ -352,14 +353,14 @@ def summary(request):
     update_plot()
     eligible_players = get_eligible_players()
     return render_to_response("kicker/summary.html", {
-        "title": _(u"Kicker summary"), "kicker_numbers": eligible_players,
+        "title": _("Kicker summary"), "kicker_numbers": eligible_players,
         "latest_matches": models.Match.objects.reverse()[:20]},
         context_instance=RequestContext(request))
 
 
 class UserDetailsForm(forms.ModelForm):
-    u"""Model form for user preferences.  I exhibit only two fields here,
-    namely the nickname and the shortkey.
+    """Model form for user preferences.  I exhibit only two fields here, namely
+    the nickname and the shortkey.
     """
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
@@ -368,13 +369,13 @@ class UserDetailsForm(forms.ModelForm):
     def clean_nickname(self):
         nickname = self.cleaned_data["nickname"]
         if nickname and models.UserDetails.objects.exclude(user=self.user).filter(nickname=nickname).exists():
-            raise ValidationError(_(u"This nickname is already given."))
+            raise ValidationError(_("This nickname is already given."))
         return nickname
 
     def clean_shortkey(self):
         shortkey = self.cleaned_data["shortkey"]
         if shortkey and models.UserDetails.objects.exclude(user=self.user).filter(shortkey=shortkey).exists():
-            raise ValidationError(_(u"This shortkey is already given."))
+            raise ValidationError(_("This shortkey is already given."))
         return shortkey
 
     class Meta:
@@ -386,17 +387,17 @@ class UserDetailsForm(forms.ModelForm):
 def edit_user_details(request, username):
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if not request.user.is_staff and request.user != user:
-        raise Http404(u"You can't access the user details of another user.")
+        raise Http404("You can't access the user details of another user.")
     user_details = user.kicker_user_details
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
         if user_details_form.is_valid():
             user_details_form.save()
-            return successful_response(request, _(u"The preferences were successfully updated."), summary)
+            return successful_response(request, _("The preferences were successfully updated."), summary)
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
     return render_to_response("kicker/user_details.html", {
-            "title": _(u"Change preferences for {user_name}").format(user_name=get_really_full_name(user)),
+            "title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(user)),
             "user_details": user_details_form}, context_instance=RequestContext(request))
 
 
@@ -404,9 +405,9 @@ def edit_user_details(request, username):
 @require_http_methods(["GET"])
 def get_player(request):
     try:
-        user_details = models.UserDetails.objects.get(shortkey=request.GET.get("shortkey", u""))
+        user_details = models.UserDetails.objects.get(shortkey=request.GET.get("shortkey", ""))
     except (models.UserDetails.MultipleObjectsReturned, models.UserDetails.DoesNotExist):
-        raise Http404(u"User not found.")
+        raise Http404("User not found.")
     return respond_in_json(
         (user_details.user.username, user_details.nickname or user_details.user.first_name or user_details.user.username))
 
