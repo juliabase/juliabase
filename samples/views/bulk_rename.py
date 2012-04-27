@@ -54,7 +54,7 @@ class NewNameForm(forms.Form):
     """Form for the new name of one sample.
     """
     _ = ugettext_lazy
-    name = forms.CharField(label=_("New name"), max_length=192)
+    name = forms.CharField(label=_("New name"), max_length=22)
 
     def __init__(self, prefix_, *args, **kwargs):
         """Class constructor.
