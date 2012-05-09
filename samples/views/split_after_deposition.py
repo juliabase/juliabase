@@ -467,8 +467,7 @@ def split_and_rename_after_deposition(request, deposition_number):
     if not deposition.finished:
         raise Http404("This deposition is not finished yet.")
     if deposition.split_done:
-        messages.error(request, _("You can use the split and rename function only once after a deposition."))
-        return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+        raise Http404("You can use the split and rename function only once after a deposition.")
     remote_client = is_json_requested(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \
