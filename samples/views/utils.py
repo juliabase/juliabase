@@ -43,7 +43,6 @@ import re
 import string
 
 
-
 old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$")
 new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})|  # initials of a user
                                          [A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4})             # external operator
