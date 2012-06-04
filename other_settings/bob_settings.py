@@ -22,14 +22,12 @@ TEMPLATE_DEBUG = DEBUG
 
 import sys
 sys.path.extend(["/home/chantal/repos/chantal_common/bob_online",
-                 "/home/chantal/repos/chantal_samples/bob_online",
-                 "/home/chantal/repos/businesscards/bob_online",
-                 "/home/chantal/repos/chantal_kicker/bob_online"])
+                 "/home/chantal/repos/chantal_samples/bob_online"])
 
-DEFAULT_FROM_EMAIL = "bronger@physik.rwth-aachen.de"
+DEFAULT_FROM_EMAIL = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
-    ("Torsten Bronger", "bronger@physik.rwth-aachen.de"),
+    ("", ""),
 )
 
 MANAGERS = ADMINS
@@ -49,8 +47,7 @@ CACHE_ROOT = b"/tmp/chantal/cache"
 
 USE_X_SENDFILE = False
 
-TEMPLATE_DIRS = ("/home/chantal/repos/chantal_ipv/bob_online", "/home/chantal/repos/chantal_common/bob_online",
-                 "/home/chantal/repos/chantal_samples/bob_online", "/home/chantal/repos/businesscards/bob_online")
+TEMPLATE_DIRS = ()
 
 INSTALLED_APPS = (
     "django.contrib.auth",
@@ -60,16 +57,14 @@ INSTALLED_APPS = (
     "django.contrib.markup",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "chantal_ipv",
+    "chantal_institute",
 #    "refdb",
     "samples",
-    "visiting",
-    "kicker",
     "chantal_common",
     "south"
 )
 
-DOMAIN_NAME = "bob.ipv.kfa-juelich.de"
+DOMAIN_NAME = ""
 
 LOGIN_URL = "http://{0}/login".format(DOMAIN_NAME)
 LOGIN_REDIRECT_URL = "/"
@@ -92,13 +87,7 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 REFDB_ROOT_USERNAME = CREDENTIALS["refdb_user"]
 REFDB_ROOT_PASSWORD = CREDENTIALS["refdb_password"]
-REFDB_PATH_TO_INDEXER = "/home/bronger/src/django-refdb/current/index_pdfs.py"
+REFDB_PATH_TO_INDEXER = "/home/chantal/src/django-refdb/current/index_pdfs.py"
 
 
 #AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
-
-MEASUREMENT_DATA_ROOT_DIR = b"/windows/T/Daten/"
-PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, b"pds")
-DSR_ROOT_DIR = b"/windows/user_public/USER/w.reetz/DSR/Messwerte/"
-IR_ROOT_DIR = b"/windows/IR/"
-SOLARSIMULATOR_1_ROOT_DIR = b"/windows/P/LABOR USER/maike_user/ascii files/"

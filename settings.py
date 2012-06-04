@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Django settings for IEK-PV's Chantal installation.
+"""Django settings for a generic Chantal installation.
 """
 
 from __future__ import unicode_literals
@@ -35,8 +35,8 @@ assert read_files, Exception("file with authentication data not found")
 CREDENTIALS = dict(credentials.items("DEFAULT"))
 
 
-DEFAULT_FROM_EMAIL = "t.bronger@fz-juelich.de"
-EMAIL_HOST = "mailrelay.fz-juelich.de"
+DEFAULT_FROM_EMAIL = ""
+EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
     ("Chantal-Admins", "chantal-admins@googlegroups.com"),
@@ -53,7 +53,7 @@ DATABASES = {
         "NAME": "chantal",
         "USER": CREDENTIALS["postgresql_user"],
         "PASSWORD": CREDENTIALS["postgresql_password"],
-        "HOST": "192.168.26.132"
+        "HOST": "192.168.xx.xxx"
         }
     }
 
@@ -127,12 +127,10 @@ INSTALLED_APPS = (
     "django.contrib.markup",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "chantal_ipv",
+    "chantal_institute",
     "samples",
 #    "refdb",
     "south",
-    "kicker",
-    "visiting",
     "chantal_common"
 )
 
@@ -236,21 +234,17 @@ AD_MANAGED_PERMISSIONS = set(["view_all_samples", "adopt_samples", "edit_permiss
 # alternative would be a full-fledged Django account with locally stored
 # password, which means bigger maintenance work for the Chantal administrator.
 
-ADDITIONAL_LDAP_USERS = set(["r.imlau", "a.kuvacs", "m.luysberg"])
+ADDITIONAL_LDAP_USERS = set([])
 
 ADD_SAMPLE_VIEW = "chantal_ipv.views.samples.sample.add"
 
-MEASUREMENT_DATA_ROOT_DIR = b"/mnt/T/Daten/"
+MEASUREMENT_DATA_ROOT_DIR = b""
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, b"pds")
-LUMA_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, b"luma")
-DSR_ROOT_DIR = b"/mnt/P/USER/w.reetz/DSR/Messwerte/"
-IR_ROOT_DIR = b"/mnt/IR/"
+
 PHYSICAL_PROCESS_BLACKLIST = [("chantal_ipv", "substrate"),
                               ("chantal_ipv", "layerthicknessmeasurement")]
-SOLARSIMULATOR_1_ROOT_DIR = b"/mnt/P/LABOR USER/maike_user/ascii files/"
-LADA_MFC_CALIBRATION_FILE_PATH = b"/mnt/modultechnologie/lada_mfc_calibrations.txt"
+SOLARSIMULATOR_1_ROOT_DIR = b""
 MERGE_CLEANUP_FUNCTION = "chantal_ipv.utils.clean_up_after_merging"
-ERMES_OPTICAL_DATA_ROOT_DIR = b"/mnt/P/USER/m.ermes/optical_data/"
 
-CRAWLER_LOGS_ROOT = b"/home/chantal/crawler_data"
-CRAWLER_LOGS_WHITELIST = set(["ConductivityMeasurementSet", "SolarsimulatorPhotoMeasurement"])
+CRAWLER_LOGS_ROOT = b""
+CRAWLER_LOGS_WHITELIST = set([])

@@ -48,16 +48,6 @@ if "refdb" in settings.INSTALLED_APPS:
                             (r"^bib/", include("refdb.urls")),
                             )
 
-if "visiting" in settings.INSTALLED_APPS:
-    urlpatterns += patterns("",
-                            (r"cards/", include("visiting.urls")),
-                            )
-
-if "kicker" in settings.INSTALLED_APPS:
-    urlpatterns += patterns("",
-                            (r"^kicker/", include("kicker.urls")),
-                            )
-
 urlpatterns += patterns("",
     (r"^admin/", include(admin.site.urls)),
 )
