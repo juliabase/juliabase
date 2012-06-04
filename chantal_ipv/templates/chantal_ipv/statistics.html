@@ -1,0 +1,183 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "chantal_common/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load ipv_extras %}
+
+{% block refresh_tag %}
+  <meta http-equiv="refresh" content="600"/>
+{% endblock %}
+
+{% block local_scripts %}
+  <script type="text/javascript">
+    // <![CDATA[
+    google.load("visualization", "1", {packages: ["gauge"]});
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+	var data = new google.visualization.DataTable();
+	data.addColumn("string", "Label");
+	data.addColumn("number", "Value");
+	data.addRows(1);
+	data.setValue(0, 0, "{% trans 'hit rate' %}/%");
+	data.setValue(0, 1, {{ cache_hit_rate }});
+	var chart = new google.visualization.Gauge(document.getElementById("cache_hit_rate"));
+	var options = {width: 200, height: 200, redFrom: 0, redTo: 10, majorTicks: ["0", "", "", "", "", "100"], 
+                       minorTicks: 2};
+	chart.draw(data, options);
+
+	var data = new google.visualization.DataTable();
+	data.addColumn("string", "Label");
+	data.addColumn("number", "Value");
+	data.addRows(1);
+	data.setValue(0, 0, "{% trans 'connect.' %}");
+	data.setValue(0, 1, {{ cache_connections.0 }});
+	var chart = new google.visualization.Gauge(document.getElementById("cache_connections"));
+	var options = {width: 200, height: 200, max: {{ cache_connections.1 }}, redFrom: {{ cache_connections.1|fraction }}, 
+		       redTo: {{ cache_connections.1 }},
+		       majorTicks: ["0", "", "{{ cache_connections.1 }}"], minorTicks: 4};
+	chart.draw(data, options);
+    }
+    // ]]>
+  </script>
+{% endblock %}
+
+{% block float_image %}
+<img class="vintage-image" src="{{ STATIC_URL }}ipv/secretary.jpg" alt="{% trans 'secretary' %}"
+     width="300" height="368"/>
+{% endblock %}
+
+{% block css %}
+<style type="text/css">
+  img { border: 0pt }
+  th { text-align: left }
+  td { vertical-align: top }
+</style>
+{% endblock %}
+
+{% block frame_content %}
+<h2>{% trans 'Availability' %}</h2>
+
+{% if not availability %}
+  <p>{% trans 'No data available.' %}</p>
+{% else %}
+  <p>{% blocktrans with availability.availability as availability and availability.start_date as start_date %}{{ availability }} 
+         availability since {{ start_date }}.{% endblocktrans %}</p>
+
+  {% if availability.downtimes %}
+    <p>{% trans 'Most recent downtimes:' %}</p>
+
+    <ul>
+      {% for downtime in availability.downtimes %}
+        <li>{{ downtime }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
+
+
+<h2 style="clear:both">{% trans 'Work load' %}</h2>
+
+{% blocktrans %}
+<p>These plots are re-calculated every 10 minutes, the underlying resolution
+  being higher, though.  Lines referring to “mandy” are slightly thicker than
+  those referring to “olga”.</p>
+
+<p>“Memory usage” also shows the use of swap storage in red.</p>
+{% endblocktrans %}
+
+<div style="float: right; text-align: center"><p>{% trans 'Cache status' %}</p>
+  <div id="cache_hit_rate"></div>
+  <div id="cache_connections"></div>
+</div>
+
+<p><img src="{{ STATIC_URL }}server_load.png" alt="{% trans 'server load statistics plots' %}" width="800" height="900"/></p>
+
+
+<h2>{% trans 'Backups' %}</h2>
+
+<h3>{% trans 'Hourly backups of the database tables' %}</h3>
+
+{% if last_db_backup %}
+  <table>
+    <tbody>
+    <tr>
+      <td>{% trans 'Last backup:' %}</td>
+      <td style="padding-left: 1em">{{ last_db_backup.last_backup }}</td>
+    </tr>
+    <tr>
+      <td>{% trans 'Last copy of all backups to sonne:' %}</td>
+      <td style="padding-left: 1em">{{ last_db_backup.last_copy }}</td>
+    </tr>
+    </tbody>
+  </table>
+{% else %}
+  <p>{% trans 'No log data found.' %}</p>
+{% endif %}
+
+<h3>{% trans 'Tivoli storage manager' %}</h3>
+
+<div style="float: left; margin-right: 5em">
+<h4 style="margin-top: 0pt">Mandy</h4>
+
+{% if adsm_results_mandy.log_file_error %}
+  <p style="warning">{% trans 'Log file could not be accessed.' %}</p>
+{% else %}
+  <table class="padding5" border="1">
+    <caption>{% trans 'last backup' %}</caption>
+    <tbody>
+    <tr>
+      {# Clock time #}
+      <th>{% trans 'Time' %}</th>
+      <td>{{ adsm_results_mandy.last_backup_timestamp }}</td>
+    </tr>
+    <tr>
+      <th>{% trans 'Objects inspected' %}</th>
+      <td>{{ adsm_results_mandy.ispected_objects }}</td>
+    </tr>
+    <tr>
+      <th>{% trans 'Objects failed' %}</th>
+      <td>{{ adsm_results_mandy.failed_objects }}</td>
+    </tr>
+    </tbody>
+  </table>
+{% endif %}
+</div>
+
+<h4 style="margin-top: 0pt">Olga</h4>
+
+{% if adsm_results_olga.log_file_error %}
+  <p style="warning">{% trans 'Log file could not be accessed.' %}</p>
+{% else %}
+  <table class="padding5" border="1">
+    <caption>{% trans 'last backup' %}</caption>
+    <tbody>
+    <tr>
+      {# Clock time #}
+      <th>{% trans 'Time' %}</th>
+      <td>{{ adsm_results_olga.last_backup_timestamp }}</td>
+    </tr>
+    <tr>
+      <th>{% trans 'Objects inspected' %}</th>
+      <td>{{ adsm_results_olga.ispected_objects }}</td>
+    </tr>
+    <tr>
+      <th>{% trans 'Objects failed' %}</th>
+      <td>{{ adsm_results_olga.failed_objects }}</td>
+    </tr>
+    </tbody>
+  </table>
+{% endif %}
+
+{% endblock %}

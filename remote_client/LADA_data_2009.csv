@@ -1,0 +1,518 @@
+Nr.	Datum	Operator	Schicht	Kammer	vSubstr LQ	Pendel#	H2	SiH4	SC	TMB	CH4	CO2	PH3	Gas?	Gasfluss	t	p	P	Pump nach	f	del	Ts	Th	Th depo	Subst	Subst	Anzahl	Pr	CL	CT	UDC	Basis p	d	R	?d/d¯	Deplet	R dyn	h	FF	Voc	jsc	Rs	FF rot	jsc rot	FF blau	jsc blau	j0	n	Reflekt	Anneal	sd nT	sd vT/oT	sph	Photosens	Krist (%)	Krist (%)	Sims [O]	Sims [C]	Sims [N]	Sims [B]	Sims [?]	PDS E04	PDS a 1,2	H2	SiH4	TMB	CH4	CO2	PH3		Bemerkung			
+					(m/s)	LQ	(sccm)	(sccm)	(%)	(sccm)	(sccm)	(sccm)	(sccm)		(sccm)	(s)	(mbar)	(W)	Schicht (s)	(Hz)	(mm)	(°C)	(°C)	(°C)	Größe	Material	Gläser	(W)			(V)	(mbar)	(nm)	(Å/s)	(%)	(%)	(nm·m/min)	(%)	(%)	(mV)	(mA/cm²)	(W)	(%)	(mA/cm²)	(%)	(mA/cm²)	(mA/cm²)	(-)			(S/cm)	(S/cm)	(S/cm)	(-)	488 nm	647 nm	(cm-3)	(cm-3)	(cm-3)	(cm-3)	(cm-3)	(eV)	eV (cm-1)	Cal sccm	Cal sccm	Cal sccm	Cal sccm	Cal sccm	Cal sccm				Größe	Material
+																																																			(nach Tempern)	(vor Tempern)	Hell																				10x10	Corning
+08D001	03.12.2008			1			300	60	11.03							2400	4	30		13.56					40x40	Fensterglas		0.4	804	129	0.4		385.25	1.6	1.69	15.18386714																												#NV	#NV						380°C Heizer T 1,5 h Carrier aufgeheizt, auf Fensterglas, Homogenitätsversuch,Messungen  auf Mitte		40x40	ZnO
+																																																																										
+08D002	03.12.2008			1			4000	105	1.6							1680	9	500		13.56					40x40	Fensterglas		0.4	752	129	0.8		1034.25																															#NV	#NV						Schicht abgeplatzt, radiale Inhomogenitäten zu erahnen,		40x40x0,18	Asahi-U
+																																																																										
+08D003	03.12.2008			1			300	60	11.03							2400	4	31		13.56					10x10	Corning	8	0.4	805	127	0,3-0,7		396.8																		3.93E-11		1.65E-06	4.20E+04										#NV	#NV						8 Stck 10x10 in einem Carrier, Startdruck 10-5mbar, 1h aufgeheizt,9.te vergessen. 08d003-2 --> An J. Hüpkes gegeben		Dummy	Alu-Folie
+																																																																										
+08D004	03.12.2008			1			4000	105	1.6							120	9	1000		13.56					40x40	Alu-Folie		0.4	752	129	0.8		147.75																															#NV	#NV						40x40 Substrat-Al-Folie,ca.200nm, Inhomogenitäten durch gefaltetes Al, zünden in den Löchern Al-Folie		Übrig	Fensterglas
+																																																																										
+08D005	03.12.2008			1			4000	105	1.6							300	9	500		13.56					40x40	Alu-Folie		0.4	769	124	0.7		184.69																															#NV	#NV									fz-c-Si
+																																																																										sz-c-Si
+08D006	04.12.2008			1			2000	31	0.95							600	10	400		13.56					10x10	Asahi-U	9	0.4	734	131	0.7		101.4																															#NV	#NV						ASAHI-U(TCO) Glas, µc-Si AP 3A/s			Übrig
+																																																																										
+08D007	04.12.2008			1			300	60	11.03							600	4	100		13.56					40x40	Fensterglas		0.4	751	131	0.6		320																															#NV	#NV						Glas, a-Si AP 5A/s			
+																																																																										
+08D008	04.12.2008			1			2700	42	0.95							600	13	400		13.56					10x10	Asahi-U	9	0.4	732	132	0.3		101.4																															#NV	#NV						Raman: amorph			
+																																																																										
+08D009	04.12.2008			1			300	60	11.03							600	4	50		13.56					40x40	Fensterglas		0.5	782	128	0.3		160																		7.90E-10		1.42E-07	1.79E+02										#NV	#NV									
+																																																																										
+08D010	04.12.2008			1			300	60	11.03							600	4	100		13.56					10x10	Corning	9	0.4	757	130	0.4		320																															#NV	#NV									
+																																																																										
+08d011	09.12.2008			2			300	60	11.03							600	3	100		60					40x40	Alu-Folie		16/6	435	131			640																															#NV	#NV						Statisch in PC2 LQ auf Al- Folie,min.Zündleistung 100W			
+																																																																										
+08d012	11.12.2008			2			300	60	11.03							600	2	70		60					40x40	Alu-Folie		4.4	433	153			448																															#NV	#NV						Statisch in PC2 LQ auf Al- Folie,min.Zündleistung 100W			
+																												4.4	453	133																																									brennt unruhig, zu hoher Druck			
+08d013	11.12.2008			2			300	60	11.03							600	1	50		60					40x40	Alu-Folie		10	433	154			320																															#NV	#NV						Statisch in PC2 LQ auf Al- Folie,min.Zündleistung 50W			
+																												10	450	155																																												
+08d014	12.12.2008			2			300	60	11.03							600	1.5	51		60					40x40	Alu-Folie		10	433	153			326.4																															#NV	#NV						statisch in PC2 LQ auf Al- Folie, Zündleistung 50W			
+																		54										12	443	189																																												
+08d015	12.12.2008			2			300	60	11.03							100 hübe 0,076m/s	1.5	100		60					40x40	Alu-Folie		30/16	433	133			3520																															#NV	#NV						dynamisch 100 Hübe, Matchboxen manuell, Plasma instabil bei jeder Carrierfahrt (Lücken, etc)			
+																		100										30/16	447	142																																												
+08d016	17.12.2008			1			4000	105	1.6							600	9	800		13.56					10x10	Asahi-U		0,4	755	126			590.78	9.85	1.694915254	53.394591																												#NV	#NV						"Entladung nach 1min wegen Gasmangel aus, wietere 10 min deponiert; amorph"			
+08d017	17.12.2008			1			2700	42	0.95							600	13	800		13.56					10x10	Asahi-U		0,4	741	128			202.56	3.38	3.703703704	45.76750959																												#NV	#NV						Raman 71%			
+08d018	17.12.2008			1			300	60	11.03							2400	4	33		13.56					40x40	Fensterglas		0,4	810	125			422.4																		5.12E-10		1.16E-06	2.27E+03										#NV	#NV						Bei 42°C in LC evakuiert, 40min in PC1 geheizt, Fensterglas 3mm, 3*10-6mbar, 388°C			
+																																																																										
+08d019	18.12.2008			1			300	60	11.03							2400	4	33		13.56					40x40	Fensterglas		0.4	807	126			422.4																		4.83E-10		2.30E-07	4.76E+02										#NV	#NV						15 min mit 380°C geheizt, in LC auf Glas  40°C, evakuiert, 40 min 350°C			
+08d020	18.12.2008			1			300	60	11.03							2400	4	33		13.56					40x40	Fensterglas		0.4	806	126			422.4																		1.00E-09		2.70E-05	2.70E+04										#NV	#NV						40 min mit 380°C geheizt, in LC gemessen 70°C,Carrier 86°C, abgekühlt auf 45°C,ca.2h mit 450°C geheizt, 			
+																																																																										
+08d021	19.12.2008			1			300	60	11.03							2400	4	30		13.56					10x10	Corning	9						406.78	1.69	8.564535585	16.08453056															1.50E-10		2.50E-05	1.67E+05										#NV	#NV						Temp: 1,5h aufgeheizt auf 380 °C, Thermo-Element auf Blech. Temp Glass 180-190 °C			
+																																																																										
+09d001	16.01.2009			1			340	68	11.03							2400	4	33		13.56					10x10	Corning		1					474	1.98	3.433476395	16.53757588															1.50E-10		3.00E-05	2.00E+05										#NV	#NV						Nur 1,3,5,7,9 bestickt. 60 min aufheizen 430°C (nicht angedrückt). 60 min stabilisieren 430°C (angedrückt)			
+																																																																							Am Anfang war H2-Gasfluß ausgefallen (Dauer ~1 min)--> slechte Verdünnung			
+09d002	19.01.2009			1			340	68	11.03							2400	4	33		13.56					10x10	Corning		0.4	803	125			465.8	1.94	2.040816327	16.2514828															6.50E-11	4.80E-11	2.30E-05	3.54E+05										#NV	#NV						Soll Heizer 430°C. Carrier 190,5°C, Draht 489,8°C, Heizer 456,1°C. 4 Min Gasfluß: Carrier 178°C.			
+																																																																							Ende Deposition: Carrier 185°C, Draht 490,9°C, Heizer 453,3°C.			
+09d003	19.01.2009			1			340	68	11.03							2400	4	33		13.56					10x10	Corning							466.6	1.94	3.036876356	16.27939432															2.80E-11	4.20E-11	2.30E-05	8.21E+05										#NV	#NV						Leistung auf 60% begrenzt. Während aufheizen: Heizdraht 705°C!. Tempstreifen: Carriertransportschiene max 143°C.			
+																																																																							Carriertemperatur: 190°C (Start Plasma), abgesunken auf 175°C, während Prozess gestiegen bis 185°C			
+09d004	20.01.2009			1			340	68	11.03							2400	4	33		13.56					10x10	Corning							452	1.88	4.21286031	15.77000907															3.00E-11	6.60E-11	2.00E-05	6.67E+05										#NV	#NV						Leistung Heizer auf 50% begrenzt! Solltemp Carrier 160°C. Vor Anfang Plasma: Carrier 170°C, Heizdraht 480°C, Heizer 433°C.			
+																																																																							5 Min Gasflüsse bei 4mbar --> Carrier 157°C. Am Ende der Deposition: Carrier 170°C.			
+09d005	20.01.2009			1			340	68	11.03							2400	4	33		13.56					10x10	Corning							467.8	1.95	4.812834225	16.3212616															2.67E-11	1.20E-10	1.80E-05	6.74E+05										#NV	#NV						Solltemperatur Carrier 200 °C. 5 Min Gasflüsse --> Carrier 180°C. Am Ende der Deposition: Carrier 193°C.			
+																																																																							Heizdraht 499°C, Heizer 463°C.			
+09d006	21.01.2009			1			3078	47	0.94							600	13	800		13.56					10x10	Asahi-U							342.8	5.71	3.812316716	69.21581989																												#NV	#NV						Solltemperatur Carrier 180°C. Carrier 184°C. Gasflüsse --> Carrier 173°C. Beluftet bei Carriertemp 143°C.			
+																																																																										
+09d007	23.01.2009			1																13.56					10x10	Asahi-U																																													Substrate Pos 3+5, einer mit Quarzglas-Stückchen für Kristallinitätsmessung.			
+																																																																										
+09d013	07.04.2009			1			340	68	11.03							2400	4	33		13.56		184			10x10	Corning						2.80E-05	407.33	1.7	5.432098765	14.21161584															3.60E-10		6.64E-05	1.84E+05										#NV	#NV						a-Si Versuch rund 180 °C. Basisdruck vor Prozess 2,8E-5 (schlecht!!!). Heizertemp ging noch hoch: Druck noch schlechter?			
+09d014	07.04.2009			1																13.56		180			10x10	Asahi-U																																													µc-Si Versuch fehlgeschlagen. T~180 °C			
+																																																																										
+09d015	20.04.2009			1			3078	47	0.94							600	13	800		13.56		173	370	370	10x10	Asahi-U	5					2.90E-05	382.25	6.37	7.953063885	77.18129275																			74		5.00E+20	2.50E+20	5.00E+18					#NV	#NV						"µc-Si Versuch Standard 180 °C; 5 Proben. Nummer 1 fehlgeschlagen."			
+																																																																										
+09d016	21.04.2009			1			3078	25	0.5							1140	13	800		13.56		189.7	350	350	10x10	Asahi-U	5	0.7				2.50E-05	381.8	3.35	2.917771883	76.27895361																			83.72									#NV	#NV						µc-Si Versuch 180°C, SC 0,49%. 5 Proben			
+																																																																										
+09d017	22.04.2009			1			340	68	11.03							2400	4	33		13.56		195.5	340	345	10x10	Corning	5	0.4	814	124		1.50E-06	460.4	1.92	6.318082789	16.06308004															1.37E-11	3.80E-11	2.13E-05	1.56E+06										#NV	#NV						Übernacht ausgeheizt in PC1, angedrückt 380 °C. a-Si Versuch 200 °C			
+																																																																										
+09d018	23.04.2009			1			340	68	11.03							2400	4	33		13.56		162	300	300	10x10	Corning	5	0.4	811	126		8.00E-07	449.8	1.87	7.173913043	15.69325239															9.00E-12		1.10E-05	1.22E+06										#NV	#NV						a-Si-Versuch 160 °C. Viel Pulver. Fensterglass Camera bedeckt mit Si-Pulver. Sieht inhomogen aus.			
+09d019	23.04.2009			1			3078	66	1.31							420	13	800		13.56		181	350	330	10x10	Asahi-U	5	0.4	752	128	0.4	~2E-5	326.8	7.78	2.769230769	67.1278109																			0									#NV	#NV						µc-Si Versuch 180°C, SC 1,29%. Raman: amorph			
+																																																																										
+09d020	24.04.2009			1			340	68	11.03							2400	4	33		13.56		177	315	315	10x10	Corning	5	0.4	818	124	0.4	1.50E-06	460.6	1.92	7.810781078	16.07005792															9.90E-12	4.19E-11	1.29E-05	1.31E+06										#NV	#NV						a-Si 180°C. neuer Versuch. Problem mit Matching Anfang (kein Plasma 30s), 30s länger deponiert. Dreckig nach Versuch 09d018			
+09d021	24.04.2009			1			3078	47	0.94							600	13	450		13.56		184	350	330	10x10	Asahi-U	5	0.4	755	128	0.4	2.50E-05	274.6	4.58	4.174228675	55.44534464																			2.44									#NV	#NV						µc-Si Versuch 180°C mit 450 W.			
+																																																																										
+09d022	29.04.2009			1			3078	47	0.94							1500	13	800		13.56			320	320	Übrig	Übrig		3	752	128		6.00E-07																																#NV	#NV						Carrier beschichtet mit ~ 1 µm µc-Si			
+09d023	29.04.2009			2			1000	100	5.83							20x pendeln	1.5	100/100		60			220		40x40	Alu-Folie		25/21	449/434	160/149			704																															#NV	#NV						Pendelzahl 20x, 1,5 mbar, 0,02 m/s			
+09d024	29.04.2009			2			1000	100	5.83							20x pendeln	1	100/100		60			220		40x40	Alu-Folie		20/ 30	449/434	160/149			704																															#NV	#NV						Pendelzahl 20x, 1,0 mbar, 0,02 m/s			
+09d025	29.04.2009			2			1000	100	5.83							20x pendeln	2	100/100		60					40x40	Alu-Folie			449/434	160/149			704																															#NV	#NV						Pendelzahl 20x, 2,0 mbar, 0,02 m/s, viel Pulver --> P verringern			
+																																																																										
+09d026	04.05.2009			1			3078	36	0.72							780	12.5	800		13.56		180	335	320	10x10	Asahi-U	5	0.5	752	128	0.2	2.10E-05	360.4	4.62	1.939058172	73.08047166																			79.06									#NV	#NV						µc-Si Versuch 180 °C, SC 0,71%			
+																																																																										
+09d027	05.05.2009			1			1053	129	7.06							600	10	340		13.56		191	340	340	10x10	Corning	5	3	752	128	1.6	1.70E-06	705.2	11.75	8.92733564	51.87821273															6.83E-12	1.28E-11	8.33E-06	1.22E+06			5.00E+18	2.00E+18	4.00E+17					#NV	#NV						a-Si hohe Rate Rezept Dzimitry			
+09d028	05.05.2009			1			3078	56	1.11							480	12.5	800		13.56		180.3	335	320	10x10	Asahi-U	5	0.4	752	128		1.60E-06	327	6.81	2.431610942	69.26792069																			22.3		1.00E+20	3.00E+19	1.00E+18					#NV	#NV						µc-Si Versuch 180 °C, SC 1,10%			
+																																																																										
+09d029	06.05.2009			1			340	68	11.03							2400	4	33		13.56		185.4	330	330	10x10	Corning	5	0.4	819	124		1.30E-06	414.6	1.73	8.02919708	14.46514549															6.83E-12	1.12E-11	1.03E-05	1.51E+06			2.00E+19	2.50E+18	5.00E+17			1.91	15	#NV	#NV						a-Si Versuch 180 °C. Neuer Versuch.			
+09d030	06.05.2009			1			3078	47	0.94							600	12.5	450		13.56		181	320	320	10x10	Asahi-U	5	0.4	756	127		3.00E-05	270.6	4.51	3.512014787	54.63769213																			6.4									#NV	#NV						µc-Si 450 W, 12,5 mbar			
+																																																																										
+09d031	07.05.2009			1			340	68	11.03							2700	4	26		13.56		187	320	320	10x10	Corning	5	0.4	821	124		1.20E-06	344.4	1.28	8.538350217	10.6808085															8.33E-12	1.07E-11	1.08E-05	1.30E+06										#NV	#NV						a-Si 180°C 1,5 A/s.			
+09d032	07.05.2009			1			3078	61	1.21							480	12.5	800		13.56		184	320	310	10x10	Asahi-U	3	0.4	754	127		4.00E-06	351.33	7.32	5.218617772	68.32221639																			7.933333333									#NV	#NV						µc-Si SC 1,19%			
+																																																																										
+09d033	08.05.2009			1			340	98	15.15							1680	4	33		13.56		186.8	320	320	10x10	Corning	5	0.4	811	125		9.70E-07	320.8	1.91	6.832298137	11.09462595															9.38E-12	1.00E-11	5.90E-06	6.29E+05										#NV	#NV						a-Si 180 °C, SC 15%.			
+																																																																										
+09d034	15.05.2009			1			340	68	11.03							2400	4	33		13.56		179	320	320	40x40	Corning		0.4	819	124	0.3	2.00E-06	446.25	1.86	2.242152466	15.56939502																												#NV	#NV						Std a-Si, Glas 40x40 Corning, 1 mm dick. Abgeplätzt			
+																																																																										
+09D035	25.05.2009			1			1053	129	10.04							900	10	180		13.56		179.5	330	330	40x40	Corning		0.4	771	129	0.9	8.00E-07	0																															698.696654	77.9724375						Fehlversuch: aus Versehen 1h mit H2 180W geätzt			
+																																																																										
+09D036	28.05.2009			1			3078	50	0.99							540	12.5	800		13.56		180	350	330	10x10	Asahi-U	3	0.4	757	127	0.2	2.80E-06	316	5.85	2.05371248	79.39986392																			68.7		6.00E+21	3.00E+20	1.00E+19					2627.077118	26.228125						µc-Si SC 0,98%			
+																																																																										
+09D037	29.05.2009			1			3078	50	0.99							540	12.5	800		13.56		181	340	325	10x10	Corning	9	0.4	765	125	0.1	1.00E-06	327.22	6.06	4.863221884	82.21961999															1.99E-07	3.29E-07	1.05E-05	5.29E+01	75.64444444							2.04	2.3	2627.077118	26.228125						µc-Si SC 0,98%. 1,3,5,7,9=Corning. 2,4,6,8=Ungereinigt. Erst 5' Ar-Plasma 400 sccm 1,3 mbar, 342W CL 830 CT 114.			
+09D038	29.05.2009			1			1053	129	10.04							900	10	180		13.56		179	330	330	40x40	Corning		0.4	763	129	0.3	4.50E-06	964.25	10.71	8.372334893	48.89896954																												698.696654	77.9724375						a-Si Dimitry 5 Å/s auf 40x40 1,8 mm dick mit 2 mm Blech. Fehlversuch: Feder abgekommen, inhomogen			
+																																																																										
+09D039	29.06.2009			1			340	68	10.7							2400	4	33		13.56		180	340	340	10x10	Corning	3	0.4	813	118	0.2	1.40E-06	459.67	1.92	4.772234273	16.58307773															4.50E-11	1.20E-10	1.70E-05	3.78E+05										342.9478	41.10175						a-Si std auf neuem schwarzem Carrier. Mit Rezept gearbeitet			
+09D040	29.06.2009			1			340	68	10.7							2400	4	33		13.56		180	340	340	40x40	Corning		2	877	117	0.3		0																															342.9478	41.10175						Fehlgeschlagen. Versuch mit VA-Carrier. Nur am Rand beschichtet.			
+																																																																										
+09D041	30.06.2009			1			340	68	10.7							750	4	100		13.56		180	340	340	40x40x0,18	Corning		2	824	117	1.6	1.60E-06	408.25	5.44	2.912621359	47.130093															5.18E-12	5.05E-12	5.91E-06	1.14E+06										342.9478	41.10175						"a-Si. 30 Min. 300 °C in LC. Rezept 5 Å/s, std-->Leistung hoch gestellt. Zündung schwierig; effektiv 12,5 Min Plasma"			
+																																																																										
+09D042	01.07.2009			1			1053	129	10.04							900	10	100		13.56		180	340	340	40x40x0,18	Corning		2	790	121	0.1		603.81	6.71	14.66445733	30.62049162																												698.696654	77.9724375						a-Si. Rezept 5 Å/s Dmitry			
+09D043	01.07.2009			1			1053	129	10.04							900	10	100		13.56		180	340	340	10x10	Corning	3	2	782	121	0.1		444.33	4.94	32.28180862	22.53299677																												698.696654	77.9724375						a-Si. Rezept 5 Å/s Dmitry			
+																																																																										
+09D044	02.07.2009			1			340	68	10.7							2190	4	33		13.56		180	340	340	40x40x0,18	Corning		2	818	118	0.4	1.00E-06	453.88	2.07	1.866081229	17.94425837															1.05E-11	8.68E-11	6.31E-06	5.99E+05								1.89	2.8	342.9478	41.10175						Std a-Si 180°C 40x40. Problemen mit zünden. Mit 200W gezündet, danach auf 33 W. PreProcessWait1=15			
+09D045	02.07.2009			1			340	68	10.7							2300	4	33		13.56		200	370	370	40x40x0,18	Corning		2				1.50E-06	513.5	2.23	4.236453202	19.33062868															2.21E-12	1.39E-11	3.26E-06	1.48E+06								1.92	2.3	342.9478	41.10175						Std a-Si 200°C. Problemen mit zünden. Erst auf 200W, danach auf 33W. PreProcessWait=5			
+																																																																										
+09D046	06.07.2009			1			340	68	10.7							2400	4	33		13.56		180	340	340	10x10	Corning	3					8.00E-07	476.67	1.99	4.255319149	17.19637502															5.47E-12	1.70E-10	7.37E-06	1.35E+06								1.92	2	342.9478	41.10175						Std a-Si 180°C 10x10.			
+09D047	06.07.2009			1			3078	50	0.99							600	12.5	800		13.56		180	340	340	10x10	Asahi-U	3					9.00E-07	0																															2627.077118	26.228125						"µc-Si. Fehlversuch. Kurzschluss in Matchbox; beseitigt. Noch Zündversuche mit 33W und 800W."			
+																																																																										
+09D048	07.07.2009			1			3078	50	0.99							600	12.5	800		13.56		180	340	340	10x10	Asahi-U	3	2/18	766	127	0.1	9.00E-07	387	6.45	4.675324675	87.51573608																			76.7									2627.077118	26.228125						µc-Si 50 sccm SiH4. Plasma nicht stabil. Auf Manual: refl. Leistung von 2W --> 18 W während Depo			
+																																																																										
+09D049	08.07.2009			1			340	68	10.7							2400	4	33		13.56		180	340	340	10x10	Übrig	4					2.00E-06	477	1.99	0	17.20840046																												342.9478	41.10175						Hüpfzellen a-Si, -1, -5 Asahi-U mit p-Schicht aus LA. -9 Corning zum Vergleich. Auf falscher Seite deponiert.			
+																																																																										
+09D050	09.07.2009			1			340	68	10.7							2400	4	33		13.56		180	340	340	10x10	Übrig	4					9.00E-07	421	1.75	0	15.18812703		8.11	65.55	742.59	16.65										1.64E-11	5.88E-11	1.48E-05	9.02E+05			5.00E+19	3.00E+18	8.00E+17					342.9478	41.10175						Hüpfzellen a-Si, -1, -5 Asahi-U mit p-Schicht aus LA. -9 Corning zum Vergleich. Dicke gemessen -9. Wirkgrad 8,4% auf ZnO/Ag			
+																																																																										
+09D051	07.08.2009			1			3078	56	1.27							505	12.5	800		13.56		171			40x40	Corning		1	785	125		2.70E-06	265.63	5.26		55.30189288																												2627.077118	33.8485						µc-Si mit VA-Carrier. Fehlversuch: Glas zersprungen			
+																																																																										
+09D052	11.08.2009			1			3078	50	0.99							2040	12.5	800		13.56		180	340		10x10	ZnO	5	2	765	125		9.00E-07	1073.04	5.26		71.36942198																												2627.077118	26.228125						µc-Si Hüpfzelle. ZnO auf Corning. 1, 3, 5, 9 mit p-Schicht aus LA. -7 ZnO zum Vergleich. Abgeplatzt. T zu hoch? d~1µm			
+																																																																										
+09D053	12.08.2009			1			3078	50	0.99							2040	12.5	800		13.56		140	290		10x10	Übrig	2					9.00E-07	1074	5.26	0	71.43327296																												2627.077118	26.228125						µc-Si. -1 ZnO, -9 Asahi-U. Hat nicht abgeplatzt. Auf ZnO kleine Beschädigungen (fängt an abzuplazten?)			
+																																																																										
+09D054	14.08.2009		µc(i)	1			3078	50	0.99							2460	12.5	800		13.56		140	290		10x10	Übrig	4					9.00E-07	1287	5.23	0.763358779	70.98553749		5.13	63.3	421	19.23	2.9	63.1	9.39	63.5	3.12		1.62	Ag	30' 160°C					83.2	79.1								2627.077118	26.228125						µc-Si Hüpfzelle. ZnO auf Corning. 1, 5, 9 mit p-Schicht aus LA. -4 ZnO zum Vergleich. Abgeplatzt, nur -1 hält noch einigermassen.			
+																																																																										
+09D055	21.08.2009	AF, JW, TM	a(p)	1			285	47	8.21	6	17					440	4	51		13.56		180	340	340	10x10	Übrig	4					9.00E-07	120.5	2.74	5.042016807	38.28525028																2.06E-05	2.09E-05	1.01E+00								1.93	240	284.43	25.456375	7.716937582	13.4667744				"a-Si (p)-Schicht. Sicherung Generator war raus; deswegen kürzere Depo (7'20"" statt 8'). -1, -5, -9 Corning. -4 Asahi-U"			
+																																																																										
+09D056	21.08.2009	AF	CO2	1								200					1.5	400		13.56					Dummy	Übrig																																										200			Probleme mit zünden. Deswegen 400W statt 100W. Siehe Logbuch.			
+																																																																										
+09D057	26.08.2009	JW, AF, TM	a(p)	1			285	47	8.21	6	51					1440	4	51		13.56		180	340	340	10x10	Corning	3	2	791	127	0.2	9.00E-07	499.25	3.47	1.810865191	48.46773242																2.15E-05												284.43	25.456375	7.716937582	40.4003232				"Fehlversuch: CH4 ausgefallen. -4 Asahi-U; -1,-5,-9 Corning"			
+																																																																										
+09D058	27.08.2009	JW, AF, TM	a(p)	1			285	47	8.21	6	17					1440	4	51		13.56		180	340	340	10x10	Corning	2					9.00E-07	408	2.83		39.60908328																												284.43	25.456375	7.716937582	13.4667744				Fehlversuch: CH4 war aus. Proben nicht aufbewahrt.			
+																																																																										
+09D059	27.08.2009	JW, AF, TM	a(p)	1			285	47	8.21	6	51					1200	4	51		13.56		180	340	340	10x10	Corning	2	2	821	123	0.3	9.00E-07	408	3.4	1.960784314	47.53089993																4.87E-07	5.38E-07	1.10E+00								2.095	230	284.43	25.456375	7.716937582	40.4003232				a-Si (p)-layer CH4(51sccm) for PDS d=400nm and conductivity			
+																																																																										
+09D060	28.08.2009	TM, AF, JW	a(p)	1			285	47	8.21	6	17					1200	4	51		13.56		180	340	340	10x10	Corning	2	2	821	124	0.2	9.00E-07	444.5	3.7	2.362204724	51.78305152																2.07E-05	2.26E-05	1.09E+00								1.93	430	284.43	25.456375	7.716937582	13.4667744				a-Si (p)-layer CH4(17sccm) for PDS d=400nm			
+																																																																										
+09D061	28.08.2009	TM, AF, JW	CO2	1								200				120	5	150		13.56		kalt	230	230	Dummy	Übrig		2	864	121	0.8																																					200			Hat bei 4,5 mbar nicht gezündet. Deswegen 5 mbar.			
+																																																																										
+09D062	28.08.2009	AF,JW,TM	a(n)	1			547	91	9.17				23			3600	4	34		13.56		180	340	340	10x10	Corning	2	2	807	125	0.2	9.00E-07	764.5	2.12	6.474820144	13.643723																9.65E-03	1.53E-02	1.58E+00								1.91	206	548.9692	55.3905625				14.1832534		a-Si (n)-layer d=400nm			
+																																																																										
+09D063	31.08.2009	AF,JW,TM	CO2	1								200				120	5	150		13.56		kalt	230	230	Dummy	Übrig		2	876	119	12																																					200			CO2 plasma 6mbar, 400W, schwierigkeiten mit zünden			
+																																																																										
+09D064	31.08.2009	JW,TM,AF	a(p)	1			285	47	8.21	6	26					1200	4	51		13.56		180	340	340	10x10	Corning	2	2	813	125	0.2	9.00E-07	420	3.5	2.380952381	48.92886758																7.56E-06	8.20E-06	1.08E+00								1.983	360	284.43	25.456375	7.716937582	20.5962432				a-Si (p)-layer CH4(26sccm) for PDS d=400nm			
+																																																																										
+09D065	31.08.2009	DW, AF, TM, JW	a(p)	1			285	47	8.21	6	26					55	4	51		13.56		180	340	340	10x10	Asahi-U	3	2	805	125	0.2	9.00E-07	19.25	3.5		48.92886758																												284.43	25.456375	7.716937582	20.5962432							
+09D066	31.08.2009	DW, AF, TM, JW	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig		10/40	874	120	12																																					200			"Zündet sehr schwer; nicht stabil. Carrier in LC mit 150 °C"			
+09D067	31.08.2009	DW, AF, TM, JW	a(i)	1			1026	68	3.86							205	4	33		13.56		180	329	329	10x10	Asahi-U	3	2	828	124	0.2	2.00E-06	26.65	1.3		11.17721839																												1029.6936	41.39075						6 Min. 250 sccm H2 T stabilisieren lassen. Danach ~5 Min. mit Prozessgasen T stabilisieren.			
+09D068	31.08.2009	DW, AF, TM, JW	a(i)	1			340	68	10.87							1400	4	33		13.56		180			10x10	Asahi-U	3	2	816	124	0.2		279.41	2	4.347826087	17.15969147		7.94	73.6	820	13.15	4.8	75.3	4.47	74.4	2.71	4.00E-09	1.45	Ag	30'160°C														339.32	41.39075									
+09D069	31.08.2009	DW, AF, TM, JW	a(n)	1			547	91	9.17				23			85	4	34		13.56		180	340	340	10x10	Asahi-U	3	2	805	125	0.2		18.02	2.12		13.62052242		8.4	72.3	814	14.27	5.4	74.3	5.7	72.4	2.6			ZnO/Ag	30'160°C														548.9692	55.3905625				14.1832534		Carrier in PC1 bis 130°C abgekühlt mit H2. Danach -->LC. Übernacht unter Vakuum lassen.			
+09D070	31.08.2009	DW, AF, TM, JW	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig		2	875	120	12																																					200			"Plasma zündet leicht auf Manual; danach auf auto gestellt."			
+																																	343.33																																									
+09D071	03.09.2009	JW,TM, DW	a(p)	1			285	47	8.21	6	35					1200	4	51		13.56		180	340	340	10x10	Corning	2	2	820	124	0.2	1.10E-06	437.5	3.65	2.857142857	50.9675704																2.48E-06	2.70E-06	1.09E+00								2.01	350	284.43	25.456375	7.716937582	27.725712				a-Si (p)-layer CH4(35sccm) for PDS d=400nm			
+																																																																										
+09D072	03.09.2009	JW, TM, DW	CO2	1								200				150	6	400		13.56		kalt			Dummy	Übrig		2	874	120	7.6																																					200			"Plasma zündet leicht auf Manual; danach auf auto gestellt."			
+																																																																										
+09D073	07.09.2009	JW, TM	a(p)	1			285	47	8.21	10	35					1200	4	51		13.56		180	340		10x10	Corning	2	2	822	123	0.2		540	4.5	14.81481481	62.90854403																3.84E-06	3.74E-06	9.75E-01								2.035	330	284.43	25.456375	12.86156264	27.725712				a-Si (p)-layer TMB (10sccm), CH4(35sccm) for PDS d=400nm			
+																																																																										
+09D074	08.09.2009	JW,AF,TM,DW	a(p)	1			285	47	8.21	10	35	200				50	4	51		13.56		180	340	340	10x10	Asahi-U	2					9.00E-07	22.5	4.5																														284.43	25.456375	12.86156264	27.725712	200						
+09D075	08.09.2009		CO2	1												120	6	400		13.56		kalt			Dummy	Übrig																																																
+09D076	08.09.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180	329	329	10x10	Asahi-U	2					9.00E-07	26.65	1.3		11.17721839																												1029.6936	41.39075						Software-Test. Automatisches Rezept manchmal abgebrochen. Wartezeiten und Temperaturänderungen			
+09D077	08.09.2009		a(i)	1			340	68	10.87							1640	4	33		13.56		180			10x10	Asahi-U	2						362.83	2.21		19.02171739		8.15	72.2	820	13.76	4.6	73.5	5.34	70.3	2.58	5.72E-09	1.46	Ag	30'160°C														339.32	41.39075						zwischen Schichten nicht gut definiert.			
+09D078	08.09.2009		a(n)	1			547	91	9.17				23			85	4	34		13.56		180	340	340	10x10	Asahi-U	2						18.02	2.12	3.488372093	13.62052242																												548.9692	55.3905625				14.1832534					
+09D079	08.09.2009		CO2	1												120	6	400		13.56		kalt			Dummy	Übrig																																																
+																																	430																																									
+09D080	11.09.2009	TM, JW, AF, DW	a(p)	1			285	47	8.21	6	17					1800	4	25		13.56		180	340	340	10x10	Corning	2	2	826	124	0.2	9.00E-07	305	1.69	6.557377049	23.6877851																3.28E-05	3.56E-05	1.09E+00										284.43	25.456375	7.716937582	13.4667744				inhomogenity 6.5% increase the power from 25 W to 27 W			
+																																																																										
+09D081	14.09.2009	AF, TM	a(p)	1			285	47	8.21	6	17					2160	4	27		13.56		180	340	340	10x10	Corning	2	2	825	125	0.2	9.00E-07	440	2.04	0	28.4771187																3.82E-05	4.10E-05	1.07E+00								1.923	410	284.43	25.456375	7.716937582	13.4667744				a(p) layer with lower deposition rate. Schicht sieht etwas inhomogen aus (siehe DS-Tabellenblatt)			
+																																																																										
+09D082	14.09.2009	TM, AF	a(p)	1			285	47	8.21	6	35					2120	4	27		13.56		180	340	340	10x10	Corning	2	2	827	124	0.2	9.00E-07	397.5	1.88	6.918238994	26.21189335																1.38E-05	1.42E-05	1.03E+00								1.95	485	284.43	25.456375	7.716937582	27.725712				Schwierigkeiten beim Zünden, weil Cl=800 eingestellt war.			
+																																																																										
+09D083	15.09.2009	AF, TM	a(p)	1			285	47	8.21	6	17					61	4	27		13.56		180	340	340	10x10	Asahi-U	3					9.00E-07	12.44	2.04		28.51853996																												284.43	25.456375	7.716937582	13.4667744			1,5,9				
+09D084	15.09.2009		CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			It was complitly automatically It works now without problems			
+09D085	15.09.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	26.65	1.3		11.17721839		7.5	70.1	793	13.49	5.5	73.4	4.76	68.2	2.64	3.41E-09	1.38	Ag-1	30'160°C														1029.6936	41.39075						Beim Reinfahren war Substrattemperatur 172 °C			
+09D086	15.09.2009		a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						311.07	2.05	5.405405405	17.59540797		7.73	72.3	794	13.45	5.2	74.4	5.03	71.4	2.52	4.89E-09	1.4	Ag-5	30'160°C														339.32	41.39075									
+09D087	15.09.2009		a(n)	1			547	91	9.17				23			70	4	34		13.56		180			10x10	Asahi-U	3	2	825	125	0.2		14.84	2.12		13.62052242		7.82	69.4	790	14.26	5.5	72.5	5.8	67.3	2.53	3.28E-09	1.34	ZnO/Ag-9	30'160°C														548.9692	55.3905625				14.1832534		Gezündet mit CL/CT=825/125, brennt weiter mit 806/125. SubstrT=180,9°C-->180,4°C			
+09D088	15.09.2009		CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig		3.4	855	120	5.1																																					200						
+																																	365																																									
+09D089	21.09.2009	JW	a(p)	1			285	47	8.21	6	50					2150	4	27		13.56		180	340	340	10x10	Corning	3	2	825	124	0.2	9.00E-07	416.67	1.94	4.761904762	27.09239622																2.56E-06	2.72E-06	1.06E+00								2.05	390	284.43	25.456375	7.716937582	39.60816				a(p) Schicht mit kleiner Deporate und 50 sccm Methan			
+																																																																										
+09D090	23.09.2009	JW	a(p)	1			285	47	8.21	10	45					1980	4	27		13.56		180	340	340	10x10	Corning	3	2	826	124	0.2	9.00E-07	406	2.05	5.651105651	28.66539717																7.82E-06	8.23E-06	1.05E+00								2.005	455	284.43	25.456375	12.86156264	35.647344				a(p) Schicht mit kleiner Deporate, 45 sccm Methan und 10sccm TMB (soll Eg von 2.06eV haben)			
+																																																																										
+09D091	23.09.2009	JW	a(p)	1			285	47	8.21	3	45					1960	4	27		13.56		180	340	340	10x10	Corning	3	2	829	123	0.2	9.00E-07	373.33	1.9	2.702702703	26.62795515																1.65E-06	1.84E-06	1.12E+00								2.05	217	284.43	25.456375	3.858468791	35.647344				a(p) Schicht mit kleiner Deporate, 45 sccm Methan und 3sccm TMB (soll Eg von 2.06eV haben), plasma zündet erst nach 15-20s			
+																																																																										
+09D092	24.09.2009	JW	a(p)	1			285	47	8.21	20	45					1980	4	27		13.56		180	340	340	10x10	Corning	3	2	818	126	0.2	9.00E-07	439.33	2.22	3.510758777	31.01887805																7.28E-06	7.70E-06	1.06E+00								1.925	600	284.43	25.456375	25.61258656	35.647344				a(p) Schicht mit kleiner Deporate, 45 sccm Methan und 20sccm TMB (soll Eg von 2.06eV haben)			
+																																																																										
+09D093	25.09.2009	JW	a(p)	1			285	47	8.21	10	45					77	4	27		13.56		180	340	340	10x10	Asahi-U	2	2.5	825	124	0.15	9.00E-07	15.79	2.05		28.65833673																												284.43	25.456375	12.86156264	35.647344			1,5	plasma zündet nach 4s, 181.4°C			
+09D094	25.09.2009		CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig		2.5	858	120	5.5							4.82	45.8	831	12.66	8.8	51.5	4.89	38.9	2.3	1.47E-08	1.67	Ag-1	30'160°C																		200			zündet sofort			
+09D095	25.09.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	2	2	826	124	0.2	9.00E-07	26.65	1.3		11.17721839		7.58	68.2	818	13.58	6.2	71.5	5.12	65.1	2.53	3.60E-09	1.44	Ag-5	30'160°C														1029.6936	41.39075						zündet nach 20s, regelt lange nach, manuel T_H vor Depostart auf 330°C gestellt, war nur 300°C			
+09D096	25.09.2009		a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	2	2	813	124	0.2		314.55	2.07	1.333333333	17.79219715																												339.32	41.39075						zündet sofort			
+09D097	25.09.2009		a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	2	2	808	125	0.2		18.02	2.12		13.62052242																												548.9692	55.3905625				14.1832534		zündet nach 10-15s  (nach Depo Heizer manuell ausgestellt)			
+09D098	25.09.2009		CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig		2	860	120	6.5																																					200			zündet sofort			
+																																	375																																									
+09D099	25.09.2009	JW	a(p)	1			285	47	8.21	15	45					1980	4	27		13.56		180	340	340	10x10	Corning	2					9.00E-07	442.5	2.23	2.824858757	31.24245874																8.99E-06	9.30E-06	1.03E+00										284.43	25.456375	19.20943992	35.647344				a(p) Schicht mit kleiner Deporate, 45 sccm Methan und 15sccm TMB (soll Eg von 2.06eV haben)			
+																																																																										
+09D100	25.09.2009	JW	CO2	1								200				240	6	400		13.56		kalt			Dummy	Übrig		2	866	119	7.7																																					200						
+																																																																										
+09D101	28.09.2009	JW	a(n)	1			547	91	9.17				18			1800	4	27		13.56		180	340	340	10x10	Corning	2						275	1.53	5.454545455	9.815628057																9.00E-03	1.02E-02	1.13E+00								1.93	170	548.9692	55.3905625				11.09993744		a(n) Schicht mit kleiner Deporate und weniger ph3			
+																																																																										
+09D102	08.10.2009	TM, AF	a(p)	1			285	47	8.21	14	30					500	4	27		13.56		180	340	340	10x10	fz-c-Si	2					5.00E-06	15.79	0.32		4.413383856																												284.43	25.456375	17.92881059	23.764896				"1: Corning, 5: Corning mit FZc-Si. 0' Ar-Spül; SIMS B-contaminations; by CO2 plasma carrier in PC1"			
+09D103	08.10.2009		CO2	1								200				120	6	400		13.56		180			10x10	fz-c-Si	2																																									200			0' Ar-Spül			
+09D104	08.10.2009		a(i)	1			1026	68	3.86							180	4	33		13.56		180			10x10	fz-c-Si	2						26.65	1.48		12.72960983																												1029.6936	41.39075						0' Ar-Spül			
+09D105	08.10.2009		a(i)	1			340	68	10.87							1800	4	33		13.56		180			10x10	fz-c-Si	2	2	813	124	0.1		314.55	1.75		15.02452204																												339.32	41.39075						0' Ar-Spül			
+09D106	08.10.2009		a(p)	1			285	47	8.21	14	30					500	4	27		13.56		180			10x10	fz-c-Si	2						15.79	0.32		4.413383856																												284.43	25.456375	17.92881059	23.764896				0' Ar-Spül. 20s zünden. Am Anfang Plasma nicht stabil.			
+09D107	08.10.2009		a(i)	1			1026	68	3.86							180	4	33		13.56		180			10x10	fz-c-Si	2						26.65	1.48		12.72960983																												1029.6936	41.39075						0' Ar-Spül. Plasma zündete nicht. Bei 200W gezündet, danach auf 33W.			
+09D108	08.10.2009		a(i)	1			340	68	10.87							1800	4	33		13.56		180			10x10	fz-c-Si	2						314.55	1.75		15.02452204																												339.32	41.39075						5' Ar-Spül			
+09D109	08.10.2009		CO2	1								200				120	6	400		13.56		180			10x10	fz-c-Si																																										200			5' Ar-Spül			
+																																																																										
+09D110	09.10.2009	TM, AF	a(p)	1			285	47	8.21	14	30					500	4	27		13.56		180	340	340	10x10	Übrig	2					5.00E-06	15.79	0.32		4.413383856																												284.43	25.456375	17.92881059	23.764896				1: Corning, 5: Corning mit FZc-Si. 5' Ar-Spül. Plasma überal mit 200W gezündet.			
+09D111	09.10.2009		CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig					12																																					200			"5' Ar-Spül. Plasma nicht gezündet; auf Manual --> zünden OK; by CO2 plasma Dymmy carrier in PC1"			
+09D112	09.10.2009		a(i)	1			1026	68	3.86							180	4	33		13.56		180			10x10	Übrig	2						26.65	1.48		12.72960983																												1029.6936	41.39075						0' Ar-Spül			
+09D113	09.10.2009		a(i)	1			340	68	10.87							1800	4	33		13.56		180			10x10	Übrig	2						314.55	1.75		15.02452204																												339.32	41.39075						0' Ar-Spül. Nicht sicher ob Plasma gebrennt hat.			
+09D114	09.10.2009		a(p)	1			285	47	8.21	14	30					500	4	27		13.56		180			10x10	Übrig	2						15.79	0.32		4.413383856																												284.43	25.456375	17.92881059	23.764896				5' Ar-Spül. Nicht sicher ob Plasma gebrennt hat.			
+09D115	09.10.2009		a(i)	1			1026	68	3.86							150	4	33		13.56		180			10x10	Übrig	2		825	125			26.65	1.78		15.2755318																												1029.6936	41.39075						0' Ar-Spül. Plasma-Start schwierig.			
+09D116	09.10.2009		a(i)	1			340	68	10.87							1800	4	33		13.56		180			10x10	Übrig	2		818	124			314.55	1.75		15.02452204																												339.32	41.39075						0' Ar-Spül.			
+09D117	09.10.2009		CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			5' Ar-Spül.			
+																																																																										
+09D118	12.10.2009	AF, TZ	a(i)	2	0		340	68	10.87							900	4	100 / 100		60		180			10x10	Corning	5	2,4 / 2,4	516 / 530	220 / 191	0,1 / 0,2	1.00E-06	493.1	5.48	13.56518202	47.10672125																												339.32	41.39075						Statisch 5 Å/s. Zünd 200 W, man Matching, ~2 Min gedauert. Danach 100W. Anfang Car 180°C, Ende 165°C. Proben inhomogen: am Rand andere Temperatur als in der Mitte			
+																																																																										
+09D119	19.10.2009	JW, TM	a(p)	1			285	47	8.21	10	30					75	4	27		13.56		180	340	340	10x10	Asahi-U	3					9.00E-07	14.63	1.95		27.26036908																												284.43	25.456375	12.86156264	23.764896			1,5,9				
+09D120	19.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												8.13	73.3	819	13.55	5.6	74.6	4.92	74.7	2.64	1.70E-09	1.38	Ag-1	30'160°C																		200			Zelle mit 75'' p-Schicht (30/10 - CH4/TMB)			
+09D121	19.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	26.65	1.3		11.17721839		7.82	72.4	817	13.23	5.7	74.2	5.19	72.6	2.4	3.00E-09	1.42	Ag-5	30'160°C														1029.6936	41.39075						versehentlich falschen MFC für TMB genommen --> 14sccm --> 10sccm			
+09D122	19.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						328.71	2.16	7.672301691	18.59315572		8.32	72.5	805	14.26	4.8	74.6	5.9	73.3	2.45	1.72E-08	1.54	ZnO/Ag-9	30'160°C														339.32	41.39075									
+09D123	19.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						18.02	2.12		13.62052242																												548.9692	55.3905625				14.1832534					
+09D124	19.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	388																																									
+09D125	19.10.2009	JW, TM	a(p)	1			285	47	8.21	10	30					1980	4	27		13.56		180	340	340	10x10	Corning	3					9.00E-07	386.1	1.95		27.26036908																												284.43	25.456375	12.86156264	23.764896				p-Schicht (30/10 - CH4/TMB)  versehentlich falschen MFC für TMB genommen --> 14sccm --> 10sccm			
+																																																																							nicht gemessen, da temperatur fehler am pyrometer gefunden			
+09D126	20.10.2009	JW, TM	a(p)	1			285	47	8.21	10	30					125	4	27		13.56		180	340	340	10x10	Asahi-U	3					9.00E-07	24.38	1.95		27.26036908																												284.43	25.456375	12.86156264	23.764896			1,5				
+09D127	20.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												6.52	68.8	818	11.58	6.6	71	4.81	65	1.94	2.70E-08	1.61	Ag-1	30'160°C																		200			Zelle mit 125'' p-Schicht (30/10 - CH4/TMB)			
+09D128	20.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	26.65	1.3		11.17721839		4.18	46.9	826	10.77	9	51.6	4.71	38.5	1.74	3.00E-07	1.96	Ag-5	30'160°C														1029.6936	41.39075						versehentlich falschen MFC für TMB genommen --> 14sccm --> 10sccm			
+09D129	20.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						362.96	2.39	4.166666667	20.53050253																												339.32	41.39075									
+09D130	20.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						18.02	2.12		13.62052242																												548.9692	55.3905625				14.1832534					
+09D131	20.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	432																																									
+09D132	20.10.2009	JW, TM	a(p)	1			285	47	8.21	16	30					75	4	27		13.56		180	340	340	10x10	Asahi-U	5					9.00E-07	13.13	1.75		24.46443379																												284.43	25.456375	20.49006925	23.764896			1,5,9				
+09D133	20.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												6.08	60.6	810	12.39	6.6	64.9	4.91	54.6	2.22	1.00E-07	1.77	Ag-1	30'160°C																		200			Zelle mit 75'' p-Schicht (30/16 - CH4/TMB)			
+09D134	20.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	5					9.00E-07	26.65	1.3		11.17721839		6.97	68.6	806	12.6	5.3	68.2	4.97	58.3	2.23	3.50E-06	2.16	Ag-5	30'160°C														1029.6936	41.39075									
+09D135	20.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	5						355.01	2.34	6.024096386	20.08109463		5.56	56.5	800	12.29	7.6	55.2	4.99	38.7	2.14			Ag-9	30'160°C														339.32	41.39075									
+09D136	20.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	5						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D137	20.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	410																																									
+09D138	23.10.2009	AF, JW	a(p)	1			285	47	8.21	6	78					75	4	27		13.56		180	340	260	10x10	Asahi-U	3					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	61.7887296				test mit grading, fehlgeschlagen:			
+09D139	23.10.2009	AF, JW	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			nach Beeden des Gradings springt TMB Fluss wieder auf Anfangswert			
+09D140	23.10.2009	AF, JW	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15		9.887539342																												1029.6936	41.39075						bei Begin der i-Schicht fließt wieder TMB ->Abbruch			
+09D141	23.10.2009	AF, JW	abbr.	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3																																					339.32	41.39075									
+09D142	23.10.2009	AF, JW	abbr.	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3																																					548.9692	55.3905625				14.1832534		Achtung, AB HIER NEUE TEMPERATURREGLUNG			
+09D143	23.10.2009	AF, JW	abbr.	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			Plasma brennt wieder gleichmäßiger			
+																																																																										
+09D145	26.10.2009	JW, TM	a(p)	1			285	47	8.21	6	78					75	4	27		13.56		180	270	263	10x10	Asahi-U	3					9.00E-07	15.6	2.08		29.07772702																												284.43	25.456375	7.716937582	61.7887296			1,5,9	p-Schicht mit grading (50s/10s/15s)  TMB 6 CH4 78  generator war die ersten 3-5 s aus (uups…)			
+09D146	26.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												8.85	66.8	900	14.7	8.2	68.8	4.41	73	3.21	2.40E-08	1.81	Ag-1	30'160°C																		200			Pos.1 Andreas Gerber			
+09D147	26.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3	2	818	126	0.1	9.00E-07	23.58	1.15	5.714285714	9.887539342		8.87	65.1	911	14.96	10.4	67	4.56	71.8	3.25	5.00E-07	2.24	Ag-5	30'160°C														1029.6936	41.39075						Doppel i-layer, mit grading gemacht			
+09D147	26.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3	2	810	126	0.1		292.28	1.92	5.714285714	16.53259177		9.46	65.8	904	15.92	8.5	67.5	5.51	71.5	3.21	1.50E-06	2.37	ZnOAg-9	30'160°C														339.32	41.39075						mehr als 3 min pause vor i-Schicht, da Temperatur zu hoch wegen zu hoher Temperatur in LC während CO2			
+09D148	26.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534		Plasma (von 180 auf 165°C gestellt)			
+09D149	26.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	346.67																																									
+09D150	26.10.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180	270	270	10x10	Asahi-U	3					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,9	p-Schicht mit grading (50s/10s/15s)  TMB 6 CH4 30  			
+09D151	26.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.36	73.7	909	13.97	5.2	74	4.36	76.7	2.98			Ag-1	30'160°C																		200						
+09D152	26.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	5.714285714	9.887539342		9.21	71.7	909	14.14	5.2	67.7	4.58	66.1	2.92			Ag-5	30'160°C														1029.6936	41.39075						Doppel i-layer, mit grading gemacht			
+09D152	26.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						294.38	1.94	5.714285714	16.65137799		9.49	69.9	905	14.98	4.9	64.6	5.37	58.2	2.96			ZnOAg-9	30'160°C														339.32	41.39075						mehr als 3 min pause vor i-Schicht, da Temperatur zu hoch wegen zu hoher Temperatur in LC während CO2			
+09D153	26.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534		Plasma (von 165 auf 160°C gestellt)			
+09D154	26.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			einige Löcher in der Zelle --> viele Shunts….			
+																																	346.67																																									
+09D155	27.10.2009	JW, TM	a(p)	1			285	47	8.21	6	78					90	4	27		13.56		180		280	10x10	Asahi-U	3					9.00E-07	18.72	2.08		29.07772702																												284.43	25.456375	7.716937582	61.7887296			1,5,9	p-Schicht mit grading (65s/10s/15s)  TMB 6 CH4 78  			
+09D156	27.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												8.64	64.1	927	14.54	12.6	65.7	4.42	69.8	3.18			Ag-1	30'160°C																		200			Doppel i-layer, mit grading gemacht			
+09D157	27.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3	2	813	127	0.2	9.00E-07	23.58	1.15	4.347826087	9.887539342		8.52	62.5	929	14.66	15.4	65.2	4.54	70.2	3.19			Ag-5	30'160°C														1029.6936	41.39075						mehr als 3 min pause vor i-Schicht, da Temperatur zu hoch wegen zu hoher Temperatur in LC während CO2			
+09D157	27.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						287.49	1.89	4.347826087	16.26183459		9.32	63.1	935	15.81	13.2	65.7	5.52	71.6	3.2			ZnOAg-9	30'160°C														339.32	41.39075						Plasma (von 160 auf 150°C gestellt)			
+09D158	27.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534		Heizung in PC1 war beim Aufheizen aus (mglw. wg. manueller Temperaturabschaltung vor 09D154)			
+09D159	27.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			sieht aus wie ein schweizer Käse…			
+																																	345																																									
+09D160	27.10.2009	JW, TM	a(i)	1			340	50	7.39							1980	4	33		13.56		180		275	10x10	Corning	2					9.00E-07	321.67	1.62	3.875968992	21.3484251															5.67E-12	1.00E-11	1.15E-05	2.03E+06			4.00E+19	2.60E+18	4.00E+17			1.93	3.5	339.32	27.08125						i-Schicht als Referenzmessung vor Depo LC gereinigt (etwas weniger Löcher) SIMS auf Asahi U			
+																																																																										
+09D161	28.10.2009	JW, TM	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180			10x10	Asahi-U	3					9.00E-07	9	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,9	p-Schicht ohne grading , Temperatur Deposition 280 - 300 °C 			
+09D162	28.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.38	73.9	894	14.19	5.2	75.1	4.31	76.4	3.09	6.90E-10	1.47E+00	Ag-1	30'160°C																		200			Doppel i-layer, mit grading gemacht			
+09D163	28.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	3.225806452	9.887539342		9.61	73.8	900	14.47	4.6	74.8	4.52	76.5	3.08	1.00E-09	1.51	Ag-5	30'160°C														1029.6936	41.39075						mehr als 3 min pause vor i-Schicht, da Temperatur zu hoch wegen zu hoher Temperatur in LC während CO2			
+09D163	28.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3	2	806	128	0.2		293.21	1.93	3.225806452	16.58538564		10.13	73.1	895	15.49	5.3	74.8	5.47	76.3	3.1	2.20E-09	1.55	ZnOAg-9	30'160°C														339.32	41.39075						Plasma (von 150 auf 145°C gestellt)			
+09D164	28.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534		Heizung in PC1 war beim Aufheizen aus (mglw. wg. manueller Temperaturabschaltung vor 09D160)			
+09D165	28.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	341																																									
+09D166	28.10.2009	JW, TM	a(p)	1			285	47	8.21	6	30					2400	4	27		13.56		180		270	10x10	Corning	3					9.00E-07	431	1.8	5.263157895	25.10516896																4.65E-06	4.57E-06	9.83E-01								2.03	180	284.43	25.456375	7.716937582	23.764896				standart p-Schicht			
+																																																																										
+09D167	29.10.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180		270	10x10	Asahi-U	3					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,9	p-Schicht mit grading (50s/10s/15s)  TMB 6 CH4 30  wdh. Von 09D150			
+09D168	29.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.5	74.5	904	14.11	5.1	75.2	4.48	76.7	3	3.50E-09	1.61	Ag-1	30'160°C																		200						
+09D169	29.10.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	5.633802817	9.887539342		9.58	74.1	911	14.19	5.4	75	4.57	77	3.01	2.10E-09	1.56	Ag-5	30'160°C														1029.6936	41.39075						Doppel i-layer, mit grading gemacht			
+09D169	29.10.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						302.71	1.99	5.633802817	17.12275191		10.33	73.5	908	15.47	5.5	75	5.59	76.7	3.01	1.70E-09	1.55	ZnOAg-9	30'160°C														339.32	41.39075									
+09D170	29.10.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D171	29.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	355																																									
+09D172	29.10.2009	JW, TM	a(p)	1			285	47	8.21	6	78					2400	4	27		13.56				270	10x10	Corning	3					9.00E-07	498.67	2.08	24.88174078	29.04666107																1.15E-07	1.19E-07	1.03E+00								2.2	80	284.43	25.456375	7.716937582	61.7887296				p-Schicht mit mehr TMB			
+																																																																										
+09D173	30.10.2009	JW, TM	a(p)	1			285	47	8.21	6	30					72	4	30		13.56		180		270	10x10	Asahi-U	3					9.00E-07	14.4	2	2.325581395	27.9593529																												284.43	25.456375	7.716937582	23.764896			1,5,9	Zelle ohne Plasmastopp			
+09D173	30.10.2009		a(i)	1			1026	68	3.86							205	4	30		13.56		180			10x10	Asahi-U	3						23.58	1.15	2.325581395	9.887539342		5.75	61.3	890	10.52	6.6	64.9	3.93	56.9	1.97	2.10E-09	1.58	Ag-1	30'160°C														1029.6936	41.39075						p-Schicht mit grading (48s/11s/13s)  TMB 6 CH4 30  			
+09D173	30.10.2009		a(i)	1			340	68	10.87							1700	4	30		13.56		180			10x10	Asahi-U	3						270.56	1.59	2.325581395	13.68359582		7.11	67.4	891	11.83	5.9	69.3	4.46	64.2	2.24	3.40E-09	1.61	Ag-5	30'160°C														339.32	41.39075						auf platz 1&9 starker gradient im wirkungsgrad, auf platz 5 homogen			
+09D173	30.10.2009		a(n)	1			547	91	9.17				23			90	4	30		13.56		180			10x10	Asahi-U	3						13.97	1.55	2.325581395	9.971250378		6.47	62.2	893	11.66	6.6	65.1	4.98	57.4	1.97	3.80E-09	1.64	ZnOAg-9	30'160°C														548.9692	55.3905625				14.1832534					
+09D174	30.10.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	322.5																																									
+09D175	16.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180		270	10x10	Asahi-U	3					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,9	p-Schicht mit grading (50s/10s/15s) 			
+09D176	16.11.2009	JW, TM	CO2	1								200				600	6	400		13.56		kalt			Dummy	Übrig												9.23	73.7	904	13.85	5	75	4.34	76.8	2.95	1.10E-09	1.52	Ag-1	30'160°C																		200			10 min CO2 Plasmareinigung			
+09D177	16.11.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					2.00E-06	23.58	1.15	3.649635036	9.887539342		10.15	73.7	906	15.2	5.2	75	5.57	76.4	2.96	1.20E-09	1.52	ZnOAg-5	30'160°C														1029.6936	41.39075									
+09D177	16.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						286.04	1.88	3.649635036	16.18000407		10.11	74	903	15.14	4.9	75.2	5.48	76.7	2.96	8.80E-10	1.49	ZnOAg-9	30'160°C														339.32	41.39075									
+09D178	16.11.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D179	16.11.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	338.33																																									
+09D180	17.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180		270	10x10	Asahi-U	4					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,4,5,9	p-Schicht mit grading (50s/10s/15s) 			
+09D181	17.11.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	4					9.00E-07	23.58	1.15	3.225806452	9.887539342		9.23	73.7	902	13.87	5.2	74.9	4.6	74.9	2.88	1.50E-09	1.55	Ag-1	30'160°C														1029.6936	41.39075						ohne CO2 Plasmareinigung			
+09D181	17.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	4						301.96	1.99	3.225806452	17.08032826		9.2	74.5	903	13.68	4.9	75.1	4.53	74.4	2.83	1.64E-09	1.55	Ag-4	30'160°C														339.32	41.39075						1000H LID (done)			
+09D182	17.11.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	4						15.22	1.79		11.50034676		9.96	73.6	906	14.93	4.9	75.3	5.57	75.4	2.83	1.70E-09	1.55	ZnOAg-5	30'160°C														548.9692	55.3905625				14.1832534		cells given to W. Reetz			
+09D183	17.11.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.79	73.3	905	14.76	4.8	75	5.55	74.1	2.83	1.80E-09	1.56	ZnOAg-9	30'160°C																		200			auf Platz 9 viele Shunts (nur 3 gute Zellen…)			
+																																	354.25																																									
+09D184	17.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180		270	10x10	Asahi-U	4					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,4,5,9	p-Schicht mit grading (50s/10s/15s) 			
+09D185	17.11.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.49	73.8	903	14.24	5.2	74.9	4.57	77.5	2.99	6.70E-10	1.49	Ag-1	30'160°C																		200						
+09D186	17.11.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	4					9.00E-07	23.58	1.15	5.292479109	9.887539342		9.47	74.2	902	14.16	4.8	75.2	4.45	77.4	3.03	8.40E-10	1.49	Ag-4	30'160°C														1029.6936	41.39075									
+09D186	17.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	4						300.21	1.98	5.292479109	16.98133974		10.24	74.1	909	15.2	5.3	74.9	5.61	76.1	2.94	8.00E-09	1.75	ZnOAg-5	30'160°C														339.32	41.39075									
+09D187	17.11.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	4						15.22	1.79		11.50034676		10.21	73.5	904	15.36	4.7	74.9	5.52	76.8	3	1.10E-09	1.52	ZnOAg-9	30'160°C														548.9692	55.3905625				14.1832534					
+09D188	17.11.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	352.5																																									
+09D189	18.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180		270	10x10	Asahi-U	4					9.00E-07	9	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,4,5,9	Pos.1 Andreas Gerber			
+09D190	18.11.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	4					9.00E-07	23.58	1.15	3.597122302	9.887539342		9.55	73.6	899	14.44	5.9	75.4	4.5	75.9	3.06	1.53E-09	1.53	Ag-1	30'160°C														1029.6936	41.39075						ohne CO2 Plasmareinigung			
+09D190	18.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	4						297.96	1.96	3.597122302	16.85406878		9.46	74.9	888	14.22	5	75.4	4.52	75.4	3.04	1.00E-09	1.49	Ag-4	30'160°C														339.32	41.39075									
+09D191	18.11.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	4						15.22	1.79		11.50034676		10.28	73.8	899	15.5	5.3	75.4	5.63	75.4	3.01	1.20E-09	1.51	ZnOAg-5	30'160°C														548.9692	55.3905625				14.1832534					
+09D192	18.11.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												10.24	73.4	895	15.58	5.2	75.6	5.55	75.6	3.06	1.11E-09	1.5	ZnOAg-9	30'160°C																		200						
+																																	345.75																																									
+09D193	18.11.2009	JW, TM	a(i)	1			500	50	5.15							3000	4	33		13.56		180			10x10	Corning	3					9.00E-07	413.33	1.38	4.87804878	18.1052343																												499	27.08125									
+																																																																										
+09D194	18.11.2009	TZ, AF	a(i)	1			340	68	10.87							1980	4	33		13.56		180	250		10x10	Corning	9					2.00E-06	384.11	1.94	2.477183833	16.67946299																												339.32	41.39075						Neuer Carrier. -1 bis -4 saubere Corninggläser, -5 bis -9 beschichtet auf der Rückseite.			
+																																																																										
+09D195	19.11.2009	TZ, AF	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180			10x10	Asahi-U	3						13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,9	Neuer Carrier, Standard a-Si Solarzelle mit p-Grading, 2 Min CO2 Plasma und Doppel i-layer			
+09D196	19.11.2009	TZ, AF	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+09D197	19.11.2009	TZ, AF	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3						23.58	1.15	0.520833333	9.887539342		9.46	73.7	919	13.95	6	74.3	4.4	76.4	2.9	2.07E-09		Ag-1	30'160°C														1029.6936	41.39075						Nicht gezündet bei Buffer. P kurz auf 300, 200 W.			
+09D197	19.11.2009	TZ, AF	a(i)	1			340	68	10.87							1520	4	33		13.56		180		273	10x10	Asahi-U	3	2	825	125		9.00E-07	330.48	2.17	0.520833333	18.69365264		9.25	74.5	891	13.92	5	75.7	4.72	76.1	2.79	7.95E-10		Ag-5	30'160°C														339.32	41.39075									
+09D198	19.11.2009	TZ, AF	a(n)	1			547	91	9.17				23			90	4	34		13.56		180			10x10	Asahi-U	3						16.11	1.79		11.50034676		9.4	75.4	909	13.72	5	75.4	4.38	76.7	2.88	9.69E-10		Ag-9	30'160°C														548.9692	55.3905625				14.1832534					
+09D199	19.11.2009	TZ, AF	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			starke Inhomogenität in der Leerlaufspannung --> Temperaturunterschied?			
+																																	383.67																																									
+09D200	19.11.2009	AF, TZ	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180			10x10	Asahi-U	3						13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,9	Neuer Carrier, Standard a-Si Solarzelle mit p-Grading, 2 Min CO2 Plasma und Doppel i-layer			
+09D201	19.11.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+09D202	19.11.2009	AF, TZ	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3						23.58	1.15		9.887539342		9.25	72.3	914	14	5.9	73.9	4.42	76	2.96	3.30E-09		Ag-1	30'160°C														1029.6936	41.39075						Nicht gezündet bei Buffer. P kurz auf 300, 200 W.			
+09D202	19.11.2009	AF, TZ	a(i)	1			340	68	10.87							1520	4	33		13.56		180		273	10x10	Asahi-U	3					9.00E-07	330.48	2.17		18.69365264		9.22	74.2	896	13.88	5.4	75.1	4.55	76.1	2.89	8.59E-10		Ag-5	30'160°C														339.32	41.39075									
+09D203	19.11.2009	AF, TZ	a(n)	1			547	91	9.17				23			90	4	34		13.56		180			10x10	Asahi-U	3						16.11	1.79		11.50034676		9.41	74.1	908	13.98	5.1	74.8	4.46	76	2.94	1.17E-09		Ag-9	30'160°C														548.9692	55.3905625				14.1832534		Mit 300 W gezündet. Bei 180°C in LC gefahren (keine H2-Kühlung)			
+09D204	19.11.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			starke Inhomogenität in der Leerlaufspannung --> Temperaturunterschied?			
+																																																																										
+09D205	23.11.2009	AF, TZ	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180			10x10	Asahi-U	6						13.5	1.8		25.16341761		9.29	73.1	916	13.87	5.8	74.2	4.4	76.5	2.92	1.60E-09		Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,2,3,5,6,9	45 Min. H2-Stabilisierung			
+09D206	23.11.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.27	74	903	13.88	5	74.8	4.55	76.6	2.86	7.80E-10		Ag-2	30'160°C																		200						
+09D207	23.11.2009	AF, TZ	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	6						23.58	1.15		9.887539342		9.4	73.6	912	14.01	5.6	74.3	4.57	76.4	2.93	1.59E-09		Ag-3	30'160°C														1029.6936	41.39075						30 Min. H2-Stabilisierung			
+09D207	23.11.2009	AF, TZ	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	6					9.00E-07	330.48	2.17		18.69365264		9.26	73.7	896	14.02	6.1	75.1	4.74	76.2	2.86	7.75E-10		Ag-5	30'160°C														339.32	41.39075									
+09D208	23.11.2009	AF, TZ	a(n)	1			547	91	9.17				23			90	4	34		13.56		180			10x10	Asahi-U	6						16.11	1.79		11.50034676		9.37	73.7	905	14.04	5.2	74.7	4.62	77	2.86	5.30E-10		Ag-6	30'160°C														548.9692	55.3905625				14.1832534					
+09D209	23.11.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												9.35	74	913	13.82	5.6	74.4	4.45	76.8	2.91	9.06E-10		Ag-9	30'160°C																		200			Substrate 1, 5 und 6 gesprungen			
+																																																																										
+09D210	23.11.2009	AF, TZ	a(i)	2			340	68	10.87							1500	4	90 / 100		60		180	280	280	10x10	Corning	6	7,8 / 1,5	492 / 544	241 / 178	0,1 / 0,1	9.00E-07	767.83	5.12	17.80821918	44.01149155																												339.32	41.39075						statische i-Schicht in PC2, Zündleistung 100/90W. Alles mit der Hand gefahren. Eurotherm eingelernt. Alter Carrier			
+																																																																										
+09D211	24.11.2009	TZ, AF	a(i)	2			340	68	10.87								4	45 / 50		60		180			10x10	Corning	6																																					339.32	41.39075						Statisch auf neuem Carrier. Schwer gezündet. Plasma nicht stabil. Bei 2 mbar versucht. Proben weggeschmissen.			
+																																																																										
+09D212	25.11.2009	JW, TM	a(i)	1			1026	68	3.86							3000	4	33		13.56		180			10x10	Corning	3					9.00E-07	345	1.15	1.449275362	9.887539342															4.39E-12	1.21E-11	6.44E-06	1.47E+06		0								1029.6936	41.39075						Charakterisierung Start-i-Schicht			
+																																																																										
+09D213	25.11.2009	JW, TM	a(i)	1			340	68	10.87							1980	4	33		13.56		180	280									9.00E-07	363.33	1.84	4.109589041	15.77721839															5.54E-12	1.49E-11	9.42E-06	1.70E+06								1.895	45	339.32	41.39075									
+																																																																										
+09D214	26.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					500	4	27		13.56		180			10x10	fz-c-Si	1					9.00E-07	15.79	0.32		4.413383856																												284.43	25.456375	7.716937582	23.764896				fz-si auf asahi u			
+09D215	26.11.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	fz-c-Si	1					9.00E-07																																1029.6936	41.39075						p-schicht mit grading am Ende (10s/15s)			
+09D215	26.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	fz-c-Si	1						26.65	0.18		1.507453796																												339.32	41.39075									
+09D216	26.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					500	4	27		13.56		180			10x10	fz-c-Si	1					9.00E-07	314.55	6.29		87.94474659																												284.43	25.456375	7.716937582	23.764896							
+09D217	26.11.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig	1						15.79	0.79		#DIV/0!																																200						
+09D218	26.11.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	fz-c-Si	1					9.00E-07	26.65	1.3		11.17721839																												1029.6936	41.39075									
+09D218	26.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	fz-c-Si	1						314.55	2.07		17.79219715																												339.32	41.39075									
+																																																																										
+09D219	26.11.2009	JW, TM	µc(i)	1			3000	50	0.89							900	12.5	800		13.56		180			10x10	ZnO	4					9.00E-07	494	5.49	2.636916836	72.1289173																8.02E-07	1.67E-05	2.08E+01		63.05								3010.8	27.08125						zus. 3 corning  platzt nach Schneiden schnell ab, grade noch messbar			
+																																																																										
+09D220	26.11.2009	JW, TM	µc(i)	1			3000	50	0.89							900	12.5	800		13.56		140			10x10	ZnO	3					9.00E-07	425	4.72	1.176470588	62.05423047																3.18E-07	1.34E-05	4.21E+01		72.05								3010.8	27.08125						zus. 2 corning  platzt nach Schneiden schnell ab, grade noch messbar			
+																																																																										
+09D221	27.11.2009	JW, TM	µc(p)	1			3000	13	0.23	1.2						2280	12.5	720		13.56		180			10x10	ZnO	4					9.00E-07	420.5	1.84	3.529411765	93.21435072																2.40E+00	2.42E+00	1.01E+00		85.35						1.96	900	3010.8	7.041125	1.543387516					zus. 3 corning  platzt nicht ab, gut messbar			
+																																																																										
+09D222	27.11.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180		270	10x10	Asahi-U	4					9.00E-07	13.5	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896			1,5,6,9	Grading hat wahrscheinlich (prüfen) nicht funktioniert bei p --> dicke simple p 			
+09D223	27.11.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	4					9.00E-07	23.58	1.15	6.849315068	9.887539342		8.12	68.2	901	13.21	5.2	70.6	4.62	67.2	2.63	2.90E-09	1.6	Ag-1	30'160°C														1029.6936	41.39075						(dringend nachschauen, ob das Problem schon länger besteht)			
+09D223	27.11.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	4						310.21	2.04	6.849315068	17.54698844		gebrochen											ZnOAg-5	30'160°C														339.32	41.39075						Grading hat nicht funktioniert. Wurde aber auch nicht im logfile mitgeschrieben, erst ab jetzt			
+09D224	27.11.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	4						15.22	1.79		11.50034676		8.42	70.4	902	13.26	5.1	72.1	4.63	70	2.63	1.80E-09	1.56	Ag-6	30'160°C														548.9692	55.3905625				14.1832534		Meiner Meinung hat das Grading bis jetzt funktioniert, wenn, dann bei 09D214 ff nicht (JW)			
+09D225	27.11.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												8.96	69.7	904	14.21	5.1	71.8	5.58	68.7	2.6	3.10E-09	1.6	ZnOAg-9	30'160°C																		200			wdh von 09D180			
+																																	362.5																																									
+09D226	30.11.2009	JW	µc(i)	1			3000	50	0.89							2400	12.5	800		13.56		180			10x10	ZnO	3					9.00E-07	1371.45	5.71	7.52688172	75.09209806		1.84	43.5	456	9.26	11.2	38.4	3.42	52.7	1.91	3.60E-05	1.53	Ag-1	30'160°C														3010.8	27.08125					1,5,9	µc-Si:H Hüpfzelle (LA) 			
+09D227	30.11.2009	JW	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	ZnO	3						15.22	1.79		11.50034676		1.77	44.9	442	8.91	9.6	41.1	3.56	52.9	1.84	1.40E-04	1.68	ZnOAg-5	30'160°C														548.9692	55.3905625				14.1832534		R_sh bei nur 130 Ohm!!			
+09D228	30.11.2009	JW	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig	3											2.21	41.1	460	11.68	8.7	37.2	5.44	49.5	1.97	3.20E-04	1.91	ZnOAg-9	30'160°C																		200			Temperatur scheint in der Mitte am höchsten zu sein (Voc) und zum rand hin abzufallen			
+																																	1386.67																																									
+09D229	30.11.2009	AF, TZ	a(i)	2			228	94	20.09							1000	1.7	36 / 40		60		180	320	305	10x10	Corning	6					9.00E-07	366.5	3.67	48.22190612	22.79530578																												227.544	57.216625						Schwierigkeiten beim Zünden, auf 100 W gezündet. Manual Matching klappt nicht. -2,5,8 Dummy. Plasma nicht stabil			
+																																																																										
+09D230	01.12.2009	AF, TZ	a(i)	2			340	68	10.87							1500	2	36 / 40		60		180		305	10x10	Corning	6					9.00E-07	357.5	2.38	72.78106509	20.49156704																												339.32	41.39075						Plasma zündet und brennt stabil			
+																																																																										
+09D231	01.12.2009	AF, TZ	a(i)	2			340	68	10.87							1500	2	36 / 50		60		180			10x10	Corning	6					2.00E-06	493.23	3.29	12.48995984	28.27167529																												339.32	41.39075									
+																																																																										
+09D232	02.12.2009	AF, TZ	a(i)	2			340	68	10.87							300	2	36 / 50		60		kalt	280	280	40x40	Alu-Folie			528/466	176/265	0,1/0,1	2.00E-06	100	3.33		28.65953433																												339.32	41.39075						"Fehlversuch. Flackert. Danach 20 Min unter 320°C aufheizen. Wieder gezündet; etwas besser, flackert aber bißchen. Manual match, starke Pulverbildung (Temperatur zu niedrig)"			
+																																																																										
+09D233	02.12.2009	AF, TZ	a(i)	2			340	68	10.87							300	2	36 / 50		60			300		40x40	Alu-Folie		1,5 / 3,4	552/484	154/233			100	3.33		28.65953433																												339.32	41.39075									
+																																																																										
+09D234	02.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	2	36 / 50		60			300		40x40	Alu-Folie		1,5 / 2,4	549/481	158/239			100	3.33		14.32976716																												682.448	82.7815						Plasma stabiler als bei 09D234. Kein/kaum flackern.			
+																																																																										
+09D235	02.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	2	45 / 60		60			300		40x40	Alu-Folie		1,5 / 2,4	546 / 475	156 / 240			100	3.33		14.32976716																												682.448	82.7815									
+																																																																										
+09D236	02.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	2	60 / 80		60			300		40x40	Alu-Folie		1,4 / 4,9	546 / 458	150 / 251			100	3.33		14.32976716																												682.448	82.7815						Plasma sehr schön und stabil. Gezündet bei 80W.			
+																																																																										
+09D237	02.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	1.5	45 / 60		60			300		40x40	Alu-Folie		1,5 / 2,4	561 / 483	133 / 217	0,1 / 0,1		100	3.33		14.32976716																												682.448	82.7815						Plasma sehr schön und stabil. Gezündet bei 60W.			
+																																																																										
+09D238	03.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	1.5	60 / 80		60			300		40x40	Alu-Folie			580 / 496	123 / 200			100	3.33		14.32976716																												682.448	82.7815									
+																																																																										
+09D239	03.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	1.5	75 / 100		60			300		40x40	Alu-Folie			591 / 494	105 / 195			100	3.33		14.32976716																												682.448	82.7815									
+																																																																										
+09D240	03.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	1.5	36 / 50		60			300		40x40	Alu-Folie			568 / 478	129 / 226			100	3.33		14.32976716																												682.448	82.7815									
+																																																																										
+09D241	03.12.2009	AF, TZ	a(i)	2			600	270	21.44							300	1	45 / 60		60			300		40x40	Alu-Folie			584 / 485	112 / 210			100	3.33		7.217956793																												602.16	164.345625									
+																																																																										
+09D242	03.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	1	45 / 60		60			300		40x40	Alu-Folie			588 / 499	110 / 195			100	3.33		14.32976716																												682.448	82.7815									
+																																																																										
+09D243	03.12.2009	AF, TZ	a(i)	2			340	68	10.87							300	1.5	45 / 60		60			300		40x40	Alu-Folie			562 / 483	133 / 213			100	3.33		28.65953433																												339.32	41.39075									
+																																																																										
+09D244	03.12.2009	AF, TZ	a(i)	2			170	38	10.82							300	1.5	45 / 60		60			300		40x40	Alu-Folie			574 / 493	129 / 204			100	3.33		57.63550818																												169.66	20.58175						mit einem Dummy-Carrier, Carrier nicht in der Mitte, damit ganze Abscheidung einer LQ auf der Alu-Folie zu sehen ist			
+																																																																										
+09D245	03.12.2009	AF, TZ	a(i)	2			85	19	10.82							300	1.5	45 / 60		60			300		40x40	Alu-Folie			562 / 483	133 / 213			100	3.33		115.2710164																												84.83	10.290875						mit einem Dummy-Carrier, Carrier nicht in der Mitte, damit ganze Abscheidung einer LQ auf der Alu-Folie zu sehen ist			
+																																																																										
+09D246	04.12.2009	AF, TZ	a(i)	2			85	19	10.82							300	1.5	45 / 60		60			300		40x40	Alu-Folie							100	3.33		115.2710164																												84.83	10.290875						Kammer zuerst mit 1,5 mbar H2 füllen. Erst zünden, dann Silan zuschalten.			
+																																																																										
+09D247	04.12.2009	AF, TZ	a(i)	2			340	68	10.87							300	1.5	45 / 60		60			300		40x40	Alu-Folie							100	3.33		28.65953433																												339.32	41.39075						Kammer zuerst mit 1,5 mbar H2 füllen. Erst zünden, dann Silan zuschalten.			
+																																																																										
+09D248	04.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	2.5	45 / 60		60			300		40x40	Alu-Folie							100	3.33		14.32976716																												682.448	82.7815						"Funktioniert nicht; Plasma bis 100/75 instabil; Versuch abgebrochen"			
+																																																																										
+09D249	04.12.2009	AF, TZ	a(i)	2			680	136	10.82							300	2	75 / 100		60			300		40x40	Alu-Folie							100	3.33		14.32976716																												682.448	82.7815									
+																																																																										
+09D250	04.12.2009	JW	µc(p)	1			3000	8.6	0.15	0.8						3000	12.5	400		13.56					10x10	ZnO	1					9.00E-07	349	1.16	2.158273381	88.87931505																1.50E+00	1.50E+00	1.00E+00	91.6	84.9						2.008	495	3010.8	4.657975	1.028925011					2 zus corning, soll geringere deporate haben			
+																																																																										
+09D251	07.12.2009	JW, TM	a(p)	1			285	47	8.21	6	30					75	4	27		13.56		180			10x10	Asahi-U	3					9.00E-07	13.5	1.8		25.16341761		9.27	72.6	904	14.13	5.2	74.4	4.62	74.2	2.95	1.98E-09	1.57	Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,5,9	wdh von 09D222, da das Grading in der p-Schicht damals nicht funktioniert hatte			
+09D252	07.12.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	5.555555556	9.887539342		10.22	73.3	911	15.31	5.4	74.2	5.67	74.9	2.96	2.19E-09	1.58	ZnO/Ag-5	30'160°C														1029.6936	41.39075									
+09D252	07.12.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						301.04	1.98	5.555555556	17.02847713		10.04	72.7	908	15.22	5.1	74.4	5.54	73.6	2.98	2.16E-09	1.57	ZnO/Ag-9	30'160°C														339.32	41.39075									
+09D253	07.12.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D254	07.12.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	353.33																																									
+09D255	07.12.2009	JW	µc(p)	1			3000	8.6	0.15	0.8						180	12.5	400		13.56		180			10x10	ZnO	1					9.00E-07	20	1.11	0	84.88950817																8.00E-02			63.5									3010.8	4.657975	1.028925011					2 zus corning			
+																																																																										
+09D256	08.12.2009	JW, TM	µc(p)	1			3000	8.6	0.15	0.8						180	12.5	400		13.56		180			10x10	ZnO	3					9.00E-07	20.88	1.16		88.62464653		4.7	59.4	399	19.82	3.9	60	10.16	58.4	3.09		1.75	Ag-1	30'160°C						81								3010.8	4.657975	1.028925011				1,5,9	1. µc-Si:H Zelle komplett in LADA			
+09D257	08.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig												4.58	60.1	393	19.42	3.5	60.9	10.02	59.7	3.06		1.65	Ag-5	30'160°C																		200						
+09D258	08.12.2009	JW, TM	µc(i)	1			3000	50	0.89							2400	12.5	800		13.56		180			10x10	ZnO	3					9.00E-07	1335.57	5.56	3.435804702	73.12753413		6.25	61.2	417	24.49	3.2	62.1	14.09	59.7	3.16			ZnO/Ag-9	30'160°C														3010.8	27.08125									
+09D259	08.12.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	ZnO	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D260	08.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	1371.67																																									
+09D261	08.12.2009	JW, TM	µc(i)-seed	1			3000	8.6	0.15							180	12.5	400		13.56		180			10x10	ZnO	1					9.00E-07	20.88	1.16		88.62464653																												3010.8	4.657975						2 zus corning			
+09D262	08.12.2009	JW, TM	µc(i)	1			3000	50	0.89							600	12.5	800		13.56		180			10x10	ZnO	1					9.00E-07	350.79	5.85	3.355704698	76.82751762															2.42E-06	5.02E-06	2.89E-05	1.19E+01										3010.8	27.08125									
+																																	371.67																																									
+09D263	08.12.2009	JW, TM	µc(p)	1			3000	8.6	0.15	0.8						180	12.5	400		13.56		180			10x10	ZnO	3					9.00E-07	20.88	1.16		88.62464653																												3010.8	4.657975	1.028925011					nach Depo sofort abgeplatzt			
+09D264	08.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig												Zelle ist	nach der	Depo	sofort	abgeplatzt																										200			zellen weggeschmissen			
+09D265	08.12.2009	JW, TM	µc(i)	1			3000	75	1.49							2400	12.5	800		13.56		180			10x10	ZnO	3					9.00E-07																																3010.8	45.6515625									
+09D266	08.12.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	ZnO	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D267	08.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																																																										
+09D268	09.12.2009	AF, TZ	a(i)	2			680	136	10.82							1200	2	45 / 60		60		180		295	10x10	Corning	6					9.00E-07	464	3.87	5.477980666	16.62252991															7.93E-12	1.73E-11	1.33E-05	1.67E+06								1.92	7	682.448	82.7815						Zünden bei 100 / 75, Slave geht bei Reduzierung der Leistung aus -> kurze Erhöhung auf 60 W und dann zurück auf 45 W			
+																																																																										
+09D269	09.12.2009	AF, TZ	a(i)	2			680	136	10.82							1500	1.5	45 / 60		60		180		285	10x10	Corning	6					9.00E-07	493.5	3.29		14.14348019																												682.448	82.7815						Ab hier Zünden mit 80 / 60, Schichten haften nur auf Substrat 4 (platzen nach wenigen Stunden ab)			
+																																																																										
+09D270	09.12.2009	AF, TZ	a(i)	2			680	136	10.82							1350	1.5	60 / 80		60		180		285	10x10	Corning	6					9.00E-07	444.15	3.29		14.14348019																												682.448	82.7815						alle Schichten platzen nach einigen Minuten ab			
+																																																																										
+09D271	09.12.2009	AF, TZ	Ar	1										Ar	400	300	1.7	342		13.56		180			10x10	Corning	6					9.00E-07																			6.76E-12	1.66E-11	9.80E-06	1.45E+06																	Ar-Plasma vor i-Schicht für bessere Haftung			
+09D272	09.12.2009	AF, TZ	a(i)	2			680	136	10.82							1350	1	45 / 60		60		180		290	10x10	Corning	6					9.00E-07	429	3.18	7.781649245	13.6610447																										1.95	22	682.448	82.7815						Schichten noch homogener als bei 09D268, aber Slave etwa 15 % dicker als Master			
+																																																																										
+09D273	10.12.2009	JW, TM	µc(i)-seed	1			3000	8.6	0.15							180	12.5	400		13.56		140			10x10	ZnO	1					9.00E-07	20.88	1.16		88.62464653															1.08E-05	8.34E-06	1.03E-04	9.54E+00	77.6	60.3								3010.8	4.657975						2 zus corning			
+09D274	10.12.2009	JW, TM	µc(i)	1			3000	50	0.89							600	12.5	800		13.56		140			10x10	ZnO	1					9.00E-07	274.12	4.57	2.564102564	60.0363729																												3010.8	27.08125									
+																																	295																																									
+09D275	10.12.2009	JW, TM	µc(i)	1			3000	55	1.1							2100	12.5	800		13.56		180			10x10	ZnO	4					9.00E-07	1459.79	6.95	2.199661591	73.89349521		5.14	57.7	430	20.69	3.1	55.4	11.42	62	2.81			ZnO/Ag-1	30'160°C						72								3010.8	33.4778125					1,5,6,9	Hüphzellen mit p-Schicht aus:			
+09D276	10.12.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	ZnO	4						15.22	1.79		11.50034676		5.69	60.6	466	20.14	3	58.5	11.6	65.5	2.55	1.79E-05	1.32	ZnO/Ag-5	30'160°C														548.9692	55.3905625				14.1832534		1:5K, 5&9:LA, 6:Cluster			
+09D277	10.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig												4.89	49.3	463	21.4	4.3	46.3	10.89	58.8	3.23	6.59E-05	1.52	ZnO/Ag-6	30'160°C																		200						
+																																	1475					6.36	61.9	470	21.82	2.9	60.2	12.75	64.3	2.68	4.49E-05	1.42	ZnO/Ag-9	30'160°C																								
+09D278	10.12.2009	JW, TM	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180		270	10x10	Asahi-U	3					9.00E-07	9	1.8		25.16341761		9.49	73.1	900	14.42	6	74.5	4.65	75.4	3.03			Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,5,9	after simple p-layer gas pumping and Ar-i-n (between i- and n- layers without stop for pumping and Ar)			
+09D279	10.12.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	5.109489051	9.887539342		10.28	73.8	905	15.38	4.7	75.1	5.63	75.5	2.98	1.27E-09	1.53	ZnO/Ag-5	30'160°C														1029.6936	41.39075									
+09D279	10.12.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33				180			10x10	Asahi-U	3						291.32	1.92	5.109489051	16.47819521		10.35	73.1	899	15.76	5.5	75.1	5.74	75.3	3.04	1.40E-09	1.52	ZnO/Ag-9	30'160°C														339.32	41.39075									
+09D279	10.12.2009	JW, TM	a(n)	1			547	91	9.17				23			90	4	34				180			10x10	Asahi-U	3						16.11	1.79	5.109489051	11.50034676																												548.9692	55.3905625				14.1832534					
+09D280	10.12.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												10.35	73.1	899	15.76	5.5	75.1	5.74	75.3	3.04	1.40E-09	1.52	ZnO/Ag-9	30'160°C																		200						
+																																	340																																									
+09D281	11.12.2009	AF, TZ	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180			10x10	Asahi-U	4					9.00E-07	9	1.8		25.16341761		4.79	45	840	12.66	9.7	26.4	3.2	26	3	1.46E+00	21.32	Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,4,6,9	p-Schicht ohne grading  			
+09D282	11.12.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												8.22	71.2	890	12.89	6.9	72.6	3.34	74.4	3.06	3.19E-09	1.6	Ag-4	30'160°C																		200			-1, -9: Viel geshuntet. -4,-6: ziemlich gut, paar Zellen geshuntet.			
+09D283	11.12.2009	AF, TZ	a(i)	2			680	136	10.82							800	2	45 / 60		60		180			10x10	Asahi-U	4					9.00E-07	315.79	3.95	5.671641791	16.96922071		8.42	71.1	889	13.32	6.3	73.5	3.51	73.9	3.1	5.56E-09	1.65	Ag-6	30'160°C														682.448	82.7815						einfache i-Schicht			
+09D284	11.12.2009	AF, TZ	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	4						15.22	1.79		11.50034676		7.98	70.4	889	12.74	6.8	71.9	3.31	73	3.02	4.59E-09	1.63	Ag-9	30'160°C														548.9692	55.3905625				14.1832534					
+09D285	11.12.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	340																																									
+09D286	11.12.2009	AF, TZ	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180			10x10	Asahi-U	5					9.00E-07	9	1.8		25.16341761		9.23	73.2	866	14.55	4.9	74.5	4.45	76.3	3.16	1.70E-09	1.47	Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,4,5,6,9	"Referenzzelle in der PC1; single p, single i (ohne Grading)"			
+09D287	11.12.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt																9.33	73.7	867	14.6	4.8	74.3	4.49	75.3	3.15	5.28E-08	1.78	Ag-4	30'160°C																		200						
+09D288	11.12.2009	AF, TZ	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	5					9.00E-07	290.79	1.91	0.949367089	16.44821583		9.22	73.6	866	14.46	5	74.5	4.47	76.1	3.13	1.03E-09	1.43	Ag-6	30'160°C														339.32	41.39075									
+09D289	11.12.2009	AF, TZ	a(n)	1			547	91	9.17							85	4	34		13.56		180			10x10	Asahi-U	5						15.22	1.79		11.50034676		9.08	73	860	14.47	5.7	74	4.46	76.3	3.14	1.70E-08	1.66	Ag-9	30'160°C														548.9692	55.3905625									
+09D290	11.12.2009	AF, TZ	CO2	1								200				120	6	400		13.56		kalt																9.32	73.5	869	14.59	5	75	4.59	76.1	3.12	3.23E-09	1.53	Ag-5	30'160°C																		200						
+																																	315					10.06	73.6	875	15.62	5.1	74.8	5.51	75.7	3.1	1.56E-09	1.47	ZnO/Ag-5	30'160°C																								
+09D291	14.12.2009	JW, TM	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180		270	40x40	Asahi-U	1					9.00E-07	9	1.8		25.16341761																												284.43	25.456375	7.716937582	23.764896				1. Modul (a-Si:H)			
+09D292	14.12.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			40x40	Asahi-U	1					9.00E-07	23.58	1.15		9.887539342																												1029.6936	41.39075									
+09D292	14.12.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			40x40	Asahi-U	1																																					339.32	41.39075									
+09D293	14.12.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			40x40	Asahi-U	1						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D294	14.12.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																																																										
+09D295	14.12.2009	JW, TM	µc(p)	1			3000	8.6	0.15	0.8						180	12.5	400		13.56		180			10x10	ZnO	4					9.00E-07	20.88	1.16		88.62464653		5.95	64.7	455	20.11	3.2	64.5	10.02	67.4	3.14	7.82E-05	1.44	Ag-1	30'160°C						70.13333333								3010.8	4.657975	1.028925011				1,5,6,9	µc-Si:H Zelle			
+09D296	14.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig												6.25	65.6	460	20.7	2.5	65.7	10.49	66.4	3.14		1.5	Ag-6	30'160°C																		200			mehr SiH4, kürzer deponiert			
+09D297	14.12.2009	JW, TM	µc(i)	1			3000	58	1.16							1800	12.5	800		13.56		180			10x10	ZnO	4					9.00E-07	1423.91	7.91	0.684931507	79.74065768		6.78	63.1	455	23.59	3	63.1	12.83	66.8	3.23	7.97E-05	1.45	ZnO/Ag-5	30'160°C														3010.8	35.303875						soll mehr Voc haben, als die vorherige µc-Si:H Zelle			
+09D298	14.12.2009	JW, TM	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	ZnO	4						15.22	1.79		11.50034676		7.02	65.9	476	22.38	2.8	65.5	12.2	68	3.03	4.24E-05	1.43	ZnO/Ag-9	30'160°C														548.9692	55.3905625				14.1832534					
+09D299	14.12.2009	JW, TM	CO2	1								200				200	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	1460																																									
+09D300	15.12.2009	JW, TM	a(p)	1			285	47	8.21	6	30					48	4	27		13.56		180			10x10	Asahi-U	3					9.00E-07	8.64	1.8	5.015673981	25.16341761		6.62	66.1	902	11.1	6.6	68	4.26	62.9	2.05	4.06E-09	1.65	Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,5,9	keine Plasmaunterbrechung			
+09D300	15.12.2009	JW, TM	a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	5.015673981	9.887539342		7.72	67.2	908	12.66	6.1	69.1	5.36	64.2	2.12	5.12E-09	1.66	ZnO/Ag-5	30'160°C														1029.6936	41.39075									
+09D300	15.12.2009	JW, TM	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						272.68	1.79	5.015673981	15.42382603		7.62	65.7	907	12.8	6.7	68.4	5.22	62.6	2.25	6.88E-09	1.7	ZnO/Ag-9	30'160°C														339.32	41.39075									
+09D300	15.12.2009	JW, TM	a(n)	1			547	91	9.17				23			90	4	34		13.56		180			10x10	Asahi-U	3						16.11	1.79	5.015673981	11.50034676																												548.9692	55.3905625				14.1832534					
+09D301	15.12.2009	JW, TM	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	321																																									
+09D302	15.12.2009	TM, TZ, JW	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180			10x10	Asahi-U	3					9.00E-07	9	1.8		25.16341761		9.19	72.5	891	14.23	5.4	72.7	4.33	73.6	3.08	6.21E-09	1.46	Ag-1	30'160°C														284.43	25.456375	7.716937582	23.764896			1,5,6,9	Wiederholung von 09D161 			
+09D303	15.12.2009	TM, TZ, JW	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												10.24	73.7	898	15.48	5.2	75.2	5.59	76.3	3.03	8.46E-10	1.48	ZnO/Ag-6	30'160°C																		200			p-Schicht ohne grading  			
+09D304	15.12.2009		a(i)	1			1026	68	3.86							205	4	33		13.56		180			10x10	Asahi-U	3					9.00E-07	23.58	1.15	3.703703704	9.887539342		10.29	73.3	897	15.66	5.3	74.8	5.7	75.9	3.03	9.06E-10	1.49	ZnO/Ag-5	30'160°C														1029.6936	41.39075						2 min CO2 plasma nach dem p-Schicht			
+09D304	15.12.2009	TM, TZ, JW	a(i)	1			340	68	10.87							1520	4	33		13.56		180			10x10	Asahi-U	3						285.96	1.88	3.703703704	16.17529033		10.28	73.4	898	15.6	5.3	75	5.59	76.4	3.06	8.44E-10	1.48	ZnO/Ag-9	30'160°C														339.32	41.39075						position-1,6 very inhomogenious			
+09D305	15.12.2009	TM, TZ, JW	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	3						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D306	15.12.2009	TM, TZ, JW	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200						
+																																	333.75																																									
+09D307	22.12.2009	AF	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180			10x10	Asahi-U	4						9	1.8		25.16341761		6.29	54.8	821	13.99	13	58.4	4.21	68.6	3.08	2.38E-10	1.3	Ag-1	30'160°C							1.00E+19	4.00E+18	6.00E+17					284.43	25.456375	7.716937582	23.764896			1,4,6,9	a-Si Zelle LQ 1 mbar. -1, -4, -6, -9 Asahi-U. Andere Stellen Dummygläser.			
+09D308	22.12.2009	AF	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												7.69	65.3	851	13.84	7.6	67.4	4.15	74.4	3.01	1.93E-10	1.33	Ag-4	30'160°C																		200						
+09D309	22.12.2009	AF	a(i)	2			680	136	10.82							1300	1	42 / 63		60		180			10x10	Asahi-U	4						421.54	3.24	4.017857143	13.93961169		7.84	66.3	853	13.84	6.5	67.3	4.16	74.6	3.04	2.74E-10	1.36	Ag-6	30'160°C														682.448	82.7815									
+09D310	22.12.2009	AF	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	4						15.22	1.79		11.50034676		7.65	66.8	856	13.37	6.9	67.7	3.66	75	3.05	2.34E-10	1.35	Ag-9	30'160°C														548.9692	55.3905625				14.1832534					
+09D311	22.12.2009	AF	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			Aus versehen 20 Min in LC auf 250°C während abkühlen mit N2. Bei 135°C geöffnet.			
+																																	445.75																																									
+09D312	23.12.2009	AF	a(p)	1			285	47	8.21	6	30					50	4	27		13.56		180			10x10	Asahi-U	5						9	1.8		25.16341761		0.85	19.6	849	5.09	>1000	21.2	2.3	32.9	1.92			Ag-5	30'160°C							2.00E+19	2.00E+18	9.00E+17					284.43	25.456375	7.716937582	23.764896			1,4,5,6,9	Asahi-U auf -1, -4, -5, -6, -9. Rest Dummy-Gläser			
+09D313	23.12.2009	AF	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig												0.57	18.1	857	3.69	>1000							Ag-9	30'160°C																		200						
+09D314	23.12.2009	AF	a(i)	2	0.02	66	680	136	10.82							3300	1	42 / 63		60		180			10x10	Asahi-U	5						450.79	1.37	2.315789474	5.872403719	3.28																											682.448	82.7815						"Slave hat nicht sofort gezündet. Noch Fehler im Program mit Matching; jetzt behoben."			
+09D315	23.12.2009	AF	a(n)	1			547	91	9.17				23			85	4	34		13.56		180			10x10	Asahi-U	5						15.22	1.79		11.50034676																												548.9692	55.3905625				14.1832534					
+09D316	23.12.2009	AF	CO2	1								200				120	6	400		13.56		kalt			Dummy	Übrig																																										200			Nächstes Mal auch vor Tempern vermessen.			
+

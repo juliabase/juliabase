@@ -1,0 +1,148 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+{% load ipv_extras %}
+
+{% if processes %}
+  <table class="lab-notebook" style="font-size: small">
+    <colgroup span="7"></colgroup>
+    <colgroup span="7" style="background-color: #ffbbbb"></colgroup>
+    <colgroup span="7" style="background-color: #99dddd"></colgroup>
+    <colgroup style="background-color: #bbffbb"></colgroup>
+    <colgroup span="11"></colgroup>
+    <thead>
+      <tr>
+        <th class="top">{% trans 'Number' %}</th>
+        {# Translators: Of layer (p, i, or n) #}
+        <th class="top">{% trans 'Type' %}</th>
+        <th class="top">{% verbose_name LADADeposition.customer %}</th>
+        <th class="top">{% verbose_name LADALayer.carrier %}</th>
+        <th class="top">{% verbose_name LADALayer.chamber %}</th>
+        <th class="top">{% verbose_name LADALayer.v_lq %}</th>
+        <th class="top">{% verbose_name LADALayer.pendulum_lq %}</th>
+        <th class="top">{% verbose_name LADALayer.sih4_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.h2_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.tmb_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.ch4 %}</th>
+        <th class="top">{% verbose_name LADALayer.co2 %}</th>
+        <th class="top">{% verbose_name LADALayer.ph3_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.additional_gas %}</th>
+        <th class="top">{% verbose_name LADALayer.sih4_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.h2_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.tmb_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.ch4 %}</th>
+        <th class="top">{% verbose_name LADALayer.co2 %}</th>
+        <th class="top">{% verbose_name LADALayer.ph3_1 %}</th>
+        <th class="top">{% verbose_name LADALayer.additional_gas %}</th>
+        <th class="top">SC</th>
+        <th class="top" style="font-style: italic">P</th>
+        <th class="top" style="font-style: italic">{% trans 'Base' %} p</th>
+        <th class="top" style="font-style: italic">p</th>
+        <th class="top" style="font-style: italic">T {% trans 'substrate' %}</th>
+        <th class="top" style="font-style: italic">T {% trans 'heater' %}</th>
+        <th class="top" style="font-style: italic">T {% trans 'heater depo' %}</th>
+        <th class="top"><span style="font-style: italic">f</span><sub>HF</sub></th>
+        <th class="top" style="font-style: italic">t</th>
+        <th class="top">{% trans 'elect. dist.' %}</th>
+        <th class="top">{% trans 'layer comments' %}</th>
+        <th class="top">{% trans 'comments' %}</th>
+      </tr>
+      <tr style="padding-top: -2ex">
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th style="white-space: nowrap">(m/s)</th>
+        <th colspan="7" style="text-align: center">(sccm)</th>
+        <th colspan="7" style="text-align: center">{% trans 'calib.' %} (sccm)</th>
+        <th style="white-space: nowrap">{% trans 'calib.' %} (%)</th>
+        <th style="white-space: nowrap">(W)</th>
+        <th style="white-space: nowrap">(mbar)</th>
+        <th style="white-space: nowrap">(mbar)</th>
+        <th style="white-space: nowrap">(℃)</th>
+        <th style="white-space: nowrap">(℃)</th>
+        <th style="white-space: nowrap">(℃)</th>
+        <th style="white-space: nowrap">(MHz)</th>
+        <th style="white-space: nowrap">(s)</th>
+        <th style="white-space: nowrap">(mm)</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for deposition in processes %}
+        {% lab_notebook_comments deposition "before" %}
+        {% for layer in deposition.layers.all %}
+          <tr style="vertical-align: top">
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
+              {% if forloop.first %}
+                <a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a>
+              {% else %}
+                {{ layer.date|date:"y" }}D-{{ layer.number|four_digits }}
+              {% endif %}
+            </td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.layer_type }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{% if deposition.customer.initials %}{{ deposition.customer.initials }}{% else %}{{ deposition.customer }}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.get_carrier_display }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.chamber }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.v_lq|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.pendulum_lq|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% if layer.sih4_1 != None %}MFC#{{ layer.get_sih4_mfc_number_1_display }}: {{ layer.sih4_1|quantity }}{% endif %}{% if layer.sih4_1_end %}–{{ layer.sih4_1_end|quantity }}{% endif %}
+                                                                                                                                                          {% if layer.sih4_2 %}MFC#{{ layer.get_sih4_mfc_number_2_display }}: {{ layer.sih4_2|quantity }}{% endif %}{% if layer.sih4_2_end %}–{{ layer.sih4_2_end|quantity }}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% if layer.h2_1 %}MFC#{{ layer.get_h2_mfc_number_1_display }}: {{ layer.h2_1|quantity }}{% endif %}{% if layer.h2_1_end %}–{{ layer.h2_1_end|quantity }}{% endif %}
+                                                                                                                                                          {% if layer.h2_2 %}MFC#{{ layer.get_h2_mfc_number_2_display }}: {{ layer.h2_2|quantity }}{% endif %}{% if layer.h2_2_end %}–{{ layer.h2_2_end|quantity }}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% if layer.tmb_1 %}MFC#1.1: {{ layer.tmb_1|quantity }}{% endif %}
+                                                                                                                                                          {% if layer.tmb_2 %}MFC#1.2: {{ layer.tmb_2|quantity }}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.ch4|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.co2|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% if layer.ph3_1 %}MFC#1.1: {{ layer.ph3_1|quantity }}{% endif %}{% if layer.ph3_1_end %}–{{ layer.ph3_1_end|quantity }}{% endif %}
+                                                                                                                                                          {% if layer.ph3_2 %}MFC#1.2: {{ layer.ph3_2|quantity }}{% endif %}{% if layer.ph3_2_end %}–{{ layer.ph3_2_end|quantity }}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% if layer.additional_gas %}{{ layer.get_additional_gas_display }}: {{ layer.additional_gas_flow|quantity }}{% else %}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% get_calibrate_gas_flow layer "sih4_1" layer.get_sih4_mfc_number_1_display  %} {% get_calibrate_gas_flow layer "sih4_2" layer.get_sih4_mfc_number_2_display %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% get_calibrate_gas_flow layer "h2_1" layer.get_h2_mfc_number_1_display  %} {% get_calibrate_gas_flow layer "h2_2" layer.get_h2_mfc_number_2_display %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% get_calibrate_gas_flow layer "tmb_1" "1.1" %} {% get_calibrate_gas_flow layer "tmb_2" "1.2" %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% get_calibrate_gas_flow layer "ch4" "1.1" %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% get_calibrate_gas_flow layer "co2" "1.1" %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% get_calibrate_gas_flow layer "ph3_1" "1.1" %} {% get_calibrate_gas_flow layer "ph3_2" "1.2" %}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{% if layer.additional_gas == "Ar" %}{{ layer.get_additional_gas_display }}: {% get_calibrate_gas_flow layer layer.additional_gas "1" %}{% else %}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.silane_concentration|quantity|default_if_none:" " }}{% if layer.silane_concentration_end %}–{{ layer.silane_concentration_end|quantity }}{% endif %}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.power_1|quantity|default_if_none:"–" }}/{{ layer.power_2|quantity|default_if_none:"–" }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.base_pressure|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.pressure|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.temperature_substrate|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.temperature_heater|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.temperature_heater_depo|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.get_hf_frequency_display|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.time_1|quantity|default_if_none:"–" }}/{{ layer.time_2|quantity|default_if_none:"–" }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.electrodes_distance|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.comments|markdown_samples:"collapse" }}</td>
+            {% if forloop.first %}
+              <td rowspan="{{ deposition.layers.count }}"{% if forloop.first %} class="top"{% endif %}{% if forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
+                <div style="float: right; marging-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
+                            border-bottom: 1px solid" class="timestamp">
+                  {{ deposition|timestamp:"3" }}</div>{{ deposition.comments|markdown_samples:"collapse" }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+        {% lab_notebook_comments deposition "after" %}
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>{% trans 'No data found for this time range.' %}</p>
+{% endif %}

@@ -1,0 +1,215 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+{% load ipv_extras %}
+
+<p>
+  <span class="label">{% verbose_name Deposition.number %}:</span><span class="value"
+    style="margin-right: 4em">{{ process.number }}</span>
+  <span class="label">{% verbose_name OldClusterToolDeposition.carrier %}:</span><span class="value">{{ process.carrier|default:"—" }}</span>
+</p>
+
+{% if process.comments %}
+  <blockquote>{{ process.comments|markdown_samples }}</blockquote>
+{% endif %}
+
+<table style="width: 100%">
+  <tbody>
+  {% for layer in layers %}
+  <tr>
+    <td style="border-style: solid; border-color: black; border-width: thin">
+      <table style="width: 100%">
+        <tbody>
+        <tr>
+          <td>
+            <table style="width: 100%">
+              <tbody>
+              <tr>
+                <td colspan="2" rowspan="3" style="vertical-align: top">
+                  <table>
+                    <tbody>
+                    <tr>
+                      <td style="vertical-align: top; text-align: right">
+                        <div style="float: left">{% verbose_name OldClusterToolLayer.number %}:</div>
+                        <div
+                          style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                 margin-left: 0.3em;
+                                 border-style: solid; border-width: thin;
+                                 border-color: black; float: right; clear: left">{{ layer.number }}</div>
+                      </td>
+                      <td style="vertical-align: top; padding-left: 2em">
+                        {% ifequal layer.type "PECVD" %}
+                          <span class="label">{% verbose_name OldClusterToolPECVDLayer.chamber %}:</span
+                                ><span class="value">{{ layer.chamber }}</span>
+                        {% else %}
+                           
+                        {% endifequal %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="2">{{ layer|cluster_tool_layer_type:"verbose" }}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </td>
+                 {% value_field layer.transfer_in_chamber %}
+                 {% ifequal layer.type "PECVD" %}
+                    {% value_field layer.plasma_start_power "W" %}
+                 {% else %}{% ifequal layer.type "hot-wire" %}
+                    <td class="label">{% verbose_name OldClusterToolHotWireLayer.wire_material %}:</td>
+                    <td class="value">{{ layer.get_wire_material_display }}</td>
+                 {% else %}
+                    {% value_field layer.working_pressure "mbar" %}
+                 {% endifequal %}{% endifequal %}
+              </tr>
+              <tr>
+                 <td class="label">{% verbose_name ClusterToolPECVDLayer.pre_heat %}:</td>
+                <td class="value"> {{ layer.pre_heat|depostion_time }}</td>
+                 {% ifequal layer.type "PECVD" %}
+                    {% value_field layer.plasma_start_with_shutter "yes/no" %}
+                 {% else %}{% ifequal layer.type "hot-wire" %}
+                    {% value_field layer.voltage "V" %}
+                 {% else %}
+                    {% value_field layer.temperature "℃" %}
+                 {% endifequal %}{% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.heating_temperature "℃" %}
+                {% ifequal layer.type "PECVD" %}
+                   {% value_field layer.deposition_frequency "MHz" %}
+                {% else %}{% ifequal layer.type "hot-wire" %}
+                   {% value_field layer.current "A" %}
+                {% else %}
+                   {% value_field layer.ts "℃" %}
+                {% endifequal %}{% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.gas_pre_heat_gas %}
+                {% value_field layer.gas_pre_heat_pressure "mbar" %}
+                {% ifequal layer.type "PECVD" %}
+                   {% value_field layer.deposition_power "W" %}
+                {% else %}{% ifequal layer.type "hot-wire" %}
+                   {% value_field layer.wire_power "W" %}
+                {% else %}
+                   {% value_field layer.ion "W" %}
+                {% endifequal %}{% endifequal %}
+              </tr>
+              <tr>
+                {% value_field layer.pressure "mbar" %}
+                {% value_field layer.transfer_out_of_chamber %}
+                <td class="label">{% verbose_name NewClusterToolPECVDLayer.gas_pre_heat_time %}:</td>
+                <td class="value"> {{ layer.gas_pre_heat_time|depostion_time }}</td>
+              </tr>
+              <tr>
+                <td class="label">{% verbose_name ClusterToolHotWireLayer.time %}:</td>
+		        <td class="value"> {{ layer.time|depostion_time }}</td>
+                {% ifequal layer.type "PECVD" %}
+                   {% value_field layer.substrate_electrode_distance "mm" %}
+                {% else %}{% ifequal layer.type "hot-wire" %}
+                   {% value_field layer.substrate_wire_distance "mm" %}
+                {% else %}
+                   {% value_field layer.current "A" %}
+                {% endifequal %}{% endifequal %}
+                {% ifequal layer.type "PECVD" %}
+                   {% value_field layer.base_pressure "mbar" %}
+                {% else %}{% ifequal layer.type "hot-wire" %}
+                   {% value_field layer.filament_temperature "℃" %}
+                {% else %}
+                   {% value_field layer.ct_2 %}
+                {% endifequal %}{% endifequal %}
+              </tr>
+              <tr>
+                {% ifequal layer.type "hot-wire" %}
+                    {% value_field layer.base_pressure %}
+                    <td colspan="4"></td>
+                  {% else %}
+                    <td colspan="6"></td>
+                  {% endifequal %}
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <table style="width: 100%">
+              <tbody>
+              <tr>
+                {% if layer.comments %}
+                <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                    {{ layer.comments|markdown_samples:"collapse" }}
+                </td>
+                {% else %}
+                <td> </td>
+                {% endif %}
+                <td style="width: 60%; vertical-align: top; padding: 1ex">
+                  <table style="text-align: center; width: 100%">
+                    <tbody>
+                    {% if layer.h2 %}
+                    <tr>
+                        {% value_field layer.h2 "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.sih4 %}
+                    <tr>
+                        {% value_field layer.sih4 "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.mms %}
+                    <tr>
+                        {% value_field layer.mms "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.tmb %}
+                    <tr>
+                        {% value_field layer.tmb "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.co2 %}
+                    <tr>
+                        {% value_field layer.co2 "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.ph3 %}
+                    <tr>
+                        {% value_field layer.ph3 "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.ch4 %}
+                    <tr>
+                        {% value_field layer.ch4 "sccm" %}
+                    </tr>
+                    {% endif %}
+                    {% if layer.ar %}
+                    <tr>
+                        {% value_field layer.ar "sccm" %}
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

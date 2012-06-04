@@ -1,0 +1,115 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">
+  {% error_list conductivity_measurement _("Error in conductivity measurements") %}
+  {% error_list sample _("Error in sample") %}
+  {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
+  <table class="padding5">
+    <tbody>
+    <tr>
+      {% input_field sample.sample %}
+    </tr>
+    <tr>
+      {% input_field conductivity_measurement.apparatus %}
+    </tr>
+    {% if conductivity_measurement.user.is_staff %}
+      <tr>
+        {% input_field conductivity_measurement.operator %}
+      </tr>
+      <tr>
+        {% input_field conductivity_measurement.external_operator %}
+      </tr>
+    {% else %}
+      <tr>
+        {% input_field conductivity_measurement.combined_operator %}
+      </tr>
+    {% endif %}
+    </tbody>
+  </table>
+  {% if conductivity_measurements %}
+    <table style="width: 100%">
+      <tbody>
+      {% for measurement, remove_measurement in conductivity_measurements %}
+      <tr>
+        <td style="border-style: solid; border-color: black; border-width: thin">
+          <table style="width: 100%">
+            <tbody>
+              {% error_list measurement _("Error in conductivity measurement") "<tr>" 4 %}
+                <tr>
+                  {% input_field measurement.number %}
+                  {% input_field measurement.timestamp %}
+                </tr>
+                <tr>
+                  {% input_field measurement.light %}
+                  <td colspan="2"></td>
+                </tr>
+                <tr>
+                  {% input_field measurement.tempering_time %}
+                  {% input_field measurement.tempering_temperature %}
+                  {% input_field measurement.in_vacuum %}
+                </tr>
+                <tr>
+                  <td class="label"><label for="id_{{ measurement.filepath.html_name }}"
+                       >{{ measurement.filepath.label }}:</label></td>
+                  <td class="input" colspan="3">{{ measurement.filepath }}
+                    <span class="help">({{ measurement.filepath.help_text }})</span></td>
+                </tr>
+             <tr><td><br/></td></tr>
+                <tr>
+                  <td class="label"><label for="id_{{ measurement.comments.html_name }}"
+                       >{{ measurement.comments.label }}:</label><br/>{% markdown_hint %}</td>
+                  <td class="input" colspan="3">{{ measurement.comments }}</td>
+                  {% input_field remove_measurement.remove_measurement %}
+                </tr>
+                <tr>
+                    <td style="display: none">
+                    {{ measurement.timestamp_inaccuracy }}
+                    </td>
+                </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+  {% error_list add_measurement _("Error with adding layers") %}
+  <table>
+    <tbody>
+    <tr>
+      {% input_field add_measurement.number_of_measurements_to_add %}
+    </tr>
+    {% if remove_from_my_samples %}
+      <tr>
+      {{ remove_from_my_samples.as_p }}
+      </tr>
+    {% endif %}
+    </tbody>
+  </table>
+
+{% include "samples/edit_description.html" %}
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

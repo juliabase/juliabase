@@ -1,0 +1,85 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+{% load ipv_extras %}
+
+<p>
+  <span class="label">{% verbose_name ConductivityMeasurementSet.apparatus %}:
+  </span><span class="value">{{ process.get_apparatus_display }}</span>
+</p>
+
+<table style="width: 100%">
+  <tbody>
+  {% for measurement, plot_url, thumbnail_url in single_measurements %}
+    <tr>
+      <td style="border-style: solid; border-color: black; border-width: thin">
+        {% if plot_url %}
+          <div style="float: right">
+            <a href="{{ plot_url }}"><img src="{{ thumbnail_url }}" alt="plot"/></a>
+          </div>
+        {% endif %}
+        <table class="padding5">
+          <tbody>
+          <tr>
+            <td class="label">{% verbose_name SingleConductivityMeasurement.light %}:</td>
+            <td class="value">{{ measurement.get_light_display }}</td>
+            {% value_field measurement.tempering_time "min" %}
+            {% value_field measurement.tempering_temperature "K"%}
+          </tr>
+          <tr>
+            {% if measurement.sigma or measurement.sigma == 0 %}
+              <td class="label">&sigma;:</td>
+              <td class="value">{{ measurement.sigma|round:"3"|quantity:"S/cm" }}</td>
+            {% else %}
+              <td colspan="2"></td>
+            {% endif %}
+            {% if measurement.temperature or measurement.temperature == 0 %}
+              {% value_field measurement.temperature "K" %}
+            {% else %}
+              <td colspan="2"></td>
+            {% endif %}
+            {% value_field measurement.in_vacuum "yes/no" %}
+          </tr>
+          {% if measurement.kind == "single sigma" %}
+            <tr>
+              {% value_field measurement.voltage "V" %}
+              {% value_field measurement.assumed_thickness "nm" %}
+              <td colspan="2"></td>
+            </tr>
+          {% endif %}
+          <tr>
+            <td class="label">{% trans "File" %}:</td>
+            <td class="value" style="font-weight: normal" colspan="5">
+              {% ifequal browser_system "windows" %}
+                <a href="file:///T:/Daten/{{ measurement.filepath }}">
+              {% else %}
+                <a href="file:///mnt/T/Daten/{{ measurement.filepath }}">
+              {% endifequal %}
+            {{ measurement.filepath }}</a></td>
+          </tr>
+          {% if measurement.comments %}
+            <tr>
+              <td class="label" style="vertical-align: top">{% verbose_name SingleConductivityMeasurement.comments %}:</td>
+              <td class="value" style="font-weight: normal" colspan="5">{{ measurement.comments|markdown_samples:"collapse" }}</td>
+            </tr>
+          {% endif %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

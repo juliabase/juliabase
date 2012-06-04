@@ -1,0 +1,84 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+
+<p>
+  {% verbose_name LargeAreaCleaningProcess.cleaning_number %}: <strong>{{ process.cleaning_number }}</strong>
+</p>
+<div style=" display: inline-block;">
+  <table width="100%">
+  <tbody>
+   <tr>
+    <td class="label">{% verbose_name LargeAreaCleaningProcess.substrate_size %}:
+    </td><td class="value">{% if process.substrate_size %}{{ process.get_substrate_size_display|quantity:"cm²" }}
+    {% else %}—{% endif %}</td>
+   </tr>
+   <tr>
+    <td class="label">{% verbose_name LargeAreaCleaningProcess.drying %}:
+    </td><td>{% if process.drying %}{{ process.get_drying_display }}{% else %}—{% endif %}</td></td>
+   </tr>
+   <tr>
+    {% value_field process.shower_1 "yes/no" %}
+   </tr>
+   <tr>
+    {% value_field process.shower_2 "yes/no" %}
+   </tr>
+  </tbody>
+  </table>
+  </div>
+	<div style="vertical-align: top; border: 1px dashed grey; padding: 1ex; display: inline-block;">
+	  {% trans 'Cleaning bath' %}:
+	  <table style="border: thin solid black; padding: 1ex">
+	    <tbody>
+	    <tr>
+	      {% value_field process.temperature_start "℃" %}
+	    </tr>
+	    <tr>
+	      {% value_field process.temperature_end "℃" %}
+	    </tr>
+	    <tr>
+	      {% value_field process.time "min" %}
+	    </tr>
+	    </tbody>
+	  </table>
+	</div>
+
+     <div style="vertical-align: top; border: 1px dashed grey; padding: 1ex; display: inline-block;" >
+      {% trans 'Overflow basin' %}:
+      <table style="border: thin solid black; padding: 1ex">
+        <tbody>
+        <tr>
+          {% value_field process.resistance "MΩ" %}
+        </tr>
+        <tr>
+          {% value_field process.conductance_value_1 "MΩ" %}
+        </tr>
+        <tr>
+          {% value_field process.conductance_value_2 "MΩ" %}
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+	{% if process.comments %}
+	<div style="vertical-align: top; border: 1px dashed grey; padding: 1ex; display: inline-block;">
+	{% trans 'Comments' %}:
+	 <div style="vertical-align: top; border: 1px solid black; padding: 1ex;">
+	    {{ process.comments|markdown_samples:"collapse" }}
+	  </div>
+	 </div>
+	{% endif %}
+</div>

@@ -1,0 +1,145 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+{% load ipv_extras %}
+
+<p>
+  <span class="label">{% verbose_name Deposition.number %}:</span><span class="value"
+    style="margin-right: 4em">{{ process.number }}</span>
+  <span class="label">{% verbose_name SixChamberDeposition.carrier %}:</span><span class="value">{{ process.carrier|default:"—" }}</span>
+</p>
+
+{% if process.comments %}
+  <blockquote>{{ process.comments|markdown_samples }}</blockquote>
+{% endif %}
+
+<table style="width: 100%">
+  <tbody>
+  {% for layer in process.layers.all %}
+  <tr>
+    <td style="border-style: solid; border-color: black; border-width: thin">
+      <table style="width: 100%">
+        <tbody>
+        <tr>
+          <td>
+            <table style="width: 100%">
+              <tbody>
+              <tr>
+                <td colspan="2" rowspan="3" style="vertical-align: top">
+                  <table>
+                    <tbody>
+                    <tr>
+                      <td style="vertical-align: top; text-align: right">
+                        <div style="float: left">{% verbose_name SixChamberLayer.number %}:</div>
+                        <div
+                          style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                 margin-left: 0.3em;
+                                 border-style: solid; border-width: thin;
+                                 border-color: black; float: right; clear: left">{{ layer.number }}</div>
+                      </td>
+                      <td style="vertical-align: top; padding-left: 2em">
+                        <span class="label">{% verbose_name SixChamberLayer.chamber %}:</span
+                              ><span class="value">{{ layer.chamber }}</span>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </td>
+                {% value_field layer.transfer_in_chamber %}
+                {% value_field layer.plasma_start_power "W" %}
+              </tr>
+              <tr>
+                <td class="label">{% verbose_name SixChamberLayer.pre_heat %}:</td>
+                <td class="value"> {{ layer.pre_heat|depostion_time }}</td>
+                {% value_field layer.plasma_start_with_carrier "yes/no" %}
+              </tr>
+              <tr>
+                {% value_field layer.heating_temperature "℃" %}
+                {% value_field layer.deposition_frequency "MHz" %}
+              </tr>
+              <tr>
+                {% value_field layer.gas_pre_heat_gas %}
+                {% value_field layer.gas_pre_heat_pressure "" %}  {# "" for float pretty-formatting #}
+                <td class="label">{% verbose_name SixChamberLayer.gas_pre_heat_time %}:</td>
+                <td class="value"> {{ layer.gas_pre_heat_time|depostion_time }}</td>
+              </tr>
+              <tr>
+                {% value_field layer.pressure "" %}  {# "" for float pretty-formatting #}
+                {% value_field layer.transfer_out_of_chamber %}
+                {% value_field layer.deposition_power "W" %}
+              </tr>
+              <tr>
+                <td class="label">{% verbose_name SixChamberLayer.time %}:</td>
+                <td class="value"> {{ layer.time|depostion_time }}</td>
+                {% value_field layer.substrate_electrode_distance "mm" %}
+                {% value_field layer.base_pressure "Torr" %}
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        {% with layer.channels.all as channels %}
+          {% if layer.comments or channels %}
+            <tr>
+              <td>
+                <table style="width: 100%">
+                  <tbody>
+                  <tr>
+                    {% if layer.comments %}
+                    <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                        {{ layer.comments|markdown_samples:"collapse" }}
+                    </td>
+                    {% else %}
+                    <td> </td>
+                    {% endif %}
+                    <td style="width: 50%; vertical-align: top; padding: 1ex">
+                      {% if channels %}
+                        <table width="100%" style="text-align: center">
+                          <thead>
+                            <tr>
+                              <th>{% verbose_name SixChamberChannel.number %}</th>
+                              <th>{% verbose_name SixChamberChannel.gas %}</th>
+                              <th>{% verbose_name SixChamberChannel.flow_rate %}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for channel in channels %}
+                            <tr>
+                              <td>{{ channel.number }}</td>
+                              <td>{{ channel.get_gas_display }}</td>
+                              <td>{{ channel.flow_rate|quantity:"sccm" }}</td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      {% else %}
+                         
+                      {% endif %}
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          {% endif %}
+        {% endwith %}
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

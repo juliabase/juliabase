@@ -1,0 +1,118 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">
+  {% error_list cleaning_process _("cleaning process error") %}
+  {% error_list samples _("Sample list error") %}
+  <table>
+    <tbody>
+    <tr>
+      <td style="text-align: right"><label for="id_{{ cleaning_process.cleaning_number.html_name }}"
+           >{{ cleaning_process.cleaning_number.label }}:</label></td>
+      <td>{{ cleaning_process.cleaning_number }}</td>
+      <td rowspan="5" style="padding-left: 2em; vertical-align:top">
+        <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
+                             >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
+    </tr>
+    <tr>
+      {% input_field cleaning_process.timestamp %}
+    </tr>
+    {% if cleaning_process.user.is_staff %}
+      <tr>
+        {% input_field cleaning_process.operator %}
+      </tr>
+      <tr>
+        {% input_field cleaning_process.external_operator %}
+      </tr>
+    {% else %}
+      <tr>
+        {% input_field cleaning_process.combined_operator %}
+      </tr>
+    {% endif %}
+
+    <tr>
+      <td style="text-align: right">
+        <label class=label for="id_{{ cleaning_process.comments.html_name }}">{{ cleaning_process.comments.label }}:<br/>
+          {% markdown_hint %}</label></td>
+      <td>{{ cleaning_process.comments }}</td>
+    </tr>
+    <tr>
+      {% input_field cleaning_process.shower_1 %}
+    </tr>
+    <tr>
+      {% input_field cleaning_process.shower_2 %}
+    </tr>
+    <tr>
+      {% input_field cleaning_process.substrate_size %}
+    </tr>
+    </tbody>
+  </table>
+  <table>
+  <tbody>
+    <tr>
+        <td colspan="2" style="vertical-align: top; border: 1px dashed grey; padding: 1ex" >
+          {% trans 'Cleaning bath' %}:
+          <table style="border: thin solid black">
+            <tbody>
+            <tr>
+              {% input_field cleaning_process.temperature_start %}
+            </tr>
+            <tr>
+              {% input_field cleaning_process.temperature_end %}
+            </tr>
+            <tr>
+              {% input_field cleaning_process.time %}
+            </tr>
+            </tbody>
+          </table>
+        </td>
+        <td colspan="2" style="vertical-align: top; border: 1px dashed grey; padding: 1ex" >
+          {% trans 'Overflow basin' %}:
+          <table style="border: thin solid black">
+            <tbody>
+            <tr>
+              {% input_field cleaning_process.resistance %}
+            </tr>
+            <tr>
+              {% input_field cleaning_process.conductance_value_1 %}
+            </tr>
+            <tr>
+              {% input_field cleaning_process.conductance_value_2 %}
+            </tr>
+            </tbody>
+          </table>
+        </td>
+    </tr>
+        <tr>
+      {% input_field cleaning_process.drying %}
+    </tr>
+    </tbody>
+  </table>
+  <div style="display: none">
+    {{ cleaning_process.timestamp_inaccuracy }}
+  </div>
+
+  {% include "samples/edit_description.html" %}
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

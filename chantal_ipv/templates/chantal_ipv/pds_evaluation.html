@@ -1,0 +1,46 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form enctype="multipart/form-data" method="post">
+  {% error_list evaluation _("Error in PDS evaluation") %}
+  <table class="padding5">
+    <tbody>
+    <tr>
+      <td class="label"><label for="id_{{ evaluation.evaluated_pds_file.html_name }}"
+			       >{{ evaluation.evaluated_pds_file.label }}:</label></td>
+      <td class="input">{{ evaluation.evaluated_pds_file }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  {% if results %}
+    <table class="padding5">
+      <tbody>
+	<tr><td>{% trans "1e4 value/eV" %}:</td><td>{{ results.gap_width }}</td></tr>
+	<tr><td>{% trans "1,2eV value/cm⁻¹" %}:</td><td>{{ results.defects_absorption }}</td></tr>
+	<tr><td>{% trans "tailwidth/meV" %}:</td><td>{{ results.tailwidth }}</td></tr>
+      </tbody>
+    </table>
+  {% endif %}
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

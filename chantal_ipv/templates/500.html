@@ -1,0 +1,72 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "base_chantal.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+
+{% block extrahead %}
+  <link rel="stylesheet" type="text/css" media="screen" href="/media/chantal/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="/media/chantal/css/print.css"/>
+  <link rel="shortcut icon" href="/media/ipv/favicon.ico" type="image/x-icon"/>
+{% endblock %}
+
+{% block title %}{% trans 'Internal Chantal error' %}{% endblock %}
+
+{% block content %}
+  <table class="headbar">
+    <tbody>
+    <tr>
+      <td class="info">
+      </td>
+      <td class="login-data">
+        <a href="/"><img src="/media/chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
+                         width="16" height="16"/></a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="main">
+    <div class="screen-only">
+      <p style="margin:0pt"><img class="logo-fz" src="/media/ipv/juelich.png"
+                                 alt="{% trans 'Jülich Forschungszentrum logo' %}" width="218" height="70"/></p>
+      <p class="logo-text">Chantal</p>
+      <p class="logo-subtext"> </p>
+    </div>
+
+    <div class="outer-frame">
+      <div class="inner-frame">
+        {% block float_image %}
+        <img class="vintage-image" src="/media/chantal/fraeulein.jpg" 
+             alt="{% trans 'ancient human dispatcher' %}" width="425" height="319"/>
+        {% endblock %}
+	<h1>{% trans 'Internal server error' %}</h1>
+	{% blocktrans %}
+<p>You experienced an internal error in the Chantal server software.  The
+administrators have been contacted already and will do their best in
+eliminating the bug.  Typically, they will contact you as soon as the problem
+is tackled.</p>
+
+<p>If you just submitted data to the database, don't close this window.
+It may be that the problem is being fixed and you are asked to go back
+and re-do your action, so that the data is actually written into the
+database.</p>
+{% endblocktrans %}
+<p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+<div style="clear: both"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

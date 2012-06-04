@@ -1,0 +1,42 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+
+{# FixMe: Can't this be derived from chantal_samples/permission_error.html? #}
+
+{% block float_image %}
+<img class="vintage-image" src="{{ STATIC_URL}}samples/lock_woman.jpg" alt="{% trans 'woman with lock' %}"
+     width="180" height="250"/>
+{% endblock %}
+
+{% block frame_content %}
+  <p>
+    {% blocktrans with exception.description as description %}
+      Sorry, you can't access this resource.  {{ description }}
+      Please contact the administrator if you think you ought to have the permission.
+    {% endblocktrans %}
+    {% if exception.new_topic_would_help %}
+      {% blocktrans %}
+        Also note that the head of your institute group may add you to the
+        Chantal topic you need to access this resource.
+      {% endblocktrans %}
+    {% endif %}
+  </p>
+
+  <p>{% trans "This occurence isn't reported to anyone, and it is not logged." %}</p>
+  <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+  <div style="clear: both"></div>
+{% endblock %}

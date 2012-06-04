@@ -1,0 +1,101 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">
+  {% error_list dsr_measurement _("Error in DSR measurement") %}
+  {% error_list sample _("Error in sample") %}
+  {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
+  <table class="padding5">
+    <tbody>
+    <tr>
+      {% input_field sample.sample %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr>
+      {% input_field dsr_measurement.cell_position %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr>
+      {% input_field dsr_measurement.timestamp %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr style="display: none">
+      {% input_field dsr_measurement.operator %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr>
+        {% input_field dsr_measurement.lens %}
+    </tr>
+    <tr>
+        {% input_field dsr_measurement.bias %}
+    </tr>
+    <tr>
+        {% input_field dsr_measurement.irradiance %}
+    </tr>
+    <tr>
+    {% input_field dsr_measurement.parameter_file %}
+    </tr>
+    <tr>
+      <td class="label"><label for="id_{{ dsr_measurement.comments.html_name }}"
+           >{{ dsr_measurement.comments.label }}:</label><br/>{% markdown_hint %}</td>
+      <td class="input" colspan="3">{{ dsr_measurement.comments }}</td>
+    </tr>
+    </tbody>
+  </table>
+  {% if iv_data_files %}
+    <table style="width: 100%">
+      <tbody>
+      {% for iv_data_file in iv_data_files %}
+      {% error_list iv_data_file _("Error in iv data") "<tr>" 2 %}
+        <tr style="border-style: solid; border-color: black; border-width: thin">
+          {% input_field iv_data_file.iv_data_file %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+  {% if spectral_data_files %}
+    <table style="width: 100%">
+      <tbody>
+      {% for spectral_data_file in spectral_data_files %}
+      {% error_list spectral_data_file _("Error in spectral data") "<tr>" 2 %}
+        <tr style="border-style: solid; border-color: black; border-width: thin">
+          {% input_field spectral_data_file.spectral_data_file %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% include "samples/edit_description.html" %}
+
+  {% if remove_from_my_samples %}
+    <div style="text-align: right; clear: both">
+      {{ remove_from_my_samples.as_p }}
+    </div>
+  {% endif %}
+
+  <div style="display: none">
+    {{ dsr_measurement.timestamp_inaccuracy }}
+  </div>
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+{% endblock %}
