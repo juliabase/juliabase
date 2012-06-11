@@ -14,7 +14,7 @@
 
 
 """Custom logging class which doesn't send HTML emails.  This module must
-reside on top-level because in chantal_ipv, the settings would be implicitly
+reside on top-level because in chantal_institute, the settings would be implicitly
 imported, which leads to a cyclic import.
 """
 

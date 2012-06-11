@@ -96,7 +96,7 @@ SECRET_KEY = CREDENTIALS["salt"]
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
-# template.  This is used in chantal_ipv's "sample claim" views, for example.
+# template.  This is used in chantal_institute's "sample claim" views, for example.
 TEMPLATE_DIRS = (os.path.dirname(os.path.abspath(__file__)),)
 TEMPLATE_LOADERS = (
     ("django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
@@ -212,7 +212,7 @@ AD_NT4_DOMAIN = "fzj"
 AD_SEARCH_FIELDS = [b"mail", b"givenName", b"sn", b"department", b"telephoneNumber", b"msExchUserCulture",
                     b"generationQualifier", b"physicalDeliveryOfficeName", b"memberOf"]
 AD_LDAP_URL = "ldaps://{0}:{1}".format(AD_DNS_NAME, AD_LDAP_PORT)
-AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend", "chantal_ipv.auth.ActiveDirectoryBackend")
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend", "chantal_institute.auth.ActiveDirectoryBackend")
 
 # Dictionary mapping LDAP group names to sets of Django permission names.  Use
 # the ``codename`` of the permission, in particular, without any app label.
@@ -236,15 +236,15 @@ AD_MANAGED_PERMISSIONS = set(["view_all_samples", "adopt_samples", "edit_permiss
 
 ADDITIONAL_LDAP_USERS = set([])
 
-ADD_SAMPLE_VIEW = "chantal_ipv.views.samples.sample.add"
+ADD_SAMPLE_VIEW = "chantal_institute.views.samples.sample.add"
 
 MEASUREMENT_DATA_ROOT_DIR = b""
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, b"pds")
 
-PHYSICAL_PROCESS_BLACKLIST = [("chantal_ipv", "substrate"),
-                              ("chantal_ipv", "layerthicknessmeasurement")]
+PHYSICAL_PROCESS_BLACKLIST = [("chantal_institute", "substrate"),
+                              ("chantal_institute", "layerthicknessmeasurement")]
 SOLARSIMULATOR_1_ROOT_DIR = b""
-MERGE_CLEANUP_FUNCTION = "chantal_ipv.utils.clean_up_after_merging"
+MERGE_CLEANUP_FUNCTION = "chantal_institute.utils.clean_up_after_merging"
 
 CRAWLER_LOGS_ROOT = b""
 CRAWLER_LOGS_WHITELIST = set([])

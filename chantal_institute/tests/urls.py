@@ -14,18 +14,7 @@
 # Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
 
 
-"""Root URL dispach for IEK-PV's Chantal installation.  Mapping URL patterns
-to function calls.  This is the local URL dispatch of the Django application
-“chantal_common”, which provides core functionality and core views for all
-Chantal apps.
-
-
-:var urlpatterns: the actual mapping.  See the `Django documentation`_ for
-  details.
-
-.. _Django documentation:
-    http://docs.djangoproject.com/en/dev/topics/http/urls/
-
+"""Root URL dispach for testing the “chantal_institute” app.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -38,15 +27,10 @@ admin.autodiscover()
 
 
 urlpatterns = patterns("",
-                       (r"", include("chantal_institute.urls")),
                        (r"", include("chantal_common.urls")),
                        (r"", include("samples.urls")),
+                       (r"", include("chantal_institute.urls")),
                        )
-
-if "refdb" in settings.INSTALLED_APPS:
-    urlpatterns += patterns("",
-                            (r"^bib/", include("refdb.urls")),
-                            )
 
 urlpatterns += patterns("",
     (r"^admin/", include(admin.site.urls)),
