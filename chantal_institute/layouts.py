@@ -110,9 +110,7 @@ def get_layout(sample, process):
     except NoStructuringFound:
         return None
     else:
-        layout_class = {"juelich standard": JuelichStandard,
-                        "ACME 1": ACME1,
-                        "ACME 2": ACME2}.get(current_structuring.layout)
+        layout_class = {"juelich standard": JuelichStandard, }.get(current_structuring.layout)
         return layout_class and layout_class(sample, process, current_structuring)
 
 
@@ -296,8 +294,7 @@ class CellsLayout(Layout):
             return colors[i]
         irradiance = solarsimulator_measurement.irradiance
         colors_and_labels = {}
-        cell_measurements = solarsimulator_measurement.dark_cells.all() if irradiance == "dark" \
-            else solarsimulator_measurement.photo_cells.all()
+        cell_measurements = solarsimulator_measurement.photo_cells.all()
         for cell in cell_measurements:
             if irradiance == "AM1.5":
                 color = map_value_to_RGB(cell.eta, [0.33, 3.1, 5.3, 6.3, 7.0, 7.7, 8.4, 9.2])
@@ -316,8 +313,7 @@ class CellsLayout(Layout):
 
     def draw_layout(self, filename):
         canvas = Canvas(filename, pagesize=(self.width * mm, self.height * mm))
-        if isinstance(self.process, (chantal_institute.models.SolarsimulatorPhotoMeasurement,
-                                     chantal_institute.models.SolarsimulatorDarkMeasurement)):
+        if isinstance(self.process, (chantal_institute.models.SolarsimulatorPhotoMeasurement)):
             colors_and_labels = self._get_colors_and_labels(self.process)
             if self.process.irradiance == "AM1.5":
                 global_label = "η in %"
@@ -403,83 +399,3 @@ class JuelichStandard(CellsLayout):
     height *= _scaling
     width *= _scaling
 
-
-class ACME1(CellsLayout):
-    width = 26.8
-    height = 26.8
-    shapes = {"1A": ((3.4, 22.4), (2, 2)),
-              "1B": ((9.4, 22.4), (2, 2)),
-              "1C": ((15.4, 22.4), (2, 2)),
-              "1D": ((21.4, 22.4), (2, 2)),
-              "2A": ((3.4, 17.4), (3, 3)),
-              "2B": ((9.4, 17.4), (3, 3)),
-              "2C": ((15.4, 17.4), (3, 3)),
-              "2D": ((21.4, 17.4), (3, 3)),
-              "3A": ((3.4, 12.4), (2, 2)),
-              "3B": ((9.4, 12.4), (2, 2)),
-              "3C": ((15.4, 12.4), (2, 2)),
-              "3D": ((21.4, 12.4), (2, 2)),
-              "4A": ((3.4, 6.4), (3, 3)),
-              "4B": ((9.4, 6.4), (3, 3)),
-              "4C": ((15.4, 6.4), (3, 3)),
-              "4D": ((21.4, 6.4), (3, 3)),
-              "5A": ((3.4, 2.4), (2, 2)),
-              "5B": ((9.4, 2.4), (2, 2)),
-              "5C": ((15.4, 2.4), (2, 2)),
-              "5D": ((21.4, 2.4), (2, 2))}
-
-    _scaling = 80 / max(height, width)
-    for cell_index, coords in shapes.iteritems():
-        shapes[cell_index] = ((_scaling * coords[0][0], _scaling * coords[0][1]),
-                              (_scaling * coords[1][0], _scaling * coords[1][1]))
-    height *= _scaling
-    width *= _scaling
-
-class ACME2(CellsLayout):
-    width = 47
-    height = 47
-    shapes = {"A1":((4, 41.5), (2, 2)),
-              "A2":((20, 41.5), (2, 2)),
-              "A3":((25, 41.5), (2, 2)),
-              "A4":((41, 41.5), (2, 2)),
-              "A5":((4, 34), (2, 2)),
-              "A6":((10.5, 34), (2, 2)),
-              "A7":((35, 34), (2, 2)),
-              "A8":((41, 34), (2, 2)),
-              "A9":((12.5, 27.5), (2, 2)),
-              "A10":((25, 27.5), (2, 2)),
-              "A11":((29, 25.5), (2, 2)),
-              "A12":((41, 27.5), (2, 2)),
-              "A13":((4, 17.5), (2, 2)),
-              "A14":((16, 19.5), (2, 2)),
-              "A15":((20, 17.5), (2, 2)),
-              "A16":((34.5, 17.5), (2, 2)),
-              "A17":((4, 11), (2, 2)),
-              "A18":((10, 11), (2, 2)),
-              "A19":((36.5, 11), (2, 2)),
-              "A20":((41, 11), (2, 2)),
-              "A21":((4, 3.5), (2, 2)),
-              "A22":((20, 3.5), (2, 2)),
-              "A23":((25, 3.5), (2, 2)),
-              "A24":((41, 3.5), (2, 2)),
-              "B1":((10.5, 39.5), (4, 4)),
-              "B2":((33, 39.5), (4, 4)),
-              "B3":((18, 25.5), (4, 4)),
-              "B4":((33, 25.5), (4, 4)),
-              "B5":((10, 17.5), (4, 4)),
-              "B6":((25, 17.5), (4, 4)),
-              "B7":((10, 3.5), (4, 4)),
-              "B8":((34.5, 3.5), (4, 4)),
-              "C1":((16, 32), (6, 6)),
-              "C2":((25, 32), (6, 6)),
-              "C3":((4, 23.5), (6, 6)),
-              "C4":((37, 17.5), (6, 6)),
-              "C5":((16, 9), (6, 6)),
-              "C6":((25, 9), (6, 6))}
-
-    _scaling = 80 / max(height, width)
-    for cell_index, coords in shapes.iteritems():
-        shapes[cell_index] = ((_scaling * coords[0][0], _scaling * coords[0][1]),
-                              (_scaling * coords[1][0], _scaling * coords[1][1]))
-    height *= _scaling
-    width *= _scaling
