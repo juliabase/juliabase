@@ -4079,17 +4079,17 @@ msgstr "Zelllayout"
 msgid "Material"
 msgstr "Material"
 
-#: templatetags/ipv_extras.py:79
+#: templatetags/institute_extras.py:79
 #: views/samples/new_cluster_tool_deposition.py:50
 #: views/samples/old_cluster_tool_deposition.py:48
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
-#: templatetags/ipv_extras.py:83
+#: templatetags/institute_extras.py:83
 msgid "sputter"
 msgstr "Sputter"
 
-#: templatetags/ipv_extras.py:141
+#: templatetags/institute_extras.py:141
 msgid "Mr {lastname}"
 msgstr "Herr {lastname}"
 

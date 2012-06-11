@@ -2666,7 +2666,7 @@ msgstr ""
 msgid "Material"
 msgstr ""
 
-#: templatetags/ipv_extras.py:105
+#: templatetags/institute_extras.py:105
 msgid "Mr {lastname}"
 msgstr ""
 

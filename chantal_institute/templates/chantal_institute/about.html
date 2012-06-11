@@ -16,7 +16,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 
 {% block float_image %}
-<img class="vintage-image" src="{{ STATIC_URL }}ipv/stewardess.jpg" alt="{% trans 'stewardess' %}"
+<img class="vintage-image" src="{{ STATIC_URL }}institute/stewardess.jpg" alt="{% trans 'stewardess' %}"
      width="288" height="400"/>
 {% endblock %}
 
@@ -33,7 +33,7 @@ copyright holder, you must destroy it immediately and completely.
   <tbody>
   <tr>
     <th>{% trans 'Operating system' %}:</th>
-    <td><p><a href="http://www.ubuntu.com"><img class="helper-program-logo" src="{{ STATIC_URL }}ipv/ubuntu.png"
+    <td><p><a href="http://www.ubuntu.com"><img class="helper-program-logo" src="{{ STATIC_URL }}institute/ubuntu.png"
                                                 alt="{% trans 'Ubuntu logo' %}" width="125" height="35"/></a></p>
       <p><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">10.04
           <a href="http://www.ubuntu.com/server">Server Edition</a></span></p></td>
@@ -44,7 +44,7 @@ copyright holder, you must destroy it immediately and completely.
     <td>{% trans 'Django testserver' %}</td>
     {% else %}
     <td><p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}"
-              ><img class="helper-program-logo" src="{{ STATIC_URL }}ipv/apache.png" alt="{% trans 'Apache logo' %}"
+              ><img class="helper-program-logo" src="{{ STATIC_URL }}institute/apache.png" alt="{% trans 'Apache logo' %}"
                     width="125" height="40"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
       <span class="version">{{ web_server_version }}</span></p></td>
@@ -54,7 +54,7 @@ copyright holder, you must destroy it immediately and completely.
     <th>{% trans 'Database' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/PostgreSQL' %}"
-            ><img class="helper-program-logo" src="{{ STATIC_URL }}ipv/postgresql.png" alt="{% trans 'PostgreSQL logo' %}"
+            ><img class="helper-program-logo" src="{{ STATIC_URL }}institute/postgresql.png" alt="{% trans 'PostgreSQL logo' %}"
                   width="49" height="50"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/PostgreSQL' %}">PostgreSQL</a>
         <span class="version">{{ db_version }}</span></p></td>
@@ -63,7 +63,7 @@ copyright holder, you must destroy it immediately and completely.
     <th>{% trans 'Web framework' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}"
-            ><img class="helper-program-logo" src="{{ STATIC_URL }}ipv/django.png" alt="{% trans 'Django logo' %}"
+            ><img class="helper-program-logo" src="{{ STATIC_URL }}institute/django.png" alt="{% trans 'Django logo' %}"
                   width="75" height="32"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a>
         <span class="version">{{ framework_version }}</span></p></td>
@@ -73,7 +73,7 @@ copyright holder, you must destroy it immediately and completely.
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}"
             ><img class="helper-program-logo" style="margin-bottom: 0pt" width="70" height="70"
-                  src="{{ STATIC_URL }}ipv/matplotlib.png" alt="{% trans 'Matplotlib logo' %}"/></a></p>
+                  src="{{ STATIC_URL }}institute/matplotlib.png" alt="{% trans 'Matplotlib logo' %}"/></a></p>
       <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}">Matplotlib</a>
         <span class="version">{{ matplotlib_version }}</span></p>
     </td>
@@ -84,7 +84,7 @@ copyright holder, you must destroy it immediately and completely.
 <p style="margin: 1em; text-align: center">
   {% blocktrans %}
     “<strong>Chantal</strong>” stands
-    for “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</strong>vailable <strong>n</strong>etworked 
+    for “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</strong>vailable <strong>n</strong>etworked
     <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</strong>ibrary”.
   {% endblocktrans %}
 </p>

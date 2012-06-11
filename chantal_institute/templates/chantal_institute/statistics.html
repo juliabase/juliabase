@@ -14,7 +14,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
-{% load ipv_extras %}
+{% load institute_extras %}
 
 {% block refresh_tag %}
   <meta http-equiv="refresh" content="600"/>
@@ -33,7 +33,7 @@ copyright holder, you must destroy it immediately and completely.
 	data.setValue(0, 0, "{% trans 'hit rate' %}/%");
 	data.setValue(0, 1, {{ cache_hit_rate }});
 	var chart = new google.visualization.Gauge(document.getElementById("cache_hit_rate"));
-	var options = {width: 200, height: 200, redFrom: 0, redTo: 10, majorTicks: ["0", "", "", "", "", "100"], 
+	var options = {width: 200, height: 200, redFrom: 0, redTo: 10, majorTicks: ["0", "", "", "", "", "100"],
                        minorTicks: 2};
 	chart.draw(data, options);
 
@@ -44,7 +44,7 @@ copyright holder, you must destroy it immediately and completely.
 	data.setValue(0, 0, "{% trans 'connect.' %}");
 	data.setValue(0, 1, {{ cache_connections.0 }});
 	var chart = new google.visualization.Gauge(document.getElementById("cache_connections"));
-	var options = {width: 200, height: 200, max: {{ cache_connections.1 }}, redFrom: {{ cache_connections.1|fraction }}, 
+	var options = {width: 200, height: 200, max: {{ cache_connections.1 }}, redFrom: {{ cache_connections.1|fraction }},
 		       redTo: {{ cache_connections.1 }},
 		       majorTicks: ["0", "", "{{ cache_connections.1 }}"], minorTicks: 4};
 	chart.draw(data, options);
@@ -54,7 +54,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endblock %}
 
 {% block float_image %}
-<img class="vintage-image" src="{{ STATIC_URL }}ipv/secretary.jpg" alt="{% trans 'secretary' %}"
+<img class="vintage-image" src="{{ STATIC_URL }}institute/secretary.jpg" alt="{% trans 'secretary' %}"
      width="300" height="368"/>
 {% endblock %}
 
@@ -72,7 +72,7 @@ copyright holder, you must destroy it immediately and completely.
 {% if not availability %}
   <p>{% trans 'No data available.' %}</p>
 {% else %}
-  <p>{% blocktrans with availability.availability as availability and availability.start_date as start_date %}{{ availability }} 
+  <p>{% blocktrans with availability.availability as availability and availability.start_date as start_date %}{{ availability }}
          availability since {{ start_date }}.{% endblocktrans %}</p>
 
   {% if availability.downtimes %}
