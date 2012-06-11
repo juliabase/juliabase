@@ -38,7 +38,6 @@ urlpatterns = patterns("chantal_institute.views.statistics",
                        )
 
 urlpatterns += patterns("chantal_institute.views",
-                        (r"^gc$", "group_meeting.meeting_schedule"),
                         (r"^pds_evaluation$", "pds_evaluation.evaluation"),
                         (r"^optical_data$", "optical_data_ermes.show"),
                         url(r"^plots/thumbnails/optical_data/(?P<filename>.+)", "optical_data_ermes.show_plot",

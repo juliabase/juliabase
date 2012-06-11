@@ -50,17 +50,3 @@ samples.models.clearance_sets.update({
         OldClusterToolDeposition: (OldClusterToolDeposition, Substrate),
         NewClusterToolDeposition: (NewClusterToolDeposition, Substrate),
         })
-
-
-class GroupMeetingSchedule(models.Model):
-    """Model for the schedule of group meetings.  So far, it is only used for
-    the Carius group.
-    """
-    group = models.CharField(_("group"), max_length=30, unique=True)
-    members_and_times = models.TextField(_("members and times"), help_text=_("in JSON format"))
-    start_time = models.CharField(_("start time"), max_length=5)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True)
-
-    class Meta:
-        verbose_name = _("group meeting schedule")
-        verbose_name_plural = _("group meeting schedules")
