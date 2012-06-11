@@ -32,7 +32,7 @@ from chantal_common.utils import append_error, is_json_requested, respond_in_jso
 from django.utils.text import capfirst
 
 
-def edit_depositions(request, deposition_number, form_set, ipv_model, edit_url, rename_conservatively=False):
+def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):
     """This function is the central view for editing, creating, and duplicating for any deposition.
     The edit functions in the deposition views are wrapper functions who provides this function
     with the specific informations.
@@ -43,7 +43,7 @@ def edit_depositions(request, deposition_number, form_set, ipv_model, edit_url, 
       - `request`: the HTTP request object
       - `deposition_number`: the number (=name) or the deposition
       - `form_set`: the related formset object for the deposition
-      - `ipv_model`: the related Database model
+      - `institute_model`: the related Database model
       - `edit_url`: the location of the edit template
       - `rename_conservatively`: If ``True``, rename only provisional and
         cleaning process names.  This is used by the Large Sputter deposition.
@@ -54,7 +54,7 @@ def edit_depositions(request, deposition_number, form_set, ipv_model, edit_url, 
     :type request: ``QueryDict``
     :type deposition_number: unicode or ``NoneType``
     :type form_set: ``FormSet`` object
-    :type ipv_model: ``samples.models_depositions.Deposition``
+    :type institute_model: ``samples.models_depositions.Deposition``
     :type edit_url: unicode
     :type rename_conservatively: bool
 
@@ -63,7 +63,7 @@ def edit_depositions(request, deposition_number, form_set, ipv_model, edit_url, 
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, ipv_model)
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, institute_model)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         deposition = form_set.save_to_database()
@@ -108,16 +108,16 @@ def edit_depositions(request, deposition_number, form_set, ipv_model, edit_url, 
             messages.error(request, _("The deposition was not saved due to incorrect or missing data."))
     else:
         form_set.from_database(utils.parse_query_string(request))
-    ipv_model_name = utils.capitalize_first_letter(ipv_model._meta.verbose_name)
-    title = _("Edit {name} “{number}”").format(name=ipv_model_name, number=deposition_number) if deposition_number \
-        else _("Add {name}").format(name=ipv_model._meta.verbose_name)
+    institute_model_name = utils.capitalize_first_letter(institute_model._meta.verbose_name)
+    title = _("Edit {name} “{number}”").format(name=institute_model_name, number=deposition_number) if deposition_number \
+        else _("Add {name}").format(name=institute_model._meta.verbose_name)
     title = utils.capitalize_first_letter(title)
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
     return render_to_response(edit_url, context_dict, context_instance=RequestContext(request))
 
 
-def show_depositions(request, deposition_number, ipv_model):
+def show_depositions(request, deposition_number, institute_model):
     """Show an existing new deposision.  You must be an operator of the deposition
     *or* be able to view one of the samples
     affected by this deposition in order to be allowed to view it.
@@ -125,29 +125,29 @@ def show_depositions(request, deposition_number, ipv_model):
     :Parameters:
       - `request`: the current HTTP Request object
       - `deposition_number`: the number (=name) or the deposition
-      - `ipv_model`: the related Database model
+      - `institute_model`: the related Database model
 
     :type request: ``HttpRequest``
     :type deposition_number: unicode
-    :type ipv_model: ``samples.models_depositions.Deposition``
+    :type institute_model: ``samples.models_depositions.Deposition``
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    deposition = get_object_or_404(ipv_model, number=deposition_number)
+    deposition = get_object_or_404(institute_model, number=deposition_number)
     permissions.assert_can_view_physical_process(request.user, deposition)
     if is_json_requested(request):
         return respond_in_json(deposition.get_data().to_dict())
-    template_context = {"title": _("{name} “{number}”").format(name=ipv_model._meta.verbose_name, number=deposition.number),
+    template_context = {"title": _("{name} “{number}”").format(name=institute_model._meta.verbose_name, number=deposition.number),
                         "samples": deposition.samples.all(),
                         "process": deposition}
     template_context.update(utils.digest_process(deposition, request.user))
     return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
 
 
-def measurement_is_referentially_valid(measurement_form, sample_form, measurement_number, ipv_model):
+def measurement_is_referentially_valid(measurement_form, sample_form, measurement_number, institute_model):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
@@ -157,12 +157,12 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
       - `sample_form`: a bound sample selection form
       - `measurement_number`: The number of the measurement to be edited.  If
         it is ``None``, a new measurement is added to the database.
-      - `ipv_model`: the related Database model
+      - `institute_model`: the related Database model
 
     :type measurement_form: `form_utils.ProcessForm`
     :type sample_form: `SampleForm`
     :type measurement_number: unicode
-    :type ipv_model: ``samples.models_physical_processes.Process``
+    :type institute_model: ``samples.models_physical_processes.Process``
 
     :Return:
       whether the forms are consistent with each other and the database
@@ -174,7 +174,7 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
         number = measurement_form.cleaned_data.get("number")
         number = number and unicode(number)
         if number is not None and (measurement_number is None or number != measurement_number) and \
-                ipv_model.objects.filter(number=number).exists():
+                institute_model.objects.filter(number=number).exists():
             append_error(measurement_form, _("This number is already in use."), "number")
             referentially_valid = False
         if sample_form.is_valid() and dead_samples([sample_form.cleaned_data["sample"]],

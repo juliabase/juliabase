@@ -275,8 +275,8 @@ def edit(request, process_number):
     :rtype: ``HttpResponse``
     """
     form_set = FormSet(request, process_number)
-    ipv_model = institute_models.SmallEvaporation
-    permissions.assert_can_add_edit_physical_process(request.user, form_set.process, ipv_model)
+    institute_model = institute_models.SmallEvaporation
+    permissions.assert_can_add_edit_physical_process(request.user, form_set.process, institute_model)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         process = form_set.save_to_database()
@@ -297,10 +297,10 @@ def edit(request, process_number):
                     forced=True, json_response=process.number)
     else:
         form_set.from_database(utils.parse_query_string(request))
-    ipv_model_name = ipv_model._meta.verbose_name
-    ipv_model_name = ipv_model_name[0].upper() + ipv_model_name[1:]
-    title = _("Edit {name} “{number}”").format(name=ipv_model_name, number=process_number) if process_number \
-        else _("Add {name}").format(name=ipv_model_name)
+    institute_model_name = institute_model._meta.verbose_name
+    institute_model_name = institute_model_name[0].upper() + institute_model_name[1:]
+    title = _("Edit {name} “{number}”").format(name=institute_model_name, number=process_number) if process_number \
+        else _("Add {name}").format(name=institute_model_name)
     title = utils.capitalize_first_letter(title)
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
