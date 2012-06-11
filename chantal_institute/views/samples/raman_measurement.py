@@ -36,7 +36,7 @@ from chantal_common.utils import append_error, is_json_requested, respond_in_jso
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class SampleForm(forms.Form):
@@ -60,7 +60,7 @@ class SampleForm(forms.Form):
             `utils.extract_preset_sample`
 
         :type user: `models.UserDetails`
-        :type raman_measurement: `ipv_models.RamanMeasurement`
+        :type raman_measurement: `institute_models.RamanMeasurement`
         :type preset_sample: `models.Sample`
         """
         super(SampleForm, self).__init__(*args, **kwargs)
@@ -99,7 +99,7 @@ class RamanMeasurementForm(form_utils.ProcessForm):
         self.fields["number"].required = False
         self.fields["operator"].set_operator(measurement.operator if measurement else user, user.is_staff)
         self.fields["operator"].initial = measurement.operator.pk if measurement else user.pk
-        self.fields["dektak_measurement"].queryset = ipv_models.DektakMeasurement.objects.filter(samples=sample)
+        self.fields["dektak_measurement"].queryset = institute_models.DektakMeasurement.objects.filter(samples=sample)
         self.user = user
 
     def clean_number(self):
@@ -148,23 +148,23 @@ class RamanMeasurementForm(form_utils.ProcessForm):
 
 class RamanMeasurementOneForm(RamanMeasurementForm):
     def __init__(self, user, sample, *args, **kwargs):
-        super(RamanMeasurementOneForm, self).__init__(user, sample, ipv_models.RamanMeasurementOne, *args, **kwargs)
+        super(RamanMeasurementOneForm, self).__init__(user, sample, institute_models.RamanMeasurementOne, *args, **kwargs)
     class Meta(RamanMeasurementForm.Meta):
-        model = ipv_models.RamanMeasurementOne
+        model = institute_models.RamanMeasurementOne
 
 
 class RamanMeasurementTwoForm(RamanMeasurementForm):
     def __init__(self, user, sample, *args, **kwargs):
-        super(RamanMeasurementTwoForm, self).__init__(user, sample, ipv_models.RamanMeasurementTwo, *args, **kwargs)
+        super(RamanMeasurementTwoForm, self).__init__(user, sample, institute_models.RamanMeasurementTwo, *args, **kwargs)
     class Meta(RamanMeasurementForm.Meta):
-        model = ipv_models.RamanMeasurementTwo
+        model = institute_models.RamanMeasurementTwo
 
 
 class RamanMeasurementThreeForm(RamanMeasurementForm):
     def __init__(self, user, sample, *args, **kwargs):
-        super(RamanMeasurementThreeForm, self).__init__(user, sample, ipv_models.RamanMeasurementThree, *args, **kwargs)
+        super(RamanMeasurementThreeForm, self).__init__(user, sample, institute_models.RamanMeasurementThree, *args, **kwargs)
     class Meta(RamanMeasurementForm.Meta):
-        model = ipv_models.RamanMeasurementThree
+        model = institute_models.RamanMeasurementThree
 
 
 def is_all_valid(raman_measurement_form, sample_form, remove_from_my_samples_form, edit_description_form):
@@ -213,7 +213,7 @@ def is_referentially_valid(raman_measurement_form, raman_model, sample_form, ram
         it is ``None``, a new measurement is added to the database.
 
     :type raman_measurement_form: `RamanMeasurementForm`
-    :type raman_model: ``class`` (subclass of `ipv_models.RamanMeasurement`)
+    :type raman_model: ``class`` (subclass of `institute_models.RamanMeasurement`)
     :type sample_form: `SampleForm`
     :type raman_number: unicode
 
@@ -245,8 +245,8 @@ def edit(request, apparatus_number, raman_number):
 
     :rtype: ``HttpResponse``
     """
-    raman_model = {"1": ipv_models.RamanMeasurementOne, "2": ipv_models.RamanMeasurementTwo,
-                   "3": ipv_models.RamanMeasurementThree}[apparatus_number]
+    raman_model = {"1": institute_models.RamanMeasurementOne, "2": institute_models.RamanMeasurementTwo,
+                   "3": institute_models.RamanMeasurementThree}[apparatus_number]
     form_class = {"1": RamanMeasurementOneForm, "2": RamanMeasurementTwoForm,
                   "3": RamanMeasurementThreeForm}[apparatus_number]
     raman_measurement = get_object_or_404(raman_model, number=utils.convert_id_to_int(raman_number)) \
@@ -345,8 +345,8 @@ def show(request, apparatus_number, raman_number):
 
     :rtype: ``HttpResponse``
     """
-    raman_model = {"1": ipv_models.RamanMeasurementOne, "2": ipv_models.RamanMeasurementTwo,
-                   "3": ipv_models.RamanMeasurementThree}[apparatus_number]
+    raman_model = {"1": institute_models.RamanMeasurementOne, "2": institute_models.RamanMeasurementTwo,
+                   "3": institute_models.RamanMeasurementThree}[apparatus_number]
     raman_measurement = get_object_or_404(raman_model, number=utils.convert_id_to_int(raman_number))
     permissions.assert_can_view_physical_process(request.user, raman_measurement)
     if is_json_requested(request):

@@ -33,7 +33,7 @@ from samples.views import utils, feed_utils
 from samples.views.shared_utils import read_techplot_file, PlotError
 from chantal_institute.views import form_utils
 from samples import permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class ConductivityMeasurementsForm(form_utils.ProcessForm):
@@ -81,7 +81,7 @@ class ConductivityMeasurementsForm(form_utils.ProcessForm):
         return cleaned_data
 
     class Meta:
-        model = ipv_models.ConductivityMeasurementSet
+        model = institute_models.ConductivityMeasurementSet
         exclude = ("timestamp", "timestamp_inaccuracy")
 
 
@@ -157,7 +157,7 @@ class SingleConductivityMeasurementForm(forms.ModelForm):
         return instance
 
     class Meta:
-        model = ipv_models.SingleConductivityMeasurement
+        model = institute_models.SingleConductivityMeasurement
         exclude = ("measurement_set", "sigma", "voltage", "assumed_thickness", "temperature", "kind")
 
 
@@ -188,7 +188,7 @@ class FormSet(object):
         self.user_details = self.user.samples_user_details
         self.conductivity_measurements_pk = conductivity_measurements_pk
         self.conductivity_measurements = \
-            get_object_or_404(ipv_models.ConductivityMeasurementSet, pk=conductivity_measurements_pk) \
+            get_object_or_404(institute_models.ConductivityMeasurementSet, pk=conductivity_measurements_pk) \
             if conductivity_measurements_pk else None
         self.conductivity_measurements_form = self.add_measurement_form = self.samples_form = \
             self.remove_from_my_samples_form = self.edit_description_form = None
@@ -343,7 +343,7 @@ class FormSet(object):
             for measurement_form in self.measurement_forms:
                 if measurement_form.is_valid():
                     filepath = measurement_form.cleaned_data["filepath"]
-                    query_set = ipv_models.SingleConductivityMeasurement.objects.filter(filepath=filepath)
+                    query_set = institute_models.SingleConductivityMeasurement.objects.filter(filepath=filepath)
                     if self.conductivity_measurements_pk:
                         query_set = query_set.exclude(measurement_set__id=self.conductivity_measurements_pk)
                     if query_set.exists():
@@ -362,7 +362,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `ipv_models.ConductivityMeasurementSet` or ``NoneType``
+        :rtype: `institute_models.ConductivityMeasurementSet` or ``NoneType``
         """
         database_ready = not self.__change_structure() if not self.json_client else True
         database_ready = self.__is_all_valid() and database_ready
@@ -402,7 +402,7 @@ def edit(request, conductivity_set_pk):
     """
     form_set = FormSet(request, conductivity_set_pk)
     permissions.assert_can_add_edit_physical_process(request.user, form_set.conductivity_measurements,
-                                                     ipv_models.ConductivityMeasurementSet)
+                                                     institute_models.ConductivityMeasurementSet)
     if request.method == "POST":
         form_set.from_post_data(request.POST)
         conductivity_measurements = form_set.save_to_database()

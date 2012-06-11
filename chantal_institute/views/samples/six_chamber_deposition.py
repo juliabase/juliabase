@@ -43,7 +43,7 @@ from samples.views.form_utils import DataModelForm
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
 from django.conf import settings
 import django.contrib.auth.models
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class AddMyLayerForm(Form):
@@ -55,7 +55,7 @@ class AddMyLayerForm(Form):
     def __init__(self, data=None, **kwargs):
         user_details = kwargs.pop("user_details")
         super(AddMyLayerForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = form_utils.get_my_layers(user_details, ipv_models.SixChamberDeposition)
+        self.fields["my_layer_to_be_added"].choices = form_utils.get_my_layers(user_details, institute_models.SixChamberDeposition)
 
 
 class DepositionForm(form_utils.ProcessForm):
@@ -104,7 +104,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.SixChamberDeposition
+        model = institute_models.SixChamberDeposition
 
 
 class LayerForm(DataModelForm):
@@ -151,7 +151,7 @@ class LayerForm(DataModelForm):
         return comments
 
     class Meta:
-        model = ipv_models.SixChamberLayer
+        model = institute_models.SixChamberLayer
         exclude = ("deposition",)
 
 
@@ -167,7 +167,7 @@ class ChannelForm(ModelForm):
         self.fields["flow_rate"].widget = forms.TextInput(attrs={"size": "7"})
 
     class Meta:
-        model = ipv_models.SixChamberChannel
+        model = institute_models.SixChamberChannel
         exclude = ("layer",)
 
 class FormSet(object):
@@ -195,7 +195,7 @@ class FormSet(object):
         """
         self.user = request.user
         self.user_details = self.user.samples_user_details
-        self.deposition = get_object_or_404(ipv_models.SixChamberDeposition, number=deposition_number) if deposition_number \
+        self.deposition = get_object_or_404(institute_models.SixChamberDeposition, number=deposition_number) if deposition_number \
             else None
         self.unfinished = self.deposition and not self.deposition.finished
         self.deposition_form = None
@@ -263,7 +263,7 @@ class FormSet(object):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            copy_from_query = ipv_models.SixChamberDeposition.objects.filter(number=copy_from)
+            copy_from_query = institute_models.SixChamberDeposition.objects.filter(number=copy_from)
             if copy_from_query.count() == 1:
                 deposition_data = copy_from_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -526,7 +526,7 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     return form_utils.edit_depositions(request, deposition_number, FormSet(request, deposition_number),
-                                       ipv_models.SixChamberDeposition, "samples/edit_six_chamber_deposition.html")
+                                       institute_models.SixChamberDeposition, "samples/edit_six_chamber_deposition.html")
 
 @login_required
 def show(request, deposition_number):
@@ -546,4 +546,4 @@ def show(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    return form_utils.show_depositions(request, deposition_number, ipv_models.SixChamberDeposition)
+    return form_utils.show_depositions(request, deposition_number, institute_models.SixChamberDeposition)

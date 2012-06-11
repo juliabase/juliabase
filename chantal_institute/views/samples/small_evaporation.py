@@ -33,7 +33,7 @@ from samples import models, permissions
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from django.utils.translation import ugettext , ugettext_lazy, ungettext
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 _ = ugettext
 
@@ -71,12 +71,12 @@ class ProcessForm(form_utils.ProcessForm):
         if number:
             if not re.match(datetime.date.today().strftime("%y") + r"A-\d{3,4}$", number):
                 raise ValidationError(_("The evaporation number you have chosen isn't valid."))
-            if ipv_models.SmallEvaporation.objects.filter(number=number).exists() and not self.edit:
+            if institute_models.SmallEvaporation.objects.filter(number=number).exists() and not self.edit:
                 raise ValidationError(_("The evaporation number you have chosen already exists."))
         return number
 
     class Meta:
-        model = ipv_models.SmallEvaporation
+        model = institute_models.SmallEvaporation
         exclude = ("external_operator",)
 
 
@@ -88,7 +88,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``process``
       is the only way to distinguish between editing or creating.
 
-    :type process: `ipv_models.SmallEvaporation` or ``NoneType``
+    :type process: `institute_models.SmallEvaporation` or ``NoneType``
     """
     process_number_pattern = re.compile(r"(?P<prefix>\d\dA-)(?P<number>\d+)$")
 
@@ -107,7 +107,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = self.user.samples_user_details
         self.process = \
-            get_object_or_404(ipv_models.SmallEvaporation, number=process_number) if process_number else None
+            get_object_or_404(institute_models.SmallEvaporation, number=process_number) if process_number else None
         self.process_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
         self.preset_sample = utils.extract_preset_sample(request) if not self.process else None
         self.post_data = None
@@ -144,13 +144,13 @@ class FormSet(object):
 
         copy_from = query_dict.get("copy_from")
         try:
-            number = ipv_models.SmallEvaporation.objects.latest('number').number
+            number = institute_models.SmallEvaporation.objects.latest('number').number
             number = "{0}{1:03}".format(number[:4], int(number[4:]) + 1)
         except:
             number = datetime.date.today().strftime("%y") + "A-001"
         if not self.process and copy_from:
             # Duplication of a process
-            source_process_query = ipv_models.SmallEvaporation.objects.filter(number=copy_from)
+            source_process_query = institute_models.SmallEvaporation.objects.filter(number=copy_from)
             if source_process_query.count() == 1:
                 process_data = source_process_query.values()[0]
                 process_data["timestamp"] = datetime.datetime.now()
@@ -227,7 +227,7 @@ class FormSet(object):
         :Return:
           The saved process object, or ``None`` if validation failed
 
-        :rtype: `ipv_models.SmallEvaporation` or ``NoneType``
+        :rtype: `institute_models.SmallEvaporation` or ``NoneType``
         """
         database_ready = self.__is_all_valid()
         database_ready = self.__is_referentially_valid() and database_ready
@@ -275,7 +275,7 @@ def edit(request, process_number):
     :rtype: ``HttpResponse``
     """
     form_set = FormSet(request, process_number)
-    ipv_model = ipv_models.SmallEvaporation
+    ipv_model = institute_models.SmallEvaporation
     permissions.assert_can_add_edit_physical_process(request.user, form_set.process, ipv_model)
     if request.method == "POST":
         form_set.from_post_data(request.POST)

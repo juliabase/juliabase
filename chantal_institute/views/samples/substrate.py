@@ -26,7 +26,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.template import RequestContext
 from chantal_common.utils import append_error
-from chantal_institute import models as ipv_models
+from chantal_institute import models as institute_models
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 
@@ -38,7 +38,7 @@ class SubstrateForm(form_utils.ProcessForm):
     combined_operator = form_utils.OperatorField(label=_("Operator"))
 
     class Meta:
-        model = ipv_models.Substrate
+        model = institute_models.Substrate
 
     def __init__(self, user, *args, **kwargs):
         super(SubstrateForm, self).__init__(*args, **kwargs)
@@ -124,7 +124,7 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
                     append_error(samples_form, _("Sample {0} has already processes before the timestamp of this substrate, "
                                                  "namely from {1}.").format(sample, earliest_timestamp), "sample_list")
                 for process in processes:
-                    if process.content_type.model_class() == ipv_models.Substrate:
+                    if process.content_type.model_class() == institute_models.Substrate:
                         append_error(samples_form, _("Sample {0} has already a substrate.").format(sample), "sample_list")
                         referentially_valid = False
                         break
@@ -148,8 +148,8 @@ def edit(request, substrate_id):
 
     :rtype: ``HttpResponse``
     """
-    substrate = get_object_or_404(ipv_models.Substrate, pk=utils.convert_id_to_int(substrate_id)) if substrate_id else None
-    permissions.assert_can_add_edit_physical_process(request.user, substrate, ipv_models.Substrate)
+    substrate = get_object_or_404(institute_models.Substrate, pk=utils.convert_id_to_int(substrate_id)) if substrate_id else None
+    permissions.assert_can_add_edit_physical_process(request.user, substrate, institute_models.Substrate)
     preset_sample = utils.extract_preset_sample(request) if not substrate else None
     if request.method == "POST":
         substrate_form = SubstrateForm(request.user, request.POST, instance=substrate)

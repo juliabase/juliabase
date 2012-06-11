@@ -25,7 +25,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.template import RequestContext
 from chantal_common.utils import append_error
 from samples import models, permissions
-from chantal_institute import models as ipv_models
+from chantal_institute import models as institute_models
 from samples.views import utils, feed_utils, form_utils
 
 
@@ -36,7 +36,7 @@ class CleaningProcessForm(form_utils.ProcessForm):
     combined_operator = form_utils.OperatorField(label=_("Operator"))
 
     class Meta:
-        model = ipv_models.CleaningProcess
+        model = institute_models.CleaningProcess
 
     def __init__(self, user, *args, **kwargs):
         super(CleaningProcessForm, self).__init__(*args, **kwargs)
@@ -55,7 +55,7 @@ class CleaningProcessForm(form_utils.ProcessForm):
             self.fields["cleaning_number"].widget.attrs["readonly"] = "readonly"
         self.fields["timestamp"].initial = datetime.datetime.now()
         current_year = datetime.date.today().strftime("%y")
-        old_cleaning_numbers = list(ipv_models.CleaningProcess.objects.filter(cleaning_number__startswith=current_year).
+        old_cleaning_numbers = list(institute_models.CleaningProcess.objects.filter(cleaning_number__startswith=current_year).
                                         values_list("cleaning_number", flat=True))
         next_cleaning_number = max(int(cleaning_number[4:]) for cleaning_number in old_cleaning_numbers) + 1 \
         if old_cleaning_numbers else 1
@@ -78,7 +78,7 @@ class CleaningProcessForm(form_utils.ProcessForm):
         if not self.old_cleaningprocess and cleaning_number:
             if not re.match(r"\d\dN-\d{3,4}$", cleaning_number):
                 raise ValidationError(_("The cleaning number you have chosen isn't valid."))
-            if ipv_models.CleaningProcess.objects.filter(cleaning_number=cleaning_number).exists():
+            if institute_models.CleaningProcess.objects.filter(cleaning_number=cleaning_number).exists():
                 raise ValidationError(_("The cleaning number you have chosen already exists."))
         return cleaning_number
 
@@ -154,9 +154,9 @@ def edit(request, cleaning_process_id):
 
     :rtype: ``HttpResponse``
     """
-    cleaning_process = get_object_or_404(ipv_models.CleaningProcess, pk=utils.convert_id_to_int(cleaning_process_id)) \
+    cleaning_process = get_object_or_404(institute_models.CleaningProcess, pk=utils.convert_id_to_int(cleaning_process_id)) \
         if cleaning_process_id else None
-    permissions.assert_can_add_edit_physical_process(request.user, cleaning_process, ipv_models.CleaningProcess)
+    permissions.assert_can_add_edit_physical_process(request.user, cleaning_process, institute_models.CleaningProcess)
     preset_sample = utils.extract_preset_sample(request) if not cleaning_process else None
     if request.method == "POST":
         cleaning_process_form = CleaningProcessForm(request.user, request.POST, instance=cleaning_process)

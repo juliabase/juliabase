@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 from django.conf import settings
 from chantal_common.utils import append_error, is_json_requested, respond_in_json
 
@@ -75,7 +75,7 @@ class DSRForm(form_utils.ProcessForm):
         return cleaned_data
 
     class Meta:
-        model = ipv_models.DSRMeasurement
+        model = institute_models.DSRMeasurement
         exclude = ("external_operator",)
 
 
@@ -93,7 +93,7 @@ class IVForm(forms.ModelForm):
         pass
 
     class Meta:
-        model = ipv_models.DSRIVData
+        model = institute_models.DSRIVData
         exclude = ("measurement",)
 
 
@@ -111,7 +111,7 @@ class SpectralForm(forms.ModelForm):
         pass
 
     class Meta:
-        model = ipv_models.DSRSpectralData
+        model = institute_models.DSRSpectralData
         exclude = ("measurement",)
 
 
@@ -263,9 +263,9 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    dsr_measurement = get_object_or_404(ipv_models.DSRMeasurement, id=utils.convert_id_to_int(process_id)) \
+    dsr_measurement = get_object_or_404(institute_models.DSRMeasurement, id=utils.convert_id_to_int(process_id)) \
     if process_id is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, dsr_measurement, ipv_models.DSRMeasurement)
+    permissions.assert_can_add_edit_physical_process(request.user, dsr_measurement, institute_models.DSRMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not dsr_measurement else None
     if request.method == "POST":
         dsr_form = DSRForm(request.user, request.POST, instance=dsr_measurement)
@@ -344,17 +344,17 @@ def show(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    dsr_measurement = get_object_or_404(ipv_models.DSRMeasurement, id=utils.convert_id_to_int(process_id))
+    dsr_measurement = get_object_or_404(institute_models.DSRMeasurement, id=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_physical_process(request.user, dsr_measurement)
     if is_json_requested(request):
         return respond_in_json(dsr_measurement.get_data().to_dict())
     try:
         iv_data_list = dsr_measurement.iv_data_files.all()
-    except ipv_models.DSRIVData.DoesNotExist:
+    except institute_models.DSRIVData.DoesNotExist:
         iv_data_list = None
     try:
         spectral_data_list = dsr_measurement.spectral_data_files.all()
-    except ipv_models.DSRSpectralData.DoesNotExist:
+    except institute_models.DSRSpectralData.DoesNotExist:
         spectral_data_list = None
     template_context = {"title": _(u"DSR measurement from cell {cell_position}").format(cell_position=dsr_measurement.cell_position),
                         "samples": dsr_measurement.samples.all(), "process": dsr_measurement,

@@ -28,7 +28,7 @@ from chantal_common.utils import check_filepath
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class LumaMeasurementForm(form_utils.ProcessForm):
@@ -52,7 +52,7 @@ class LumaMeasurementForm(form_utils.ProcessForm):
         return check_filepath(filename, settings.LUMA_ROOT_DIR)
 
     class Meta:
-        model = ipv_models.LumaMeasurement
+        model = institute_models.LumaMeasurement
         exclude = ("external_operator",)
 
 
@@ -109,7 +109,7 @@ def is_referentially_valid(luma_measurement_form, sample_form, process_id):
     :rtype: bool
     """
     return form_utils.measurement_is_referentially_valid(luma_measurement_form, sample_form, process_id,
-                                                         ipv_models.LumaMeasurement)
+                                                         institute_models.LumaMeasurement)
 
 @login_required
 def edit(request, process_id):
@@ -128,9 +128,9 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    luma_measurement = get_object_or_404(ipv_models.LumaMeasurement, id=utils.convert_id_to_int(process_id)) \
+    luma_measurement = get_object_or_404(institute_models.LumaMeasurement, id=utils.convert_id_to_int(process_id)) \
         if process_id is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, luma_measurement, ipv_models.LumaMeasurement)
+    permissions.assert_can_add_edit_physical_process(request.user, luma_measurement, institute_models.LumaMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not luma_measurement else None
     if request.method == "POST":
         sample_form = form_utils.SampleForm(request.user, luma_measurement, preset_sample, request.POST)

@@ -36,7 +36,7 @@ from chantal_common.utils import register_abstract_model, format_lazy
 from chantal_common import search
 from samples.views import utils
 from chantal_institute import layouts
-import chantal_institute.views.shared_utils as ipv_utils
+import chantal_institute.views.shared_utils as institute_utils
 from chantal_institute.models_depositions import five_chamber_chamber_choices, five_chamber_hf_frequency_choices
 
 
@@ -456,7 +456,7 @@ class LumaMeasurement(PhysicalProcess):
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         """`plot_id` is "iv" or "r_s"."""
         _ = ugettext
-        dark_curve_u, dark_curve_j, vocs, jscs = ipv_utils.read_luma_file(filename)
+        dark_curve_u, dark_curve_j, vocs, jscs = institute_utils.read_luma_file(filename)
         if plot_id == "iv":
             axes.semilogy(vocs, jscs, "bo:")
             axes.semilogy(dark_curve_u, dark_curve_j)
@@ -465,7 +465,7 @@ class LumaMeasurement(PhysicalProcess):
             axes.set_ylabel(_("Jsc in mA/cm²"))
         else:
             assert plot_id == "r_s"
-            r_s, voltages, n = ipv_utils.evaluate_luma(dark_curve_u, dark_curve_j, vocs, jscs)
+            r_s, voltages, n = institute_utils.evaluate_luma(dark_curve_u, dark_curve_j, vocs, jscs)
             r_s_axes = axes
             r_s_axes.plot(vocs, r_s, "ro:")
             r_s_axes.set_xlabel(_("voltage in V"))
@@ -1293,10 +1293,10 @@ class DSRMeasurement(PhysicalProcess):
             axes.set_position((0.2, 0.15, 0.6, 0.8))
         for filename in filenames:
             if plot_id == "iv":
-                x_values, y_values = ipv_utils.read_dsr_plot_file(filename, columns=(0, 1))
+                x_values, y_values = institute_utils.read_dsr_plot_file(filename, columns=(0, 1))
                 axes.semilogy(x_values, y_values)
             elif plot_id == "spectral":
-                x_values, y_values = ipv_utils.read_dsr_plot_file(filename, columns=(0, 8))
+                x_values, y_values = institute_utils.read_dsr_plot_file(filename, columns=(0, 8))
                 x_values = numpy.array(x_values)
                 y_values = 1239 * numpy.array(y_values) / x_values
             axes.plot(x_values, y_values, label=filename[filename.rfind(".") + 1:])
@@ -1907,7 +1907,7 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
         related_cell = self.photo_cells.get(position=plot_id)
-        x_values, y_values = ipv_utils.read_solarsimulator_plot_file(filename, columns=(0, int(related_cell.cell_index)))
+        x_values, y_values = institute_utils.read_solarsimulator_plot_file(filename, columns=(0, int(related_cell.cell_index)))
         y_values = 1000 * numpy.array(y_values)
         if not related_cell.area:
             raise utils.PlotError("Area was zero, so could not determine current density.")
@@ -2080,7 +2080,7 @@ class SolarsimulatorDarkMeasurement(PhysicalProcess):
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
         related_cell = self.dark_cells.get(position=plot_id)
-        x_values, y_values = ipv_utils.read_solarsimulator_plot_file(filename, columns=(0, int(related_cell.cell_index)))
+        x_values, y_values = institute_utils.read_solarsimulator_plot_file(filename, columns=(0, int(related_cell.cell_index)))
         y_values = 1000 * numpy.array(y_values)
         if for_thumbnail:
             axes.set_position((0.2, 0.15, 0.6, 0.8))

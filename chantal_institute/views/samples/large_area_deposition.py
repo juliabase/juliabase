@@ -43,7 +43,7 @@ import django.contrib.auth.models
 from chantal_common.utils import append_error, HttpResponseSeeOther, is_json_requested
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class DepositionForm(form_utils.ProcessForm):
@@ -96,7 +96,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.LargeAreaDeposition
+        model = institute_models.LargeAreaDeposition
         exclude = ("external_operator",)
 
 
@@ -139,7 +139,7 @@ class LayerForm(forms.ModelForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.LargeAreaLayer
+        model = institute_models.LargeAreaLayer
         exclude = ("deposition",)
 
 
@@ -175,7 +175,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `ipv_models.LargeAreaDeposition` or ``NoneType``
+    :type deposition: `institute_models.LargeAreaDeposition` or ``NoneType``
     """
     deposition_number_pattern = re.compile(r"(?P<prefix>\d\dL-)(?P<number>\d+)$")
 
@@ -194,7 +194,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = self.user.samples_user_details
         self.deposition = \
-            get_object_or_404(ipv_models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
+            get_object_or_404(institute_models.LargeAreaDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
         self.layer_forms, self.change_layer_forms = [], []
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
@@ -211,7 +211,7 @@ class FormSet(object):
         """
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.LargeAreaDeposition, self.post_data)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.LargeAreaDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -237,7 +237,7 @@ class FormSet(object):
             deposition with this number.  If none, ``source_deposition``
             already contains the proper deposition number.
 
-        :type source_deposition: `ipv_models.LargeAreaDeposition`
+        :type source_deposition: `institute_models.LargeAreaDeposition`
         :type destination_deposition_number: unicode
         """
         layers = source_deposition.layers
@@ -270,7 +270,7 @@ class FormSet(object):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            source_deposition_query = ipv_models.LargeAreaDeposition.objects.filter(number=copy_from)
+            source_deposition_query = institute_models.LargeAreaDeposition.objects.filter(number=copy_from)
             if source_deposition_query.exists():
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -294,7 +294,7 @@ class FormSet(object):
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.LargeAreaDeposition)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.LargeAreaDeposition)
         self.edit_description_form = form_utils.EditDescriptionForm() \
             if self.deposition and self.deposition.finished else None
         if not self.deposition:
@@ -370,7 +370,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.LargeAreaDeposition)
+            self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.LargeAreaDeposition)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -478,7 +478,7 @@ class FormSet(object):
             match = self.deposition_number_pattern.match(self.deposition_form.cleaned_data["number"])
             deposition_prefix = match.group("prefix")
             number_only = int(match.group("number"))
-            deposition_numbers = ipv_models.LargeAreaDeposition.objects.filter(
+            deposition_numbers = institute_models.LargeAreaDeposition.objects.filter(
                 number__startswith=deposition_prefix).values_list("number", flat=True)
             deposition_numbers = [int(number[len(deposition_prefix):]) for number in deposition_numbers]
             max_deposition_number = max(deposition_numbers) if deposition_numbers else 0
@@ -491,7 +491,7 @@ class FormSet(object):
                 higher_deposition_numbers = [number for number in deposition_numbers if number > old_number_only]
                 if higher_deposition_numbers:
                     next_number = min(higher_deposition_numbers)
-                    number_of_next_layers = ipv_models.LargeAreaDeposition.objects.get(
+                    number_of_next_layers = institute_models.LargeAreaDeposition.objects.get(
                         number=deposition_prefix + form_utils.three_digits(next_number)).layers.count()
                     if number_only + number_of_next_layers > next_number:
                         append_error(self.deposition_form, _("New layers collide with following deposition."))
@@ -534,7 +534,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `ipv_models.LargeAreaDeposition` or ``NoneType``
+        :rtype: `institute_models.LargeAreaDeposition` or ``NoneType``
         """
         database_ready = not self.__change_structure() if not self.json_client else True
         database_ready = self.__is_all_valid() and database_ready
@@ -589,7 +589,7 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     return form_utils.edit_depositions(request, deposition_number, FormSet(request, deposition_number),
-                                       ipv_models.LargeAreaDeposition, "samples/edit_large_area_deposition.html")
+                                       institute_models.LargeAreaDeposition, "samples/edit_large_area_deposition.html")
 
 
 @login_required
@@ -611,4 +611,4 @@ def show(request, deposition_number):
     :rtype: ``HttpResponse``
     """
 
-    return form_utils.show_depositions(request, deposition_number, ipv_models.LargeAreaDeposition)
+    return form_utils.show_depositions(request, deposition_number, institute_models.LargeAreaDeposition)

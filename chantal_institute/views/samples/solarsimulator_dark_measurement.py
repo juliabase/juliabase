@@ -24,7 +24,7 @@ from django import forms
 from django.utils.translation import ugettext
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 import chantal_institute.views.solarsimulator_measurement_utils as solarsimulator_utils
 from samples import permissions
 
@@ -37,7 +37,7 @@ class SolarsimulatorMeasurementForm(solarsimulator_utils.SolarsimulatorMeasureme
         self.fields["irradiance"].widget.attrs.update({"size": "5", "readonly": "readonly"})
 
     class Meta:
-        model = ipv_models.SolarsimulatorDarkMeasurement
+        model = institute_models.SolarsimulatorDarkMeasurement
 
 
 class SolarsimulatorDarkCellForm(forms.ModelForm):
@@ -50,7 +50,7 @@ class SolarsimulatorDarkCellForm(forms.ModelForm):
         pass
 
     class Meta:
-        model = ipv_models.SolarsimulatorDarkCellMeasurement
+        model = institute_models.SolarsimulatorDarkCellMeasurement
         exclude = ("measurement")
 
 
@@ -77,10 +77,10 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    solarsimulator_measurement = get_object_or_404(ipv_models.SolarsimulatorDarkMeasurement, id=process_id)\
+    solarsimulator_measurement = get_object_or_404(institute_models.SolarsimulatorDarkMeasurement, id=process_id)\
         if process_id is not None else None
     permissions.assert_can_add_edit_physical_process(request.user, solarsimulator_measurement,
-                                                     ipv_models.SolarsimulatorDarkMeasurement)
+                                                     institute_models.SolarsimulatorDarkMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not solarsimulator_measurement else None
     if request.method == "POST":
         sample_form = form_utils.SampleForm(request.user, solarsimulator_measurement, preset_sample, request.POST)
@@ -131,9 +131,9 @@ def edit(request, process_id):
         sample_form = form_utils.SampleForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not solarsimulator_measurement else None
         edit_description_form = form_utils.EditDescriptionForm() if solarsimulator_measurement else None
-    title = _(u"{name} of {sample}").format(name=ipv_models.SolarsimulatorDarkMeasurement._meta.verbose_name,
+    title = _(u"{name} of {sample}").format(name=institute_models.SolarsimulatorDarkMeasurement._meta.verbose_name,
                                                         sample=samples[0]) if solarsimulator_measurement \
-        else _(u"Add {name}").format(name=ipv_models.SolarsimulatorDarkMeasurement._meta.verbose_name)
+        else _(u"Add {name}").format(name=institute_models.SolarsimulatorDarkMeasurement._meta.verbose_name)
     return render_to_response("samples/edit_solarsimulator_measurement.html",
                               {"title": title,
                                "solarsimulator_measurement": solarsimulator_measurement_form,
@@ -159,5 +159,5 @@ def show(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    return solarsimulator_utils. show_solarsimulator_measurement(request, process_id, ipv_models.SolarsimulatorDarkMeasurement)
+    return solarsimulator_utils. show_solarsimulator_measurement(request, process_id, institute_models.SolarsimulatorDarkMeasurement)
 

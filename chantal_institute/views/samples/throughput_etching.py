@@ -33,7 +33,7 @@ from chantal_common.utils import append_error
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class ThroughputEtchingForm(form_utils.ProcessForm):
@@ -67,7 +67,7 @@ class ThroughputEtchingForm(form_utils.ProcessForm):
         if number:
             if not re.match(datetime.date.today().strftime("%y") + r"W-\d{3,4}$", number):
                 raise ValidationError(_("The etching number you have chosen isn't valid."))
-            if ipv_models.ThroughputEtching.objects.filter(number=number).exists() and not self.edit:
+            if institute_models.ThroughputEtching.objects.filter(number=number).exists() and not self.edit:
                 raise ValidationError(_("The etching number you have chosen already exists."))
         return number
 
@@ -90,7 +90,7 @@ class ThroughputEtchingForm(form_utils.ProcessForm):
         pass
 
     class Meta:
-        model = ipv_models.ThroughputEtching
+        model = institute_models.ThroughputEtching
         exclude = ("external_operator",)
 
 
@@ -166,7 +166,7 @@ def is_referentially_valid(throughput_etching_form, sample_form, etching_number)
     referentially_valid = True
     if throughput_etching_form.is_valid():
         number = throughput_etching_form.cleaned_data["number"]
-        if unicode(number) != etching_number and ipv_models.ThroughputEtching.objects.filter(number=number).count():
+        if unicode(number) != etching_number and institute_models.ThroughputEtching.objects.filter(number=number).count():
             append_error(throughput_etching_form, _("This etching number is already in use."))
             referentially_valid = False
         if sample_form.is_valid():
@@ -200,9 +200,9 @@ def edit(request, etching_number):
 
     :rtype: ``HttpResponse``
     """
-    throughput_etching = get_object_or_404(ipv_models.ThroughputEtching, number=etching_number) \
+    throughput_etching = get_object_or_404(institute_models.ThroughputEtching, number=etching_number) \
         if etching_number is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, throughput_etching, ipv_models.ThroughputEtching)
+    permissions.assert_can_add_edit_physical_process(request.user, throughput_etching, institute_models.ThroughputEtching)
     preset_sample = utils.extract_preset_sample(request) if not throughput_etching else None
     if request.method == "POST":
         throughput_etching_form = None
@@ -245,7 +245,7 @@ def edit(request, etching_number):
         if etching_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
             try:
-                number = ipv_models.ThroughputEtching.objects.filter(timestamp__year=datetime.datetime.today() \
+                number = institute_models.ThroughputEtching.objects.filter(timestamp__year=datetime.datetime.today() \
                                                                      .strftime("%Y")).latest("number").number
                 initial["number"] = "{0}{1:04}".format(number[:4], int(number[4:]) + 1)
             except:

@@ -37,7 +37,7 @@ import django.core.urlresolvers
 from chantal_common.utils import append_error, get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
-from chantal_institute import models as ipv_models
+from chantal_institute import models as institute_models
 from chantal_institute import printer_labels
 
 
@@ -63,7 +63,7 @@ class AddSamplesForm(forms.Form):
     Besides, we have massive code duplication to substrate.SubstrateForm.
     """
     number_of_samples = forms.IntegerField(label=_("Number of samples"), min_value=1, max_value=100)
-    substrate = forms.ChoiceField(label=_("Substrate"), choices=ipv_models.substrate_materials, required=True)
+    substrate = forms.ChoiceField(label=_("Substrate"), choices=institute_models.substrate_materials, required=True)
     substrate_comments = forms.CharField(label=_("Substrate comments"), required=False)
     substrate_originator = forms.ChoiceField(label=_("Substrate originator"), required=False)
     timestamp = forms.DateTimeField(label=_("timestamp"))
@@ -116,8 +116,8 @@ class AddSamplesForm(forms.Form):
         _ = ugettext
         cleaning_number = self.cleaned_data["cleaning_number"]
         if cleaning_number:
-            if not ipv_models.CleaningProcess.objects.filter(cleaning_number=cleaning_number).exists() and \
-            not ipv_models.LargeAreaCleaningProcess.objects.filter(cleaning_number=cleaning_number).exists():
+            if not institute_models.CleaningProcess.objects.filter(cleaning_number=cleaning_number).exists() and \
+            not institute_models.LargeAreaCleaningProcess.objects.filter(cleaning_number=cleaning_number).exists():
                 raise ValidationError(_("The cleaning number you have chosen doesn't exist."))
         return cleaning_number
 
@@ -153,7 +153,7 @@ def add_samples_to_database(add_samples_form, user):
     _ = ugettext
     cleaned_data = add_samples_form.cleaned_data
     cleaning_number = cleaned_data.get("cleaning_number")
-    substrate = ipv_models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
+    substrate = institute_models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
                                                     material=cleaned_data["substrate"],
                                                     comments=cleaned_data["substrate_comments"],
                                                     external_operator=cleaned_data["substrate_originator"])
@@ -163,9 +163,9 @@ def add_samples_to_database(add_samples_form, user):
         substrate.save()
     if cleaning_number:
         try:
-            cleaning_process = ipv_models.CleaningProcess.objects.get(cleaning_number=cleaning_number)
-        except ipv_models.CleaningProcess.DoesNotExist:
-            cleaning_process = ipv_models.LargeAreaCleaningProcess.objects.get(cleaning_number=cleaning_number)
+            cleaning_process = institute_models.CleaningProcess.objects.get(cleaning_number=cleaning_number)
+        except institute_models.CleaningProcess.DoesNotExist:
+            cleaning_process = institute_models.LargeAreaCleaningProcess.objects.get(cleaning_number=cleaning_number)
         if cleaning_process.timestamp <= cleaned_data["timestamp"]:
             substrate.timestamp = cleaning_process.timestamp - datetime.timedelta(minutes=1)
             substrate.save()

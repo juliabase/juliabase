@@ -30,7 +30,7 @@ from django.http import Http404
 from django.conf import settings
 from samples.views import utils
 from samples import models, permissions
-from chantal_institute import models as ipv_models, layouts
+from chantal_institute import models as institute_models, layouts
 from chantal_common.utils import respond_in_json, JSONRequestException
 from django.db.models import Q
 
@@ -47,9 +47,9 @@ def get_substrates(sample):
     :Return:
       the substrate processes of the sample
 
-    :rtype: list of `ipv_models.Substrate`
+    :rtype: list of `institute_models.Substrate`
     """
-    substrates = list(ipv_models.Substrate.objects.filter(samples=sample))
+    substrates = list(institute_models.Substrate.objects.filter(samples=sample))
     if sample.split_origin:
         substrates = get_substrates(sample.split_origin.parent) + substrates
     return substrates
@@ -68,7 +68,7 @@ def get_substrate(sample):
     :Return:
       the substrate process of the sample
 
-    :rtype: `ipv_models.Substrate`
+    :rtype: `institute_models.Substrate`
     """
     return get_substrates(sample)[0]
 
@@ -117,7 +117,7 @@ def raman_file_path(request):
         apparatus_path = {"1": "raman", "2": "raman_2", "3": "raman_3"}[apparatus]
     except KeyError:
         raise JSONRequestException(5, '"apparatus" must be 1, 2, or 3')
-    if central_wavelength not in [choice[0] for choice in ipv_models.raman_excitation_choices if choice[0] != "??"]:
+    if central_wavelength not in [choice[0] for choice in institute_models.raman_excitation_choices if choice[0] != "??"]:
         raise JSONRequestException(5, '"central_wavelength" has an invalid value')
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     sample_name_normalized = sample.name.lower().replace("/", "-")
@@ -137,8 +137,8 @@ def raman_file_path(request):
         suffix = "c"
     path = os.path.join(apparatus_path, sample.currently_responsible_person.username if apparatus in ["1", "2"]
                         else request.user.username, central_wavelength, sample_name_normalized + suffix)
-    raman_model = {"1": ipv_models.RamanMeasurementOne, "2": ipv_models.RamanMeasurementTwo,
-                   "3": ipv_models.RamanMeasurementThree}[apparatus]
+    raman_model = {"1": institute_models.RamanMeasurementOne, "2": institute_models.RamanMeasurementTwo,
+                   "3": institute_models.RamanMeasurementThree}[apparatus]
     similar_paths = list(raman_model.objects.filter(
             datafile__regex="/" + re.escape(sample_name_normalized + suffix) + r"[0-9]+\.").
                          values_list("datafile", flat=True))
@@ -173,12 +173,12 @@ def raman_by_filepath(request, filepath):
     """
     filepath = filepath.replace("\\", "/")
     try:
-        measurement = ipv_models.RamanMeasurementOne.objects.get(datafile__iexact=filepath)
-    except ipv_models.RamanMeasurementOne.DoesNotExist:
+        measurement = institute_models.RamanMeasurementOne.objects.get(datafile__iexact=filepath)
+    except institute_models.RamanMeasurementOne.DoesNotExist:
         try:
-            measurement = ipv_models.RamanMeasurementTwo.objects.get(datafile__iexact=filepath)
-        except ipv_models.RamanMeasurementTwo.DoesNotExist:
-            measurement = get_object_or_404(ipv_models.RamanMeasurementThree, datafile__iexact=filepath)
+            measurement = institute_models.RamanMeasurementTwo.objects.get(datafile__iexact=filepath)
+        except institute_models.RamanMeasurementTwo.DoesNotExist:
+            measurement = get_object_or_404(institute_models.RamanMeasurementThree, datafile__iexact=filepath)
     permissions.assert_can_view_physical_process(request.user, measurement)
     return respond_in_json([measurement.get_apparatus_number(), measurement.number])
 
@@ -208,8 +208,8 @@ def _get_maike_by_filepath(filepath, user):
         solarsimulator measurement
       - `Http404`: if the filepath was not found in the database
     """
-    photo_cells = ipv_models.SolarsimulatorPhotoCellMeasurement.objects.filter(data_file=filepath)
-    dark_cells = ipv_models.SolarsimulatorDarkCellMeasurement.objects.filter(data_file=filepath)
+    photo_cells = institute_models.SolarsimulatorPhotoCellMeasurement.objects.filter(data_file=filepath)
+    dark_cells = institute_models.SolarsimulatorDarkCellMeasurement.objects.filter(data_file=filepath)
     if photo_cells.exists():
         measurement = photo_cells[0].measurement
     elif dark_cells.exists():
@@ -288,11 +288,11 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
         sample = get_object_or_404(models.Sample, id=sample_id)
         start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
         end_date = start_date + datetime.timedelta(days=1)
-        matching_measurements = ipv_models.SolarsimulatorDarkMeasurement.objects.filter(
+        matching_measurements = institute_models.SolarsimulatorDarkMeasurement.objects.filter(
             samples__id=sample_id, irradiance=irradiance, timestamp__gte=start_date, timestamp__lt=end_date). \
             exclude(dark_cells__position=cell_position).order_by("timestamp") \
             if irradiance == "dark" else \
-            ipv_models.SolarsimulatorPhotoMeasurement.objects.filter(
+            institute_models.SolarsimulatorPhotoMeasurement.objects.filter(
             samples__id=sample_id, irradiance=irradiance, timestamp__gte=start_date, timestamp__lt=end_date). \
             exclude(photo_cells__position=cell_position).order_by("timestamp")
         if matching_measurements.exists():
@@ -402,7 +402,7 @@ def get_current_conductivity_measurement_set(request, apparatus, sample_id):
         if only_one_working_night_inbetween(latest_set.timestamp, timestamp):
             if not sample.processes.filter(timestamp__range=(latest_set.timestamp, timestamp)). \
                     exclude(id=latest_set.id).exists():
-                if not ipv_models.SingleConductivityMeasurement.objects.filter(
+                if not institute_models.SingleConductivityMeasurement.objects.filter(
                     measurement_set__apparatus=apparatus, timestamp__range=(latest_set.timestamp, timestamp)). \
                     exclude(measurement_set=latest_set).exists():
                     return respond_in_json(latest_set.pk)
@@ -431,7 +431,7 @@ def _get_dsr_by_filepath(filepath, user):
         dsr measurement
       - `Http404`: if the filepath was not found in the database
     """
-    measurements = ipv_models.DSRMeasurement.objects.filter(parameter_file=filepath)
+    measurements = institute_models.DSRMeasurement.objects.filter(parameter_file=filepath)
     if measurements.exists():
         measurement = measurements[0]
     else:

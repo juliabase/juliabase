@@ -35,7 +35,7 @@ from samples import models, permissions
 from samples.views import utils, feed_utils, sample
 from chantal_institute.views import form_utils
 from django.utils.translation import ugettext, ungettext, ugettext_lazy
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 _ = ugettext
 
@@ -131,7 +131,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.NewClusterToolDeposition
+        model = institute_models.NewClusterToolDeposition
 
 
 class HotWireLayerForm(forms.ModelForm):
@@ -187,7 +187,7 @@ class HotWireLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = ipv_models.NewClusterToolHotWireLayer
+        model = institute_models.NewClusterToolHotWireLayer
         exclude = ("deposition", "wire_power")
 
 
@@ -250,7 +250,7 @@ class PECVDLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = ipv_models.NewClusterToolPECVDLayer
+        model = institute_models.NewClusterToolPECVDLayer
         exclude = ("deposition")
 
 
@@ -294,11 +294,11 @@ class SputterLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = ipv_models.NewClusterToolSputterLayer
+        model = institute_models.NewClusterToolSputterLayer
         exclude = ("deposition")
 
 
-__all_targets = [choice[0] for choice in ipv_models.cluster_tool_target_choices]
+__all_targets = [choice[0] for choice in institute_models.cluster_tool_target_choices]
 allowed_targets = {"RF": tuple(target for target in __all_targets if target != "Ion"),
                    "DC": tuple(target for target in __all_targets if ":" in target or target == "Ag")}
 
@@ -314,7 +314,7 @@ class SputterSlotForm(forms.ModelForm):
         for fieldname in ["power", "voltage", "current", "u_bias"]:
             self.fields[fieldname].widget.attrs["size"] = self.fields[fieldname + "_end"].widget.attrs["size"] = "5"
         self.slot_number = slot_number
-        mode_choices = dict(ipv_models.cluster_tool_sputter_mode_choices)
+        mode_choices = dict(institute_models.cluster_tool_sputter_mode_choices)
         if slot_number == 3:
             self.targets = {"RF": allowed_targets["RF"], "DC": allowed_targets["DC"]}
         elif slot_number == 1:
@@ -346,7 +346,7 @@ class SputterSlotForm(forms.ModelForm):
         return cleaned_data
 
     class Meta:
-        model = ipv_models.NewClusterToolSputterSlot
+        model = institute_models.NewClusterToolSputterSlot
         exclude = ("layer", "number")
 
 
@@ -382,7 +382,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `ipv_models.NewClusterToolDeposition` or ``NoneType``
+    :type deposition: `institute_models.NewClusterToolDeposition` or ``NoneType``
     """
 
     class LayerForm(forms.Form):
@@ -405,7 +405,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = self.user.samples_user_details
         self.deposition = \
-            get_object_or_404(ipv_models.NewClusterToolDeposition, number=deposition_number) if deposition_number else None
+            get_object_or_404(institute_models.NewClusterToolDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = None
         self.layer_forms = []
         self.sputter_slot_lists = []
@@ -437,7 +437,7 @@ class FormSet(object):
 
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = AddLayersForm(self.user_details, ipv_models.NewClusterToolDeposition, self.post_data)
+        self.add_layers_form = AddLayersForm(self.user_details, institute_models.NewClusterToolDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -477,16 +477,16 @@ class FormSet(object):
               - `deposition`: the new cluster tool deposition for which the
                 layer and channel forms should be generated
 
-            :type deposition: `ipv_models.NewClusterToolDeposition`
+            :type deposition: `institute_models.NewClusterToolDeposition`
             """
             self.layer_forms = []
             self.sputter_slot_lists = []
             for index, layer in enumerate(deposition.layers.all()):
                 layer = layer.actual_instance
-                if isinstance(layer, ipv_models.NewClusterToolHotWireLayer):
+                if isinstance(layer, institute_models.NewClusterToolHotWireLayer):
                     self.layer_forms.append(HotWireLayerForm(prefix=str(index), instance=layer))
                     self.sputter_slot_lists.append([])
-                elif isinstance(layer, ipv_models.NewClusterToolSputterLayer):
+                elif isinstance(layer, institute_models.NewClusterToolSputterLayer):
                     self.layer_forms.append(SputterLayerForm(prefix=str(index), instance=layer))
                     sputter_slots = [
                         SputterSlotForm(slot_index + 1, prefix="{0}-{1}".format(index, slot_index), instance=slot)
@@ -499,7 +499,7 @@ class FormSet(object):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            source_deposition_query = ipv_models.NewClusterToolDeposition.objects.filter(number=copy_from)
+            source_deposition_query = institute_models.NewClusterToolDeposition.objects.filter(number=copy_from)
             if source_deposition_query.count() == 1:
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -520,7 +520,7 @@ class FormSet(object):
                                         "number": utils.get_next_deposition_number("P")})
                 self.layer_forms, self.sputter_slot_lists, self.change_layer_forms = [], [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
-        self.add_layers_form = AddLayersForm(self.user_details, ipv_models.NewClusterToolDeposition)
+        self.add_layers_form = AddLayersForm(self.user_details, institute_models.NewClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm()
@@ -604,7 +604,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = AddLayersForm(self.user_details, ipv_models.NewClusterToolDeposition)
+            self.add_layers_form = AddLayersForm(self.user_details, institute_models.NewClusterToolDeposition)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -657,14 +657,14 @@ class FormSet(object):
                 # New MyLayer
                 initial = {}
                 id_ = new_layer[1]["id"]
-                layer_class = ipv_models.NewClusterToolLayer.objects.get(id=id_).content_type.model_class()
-                if layer_class == ipv_models.NewClusterToolHotWireLayer:
+                layer_class = institute_models.NewClusterToolLayer.objects.get(id=id_).content_type.model_class()
+                if layer_class == institute_models.NewClusterToolHotWireLayer:
                     LayerFormClass = HotWireLayerForm
-                    initial = ipv_models.NewClusterToolHotWireLayer.objects.filter(id=id_).values()[0]
+                    initial = institute_models.NewClusterToolHotWireLayer.objects.filter(id=id_).values()[0]
                     self.sputter_slot_lists.append([])
-                elif layer_class == ipv_models.NewClusterToolSputterLayer:
+                elif layer_class == institute_models.NewClusterToolSputterLayer:
                     LayerFormClass = SputterLayerForm
-                    query = ipv_models.NewClusterToolSputterLayer.objects.filter(id=id_)
+                    query = institute_models.NewClusterToolSputterLayer.objects.filter(id=id_)
                     initial = query.values()[0]
                     layer = query[0]
                     sputter_slots = [SputterSlotForm(slot_index + 1, initial=slot_data,
@@ -673,7 +673,7 @@ class FormSet(object):
                     self.sputter_slot_lists.append(sputter_slots)
                 else:
                     LayerFormClass = PECVDLayerForm
-                    initial = ipv_models.NewClusterToolPECVDLayer.objects.filter(id=id_).values()[0]
+                    initial = institute_models.NewClusterToolPECVDLayer.objects.filter(id=id_).values()[0]
                     self.sputter_slot_lists.append([])
                 initial["number"] = i+1
                 self.layer_forms.append(LayerFormClass(initial=initial, prefix=str(next_prefix)))
@@ -760,7 +760,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `ipv_models.NewClusterToolDeposition` or ``NoneType``
+        :rtype: `institute_models.NewClusterToolDeposition` or ``NoneType``
         """
         database_ready = not self._change_structure() if not self.json_client else True
         database_ready = self._is_all_valid() and database_ready
@@ -773,7 +773,7 @@ class FormSet(object):
             for layer_form, sputter_slots in zip( self.layer_forms, self.sputter_slot_lists):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
-                if isinstance(layer, ipv_models.NewClusterToolHotWireLayer) and \
+                if isinstance(layer, institute_models.NewClusterToolHotWireLayer) and \
                         layer.current is not None and layer.voltage is not None:
                     layer.wire_power = layer.current * layer.voltage
                 layer.save()
@@ -824,7 +824,7 @@ def edit(request, deposition_number):
     return form_utils.edit_depositions(request,
                                        deposition_number,
                                        FormSet(request, deposition_number),
-                                       ipv_models.NewClusterToolDeposition,
+                                       institute_models.NewClusterToolDeposition,
                                        "samples/edit_new_cluster_tool_deposition.html")
 
 
@@ -848,4 +848,4 @@ def show(request, deposition_number):
     """
     return form_utils.show_depositions(request,
                                        deposition_number,
-                                       ipv_models.NewClusterToolDeposition)
+                                       institute_models.NewClusterToolDeposition)

@@ -22,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.template import RequestContext
 from chantal_common.utils import append_error
-from chantal_institute import models as ipv_models
+from chantal_institute import models as institute_models
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 from django.utils.text import capfirst
@@ -47,8 +47,8 @@ class DepositionForm(forms.Form):
                 # Translators: “YY” is year, “L” is letter, and “NNN” is number
                 raise ValidationError(_("Invalid deposition number. It must be of the form YYL-NNN."))
             try:
-                return ipv_models.LargeSputterDeposition.objects.get(number=deposition_number)
-            except ipv_models.LargeSputterDeposition.DoesNotExist:
+                return institute_models.LargeSputterDeposition.objects.get(number=deposition_number)
+            except institute_models.LargeSputterDeposition.DoesNotExist:
                 raise ValidationError(_("Invalid deposition number. Deposition does not exists."))
         return deposition_number
 
@@ -73,7 +73,7 @@ class CharacterizationForm(form_utils.ProcessForm):
         return models.Sample.objects.get(name=self.cleaned_data["sample"])
 
     class Meta:
-        model = ipv_models.SputterCharacterization
+        model = institute_models.SputterCharacterization
         exclude = ("large_sputter_deposition", "samples", "rho",
                    "external_operator", "new_cluster_tool_deposition")
 
@@ -108,7 +108,7 @@ class FormSet(object):
         :Parameters:
          - `suptter_deposition`: the large sputter deposition to which the characterization was made.
 
-        :type suptter_deposition: `ipv_models.LargeSputterDeposition`
+        :type suptter_deposition: `institute_models.LargeSputterDeposition`
         """
         for characterization_form in self.characterization_forms:
             characterization = characterization_form.save(commit=False)
@@ -135,7 +135,7 @@ class FormSet(object):
         :Parameters:
          - `suptter_deposition`: the large sputter deposition to which the characterization was made.
 
-        :type suptter_deposition: `ipv_models.LargeSputterDeposition`
+        :type suptter_deposition: `institute_models.LargeSputterDeposition`
         """
         if not self.characterization_forms or \
         not self.characterization_forms[0].sample in suptter_deposition.samples.all():
@@ -185,7 +185,7 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_add_physical_process(request.user, ipv_models.SputterCharacterization)
+    permissions.assert_can_add_physical_process(request.user, institute_models.SputterCharacterization)
     form_set = FormSet(request)
     if request.method == "POST":
         form_set.from_post_data(request.POST)

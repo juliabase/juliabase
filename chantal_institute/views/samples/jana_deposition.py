@@ -31,7 +31,7 @@ import django.contrib.auth.models
 from chantal_common.utils import append_error, check_markdown, HttpResponseSeeOther, is_json_requested
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class DepositionForm(form_utils.ProcessForm):
@@ -75,7 +75,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.JANADeposition
+        model = institute_models.JANADeposition
         exclude = ("external_operator",)
 
 
@@ -104,7 +104,7 @@ class LayerForm(forms.ModelForm):
         return form_utils.clean_date_field(self.cleaned_data["date"])
 
     class Meta:
-        model = ipv_models.JANALayer
+        model = institute_models.JANALayer
         exclude = ("deposition",)
 
 
@@ -140,7 +140,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `ipv_models.JANADeposition` or ``NoneType``
+    :type deposition: `institute_models.JANADeposition` or ``NoneType``
     """
     deposition_number_pattern = re.compile(r"(?P<prefix>\d\dS-)(?P<number>\d+)$")
 
@@ -159,7 +159,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = self.user.samples_user_details
         self.deposition = \
-            get_object_or_404(ipv_models.JANADeposition, number=deposition_number) if deposition_number else None
+            get_object_or_404(institute_models.JANADeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
         self.layer_forms, self.change_layer_forms = [], []
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
@@ -176,7 +176,7 @@ class FormSet(object):
         """
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.JANADeposition, self.post_data)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.JANADeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -212,7 +212,7 @@ class FormSet(object):
                 edited, or the deposition which is duplicated to create a new
                 deposition.
 
-            :type source_deposition: `ipv_models.JANADeposition`
+            :type source_deposition: `institute_models.JANADeposition`
             :type destination_deposition_number: unicode
             """
             self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer,
@@ -222,7 +222,7 @@ class FormSet(object):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            source_deposition_query = ipv_models.JANADeposition.objects.filter(number=copy_from)
+            source_deposition_query = institute_models.JANADeposition.objects.filter(number=copy_from)
             if source_deposition_query.count() == 1:
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -244,7 +244,7 @@ class FormSet(object):
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.JANADeposition)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.JANADeposition)
         self.edit_description_form = form_utils.EditDescriptionForm() \
             if self.deposition and self.deposition.finished else None
         if not self.deposition:
@@ -320,7 +320,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.JANADeposition)
+            self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.JANADeposition)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -429,7 +429,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `ipv_models.JANADeposition` or ``NoneType``
+        :rtype: `institute_models.JANADeposition` or ``NoneType``
         """
         database_ready = not self.__change_structure() if not self.json_client else True
         database_ready = self.__is_all_valid() and database_ready
@@ -486,7 +486,7 @@ def edit(request, deposition_number):
     return form_utils.edit_depositions(request,
                                        deposition_number,
                                        FormSet(request, deposition_number),
-                                       ipv_models.JANADeposition,
+                                       institute_models.JANADeposition,
                                        "samples/edit_jana_deposition.html")
 
 @login_required
@@ -509,4 +509,4 @@ def show(request, deposition_number):
     """
     return form_utils.show_depositions(request,
                                        deposition_number,
-                                       ipv_models.JANADeposition)
+                                       institute_models.JANADeposition)

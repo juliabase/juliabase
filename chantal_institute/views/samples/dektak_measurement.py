@@ -31,7 +31,7 @@ from chantal_common.utils import append_error
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 
@@ -64,7 +64,7 @@ class DektakMeasurementForm(form_utils.ProcessForm):
         pass
 
     class Meta:
-        model = ipv_models.DektakMeasurement
+        model = institute_models.DektakMeasurement
         exclude = ("external_operator",)
 
 
@@ -123,7 +123,7 @@ def is_referentially_valid(dektak_measurement_form, sample_form, dektak_number):
     return form_utils.measurement_is_referentially_valid(dektak_measurement_form,
                                                          sample_form,
                                                          dektak_number,
-                                                         ipv_models.DektakMeasurement)
+                                                         institute_models.DektakMeasurement)
 
 @login_required
 def edit(request, dektak_number):
@@ -142,9 +142,9 @@ def edit(request, dektak_number):
 
     :rtype: ``HttpResponse``
     """
-    dektak_measurement = get_object_or_404(ipv_models.DektakMeasurement, number=utils.convert_id_to_int(dektak_number)) \
+    dektak_measurement = get_object_or_404(institute_models.DektakMeasurement, number=utils.convert_id_to_int(dektak_number)) \
         if dektak_number is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, dektak_measurement, ipv_models.DektakMeasurement)
+    permissions.assert_can_add_edit_physical_process(request.user, dektak_measurement, institute_models.DektakMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not dektak_measurement else None
     if request.method == "POST":
         sample_form = form_utils.SampleForm(request.user, dektak_measurement, preset_sample, request.POST)
@@ -169,7 +169,7 @@ def edit(request, dektak_number):
         initial = {}
         if dektak_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
-            numbers = ipv_models.DektakMeasurement.objects.values_list("number", flat=True)
+            numbers = institute_models.DektakMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
         dektak_measurement_form = DektakMeasurementForm(request.user, instance=dektak_measurement, initial=initial)
         initial = {}

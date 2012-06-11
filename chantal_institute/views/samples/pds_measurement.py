@@ -34,7 +34,7 @@ from chantal_common.utils import append_error, is_json_requested, respond_in_jso
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
@@ -180,7 +180,7 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         pass
 
     class Meta:
-        model = ipv_models.PDSMeasurement
+        model = institute_models.PDSMeasurement
         exclude = ("external_operator",)
 
 
@@ -248,7 +248,7 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     :rtype: bool
     """
     return form_utils.measurement_is_referentially_valid(pds_measurement_form, sample_form, pds_number,
-                                                         ipv_models.PDSMeasurement)
+                                                         institute_models.PDSMeasurement)
 
 @login_required
 def edit(request, pds_number):
@@ -267,10 +267,10 @@ def edit(request, pds_number):
 
     :rtype: ``HttpResponse``
     """
-    pds_measurement = get_object_or_404(ipv_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number)) \
+    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number)) \
         if pds_number is not None else None
     old_sample = pds_measurement.samples.get() if pds_measurement else None
-    permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, ipv_models.PDSMeasurement)
+    permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, institute_models.PDSMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
     if request.method == "POST":
         pds_measurement_form = None
@@ -314,7 +314,7 @@ def edit(request, pds_number):
         initial = {}
         if pds_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
-            numbers = ipv_models.PDSMeasurement.objects.values_list("number", flat=True)
+            numbers = institute_models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
         pds_measurement_form = PDSMeasurementForm(request.user, instance=pds_measurement, initial=initial)
         initial = {}
@@ -350,7 +350,7 @@ def show(request, pds_number):
 
     :rtype: ``HttpResponse``
     """
-    pds_measurement = get_object_or_404(ipv_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number))
+    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number))
     permissions.assert_can_view_physical_process(request.user, pds_measurement)
     if is_json_requested(request):
         return respond_in_json(pds_measurement.get_data().to_dict())

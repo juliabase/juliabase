@@ -28,7 +28,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, \
     ungettext
 from samples.views import utils, feed_utils
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 import datetime
 import re
 import decimal
@@ -128,7 +128,7 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.LADADeposition
+        model = institute_models.LADADeposition
         exclude = ("external_operator",)
 
 
@@ -207,7 +207,7 @@ class LayerForm(forms.ModelForm):
         return self.cleaned_data
 
     class Meta:
-        model = ipv_models.LADALayer
+        model = institute_models.LADALayer
         exclude = ("deposition", "silane_concentration", "silane_concentration_end")
 
 
@@ -243,7 +243,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `ipv_models.LADADeposition` or ``NoneType``
+    :type deposition: `institute_models.LADADeposition` or ``NoneType``
     """
     deposition_number_pattern = re.compile(r"(?P<prefix>\d\dD-)(?P<number>\d{3,4})$")
 
@@ -262,7 +262,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = self.user.samples_user_details
         self.deposition = \
-            get_object_or_404(ipv_models.LADADeposition, number=deposition_number) if deposition_number else None
+            get_object_or_404(institute_models.LADADeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = self.add_layers_form = self.samples_form = self.remove_from_my_samples_form = None
         self.layer_forms, self.change_layer_forms = [], []
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
@@ -280,7 +280,7 @@ class FormSet(object):
         """
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.LADADeposition, self.post_data)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.LADADeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -303,7 +303,7 @@ class FormSet(object):
         prefix = r"{0}{1}-".format(datetime.date.today().strftime("%y"), "D")
         pattern_string = r"^{0}\d+".format(re.escape(prefix))
         deposition_numbers = \
-            ipv_models.LADADeposition.objects.select_related('layers__number', 'number') \
+            institute_models.LADADeposition.objects.select_related('layers__number', 'number') \
                 .filter(number__regex=pattern_string).values_list("layers__number", flat=True)
         next_number = max(deposition_numbers) + 1 if deposition_numbers else 1
         return prefix + "{0:04}".format(next_number)
@@ -323,7 +323,7 @@ class FormSet(object):
             deposition with this number.  If none, ``source_deposition``
             already contains the proper deposition number.
 
-        :type source_deposition: `ipv_models.LADADeposition`
+        :type source_deposition: `institute_models.LADADeposition`
         :type destination_deposition_number: unicode
         """
         layers = source_deposition.layers
@@ -354,7 +354,7 @@ class FormSet(object):
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            source_deposition_query = ipv_models.LADADeposition.objects.filter(number=copy_from)
+            source_deposition_query = institute_models.LADADeposition.objects.filter(number=copy_from)
             if source_deposition_query.exists():
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -378,7 +378,7 @@ class FormSet(object):
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.LADADeposition)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.LADADeposition)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm()
         self.edit_description_form = form_utils.EditDescriptionForm() if self.deposition else None
@@ -453,7 +453,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = form_utils.AddLayersForm(self.user_details, ipv_models.LADADeposition)
+            self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.LADADeposition)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -570,7 +570,7 @@ class FormSet(object):
                     append_error(self.deposition_form, _("You can't change the number of the first layer."))
                     referentially_valid = False
                 pattern_string = r"^{0}\d+".format(re.escape(deposition_prefix))
-                higher_deposition_numbers = ipv_models.LADADeposition.objects.filter(number__regex=pattern_string) \
+                higher_deposition_numbers = institute_models.LADADeposition.objects.filter(number__regex=pattern_string) \
                     .values_list("number", flat=True).iterator()
                 higher_deposition_numbers = [int(higher_deposition_number[len(deposition_prefix):len(deposition_prefix) + 4])
                                              for higher_deposition_number in higher_deposition_numbers
@@ -582,7 +582,7 @@ class FormSet(object):
             elif self.layer_forms and self.layer_forms[0].is_valid():
                 start_date = datetime.date(self.layer_forms[0].cleaned_data["date"].year, 1, 1)
                 end_date = self.layer_forms[0].cleaned_data["date"]
-                if ipv_models.LADALayer.objects.filter(number=self.layer_forms[0].cleaned_data["number"],
+                if institute_models.LADALayer.objects.filter(number=self.layer_forms[0].cleaned_data["number"],
                                                             date__range=(start_date, end_date)).exists():
                         #self.layer_forms[0].cleaned_data["number"] <= max_layer_number:
                     append_error(self.deposition_form, _("Overlap with previous deposition numbers."))
@@ -620,7 +620,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `ipv_models.LADADeposition` or ``NoneType``
+        :rtype: `institute_models.LADADeposition` or ``NoneType``
         """
         database_ready = not self.__change_structure() if not self.json_client else True
         database_ready = self.__is_all_valid() and database_ready
@@ -676,7 +676,7 @@ def edit(request, deposition_number):
     :rtype: ``HttpResponse``
     """
     return form_utils.edit_depositions(request, deposition_number, FormSet(request, deposition_number),
-                                       ipv_models.LADADeposition, "samples/edit_lada_deposition.html")
+                                       institute_models.LADADeposition, "samples/edit_lada_deposition.html")
 
 
 @login_required
@@ -697,4 +697,4 @@ def show(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    return form_utils.show_depositions(request, deposition_number, ipv_models.LADADeposition)
+    return form_utils.show_depositions(request, deposition_number, institute_models.LADADeposition)

@@ -31,7 +31,7 @@ from chantal_common.utils import append_error, check_filepath
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class IRMeasurementForm(form_utils.ProcessForm):
@@ -75,7 +75,7 @@ class IRMeasurementForm(form_utils.ProcessForm):
         pass
 
     class Meta:
-        model = ipv_models.IRMeasurement
+        model = institute_models.IRMeasurement
         exclude = ("external_operator",)
 
 def is_all_valid(ir_measurement_form, sample_form, remove_from_my_samples_form, edit_description_form):
@@ -132,7 +132,7 @@ def is_referentially_valid(ir_measurement_form, sample_form, ir_number):
     return form_utils.measurement_is_referentially_valid(ir_measurement_form,
                                                          sample_form,
                                                          ir_number,
-                                                         ipv_models.IRMeasurement)
+                                                         institute_models.IRMeasurement)
 
 @login_required
 def edit(request, ir_number):
@@ -151,9 +151,9 @@ def edit(request, ir_number):
 
     :rtype: ``HttpResponse``
     """
-    ir_measurement = get_object_or_404(ipv_models.IRMeasurement, number=utils.convert_id_to_int(ir_number)) \
+    ir_measurement = get_object_or_404(institute_models.IRMeasurement, number=utils.convert_id_to_int(ir_number)) \
         if ir_number is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, ir_measurement, ipv_models.IRMeasurement)
+    permissions.assert_can_add_edit_physical_process(request.user, ir_measurement, institute_models.IRMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not ir_measurement else None
     if request.method == "POST":
         ir_measurement_form = None
@@ -178,7 +178,7 @@ def edit(request, ir_number):
         initial = {}
         if ir_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
-            numbers = ipv_models.IRMeasurement.objects.values_list("number", flat=True)
+            numbers = institute_models.IRMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
         ir_measurement_form = IRMeasurementForm(request.user, instance=ir_measurement, initial=initial)
         initial = {}

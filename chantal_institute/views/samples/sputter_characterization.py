@@ -26,7 +26,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 from django.conf import settings
 from chantal_common.utils import append_error
 
@@ -48,9 +48,9 @@ class SputterCharacterizationForm(form_utils.ProcessForm):
             self.fields["operator"].required = False
         else:
             self.fields["combined_operator"].required = False
-        self.fields["large_sputter_deposition"].queryset = ipv_models.LargeSputterDeposition.objects.filter(samples=sample)
+        self.fields["large_sputter_deposition"].queryset = institute_models.LargeSputterDeposition.objects.filter(samples=sample)
         self.fields["new_cluster_tool_deposition"].queryset = \
-            ipv_models.NewClusterToolDeposition.objects.filter(samples=sample)
+            institute_models.NewClusterToolDeposition.objects.filter(samples=sample)
 
     def clean_timestamp(self):
         if not self.user.is_staff and self.old_measurement:
@@ -92,7 +92,7 @@ class SputterCharacterizationForm(form_utils.ProcessForm):
         return cleaned_data
 
     class Meta:
-        model = ipv_models.SputterCharacterization
+        model = institute_models.SputterCharacterization
 
 
 def is_all_valid(sample_form, sputter_characterization_form, remove_from_my_samples_form, edit_description_form):
@@ -152,7 +152,7 @@ def is_referentially_valid(sputter_characterization_form, sample_form, process_i
     return form_utils.measurement_is_referentially_valid(sputter_characterization_form,
                                                          sample_form,
                                                          process_id,
-                                                         ipv_models.SputterCharacterization)
+                                                         institute_models.SputterCharacterization)
 @login_required
 def edit(request, process_id):
     """Edit and create view for sputter characterisations.
@@ -172,11 +172,11 @@ def edit(request, process_id):
     :rtype: ``HttpResponse``
     """
     sputter_characterization = \
-        get_object_or_404(ipv_models.SputterCharacterization, id=utils.convert_id_to_int(process_id)) \
+        get_object_or_404(institute_models.SputterCharacterization, id=utils.convert_id_to_int(process_id)) \
         if process_id is not None else None
     old_sample = sputter_characterization.samples.get() if sputter_characterization else None
     permissions.assert_can_add_edit_physical_process(request.user, sputter_characterization,
-                                                     ipv_models.SputterCharacterization)
+                                                     institute_models.SputterCharacterization)
     preset_sample = utils.extract_preset_sample(request) if not sputter_characterization else None
     if request.method == "POST":
         sample_form = form_utils.SampleForm(request.user, sputter_characterization, preset_sample, request.POST)
@@ -204,7 +204,7 @@ def edit(request, process_id):
                     sputter_characterization.deposition_rate = sputter_characterization.thickness / layer.static_time
             elif sputter_characterization.new_cluster_tool_deposition and sputter_characterization.thickness:
                 sputter_layers = [layer for layer in sputter_characterization.new_cluster_tool_deposition.layers.all()
-                                  if layer.content_type.model_class() == ipv_models.NewClusterToolSputterLayer]
+                                  if layer.content_type.model_class() == institute_models.NewClusterToolSputterLayer]
                 if len(sputter_layers) == 1:
                     layer = sputter_layers[0].actual_instance
                     sputter_times = layer.slots.filter(number__in=[1, 3]).values_list("time", flat=True)

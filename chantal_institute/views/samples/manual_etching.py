@@ -34,7 +34,7 @@ from chantal_common.utils import append_error
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class ManualEtchingForm(form_utils.ProcessForm):
@@ -64,7 +64,7 @@ class ManualEtchingForm(form_utils.ProcessForm):
         if number:
             if not re.match(datetime.date.today().strftime("%y") + r"X-\d{3,4}$", number):
                 raise ValidationError(_("The etching number you have chosen isn't valid."))
-            if ipv_models.ManualEtching.objects.filter(number=number).exists() and not self.edit:
+            if institute_models.ManualEtching.objects.filter(number=number).exists() and not self.edit:
                 raise ValidationError(_("The etching number you have chosen already exists."))
         return number
 
@@ -87,7 +87,7 @@ class ManualEtchingForm(form_utils.ProcessForm):
         pass
 
     class Meta:
-        model = ipv_models.ManualEtching
+        model = institute_models.ManualEtching
         exclude = ("external_operator",)
 
 class SplitAfterEtchingForm(forms.Form):
@@ -162,7 +162,7 @@ def is_referentially_valid(manual_etching_form, sample_form, etching_number):
     referentially_valid = True
     if manual_etching_form.is_valid():
         number = manual_etching_form.cleaned_data["number"]
-        if unicode(number) != etching_number and ipv_models.ManualEtching.objects.filter(number=number).count():
+        if unicode(number) != etching_number and institute_models.ManualEtching.objects.filter(number=number).count():
             append_error(manual_etching_form, _("This etching number is already in use."))
             referentially_valid = False
         if sample_form.is_valid() and form_utils.dead_samples([sample_form.cleaned_data["sample"]],
@@ -190,9 +190,9 @@ def edit(request, etching_number):
 
     :rtype: ``HttpResponse``
     """
-    manual_etching = get_object_or_404(ipv_models.ManualEtching, number=etching_number) \
+    manual_etching = get_object_or_404(institute_models.ManualEtching, number=etching_number) \
         if etching_number is not None else None
-    permissions.assert_can_add_edit_physical_process(request.user, manual_etching, ipv_models.ManualEtching)
+    permissions.assert_can_add_edit_physical_process(request.user, manual_etching, institute_models.ManualEtching)
     preset_sample = utils.extract_preset_sample(request) if not manual_etching else None
     if request.method == "POST":
         manual_etching_form = None
@@ -234,7 +234,7 @@ def edit(request, etching_number):
         if etching_number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
             try:
-                number = ipv_models.ManualEtching.objects.latest('number').number
+                number = institute_models.ManualEtching.objects.latest('number').number
                 initial["number"] = "{0}{1:04}".format(number[:4], int(number[4:]) + 1)
             except:
                 initial["number"] = datetime.date.today().strftime("%y") + "X-0001"

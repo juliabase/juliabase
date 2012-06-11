@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import permissions
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 from django.conf import settings
 from chantal_common.utils import append_error
 
@@ -62,7 +62,7 @@ class LayerThicknessForm(form_utils.ProcessForm):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data.get("thickness") and cleaned_data.get("unit"):
-            cleaned_data["thickness"] = ipv_models.LayerThicknessMeasurement.convert_thickness(cleaned_data["thickness"],
+            cleaned_data["thickness"] = institute_models.LayerThicknessMeasurement.convert_thickness(cleaned_data["thickness"],
                                                                                                cleaned_data["unit"], "nm")
         # FixMe: The following could be done in ProcessForm.clean().
         final_operator = cleaned_data.get("operator")
@@ -88,7 +88,7 @@ class LayerThicknessForm(form_utils.ProcessForm):
         return cleaned_data
 
     class Meta:
-        model = ipv_models.LayerThicknessMeasurement
+        model = institute_models.LayerThicknessMeasurement
 
 
 def is_all_valid(sample_form, layer_thickness_form, edit_description_form):
@@ -143,7 +143,7 @@ def is_referentially_valid(layer_thickness_form, sample_form, process_id):
     return form_utils.measurement_is_referentially_valid(layer_thickness_form,
                                                          sample_form,
                                                          process_id,
-                                                         ipv_models.LayerThicknessMeasurement)
+                                                         institute_models.LayerThicknessMeasurement)
 @login_required
 def edit(request, process_id):
     """Edit and create view for Layer Thickness Measurements.
@@ -163,11 +163,11 @@ def edit(request, process_id):
     :rtype: ``HttpResponse``
     """
     layer_thickness_measurement = \
-        get_object_or_404(ipv_models.LayerThicknessMeasurement, id=utils.convert_id_to_int(process_id)) \
+        get_object_or_404(institute_models.LayerThicknessMeasurement, id=utils.convert_id_to_int(process_id)) \
         if process_id is not None else None
     old_sample = layer_thickness_measurement.samples.get() if layer_thickness_measurement else None
     permissions.assert_can_add_edit_physical_process(request.user, layer_thickness_measurement,
-                                                     ipv_models.LayerThicknessMeasurement)
+                                                     institute_models.LayerThicknessMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not layer_thickness_measurement else None
     if request.method == "POST":
         layer_thickness_form = LayerThicknessForm(request.user, request.POST, instance=layer_thickness_measurement)
@@ -190,7 +190,7 @@ def edit(request, process_id):
         if process_id is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
         if layer_thickness_measurement:
-            initial["thickness"] = ipv_models.LayerThicknessMeasurement.convert_thickness(layer_thickness_measurement.thickness,
+            initial["thickness"] = institute_models.LayerThicknessMeasurement.convert_thickness(layer_thickness_measurement.thickness,
                                                                                               "nm",
                                                                                                layer_thickness_measurement.unit)
         layer_thickness_form = LayerThicknessForm(request.user, instance=layer_thickness_measurement, initial=initial)

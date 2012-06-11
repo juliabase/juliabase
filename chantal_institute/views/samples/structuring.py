@@ -29,7 +29,7 @@ from chantal_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils
 from chantal_institute.views import form_utils
-import chantal_institute.models as ipv_models
+import chantal_institute.models as institute_models
 
 
 class StructuringForm(form_utils.ProcessForm):
@@ -77,7 +77,7 @@ class StructuringForm(form_utils.ProcessForm):
         return cleaned_data
 
     class Meta:
-        model = ipv_models.Structuring
+        model = institute_models.Structuring
         exclude = ("external_operator")
 
 def is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edit_description_form):
@@ -155,7 +155,7 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    structuring = get_object_or_404(ipv_models.Structuring, id=process_id) \
+    structuring = get_object_or_404(institute_models.Structuring, id=process_id) \
         if process_id is not None else None
     preset_sample = utils.extract_preset_sample(request) if not structuring else None
     if request.method == "POST":
