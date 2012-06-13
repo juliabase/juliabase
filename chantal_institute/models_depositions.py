@@ -40,35 +40,17 @@ from chantal_common.utils import get_really_full_name
 class ClusterToolHotWireAndPECVDGases(models.Model):
     h2 = models.DecimalField("H₂", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
     sih4 = models.DecimalField("SiH₄", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    mms = models.DecimalField("MMS", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    tmb = models.DecimalField("TMB", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    co2 = models.DecimalField("CO₂", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    ph3 = models.DecimalField("PH₃", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    ch4 = models.DecimalField("CH₄", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    ar = models.DecimalField("Ar", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
 
     class Meta:
         abstract = True
 
     def get_data_items(self):
         return [DataItem("H2/sccm", self.h2),
-                DataItem("SiH4/sccm", self.sih4),
-                DataItem("MMS/sccm", self.mms),
-                DataItem("TMB/sccm", self.tmb),
-                DataItem("CO2/sccm", self.co2),
-                DataItem("PH3/sccm", self.ph3),
-                DataItem("CH4/sccm", self.ch4),
-                DataItem("Ar/sccm", self.ar)]
+                DataItem("SiH4/sccm", self.sih4), ]
 
     def get_data_items_for_table_export(self):
         return [DataItem("H₂/sccm", self.h2),
-                DataItem("SiH₄/sccm", self.sih4),
-                DataItem("MMS/sccm", self.mms),
-                DataItem("TMB/sccm", self.tmb),
-                DataItem("CO₂/sccm", self.co2),
-                DataItem("PH₃/sccm", self.ph3),
-                DataItem("CH₄/sccm", self.ch4),
-                DataItem("Ar/sccm", self.ar)]
+                DataItem("SiH₄/sccm", self.sih4), ]
 
 
 class ClusterToolDeposition(samples.models_depositions.Deposition):
@@ -167,11 +149,11 @@ class ClusterToolDeposition(samples.models_depositions.Deposition):
         return model_field
 
 samples.models_depositions.default_location_of_deposited_samples[ClusterToolDeposition] = \
-    _("large-area deposition lab")
+    _("cluster tool deposition lab")
 
 
 class ClusterToolLayer(samples.models_depositions.Layer, chantal_common_models.PolymorphicModel):
-    """Model for a layer the “cluster tool”.  Note that this is the common
+    """Model for a layer of the “cluster tool”.  Note that this is the common
     base class for the actual layer models `ClusterToolHotWireLayer` and
     `ClusterToolPECVDLayer`.  This is *not* an abstract model though because
     it needs to be back-referenced from the deposition.  I need inheritance and
@@ -200,31 +182,8 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     """Model for a hot-wire layer in the cluster tool.  We have no
     “chamber” field here because there is only one hot-wire chamber anyway.
     """
-    pressure = models.DecimalField(_("deposition pressure"), max_digits=5, decimal_places=3, help_text=_("in mbar"),
-                                   null=True, blank=True)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
-    substrate_wire_distance = models.DecimalField(_("substrate–wire distance"), null=True, blank=True, max_digits=4,
-                                                  decimal_places=1, help_text=_("in mm"))
     comments = models.TextField(_("comments"), blank=True)
-    transfer_in_chamber = models.CharField(_("transfer in the chamber"), max_length=10, default="Ar", blank=True)
-    pre_heat = models.CharField(_("pre-heat"), max_length=9, blank=True, help_text=_("format HH:MM:SS"))
-    gas_pre_heat_gas = models.CharField(_("gas of gas pre-heat"), max_length=10, blank=True)
-    gas_pre_heat_pressure = models.DecimalField(_("pressure of gas pre-heat"), max_digits=5, decimal_places=3,
-                                                null=True, blank=True, help_text=_("in mbar"))
-    gas_pre_heat_time = models.CharField(_("time of gas pre-heat"), max_length=15, blank=True,
-                                         help_text=_("format HH:MM:SS"))
-    heating_temperature = models.IntegerField(_("heating temperature"), help_text=_("in ℃"), null=True, blank=True)
-    transfer_out_of_chamber = models.CharField(_("transfer out of the chamber"), max_length=10, default="Ar", blank=True)
-    filament_temperature = models.DecimalField(_("filament temperature"), max_digits=5, decimal_places=1,
-                                               null=True, blank=True, help_text=_("in ℃"))
-    current = models.DecimalField(_("wire current"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                  # Translators: Ampère
-                                  help_text=_("in A"))
-    voltage = models.DecimalField(_("wire voltage"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                  # Translators: Volt
-                                  help_text=_("in V"))
-    wire_power = models.DecimalField(_("wire power"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                     help_text=_("in W"))
     wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
     base_pressure = models.FloatField(_("base pressure"), help_text=_("in mbar"), null=True, blank=True)
 
@@ -237,21 +196,8 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         # See `Layer.get_data` for the documentation.
         data_node = samples.models_depositions.Layer.get_data(self)
         data_node.items = [DataItem("layer type", "hot-wire"),
-                           DataItem("pressure/mbar", self.pressure),
                            DataItem("time", self.time),
-                           DataItem("substrate-wire distance/mm", self.substrate_wire_distance),
                            DataItem("comments", self.comments),
-                           DataItem("transfer in chamber", self.transfer_in_chamber),
-                           DataItem("pre-heat", self.pre_heat),
-                           DataItem("gas pre-heat gas", self.gas_pre_heat_gas),
-                           DataItem("gas pre-heat pressure/mbar", self.gas_pre_heat_pressure),
-                           DataItem("gas pre-heat time", self.gas_pre_heat_time),
-                           DataItem("heating temperature/degC", self.heating_temperature),
-                           DataItem("transfer out of chamber", self.transfer_out_of_chamber),
-                           DataItem("filament temperature/degC", self.filament_temperature),
-                           DataItem("current/A", self.current),
-                           DataItem("voltage/V", self.voltage),
-                           DataItem("wire power/W", self.wire_power),
                            DataItem("wire material", self.wire_material),
                            DataItem("base pressure/mbar", self.base_pressure)]
         data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items(self))
@@ -262,21 +208,8 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         # See `Layer.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = samples.models_depositions.Layer.get_data_for_table_export(self)
-        data_node.items = [DataItem(_("pressure") + "/mbar", self.pressure),
-                            DataItem(_("time"), self.time),
-                            DataItem(_("substrate–wire distance") + "/mm", self.substrate_wire_distance),
+        data_node.items = [DataItem(_("time"), self.time),
                             DataItem(_("comments"), self.comments),
-                            DataItem(_("transfer in chamber"), self.transfer_in_chamber),
-                            DataItem(_("pre-heat"), self.pre_heat),
-                            DataItem(_("gas pre-heat gas"), self.gas_pre_heat_gas),
-                            DataItem(_("gas pre-heat pressure") + "/mbar", self.gas_pre_heat_pressure),
-                            DataItem(_("gas pre-heat time"), self.gas_pre_heat_time),
-                            DataItem(_("heating temperature") + "/degC", self.heating_temperature),
-                            DataItem(_("transfer out of chamber"), self.transfer_out_of_chamber),
-                            DataItem(_("filament temperature") + "/degC", self.filament_temperature),
-                            DataItem(_("current") + "/A", self.current),
-                            DataItem(_("voltage") + "/V", self.voltage),
-                            DataItem(_("wire power") + "/W", self.wire_power),
                             DataItem(_("wire material"), self.get_wire_material_display()),
                             DataItem(_("base pressure") + "/mbar", self.base_pressure)]
         data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items_for_table_export(self))
@@ -291,31 +224,12 @@ cluster_tool_pecvd_chamber_choices = (
 class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     """Model for a PECDV layer in the cluster tool.
     """
-    deposition_frequency = models.DecimalField(_("deposition frequency"), max_digits=5, decimal_places=2,
-                                               null=True, blank=True, help_text=_("in MHz"))
     chamber = models.CharField(_("chamber"), max_length=5, choices=cluster_tool_pecvd_chamber_choices)
-    pressure = models.DecimalField(_("deposition pressure"), max_digits=5, decimal_places=3, help_text=_("in mbar"),
-                                   null=True, blank=True)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
-    substrate_electrode_distance = \
-        models.DecimalField(_("substrate–electrode distance"), null=True, blank=True, max_digits=4,
-                            decimal_places=1, help_text=_("in mm"))
     comments = models.TextField(_("comments"), blank=True)
-    transfer_in_chamber = models.CharField(_("transfer in the chamber"), max_length=10, default="Ar", blank=True)
-    pre_heat = models.CharField(_("pre-heat"), max_length=9, blank=True, help_text=_("format HH:MM:SS"))
-    gas_pre_heat_gas = models.CharField(_("gas of gas pre-heat"), max_length=10, blank=True)
-    gas_pre_heat_pressure = models.DecimalField(_("pressure of gas pre-heat"), max_digits=5, decimal_places=3,
-                                                null=True, blank=True, help_text=_("in mbar"))
-    gas_pre_heat_time = models.CharField(_("time of gas pre-heat"), max_length=15, blank=True,
-                                         help_text=_("format HH:MM:SS"))
-    heating_temperature = models.IntegerField(_("heating temperature"), help_text=_("in ℃"), null=True, blank=True)
-    transfer_out_of_chamber = models.CharField(_("transfer out of the chamber"), max_length=10, default="Ar", blank=True)
-    plasma_start_power = models.DecimalField(_("plasma start power"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                             help_text=_("in W"))
     plasma_start_with_shutter = models.BooleanField(_("plasma start with shutter"), default=False)
     deposition_power = models.DecimalField(_("deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
                                            help_text=_("in W"))
-    base_pressure = models.FloatField(_("base pressure"), help_text=_("in mbar"), null=True, blank=True)
 
 
     class Meta(ClusterToolLayer.Meta):
@@ -328,22 +242,10 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
         data_node = samples.models_depositions.Layer.get_data(self)
         data_node.items = [DataItem("layer type", "PECVD"),
                             DataItem("chamber", self.chamber),
-                            DataItem("pressure/mbar", self.pressure),
                             DataItem("time", self.time),
-                            DataItem("substrate-electrode distance/mm", self.substrate_electrode_distance),
                             DataItem("comments", self.comments),
-                            DataItem("transfer in chamber", self.transfer_in_chamber),
-                            DataItem("pre-heat", self.pre_heat),
-                            DataItem("gas pre-heat gas", self.gas_pre_heat_gas),
-                            DataItem("gas pre-heat pressure/mbar", self.gas_pre_heat_pressure),
-                            DataItem("gas pre-heat time", self.gas_pre_heat_time),
-                            DataItem("heating temperature/degC", self.heating_temperature),
-                            DataItem("transfer out of chamber", self.transfer_out_of_chamber),
-                            DataItem("plasma start power/W", self.plasma_start_power),
                             DataItem("plasma start with shutter", self.plasma_start_with_shutter),
-                            DataItem("deposition frequency/MHz", self.deposition_frequency),
-                            DataItem("deposition power/W", self.deposition_power),
-                            DataItem("base pressure/mbar", self.base_pressure)]
+                            DataItem("deposition power/W", self.deposition_power), ]
         data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items(self))
         return data_node
 
@@ -353,22 +255,10 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
         # See `Layer.get_data_for_table_export` for the documentation.
         data_node = samples.models_depositions.Layer.get_data_for_table_export(self)
         data_node.items = [DataItem(_("chamber"), self.get_chamber_display()),
-                            DataItem(_("pressure") + "/mbar", self.pressure),
                             DataItem(_("time"), self.time),
-                            DataItem(_("substrate–electrode distance") + "/mm", self.substrate_electrode_distance),
                             DataItem(_("comments"), self.comments),
-                            DataItem(_("transfer in chamber"), self.transfer_in_chamber),
-                            DataItem(_("pre-heat"), self.pre_heat),
-                            DataItem(_("gas pre-heat gas"), self.gas_pre_heat_gas),
-                            DataItem(_("gas pre-heat pressure") + "/mbar", self.gas_pre_heat_pressure),
-                            DataItem(_("gas pre-heat time"), self.gas_pre_heat_time),
-                            DataItem(_("heating temperature") + "/degC", self.heating_temperature),
-                            DataItem(_("transfer out of chamber"), self.transfer_out_of_chamber),
-                            DataItem(_("plasma start power") + "/W", self.plasma_start_power),
                             DataItem(_("plasma start with shutter"), _("yes") if self.plasma_start_with_shutter else _("no")),
-                            DataItem(_("deposition frequency") + "/MHz", self.deposition_frequency),
-                            DataItem(_("deposition power") + "/W", self.deposition_power),
-                            DataItem(_("base pressure") + "/mbar", self.base_pressure)]
+                            DataItem(_("deposition power") + "/W", self.deposition_power), ]
         data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items_for_table_export(self))
         return data_node
 

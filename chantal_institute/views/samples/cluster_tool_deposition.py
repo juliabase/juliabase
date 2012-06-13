@@ -146,11 +146,9 @@ class HotWireLayerForm(forms.ModelForm):
         self.fields["comments"].widget.attrs["rows"] = "18"
         self.fields["number"].widget.attrs.update({"readonly": "readonly" , "size": "2",
                                                    "style": "text-align: center; font-size: xx-large"})
-        for fieldname in ["pressure", "time", "substrate_wire_distance", "transfer_in_chamber", "pre_heat",
-                          "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
-                          "transfer_out_of_chamber", "filament_temperature", "current", "voltage", "base_pressure"]:
+        for fieldname in ["time", "base_pressure"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
-        for fieldname in ["h2", "sih4", "mms", "tmb", "co2", "ph3", "ch4", "ar"]:
+        for fieldname in ["h2", "sih4"]:
             self.fields[fieldname].help_text = ""
             self.fields[fieldname].widget.attrs["size"] = "15"
         if not user.is_staff:
@@ -160,12 +158,6 @@ class HotWireLayerForm(forms.ModelForm):
 
     def clean_time(self):
         return form_utils.clean_time_field(self.cleaned_data["time"])
-
-    def clean_pre_heat(self):
-        return form_utils.clean_time_field(self.cleaned_data["pre_heat"])
-
-    def clean_gas_pre_heat_time(self):
-        return form_utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
@@ -186,7 +178,7 @@ class HotWireLayerForm(forms.ModelForm):
 
     class Meta:
         model = institute_models.ClusterToolHotWireLayer
-        exclude = ("deposition", "wire_power")
+        exclude = ("deposition")
 
 
 class PECVDLayerForm(forms.ModelForm):
@@ -209,13 +201,10 @@ class PECVDLayerForm(forms.ModelForm):
         self.fields["comments"].widget.attrs["rows"] = "18"
         self.fields["number"].widget.attrs.update({"readonly": "readonly" , "size": "2",
                                                    "style": "text-align: center; font-size: xx-large"})
-        for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
-                          "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
-                          "transfer_out_of_chamber", "plasma_start_power",
-                          "deposition_frequency", "deposition_power", "base_pressure"]:
+        for fieldname in ["time", "deposition_power"]:
             self.fields[fieldname].widget.attrs["size"] = "10"
 
-        for fieldname in ["h2", "sih4", "mms", "tmb", "co2", "ph3", "ch4", "ar"]:
+        for fieldname in ["h2", "sih4"]:
             self.fields[fieldname].help_text = ""
             self.fields[fieldname].widget.attrs["size"] = "15"
 
@@ -226,12 +215,6 @@ class PECVDLayerForm(forms.ModelForm):
 
     def clean_time(self):
         return form_utils.clean_time_field(self.cleaned_data["time"])
-
-    def clean_pre_heat(self):
-        return form_utils.clean_time_field(self.cleaned_data["pre_heat"])
-
-    def clean_gas_pre_heat_time(self):
-        return form_utils.clean_time_field(self.cleaned_data["gas_pre_heat_time"])
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
@@ -625,9 +608,6 @@ class FormSet(object):
             for layer_form in self.layer_forms:
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
-                if isinstance(layer, institute_models.ClusterToolHotWireLayer) and \
-                        layer.current is not None and layer.voltage is not None:
-                    layer.wire_power = layer.current * layer.voltage
                 layer.save()
             if self.remove_from_my_samples_form and \
                     self.remove_from_my_samples_form.cleaned_data["remove_from_my_samples"]:

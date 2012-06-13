@@ -108,149 +108,20 @@ copyright holder, you must destroy it immediately and completely.
                           </tbody>
                         </table>
                       </td>
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.base_pressure %}
-                      {% else %}
-                        {% input_field layer.transfer_in_chamber %}
-                      {% endifequal %}
-                      {% ifequal layer.type "PECVD" %}
-                        {% input_field layer.plasma_start_power %}
-                      {% else %}{% ifequal layer.type "hot-wire" %}
-                        {% input_field layer.wire_material %}
-                      {% else %}
-                        {% input_field layer.working_pressure %}
-                      {% endifequal %}{% endifequal %}
-                    </tr>
-                    <tr>
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.valve %}
-                      {% else %}
-                        {% input_field layer.pre_heat %}
-                      {% endifequal %}
-                      {% ifequal layer.type "PECVD" %}
-                        {% input_field layer.plasma_start_with_shutter %}
-                      {% else %}{% ifequal layer.type "hot-wire" %}
-                        {% input_field layer.voltage %}
-                      {% else %}
-                        {% input_field layer.temperature %}
-                      {% endifequal %}{% endifequal %}
-                    </tr>
-                    <tr>
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.thermo %}
-                      {% else %}
-                        {% input_field layer.heating_temperature %}
-                      {% endifequal %}
-                      {% ifequal layer.type "PECVD" %}
-                        {% input_field layer.deposition_frequency %}
-                      {% else %}{% ifequal layer.type "hot-wire" %}
-                        {% input_field layer.current %}
-                      {% else %}
-                        {% input_field layer.ts %}
-                      {% endifequal %}{% endifequal %}
-                    </tr>
-                    <tr>
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.rf %}
-                      {% else %}
-                        {% input_field layer.gas_pre_heat_gas %}
-                      {% endifequal %}
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.dc %}
-                      {% else %}
-                        {% input_field layer.gas_pre_heat_pressure %}
-                      {% endifequal %}
-                      {% ifequal layer.type "PECVD" %}
-                        {% input_field layer.deposition_power %}
-                      {% else %}{% ifequal layer.type "hot-wire" %}
-                        <td colspan="2"></td>
-                      {% else %}
-                        {% input_field layer.ion %}
-                      {% endifequal %}{% endifequal %}
-                    </tr>
-                    <tr>
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.cl_1 %}
-                      {% else %}
-                        {% input_field layer.pressure %}
-                      {% endifequal %}
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.voltage %}
-                      {% else %}
-                        {% input_field layer.transfer_out_of_chamber %}
-                      {% endifequal %}
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.cl_2 %}
-                      {% else %}
-                        {% input_field layer.gas_pre_heat_time %}
-                      {% endifequal %}
-                    </tr>
-                    <tr>
-                      {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.ct_1 %}
-                      {% else %}
                         {% input_field layer.time %}
-                      {% endifequal %}
-                      {% ifequal layer.type "PECVD" %}
-                        {% input_field layer.substrate_electrode_distance %}
-                      {% else %}{% ifequal layer.type "hot-wire" %}
-                        {% input_field layer.substrate_wire_distance %}
-                      {% else %}
-                        {% input_field layer.current %}
-                      {% endifequal %}{% endifequal %}
-                      {% ifequal layer.type "PECVD" %}
-                        {% input_field layer.base_pressure %}
-                      {% else %}{% ifequal layer.type "hot-wire" %}
-                        {% input_field layer.filament_temperature %}
-                      {% else %}
-                        {% input_field layer.ct_2 %}
-                      {% endifequal %}{% endifequal %}
+                        {% ifequal layer.type "hot-wire" %}
+                          {% input_field layer.wire_material %}
+                        {% else %}{% ifequal layer.type "PECVD" %}
+                          {% input_field layer.plasma_start_with_shutter %}
+                        {% endifequal %}{% endifequal %}
                     </tr>
                     <tr>
-                    {% ifequal layer.type "Sputter" %}
-                        {% input_field layer.refl_power_1 %}
-                        <td colspan="2"></td>
-                        {% input_field layer.refl_power_2 %}
-                      {% endifequal %}
                       {% ifequal layer.type "hot-wire" %}
-                        <td colspan="2"></td>
                         {% input_field layer.base_pressure %}
-                      {% endifequal %}
+                      {% else %}{% ifequal layer.type "PECVD" %}
+                        {% input_field layer.deposition_power %}
+                      {% endifequal %}{% endifequal %}
                     </tr>
-                    {% ifequal layer.type "Sputter" %}
-                    <tr>
-                        {% input_field layer.u_bias_1 %}
-                        <td colspan="2"></td>
-                        {% input_field layer.u_bias_2 %}
-                    </tr>
-                    <tr>
-                        <td> <br/></td>
-                    </tr>
-                    <tr>
-                        {% input_field layer.loading_chamber %}
-                        {% input_field layer.duration %}
-                        {% input_field layer.pyro %}
-                    </tr>
-                    <tr>
-                        {% input_field layer.ar %}
-                        {% input_field layer.o2 %}
-                        {% input_field layer.ar_o2 %}
-                    </tr>
-                    <tr>
-                        {% input_field layer.pre_heat %}
-                        {% input_field layer.pre_sputter %}
-                        {% input_field layer.sputter %}
-                    </tr>
-                    <tr>
-                        {% input_field layer.large_shutter %}
-                        {% input_field layer.small_shutter %}
-                        {% input_field layer.rotation %}
-                    </tr>
-                    <tr>
-                        {% input_field layer.r_square %}
-                        {% input_field layer.thickness %}
-                    </tr>
-                    {% endifequal %}
                     </tbody>
                   </table>
                 </td>
@@ -280,25 +151,7 @@ copyright holder, you must destroy it immediately and completely.
                             </tr>
                             <tr>
                                 {% input_field layer.sih4 %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.mms %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.tmb %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.co2 %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.ph3 %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.ch4 %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.ar %}
-                            </tr>
+                            </tr>                          
                           </tbody>
                         </table>
                       </td>
