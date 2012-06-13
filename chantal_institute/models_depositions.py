@@ -171,9 +171,9 @@ samples.models_depositions.default_location_of_deposited_samples[ClusterToolDepo
 
 
 class ClusterToolLayer(samples.models_depositions.Layer, chantal_common_models.PolymorphicModel):
-    """Model for a layer the old “cluster tool”.  Note that this is the common
-    base class for the actual layer models `OldClusterToolHotWireLayer` and
-    `OldClusterToolPECVDLayer`.  This is *not* an abstract model though because
+    """Model for a layer the “cluster tool”.  Note that this is the common
+    base class for the actual layer models `ClusterToolHotWireLayer` and
+    `ClusterToolPECVDLayer`.  This is *not* an abstract model though because
     it needs to be back-referenced from the deposition.  I need inheritance and
     polymorphism here because cluster tools may have layers with very different
     fields.
@@ -182,8 +182,8 @@ class ClusterToolLayer(samples.models_depositions.Layer, chantal_common_models.P
 
     class Meta(samples.models_depositions.Layer.Meta):
         unique_together = ("deposition", "number")
-        verbose_name = _("cluster tool I layer")
-        verbose_name_plural = _("cluster tool I layers")
+        verbose_name = _("cluster tool layer")
+        verbose_name_plural = _("cluster tool layers")
 
     def __unicode__(self):
         _ = ugettext

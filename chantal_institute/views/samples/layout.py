@@ -38,7 +38,7 @@ def show_layout(request, process_id, sample_id):
     chantal_common.utils.mkdirs(pdf_filename)
     layout = layouts.get_layout(sample, process)
     if not layout:
-        raise Http404(unicode(error))
+        raise Http404(unicode("error"))
     canvas, resolution = layout.draw_layout(pdf_filename)
     canvas.showPage()
     canvas.save()

@@ -112,14 +112,6 @@ class AddSamplesForm(forms.Form):
             return None
         return models.ExternalOperator.objects.get(pk=int(key))
 
-    def clean_cleaning_number(self):
-        _ = ugettext
-        cleaning_number = self.cleaned_data["cleaning_number"]
-        if cleaning_number:
-            if not institute_models.CleaningProcess.objects.filter(cleaning_number=cleaning_number).exists() and \
-            not institute_models.LargeAreaCleaningProcess.objects.filter(cleaning_number=cleaning_number).exists():
-                raise ValidationError(_("The cleaning number you have chosen doesn't exist."))
-        return cleaning_number
 
     def clean(self):
         _ = ugettext
@@ -161,16 +153,6 @@ def add_samples_to_database(add_samples_form, user):
     if inaccuracy:
         substrate.timestamp_inaccuracy = inaccuracy
         substrate.save()
-    if cleaning_number:
-        try:
-            cleaning_process = institute_models.CleaningProcess.objects.get(cleaning_number=cleaning_number)
-        except institute_models.CleaningProcess.DoesNotExist:
-            cleaning_process = institute_models.LargeAreaCleaningProcess.objects.get(cleaning_number=cleaning_number)
-        if cleaning_process.timestamp <= cleaned_data["timestamp"]:
-            substrate.timestamp = cleaning_process.timestamp - datetime.timedelta(minutes=1)
-            substrate.save()
-    else:
-        cleaning_process = None
     provisional_sample_names = \
         models.Sample.objects.filter(name__startswith="*").values_list("name", flat=True)
     occupied_provisional_numbers = [int(name[1:]) for name in provisional_sample_names]
@@ -201,7 +183,6 @@ def add_samples_to_database(add_samples_form, user):
         sample.processes.add(substrate)
         if cleaning_number:
             models.SampleAlias.objects.create(name=cleaning_number, sample=sample)
-            sample.processes.add(cleaning_process)
         sample.watchers.add(user)
         if topic:
             for watcher in (user_details.user for user_details in topic.auto_adders.all()):

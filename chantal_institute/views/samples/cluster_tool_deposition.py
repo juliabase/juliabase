@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""All views and helper routines directly connected with the old cluster
+"""All views and helper routines directly connected with the cluster
 tool deposition system.  This includes adding, editing, and viewing such
 processes.
 """
@@ -81,9 +81,9 @@ class AddLayersForm(forms.Form):
                 if layer_query.count() == 1:
                     result = layer_query.values()[0]
                     layer = layer_query[0]
-                    if hasattr(layer, "oldclustertoolhotwirelayer"):
+                    if hasattr(layer, "clustertoolhotwirelayer"):
                         result["layer_type"] = {"layer_type": "hot-wire"}
-                    elif hasattr(layer, "oldclustertoolpecvdlayer"):
+                    elif hasattr(layer, "clustertoolpecvdlayer"):
                         result["layer_type"] = {"layer_type": "PECVD"}
                     return result
 
@@ -126,11 +126,11 @@ class DepositionForm(form_utils.ProcessForm):
         return self.cleaned_data
 
     class Meta:
-        model = institute_models.OldClusterToolDeposition
+        model = institute_models.ClusterToolDeposition
 
 
 class HotWireLayerForm(forms.ModelForm):
-    """Model form for a hot-wire layer in the old cluster tool."""
+    """Model form for a hot-wire layer in the cluster tool."""
 
     layer_type = forms.CharField(widget=forms.HiddenInput, initial="hot-wire")
     """This is for being able to distinguish the form types; it is not given
@@ -144,7 +144,7 @@ class HotWireLayerForm(forms.ModelForm):
         self.type = "hot-wire"
         self.fields["comments"].widget.attrs["cols"] = "70"
         self.fields["comments"].widget.attrs["rows"] = "18"
-        self.fields["number"].widget.attrs.update({"readonly": "readonly" ,"size": "2",
+        self.fields["number"].widget.attrs.update({"readonly": "readonly" , "size": "2",
                                                    "style": "text-align: center; font-size: xx-large"})
         for fieldname in ["pressure", "time", "substrate_wire_distance", "transfer_in_chamber", "pre_heat",
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
@@ -185,12 +185,12 @@ class HotWireLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = institute_models.OldClusterToolHotWireLayer
+        model = institute_models.ClusterToolHotWireLayer
         exclude = ("deposition", "wire_power")
 
 
 class PECVDLayerForm(forms.ModelForm):
-    """Model form for a PECVD layer in a old cluster tool deposition."""
+    """Model form for a PECVD layer in a cluster tool deposition."""
 
     layer_type = forms.CharField(widget=forms.HiddenInput, initial="PECVD")
     """This is for being able to distinguish the form types; it is not given
@@ -207,7 +207,7 @@ class PECVDLayerForm(forms.ModelForm):
         self.type = "PECVD"
         self.fields["comments"].widget.attrs["cols"] = "70"
         self.fields["comments"].widget.attrs["rows"] = "18"
-        self.fields["number"].widget.attrs.update({"readonly": "readonly" ,"size": "2",
+        self.fields["number"].widget.attrs.update({"readonly": "readonly" , "size": "2",
                                                    "style": "text-align: center; font-size: xx-large"})
         for fieldname in ["pressure", "time", "substrate_electrode_distance", "transfer_in_chamber", "pre_heat",
                           "gas_pre_heat_gas", "gas_pre_heat_pressure", "gas_pre_heat_time", "heating_temperature",
@@ -251,7 +251,7 @@ class PECVDLayerForm(forms.ModelForm):
         return self.cleaned_data["layer_type"]
 
     class Meta:
-        model = institute_models.OldClusterToolPECVDLayer
+        model = institute_models.ClusterToolPECVDLayer
         exclude = ("deposition")
 
 
@@ -280,14 +280,14 @@ class ChangeLayerForm(forms.Form):
 
 
 class FormSet(object):
-    """Class for holding all forms of the old cluster tool deposition views,
+    """Class for holding all forms of the cluster tool deposition views,
     and for all methods working on these forms.
 
     :ivar deposition: the deposition to be edited.  If it is ``None``, we
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `institute_models.OldClusterToolDeposition` or ``NoneType``
+    :type deposition: `institute_models.ClusterToolDeposition` or ``NoneType``
     """
 
     class LayerForm(forms.Form):
@@ -310,7 +310,7 @@ class FormSet(object):
         self.user = request.user
         self.user_details = self.user.samples_user_details
         self.deposition = \
-            get_object_or_404(institute_models.OldClusterToolDeposition, number=deposition_number) if deposition_number else None
+            get_object_or_404(institute_models.ClusterToolDeposition, number=deposition_number) if deposition_number else None
         self.deposition_form = None
         self.layer_forms = []
         self.remove_from_my_samples_form = None
@@ -339,7 +339,7 @@ class FormSet(object):
 
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = AddLayersForm(self.user_details, institute_models.OldClusterToolDeposition, self.post_data)
+        self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition, self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -369,24 +369,24 @@ class FormSet(object):
             writes its products directly into the instance.
 
             :Parameters:
-              - `deposition`: the old cluster tool deposition for which the
+              - `deposition`: the cluster tool deposition for which the
                 layer and channel forms should be generated
 
-            :type deposition: `institute_models.OldClusterToolDeposition`
+            :type deposition: `institute_models.ClusterToolDeposition`
             """
             self.layer_forms = []
             for index, layer in enumerate(deposition.layers.all()):
-                if hasattr(layer, "oldclustertoolhotwirelayer"):
+                if hasattr(layer, "clustertoolhotwirelayer"):
                     self.layer_forms.append(HotWireLayerForm(self.user, prefix=str(index),
-                                                             instance=layer.oldclustertoolhotwirelayer))
+                                                             instance=layer.clustertoolhotwirelayer))
                 else:
                     self.layer_forms.append(PECVDLayerForm(self.user, prefix=str(index),
-                                                           instance=layer.oldclustertoolpecvdlayer))
+                                                           instance=layer.clustertoolpecvdlayer))
 
         copy_from = query_dict.get("copy_from")
         if not self.deposition and copy_from:
             # Duplication of a deposition
-            source_deposition_query = institute_models.OldClusterToolDeposition.objects.filter(number=copy_from)
+            source_deposition_query = institute_models.ClusterToolDeposition.objects.filter(number=copy_from)
             if source_deposition_query.count() == 1:
                 deposition_data = source_deposition_query.values()[0]
                 deposition_data["timestamp"] = datetime.datetime.now()
@@ -407,7 +407,7 @@ class FormSet(object):
                                         "number": utils.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
-        self.add_layers_form = AddLayersForm(self.user_details, institute_models.OldClusterToolDeposition)
+        self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm()
@@ -456,13 +456,13 @@ class FormSet(object):
                     new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
                     structure_changed = True
                     if movement == "up" and i > 0:
-                        temp = new_layers[i-1]
-                        new_layers[i-1] = new_layers[i]
+                        temp = new_layers[i - 1]
+                        new_layers[i - 1] = new_layers[i]
                         new_layers[i] = temp
                     elif movement == "down" and i < len(new_layers) - 1:
                         temp = new_layers[i]
-                        new_layers[i] = new_layers[i+1]
-                        new_layers[i+1] = temp
+                        new_layers[i] = new_layers[i + 1]
+                        new_layers[i + 1] = temp
 
         # Duplicate layers
         for i in range(len(new_layers)):
@@ -488,10 +488,10 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = AddLayersForm(self.user_details, institute_models.OldClusterToolDeposition)
+            self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)
 
         # Delete layers
-        for i in range(len(new_layers)-1, -1, -1):
+        for i in range(len(new_layers) - 1, -1, -1):
             if len(new_layers[i]) == 3:
                 change_layer_form = new_layers[i][2]
                 if change_layer_form.is_valid() and change_layer_form.cleaned_data["remove_this_layer"]:
@@ -512,7 +512,7 @@ class FormSet(object):
                     LayerFormClass = PECVDLayerForm
                 post_data = self.post_data.copy()
                 prefix = new_layer[1].prefix
-                post_data[prefix+"-number"] = str(i+1)
+                post_data[prefix + "-number"] = str(i + 1)
                 self.layer_forms.append(LayerFormClass(self.user, post_data, prefix=prefix))
                 self.change_layer_forms.append(new_layer[2])
             elif new_layer[0] == "duplicate":
@@ -523,7 +523,7 @@ class FormSet(object):
                     else:
                         LayerFormClass = PECVDLayerForm
                     layer_data = original_layer.cleaned_data
-                    layer_data["number"] = i+1
+                    layer_data["number"] = i + 1
                     self.layer_forms.append(LayerFormClass(self.user, initial=layer_data, prefix=str(next_prefix)))
                     self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                     next_prefix += 1
@@ -531,23 +531,23 @@ class FormSet(object):
                 # New MyLayer
                 initial = {}
                 id_ = new_layer[1]["id"]
-                layer_class = institute_models.OldClusterToolLayer.objects.get(id=id_).content_type.model_class()
-                if layer_class == institute_models.OldClusterToolHotWireLayer:
+                layer_class = institute_models.ClusterToolLayer.objects.get(id=id_).content_type.model_class()
+                if layer_class == institute_models.ClusterToolHotWireLayer:
                     LayerFormClass = HotWireLayerForm
-                    initial = institute_models.OldClusterToolHotWireLayer.objects.filter(id=id_).values()[0]
+                    initial = institute_models.ClusterToolHotWireLayer.objects.filter(id=id_).values()[0]
                 else:
                     LayerFormClass = PECVDLayerForm
-                    initial = institute_models.OldClusterToolPECVDLayer.objects.filter(id=id_).values()[0]
-                initial["number"] = i+1
+                    initial = institute_models.ClusterToolPECVDLayer.objects.filter(id=id_).values()[0]
+                initial["number"] = i + 1
                 self.layer_forms.append(LayerFormClass(self.user, initial=initial, prefix=str(next_prefix)))
                 self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1
             elif new_layer[0] == "new hot-wire":
-                self.layer_forms.append(HotWireLayerForm(self.user, initial={"number": "{0}".format(i+1)}, prefix=str(next_prefix)))
+                self.layer_forms.append(HotWireLayerForm(self.user, initial={"number": "{0}".format(i + 1)}, prefix=str(next_prefix)))
                 self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1
             elif new_layer[0] == "new PECVD":
-                self.layer_forms.append(PECVDLayerForm(self.user, initial={"number": "{0}".format(i+1)}, prefix=str(next_prefix)))
+                self.layer_forms.append(PECVDLayerForm(self.user, initial={"number": "{0}".format(i + 1)}, prefix=str(next_prefix)))
                 self.change_layer_forms.append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1
             else:
@@ -612,7 +612,7 @@ class FormSet(object):
         :Return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `institute_models.OldClusterToolDeposition` or ``NoneType``
+        :rtype: `institute_models.ClusterToolDeposition` or ``NoneType``
         """
         database_ready = not self._change_structure() if not self.json_client else True
         database_ready = self._is_all_valid() and database_ready
@@ -625,7 +625,7 @@ class FormSet(object):
             for layer_form in self.layer_forms:
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
-                if isinstance(layer, institute_models.OldClusterToolHotWireLayer) and \
+                if isinstance(layer, institute_models.ClusterToolHotWireLayer) and \
                         layer.current is not None and layer.voltage is not None:
                     layer.wire_power = layer.current * layer.voltage
                 layer.save()
@@ -654,7 +654,7 @@ class FormSet(object):
 
 @login_required
 def edit(request, deposition_number):
-    """Central view for editing, creating, and duplicating old cluster tool
+    """Central view for editing, creating, and duplicating cluster tool
     depositions.  If ``deposition_number`` is ``None``, a new depositon is
     created (possibly by duplicating another one).
 
@@ -673,13 +673,13 @@ def edit(request, deposition_number):
     return form_utils.edit_depositions(request,
                                        deposition_number,
                                        FormSet(request, deposition_number),
-                                       institute_models.OldClusterToolDeposition,
-                                       "samples/edit_old_cluster_tool_deposition.html")
+                                       institute_models.ClusterToolDeposition,
+                                       "samples/edit_cluster_tool_deposition.html")
 
 @login_required
 def show(request, deposition_number):
-    """Show an existing old cluster tool deposision.  You must be a
-    old-cluster-tool operator *or* be able to view one of the samples
+    """Show an existing cluster tool deposision.  You must be a
+    cluster-tool operator *or* be able to view one of the samples
     affected by this deposition in order to be allowed to view it.
 
     :Parameters:
@@ -696,4 +696,4 @@ def show(request, deposition_number):
     """
     return form_utils.show_depositions(request,
                                        deposition_number,
-                                       institute_models.OldClusterToolDeposition)
+                                       institute_models.ClusterToolDeposition)
