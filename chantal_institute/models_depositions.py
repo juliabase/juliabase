@@ -285,7 +285,7 @@ class FiveChamberDeposition(samples.models_depositions.Deposition):
     @classmethod
     def get_add_link(cls):
         """Return all you need to generate a link to the “add” view for this
-        process.  See `SixChamberDeposition.get_add_link`.
+        process.
 
         :Return:
           the full URL to the add page for this process
@@ -309,21 +309,6 @@ class FiveChamberDeposition(samples.models_depositions.Deposition):
             context["duplicate_url"] = None
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
 
-    @classmethod
-    def get_search_tree_node(cls):
-        """Class method for generating the search tree node for this model
-        instance.  I must override the inherited method because I want to offer
-        the layer models directly instead of the proxy class
-        `NewClusterToolLayer`.
-
-        :Return:
-          the tree node for this model instance
-
-        :rtype: ``chantal_common.search.SearchTreeNode``
-        """
-        model_field = super(FiveChamberDeposition, cls).get_search_tree_node()
-        model_field.related_models.update({FiveChamberLayer: "layers"})
-        return model_field
 
 samples.models_depositions.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
 
@@ -342,28 +327,6 @@ five_chamber_layer_type_choices = (
     ("n", "n"),
 )
 
-five_chamber_hf_frequency_choices = (
-    (Decimal("13.26"), "13.26"),
-    (Decimal("13.56"), "13.56"),
-    (Decimal("16.56"), "16.56"),
-    (Decimal("40"), "40"),
-    (Decimal("100"), "100"),
-)
-
-five_chamber_impurity_choices = (
-    ("O2", "O₂"),
-    ("N2", "N₂"),
-    ("PH3", "PH₃"),
-    ("TMB", "TMB"),
-    ("Air", _("Air")),
-)
-
-five_chamber_measurement_choices = (
-    ("Raman", "Raman"),
-    ("OES", "OES"),
-    ("FTIR", "FTIR"),
-)
-
 class FiveChamberLayer(samples.models_depositions.Layer):
     """One layer in a 5-chamber deposition.
     """
@@ -373,32 +336,10 @@ class FiveChamberLayer(samples.models_depositions.Layer):
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
     sih4 = models.DecimalField("SiH₄", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
     h2 = models.DecimalField("H₂", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    tmb = models.DecimalField("TMB", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    ch4 = models.DecimalField("CH₄", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    co2 = models.DecimalField("CO₂", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    ph3 = models.DecimalField("PH₃", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    power = models.DecimalField(_("power"), max_digits=7, decimal_places=3, help_text=_("in W"), null=True, blank=True)
-    pressure = models.DecimalField(_("pressure"), max_digits=7, decimal_places=3, help_text=_("in Torr"), null=True,
-                                   blank=True)
-    base_pressure = models.FloatField(_("base pressure"), help_text=_("in Torr"), null=True,
-                                   blank=True)
     temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=_("in ℃"),
                                       null=True, blank=True)
     temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=_("in ℃"),
                                       null=True, blank=True)
-    hf_frequency = models.DecimalField(_("HF frequency"), max_digits=5, decimal_places=2, null=True, blank=True,
-                                       choices=five_chamber_hf_frequency_choices, help_text=_("in MHz"))
-    time = models.IntegerField(_("time"), help_text=_("in sec"), null=True, blank=True)
-    dc_bias = models.DecimalField(_("DC bias"), max_digits=7, decimal_places=3, help_text=_("in V"), null=True,
-                                  blank=True)
-    electrodes_distance = models.DecimalField(_("electrodes distance"), max_digits=7, decimal_places=3,
-                                               help_text=_("in mm"), null=True, blank=True)
-    impurity = models.CharField(_("impurity"), max_length=5, choices=five_chamber_impurity_choices, blank=True)
-    in_situ_measurement = models.CharField(_("in-situ measurement"), max_length=10, blank=True,
-                                            choices=five_chamber_measurement_choices)
-    data_file = models.CharField(_("measurement data file"), max_length=80, blank=True,
-                                 help_text=_("only the relative path below \"5k_PECVD/\""))
-
     class Meta(samples.models_depositions.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")
@@ -421,23 +362,9 @@ class FiveChamberLayer(samples.models_depositions.Layer):
                                 DataItem("chamber", self.chamber),
                                 DataItem("SiH4/sccm", self.sih4),
                                 DataItem("H2/sccm", self.h2),
-                                DataItem("TMB/sccm", self.tmb),
-                                DataItem("CH4/sccm", self.ch4),
-                                DataItem("CO2/sccm", self.co2),
-                                DataItem("PH3/sccm", self.ph3),
                                 DataItem("SC/%", "{0:5.2f}".format(silane_concentration)),
-                                DataItem("power/W", self.power),
-                                DataItem("pressure/Torr", self.pressure),
-                                DataItem("base pressure/Torr", self.base_pressure),
                                 DataItem("T/degC (1)", self.temperature_1),
-                                DataItem("T/degC (2)", self.temperature_2),
-                                DataItem("f_HF/MHz", self.hf_frequency),
-                                DataItem("time/s", self.time),
-                                DataItem("DC bias/V", self.dc_bias),
-                                DataItem("elec. dist./mm", self.electrodes_distance),
-                                DataItem("impurity", self.impurity),
-                                DataItem("in-situ measurement", self.in_situ_measurement),
-                                DataItem("data file", self.data_file)])
+                                DataItem("T/degC (2)", self.temperature_2)])
         return data_node
 
     def get_data_for_table_export(self):
@@ -454,21 +381,7 @@ class FiveChamberLayer(samples.models_depositions.Layer):
                                 DataItem(_("chamber"), self.get_chamber_display()),
                                 DataItem("SiH₄/sccm", self.sih4),
                                 DataItem("H₂/sccm", self.h2),
-                                DataItem("TMB/sccm", self.tmb),
-                                DataItem("CH₄/sccm", self.ch4),
-                                DataItem("CO₂/sccm", self.co2),
-                                DataItem("PH₃/sccm", self.ph3),
                                 DataItem("SC/%", "{0:5.2f}".format(silane_concentration)),
-                                DataItem(_("power") + "/W", self.power),
-                                DataItem(_("pressure") + "/Torr", self.pressure),
-                                DataItem(_("base pressure") + "/Torr", self.base_pressure),
                                 DataItem("T/℃ (1)", self.temperature_1),
-                                DataItem("T/℃ (2)", self.temperature_2),
-                                DataItem("f_HF/MHz", self.hf_frequency),
-                                DataItem(_("time") + "/s", self.time),
-                                DataItem(_("DC bias") + "/V", self.dc_bias),
-                                DataItem(_("elec. dist.") + "/mm", self.electrodes_distance),
-                                DataItem(_("impurity"), self.get_impurity_display()),
-                                DataItem(_("in-situ measurement"), self.get_in_situ_measurement_display()),
-                                DataItem(_("data file"), self.data_file)])
+                                DataItem("T/℃ (2)", self.temperature_2)])
         return data_node

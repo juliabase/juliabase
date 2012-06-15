@@ -39,53 +39,20 @@ copyright holder, you must destroy it immediately and completely.
           <td class="label">{% verbose_name FiveChamberLayer.number %}:</td>
           <td class="value">{{ layer.number|three_digits }}</td>
           {% value_field layer.sih4 "sccm" %}
-          {% value_field layer.power "W" %}
         </tr>
         <tr>
           {% value_field layer.layer_type %}
           {% value_field layer.h2 "sccm" %}
-          {% value_field layer.pressure "Torr" %}
         </tr>
         <tr>
           <td class="label">{% verbose_name FiveChamberLayer.chamber %}:</td>
           <td class="value">{{ layer.get_chamber_display }}</td>
           <td class="label">{% trans 'Silane conc.' %}:</td>
           <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
-          {% value_split_field layer.temperature_1 layer.temperature_2 "℃" %}
         </tr>
         <tr>
           {% value_field layer.date %}
-          {% value_field layer.tmb "sccm" %}
-          <td class="label">{% verbose_name FiveChamberLayer.hf_frequency %}:</td>
-          <td class="value">{% if layer.hf_frequency %}{{ layer.get_hf_frequency_display }} MHz{% else %}—{% endif %}</td>
-        </tr>
-        <tr>
-          <td colspan="2"></td>
-          {% value_field layer.ch4 "sccm" %}
-          {% value_field layer.time "sec" %}
-        </tr>
-        <tr>
-          <td colspan="2"></td>
-          {% value_field layer.co2 "sccm" %}
-          {% value_field layer.dc_bias "V" %}
-        </tr>
-        <tr>
-        {% value_field layer.in_situ_measurement %}
-        {% value_field layer.ph3 "sccm" %}
-        {% value_field layer.electrodes_distance "mm" %}
-        </tr>
-        <tr>
-          <td class="label">{% verbose_name FiveChamberLayer.data_file %}:</td>
-          <td class="value">
-            {% if layer.data_file %}
-              <a style="font-weight: normal" href="{% ifequal browser_system 'windows' %}file:///P:{% else %}file:///mnt{% endifequal %}/public_user/LABOR%20USER/5k_PECVD/{{ layer.data_file|urlquote }}">P:/public_user/LABOR USER/5k_PECVD/{{ layer.data_file }}</a>
-            {% else %}
-              —
-            {% endif %}
-          </td>
-          <td class="label">{% verbose_name FiveChamberLayer.impurity %}:</td>
-          <td class="value">{% if layer.impurity %}{{ layer.get_impurity_display }}{% else %}—{% endif %}</td>
-          {% value_field layer.base_pressure "Torr" %}
+          {% value_split_field layer.temperature_1 layer.temperature_2 "℃" %}
         </tr>
         </tbody>
       </table>

@@ -28,38 +28,16 @@ copyright holder, you must destroy it immediately and completely.
         <th class="top">{% trans 'chamber' %}</th>
         <th class="top">SiH₄</th>
         <th class="top">H₂</th>
-        <th class="top">TMB</th>
-        <th class="top">CH₄</th>
-        <th class="top">CO₂</th>
-        <th class="top">PH₃</th>
         <th class="top">SC</th>
-        <th class="top" style="font-style: italic">P</th>
-        <th class="top" style="font-style: italic">p</th>
         <th class="top" style="font-style: italic">T</th>
-        <th class="top"><span style="font-style: italic">f</span><sub>HF</sub></th>
-        <th class="top" style="font-style: italic">t</th>
-        <th class="top">{% trans 'elect. dist.' %}</th>
-        <th class="top">{% trans 'In-situ measurement' %}</th>
-        <th class="top">{% trans 'filename' %}</th>
-        <th class="top">{% trans 'impurity' %}</th>
-        <th class="top" style="font-style: italic">{% trans 'base p' %}</th>
         <th class="top">{% trans 'comments' %}</th>
       </tr>
       <tr style="padding-top: -2ex">
         <th></th>
         <th></th>
-        <th colspan="6" style="text-align: center">(sccm)</th>
+        <th colspan="2" style="text-align: center">(sccm)</th>
         <th style="white-space: nowrap">(%)</th>
-        <th style="white-space: nowrap">(W)</th>
-        <th style="white-space: nowrap">(Torr)</th>
         <th style="white-space: nowrap">(℃)</th>
-        <th style="white-space: nowrap">(MHz)</th>
-        <th style="white-space: nowrap">(sec)</th>
-        <th style="white-space: nowrap">(mm)</th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th style="white-space: nowrap">(Torr)</th>
         <th></th>
       </tr>
     </thead>
@@ -79,21 +57,8 @@ copyright holder, you must destroy it immediately and completely.
             <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.get_chamber_display }}</td>
             <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.sih4|quantity|default_if_none:" " }}</td>
             <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.h2|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.tmb|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.ch4|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.co2|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.ph3|quantity|default_if_none:" " }}</td>
             <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer|calculate_silane_concentration|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.power|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.pressure|quantity|default_if_none:" " }}</td>
-            <td style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}"{% if forloop.first %} class="top"{% endif %}>{{ layer.temperature_1|quantity|default_if_none:"–" }} / {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.hf_frequency|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.time|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.electrodes_distance|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.get_in_situ_measurement_display }}</td>
-            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.datafile|basename }}</td>
-            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.get_impurity_display }}</td>
-            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.base_pressure|quantity|default_if_none:" " }}</td>
+            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.temperature_1|quantity|default_if_none:"–" }} / {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
             {% if forloop.first %}
               <td rowspan="{{ deposition.layers.count }}"{% if forloop.first %} class="top"{% endif %}{% if forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
                 <div style="float: right; marging-left: 3em; margin-bottom: 2ex; border-left: 1px solid;

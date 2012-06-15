@@ -94,12 +94,10 @@ class LayerForm(forms.ModelForm):
             kwargs["initial"] = initial
         super(LayerForm, self).__init__(*args, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
-        for fieldname in ["date", "sih4", "h2", "tmb", "ch4", "co2", "ph3", "power", "pressure",
-                          "time", "dc_bias", "electrodes_distance", "base_pressure", ]:
+        for fieldname in ["date", "sih4", "h2", ]:
             self.fields[fieldname].widget.attrs["size"] = "10"
         self.fields["temperature_1"].widget.attrs["size"] = "5"
         self.fields["temperature_2"].widget.attrs["size"] = "5"
-        self.fields["data_file"].widget.attrs["size"] = "17"
 
     def clean_date(self):
         return form_utils.clean_date_field(self.cleaned_data["date"])

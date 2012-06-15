@@ -64,47 +64,31 @@ copyright holder, you must destroy it immediately and completely.
                 </td>
                 <td class="value">{{ layer.number }}</td>
                 {% input_field layer.sih4 %}
-                {% input_field layer.power %}
               </tr>
               <tr>
                 {% input_field layer.layer_type %}
-                {% input_field layer.h2 %}
-                {% input_field layer.pressure %}
+                {% input_field layer.h2 %}                
               </tr>
               <tr>
                 {% input_field layer.chamber %}
-                {% input_field layer.tmb %}
                 {% split_field layer.temperature_1 layer.temperature_2 %}
               </tr>
               <tr>
                 {% input_field layer.date %}
-                {% input_field layer.ch4 %}
-                {% input_field layer.hf_frequency %}
+
               </tr>
-              <tr>
-                <td colspan="2"></td>
-                {% input_field layer.co2 %}
-                {% input_field layer.time %}
-              </tr>
-              <tr>
-                <td colspan="2"></td>
-                {% input_field layer.ph3 %}
-                {% input_field layer.dc_bias %}
-              </tr>
+
               <tr>
                 {% input_field change_layer.duplicate_this_layer %}
-                <td colspan="2"></td>
-                {% input_field layer.electrodes_distance %}
+               
               </tr>
               <tr>
                 {% input_field change_layer.remove_this_layer %}
-                {% input_field layer.impurity %}
-                {% input_field layer.base_pressure %}
+                
               </tr>
               <tr>
                 {% input_field change_layer.move_this_layer %}
-                {% input_field layer.in_situ_measurement %}
-                {% input_field layer.data_file %}
+                
               </tr>
               </tbody>
             </table>
