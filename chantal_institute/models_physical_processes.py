@@ -111,11 +111,6 @@ class PDSMeasurement(PhysicalProcess):
     number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_("raw data file"), max_length=200,
                                     help_text=_("only the relative path below \"pds/\""))
-        # Translators: PDS file.  Its filename starts with "a_".
-    evaluated_datafile = models.CharField(_("evaluated data file"), max_length=200,
-                                          help_text=_("only the relative path below \"pds/\""), blank=True)
-    phase_corrected_evaluated_datafile = models.CharField(_("phase-corrected evaluated data file"), max_length=200,
-                                                          help_text=_("only the relative path below \"pds/\""), blank=True)
     apparatus = models.CharField(_("apparatus"), max_length=15, choices=pds_apparatus_choices, default="pds1")
 
     class Meta(PhysicalProcess.Meta):
@@ -148,12 +143,7 @@ class PDSMeasurement(PhysicalProcess):
                       transform=axes.transAxes, bbox={"edgecolor": "white", "facecolor": "white", "pad": 5}, style="italic")
 
     def get_datafile_name(self, plot_id):
-        if self.phase_corrected_evaluated_datafile:
-            return os.path.join(settings.PDS_ROOT_DIR, self.phase_corrected_evaluated_datafile)
-        elif self.evaluated_datafile:
-            return os.path.join(settings.PDS_ROOT_DIR, self.evaluated_datafile)
-        else:
-            return os.path.join(settings.PDS_ROOT_DIR, self.raw_datafile)
+        return os.path.join(settings.PDS_ROOT_DIR, self.raw_datafile)
 
     def get_plotfile_basename(self, plot_id):
         return "pds_{0}".format(self.samples.get()).replace("*", "")
@@ -184,8 +174,6 @@ class PDSMeasurement(PhysicalProcess):
         data_node.items.append(DataItem("PDS number", self.number))
         data_node.items.append(DataItem("apparatus", self.apparatus))
         data_node.items.append(DataItem("raw data file", self.raw_datafile))
-        data_node.items.append(DataItem("evaluated data file", self.evaluated_datafile))
-        data_node.items.append(DataItem("phase-corrected evaluated data file", self.phase_corrected_evaluated_datafile))
         return data_node
 
     def get_data_for_table_export(self):
@@ -195,8 +183,6 @@ class PDSMeasurement(PhysicalProcess):
         data_node.items.append(DataItem(_("PDS number"), self.number))
         data_node.items.append(DataItem(_("apparatus"), self.get_apparatus_display()))
         data_node.items.append(DataItem(_("raw data file"), self.raw_datafile))
-        data_node.items.append(DataItem(_("evaluated data file"), self.evaluated_datafile))
-        data_node.items.append(DataItem(_("phase-corrected evaluated data file"), self.phase_corrected_evaluated_datafile))
         return data_node
 
 

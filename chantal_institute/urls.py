@@ -37,10 +37,6 @@ urlpatterns = patterns("chantal_institute.views.statistics",
                        (r"^statistics$", "statistics"),
                        )
 
-urlpatterns += patterns("chantal_institute.views",
-                        (r"^pds_evaluation$", "pds_evaluation.evaluation"),
-                        )
-
 urlpatterns += patterns("samples.views.lab_notebook",
                         url(r"^5-chamber_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
                             "export", {"process_name": "FiveChamberDeposition"}, "export_lab_notebook_FiveChamberDeposition"),

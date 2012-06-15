@@ -42,30 +42,6 @@ copyright holder, you must destroy it immediately and completely.
       T:/Daten/pds/{{ process.raw_datafile }}</a></td>
     </tr>
   {% endif %}
-  {% if process.evaluated_datafile %}
-    <tr>
-      <td class="label">{% verbose_name PDSMeasurement.evaluated_datafile %}:</td>
-      <td class="value" style="font-weight: normal">
-      {% ifequal browser_system "windows" %}
-        <a href="file:///T:/Daten/pds/{{ process.evaluated_datafile }}">
-      {% else %}
-        <a href="file:///mnt/T/Daten/pds/{{ process.evaluated_datafile }}">
-      {% endifequal %}
-      T:/Daten/pds/{{ process.evaluated_datafile }}</a></td>
-    </tr>
-  {% endif %}
-  {% if process.phase_corrected_evaluated_datafile %}
-    <tr>
-      <td class="label">{% verbose_name PDSMeasurement.phase_corrected_evaluated_datafile %}:</td>
-      <td class="value" style="font-weight: normal">
-      {% ifequal browser_system "windows" %}
-        <a href="file:///T:/Daten/pds/{{ process.phase_corrected_evaluated_datafile }}">
-      {% else %}
-        <a href="file:///mnt/T/Daten/pds/{{ process.phase_corrected_evaluated_datafile }}">
-      {% endifequal %}
-      T:/Daten/pds/{{ process.phase_corrected_evaluated_datafile }}</a></td>
-    </tr>
-  {% endif %}
   {% if process.comments %}
     <tr>
       <td class="label" style="vertical-align: top">{% verbose_name PDSMeasurement.comments %}:</td>

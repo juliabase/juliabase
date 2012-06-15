@@ -38,16 +38,13 @@ import chantal_institute.models as institute_models
 
 
 raw_filename_pattern = re.compile(r"(?P<prefix>.*)pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
-evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
-phase_corrected_evaluated_filename_pattern = re.compile(r"a_ph_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
 date_pattern = re.compile(r"(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4})")
 
 
 def get_data_from_file(number):
     """Find the datafiles for a given PDS number, and return all data found in
     them.  The resulting dictionary may contain the following keys:
-    ``"raw_datafile"``, ``"evaluated_datafile"``,
-    ``"phase_corrected_evaluated_datafile"``, ``"timestamp"``, ``"number"``,
+    ``"raw_datafile"``, ``"timestamp"``, ``"number"``,
     and ``"comments"``.  This is ready to be used as the ``initial`` keyword
     parameter of a `PDSMeasurementForm`.  Moreover, it looks for the sample
     that was measured in the database, and if it finds it, returns it, too.
@@ -65,25 +62,14 @@ def get_data_from_file(number):
     :rtype: dict mapping str to ``object``, `models.Sample`
     """
     # First step: find the files
-    raw_filename = evaluated_filename = phase_corrected_evaluated_filename = None
+    raw_filename = None
     for directory, __, filenames in os.walk(settings.PDS_ROOT_DIR, topdown=False):
         for filename in filenames:
-            if raw_filename and evaluated_filename and phase_corrected_evaluated_filename:
+            match = raw_filename_pattern.match(filename)
+            if match and match.group("prefix").lower() != "a_" and int(match.group("number")) == number:
+                raw_filename = os.path.join(directory, filename)
                 break
-            if not raw_filename:
-                match = raw_filename_pattern.match(filename)
-                if match and match.group("prefix").lower() != "a_" and int(match.group("number")) == number:
-                    raw_filename = os.path.join(directory, filename)
-                    continue
-            if not evaluated_filename:
-                match = evaluated_filename_pattern.match(filename)
-                if match and int(match.group("number")) == number:
-                    evaluated_filename = os.path.join(directory, filename)
-            if not phase_corrected_evaluated_filename:
-                match = phase_corrected_evaluated_filename_pattern.match(filename)
-                if match and int(match.group("number")) == number:
-                    phase_corrected_evaluated_filename = os.path.join(directory, filename)
-        if raw_filename and evaluated_filename and phase_corrected_evaluated_filename:
+        if raw_filename:
             break
     # Second step: parse the raw data file and populate the resulting
     # dictionary
@@ -124,10 +110,6 @@ def get_data_from_file(number):
     if comments.startswith("\n"):
         comments = comments[1:]
     result["comments"] = comments
-    if evaluated_filename:
-        result["evaluated_datafile"] = evaluated_filename[len(settings.PDS_ROOT_DIR):]
-    if phase_corrected_evaluated_filename:
-        result["phase_corrected_evaluated_datafile"] = phase_corrected_evaluated_filename[len(settings.PDS_ROOT_DIR):]
     result["number"] = unicode(number)
     return result, sample
 
@@ -143,8 +125,7 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         """Form constructor.  I just adjust layout here.
         """
         super(PDSMeasurementForm, self).__init__(*args, **kwargs)
-        self.fields["raw_datafile"].widget.attrs["size"] = self.fields["evaluated_datafile"].widget.attrs["size"] = \
-            self.fields["phase_corrected_evaluated_datafile"].widget.attrs["size"] = "50"
+        self.fields["raw_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
         measurement = kwargs.get("instance")
         self.fields["operator"].set_operator(measurement.operator if measurement else user, user.is_staff)
@@ -154,20 +135,6 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         """Check whether the raw datafile name points to a readable file.
         """
         filename = self.cleaned_data["raw_datafile"]
-        return check_filepath(filename, settings.PDS_ROOT_DIR)
-
-    def clean_evaluated_datafile(self):
-        """Check whether the evaluated datafile name points to a readable
-        file.
-        """
-        filename = self.cleaned_data["evaluated_datafile"]
-        return check_filepath(filename, settings.PDS_ROOT_DIR)
-
-    def clean_phase_corrected_evaluated_datafile(self):
-        """Check whether the phase-corrected evaluated datafile name points to
-        a readable file.
-        """
-        filename = self.cleaned_data["phase_corrected_evaluated_datafile"]
         return check_filepath(filename, settings.PDS_ROOT_DIR)
 
     def validate_unique(self):
