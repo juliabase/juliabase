@@ -32,6 +32,10 @@ class ClearanceAdmin(admin.ModelAdmin):
     raw_id_fields = ("processes",)
 
 
+class TaskAdmin(admin.ModelAdmin):
+    raw_id_fields = ("finished_process", "samples")
+
+
 admin.site.register(ExternalOperator)
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(SampleAlias)
@@ -45,7 +49,7 @@ admin.site.register(Process)
 admin.site.register(Clearance, ClearanceAdmin)
 admin.site.register(SampleClaim)
 admin.site.register(StatusMessage)
-admin.site.register(Task)
+admin.site.register(Task, TaskAdmin)
 
 admin.site.register(FeedNewSamples)
 admin.site.register(FeedMovedSamples)
