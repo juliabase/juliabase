@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Models for IEF-5-specific physical processes except depositions.  This
+"""Models for the institute-specific physical processes except depositions.  This
 includes measurements, etching processes, clean room work etc.
 """
 
@@ -239,56 +239,6 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
     irradiance = models.CharField(_("irradiance"), max_length=10, choices=irradiance_choices)
     temperature = models.DecimalField(_("temperature"), max_digits=3, decimal_places=1, help_text=_("in ℃"),
                                       default=25.0)
-    best_cell_eta = models.FloatField(_("η of best cell"), help_text=_("in %"),
-                                      null=True, blank=True)
-    best_cell_voc = models.FloatField(_("voc of best cell"), help_text=_("in V"),
-                                      null=True, blank=True)
-    best_cell_isc = models.FloatField(_("isc of best cell"), help_text=_("in mA/cm²"),
-                                      null=True, blank=True)
-    best_cell_ff = models.FloatField(_("ff of best cell"), help_text=_(u"in %"), null=True, blank=True)
-    best_cell_rsh = models.FloatField(_("rsh of best cell"), help_text=_("in Ω"), null=True, blank=True)
-    best_cell_rs = models.FloatField(_("rs of best cell"), help_text=_("in Ω"), null=True, blank=True)
-    best_cell_isc_b = models.FloatField(_("isc of best cell blue"), help_text=_("in mA/cm²"),
-                                        null=True, blank=True)
-    best_cell_isc_r = models.FloatField(_("isc of best cell red"), help_text=_("in mA/cm²"),
-                                        null=True, blank=True)
-    best_cell_ff_b = models.FloatField(_("ff of best cell blue"), help_text=_("in %"), null=True, blank=True)
-    best_cell_ff_r = models.FloatField(_("ff of best cell red"), help_text=_("in %"), null=True, blank=True)
-    median_eta = models.FloatField(_("median of η"), help_text=_(u"in %"), null=True, blank=True)
-    median_voc = models.FloatField(_("median of voc"), help_text=_("in V"), null=True, blank=True)
-    median_isc = models.FloatField(_("median of isc"), help_text=_("in mA/cm²"), null=True,
-                                   blank=True)
-    median_ff = models.FloatField(_("median of ff"), help_text=_("in %"), null=True, blank=True)
-    median_rsh = models.FloatField(_("median of rsh"), help_text=_("in Ω"), null=True, blank=True)
-    median_rs = models.FloatField(_("median of rs"), help_text=_("in Ω"), null=True, blank=True)
-    median_isc_b = models.FloatField(_("median of isc blue"), help_text=_("in mA/cm²"), null=True,
-                                     blank=True)
-    median_isc_r = models.FloatField(_("median of isc red"), help_text=_("in mA/cm²"), null=True,
-                                     blank=True)
-    median_ff_b = models.FloatField(_("median of ff blue"), help_text=_("in %"), null=True, blank=True)
-    median_ff_r = models.FloatField(_("median of ff red"), help_text=_("in %"), null=True, blank=True)
-    average_five_best_eta = models.FloatField(_("η of average five best"), help_text=_("in %"), null=True,
-                                              blank=True)
-    average_five_best_voc = models.FloatField(_("voc of average five best"), help_text=_("in V"),
-                                              null=True, blank=True)
-    average_five_best_isc = models.FloatField(_("isc of average five best"),
-                                              help_text=_("in mA/cm²"), null=True, blank=True)
-    average_five_best_ff = models.FloatField(_("ff of average five best"), help_text=_("in %"), null=True,
-                                             blank=True)
-    average_five_best_rsh = models.FloatField(_("rsh of average five best"), help_text=_("in Ω"),
-                                              null=True, blank=True)
-    average_five_best_rs = models.FloatField(_("rs of average five best"), help_text=_("in Ω"),
-                                             null=True, blank=True)
-    average_five_best_isc_b = models.FloatField(_("isc of average five best blue"),
-                                                help_text=_("in mA/cm²"), null=True, blank=True)
-    average_five_best_isc_r = models.FloatField(_("isc of average five best red"),
-                                                help_text=_("in mA/cm²"), null=True, blank=True)
-    average_five_best_ff_b = models.FloatField(_("ff of average five best blue"), help_text=_("in %"), null=True,
-                                               blank=True)
-    average_five_best_ff_r = models.FloatField(_("ff of average five best red"), help_text=_("in %"), null=True,
-                                               blank=True)
-    cell_yield = models.PositiveSmallIntegerField(_("yield"), null=True, blank=True)
-
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("solarsimulator photo measurement")
@@ -355,41 +305,6 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
         data_node = super(SolarsimulatorPhotoMeasurement, self).get_data_for_table_export()
         data_node.items.extend([DataItem(_("irradiance"), self.irradiance),
                                 DataItem(_("temperature") + "/℃", self.temperature)])
-        if self.irradiance == "AM1.5":
-            data_node.items.extend([DataItem(_("η of best cell") + "/%", utils.round(self.best_cell_eta, 3)),
-                                DataItem(_("voc of best cell") + "/V", utils.round(self.best_cell_voc, 3)),
-                                DataItem(_("isc of best cell") + "/mA/cm²", utils.round(self.best_cell_isc, 3)),
-                                DataItem(_("ff of best cell") + "/%", utils.round(self.best_cell_ff, 3)),
-                                DataItem(_("rsh of best cell") + "/Ω", utils.round(self.best_cell_rsh, 3)),
-                                DataItem(_("rs of best cell") + "/Ω", utils.round(self.best_cell_rs, 3)),
-                                DataItem(_("isc of best cell") + _(" blue") + "/mA/cm²", utils.round(self.best_cell_isc_b, 3)),
-                                DataItem(_("isc of best cell") + _(" red") + "/mA/cm²", utils.round(self.best_cell_isc_r, 3)),
-                                DataItem(_("ff of best cell") + _(" blue") + "/%", utils.round(self.best_cell_ff_b, 3)),
-                                DataItem(_("ff of best cell") + _(" red") + "/%", utils.round(self.best_cell_ff_r, 3)),
-                                DataItem(_("median of η") + "/%", utils.round(self.median_eta, 3)),
-                                DataItem(_("median of voc") + "/V", utils.round(self.median_voc, 3)),
-                                DataItem(_("median of isc") + "/mA/cm²", utils.round(self.median_isc, 3)),
-                                DataItem(_("median of ff") + "/%", utils.round(self.median_ff, 3)),
-                                DataItem(_("median of rsh") + "/Ω", utils.round(self.median_rsh, 3)),
-                                DataItem(_("median of rs") + "/Ω", utils.round(self.median_rs, 3)),
-                                DataItem(_("median of isc") + _(" blue") + "/mA/cm²", utils.round(self.median_isc_b, 3)),
-                                DataItem(_("median of isc") + _(" red") + "/mA/cm²", utils.round(self.median_isc_r, 3)),
-                                DataItem(_("median of ff") + _(" blue") + "/%", utils.round(self.median_ff_b, 3)),
-                                DataItem(_("median of ff") + _(" red") + "/%", utils.round(self.median_ff_r, 3)),
-                                DataItem(_("η of average_five_best") + "/%", utils.round(self.average_five_best_eta, 3)),
-                                DataItem(_("voc of average five best") + "/V", utils.round(self.average_five_best_voc, 3)),
-                                DataItem(_("isc of average five best") + "/mA/cm²",
-                                         utils.round(self.average_five_best_isc, 3)),
-                                DataItem(_("ff of average five best") + "/%", utils.round(self.average_five_best_ff, 3)),
-                                DataItem(_("rsh of average five best") + "/Ω", utils.round(self.average_five_best_rsh, 3)),
-                                DataItem(_("rs of average five best") + "/Ω", utils.round(self.average_five_best_rs, 3)),
-                                DataItem(_("isc of average five best") + _(" blue") + "/mA/cm²",
-                                         utils.round(self.average_five_best_isc_b, 3)),
-                                DataItem(_("isc of average five best") + _(" red") + "/mA/cm²",
-                                         utils.round(self.average_five_best_isc_r, 3)),
-                                DataItem(_("ff of average five best") + _(" blue") + "/%", utils.round(self.average_five_best_ff_b, 3)),
-                                DataItem(_("ff of average five best") + _(" red") + "/%", utils.round(self.average_five_best_ff_r, 3)),
-                                DataItem(_("yield"), self.cell_yield)])
         return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
@@ -431,32 +346,7 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
                          search.DateTimeSearchField(cls, "timestamp"),
                          search.TextSearchField(cls, "comments"),
                          search.ChoiceSearchField(cls, "irradiance"),
-                         search.IntervalSearchField(cls, "temperature"),
-                         search.IntervalSearchField(cls, "best_cell_eta"),
-                         search.IntervalSearchField(cls, "best_cell_voc"),
-                         search.IntervalSearchField(cls, "best_cell_isc"),
-                         search.IntervalSearchField(cls, "best_cell_ff"),
-                         search.IntervalSearchField(cls, "best_cell_isc_b"),
-                         search.IntervalSearchField(cls, "best_cell_isc_r"),
-                         search.IntervalSearchField(cls, "best_cell_ff_b"),
-                         search.IntervalSearchField(cls, "best_cell_ff_r"),
-                         search.IntervalSearchField(cls, "median_eta"),
-                         search.IntervalSearchField(cls, "median_voc"),
-                         search.IntervalSearchField(cls, "median_isc"),
-                         search.IntervalSearchField(cls, "median_ff"),
-                         search.IntervalSearchField(cls, "median_isc_b"),
-                         search.IntervalSearchField(cls, "median_isc_r"),
-                         search.IntervalSearchField(cls, "median_ff_b"),
-                         search.IntervalSearchField(cls, "median_ff_r"),
-                         search.IntervalSearchField(cls, "average_five_best_eta"),
-                         search.IntervalSearchField(cls, "average_five_best_voc"),
-                         search.IntervalSearchField(cls, "average_five_best_isc"),
-                         search.IntervalSearchField(cls, "average_five_best_ff"),
-                         search.IntervalSearchField(cls, "average_five_best_isc_b"),
-                         search.IntervalSearchField(cls, "average_five_best_isc_r"),
-                         search.IntervalSearchField(cls, "average_five_best_ff_b"),
-                         search.IntervalSearchField(cls, "average_five_best_ff_r"),
-                         search.IntervalSearchField(cls, "cell_yield")]
+                         search.IntervalSearchField(cls, "temperature")]
         return model_field
 
 
@@ -467,12 +357,7 @@ class SolarsimulatorPhotoCellMeasurement(SolarsimulatorCell):
     eta = models.FloatField(_("efficiency η"), help_text=_("in %"), null=True, blank=True)
     p_max = models.FloatField(_("maximum power point"), help_text=_("in mW"), null=True, blank=True)
     ff = models.FloatField(_("fill factor"), help_text=_("in %"), null=True, blank=True)
-    voc = models.FloatField(_("open circuit voltage"), help_text=_("in V"), null=True, blank=True)
     isc = models.FloatField(_("short-circuit current density"), help_text=_("in mA/cm²"), null=True, blank=True)
-    rs = models.FloatField(_("series resistance"), help_text=_("in Ω"), null=True, blank=True)
-    rsh = models.FloatField(_("shunt resistance"), help_text=_("in Ω"), null=True, blank=True)
-    corr_fact = models.FloatField(_("correction factor"), help_text=_("in %"), null=True, blank=True)
-
     class Meta:
         verbose_name = _("solarsimulator photo cell measurement")
         verbose_name_plural = _("solarsimulator photo cell measurements")
@@ -483,13 +368,8 @@ class SolarsimulatorPhotoCellMeasurement(SolarsimulatorCell):
         data_node = super(SolarsimulatorPhotoCellMeasurement, self).get_data()
         data_node.items.extend([DataItem("area/cm^2", self.area),
                            DataItem("efficiency/%", self.eta),
-                           DataItem("maximum power point/mW", self.p_max),
                            DataItem("fill factor/%", self.ff),
-                           DataItem("open circuit voltage/V", self.voc),
-                           DataItem("short-circuit current density/(mA/cm^2)", self.isc),
-                           DataItem("series resistance/Ohm", self.rs),
-                           DataItem("shunt resistance/Ohm", self.rsh),
-                           DataItem("correction factor/%", self.corr_fact)])
+                           DataItem("short-circuit current density/(mA/cm^2)", self.isc)])
         return data_node
 
     def get_data_for_table_export(self):
