@@ -44,9 +44,6 @@ import samples.models
 
 
 samples.models.clearance_sets.update({
-        PDSMeasurement: (PDSMeasurement, Substrate, LayerThicknessMeasurement),
-        RamanMeasurement: (RamanMeasurement, Substrate, LayerThicknessMeasurement),
-        ConductivityMeasurementSet: (ConductivityMeasurementSet, Substrate, LayerThicknessMeasurement),
-        OldClusterToolDeposition: (OldClusterToolDeposition, Substrate),
-        NewClusterToolDeposition: (NewClusterToolDeposition, Substrate),
+        PDSMeasurement: (PDSMeasurement, Substrate),
+        ClusterToolDeposition: (ClusterToolDeposition, Substrate),
         })

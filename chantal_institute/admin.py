@@ -16,15 +16,15 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
-from chantal_institute.models_depositions import OldClusterToolDeposition, OldClusterToolHotWireLayer, \
-    OldClusterToolPECVDLayer, FiveChamberDeposition, FiveChamberLayer
+from chantal_institute.models_depositions import ClusterToolDeposition, ClusterToolHotWireLayer, \
+    ClusterToolPECVDLayer, FiveChamberDeposition, FiveChamberLayer
 from chantal_institute.models_physical_processes import PDSMeasurement, Substrate, SolarsimulatorPhotoMeasurement, \
     SolarsimulatorPhotoCellMeasurement, Structuring
 from chantal_institute.models import SampleDetails, InformalLayer
 
-admin.site.register(OldClusterToolDeposition)
-admin.site.register(OldClusterToolHotWireLayer)
-admin.site.register(OldClusterToolPECVDLayer)
+admin.site.register(ClusterToolDeposition)
+admin.site.register(ClusterToolHotWireLayer)
+admin.site.register(ClusterToolPECVDLayer)
 admin.site.register(FiveChamberDeposition)
 admin.site.register(FiveChamberLayer)
 
