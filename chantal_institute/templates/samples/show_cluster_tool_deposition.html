@@ -14,7 +14,7 @@ copyright holder, you must destroy it immediately and completely.
 
 {% load i18n %}
 {% load samples_extras %}
-{% load ipv_extras %}
+{% load institute_extras %}
 
 <p>
   <span class="label">{% verbose_name Deposition.number %}:</span><span class="value"
@@ -79,7 +79,7 @@ copyright holder, you must destroy it immediately and completely.
                     {% value_field layer.base_pressure %}
                   {% else %}{% ifequal layer.type "PECVD" %}
                     {% value_field layer.deposition_power "W" %}
-                  {% endifequal %}
+                  {% endifequal %}{% endifequal %}
               </tr>
               </tbody>
             </table>

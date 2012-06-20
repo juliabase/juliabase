@@ -207,8 +207,7 @@ class PECVDLayerForm(forms.ModelForm):
             self.fields[fieldname].help_text = ""
             self.fields[fieldname].widget.attrs["size"] = "15"
 
-        for fieldname, min_value, max_value in [("deposition_frequency", 13, 150), ("plasma_start_power", 0, 1000),
-                                                ("deposition_power", 0, 1000)]:
+        for fieldname, min_value, max_value in [("deposition_power", 0, 1000)]:
             self.fields[fieldname].min_value = min_value
             self.fields[fieldname].max_value = max_value
 

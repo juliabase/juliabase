@@ -23,12 +23,6 @@
     model: auth.user
     pk: 2
 -   fields:
-        first_name: "kicker"
-        password: sha1$0c824$6bee8e4dc6b2e14583d944954b0bdb5a506872a0
-        username: kicker
-    model: auth.user
-    pk: 64
--   fields:
         members: []
         name: Legacy
         confidential: false
@@ -49,8 +43,3 @@
         layout_last_modified: 1990-01-01 00:00:00
   model: chantal_common.userdetails
   pk: 2
-- fields:
-        is_administrative: true
-        layout_last_modified: 1990-01-01 00:00:00
-  model: chantal_common.userdetails
-  pk: 64
