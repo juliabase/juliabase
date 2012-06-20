@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 import os.path, subprocess
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from samples.views import utils
 import chantal_common.utils

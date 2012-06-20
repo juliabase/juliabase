@@ -17,17 +17,14 @@
 """
 
 from __future__ import unicode_literals
-import re, datetime
-from django import forms
-from django.forms.util import ValidationError
+import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
-import django.contrib.auth.models
 from django.template import RequestContext
 from chantal_common.utils import append_error
 from chantal_institute import models as institute_models
-from samples import models, permissions
+from samples import permissions
 from samples.views import utils, feed_utils, form_utils
 
 

@@ -24,8 +24,8 @@ Unix-like systems, it is in /tmp.
 """
 
 from __future__ import unicode_literals
-import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os, os.path, datetime, re, time, random, sys, \
-    subprocess, socket
+import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path, datetime, re, time, random, sys, \
+    subprocess
 import cPickle as pickle
 
 __all__ = ["login", "logout", "new_samples", "Sample", "rename_after_deposition", "PDSMeasurement",

@@ -19,20 +19,16 @@ includes measurements, etching processes, clean room work etc.
 
 from __future__ import absolute_import, unicode_literals
 
-import os.path, codecs, glob, sys
-import matplotlib.transforms, numpy
-from django.utils.translation import ugettext_lazy as _, ugettext, string_concat
+import os.path
+import numpy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db import models
-from django.db.models import Q
 import django.core.urlresolvers
-from django.core.validators import MinValueValidator
 from django.utils.http import urlquote
 from django.conf import settings
 from samples import permissions
-import samples.models_depositions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataNode, DataItem
-from chantal_common.utils import register_abstract_model, format_lazy
 from chantal_common import search
 from samples.views import utils
 from chantal_institute import layouts

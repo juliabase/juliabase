@@ -20,9 +20,8 @@ substrate with every sample, too (and possibly a cleaning process).
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, re
+import datetime
 from django.db import transaction, IntegrityError
-from django.db.models import Q
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms

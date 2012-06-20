@@ -14,7 +14,7 @@
 
 
 from __future__ import absolute_import, unicode_literals
-import os, os.path, imp, socket, sys
+import os, socket
 from django.core.management import execute_manager
 
 hostname = socket.gethostname()

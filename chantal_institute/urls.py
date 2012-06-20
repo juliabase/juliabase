@@ -14,7 +14,7 @@
 
 
 """Mapping URL patterns to function calls.  This is the local URL dispatch of
-the Django application “chantal_institute”, which provides IEF-5-specific views for
+the Django application “chantal_institute”, which provides institute-specific views for
 all Chantal apps.  That's the reason why it must have a ``""`` URL pattern in
 the root URL module.
 
@@ -29,12 +29,11 @@ the root URL module.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls.defaults import *
-from django.conf import settings
+from django.conf.urls import url, patterns
+
 
 urlpatterns = patterns("chantal_institute.views.statistics",
                        (r"^about$", "about"),
-                       (r"^statistics$", "statistics"),
                        )
 
 urlpatterns += patterns("samples.views.lab_notebook",

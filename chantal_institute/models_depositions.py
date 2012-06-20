@@ -20,21 +20,14 @@ models like the one to 6-chamber deposition channels.
 
 from __future__ import absolute_import, unicode_literals
 
-import re
-from decimal import Decimal
-from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 import samples.models_depositions
 from samples import permissions
-from samples.data_tree import DataNode, DataItem
-from chantal_common import search
+from samples.data_tree import DataItem
 from chantal_common import models as chantal_common_models
-from django.utils.translation import string_concat
-from django.contrib.auth.models import User
-from chantal_common.utils import get_really_full_name
-
 
 
 class ClusterToolHotWireAndPECVDGases(models.Model):

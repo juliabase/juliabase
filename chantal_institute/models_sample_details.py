@@ -19,8 +19,7 @@ particular, it contains the informal layer stacks.
 
 from __future__ import absolute_import, unicode_literals
 
-import subprocess, os.path
-import django.contrib.auth.models
+import os.path
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.conf import settings
 from django.db import models
@@ -29,11 +28,9 @@ from django import forms
 from django.forms.util import ValidationError
 from django.forms.models import inlineformset_factory
 from chantal_common.signals import storage_changed
-from chantal_common import utils
 from chantal_common import search
 from samples.data_tree import DataNode, DataItem
 import samples.models, samples.views.shared_utils
-import chantal_institute.views.solarsimulator_measurement_utils as solarsimulator_utils
 
 
 class SampleDetails(models.Model):
@@ -224,13 +221,7 @@ class SampleDetails(models.Model):
                 ancestor_data = self.sample.split_origin.parent.get_data_for_table_export()
                 data_node.children.extend(ancestor_data.children)
         for process in self.sample.processes.order_by("timestamp").iterator():
-            if process.content_type.name == "solarsimulator photo measurement" \
-            and process.actual_instance.irradiance in ["BG7", "OG590"]:
-                if not solarsimulator_utils.get_previous_white_measurement(self.sample,
-                                                        process.actual_instance.timestamp, process.actual_instance.irradiance):
-                    data_node.children.append(process.actual_instance.get_data_for_table_export())
-            else:
-                data_node.children.append(process.actual_instance.get_data_for_table_export())
+            data_node.children.append(process.actual_instance.get_data_for_table_export())
         return data_node
 
     @classmethod

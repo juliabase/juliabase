@@ -24,7 +24,7 @@ unit of measurement in ReportLab.
 
 from __future__ import division, unicode_literals, absolute_import
 
-import random, math, decimal, os.path, re, unicodedata
+import re
 from cStringIO import StringIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm

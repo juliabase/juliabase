@@ -26,11 +26,8 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django import forms
-from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from django.db.models import Q
-import django.contrib.auth.models
-from chantal_common.utils import append_error, is_json_requested, respond_in_json, check_filepath
+from chantal_common.utils import is_json_requested, respond_in_json, check_filepath
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from samples import models, permissions

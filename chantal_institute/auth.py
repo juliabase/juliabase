@@ -41,7 +41,6 @@ Portions of this module are inspired by
 
 from __future__ import absolute_import, unicode_literals
 
-import django.contrib.auth
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 from django.core.mail import mail_admins
@@ -222,7 +221,7 @@ class LDAPConnection(object):
         Django groups, however, any rights granted to users through Django
         groups can not be revoked by the Active Directory because we simply
         don't touch groups here.
-        
+
         :Parameters:
           - `user`: the user whose data should be updated
 

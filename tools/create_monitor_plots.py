@@ -21,14 +21,14 @@ PostgreSQL server and the monitor data from `monitor_file_name`.
 
 from __future__ import division, unicode_literals
 
-import sys, os, os.path
+import sys, os.path
 sys.path.append(os.path.expanduser("/home/chantal/chantal"))
 
-import glob, gzip, re, datetime, math, pickle, os, socket, subprocess, os.path
+import glob, gzip, re, datetime, math, pickle, socket, subprocess
 import matplotlib, numpy
 matplotlib.use("Agg")
 import pylab
-from tools.common import SystemInfo
+
 
 filename = "/var/www/chantal/media/server_load.png"
 monitor_file_name = "/mnt/hobie/chantal_monitoring/monitor.pickle"
@@ -73,7 +73,7 @@ def read_times_apache(hostname):
             timedelta_seconds = int(round(timedelta_to_seconds(timedelta)))
             index = (24 * 3600 - timedelta_seconds) // binning
             if 0 <= index < number_of_slots:
-                times[index] += 1/binning
+                times[index] += 1 / binning
             elif linenumber == 0:
                 read_further = False
         logfile.close()
@@ -86,7 +86,7 @@ window_half_width = 10 * 60 // binning
 
 def mollifier(x):
     if -window_half_width < x < window_half_width:
-        return 2.252283621 / window_half_width * math.exp(-1 / (1 - (x / window_half_width)**2))
+        return 2.252283621 / window_half_width * math.exp(-1 / (1 - (x / window_half_width) ** 2))
     else:
         return 0
 

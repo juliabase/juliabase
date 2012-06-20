@@ -21,8 +21,7 @@ processes.
 from __future__ import absolute_import, unicode_literals
 
 import datetime
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django import forms
 from django.forms import widgets
 from django.forms.util import ValidationError
@@ -31,7 +30,7 @@ from django.utils.encoding import force_unicode
 from django.contrib.auth.decorators import login_required
 import chantal_common.utils
 from chantal_common.utils import append_error
-from samples import models, permissions
+from samples import models
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 from django.utils.translation import ugettext, ungettext, ugettext_lazy

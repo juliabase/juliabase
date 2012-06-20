@@ -20,15 +20,12 @@ from __future__ import absolute_import, unicode_literals
 
 import re, datetime
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
-from samples import models, permissions
+from django.shortcuts import get_object_or_404
+from samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
-import django.core.urlresolvers
-import django.contrib.auth.models
-from chantal_common.utils import append_error, check_markdown, HttpResponseSeeOther, is_json_requested
+from chantal_common.utils import append_error, is_json_requested
 from samples.views import utils, feed_utils
 from chantal_institute.views import form_utils
 import chantal_institute.models as institute_models

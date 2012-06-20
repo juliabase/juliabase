@@ -38,9 +38,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.styles import PropertySet
 from reportlab.lib.colors import black, getAllNamedColors
-from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Paragraph
-import chantal_institute.reportlab_config
 
 
 dimensions = {"stack_width": 3 * cm, "label_width": 3 * cm, "margin": 0.2 * cm, "red_line_width": 0.15 * cm,
@@ -81,7 +80,7 @@ class LegendLabelStyle(PropertySet):
     """Style which is used for the optional legend below the stack.
     """
     defaults = {
-        "fontName": "DejaVu", "fontSize": 10, "leading": 12, "leftIndent": 14.5, "rightIndent": 0, "firstLineIndent": -14.5,
+        "fontName": "DejaVu", "fontSize": 10, "leading": 12, "leftIndent": 14.5, "rightIndent": 0, "firstLineIndent":-14.5,
         "alignment": TA_LEFT, "spaceBefore": 0, "spaceAfter": 10, "bulletFontName": "DejaVu", "bulletFontSize": 10,
         "bulletIndent": 0, "textColor": black, "backColor": None, "wordWrap": None, "borderWidth": 0, "borderPadding": 0,
         "borderColor": None, "borderRadius": None, "allowWidows": 1, "allowOrphans": 0, "textTransform": None}
@@ -168,9 +167,9 @@ class Path(object):
 
         random.seed(1)
         self.textured_points = [(dimensions["stack_width"] / parameters["grid_points"] * i,
-                                 random.uniform(- parameters["roughness"], parameters["roughness"]))
+                                 random.uniform(-parameters["roughness"], parameters["roughness"]))
                                 for i in range(parameters["grid_points"] + 1)]
-        self.edge_indices = [int(round(x * parameters["grid_points"])) for x in [1/8, 3/8, 5/8, 7/8]]
+        self.edge_indices = [int(round(x * parameters["grid_points"])) for x in [1 / 8, 3 / 8, 5 / 8, 7 / 8]]
 
         self.voffset = 0 if fill_color or not bottom_layer else bottom_layer.accumulated_height
         bottom_textured = bottom_layer and bottom_layer.textured
@@ -514,9 +513,9 @@ class Scale(object):
         thicknesses = [layer.nm for layer in layers if layer.nm > 0]
         thicknesses.sort(reverse=True)
         if thicknesses:
-            self.scale = 2 * 10**(1/10) * lineskip / thicknesses[len(thicknesses) // 2]
+            self.scale = 2 * 10 ** (1 / 10) * lineskip / thicknesses[len(thicknesses) // 2]
         else:
-            self.scale = 2 * 10**(1/10) * lineskip / 1000
+            self.scale = 2 * 10 ** (1 / 10) * lineskip / 1000
         # In order to snap the scale to discrete values
         self.scale = 10 ** (round(math.log10(self.scale) * 5) / 5)
 
@@ -671,7 +670,7 @@ class Label(object):
         __, height = paragraph.wrap(dimensions["label_width"], 10 * lineskip)
         paragraph.drawOn(canvas, hoffset, self.voffset - height / 2)
 
-    
+
 class NumberedLabel(Label):
     """Class for labels which consists of (circled) numbers because the actual
     label(s) are too big to be printed next to the layer(s).  This may have a

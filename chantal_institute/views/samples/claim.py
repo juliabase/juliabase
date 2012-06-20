@@ -28,7 +28,7 @@ import django.forms as forms
 from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, ungettext
+from django.utils.translation import ugettext, ugettext_lazy, ungettext
 from django.conf import settings
 from chantal_common.utils import append_error, send_email, get_really_full_name
 from chantal_common.models import Topic
@@ -36,7 +36,7 @@ from samples.views import utils
 from samples import permissions
 from samples.models import Sample, SampleClaim
 from chantal_institute import models
-from samples.views.claim import ReviewerChoiceField, ReviewerForm
+from samples.views.claim import ReviewerForm
 
 
 # FixMe: This module contains a lot of code duplication from

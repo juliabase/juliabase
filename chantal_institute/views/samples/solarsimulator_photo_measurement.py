@@ -24,7 +24,7 @@ from chantal_institute.views import form_utils
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext, RequestContext
+from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy
 from samples import permissions
 from samples.views import utils, feed_utils

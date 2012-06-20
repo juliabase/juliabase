@@ -17,11 +17,6 @@ copyright holder, you must destroy it immediately and completely.
 
 {# FixMe: Can't this be derived from chantal_samples/permission_error.html? #}
 
-{% block float_image %}
-<img class="vintage-image" src="{{ STATIC_URL}}samples/lock_woman.jpg" alt="{% trans 'woman with lock' %}"
-     width="180" height="250"/>
-{% endblock %}
-
 {% block frame_content %}
   <p>
     {% blocktrans with exception.description as description %}

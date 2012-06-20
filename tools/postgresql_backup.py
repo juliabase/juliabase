@@ -23,7 +23,7 @@ and the same for months.
 """
 
 from __future__ import unicode_literals
-import datetime, os, os.path, subprocess, pickle, logging, socket
+import datetime, os.path, subprocess, pickle, logging, socket
 import ConfigParser
 
 

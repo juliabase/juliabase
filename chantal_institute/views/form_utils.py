@@ -25,8 +25,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.contrib import messages
-from samples.views import utils
-from samples.views.form_utils import *
+from samples.views.form_utils import utils, permissions, dead_samples, forms, SampleField, ugettext_lazy
 from samples.views import sample
 from chantal_common.utils import append_error, is_json_requested, respond_in_json
 from django.utils.text import capfirst

@@ -18,8 +18,8 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import os.path, subprocess
-from django.http import HttpResponse, Http404
+import subprocess
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import defaultfilters

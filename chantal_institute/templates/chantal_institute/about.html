@@ -32,34 +32,6 @@ copyright holder, you must destroy it immediately and completely.
 <table class="about">
   <tbody>
   <tr>
-    <th>{% trans 'Operating system' %}:</th>
-    <td><p><a href="http://www.ubuntu.com"><img class="helper-program-logo" src="{{ STATIC_URL }}institute/ubuntu.png"
-                                                alt="{% trans 'Ubuntu logo' %}" width="125" height="35"/></a></p>
-      <p><a href="http://www.ubuntu.com">Ubuntu</a> <span class="version">10.04
-          <a href="http://www.ubuntu.com/server">Server Edition</a></span></p></td>
-  </tr>
-  <tr>
-    <th>{% trans 'Web server' %}:</th>
-    {% if is_testserver %}
-    <td>{% trans 'Django testserver' %}</td>
-    {% else %}
-    <td><p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}"
-              ><img class="helper-program-logo" src="{{ STATIC_URL }}institute/apache.png" alt="{% trans 'Apache logo' %}"
-                    width="125" height="40"/></a></p>
-      <p><a href="{% trans 'http://en.wikipedia.org/wiki/Apache_HTTP_Server' %}">Apache</a>
-      <span class="version">{{ web_server_version }}</span></p></td>
-    {% endif %}
-  </tr>
-  <tr>
-    <th>{% trans 'Database' %}:</th>
-    <td style="vertical-align: bottom">
-      <p><a href="{% trans 'http://en.wikipedia.org/wiki/PostgreSQL' %}"
-            ><img class="helper-program-logo" src="{{ STATIC_URL }}institute/postgresql.png" alt="{% trans 'PostgreSQL logo' %}"
-                  width="49" height="50"/></a></p>
-      <p><a href="{% trans 'http://en.wikipedia.org/wiki/PostgreSQL' %}">PostgreSQL</a>
-        <span class="version">{{ db_version }}</span></p></td>
-  </tr>
-  <tr>
     <th>{% trans 'Web framework' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}"

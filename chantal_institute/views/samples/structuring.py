@@ -15,18 +15,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, string
+import datetime
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.http import Http404
-import django.utils.http
-from django import forms
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
-from django.forms.util import ValidationError
-from django.contrib import messages
+from django.utils.translation import ugettext as _
 from chantal_common.utils import append_error
-from samples import models, permissions
 from samples.views import utils
 from chantal_institute.views import form_utils
 import chantal_institute.models as institute_models

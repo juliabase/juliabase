@@ -21,18 +21,16 @@ client happens in JSON format.
 
 from __future__ import absolute_import, unicode_literals
 
-import os.path, re, datetime
+import datetime
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from django.shortcuts import get_object_or_404
 from django.http import Http404
-from django.conf import settings
 from samples.views import utils
 from samples import models, permissions
 from chantal_institute import models as institute_models, layouts
 from chantal_common.utils import respond_in_json, JSONRequestException
-from django.db.models import Q
 
 
 def get_substrates(sample):
