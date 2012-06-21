@@ -18,12 +18,8 @@ import os, socket
 from django.core.management import execute_manager
 
 hostname = socket.gethostname()
-if hostname == "wilson":
-    os.environ["DJANGO_SETTINGS_MODULE"] = "other_settings.wilson_settings"
-elif hostname == "ipv609" or hostname == "mars":
+if hostname == "ipv609":
     os.environ["DJANGO_SETTINGS_MODULE"] = "other_settings.marvin_settings"
-elif hostname == "bob":
-    os.environ["DJANGO_SETTINGS_MODULE"] = "other_settings.bob_settings"
 else:
     os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
