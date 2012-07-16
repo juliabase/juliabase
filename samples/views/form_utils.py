@@ -378,6 +378,10 @@ class MultipleUsersField(forms.MultipleChoiceField):
     the set of members for a particular topic.
     """
 
+    def __init__(self, *args, **kwargs):
+        super(MultipleUsersField, self).__init__(*args, **kwargs)
+        self.widget.attrs["size"] = 15
+
     def set_users(self, additional_users=[]):
         """Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise

@@ -280,22 +280,25 @@ class Process(PolymorphicModel):
         download a plot to their local filesystem.  It need not be unique in
         any way (although mostly it is).
 
-        This method must be overridden in derived classes that wish to offer
-        plots.
+        The default behaviour is a basename which consists of the process class
+        name, the process ID, and – if given – the plot ID.
 
         :Parameters:
           - `plot_id`: the ID of the plot.  For most models offering plots,
-            this can only be zero and as such is not used it all in this
-            method.  Note that you must not assume that its value is valid.
+            this can only be the empty string and as such is not used it all in
+            this method then.
 
         :type plot_id: unicode
 
         :Return:
           the base name for the plot files, without directories or extension
 
-        :rtype: str
+        :rtype: unicode
         """
-        raise NotImplementedError
+        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
+        if plot_id:
+            basename += "_" + plot_id
+        return basename
 
     def get_data(self):
         """Extract the data of this process as a tree of nodes (or a single
