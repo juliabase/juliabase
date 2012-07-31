@@ -529,7 +529,7 @@ def assert_can_view_result_process(user, result_process):
     """
     if result_process.operator != user and \
             all(not has_permission_to_fully_view_sample(user, sample) for sample in result_process.samples.all()) and \
-            all(not has_permission_to_fully_view_sample_series(user, sample_series)
+            all(not has_permission_to_view_sample_series(user, sample_series)
                 for sample_series in result_process.sample_series.all()) and \
                 not samples.models.Clearance.objects.filter(user=user, processes=result_process).exists():
         description = _("You are not allowed to view the result “{result}” because neither did you create this result, "
