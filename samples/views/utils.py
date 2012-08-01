@@ -604,10 +604,10 @@ def restricted_samples_query(user):
     is only about the names.  See the `search` view for further information.
     """
     if user.is_staff:
-        return models.Sample.objects.all()
+        return models.Sample.objects.order_by("name").all()
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
-                                        Q(topic__isnull=True)).distinct()
+                                        Q(topic__isnull=True)).order_by("name").distinct()
 
 
 def round(value, digits):

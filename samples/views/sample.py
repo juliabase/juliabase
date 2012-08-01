@@ -759,7 +759,7 @@ class AddToMySamplesForm(forms.Form):
     add_to_my_samples = forms.BooleanField(required=False)
 
 
-max_results = 50
+max_results = 1000
 @login_required
 def search(request):
     """View for searching for samples.  The rule is: Everyone can see the
