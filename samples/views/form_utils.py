@@ -692,7 +692,7 @@ def clean_date_field(value):
         -`ValidationError`: if the specified date lies in the future.
     """
     # Allow mis-sychronisation of clocks of up to one minute.
-    if value > datetime.date.now() + datetime.timedelta(minutes=1):
+    if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
         raise ValidationError(_("The date must not be in the future."))
     return value
 
