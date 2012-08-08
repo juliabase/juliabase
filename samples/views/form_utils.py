@@ -61,9 +61,7 @@ class ProcessForm(ModelForm):
     def clean_timestamp(self):
         """Forbid timestamps that are in the future.
         """
-        timestamp = self.cleaned_data["timestamp"]
-        if timestamp > datetime.datetime.now():
-            raise ValidationError(_("The timestamp must not be in the future."))
+        timestamp = clean_date_field(self.cleaned_data["timestamp"])
         if self.unfinished and self.process.timestamp > timestamp:
             self.data = self.data.copy()
             self.data["timestamp"] = datetime.datetime.now()
@@ -693,7 +691,8 @@ def clean_date_field(value):
     :Exception:
         -`ValidationError`: if the specified date lies in the future.
     """
-    if value > datetime.date.today():
+    # Allow mis-sychronisation of clocks of up to one minute.
+    if value > datetime.date.now() + datetime.timedelta(minutes=1):
         raise ValidationError(_("The date must not be in the future."))
     return value
 
