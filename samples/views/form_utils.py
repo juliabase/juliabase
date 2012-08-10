@@ -61,7 +61,7 @@ class ProcessForm(ModelForm):
     def clean_timestamp(self):
         """Forbid timestamps that are in the future.
         """
-        timestamp = clean_date_field(self.cleaned_data["timestamp"])
+        timestamp = clean_timestamp_field(self.cleaned_data["timestamp"])
         if self.unfinished and self.process.timestamp > timestamp:
             self.data = self.data.copy()
             self.data["timestamp"] = datetime.datetime.now()
@@ -670,30 +670,34 @@ def clean_time_field(value):
         return "{0}:{1:02}:{2:02}".format(hours, minutes, seconds)
 
 
-def clean_date_field(value):
+def clean_timestamp_field(value):
     """General helper function for use in the ``clean_...`` methods in forms.
-    It tests whether the given date is not in the future.
-    It is a small an trivial test, but it is used in the most layer forms.
+    It tests whether the given timestamp is not in the future.  It also works
+    for date fields.
 
-    The test of correct input is performed by the `date field` itself.
+    The test of correct input is performed by the field class itself.
 
     :Parameter:
         - `value`: the value input by the user.  Usually this is the result of a
         ``cleaned_data[...]`` call.
 
-    :type value: datetime.date object
+    :type value: datetime.date or datetime.datetime
 
     :Return:
         the original ``value`` (unchanged)
 
-    :rtype: datetime.date object
+    :rtype: datetime.date or datetime.datetime
 
     :Exception:
-        -`ValidationError`: if the specified date lies in the future.
+        -`ValidationError`: if the specified timestamp lies in the future.
     """
-    # Allow mis-sychronisation of clocks of up to one minute.
-    if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
-        raise ValidationError(_("The date must not be in the future."))
+    if isinstance(value, datetime.datetime):
+        # Allow mis-sychronisation of clocks of up to one minute.
+        if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
+            raise ValidationError(_("The timestamp must not be in the future."))
+    else:
+        if value > datetime.date.today():
+            raise ValidationError(_("The date must not be in the future."))
     return value
 
 
