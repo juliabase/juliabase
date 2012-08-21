@@ -169,7 +169,7 @@ def get_all_addable_physical_process_models():
                 except (NotImplementedError, AttributeError):
                     continue
                 all_addable_physical_process_models[process_class] = {
-                    "url": process_class.get_add_link(), "label": process_class._meta.verbose_name,
+                    "url": url, "label": process_class._meta.verbose_name,
                     "label_plural": process_class._meta.verbose_name_plural, "type": process_class.__name__}
     return all_addable_physical_process_models
 
@@ -283,7 +283,11 @@ def assert_can_fully_view_sample(user, sample):
     currently_responsible_person = sample.currently_responsible_person
     if sample.topic and sample.topic not in user.topics.all() and currently_responsible_person != user and \
             not user.is_superuser:
-        if sample.topic.confidential:
+        if currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department:
+            description = _("You are not allowed to view the sample since you are not in the sample's topic, nor belongs the "
+                            "sample to your department.")
+            raise PermissionError(user, description, new_topic_would_help=True)
+        elif sample.topic.confidential:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name})."). \
                             format(name=chantal_common_utils.get_really_full_name(currently_responsible_person))
