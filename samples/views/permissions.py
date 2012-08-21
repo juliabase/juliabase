@@ -20,15 +20,16 @@ managers.
 from __future__ import absolute_import, unicode_literals
 
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal_common.utils import get_really_full_name, get_all_models
+from chantal_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther
 from samples import models, permissions
-from samples.views import utils
+from samples.views import utils, form_utils
+import django.core
 
 
 class PhysicalProcess(object):
@@ -134,6 +135,16 @@ class PhysicalProcess(object):
         self.all_users = utils.sorted_users(set(adders) | set(permission_editors))
 
 
+class UserListForm(forms.Form):
+    """Form class for selecting the user to change the permissions for him/her.
+    """
+    selected_user = form_utils.UserField(label=_("Change the permissions of"))
+
+    def __init__(self, user, *args, **kwargs):
+        super(UserListForm, self).__init__(*args, **kwargs)
+        self.fields["selected_user"].set_users(user)
+
+
 def get_physical_processes():
     """Return a list with all registered physical processes.  Their type is of
     `PhysicalProcess`, which means that they contain information about the
@@ -177,9 +188,15 @@ def list_(request):
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
     if can_edit_permissions:
-        user_list = utils.sorted_users(User.objects.filter(is_active=True, chantal_user_details__is_administrative=False))
+        if request.method == "POST":
+            user_list_form = UserListForm(user, request.POST)
+            if user_list_form.is_valid():
+                return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.permissions.edit",
+                                kwargs={"username": user_list_form.cleaned_data["selected_user"].username}))
+        else:
+            user_list_form = UserListForm(user)
     else:
-        user_list = []
+        user_list_form = None
     if user.has_perm("chantal_common.can_edit_all_topics"):
         topic_managers = utils.sorted_users(
             User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
@@ -190,7 +207,7 @@ def list_(request):
     return render_to_response(
         "samples/list_permissions.html",
         {"title": _("Permissions to processes"), "physical_processes": physical_processes,
-         "user_list": user_list, "topic_managers": topic_managers},
+         "user_list": user_list_form, "topic_managers": topic_managers},
         context_instance=RequestContext(request))
 
 

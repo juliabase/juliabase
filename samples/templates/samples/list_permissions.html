@@ -53,6 +53,7 @@ copyright holder, you must destroy it immediately and completely.
     </p>
   {% endif %}
   {% if user_list %}
+  {% comment %}
     <p>{% trans "Change the permissions of:" %}
       {% for user in user_list %}
         {% spaceless %}
@@ -61,5 +62,17 @@ copyright holder, you must destroy it immediately and completely.
         {% endspaceless %}
       {% endfor %}
     </p>
+  {% endcomment %}
+  <form method=POST>
+  {% error_list user_list _("Error in user list") %}
+    <table>
+    <tbody>
+    <tr>
+      {% input_field user_list.selected_user %}
+    </tr>
+    </tbody>
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+  </form>
   {% endif %}
 {% endblock %}
