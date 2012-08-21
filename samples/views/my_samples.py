@@ -65,8 +65,8 @@ class ActionForm(forms.Form):
         :type user: ``django.contrib.auth.models.User``
         """
         super(ActionForm, self).__init__(*args, **kwargs)
-        self.fields["new_currently_responsible_person"].set_users(user)
-        self.fields["copy_to_user"].set_users()
+        self.fields["new_currently_responsible_person"].set_users(user, user)
+        self.fields["copy_to_user"].set_users(user)
         try:
             self.fields["copy_to_user"].choices.remove((user.id, get_really_full_name(user)))
         except ValueError:

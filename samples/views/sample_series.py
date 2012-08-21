@@ -67,7 +67,7 @@ class SampleSeriesForm(forms.ModelForm):
         if sample_series:
             self.fields["short_name"].required = False
         if sample_series:
-            self.fields["currently_responsible_person"].set_users(sample_series.currently_responsible_person)
+            self.fields["currently_responsible_person"].set_users(user, sample_series.currently_responsible_person)
         else:
             self.fields["currently_responsible_person"].choices = ((user.pk, unicode(user)),)
         self.fields["topic"].set_topics(user, sample_series.topic if sample_series else None)

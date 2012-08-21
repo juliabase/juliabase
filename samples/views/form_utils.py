@@ -28,7 +28,7 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from chantal_common.utils import get_really_full_name, check_markdown
-from chantal_common.models import Topic
+from chantal_common.models import Topic, Department
 from samples import models, permissions
 from samples.views import utils
 from django.utils.text import capfirst
@@ -326,7 +326,7 @@ class UserField(forms.ChoiceField):
     send “My Samples” to.
     """
 
-    def set_users(self, additional_user=None):
+    def set_users(self, user, additional_user=None):
         """Set the user list shown in the widget.  You *must* call this method
         (or `set_users_without`) in the constructor of the form in which you
         use this field, otherwise the selection box will remain emtpy.  The
@@ -334,36 +334,48 @@ class UserField(forms.ChoiceField):
         given additional user if any.
 
         :Parameters:
+          - `user`: Thr user who wants to see the user list
           - `additional_user`: Optional additional user to be included into the
             list.  Typically, it is the current user for the process to be
             edited.
 
         :type additional_user: ``django.contrib.auth.models.User``
         """
+        department_ids = json.loads(user.samples_user_details.show_user_from_department)
         self.choices = [("", 9 * "-")]
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                                   chantal_user_details__is_administrative=False))
-        if additional_user:
-            users.add(additional_user)
-        self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users(users))
+        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+            user_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
+                                                                   chantal_user_details__is_administrative=False,
+                                                                   chantal_user_details__department=department))
+            if additional_user and additional_user.chantal_user_details.department == department:
+                user_from_department.add(additional_user)
+            self.choices.append((department.name, [(user.pk, get_really_full_name(user))
+                                                  for user in utils.sorted_users(user_from_department)]))
 
-    def set_users_without(self, excluded_user):
+
+    def set_users_without(self, user, excluded_user):
         """Set the user list shown in the widget.  You *must* call this method
         (or `set_users`) in the constructor of the form in which you use this
         field, otherwise the selection box will remain emtpy.  The selection
         list will consist of all currently active users, minus the given user.
 
         :Parameters:
+          - `user`: Thr user who wants to see the user list
           - `excluded_user`: User to be excluded from the list.  Typically, it
             is the currently logged-in user.
 
         :type excluded_user: ``django.contrib.auth.models.User``
         """
+        department_ids = json.loads(user.samples_user_details.show_user_from_department)
         self.choices = [("", 9 * "-")]
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                                   chantal_user_details__is_administrative=False))
-        users.discard(excluded_user)
-        self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users(users))
+        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+            user_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
+                                                                   chantal_user_details__is_administrative=False,
+                                                                   chantal_user_details__department=department))
+            if excluded_user.chantal_user_details.department == department:
+                user_from_department.discard(excluded_user)
+            self.choices.append((department.name, [(user.pk, get_really_full_name(user))
+                                                  for user in utils.sorted_users(user_from_department)]))
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -380,23 +392,30 @@ class MultipleUsersField(forms.MultipleChoiceField):
         super(MultipleUsersField, self).__init__(*args, **kwargs)
         self.widget.attrs["size"] = 15
 
-    def set_users(self, additional_users=[]):
+    def set_users(self, user, additional_users=[]):
         """Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
         the selection box will remain emtpy.  The selection list will consist
         of all currently active users, plus the given additional users if any.
 
         :Parameters:
+          - `user`: Thr user who wants to see the user list
           - `additional_users`: Optional additional users to be included into
             the list.  Typically, it is the current users for the topic whose
             memberships are to be changed.
 
         :type additional_users: iterable of ``django.contrib.auth.models.User``
         """
-        users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                                   chantal_user_details__is_administrative=False))
-        users |= set(additional_users)
-        self.choices = [(user.pk, get_really_full_name(user)) for user in utils.sorted_users(users)]
+        self.choices = []
+        department_ids = json.loads(user.samples_user_details.show_user_from_department)
+        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+            user_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
+                                                                   chantal_user_details__is_administrative=False,
+                                                                   chantal_user_details__department=department))
+            user_from_department |= set([user for user in additional_users if user.chantal_user_details.department == department])
+            self.choices.append((department.name, [(user.pk, get_really_full_name(user))
+                                                  for user in utils.sorted_users(user_from_department)]))
+
         if not self.choices:
             self.choices = (("", 9 * "-"),)
 

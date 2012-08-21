@@ -42,9 +42,11 @@ class NewTopicForm(forms.Form):
     new_topic_name = forms.CharField(label=_("Name of new topic"), max_length=80)
     # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_("confidential"), required=False)
+
     def __init__(self, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
         self.fields["new_topic_name"].widget.attrs["size"] = 40
+
     def clean_new_topic_name(self):
         topic_name = self.cleaned_data["new_topic_name"]
         topic_name = " ".join(topic_name.split())
@@ -73,7 +75,8 @@ def add(request):
         new_topic_form = NewTopicForm(request.POST)
         if new_topic_form.is_valid():
             new_topic = Topic(name=new_topic_form.cleaned_data["new_topic_name"],
-                              confidential=new_topic_form.cleaned_data["confidential"])
+                              confidential=new_topic_form.cleaned_data["confidential"],
+                              department=request.user.chantal_user_details.department)
             new_topic.save()
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
@@ -104,11 +107,11 @@ def list_(request):
     """
     user = request.user
     all_topics = Topic.objects.all()
-    user_topics = user.topics.all()
-    topics = set(topic for topic in all_topics if permissions.has_permission_to_edit_topic(user, topic))
+    user_topics = Topic.objects.filter(department=user.chantal_user_details.department).all()
+    topics = set(topic for topic in user_topics if permissions.has_permission_to_edit_topic(user, topic))
     if not topics:
         raise Http404("Can't find any topic that you can edit.")
-    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"), "topics": topics},
+    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"), "topics": all_topics if user.is_superuser else topics},
                               context_instance=RequestContext(request))
 
 
@@ -122,7 +125,7 @@ class EditTopicForm(forms.Form):
 
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)
-        self.fields["members"].set_users(topic.members.all())
+        self.fields["members"].set_users(user, topic.members.all())
         self.fields["members"].widget.attrs["size"] = 30
         self.fields["confidential"].initial = topic.confidential
         self.user = user

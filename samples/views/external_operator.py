@@ -92,13 +92,13 @@ class EditExternalOperatorForm(forms.ModelForm):
     _ = ugettext_lazy
     contact_persons = form_utils.MultipleUsersField(label=_("Contact persons"))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
         self.external_operator = kwargs.get("instance")
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
-        self.fields["contact_persons"].set_users(self.external_operator.contact_persons.all())
+        self.fields["contact_persons"].set_users(user, self.external_operator.contact_persons.all())
 
     class Meta:
         model = models.ExternalOperator
@@ -124,14 +124,14 @@ def edit(request, external_operator_id):
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
     permissions.assert_can_edit_external_operator(request.user, external_operator)
     if request.method == "POST":
-        external_operator_form = EditExternalOperatorForm(request.POST, instance=external_operator)
+        external_operator_form = EditExternalOperatorForm(request.user, request.POST, instance=external_operator)
         if external_operator_form.is_valid():
             external_operator = external_operator_form.save()
             return utils.successful_response(
                 request,
                 _("The external operator “{operator}” was successfully changed.").format(operator=external_operator.name))
     else:
-        external_operator_form = EditExternalOperatorForm(instance=external_operator)
+        external_operator_form = EditExternalOperatorForm(request.user, instance=external_operator)
     initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=True)
     return render_to_response("samples/edit_external_operator.html",
                               {"title": _("Edit external operator “{operator}”").format(operator=external_operator.name),
