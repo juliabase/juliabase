@@ -16,7 +16,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
-from chantal_common.models import UserDetails, Topic
+from chantal_common.models import UserDetails, Topic, Department
 
 admin.site.register(UserDetails)
 admin.site.register(Topic)
+admin.site.register(Department)
