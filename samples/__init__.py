@@ -160,13 +160,14 @@ is greater than 1:
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, hashlib
+import datetime, hashlib, json
 from django.db.models import signals
 import django.contrib.auth.models
 from . import models as samples_app
 from chantal_common import models as chantal_common_app
 from chantal_common.signals import maintain
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
@@ -233,6 +234,18 @@ def add_user_details(sender, instance, created, **kwargs):
         user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
                                          ContentType.objects.get(app_label="samples", model="sampleseries"),
                                          ContentType.objects.get(app_label="chantal_common", model="topic")]
+
+        try:
+            department = instance.chantal_user_details.department.name
+        except AttributeError:
+            user_details.show_user_from_department = \
+            json.dumps(list(chantal_common_app.Department.objects.filter(name="Extern").values_list("id", flat=True)))
+            user_details.save()
+        else:
+            user_details.show_user_from_department = \
+            json.dumps(list(chantal_common_app.Department.objects.filter(Q(name="Extern") |
+                                                                         Q(name=department)).values_list("id", flat=True)))
+            user_details.save()
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
