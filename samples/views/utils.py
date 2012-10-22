@@ -255,36 +255,6 @@ def convert_id_to_int(process_id):
         raise Http404("Invalid ID: “{id}”".format(id=process_id))
 
 
-# FixMe: Possibly the whole function is superfluous because there is
-# "request.GET".
-def parse_query_string(request):
-    """Parses an URL query string.
-
-    :Parameters:
-      - `request`: the current HTTP request object
-
-    :type request: ``HttpRequest``
-
-    :Return:
-      All found key/value pairs in the query string.  The URL escaping is resolved.
-
-    :rtype: dict mapping unicode to unicode
-    """
-    # FixMe: Use urlparse.parse_qs() for this
-    def decode(string):
-        string = string.replace(b"+", b" ")
-        string = re.sub(b'%(..)', lambda match: chr(int(match.group(1), 16)), string)
-        return string.decode("utf-8")
-    query_string = request.META["QUERY_STRING"] or ""
-    items = [item.split("=", 1) for item in query_string.split("&")]
-    result = []
-    for item in items:
-        if len(item) == 1:
-            item.append("")
-        result.append((decode(item[0]), decode(item[1])))
-    return dict(result)
-
-
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string="", forced=False,
                         json_response=True):
     """After a POST request was successfully processed, there is typically a
@@ -513,10 +483,9 @@ def extract_preset_sample(request):
 
     :rtype: `models.Sample` or ``NoneType``
     """
-    query_string_dict = parse_query_string(request)
-    if "sample" in query_string_dict:
+    if "sample" in request.GET:
         try:
-            return models.Sample.objects.get(name=query_string_dict["sample"])
+            return models.Sample.objects.get(name=request.GET["sample"])
         except models.Sample.DoesNotExist:
             pass
 
@@ -604,7 +573,7 @@ def restricted_samples_query(user):
     is only about the names.  See the `search` view for further information.
     """
     if user.is_staff:
-        return models.Sample.objects.order_by("name").all()
+        return models.Sample.objects.all().order_by("name")
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).order_by("name").distinct()

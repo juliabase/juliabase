@@ -77,49 +77,48 @@ def primary_keys(request):
 
     :rtype: ``HttpResponse``
     """
-    query_dict = utils.parse_query_string(request)
     result_dict = {}
-    if "topics" in query_dict:
+    if "topics" in request.GET:
         all_topics = set(topic for topic in Topic.objects.all()
                          if not topic.confidential or topic in request.user.topics.all() or request.user.is_staff)
-        if query_dict["topics"] == "*":
+        if request.GET["topics"] == "*":
             topics = all_topics
         else:
-            topicnames = query_dict["topics"].split(",")
+            topicnames = request.GET["topics"].split(",")
             topics = set(topic for topic in all_topics if topic.name in topicnames)
         result_dict["topics"] = dict((topic.name, topic.id) for topic in topics)
-    if "samples" in query_dict:
-        if query_dict["samples"] == "*":
+    if "samples" in request.GET:
+        if request.GET["samples"] == "*":
             result_dict["samples"] = dict(request.user.my_samples.values_list("name", "id"))
         else:
-            sample_names = query_dict["samples"].split(",")
+            sample_names = request.GET["samples"].split(",")
             result_dict["samples"] = {}
             for alias, sample_id in models.SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
                 result_dict["samples"].setdefault(alias, []).append(sample_id)
             result_dict["samples"].update(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
-    if "depositions" in query_dict:
-        deposition_numbers = query_dict["depositions"].split(",")
+    if "depositions" in request.GET:
+        deposition_numbers = request.GET["depositions"].split(",")
         result_dict["depositions"] = dict(models.Deposition.objects.
                                           filter(number__in=deposition_numbers).values_list("number", "id"))
-    if "users" in query_dict:
-        if query_dict["users"] == "*":
+    if "users" in request.GET:
+        if request.GET["users"] == "*":
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.values_list("username", "id"))
         else:
-            user_names = query_dict["users"].split(",")
+            user_names = request.GET["users"].split(",")
             # FixMe: Return only *active* users
             result_dict["users"] = dict(django.contrib.auth.models.User.objects.filter(username__in=user_names).
                                         values_list("username", "id"))
-    if "external_operators" in query_dict:
+    if "external_operators" in request.GET:
         if request.user.is_staff:
             all_external_operators = set(models.ExternalOperator.objects.all())
         else:
             all_external_operators = set(external_operator for external_operator in models.ExternalOperator.objects.all()
                                          if not external_operator.confidential or
                                          request.user in external_operator.contact_persons.all())
-        if query_dict["external_operators"] == "*":
+        if request.GET["external_operators"] == "*":
             external_operators = all_external_operators
         else:
-            external_operator_names = query_dict["external_operators"].split(",")
+            external_operator_names = request.GET["external_operators"].split(",")
             external_operators = set(external_operator for external_operator in all_external_operators
                                      if external_operator.name in external_operator_names)
         result_dict["external_operators"] = dict((external_operator.name, external_operator.id)

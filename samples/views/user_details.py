@@ -138,7 +138,7 @@ def edit_preferences(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(request.user, _("You can't access the preferences of another user."))
-    initials_mandatory = utils.parse_query_string(request).get("initials_mandatory") == "True"
+    initials_mandatory = request.GET.get("initials_mandatory") == "True"
     user_details = user.samples_user_details
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
