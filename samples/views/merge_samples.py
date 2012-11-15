@@ -18,6 +18,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _, ugettext_lazy
+from django.db.utils import IntegrityError
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
@@ -114,7 +115,10 @@ def merge_samples(from_sample, to_sample):
     to_sample.series.add(*from_sample.series.all())
     to_aliases = set(alias.name for alias in to_sample.aliases.all())
     to_sample.aliases.add(*(alias for alias in from_sample.aliases.all() if alias.name not in to_aliases))
-    to_sample.aliases.create(name=from_sample.name)
+    try:
+        to_sample.aliases.create(name=from_sample.name)
+    except IntegrityError:
+        pass
     try:
         cleanup_after_merge = get_callable(settings.MERGE_CLEANUP_FUNCTION)
     except (ImportError, AttributeError):
