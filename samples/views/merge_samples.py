@@ -18,7 +18,6 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _, ugettext_lazy
-from django.db.utils import IntegrityError
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
