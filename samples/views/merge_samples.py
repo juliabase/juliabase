@@ -115,10 +115,8 @@ def merge_samples(from_sample, to_sample):
     to_sample.series.add(*from_sample.series.all())
     to_aliases = set(alias.name for alias in to_sample.aliases.all())
     to_sample.aliases.add(*(alias for alias in from_sample.aliases.all() if alias.name not in to_aliases))
-    try:
+    if not to_sample.aliases.filter(name=from_sample.name).exists():
         to_sample.aliases.create(name=from_sample.name)
-    except IntegrityError:
-        pass
     try:
         cleanup_after_merge = get_callable(settings.MERGE_CLEANUP_FUNCTION)
     except (ImportError, AttributeError):
