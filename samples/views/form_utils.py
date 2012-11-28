@@ -672,8 +672,8 @@ def clean_time_field(value):
 
 def clean_timestamp_field(value):
     """General helper function for use in the ``clean_...`` methods in forms.
-    It tests whether the given timestamp is not in the future.  It also works
-    for date fields.
+    It tests whether the given timestamp is not in the future or to far in the past.
+    It also works for date fields.
 
     The test of correct input is performed by the field class itself.
 
@@ -689,7 +689,8 @@ def clean_timestamp_field(value):
     :rtype: datetime.date or datetime.datetime
 
     :Exception:
-        -`ValidationError`: if the specified timestamp lies in the future.
+        -`ValidationError`: if the specified timestamp lies in the future or to
+        far in the past.
     """
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
@@ -698,6 +699,8 @@ def clean_timestamp_field(value):
     else:
         if value > datetime.date.today():
             raise ValidationError(_("The date must not be in the future."))
+    if value.year < 1900:
+        raise ValidationError(_("The year must not be earlier than 1900."))
     return value
 
 
