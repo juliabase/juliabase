@@ -242,7 +242,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
                 raise_inaccessible_exception()
         return filepath
     else:
-        return ""
+        return b""
 
 
 class _AddHelpLink(object):
