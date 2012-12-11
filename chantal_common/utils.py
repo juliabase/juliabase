@@ -211,6 +211,11 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
       - `ValidationError`: if the ``text`` contained forbidden syntax
         elements.
     """
+    # FixMe: This is only necessary as long as we don't have WSGI running
+    # in daemon mode.  Then, Trac (or whatever) seems to set the LANG
+    # environ variable to an invalid value, causing os.stat (which is
+    # called by isdir) to fail.
+    filepath, default_root = smart_str(filepath), smart_str(default_root)
     if filepath:
         def raise_inaccessible_exception():
             raise ValidationError(_("Couldn't open {filename}.").format(filename=filepath))
@@ -222,11 +227,6 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         allowed_roots.add(default_root)
         assert all(os.path.isdir(path) for path in allowed_roots)
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
-        # FixMe: This is only necessary as long as we don't have WSGI running
-        # in daemon mode.  Then, Trac (or whatever) seems to set the LANG
-        # environ variable to an invalid value, causing os.stat (which is
-        # called by isdir) to fail.
-        absolute_filepath = smart_str(absolute_filepath)
         if os.path.isdir(absolute_filepath):
             if not may_be_directory:
                 raise_inaccessible_exception()
