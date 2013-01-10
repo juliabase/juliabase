@@ -123,7 +123,7 @@ def main_menu(request):
          "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
                                 for topic in Topic.objects.all()),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
-         "has_external_contacts": request.user.external_contacts.exists(),
+         "has_external_contacts": request.user.external_contacts.exists() or request.user.is_superuser,
          "physical_processes": allowed_physical_processes,
          "lab_notebooks": lab_notebooks},
         context_instance=RequestContext(request))

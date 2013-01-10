@@ -194,7 +194,10 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
-    external_operators = list(request.user.external_contacts.all())
+    if request.user.is_superuser:
+        external_operators = list(models.ExternalOperator.objects.all())
+    else:
+        external_operators = list(request.user.external_contacts.all())
     if not external_operators:
         raise Http404("You have no external contacts.")
     return render_to_response("samples/list_external_operators.html",
