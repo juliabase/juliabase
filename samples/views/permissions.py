@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from chantal_common.utils import get_really_full_name, get_all_models
 from samples import models, permissions
 from samples.views import utils
+from chantal_common.models import Topic
 
 
 class PhysicalProcess(object):
@@ -293,9 +294,11 @@ def edit(request, username):
             if is_topic_manager_form.cleaned_data["is_topic_manager"]:
                 edited_user.user_permissions.add(PhysicalProcess.topic_manager_permission)
                 edited_user.user_permissions.add(PhysicalProcess.add_external_operators_permission)
+                Topic.objects.get(name="Legacy").members.add(edited_user)
             else:
                 edited_user.user_permissions.remove(PhysicalProcess.topic_manager_permission)
                 edited_user.user_permissions.remove(PhysicalProcess.add_external_operators_permission)
+                Topic.objects.get(name="Legacy").members.remove(edited_user)
             return utils.successful_response(request, _("The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
     else:
