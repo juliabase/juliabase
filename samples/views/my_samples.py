@@ -132,7 +132,8 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                         permissions.assert_can_edit_sample(current_user, sample)
                 except permissions.PermissionError:
                     append_error(action_form,
-                                 _("You must be the currently responsible person for samples you'd like to change."))
+                                 _("""You must be the currently responsible person for samples you'd like to change
+                                  or the topic manager from the samples topics."""))
                     referentially_valid = False
         if action_data["clearance"] is None and action_data["copy_to_user"]:
             try:

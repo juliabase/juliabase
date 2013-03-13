@@ -579,7 +579,9 @@ def assert_can_edit_sample(user, sample):
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit the sample
     """
-    if sample.topic and sample.currently_responsible_person != user and not user.is_superuser:
+    from samples.views.permissions import PhysicalProcess
+    if sample.topic and sample.currently_responsible_person != user and not user.is_superuser and not \
+        (sample.topic in user.topics.all() and PhysicalProcess.topic_manager_permission in user.user_permissions.all()):
         description = _("You are not allowed to edit the sample “{name}” (including splitting and declaring dead) because "
                         "you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
