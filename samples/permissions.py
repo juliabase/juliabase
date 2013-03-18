@@ -421,7 +421,7 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
         the process.
     """
     if process:
-        assert process_class == process.__class__
+        assert process_class == process.actual_instance.__class__
         assert_can_edit_physical_process(user, process)
     else:
         assert_can_add_physical_process(user, process_class)
