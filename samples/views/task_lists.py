@@ -118,7 +118,7 @@ class TaskForm(forms.ModelForm):
                             Q(operator=self.user, content_type=self.task.process_class) |
                             Q(pk=old_finished_process_pk)).filter(finished=True).order_by("-timestamp")[:10]])
             elif old_finished_process_pk:
-                self.fields["finished_process"].append((old_finished_process_pk, self.task.finished_process))
+                self.fields["finished_process"].choices.append((old_finished_process_pk, self.task.finished_process))
         self.fields["comments"].widget.attrs["cols"] = 30
         self.fields["comments"].widget.attrs["rows"] = 5
         for field_name in self.fixed_fields:
