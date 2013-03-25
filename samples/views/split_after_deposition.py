@@ -323,7 +323,7 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
     for new_name_forms, original_data_form in zip(new_name_form_lists, original_data_forms):
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
-            if not deposition == original_sample.processes.exclude(content_type=ContentType.objects.get_for_model(models.Result)) \
+            if deposition != original_sample.processes.exclude(content_type=ContentType.objects.get_for_model(models.Result)) \
                 .order_by("-timestamp")[0].actual_instance and original_data_form.cleaned_data["number_of_pieces"] > 1:
                 append_error(original_data_form,
                      _("The sample can't be split, because the deposition is not the latest process."), "sample")
@@ -462,8 +462,8 @@ def split_and_rename_after_deposition(request, deposition_number):
 
     :rtype: ``HttpResponse``
     """
-    deposition = get_object_or_404(models.Deposition, number=deposition_number)
-    permissions.assert_can_edit_physical_process(request.user, deposition.actual_instance)
+    deposition = get_object_or_404(models.Deposition, number=deposition_number).actual_instance
+    permissions.assert_can_edit_physical_process(request.user, deposition)
     if not deposition.finished:
         raise Http404("This deposition is not finished yet.")
     if deposition.split_done:
