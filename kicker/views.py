@@ -247,10 +247,9 @@ def edit_match(request, id_=None):
         match_result.add_kicker_numbers()
         match_result.add_stock_values()
     else:
-        match.seconds = average_match_duration(player_a_1 == player_a_2)
+        match.seconds = max(1, match.seconds)
         match_result = MatchResult(match)
-    return respond_in_json((match.pk, match_result.estimated_win_team_1 if match.finished else
-                            match_result.expected_goal_difference))
+    return respond_in_json((match.pk, match_result.expected_goal_difference, match_result.estimated_win_team_1))
 
 
 @login_required
