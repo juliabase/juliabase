@@ -668,6 +668,23 @@ def sorted_users(users):
     return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
 
 
+def sorted_users_by_first_name(users):
+    """Return a list of users sorted by first name.  In particular, it sorts
+    case-insensitively.
+
+    :Parameters:
+      - `users`: the users to be sorted; it may also be a ``QuerySet``
+
+    :type users: an iterable of ``django.contrib.auth.models.User``
+
+    :Return:
+      the sorted users
+
+    :rtype: list of ``django.contrib.auth.models.User``
+    """
+    return sorted(users, key=lambda user: user.first_name.lower() if user.first_name else user.username)
+
+
 def table_export(request, data, label_column_heading):
     """Helper function which does almost all work needed for a CSV table
     export view.  This is not a view per se, however, it is called by views,

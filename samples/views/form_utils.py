@@ -345,7 +345,7 @@ class UserField(forms.ChoiceField):
                                                                    chantal_user_details__is_administrative=False))
         if additional_user:
             users.add(additional_user)
-        self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users(users))
+        self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users_by_first_name(users))
 
     def set_users_without(self, excluded_user):
         """Set the user list shown in the widget.  You *must* call this method
@@ -363,7 +363,7 @@ class UserField(forms.ChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         users.discard(excluded_user)
-        self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users(users))
+        self.choices.extend((user.pk, get_really_full_name(user)) for user in utils.sorted_users_by_first_name(users))
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -396,7 +396,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
         users = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False))
         users |= set(additional_users)
-        self.choices = [(user.pk, get_really_full_name(user)) for user in utils.sorted_users(users)]
+        self.choices = [(user.pk, get_really_full_name(user)) for user in utils.sorted_users_by_first_name(users)]
         if not self.choices:
             self.choices = (("", 9 * "-"),)
 
