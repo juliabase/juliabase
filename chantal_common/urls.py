@@ -28,7 +28,7 @@ core views for all Chantal apps.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.conf import settings
 
 urlpatterns = patterns("django.contrib.auth.views",

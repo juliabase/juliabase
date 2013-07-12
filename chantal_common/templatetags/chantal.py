@@ -24,7 +24,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape, escape
 import django.utils.http
-from django.contrib.markup.templatetags import markup
+import markdown
 from django.utils.translation import ugettext as _, pgettext
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
@@ -134,7 +134,7 @@ def markdown(value, margins="default"):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    result = markup.markdown(substitute_formulae(utils.substitute_html_entities(unicode(value))))
+    result = markdown.markdown(substitute_formulae(utils.substitute_html_entities(unicode(value))))
     if result.startswith("<p>"):
         if margins == "collapse":
             result = mark_safe("""<p style="margin: 0pt">""" + result[3:])

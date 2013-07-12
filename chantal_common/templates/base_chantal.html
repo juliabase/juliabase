@@ -39,24 +39,24 @@ copyright holder, you must destroy it immediately and completely.
         {% for translation_flag in translation_flags %}
           <a href="{{ translation_flag.2 }}"
              ><img src="{{ STATIC_URL }}chantal/flags/{{ translation_flag.0 }}.png"
-                   alt="{% blocktrans with translation_flag.1 as language %}switch to {{ language }}{% endblocktrans %}" 
+                   alt="{% blocktrans with translation_flag.1 as language %}switch to {{ language }}{% endblocktrans %}"
                    width="16" height="11"/></a>
         {% endfor %}
       </td>
       <td class="login-data">
         {% if user.is_authenticated %}
-          {% trans 'Welcome,' %} 
+          {% trans 'Welcome,' %}
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
           {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
           <a href="/"
              ><img src="{{ STATIC_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
                    width="16" height="16"/></a>
           <a href="/trac/newticket?reporter={{ user.email|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}chantal/icons/bug_add.png" alt="add-bug icon" 
+               ><img src="{{ STATIC_URL }}chantal/icons/bug_add.png" alt="add-bug icon"
                      title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
           {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
              src="{{ STATIC_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
-          <a href="{% url django.contrib.auth.views.logout %}"
+          <a href="{% url 'django.contrib.auth.views.logout' %}"
              ><img src="{{ STATIC_URL }}chantal/icons/door_open.png" alt="log-out icon" title="{% trans 'Log out' %}"
                    width="16" height="16"/></a>
         {% else %}
@@ -84,8 +84,8 @@ copyright holder, you must destroy it immediately and completely.
     <div class="outer-frame">
       <div class="inner-frame">
         {% block float_image %}{% endblock %}
-	{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
-	{% block frame_content %}{% endblock %}
+    {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+    {% block frame_content %}{% endblock %}
         <div style="clear: both"></div>
       </div>
     </div>
