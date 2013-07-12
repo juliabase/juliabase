@@ -24,7 +24,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endblock %}
 
 {% block frame_content %}
-{% url samples.views.status.show as next_url %}
+{% url 'samples.views.status.show' as next_url %}
 {% if status_messages %}
   <table class="padding" border="1">
      <thead>
@@ -60,7 +60,7 @@ copyright holder, you must destroy it immediately and completely.
               <td>{{ status_message.timestamp }}
                 {% if user == status_message.operator %}
                   <form method="post" 
-             action="{% url samples.views.status.withdraw id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
+             action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
                         style="display: inline">
                     <input type="image" src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="{% trans 'cancel' %}"
                            title="{% trans 'withdraw this status message for all processes' %}"/>
@@ -75,9 +75,9 @@ copyright holder, you must destroy it immediately and completely.
   <p>{% trans 'There are no current status messages.' %}</p>
 {% endif %}
 
-<p><a href="{% url samples.views.status.add %}?next={{ next_url|urlquote_plus }}" style="margin-right: 3em"
+<p><a href="{% url 'samples.views.status.add' %}?next={{ next_url|urlquote_plus }}" style="margin-right: 3em"
       >{% trans 'Add a status message' %}</a>
-<a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}?next={{ next_url|urlquote_plus }}"
+<a href="{% url 'samples.views.user_details.edit_preferences' login_name=user.username %}?next={{ next_url|urlquote_plus }}"
    >{% trans 'Subscribe to status messages' %}</a></p>
 
 
@@ -121,7 +121,7 @@ copyright holder, you must destroy it immediately and completely.
                 <td>{{ status_message.timestamp }}
                   {% if user == status_message.operator %}
                     <form method="post" 
-              action="{% url samples.views.status.withdraw id_=status_message.id %}?next={% url samples.views.status.show %}"
+              action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={% url 'samples.views.status.show' %}"
                           style="display: inline">
                       <input type="image" src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="{% trans 'cancel' %}"
                              title="{% trans 'withdraw this status message for all processes' %}"/>

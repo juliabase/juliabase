@@ -27,7 +27,7 @@ import django.utils.http
 import django.core.urlresolvers
 import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.contrib.markup.templatetags import markup
+import markdown
 from django.conf import settings
 import chantal_common.utils
 import chantal_common.templatetags.chantal
@@ -331,7 +331,7 @@ def markdown_samples(value, margins="default"):
         else:
             result += value[position:]
             break
-    result = markup.markdown(result)
+    result = markdown.markdown(result)
     if result.startswith("<p>"):
         if margins == "collapse":
             result = mark_safe("""<p style="margin: 0pt">""" + result[3:])

@@ -19,7 +19,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block local_scripts %}
 <script type="text/javascript">
 // <![CDATA[
-$(function() { chantal.request("{% url samples.views.json_client.get_folded_main_menu_elements %}",
+$(function() { chantal.request("{% url 'samples.views.json_client.get_folded_main_menu_elements' %}",
                                function(data) { for (var i=0; i < data[0].length; i++)
                                                     $("#topic-" + data[0][i]).hide();
                                                 for (var i=0; i < data[1].length; i++)
@@ -33,7 +33,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
                                       } else {
                                         var target = "#sample-series-";
                                       }
-                                      chantal.request("{% url samples.views.json_client.fold_main_menu_element %}",
+                                      chantal.request("{% url 'samples.views.json_client.fold_main_menu_element' %}",
                                                      function(data) { if (data) {
                                                                         $(target + id).hide("fast");
                                                                       } else {
@@ -51,7 +51,7 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
   {% if topicless_samples or my_topics %}
     <div class="my-samples">
       <h2>{% trans 'My Samples' %}<a class="edit-icon"
-                             href="{% url samples.views.my_samples.edit username=user.username %}"
+                             href="{% url 'samples.views.my_samples.edit' username=user.username %}"
                              ><img src="{{ STATIC_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
                                    width="16" height="16"/></a></h2>
 
@@ -108,9 +108,9 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/ruby_add.png")'>
       <a href="{{ add_sample_url }}">{% trans 'Samples' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/chart_organisation_add.png")'>
-      <a href="{% url samples.views.sample_series.new %}">{% trans 'Sample series' %}</a></li>
+      <a href="{% url 'samples.views.sample_series.new' %}">{% trans 'Sample series' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/lightbulb_add.png")'>
-      <a href="{% url add_result %}">{% trans 'Result' %}</a></li>
+      <a href="{% url 'add_result' %}">{% trans 'Result' %}</a></li>
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
@@ -118,9 +118,9 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
 
   <h2>{% trans 'Search for things' %}</h2>
   <ul style='list-style-image: url("{{ STATIC_URL }}chantal/icons/find.png")'>
-    <li><a href="{% url samples.views.sample.advanced_search %}">{% trans 'Advanced search' %}</a></li>
-    <li><a href="{% url samples.views.sample.search %}">{% trans 'Samples by name' %}</a></li>
-    <li><a href="{% url samples.views.main.deposition_search %}">{% trans 'Depositions by number' %}</a></li>
+    <li><a href="{% url 'samples.views.sample.advanced_search' %}">{% trans 'Advanced search' %}</a></li>
+    <li><a href="{% url 'samples.views.sample.search' %}">{% trans 'Samples by name' %}</a></li>
+    <li><a href="{% url 'samples.views.main.deposition_search' %}">{% trans 'Depositions by number' %}</a></li>
   </ul>
 
   {% if lab_notebooks %}
@@ -139,11 +139,11 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
     <ul>
       {% if can_add_topic %}
         <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/group_add.png")'>
-          <a href="{% url samples.views.topic.add %}">{% trans 'Add new topic' %}</a></li>
+          <a href="{% url 'samples.views.topic.add' %}">{% trans 'Add new topic' %}</a></li>
       {% endif %}
       {% if can_edit_topics %}
         <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/group_gear.png")'>
-          <a href="{% url samples.views.topic.list_ %}">{% trans 'Change topic memberships' %}</a></li>
+          <a href="{% url 'samples.views.topic.list_' %}">{% trans 'Change topic memberships' %}</a></li>
       {% endif %}
     </ul>
   {% endif %}
@@ -153,10 +153,10 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
 
     <ul style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_gray.png")'>
       {% if can_add_external_operator %}
-        <li><a href="{% url samples.views.external_operator.new %}">{% trans 'Add external operator' %}</a></li>
+        <li><a href="{% url 'samples.views.external_operator.new' %}">{% trans 'Add external operator' %}</a></li>
       {% endif %}
       {% if has_external_contacts %}
-        <li><a href="{% url samples.views.external_operator.list_ %}">{% trans 'Edit external operator' %}</a></li>
+        <li><a href="{% url 'samples.views.external_operator.list_' %}">{% trans 'Edit external operator' %}</a></li>
       {% endif %}
     </ul>
   {% endif %}
@@ -167,37 +167,37 @@ $(function() { chantal.request("{% url samples.views.json_client.get_folded_main
       <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
     {% endif %}
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/table.png")'>
-     <a href="{% url samples.views.status.show %}"
+     <a href="{% url 'samples.views.status.show' %}"
          >{% trans 'Status messages' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_edit.png")'>
-      <a href="{% url samples.views.user_details.edit_preferences login_name=user.username %}"
+      <a href="{% url 'samples.views.user_details.edit_preferences' login_name=user.username %}"
          >{% trans 'Edit preferences' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/key.png")'>
-      <a href="{% url samples.views.user_details.topics_and_permissions login_name=user.username %}"
+      <a href="{% url 'samples.views.user_details.topics_and_permissions' login_name=user.username %}"
          >{% trans 'My topics and permissions' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/webcam.png")'>
-      <a href="{% url samples.views.permissions.list_ %}"
+      <a href="{% url 'samples.views.permissions.list_' %}"
          >{% trans "Permissions to processes" %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/shape_square_edit.png")'>
-      <a href="{% url samples.views.my_layers.edit login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
+      <a href="{% url 'samples.views.my_layers.edit' login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/arrow_merge.png")'>
-      <a href="{% url samples.views.merge_samples.merge %}">{% trans 'Merge samples' %}</a></li>
+      <a href="{% url 'samples.views.merge_samples.merge' %}">{% trans 'Merge samples' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/layout.png")'>
-      <a href="{% url samples.views.task_lists.show %}">{% trans 'Task lists' %}</a></li>
+      <a href="{% url 'samples.views.task_lists.show' %}">{% trans 'Task lists' %}</a></li>
     {% if user.has_usable_password %}
       <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/lock_edit.png")'>
-        <a href="{% url django.contrib.auth.views.password_change %}">{% trans 'Change password' %}</a></li>
+        <a href="{% url 'django.contrib.auth.views.password_change' %}">{% trans 'Change password' %}</a></li>
     {% endif %}
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/feed.png")'>
-      <a href="{% url samples.views.feed.show username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
+      <a href="{% url 'samples.views.feed.show' username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/flag_blue.png")'>
-      <a href="{% url samples.views.claim.list_ username=user.username %}">{% trans 'Sample claims' %}</a></li>
+      <a href="{% url 'samples.views.claim.list_' username=user.username %}">{% trans 'Sample claims' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/exclamation.png")'>
-      <a href="{% url samples.views.log_viewer.list %}">{% trans 'Inspect crawler logs' %}</a></li>
+      <a href="{% url 'samples.views.log_viewer.list' %}">{% trans 'Inspect crawler logs' %}</a></li>
     <!-- FixMe: These menu items must not be links from here but from another menue page. -->
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/server_lightning.png")'>
-      <a href="{% url chantal_ipv.views.statistics.about %}">{% trans 'About Chantal' %}</a></li>
+      <a href="{% url 'chantal_ipv.views.statistics.about' %}">{% trans 'About Chantal' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/server_chart.png")'>
-      <a href="{% url chantal_ipv.views.statistics.statistics %}">{% trans 'Server statistics' %}</a></li>
+      <a href="{% url 'chantal_ipv.views.statistics.statistics' %}">{% trans 'Server statistics' %}</a></li>
   </ul>
 {% endblock %}

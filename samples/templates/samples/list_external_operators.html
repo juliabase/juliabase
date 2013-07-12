@@ -16,7 +16,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
   <ul>
     {% for external_operator in external_operators %}
-      <li><a href="{% url samples.views.external_operator.edit external_operator_id=external_operator.pk %}"
+      <li><a href="{% url 'samples.views.external_operator.edit' external_operator_id=external_operator.pk %}"
              >{{ external_operator }}</a></li>
     {% endfor %}
   </ul>

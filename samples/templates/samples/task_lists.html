@@ -18,12 +18,12 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-{% url samples.views.task_lists.show as next_url %}
+{% url 'samples.views.task_lists.show' as next_url %}
 {% for process_class, task_list in task_lists.iteritems %}
   {% spaceless %}
     <h2>{{ process_class|contenttype_name|capfirst }}<a
        class="edit-icon"
-       href="{% url samples.views.task_lists.edit %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
+       href="{% url 'samples.views.task_lists.edit' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
         <img src="{{ STATIC_URL }}chantal/icons/layout_add.png" alt="add icon" title="{% trans 'Add task' %}"
              width="16" height="16"/></a></h2>
   {% endspaceless %}
@@ -40,13 +40,13 @@ copyright holder, you must destroy it immediately and completely.
       <div style="float: right" class="screen-only">
       {% if task.user_can_edit %}
         <a class="edit-icon"
-           href="{% url samples.views.task_lists.edit task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}">
+           href="{% url 'samples.views.task_lists.edit' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}">
            <img src="{{ STATIC_URL }}chantal/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
            width="16" height="16"/></a>
       {% endif %}
       {% if task.user_can_delete %}
         <form method="post"
-              action="{% url samples.views.task_lists.remove task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}"
+              action="{% url 'samples.views.task_lists.remove' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}"
               style="display: inline">
           <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
                  title="{% trans 'remove task' %}"/>
