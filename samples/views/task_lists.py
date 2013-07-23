@@ -174,7 +174,7 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        exclude = ("samples")
+        exclude = ("samples",)
 
 
 class ChooseTaskListsForm(forms.Form):
