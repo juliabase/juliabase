@@ -334,8 +334,8 @@ def markdown_samples(value, margins="default"):
     result = markdown.markdown(result)
     if result.startswith("<p>"):
         if margins == "collapse":
-            result = mark_safe("""<p style="margin: 0pt">""" + result[3:])
-    return result
+            result = """<p style="margin: 0pt">""" + result[3:]
+    return mark_safe(result)
 
 
 @register.filter
