@@ -220,7 +220,7 @@ def edit_match(request, id_=None):
         player_b_1 = match.player_b_1
         player_b_2 = match.player_b_2
     try:
-        if models.Match.objects.latest("timestamp").timestamp >= timestamp:
+        if models.Match.objects.latest("timestamp").timestamp - datetime.timedelta(seconds=10) >= timestamp:
             raise JSONRequestException(3002, "This game is not the most recent one.")
     except models.Match.DoesNotExist:
         pass
