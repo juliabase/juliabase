@@ -576,8 +576,8 @@ class Sample(models.Model):
         verbose_name_plural = _("samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples")),
-                       ("adopt_samples", _("Can adopt samples")))
+        permissions = (("view_all_samples", _("Can view all samples from his/her department")),
+                       ("adopt_samples", _("Can adopt samples from his/her department")))
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
@@ -1414,21 +1414,19 @@ class UserDetails(models.Model):
     """
     subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users",
                                               verbose_name=_("subscribed newsfeeds"), blank=True)
-
     default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
                                               verbose_name=_("folded processes"), blank=True)
-
     folded_processes = models.TextField(_("folded processes"), blank=True, help_text=_("in JSON format"),
                                         default="{}")
-
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
                                                 verbose_name=_("visible task lists"), blank=True)
-
     folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
-
     folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
+    show_user_from_department = models.TextField(_("show user from department"), blank=True, help_text=_("in JSON format"),
+                                     default="[]")
+
 
     class Meta:
         verbose_name = _("user details")

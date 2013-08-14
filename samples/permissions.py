@@ -169,7 +169,7 @@ def get_all_addable_physical_process_models():
                 except (NotImplementedError, AttributeError):
                     continue
                 all_addable_physical_process_models[process_class] = {
-                    "url": process_class.get_add_link(), "label": process_class._meta.verbose_name,
+                    "url": url, "label": process_class._meta.verbose_name,
                     "label_plural": process_class._meta.verbose_name_plural, "type": process_class.__name__}
     return all_addable_physical_process_models
 
@@ -281,9 +281,17 @@ def assert_can_fully_view_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
+    if not sample.topic and currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department \
+        and not user.is_superuser:
+        description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
+        raise PermissionError(user, description, new_topic_would_help=True)
     if sample.topic and sample.topic not in user.topics.all() and currently_responsible_person != user and \
             not user.is_superuser:
-        if sample.topic.confidential:
+        if currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department:
+            description = _("You are not allowed to view the sample since you are not in the sample's topic, nor belongs the "
+                            "sample to your department.")
+            raise PermissionError(user, description, new_topic_would_help=True)
+        elif sample.topic.confidential:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name})."). \
                             format(name=chantal_common_utils.get_really_full_name(currently_responsible_person))
@@ -580,7 +588,12 @@ def assert_can_edit_sample(user, sample):
       - `PermissionError`: raised if the user is not allowed to edit the sample
     """
     from samples.views.permissions import PhysicalProcess
-    if sample.topic and sample.currently_responsible_person != user and not user.is_superuser and not \
+    currently_responsible_person = sample.currently_responsible_person
+    if not sample.topic and currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department \
+        and not user.is_superuser:
+        description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
+        raise PermissionError(user, description, new_topic_would_help=True)
+    if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
         (sample.topic in user.topics.all() and PhysicalProcess.topic_manager_permission in user.user_permissions.all()):
         description = _("You are not allowed to edit the sample “{name}” (including splitting and declaring dead) because "
                         "you are not the currently responsible person for this sample.").format(name=sample)

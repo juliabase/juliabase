@@ -36,7 +36,7 @@ from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
 from chantal_common import utils as chantal_common_utils
-from chantal_common.models import Topic
+from chantal_common.models import Topic, Department
 
 
 @login_required
@@ -71,6 +71,7 @@ class UserDetailsForm(forms.ModelForm):
     _ = ugettext_lazy
     subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_("subscribed newsfeeds")), required=False)
     default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
+    show_user_from_department = forms.MultipleChoiceField(label=capfirst(_("show user from department")), required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
@@ -83,6 +84,9 @@ class UserDetailsForm(forms.ModelForm):
         self.fields["subscribed_feeds"].choices = form_utils.choices_of_content_types(
             list(get_all_addable_physical_process_models()) + [models.Sample, models.SampleSeries, Topic])
         self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
+        self.fields["show_user_from_department"].choices = [(department.pk, department.name)
+                                                            for department in Department.objects.iterator()]
+        self.fields["show_user_from_department"].initial = (json.loads(user.samples_user_details.show_user_from_department))
 
     class Meta:
         model = models.UserDetails
@@ -145,7 +149,9 @@ def edit_preferences(request, login_name):
         initials_form = form_utils.InitialsForm(user, initials_mandatory, request.POST)
         if user_details_form.is_valid() and initials_form.is_valid():
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
-            user_details_form.save()
+            user_details = user_details_form.save(commit=False)
+            user_details.show_user_from_department = json.dumps(user_details_form.cleaned_data["show_user_from_department"])
+            user_details.save()
             initials_form.save()
             return utils.successful_response(request, _("The preferences were successfully updated."))
     else:

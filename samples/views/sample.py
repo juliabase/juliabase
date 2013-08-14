@@ -66,7 +66,7 @@ class SampleForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
         self.fields["topic"].set_topics(user, kwargs["instance"].topic if kwargs.get("instance") else None)
-        self.fields["currently_responsible_person"].set_users(
+        self.fields["currently_responsible_person"].set_users(user,
             kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
 
     class Meta:
