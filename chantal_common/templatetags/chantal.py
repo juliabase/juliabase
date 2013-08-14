@@ -138,7 +138,7 @@ def markdown(value, margins="default"):
     if result.startswith("<p>"):
         if margins == "collapse":
             result = mark_safe("""<p style="margin: 0pt">""" + result[3:])
-    return result
+    return mark_safe(result)
 
 
 @register.simple_tag
