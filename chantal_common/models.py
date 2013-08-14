@@ -26,6 +26,23 @@ from django.utils.translation import ugettext_lazy as _
 import chantal_common.search
 
 
+class Department(models.Model):
+    """Model to determine which process belongs to which department.
+    Each department has its own processes, so users should only be
+    able to see the processes of their department.
+    """
+    name = models.CharField(_("name"), max_length=30, unique=True)
+    processes = models.ManyToManyField(ContentType, blank=True, verbose_name="processes",
+                                       related_name="department")
+
+    class Meta:
+        verbose_name = _("department")
+        verbose_name_plural = _("departments")
+
+    def __unicode__(self):
+        return self.name
+
+
 languages = (
     ("en", "English"),
     ("de", "Deutsch"),
@@ -40,7 +57,8 @@ class UserDetails(models.Model):
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
                                 related_name="chantal_user_details")
-    department = models.CharField(_("department"), max_length=30, blank=True)
+    department = models.ForeignKey(Department, null=True, blank=True, verbose_name=_("department"),
+                                   related_name="user details")
     language = models.CharField(_("language"), max_length=10, choices=languages, default="de")
     browser_system = models.CharField(_("operating system"), max_length=10, default="windows")
     layout_last_modified = models.DateTimeField(_("layout last modified"), auto_now_add=True)
@@ -95,14 +113,16 @@ class Topic(models.Model):
     topics (in order to make non-disclosure agreements with external partners
     possible).
     """
-    name = models.CharField(_("name"), max_length=80, unique=True)
+    name = models.CharField(_("name"), max_length=80)
     members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_("members"),
                                      related_name="topics")
     confidential = models.BooleanField(_("confidential"), default=False)
+    department = models.ForeignKey(Department, verbose_name=_("department"), related_name="topic")
 
     class Meta:
         verbose_name = _("topic")
         verbose_name_plural = _("topics")
+        unique_together = ("name", "department")
         _ = lambda x: x
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
