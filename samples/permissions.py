@@ -281,6 +281,10 @@ def assert_can_fully_view_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
+    if not sample.topic and currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department \
+        and not user.is_superuser:
+        description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
+        raise PermissionError(user, description, new_topic_would_help=True)
     if sample.topic and sample.topic not in user.topics.all() and currently_responsible_person != user and \
             not user.is_superuser:
         if currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department:
@@ -583,7 +587,12 @@ def assert_can_edit_sample(user, sample):
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit the sample
     """
-    if sample.topic and sample.currently_responsible_person != user and not user.is_superuser:
+    currently_responsible_person = sample.currently_responsible_person
+    if not sample.topic and currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department \
+        and not user.is_superuser:
+        description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
+        raise PermissionError(user, description, new_topic_would_help=True)
+    if sample.topic and currently_responsible_person != user and not user.is_superuser:
         description = _("You are not allowed to edit the sample “{name}” (including splitting and declaring dead) because "
                         "you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
