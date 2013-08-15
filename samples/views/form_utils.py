@@ -350,7 +350,7 @@ class UserField(forms.ChoiceField):
             if additional_user and additional_user.chantal_user_details.department == department:
                 user_from_department.add(additional_user)
             self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users(user_from_department)]))
+                                                  for user in utils.sorted_users_by_first_name(user_from_department)]))
 
 
     def set_users_without(self, user, excluded_user):
@@ -375,7 +375,7 @@ class UserField(forms.ChoiceField):
             if excluded_user.chantal_user_details.department == department:
                 user_from_department.discard(excluded_user)
             self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users(user_from_department)]))
+                                                  for user in utils.sorted_users_by_first_name(user_from_department)]))
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -414,7 +414,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
                                                                    chantal_user_details__department=department))
             user_from_department |= set([user for user in additional_users if user.chantal_user_details.department == department])
             self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users(user_from_department)]))
+                                                  for user in utils.sorted_users_by_first_name(user_from_department)]))
 
         if not self.choices:
             self.choices = (("", 9 * "-"),)
@@ -449,12 +449,16 @@ class TopicField(forms.ChoiceField):
         :type additional_topic: ``chantal_common.models.Topic``
         """
         self.choices = [("", 9 * "-")]
-        all_topics = Topic.objects.filter(members__is_active=True).distinct()
-        user_topics = user.topics.all()
-        topics = \
-            set(topic for topic in all_topics if not topic.confidential or topic in user_topics)
-        if additional_topic:
-            topics.add(additional_topic)
+        if not user.is_superuser:
+            all_topics = Topic.objects.filter(members__is_active=True). \
+            filter(members__chantal_user_details__department=user.chantal_user_details.department).distinct()
+            user_topics = user.topics.all()
+            topics = \
+                set(topic for topic in all_topics if not topic.confidential or topic in user_topics)
+            if additional_topic:
+                topics.add(additional_topic)
+        else:
+            topics = set(topic for topic in Topic.objects.iterator())
         topics = sorted(topics, key=lambda topic: topic.name.lower())
         self.choices.extend((topic.pk, unicode(topic)) for topic in topics)
 
