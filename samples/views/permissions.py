@@ -145,7 +145,7 @@ class UserListForm(forms.Form):
         self.fields["selected_user"].set_users(user)
 
 
-def get_physical_processes():
+def get_physical_processes(user):
     """Return a list with all registered physical processes.  Their type is of
     `PhysicalProcess`, which means that they contain information about the
     users who have permissions for that process.
@@ -155,7 +155,11 @@ def get_physical_processes():
 
     :rtype: list of `PhysicalProcess`
     """
-    all_physical_processes = [PhysicalProcess(process) for process in utils.get_physical_processes()]
+    if user.is_superuser:
+        all_physical_processes = [PhysicalProcess(process) for process in utils.get_physical_processes()]
+    else:
+        all_physical_processes = [PhysicalProcess(process) for process
+                                  in utils.get_physical_processes(user.chantal_user_details.department.name)]
     return all_physical_processes
 
 @login_required
@@ -183,8 +187,8 @@ def list_(request):
 
     :rtype: ``HttpResponse``
     """
-    physical_processes = get_physical_processes()
     user = request.user
+    physical_processes = get_physical_processes(user)
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
         any(user in process.permission_editors for process in physical_processes)
     if can_edit_permissions:
@@ -279,7 +283,7 @@ def edit(request, username):
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
     can_appoint_topic_managers = user.has_perm("chantal_common.can_edit_all_topics")
-    physical_processes = get_physical_processes()
+    physical_processes = get_physical_processes(user)
     permissions_list = []
     for process in physical_processes:
         if process.add_permission or process.view_all_permission or process.edit_all_permission or \

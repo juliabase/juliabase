@@ -21,6 +21,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 from __future__ import absolute_import, unicode_literals
 
 from chantal_common import mimeparse
+from chantal_common.models import Department
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
@@ -29,6 +30,7 @@ from django.shortcuts import render_to_response
 from django.template import Context, RequestContext
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 from functools import update_wrapper
 from samples import models, permissions
 from samples.views.shared_utils import *
@@ -552,8 +554,14 @@ def digest_process(process, user, local_context={}):
     return process_context
 
 
-def get_physical_processes():
+def get_physical_processes(department=""):
     """Return a list with all registered physical processes, sorted by their name.
+    The processes can be filtered with the related department.
+
+    :Parameters:
+     - `department`: the related department from the processes
+
+    :type department: str
 
     :Return:
       all physical processes
@@ -562,6 +570,15 @@ def get_physical_processes():
     """
     all_physical_processes = [process for process in chantal_common.utils.get_all_models().itervalues()
                               if issubclass(process, models.PhysicalProcess)]
+    if department:
+        try:
+            department_processes = Department.objects.get(name=department).processes.all()
+        except Department.DoesNotExist:
+            all_physical_processes = []
+        else:
+            all_physical_processes = [process for process in all_physical_processes
+                                      if ContentType.objects.get_for_model(process)
+                                      in department_processes]
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
     return all_physical_processes
 

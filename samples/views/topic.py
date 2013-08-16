@@ -111,7 +111,8 @@ def list_(request):
     topics = set(topic for topic in user_topics if permissions.has_permission_to_edit_topic(user, topic))
     if not topics:
         raise Http404("Can't find any topic that you can edit.")
-    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"), "topics": all_topics if user.is_superuser else topics},
+    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"),
+                                                           "topics": all_topics if user.is_superuser else topics},
                               context_instance=RequestContext(request))
 
 
