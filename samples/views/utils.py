@@ -569,7 +569,8 @@ def get_physical_processes(department=""):
     :rtype: sorted list of `models.PhysicalProcess`
     """
     all_physical_processes = [process for process in chantal_common.utils.get_all_models().itervalues()
-                              if issubclass(process, models.PhysicalProcess)]
+                              if issubclass(process, models.PhysicalProcess) and not process._meta.abstract == True
+                              and not process == models.Deposition]
     if department:
         try:
             department_processes = Department.objects.get(name=department).processes.all()
