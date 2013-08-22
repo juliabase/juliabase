@@ -93,6 +93,8 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 axes.grid(True)
                 axes.set_title(unicode(process))
                 process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
+                # FixMe: Activate this line with Matplotlib 1.1.0.
+#                figure.tight_layout()
                 chantal_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
