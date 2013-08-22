@@ -42,34 +42,40 @@
 
 # chantal_common
 
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {name: IEK-5}
+  model: chantal_common.department
+  pk: 1
+- fields: {browser_system: windows, department: 1, is_administrative: true, language: en, layout_last_modified: "1970-01-01 00:00:00"}
   model: chantal_common.userdetails
   pk: 1
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, department: 1, is_administrative: true, language: en, layout_last_modified: "1970-01-01 00:00:00"}
   model: chantal_common.userdetails
   pk: 2
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, department: 1, is_administrative: true, language: en, layout_last_modified: "1970-01-01 00:00:00"}
   model: chantal_common.userdetails
   pk: 3
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, department: 1, is_administrative: true, language: en, layout_last_modified: "1970-01-01 00:00:00"}
   model: chantal_common.userdetails
   pk: 4
 - fields:
     confidential: false
     members: []
     name: Legacy
+    department: 1
   model: chantal_common.topic
   pk: 1
 - fields:
     confidential: true
     members: [3]
     name: restricted topic
+    department: 1
   model: chantal_common.topic
   pk: 2
 - fields:
     confidential: false
     members: [3]
     name: non-restricted topic
+    department: 1
   model: chantal_common.topic
   pk: 3
 
