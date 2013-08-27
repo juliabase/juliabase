@@ -2,7 +2,7 @@
 ..
 .. This file is part of Chantal, the samples database.
 ..
-.. Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+.. Copyright (C) 2010, 2012 Forschungszentrum Jülich, Germany,
 ..                    Marvin Goblet <m.goblet@fz-juelich.de>,
 ..                    Torsten Bronger <t.bronger@fz-juelich.de>
 ..
@@ -51,63 +51,299 @@ Note that in code which is executed at module load time (e.g. model and form
 fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
 methods which are executed on each request, it should be ``ugettext``.
 
+Creating a new Django app
+=============================
 
-.. note::
+Let us assume your institute or department is called “Institute of New
+Materials”, abbreviated “INM”.  You will then create a Django app called
+``chantal_inm``.
 
-   I skip all docstrings in the code examples in this document because
-   otherwise, the examples would be too bloated.  However, write rich
-   Docstrings for all non-trivial functions and methods.  Write them in `ReST
-   format`_.  Sometimes, you can copy-and-paste the docstring with slight
-   modifications.
-
-.. _`ReST format`: http://epydoc.sourceforge.net/manual-othermarkup.html
-
-
-Writing a deposition module
+Adding a new process module
 =================================
 
-I will show how to write a module for a deposition system by creating an
-example module step-by-step.  In this case, I show how I write the module for
-the small (old) cluster tool in the IEF-5.
+So you want to add a new measurement device or manufacturing process to your
+Chantal installation.  You do so by adding new models, views, URLs, and
+possibly an electronic lab notebook to your app “chantal_inm”.
 
+I will show how to do that step-by-step.  In this example case, we write the
+module for layer thickness measurements.
 
 Overview
 ------------
 
-The following steps are necessary for creating a deposition module:
+The following steps are necessary for creating a process module:
 
-1. Create models in ``samples/models_depositions.py``.
+1. Create a database model in ``chantal_inm/models.py``.
 
 2. Create links in ``urls.py``.
 
-3. Create a view module in ``samples/views/``.  This is called *the* deposition
+3. Create a view module in ``samples/views/``.  This is called *the* process
    module.
 
 4. Fill the view module with an “edit” and a “show” function.
 
 5. Create an “edit” and a “show” template in ``templates/``.
 
-6. Create support for the new deposition system in the Remote Client.
+6. Create support for the new process in the Remote Client.
 
-7. Import legacy data.
+7. Create an electronic lab notebook.
+
+8. Import legacy data.
+
+In general, you will not do all of this from scratch.  Instead, you will
+copy-and-paste from an already existing process which is as similar to the new
+one as possible.  There are so many processes already existing in Chantal that
+this makes creating a new one relatively simple.
 
 
 Creating the database models
 -----------------------------------
 
 A “database model” or simply a “model” is a class in the Python code which
-represents a table in the database.  A deposition system typically needs two
-models: One for the deposition data and one for the layer data.  The layer data
-will carry much more fields than the deposition, and it will contain a pointer
-to the deposition it belongs to.  This way, deposition and layers are kept
-together.  This pointer is represented by a “foreign key” field.
+represents a table in the database.  It defines which things need to be stored
+for every thickness measurement.  Since a model is a very Django-specific
+construction, see the `Django model documentation`_ for the details.
+
+.. _`Django model documentation`: https://docs.djangoproject.com/en/dev/topics/db/models/
+
+Let us assume that your thickness measurements need two fields: The measured
+thickness and the method that was used to measure the thickness.  For the
+method, you want to give the user the choice between five pre-set methods.
+
+Thus, add the following code to your ``models.py``::
+
+    methode_choices=((u"profilers&edge", _(u"profilers + edge")),
+		     (u"ellipsometer", _(u"ellipsometer")),
+		     (u"calculated", _(u"calculated from deposition parameters")),
+		     (u"estimate", _(u"estimate")),
+		     (u"other", _(u"other")))
+
+    class ThicknessMeasurement(PhysicalProcess):
+        thickness = models.DecimalField(_(u"layer thickness"), max_digits=6,
+                                        decimal_places=2, help_text=_(u"in nm"))
+        method = models.CharField(_(u"measurement method"), max_length=30, 
+                                  choices=methode_choices, default="profilers&edge")
+
+The first part defines the five choices – note that it defines pairs of
+strings, namely the internal name, which will be written to the hard disk, and
+the descriptive name, which will be shown to the user.  The descriptive name is
+enclosed by ``_(...)`` to make it translatable to various languages.
+
+Try to be as restrictive as is sensible when defining your models.  In
+particular, mark only those fields as optional that are really optional, set
+minimal and maximal values for numeric fields where applicable, and restrict
+the number of digits for decimal fields.  This not only forces users to enter
+plausible values, it also helps debugging.
+
+Schema migration
+................
+
+After you add (or change) database models, you must to a so-called schema
+migration.  This means that the tables in the database PostgreSQL are actually
+changed, so that Django can use this new structure (a.k.a. schema).  If you
+don't do that, your database will not get corrupted, however, Chantal won't
+work either.
+
+It is a good idea to test a schema migration first on a test server.
+
+A schema migration is done using `south`_.  If south is properly installed, it
+has to be called once to make a snapshot of the current models.  After you have
+added new models or fields, you call south again to do the migration in the
+database.  Then, Django and PostgreSQL are in synch again.  Please have a look
+at the south homepage for the details.  Every schema migration is slightly
+thrilling because if it goes wrong, it may be a lot of work to fix it; however,
+in my experience, south just works like a charm.
+
+.. _`south`: http://south.aeracode.org/
+
+Creating the URLs
+---------------------
+
+The following work is done in ``urls.py``.  This step is fairly simple.  You
+just have to copy-n-paste the URLs from an apparatus which is sufficiently
+closely retated to yours and substitute the names.  For the thickness
+measurement, we get::
+
+    url(r"^layer_thickness/add/$", "layer_thickness.edit", {"process_id": None}, "add_layer_thickness"),
+    url(r"^layer_thickness/(?P<process_id>.+)/edit/$", "layer_thickness.edit",
+	name="edit_layer_thickness"),
+
+You also want to provide a lab notebook, so we append::
+
+    url(r"^layer_thickness/lab_notebook/(?P<year_and_month>.*)/export/",
+	"samples.views.lab_notebook.export", {"process_name": "LayerThicknessMeasurement"},
+	"export_lab_notebook_LayerThicknessMeasurement"),
+    url(r"^layer_thickness/lab_notebook/(?P<year_and_month>.*)",
+	"samples.views.lab_notebook.show", {"process_name": "LayerThicknessMeasurement"},
+	"lab_notebook_LayerThicknessMeasurement"),
+
+
+Creating the views
+---------------------
+
+Take another view module as a guide for the new one.
+
+Try to keep the imports at the top of the file minimal.  It's best to start
+with an empty imports list and add them as needed.
+
+
+The forms
+.........
+
+In contrast to non-cluster-tool modules, I need to add a custom
+``AddMyLayerForm`` class because adding a new layer is different from other
+deposition systems since you have to give the *type* of the new layer.  Thus::
+
+    new_layer_choices = (
+	("hotwire", _(u"hotwire")),
+	("PECVD", _(u"PECVD")),
+	("none", _(u"none")),
+	)
+
+    class AddLayersForm(forms.Form):
+	_ = ugettext_lazy
+	layer_to_be_added = forms.ChoiceField(
+                label=_(u"Layer to be added"), required=False, widget=forms.RadioSelect,
+		choices=new_layer_choices)
+	my_layer_to_be_added = forms.ChoiceField(
+                label=_(u"Nickname of My Layer to be added"), required=False)
+
+        ...
+
+This is not more than a modified version of the class of the same name from
+``form_utils.py``.
+
+The deposition form can largely be copied from the 6-chamber deposition.  In
+principle, this is also true for the two layer models, however, the attributes
+and validation conditions must be carefully adapted of course.  Moreover, I add
+an extra, hidden ``TextInput`` field called ``layer_type`` which saves the
+layer type when creating the HTML form, so that it can be re-constructed when
+scanning POST data::
+
+    class HotwireLayerForm(forms.ModelForm):
+	layer_type = forms.CharField(widget=forms.HiddenInput, initial=u"hotwire")
+	...
+
+Then, I need a ``ChangeLayerForm`` which contains the controls for duplicating
+or removing a layer::
+
+    class ChangeLayerForm(forms.Form):
+	_ = ugettext_lazy
+	duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
+	remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
+	move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
+					    choices=(("", _(9*u"-")), ("up", _(u"up")), ("down", _(u"down"))))
+
+	def clean(self):
+	    _ = ugettext
+	    operations = 0
+	    if self.cleaned_data["duplicate_this_layer"]:
+		operations += 1
+	    if self.cleaned_data["remove_this_layer"]:
+		operations += 1
+	    if self.cleaned_data.get("move_this_layer"):
+		operations += 1
+	    if operations > 1:
+		raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
+	    return self.cleaned_data
+
+
+The FormSet
+...............
+
+Now we're ready to create the ``FormSet`` class which is basically a container
+for methods that are used to manage the forms.  In order to avoid being forced
+to pass all the forms and form lists to all of these routines, they are not
+functions but methods, and the forms and form lists are instance variables of
+the ``FormSet``.
+
+By and large, also the ``FormSet`` can be copied from another deposition system
+and carefully adopted.  In the case of the small cluster tool, most
+modifications are due to the prlymorphic layers.
+
+The first peculiarity is a dummy ``LayerForm`` class which is only to detect
+the layer type when constructing forms from POST data, using the above
+mentioned ``layer_type``::
+
+    class LayerForm(forms.ModelForm):
+        layer_type = forms.CharField()
+
+I cannot explain all modification that are necessary but exemplarily, have a
+look at the auxiliary routine ``build_layer_and_channel_forms``::
+
+    def build_layer_and_channel_forms(deposition):
+	self.layer_forms = []
+	for index, layer in enumerate(deposition.layers.all()):
+	    if hasattr(layer, "smallclustertoolhotwirelayer"):
+		self.layer_forms.append(HotwireLayerForm(prefix=str(index),
+                                        instance=layer.smallclustertoolhotwirelayer))
+	    else:
+		self.layer_forms.append(PECVDLayerForm(prefix=str(index),
+                                        instance=layer.smallclustertoolpecvdlayer))
+
+Here, you can see how I distinguish between the two layer types.
+
+Furthermore, it's important that I don't let the user enter a layer number.
+The ordering of the layers is simply determined by their ordering in the
+webpage's form set.  I add the layer number in the ``save_to_database`` method.
+
+
+The view functions
+......................
+
+You need an ``edit`` and a ``show`` view function.  They are really
+straightforward.  Just copy them from another deposition module and modify them
+slightly.  (Actually, this code duplication is a candidate for a common base
+function but I'd like to implement more deposition systems just to be sure.)
+
+
+Creating the templates
+---------------------------
+
+You need two templates per process, one that is called
+``edit_process_name.html`` and the other that is called
+``show_process_name.html``.  Copy them from the process which is most closely
+related to the one you're editing and apply the necessary modifications.
+
+Remember that the contents of the dictionary returned by
+``get_additional_template_context`` contains a ``layers`` list in which each
+layer also bears a ``type`` attribute, which can be used to render some parts
+of the layers depending on whether they are hotwire or PECVD layers.  For
+non-cluster-tool depositions however, you can use ``process.layers.all()`` in
+the template code instead.
+
+Read the docstrings in ``samples_extras.py`` for getting used to the filters
+and tags special to Chantal.
+
+
+Update for the Remote Client
+-----------------------------------
+
+
+
+A more complex example: Writing a deposition module
+===========================================================
+
+I will show how to write a module for a deposition system by creating an
+example module step-by-step.  In this case, I show how I write the module for
+the small cluster tool in the IEF-5.
+
+
+The models
+-------------
+
+A deposition system typically needs two models: One for the deposition data and
+one for the layer data.  The layer data will carry much more fields than the
+deposition, and it will contain a pointer to the deposition it belongs to.
+This way, deposition and layers are kept together.  This pointer is represented
+by a “foreign key” field.
 
 In case of the cluster tool, things are slightly more complicated because the
 layers are not of one kind.  Instead, we can have a PECVD layer or a hotwire
 layer.  Both have very different data.  Normally though, all layers share the
 very same attributes.  This is much simpler.
 
-Anyway.  In order to cope with the multiple layer types, I have to introduce a
+Anyway, in order to cope with the multiple layer types, I have to introduce a
 common base class for the two layer types.  This is not an abstract class in
 Django terminology but a concrete one because I need a single reverse foreign
 key from the deposition instance to the set of layers, and therefore, an
@@ -286,10 +522,7 @@ And that's it.  The models are done now.
 Creating the URLs
 ---------------------
 
-The next work is done in ``urls.py``.  This step is fairly simple.  You just
-have to copy-n-paste the URLs from an apparatus which is sufficiently closely
-retated to yours and substitute the names.  For the small cluster tool, we
-get::
+For the small cluster tool, we add to ``urls.py``::
 
     url(r"^small_cluster_tool_depositions/add/$",
         "samples.views.small_cluster_tool_deposition.edit",
@@ -300,8 +533,8 @@ get::
     (r"^small_cluster_tool_depositions/(?P<deposition_number>.+)",
      "samples.views.small_cluster_tool_deposition.show"),
 
-I took this from the 6-chamber deposition and wrote the new names into it.  If
-you also want to proved a lay notebook, you have to append::
+I took this from an already existing deposition and wrote the new names into
+it.  We also want to provide a lab notebook, so we append::
 
     url(r"^small_cluster_tool_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
 	"samples.views.lab_notebook.export", {"process_name": "SmallClusterToolDeposition"},
@@ -314,15 +547,11 @@ you also want to proved a lay notebook, you have to append::
 Creating the views
 ---------------------
 
-Take another view module as a guide for the new one.  In the case of the small
-cluster tool deposition system, I take the 6-chamber deposition as a guide.
-
-Try to keep the imports at the top of the file minimal.  It's best to start
-with an empty imports list and add them as needed.
+I take the 6-chamber deposition as a guide and copy-and-paste it.
 
 
 The forms
-........
+.........
 
 In contrast to non-cluster-tool modules, I need to add a custom
 ``AddMyLayerForm`` class because adding a new layer is different from other
@@ -429,32 +658,6 @@ You need an ``edit`` and a ``show`` view function.  They are really
 straightforward.  Just copy them from another deposition module and modify them
 slightly.  (Actually, this code duplication is a candidate for a common base
 function but I'd like to implement more deposition systems just to be sure.)
-
-
-Creating the templates
----------------------------
-
-You need two templates per process, one that is called
-``edit_process_name.html`` and the other that is called
-``show_process_name.html``.  Copy them from the process which is most closely
-related to the one you're editing and apply the necessary modifications.
-
-Remember that the contents of the dictionary returned by
-``get_additional_template_context`` contains a ``layers`` list in which each
-layer also bears a ``type`` attribute, which can be used to render some parts
-of the layers depending on whether they are hotwire or PECVD layers.  For
-non-cluster-tool depositions however, you can use ``process.layers.all()`` in
-the template code instead.
-
-Read the docstrings in ``samples_extras.py`` for getting used to the filters
-and tags special to Chantal.
-
-
-Update for the Remote Client
------------------------------------
-
-
-
 
 Glossary
 ===========

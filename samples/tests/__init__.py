@@ -17,7 +17,6 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings
 from .shared_utils import *
-from .advanced_search import *
 from .json_export import *
 
 
