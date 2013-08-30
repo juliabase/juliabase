@@ -239,10 +239,9 @@ def add_user_details(sender, instance, created, **kwargs):
             department = instance.chantal_user_details.department.name
         except AttributeError:
             department = "IEK-5"
-        else:
-            user_details.show_user_from_department = \
-            json.dumps(list(chantal_common_app.Department.objects.filter(name=department).values_list("id", flat=True)))
-            user_details.save()
+        user_details.show_user_from_department = \
+        json.dumps(list(chantal_common_app.Department.objects.filter(name=department).values_list("id", flat=True)))
+        user_details.save()
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
