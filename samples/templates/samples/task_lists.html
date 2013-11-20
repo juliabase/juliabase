@@ -19,13 +19,15 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 {% url 'samples.views.task_lists.show' as next_url %}
-{% for process_class, task_list in task_lists.iteritems %}
+{% for department, tasks in task_lists.iteritems %}
+<h2>{{ department|capfirst }}</h2>
+{% for process_class, task_list in tasks.iteritems %}
   {% spaceless %}
-    <h2>{{ process_class|contenttype_name|capfirst }}<a
+    <h3>{{ process_class|contenttype_name|capfirst }}<a
        class="edit-icon"
        href="{% url 'samples.views.task_lists.edit' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
         <img src="{{ STATIC_URL }}chantal/icons/layout_add.png" alt="add icon" title="{% trans 'Add task' %}"
-             width="16" height="16"/></a></h2>
+             width="16" height="16"/></a></h3>
   {% endspaceless %}
 
   {% if not task_list %}
@@ -115,13 +117,14 @@ copyright holder, you must destroy it immediately and completely.
   </div>
   {% endfor %}
 {% endfor %}
+{% endfor %}
 <form method="POST" style="margin-top: 5ex" class="screen-only">
   <table style="float: right">
     <tbody>
       {% error_list chose_task_lists _("General error") "<tr>" 2 %}
       <tr>
-	<td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
-	<td class="input">{{ chose_task_lists.visible_task_lists }}</td>
+    <td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
+    <td class="input">{{ chose_task_lists.visible_task_lists }}</td>
       </tr>
     </tbody>
   </table>

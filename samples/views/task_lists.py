@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import copy, datetime
+import copy, datetime, json
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -29,6 +29,7 @@ from chantal_common import utils as common_utils
 from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples import permissions
+from chantal_common.models import Department
 
 
 class SamplesForm(forms.Form):
@@ -184,8 +185,15 @@ class ChooseTaskListsForm(forms.Form):
 
     def __init__(self, user, data=None, **kwargs):
         super(ChooseTaskListsForm, self).__init__(data, **kwargs)
-        self.fields["visible_task_lists"].choices = form_utils.choices_of_content_types(
-            list(permissions.get_all_addable_physical_process_models()))
+        choices = []
+        department_ids = json.loads(user.samples_user_details.show_user_from_department)
+        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+            process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
+                                          if ContentType.objects.get_for_model(process) in department.processes.all())
+            choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
+        if not choices:
+            choices = (("", 9 * "-"),)
+        self.fields["visible_task_lists"].choices = choices
         self.fields["visible_task_lists"].initial = [content_type.id for content_type
                                                      in user.samples_user_details.visible_task_lists.iterator()]
         self.fields["visible_task_lists"].widget.attrs["size"] = "15"
@@ -333,9 +341,16 @@ def show(request):
         active_tasks = process_class.tasks.order_by("-status", "priority", "last_modified"). \
             exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_class] = [TaskForTemplate(task, request.user) for task in active_tasks]
+    task_list_for_department = {}
+    for key, values in task_lists.iteritems():
+        # FixMe: it is possible that some processes are in more then one department available
+        # maybe we need a better way to determine the department
+        task_list_for_department[key.department.all()[0].name] = {key: values}
+    print task_list_for_department
+
     return render_to_response("samples/task_lists.html", {"title": _("Task lists"),
                                                           "chose_task_lists": choose_task_lists_form,
-                                                          "task_lists": task_lists},
+                                                          "task_lists": task_list_for_department},
                               context_instance=RequestContext(request))
 
 
