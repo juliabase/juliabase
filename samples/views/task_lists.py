@@ -345,9 +345,9 @@ def show(request):
     for key, values in task_lists.iteritems():
         # FixMe: it is possible that some processes are in more then one department available
         # maybe we need a better way to determine the department
-        task_list_for_department[key.department.all()[0].name] = {key: values}
-    print task_list_for_department
-
+        if not key.department.all()[0].name in task_list_for_department:
+            task_list_for_department[key.department.all()[0].name] = {}
+        task_list_for_department[key.department.all()[0].name].update({key: values})
     return render_to_response("samples/task_lists.html", {"title": _("Task lists"),
                                                           "chose_task_lists": choose_task_lists_form,
                                                           "task_lists": task_list_for_department},
