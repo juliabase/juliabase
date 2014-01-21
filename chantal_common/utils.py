@@ -245,6 +245,37 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         return ""
 
 
+def find_file_in_directory(filename, path, max_depth=float("inf")):
+    """Searches for a file in a directory recursively to a given depth.
+
+    :Parameters:
+     - `filename`: the file to be searched for. only the basename is
+     required.
+     - `path`: the path from the top level directory where the searching
+     starts.
+     - `max_depth`: the maximum recursion depth.
+
+    :type filename: str
+    :type path: str
+    :type max_depth: int
+
+    :Return:
+     the relative path to the searched file or ``None`` if not found.
+
+    :rtype: str
+    """
+    filename = os.path.basename(filename)
+    assert os.path.isdir(path)
+    for root, dirs, files in os.walk(path):
+        if filename in files:
+            return os.path.join(root, filename)
+        depth = root[len(path) + len(os.path.sep):].count(os.path.sep)
+        if depth == max_depth:
+            # prevents further searches in the subdirectories.
+            dirs[:] = []
+
+
+
 class _AddHelpLink(object):
     """Internal helper class in order to realise the `help_link` function
     decorator.
@@ -730,3 +761,39 @@ def unlazy_object(lazy_object):
     if lazy_object._wrapped is None:
         lazy_object._setup()
     return lazy_object._wrapped
+
+
+def convert_bytes_to_unicode(byte_array):
+    """Converts an array of bytes representing the unicode litterals
+    as decimal integers to unicode letters.
+
+    :Parameters:
+     - `byte_array`: list of integers representing unicode codes.
+
+    :type byte_array: `list` of `int`
+
+    :Return:
+     the unicode string
+
+    :rtype: ``unicode``
+    """
+    try:
+        return "".join(map(unichr, byte_array)).strip()
+    except ValueError:
+        return ""
+
+
+def convert_bytes_to_bool(byte_array):
+    """Converts an array of bytes to  booleans.
+
+    :Parameters:
+     - `byte_array`: list of integers (1 or 0).
+
+    :type byte_array: `list` of `int`
+
+    :Return:
+     a tuple with True or False values
+
+    :rtype: ``tuple`` of ``boolean``
+    """
+    return tuple(True if byte else False for byte in byte_array)
