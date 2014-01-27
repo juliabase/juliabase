@@ -105,13 +105,16 @@ def main_menu(request):
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user.my_samples.all(), request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = []
-    for process in allowed_physical_processes:
+    for process_class, process in permissions.get_all_addable_physical_process_models().iteritems():
         try:
             url = django.core.urlresolvers.reverse("lab_notebook_" + process["type"], kwargs={"year_and_month": ""})
         except django.core.urlresolvers.NoReverseMatch:
             pass
         else:
-            lab_notebooks.append({"label": process["label_plural"], "url": url})
+            if permissions.has_permission_to_view_lab_notebook(request.user, process_class):
+                lab_notebooks.append({"label": process["label_plural"], "url": url})
+    if lab_notebooks:
+        lab_notebooks.sort(key=lambda process: process["label"].lower())
     return render_to_response(
         "samples/main_menu.html",
         {"title": _("Main menu"),

@@ -24,3 +24,4 @@ samples/remote_client/6k.pickle
 samples/remote_client/6k_import.py
 samples/remote_client/6k_import.py.sicher
 doc/remote_client/.build
+samples/migrations
