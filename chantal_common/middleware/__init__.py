@@ -114,6 +114,10 @@ class MessageMiddleware(object):
         return response
 
 
+class HttpResponseUnauthorised(django.http.HttpResponse):
+    status_code = 401
+
+
 class HttpResponseUnprocessableEntity(django.http.HttpResponse):
     status_code = 422
 
@@ -134,15 +138,16 @@ class JSONClientMiddleware(object):
         """
         if is_json_requested(request) and response._headers["content-type"][1].startswith("text/html") and \
                 response.status_code == 200:
+            user = request.user
+            if not user.is_authenticated():
+                # Login view was returned
+                return HttpResponseUnauthorised()
             hash_ = hashlib.sha1()
             hash_.update(str(random.random()))
             # For some very obscure reason, a random number was not enough --
             # it led to collisions time after time.
             hash_.update(str(time.time()))
             hash_value = hash_.hexdigest()
-            user = request.user
-            if not user.is_authenticated():
-                user = None
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)
             return HttpResponseUnprocessableEntity(
