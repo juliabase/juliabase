@@ -106,8 +106,8 @@ def list_(request):
     :rtype: ``HttpResponse``
     """
     user = request.user
-    all_topics = Topic.objects.all()
-    user_topics = Topic.objects.filter(department=user.chantal_user_details.department).all()
+    all_topics = Topic.objects.order_by("name").all()
+    user_topics = Topic.objects.filter(department=user.chantal_user_details.department).order_by("name").all()
     topics = set(topic for topic in user_topics if permissions.has_permission_to_edit_topic(user, topic))
     if not topics:
         raise Http404("Can't find any topic that you can edit.")
