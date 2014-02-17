@@ -1528,3 +1528,15 @@ class Task(models.Model):
     def get_absolute_url(self):
         return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples.views.task_lists.show"), self.id)
 
+
+class ProcessWithSamplePositions(models.Model):
+    """An abstract class for saving the positions of the samples
+    in an apparatus.
+    This class saves the sample_ids and the positions as dictionary
+    in json format. The sample_ids are the keys and the positions
+    are the values.
+    """
+    sample_positions = models.TextField(_("sample positions"), default="{}", help_text=_("in JSON format"))
+
+    class Meta:
+        abstract = True
