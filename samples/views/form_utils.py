@@ -27,7 +27,7 @@ from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
-from chantal_common.utils import get_really_full_name, check_markdown
+from chantal_common.utils import get_really_full_name, check_markdown, append_error
 from chantal_common.models import Topic, Department
 from samples import models, permissions
 from samples.views import utils
@@ -644,6 +644,48 @@ class DepositionSamplesForm(forms.Form):
                 self.fields["sample_list"].initial.append(preset_sample.pk)
         self.fields["sample_list"].set_samples(samples, user)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
+
+
+class SamplePositionForm(forms.Form):
+    _ = ugettext_lazy
+    sample = forms.CharField(label=capfirst(_("sample")))
+    position = forms.CharField(label=capfirst(_("sample position")), required=False)
+
+    def __init__(self, user, preset_sample, preset_sample_position, *args, **kwargs):
+        """Form constructor.
+
+        :Parameters:
+          - `user`: the current user
+          - `preset_sample`: the selected sample to which the sample position should be
+            appended when creating a new process
+          - `preset_sample_position`: the place from the selected sample in the apparatus
+
+        :type user: `django.contrib.auth.models.User`
+        :type preset_sample: `models.Sample`
+        :type preset_sample_position: str
+        """
+        super(SamplePositionForm, self).__init__(*args, **kwargs)
+        self.fields["sample"].initial = preset_sample
+        self.fields["sample"].widget.attrs['readonly'] = True
+        if preset_sample_position:
+            self.fields["position"].initial = preset_sample_position
+
+
+    def clean_sample(self):
+        sample_name = self.cleaned_data.get("sample")
+        if sample_name:
+            if sample_name.startswith("*"):
+                sample_name = "*{0:05}".format(int(sample_name.strip("*")))
+            return models.Sample.objects.get(name=sample_name)
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        sample = cleaned_data.get("sample")
+        place = cleaned_data.get("position")
+        if sample and not place:
+            append_error(self, _("This field is required."), "position")
+            del cleaned_data["sample"]
+        return cleaned_data
 
 
 class RemoveFromMySamplesForm(forms.Form):
