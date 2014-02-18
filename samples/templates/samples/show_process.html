@@ -22,18 +22,18 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
         {% spaceless %}
           <h1>
-            {{ title }}{% if edit_url %}<a class="edit-icon" 
+            {{ title }}{% if edit_url %}<a class="edit-icon"
                                              href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
                ><img src="{{ STATIC_URL }}chantal/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
-            {% endif %}{% if export_url %}<a class="edit-icon" 
+            {% endif %}{% if export_url %}<a class="edit-icon"
                     href="{{ export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
                      width="16" height="16"/></a>
-            {% endif %}{% if resplit_url %}<a class="edit-icon" 
+            {% endif %}{% if resplit_url %}<a class="edit-icon"
                      href="{{ resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{{ STATIC_URL }}chantal/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
@@ -51,7 +51,9 @@ copyright holder, you must destroy it immediately and completely.
           {% plural %}
             This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktrans %}
-          {% if not samples|length_is:"1" %}
+          {% if sample_positions %}
+            {% include "samples/show_sample_positions.html" %}
+          {% elif not samples|length_is:"1" %}
             <ul>
               {% for sample in samples %}
                 <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
@@ -63,7 +65,7 @@ copyright holder, you must destroy it immediately and completely.
           {% blocktrans count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
             This process was applied to the sample series <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
-            This process was applied to the following sample_series:  
+            This process was applied to the following sample_series:
             <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktrans %}
           {% if not sample_series|length_is:"1" %}
