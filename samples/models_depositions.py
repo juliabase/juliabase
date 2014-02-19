@@ -49,18 +49,8 @@ class Deposition(PhysicalProcess):
     pointing to the deposition class with ``relative_name="layers"``.  In other
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
-
-    The ``sample_positions`` field may be used by derived models for storing
-    where the samples were mounted during the deposition.  Sometimes it is
-    interesting to know that because the deposition device may not work
-    homogeneously.  It is placed here in order to be able to extend the
-    split-after-deposition view so that it offers input fields for it if it is
-    applicable.  (For example, this can be given in the query string.)
     """
     number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
-    sample_positions = models.TextField(_("sample positions"), blank=True)
-    """In JSON format, mapping sample IDs to positions.  Positions can be
-    numbers or strings."""
     split_done = models.BooleanField(_("split after deposition done"), default=False)
 
     class Meta(PhysicalProcess.Meta):

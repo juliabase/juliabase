@@ -1532,11 +1532,15 @@ class Task(models.Model):
 class ProcessWithSamplePositions(models.Model):
     """An abstract class for saving the positions of the samples
     in an apparatus.
-    This class saves the sample_ids and the positions as dictionary
-    in json format. The sample_ids are the keys and the positions
-    are the values.
+    The ``sample_positions`` field may be used by derived models for storing
+    where the samples were mounted during the deposition.  Sometimes it is
+    interesting to know that because the deposition device may not work
+    homogeneously.  It is placed here in order to be able to extend the
+    split-after-deposition view so that it offers input fields for it if it is
+    applicable.  (For example, this can be given in the query string.)
     """
     sample_positions = models.TextField(_("sample positions"), default="{}", help_text=_("in JSON format"))
-
+    """In JSON format, mapping sample IDs to positions.  Positions can be
+    numbers or strings."""
     class Meta:
         abstract = True
