@@ -444,6 +444,14 @@ class Process(PolymorphicModel):
                         context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
+            if "extend_html_body" not in context:
+                try:
+                    context["extend_html_body"] = render_to_string(
+                        "samples/show-extend_{0}.html". \
+                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
+                        context_instance=Context(context))
+                except TemplateDoesNotExist:
+                    context["extend_html_body"] = None
         if "operator" not in context:
             context["operator"] = self.external_operator or self.operator
         if "timestamp" not in context:

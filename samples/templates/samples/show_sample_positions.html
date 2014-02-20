@@ -12,11 +12,10 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 
-
-{% if sample_positions %}
   {% load i18n %}
   {% load chantal %}
   {% load samples_extras %}
+
 <div>
   <table class="sample-positions">
     <tbody>
@@ -28,19 +27,32 @@ copyright holder, you must destroy it immediately and completely.
         {% trans 'Substrate position' %}
       </td>
     </tr>
-    {% for sample, position in sample_positions.items %}
+    {% if sample_position %}
         <tr>
           <td class="label" style="border-right: 2px solid"">
            <label for="id_{{ sample_position.sample.html_name }}"
-               ><a href="{{ sample.get_absolute_url }}">{{ sample }}</label>
+               ><a href="{{ sample.get_absolute_url }}">{{ sample_position.sample }}</label>
           </td>
           <td class="value">
            <label for="id_{{ sample_position.position.html_name }}"
-               >{{ position }}
+               >{{ sample_position.position }}
           </td>
         </tr>
-    {% endfor %}
+    {% elif sample_positions %}
+        {% for sample, position in sample_positions.items %}
+            <tr>
+              <td class="label" style="border-right: 2px solid"">
+               <label for="id_{{ sample_position.sample.html_name }}"
+                   ><a href="{{ sample.get_absolute_url }}">{{ sample }}</label>
+              </td>
+              <td class="value">
+               <label for="id_{{ sample_position.position.html_name }}"
+                   >{{ position }}
+              </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
     </tbody>
   </table>
 </div>
-{% endif %}
+

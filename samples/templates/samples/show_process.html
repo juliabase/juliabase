@@ -51,9 +51,7 @@ copyright holder, you must destroy it immediately and completely.
           {% plural %}
             This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktrans %}
-          {% if sample_positions %}
-            {% include "samples/show_sample_positions.html" %}
-          {% elif not samples|length_is:"1" %}
+          {% if not samples|length_is:"1" %}
             <ul>
               {% for sample in samples %}
                 <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
