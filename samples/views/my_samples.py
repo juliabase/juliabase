@@ -20,6 +20,7 @@ removing them from the list.
 
 from __future__ import absolute_import, unicode_literals
 
+import re
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import Http404
@@ -51,6 +52,8 @@ class ActionForm(forms.Form):
     new_currently_responsible_person = form_utils.UserField(label=_("New currently responsible person"), required=False)
     new_topic = form_utils.TopicField(label=_("New Topic"), required=False)
     new_current_location = forms.CharField(label=_("New current location"), required=False, max_length=50)
+    new_tags = forms.CharField(label=_("New sample tags"), required=False, max_length=255,
+                               help_text=_("separated with commas, no whitespace"))
     copy_to_user = form_utils.MultipleUsersField(label=_("Copy to user"), required=False)
     clearance = forms.ChoiceField(label=_("Clearance"), required=False)
     comment = forms.CharField(label=_("Comment for recipient"), widget=forms.Textarea, required=False)
@@ -85,6 +88,12 @@ class ActionForm(forms.Form):
 
     def clean_clearance(self):
         return self.clearance_choices[self.cleaned_data["clearance"]]
+
+    def clean_new_tags(self):
+        tags = self.cleaned_data.get("new_tags", "")
+        if tags:
+            tags = re.sub(r"\s", "", tags).strip(",")
+        return tags
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -196,6 +205,8 @@ def save_to_database(user, my_samples_form, action_form):
             sample.topic = action_data["new_topic"]
         if action_data["new_current_location"]:
             sample.current_location = action_data["new_current_location"]
+        if action_data["new_tags"]:
+            sample.tags = "{old},{new}".format(old=sample.tags, new=action_data["new_tags"]).strip(",")
         sample.save()
         if sample.topic and sample.topic != old_topic:
             for watcher in (user_details.user for user_details in sample.topic.auto_adders.all()):
@@ -215,7 +226,8 @@ def save_to_database(user, my_samples_form, action_form):
         feed_reporter.report_new_responsible_person_samples(samples_with_new_responsible_person, edit_description)
     for old_topic, samples in samples_with_new_topic.iteritems():
         feed_reporter.report_changed_sample_topic(samples, old_topic, edit_description)
-    if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_topic"]:
+    if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_topic"]\
+        or action_data["new_tags"]:
         feed_reporter.report_edited_samples(samples, edit_description)
     # Now a separate(!) message for copied samples
     if action_data["copy_to_user"]:
