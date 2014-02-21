@@ -39,6 +39,7 @@ from samples.views import shared_utils
 from chantal_common import search
 from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
+import collections
 
 
 class ExternalOperator(models.Model):
@@ -444,6 +445,14 @@ class Process(PolymorphicModel):
                         context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
+            if "extend_html_body" not in context:
+                try:
+                    context["extended_html_body"] = render_to_string(
+                        "samples/show-extended_{0}.html". \
+                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
+                        context_instance=Context(context))
+                except TemplateDoesNotExist:
+                    context["extended_html_body"] = None
         if "operator" not in context:
             context["operator"] = self.external_operator or self.operator
         if "timestamp" not in context:
@@ -1544,3 +1553,43 @@ class ProcessWithSamplePositions(models.Model):
     numbers or strings."""
     class Meta:
         abstract = True
+
+    def get_sample_position_context(self, user, old_context):
+        context = old_context.copy()
+        if "sample_position" not in context:
+            sample = context.get("sample")
+            sample_positions_dict = json.loads(self.sample_positions)
+            if sample_positions_dict and sample:
+                context["sample_position"] = (sample if (sample.topic and not sample.topic.confidential) or
+                                                    permissions.has_permission_to_fully_view_sample(user, sample) or
+                                                    permissions.has_permission_to_add_edit_physical_process(user, self,
+                                                                                    self.content_type.model_class())
+                                                    else _("confidential sample"),
+                                                    sample_positions_dict[unicode(sample.id)])
+        if "sample_positions" not in context:
+            sample_positions_dict = json.loads(self.sample_positions)
+            if sample_positions_dict:
+                context["sample_positions"] = collections.OrderedDict((sample if (sample.topic and not sample.topic.confidential) or
+                                                    permissions.has_permission_to_fully_view_sample(user, sample) or
+                                                    permissions.has_permission_to_add_edit_physical_process(user, self,
+                                                                                    self.content_type.model_class())
+                                                    else _("confidential sample"),
+                                                    sample_positions_dict[unicode(sample.id)])
+                                                   for sample in self.samples.order_by("name").iterator())
+        return context
+
+
+    def get_cache_key(self, user_settings_hash, local_context):
+        """Generates an own cache key for every instance of this process.
+        When a process inherits from both ``Process`` class and
+        ``ProcessWithSamplePositions`` class, you have to make shure, that the
+        process uses this method for the cache key and not the method from
+        the ``Process`` class.
+
+        For the parameter description see
+            ``samples.models_common.Process.get_cache_key()``
+        """
+        hash_ = hashlib.sha1()
+        hash_.update(user_settings_hash)
+        hash_.update("\x04{0}".format(local_context.get("sample", "")))
+        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())

@@ -27,19 +27,16 @@ copyright holder, you must destroy it immediately and completely.
         {% trans 'Substrate position' %}
       </td>
     </tr>
-        {% for sample, position in sample_positions.items %}
-            <tr>
-              <td class="label" style="border-right: 2px solid"">
-               <label for="id_{{ sample_position.sample.html_name }}"
-                   ><a href="{{ sample.get_absolute_url }}">{{ sample }}</label>
-              </td>
-              <td class="value">
-               <label for="id_{{ sample_position.position.html_name }}"
-                   >{{ position }}
-              </td>
-            </tr>
-        {% endfor %}
+        <tr>
+          <td class="label" style="border-right: 2px solid"">
+           <label for="id_{{ sample_position.sample.html_name }}"
+               ><a href="{{ sample.get_absolute_url }}">{{ sample_position.0 }}</label>
+          </td>
+          <td class="value">
+           <label for="id_{{ sample_position.position.html_name }}"
+               >{{ sample_position.1 }}
+          </td>
+        </tr>
     </tbody>
   </table>
 </div>
-
