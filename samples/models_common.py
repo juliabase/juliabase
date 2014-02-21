@@ -1580,7 +1580,14 @@ class ProcessWithSamplePositions(models.Model):
 
 
     def get_cache_key(self, user_settings_hash, local_context):
-        """
+        """Generates an own cache key for every instance of this process.
+        When a process inherits from both ``Process`` class and
+        ``ProcessWithSamplePositions`` class, you have to make shure, that the
+        process uses this method for the cache key and not the method from
+        the ``Process`` class.
+
+        For the parameter description see
+            ``samples.models_common.Process.get_cache_key()``
         """
         hash_ = hashlib.sha1()
         hash_.update(user_settings_hash)
