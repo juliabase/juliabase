@@ -161,11 +161,9 @@ class LDAPConnection(object):
                 self.connection = ldap.initialize(ad_ldap_url)
                 self.connection.set_option(ldap.OPT_REFERRALS, 0)
                 try:
-                    # The cryptic ``!(userAccountControl...)`` filters out all inactive
-                    # accounts (i.e. former institute members).
                     found, attributes = self.connection.search_ext_s(
                         settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE,
-                        "(&(sAMAccountName={0})(!(userAccountControl:1.2.840.113556.1.4.803:=2)))".format(username),
+                        "(&(sAMAccountName={0}){1})".format(username, settings.AD_LDAP_ACCOUNT_FILTER or ""),
                         settings.AD_SEARCH_FIELDS)[0][:2]
                 except ldap.LDAPError as e:
                     if settings.AD_LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.AD_LDAP_URLS):
