@@ -29,8 +29,16 @@ copyright holder, you must destroy it immediately and completely.
     </tr>
   {% endif %}
   {% if userdetails %}
-    <!-- Phone number, picture, whatever.  Not used yet. -->
+    <tr>
+      <td class="label">{% trans "Office" %}:</td>
+      <td class="value">{{ userdetails.0 }}</td>
+    </tr>
+    <tr>
+      <td class="label">{% trans "Phone" %}:</td>
+      <td class="value">{{ userdetails.1 }}</td>
+    </tr>
   {% endif %}
+  {% value_field department %}
   </tbody>
 </table>
 {% endblock %}

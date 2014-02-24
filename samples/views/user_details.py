@@ -35,8 +35,9 @@ from samples import models, permissions
 from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
-from chantal_common import utils as chantal_common_utils
+from chantal_common import utils as chantal_common_utils, auth
 from chantal_common.models import Topic, Department
+
 
 
 @login_required
@@ -59,9 +60,17 @@ def show_user(request, login_name):
     """
     user = get_object_or_404(django.contrib.auth.models.User,
                              username=login_name, chantal_user_details__is_administrative=False)
-    userdetails = user.samples_user_details
+    connection = auth.LDAPConnection()
+    attributes = connection.get_ad_data(user.username)
+    userdetails = ()
+    if attributes:
+        office = attributes["physicalDeliveryOfficeName"][0]
+        phone = attributes["telephoneNumber"][0]
+        userdetails = (office, phone)
+    department = user.chantal_user_details.department
     username = get_really_full_name(user)
-    return render_to_response("samples/show_user.html", {"title": username, "shown_user": user, "userdetails": userdetails},
+    return render_to_response("samples/show_user.html", {"title": username, "shown_user": user, "userdetails": userdetails,
+                                                         "department": department},
                               context_instance=RequestContext(request))
 
 
