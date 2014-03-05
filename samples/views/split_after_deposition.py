@@ -20,7 +20,7 @@ you can rename and/or split them.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
+import datetime, json
 from django.http import Http404
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -430,7 +430,15 @@ def forms_from_database(deposition, remote_client, new_names):
             if utils.sample_name_format(sample.name) == "new":
                 return sample.name
             else:
-                return deposition.number
+                name_postfix = ""
+                try:
+                    sample_positions = json.loads(deposition.sample_positions)
+                except AttributeError:
+                    pass
+                else:
+                    if sample_positions and sample_positions.get(str(sample.id)):
+                        name_postfix = "-{0}".format(sample_positions[str(sample.id)])
+                return deposition.number + name_postfix
     samples = deposition.samples.all()
     original_data_forms = [OriginalDataForm(remote_client, new_name(sample), initial={"sample": sample.name}, prefix=str(i))
                            for i, sample in enumerate(samples)]
