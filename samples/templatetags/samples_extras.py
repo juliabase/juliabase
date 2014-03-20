@@ -532,7 +532,8 @@ class ValueSplitFieldNode(template.Node):
                     values += "— / "
                 else:
                     values += quantity(field) + " / "
-            values += unicode(fields[-1]) if unit is None else quantity(fields[-1], unit)
+            values += fields[-1] if fields[-1] == "—" else quantity(fields[-1], unit)
+            print fields[-1], unit
         return """<td class="label">{label}:</td><td class="value">{values}</td>""".format(
             label=verbose_name, values=values)
 
