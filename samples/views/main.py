@@ -122,7 +122,7 @@ def main_menu(request):
          "topicless_samples": topicless_samples,
          "add_sample_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLE_VIEW),
          "user_hash": permissions.get_user_hash(request.user),
-         "can_add_topic": permissions.has_permission_to_edit_topic(request.user),
+         "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
          "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
                                 for topic in Topic.objects.all()),
          "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),

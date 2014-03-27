@@ -64,38 +64,7 @@ $(function() { chantal.request("{% url 'samples.views.json_client.get_folded_mai
       {% endif %}
       <div class="my-samples-topics">
         {% for topic in my_topics %}
-
-          <h3><img src="{{ STATIC_URL }}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em" class="topics"
-                   width="16" height="16" id="topic-image-{{ topic.topic.id }}"/>{{ topic.topic_name }}</h3>
-          <div id="topic-{{ topic.topic.id }}">
-            {% if topic.samples %}
-              <ul class="sample-list">
-                {% for sample in topic.samples %}
-                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-
-            <div class="my-samples-series">
-              {% for series in topic.sample_series %}
-
-                <h4><img src="{{ STATIC_URL }}chantal/icons/chart_organisation.png" alt="sample series icon" class="sample-series"
-                         style="margin-right: 0.5em" width="16" height="16" id="series-image-{{ series.sample_series|get_hash_value }}"
-                         /><a href="{{ series.sample_series.get_absolute_url }}">{{ series.name }}</a></h4>
-                <div id="sample-series-{{ series.sample_series|get_hash_value }}">
-
-                  {% if not series.is_complete %}
-                    <p>{% trans '(This series contains further samples not part of your “My Samples” list.)' %}</p>
-                  {% endif %}
-                  <ul class="sample-list">
-                    {% for sample in series.samples %}
-                      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
+          {% expand_topic topic user %}
         {% endfor %}
       </div>
     </div>

@@ -122,7 +122,7 @@ urlpatterns = patterns("samples.views",
 
                        (r"^topics/add/$", "topic.add"),
                        (r"^topics/$", "topic.list_"),
-                       (r"^topics/(?P<name>.+)", "topic.edit"),
+                       (r"^topics/(?P<id>.+)", "topic.edit"),
 
                        (r"^claims/(?P<username>.+)/add/$", "claim.add"),
                        (r"^claims/(?P<username>.+)/$", "claim.list_"),

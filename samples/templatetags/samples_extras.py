@@ -34,6 +34,7 @@ import chantal_common.templatetags.chantal
 import samples.views.utils
 from samples.views.form_utils import time_pattern
 import chantal_common.search
+from chantal_common.models import Topic
 
 register = template.Library()
 
@@ -680,3 +681,51 @@ def get_hash_value(instance):
     """
     """
     return instance.get_hash_value()
+
+@register.simple_tag
+def expand_topic(topic, user):
+    static_url = settings.STATIC_URL
+    topic_id = topic.topic.id
+    result = """<h3><img src="{static_url}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em" class="topics"
+                   width="16" height="16" id="topic-image-{topic_id}"/>{topic_name}</h3>
+            <div id="topic-{topic_id}">
+            """.format(static_url=static_url, topic_id=topic_id, topic_name=topic.topic.name)
+    if topic.samples:
+        result += """<ul class="sample-list">
+            """
+        for sample in topic.samples:
+            result += """<li><a href="{sample_url}">{sample}</a>{sample_tags}</li>
+            """.format(sample_url=sample.get_absolute_url(), sample=sample, sample_tags=sample_tags(sample, user))
+        result += """</ul>
+            """
+    result += """<div class="my-samples-series">
+                """
+    for series in topic.sample_series:
+        result += """<h4><img src="{static_url}chantal/icons/chart_organisation.png" alt="sample series icon" class="sample-series"
+                         style="margin-right: 0.5em" width="16" height="16" id="series-image-{sample_series_hash_value}"
+                         /><a href="{sample_series_url}">{series_name}</a></h4>""" \
+                         """<div id="sample-series-{sample_series_hash_value}">
+                         """.format(static_url=static_url, sample_series_hash_value=get_hash_value(series.sample_series),
+                                sample_series_url=series.sample_series.get_absolute_url(), series_name=series.name)
+        if not series.is_complete:
+            result += """<p>{translate}</p>""".\
+            format(translate=_("(This series contains further samples not part of your “My Samples” list.)"))
+        result += """<ul class="sample-list">                    """
+        for sample in series.samples:
+            result += """<li><a href="{sample_url}">{sample}</a>{sample_tags}</li>
+            """.format(sample_url=sample.get_absolute_url(), sample=sample, sample_tags=sample_tags(sample, user))
+        result += """</ul>
+                  </div>
+                  """
+    result += """</div>
+          """
+    if topic.sub_topics:
+        for i, sub_topic in enumerate(topic.sub_topics):
+            result += """<div class="my-samples-topics" id="topic-{topic_id}-sub_topic-{sub_topic}">
+            """.format(topic_id=topic_id, sub_topic=i)
+            result += expand_topic(sub_topic, user)
+            result += """</div>
+            """
+    result += """</div>
+          """
+    return mark_safe(result)

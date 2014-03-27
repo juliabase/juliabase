@@ -285,7 +285,7 @@ def assert_can_fully_view_sample(user, sample):
         and not user.is_superuser:
         description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
-    if sample.topic and sample.topic not in user.topics.all() and currently_responsible_person != user and \
+    if sample.topic and user not in sample.topic.members.all() and currently_responsible_person != user and \
             not user.is_superuser:
         if currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor belongs the "
@@ -562,7 +562,7 @@ def assert_can_add_result_process(user, sample_or_series):
         process to the sample or series
     """
     if sample_or_series.currently_responsible_person != user and sample_or_series.topic and \
-            sample_or_series.topic not in user.topics.all() and not user.is_superuser:
+             user not in sample_or_series.topic.members.all() and not user.is_superuser:
         if isinstance(sample_or_series, samples.models.Sample):
             description = _("You are not allowed to add the result to {sample_or_series} because neither are you the "
                             "currently responsible person for this sample, nor are you a member of its topic.").format(
@@ -594,7 +594,7 @@ def assert_can_edit_sample(user, sample):
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
     if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
-        (sample.topic in user.topics.all() and PhysicalProcess.topic_manager_permission in user.user_permissions.all()):
+        (user in sample.topic.members.all() and PhysicalProcess.topic_manager_permission in user.user_permissions.all()):
         description = _("You are not allowed to edit the sample “{name}” (including splitting and declaring dead) because "
                         "you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
@@ -635,7 +635,7 @@ def assert_can_view_sample_series(user, sample_series):
       - `PermissionError`: raised if the user is not allowed to view the sample
         series
     """
-    if sample_series.currently_responsible_person != user and sample_series.topic not in user.topics.all() and \
+    if sample_series.currently_responsible_person != user and  user not in sample_series.topic.members.all()and \
             not user.is_superuser:
         description = _("You are not allowed to view the sample series “{name}” because neither are "
                         "you the currently responsible person for it, nor are you in its topic.").format(name=sample_series)
@@ -746,6 +746,28 @@ def assert_can_edit_topic(user, topic=None):
                 description = _("You are not allowed to change this topic because it is confidential "
                                 "and you are not in this topic.")
                 raise PermissionError(user, description)
+
+
+def assert_can_edit_users_topics(user):
+    """Tests whether the user can change topic memberships of other users,
+    set the topic's restriction status, and add new sub topics where the
+    user is member off. This is a priviledge of topic managers.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to edit his/ her
+        topics, or to add new sub topics.
+    """
+    if not user.has_perm("chantal_common.can_edit_their_topics") and \
+        not user.has_perm("chantal_common.can_edit_all_topics"):
+        description = _("You are not allowed to change your topics because you don't have the permission "
+                        "“{0}” or “{1}”.").format(translate_permission("chantal_common.can_edit_all_topics"),
+                                                  translate_permission("chantal_common.can_edit_their_topics"))
+        raise PermissionError(user, description)
 
 
 def assert_can_view_feed(hash_value, user):

@@ -278,19 +278,24 @@ class GeneralSampleField(object):
         :type samples: iterable of `models.Sample`
         :type user: ``django.contrib.auth.models.User``
         """
-        folded_topics_and_sample_series = []
-        folded_topics_and_sample_series.extend(json.loads(user.samples_user_details.folded_series))
-        folded_topics_and_sample_series.extend(json.loads(user.samples_user_details.folded_topics))
-        topics, topicless_samples = utils.build_structured_sample_list(samples, user)
-        self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
-        for topic in topics:
-            if not topic.topic.id in  folded_topics_and_sample_series:
+        def get_samples_from_topic(topic, folded_topics_and_sample_series):
+            if not topic.topic.id in folded_topics_and_sample_series:
                 seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
                 self.choices.append((topic.topic_name, seriesless_samples))
                 for series in topic.sample_series:
                     if not series.sample_series.get_hash_value() in folded_topics_and_sample_series:
                         samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
                         self.choices.append((4 * " " + series.name, samples))
+                for sub_topic in topic.sub_topics:
+                    get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+
+        folded_topics_and_sample_series = []
+        folded_topics_and_sample_series.extend(json.loads(user.samples_user_details.folded_series))
+        folded_topics_and_sample_series.extend(json.loads(user.samples_user_details.folded_topics))
+        topics, topicless_samples = utils.build_structured_sample_list(samples, user)
+        self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
+        for topic in topics:
+            get_samples_from_topic(topic, folded_topics_and_sample_series)
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, ("", 9 * "-"))
 

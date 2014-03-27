@@ -42,17 +42,45 @@ class NewTopicForm(forms.Form):
     new_topic_name = forms.CharField(label=_("Name of new topic"), max_length=80)
     # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_("confidential"), required=False)
+    parent_topic = forms.ChoiceField(label=_("Upper topic"), required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
         self.fields["new_topic_name"].widget.attrs["size"] = 40
+        self.user = user
+        if user.is_superuser:
+            self.fields["parent_topic"].choices = [(topic.pk, topic) for topic in
+                                                   Topic.objects.iterator()]
+        else:
+            self.fields["parent_topic"].choices = [(topic.pk, topic.get_name_for_user(user)) for topic in
+                Topic.objects.filter(department=user.chantal_user_details.department).iterator()
+                if permissions.has_permission_to_edit_topic(user, topic)]
+        self.fields["parent_topic"].choices.insert(0, ("", 9 * "-"))
 
     def clean_new_topic_name(self):
         topic_name = self.cleaned_data["new_topic_name"]
         topic_name = " ".join(topic_name.split())
-        if Topic.objects.filter(name=topic_name).exists():
-            raise ValidationError(_("This topic name is already used."))
         return topic_name
+
+    def clean_parent_topic(self):
+        pk = self.cleaned_data.get("parent_topic")
+        if pk:
+            parent_topic = Topic.objects.get(pk=int(pk))
+            if not permissions.has_permission_to_edit_topic(self.user, parent_topic):
+                raise ValidationError(_("You are not allowed to edit the topic “{parent_topic}”").\
+                                      format(parent_topic=parent_topic.name))
+            return parent_topic
+        elif not permissions.has_permission_to_edit_topic(self.user):
+            raise ValidationError(_("You are only allowed to create sub topics. You have to select an upper topic."))
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        topic_name = cleaned_data["new_topic_name"]
+        parent_topic = self.cleaned_data.get("parent_topic", None)
+        if Topic.objects.filter(name=topic_name, department=self.user.chantal_user_details.department, parent_topic=parent_topic).exists():
+            append_error(self, _("This topic name is already used."), "new_topic_name")
+            del cleaned_data["new_topic_name"]
+        return cleaned_data
 
 
 @login_required
@@ -70,21 +98,34 @@ def add(request):
 
     :rtype: ``HttpResponse``
     """
-    permissions.assert_can_edit_topic(request.user)
+    permissions.assert_can_edit_users_topics(request.user)
     if request.method == "POST":
-        new_topic_form = NewTopicForm(request.POST)
+        new_topic_form = NewTopicForm(request.user, request.POST)
         if new_topic_form.is_valid():
+            parent_topic = new_topic_form.cleaned_data.get("parent_topic", None)
             new_topic = Topic(name=new_topic_form.cleaned_data["new_topic_name"],
                               confidential=new_topic_form.cleaned_data["confidential"],
                               department=request.user.chantal_user_details.department)
             new_topic.save()
+            if parent_topic:
+                new_topic.parent_topic = parent_topic
+                new_topic.confidential = parent_topic.confidential
+                new_topic.save()
+                new_topic.set_members(parent_topic.members.all())
+                if parent_topic.confidential:
+                    new_topic.set_confidential(parent_topic.confidential)
+                next_view = None
+                next_view_kwargs = {}
+            else:
+                next_view = "samples.views.topic.edit"
+                next_view_kwargs = {"id": django.utils.http.urlquote(new_topic.id, safe="")}
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
             return utils.successful_response(
                 request, _("Topic {name} was successfully created.").format(name=new_topic.name),
-                "samples.views.topic.edit", kwargs={"name": django.utils.http.urlquote(new_topic.name, safe="")})
+                next_view, kwargs=next_view_kwargs)
     else:
-        new_topic_form = NewTopicForm()
+        new_topic_form = NewTopicForm(request.user)
     return render_to_response("samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form},
                               context_instance=RequestContext(request))
 
@@ -106,13 +147,14 @@ def list_(request):
     :rtype: ``HttpResponse``
     """
     user = request.user
-    all_topics = Topic.objects.order_by("name").all()
-    user_topics = Topic.objects.filter(department=user.chantal_user_details.department).order_by("name").all()
-    topics = set(topic for topic in user_topics if permissions.has_permission_to_edit_topic(user, topic))
-    if not topics:
+    all_toplevel_topics = Topic.objects.filter(parent_topic=None).order_by("name").all()
+    user_toplevel_topics = Topic.objects.filter(department=user.chantal_user_details.department,
+                                                parent_topic=None).order_by("name").all()
+    toplevel_topics = set(topic for topic in user_toplevel_topics if permissions.has_permission_to_edit_topic(user, topic))
+    if not toplevel_topics:
         raise Http404("Can't find any topic that you can edit.")
     return render_to_response("samples/list_topics.html", {"title": _("List of all topics"),
-                                                           "topics": all_topics if user.is_superuser else topics},
+                                                           "topics": all_toplevel_topics if user.is_superuser else toplevel_topics},
                               context_instance=RequestContext(request))
 
 
@@ -142,14 +184,14 @@ class EditTopicForm(forms.Form):
         return cleaned_data
 
 @login_required
-def edit(request, name):
+def edit(request, id):
     """View for changing the members of a particular topic, and to set the
     restriction status.  This is only allowed to heads of institute groups and
     topic managers.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `name`: the name of the topic
+      - `id`: the id of the topic
 
     :type request: ``HttpRequest``
     :type name: unicode
@@ -159,7 +201,7 @@ def edit(request, name):
 
     :rtype: ``HttpResponse``
     """
-    topic = get_object_or_404(Topic, name=name)
+    topic = get_object_or_404(Topic, id=utils.int_or_zero(id), parent_topic=None)
     permissions.assert_can_edit_topic(request.user, topic)
     if request.method == "POST":
         edit_topic_form = EditTopicForm(request.user, topic, request.POST)
@@ -168,9 +210,9 @@ def edit(request, name):
         if edit_topic_form.is_valid():
             old_members = list(topic.members.all())
             new_members = edit_topic_form.cleaned_data["members"]
-            topic.members = new_members
-            topic.confidential = edit_topic_form.cleaned_data["confidential"]
             topic.save()
+            topic.set_members(new_members)
+            topic.set_confidential(edit_topic_form.cleaned_data["confidential"])
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)
@@ -189,6 +231,6 @@ def edit(request, name):
         edit_topic_form = \
             EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True)})
     return render_to_response("samples/edit_topic.html",
-                              {"title": _("Change topic memberships of “%s”") % name,
+                              {"title": _("Change topic memberships of “{0}”").format(topic.name),
                                "edit_topic": edit_topic_form},
                               context_instance=RequestContext(request))

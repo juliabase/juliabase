@@ -80,7 +80,7 @@ def primary_keys(request):
     result_dict = {}
     if "topics" in request.GET:
         all_topics = set(topic for topic in Topic.objects.all()
-                         if not topic.confidential or topic in request.user.topics.all() or request.user.is_staff)
+                         if not topic.confidential or request.user in topic.members.all() or request.user.is_staff)
         if request.GET["topics"] == "*":
             topics = all_topics
         else:

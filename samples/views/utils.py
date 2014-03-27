@@ -304,7 +304,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     """
     if chantal_common.utils.is_json_requested(request):
         return chantal_common.utils.respond_in_json(json_response)
-    return chantal_common.utils.successful_response(request, success_report, view or "samples.views.main.main_menu", kwargs,
+    return chantal_common.utils.successful_response(request, success_report,
+                                                    view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 
 
@@ -402,9 +403,17 @@ class StructuredTopic(object):
         self.topic_name = topic.get_name_for_user(user)
         self.samples = []
         self.sample_series = []
+        self.sub_topics = []
 
     def sort_sample_series(self):
         self.sample_series.sort(key=lambda series: series.timestamp, reverse=True)
+        for topic in self.sub_topics:
+            topic.sort_sample_series()
+
+    def sort_sub_topics(self):
+        if self.sub_topics:
+            self.sub_topics = sorted(self.sub_topics,
+                                     key=lambda structured_topic: structured_topic.topic.name)
 
 
 def build_structured_sample_list(samples, user):
@@ -431,31 +440,52 @@ def build_structured_sample_list(samples, user):
 
     :rtype: list of `StructuredTopic`, list of `models.Sample`
     """
+    def create_topic_tree(structured_topics):
+        """Goes through all given topics and makes sure that all parent
+        topics are also included.
+        """
+        for structured_topic in structured_topics.itervalues():
+            if structured_topic.topic.has_parent():
+                try:
+                    parent_structured_topic = structured_topics[structured_topic.topic.parent_topic.id]
+                except KeyError:
+                    structured_topics[structured_topic.topic.parent_topic.id] = \
+                        StructuredTopic(structured_topic.topic.parent_topic, user)
+                    # i must recall the function because the size of the dictionary has changed
+                    return create_topic_tree(structured_topics)
+                parent_structured_topic.sub_topics.append(structured_topic)
+                parent_structured_topic.sort_sub_topics()
+                sub_topics.append(structured_topic.topic.id)
+            structured_topic.sort_sample_series()
+        return structured_topics
+
     structured_series = {}
     structured_topics = {}
     topicless_samples = []
+    sub_topics = []
     for sample in sorted(set(samples), key=lambda sample: (sample.tags, sample.name)):
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:
                 if series.name not in structured_series:
                     structured_series[series.name] = StructuredSeries(series)
-                    topicname = series.topic.name
-                    if topicname not in structured_topics:
-                        structured_topics[topicname] = StructuredTopic(series.topic, user)
-                    structured_topics[topicname].sample_series.append(structured_series[series.name])
+                    topic_id = series.topic.id
+                    if topic_id not in structured_topics:
+                        structured_topics[topic_id] = StructuredTopic(series.topic, user)
+                    structured_topics[topic_id].sample_series.append(structured_series[series.name])
                 structured_series[series.name].append(sample)
         elif sample.topic:
-            topicname = sample.topic.name
-            if topicname not in structured_topics:
-                structured_topics[topicname] = StructuredTopic(sample.topic, user)
-            structured_topics[topicname].samples.append(sample)
+            topic_id = sample.topic.id
+            if topic_id not in structured_topics:
+                structured_topics[topic_id] = StructuredTopic(sample.topic, user)
+            structured_topics[topic_id].samples.append(sample)
         else:
             topicless_samples.append(sample)
-    structured_topics = sorted(structured_topics.itervalues(), key=lambda structured_topic: structured_topic.topic.id,
-                               reverse=True)
-    for structured_topic in structured_topics:
-        structured_topic.sort_sample_series()
+    structured_topics = create_topic_tree(structured_topics)
+    for topic_id in sub_topics:
+        del structured_topics[topic_id]
+    structured_topics = sorted(structured_topics.itervalues(),
+                               key=lambda structured_topic: structured_topic.topic.name)
     return structured_topics, topicless_samples
 
 

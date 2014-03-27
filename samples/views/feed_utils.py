@@ -165,7 +165,7 @@ class Reporter(object):
 
         :type topic: ``chantal_common.models.Topic``
         """
-        self.interested_users.update(user for user in topic.members.all()
+        self.interested_users.update(user for user in topic.members.iterator()
                                      if not user.samples_user_details.only_important_news)
 
     def __get_subscribers(self, sample_series):
