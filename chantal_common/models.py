@@ -24,6 +24,7 @@ from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 import chantal_common.search
+from collections import Iterable
 
 
 class Department(models.Model):
@@ -117,11 +118,13 @@ class Topic(models.Model):
                                      related_name="topics")
     confidential = models.BooleanField(_("confidential"), default=False)
     department = models.ForeignKey(Department, verbose_name=_("department"), related_name="topic")
+    parent_topic = models.ForeignKey('self', verbose_name=_("parent topic"), related_name="child_topics",
+                                    blank=True, null=True)
 
     class Meta:
         verbose_name = _("topic")
         verbose_name_plural = _("topics")
-        unique_together = ("name", "department")
+        unique_together = ("name", "department", "parent_topic")
         _ = lambda x: x
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
@@ -159,6 +162,47 @@ class Topic(models.Model):
             return _("topic #{number} (confidential)").format(number=self.id)
         else:
             return self.name
+
+    def has_parent(self):
+        """Looks if the topic has a superordinate topic.
+
+        :Return:
+          ``True`` if the topic has a superordinate topic and ``False`` if not.
+
+        :rtype: bool
+        """
+        return True if self.parent_topic else False
+
+    def set_members(self, new_members):
+        """Sets the new members for the topic and all
+        child topics.
+
+        :Parameter:
+          - `new_members`: list of new members for the topic
+
+        :type new_members: list of ``django.contrib.auth.models.User``
+        """
+        if isinstance(new_members, Iterable) and \
+            all(isinstance(member, django.contrib.auth.models.User)
+                for member in new_members):
+            self.members = new_members
+            self.save()
+            for child_topic in self.child_topics.iterator():
+                child_topic.set_members(new_members)
+
+    def set_confidential(self, confidential):
+        """Sets the confidential value for the topic and all
+        child topics.
+
+        :Parameter:
+          - `confidential`: ``True`` if topic is confidential else ``False``
+
+        :type confidential: bool
+        """
+        self.confidential = confidential
+        self.save()
+        for child_topic in self.child_topics.iterator():
+                child_topic.set_confidential(confidential)
 
 
 class PolymorphicModel(models.Model):
