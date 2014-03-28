@@ -204,6 +204,18 @@ class Topic(models.Model):
         for child_topic in self.child_topics.iterator():
                 child_topic.set_confidential(confidential)
 
+    def get_top_level_topic(self):
+        """
+        :Returns:
+          the must upper topic from this topic.
+
+        :rtype: ``Topic``
+        """
+        if self.parent_topic:
+            return self.parent_topic.get_top_level_topic()
+        else:
+            return self
+
 
 class PolymorphicModel(models.Model):
     """Abstract model class, which provides the attribute ``actual_instance``.
