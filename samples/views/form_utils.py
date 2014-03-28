@@ -453,19 +453,27 @@ class TopicField(forms.ChoiceField):
         :type user: ``django.contrib.auth.models.User``
         :type additional_topic: ``chantal_common.models.Topic``
         """
+        def topics_and_sub_topics(parent_topics):
+            for topic in parent_topics:
+                name = 2 * " " + unicode(topic) if topic.has_parent() else  unicode(topic)
+                self.choices.append((topic.pk, name))
+                child_topics = topic.child_topics.all()
+                if child_topics:
+                    topics_and_sub_topics(sorted(child_topics, key=lambda topic: topic.name.lower()))
+
         self.choices = [("", 9 * "-")]
         if not user.is_superuser:
             all_topics = Topic.objects.filter(members__is_active=True). \
             filter(members__chantal_user_details__department=user.chantal_user_details.department).distinct()
             user_topics = user.topics.all()
-            topics = \
-                set(topic for topic in all_topics if not topic.confidential or topic in user_topics)
+            top_level_topics = \
+                set(topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent())
             if additional_topic:
-                topics.add(additional_topic)
+                top_level_topics.add(additional_topic.get_top_level_topic())
         else:
-            topics = set(topic for topic in Topic.objects.iterator())
-        topics = sorted(topics, key=lambda topic: topic.name.lower())
-        self.choices.extend((topic.pk, unicode(topic)) for topic in topics)
+            top_level_topics = set(topic for topic in Topic.objects.iterator() if not topic.has_parent())
+        top_level_topics = sorted(top_level_topics, key=lambda topic: topic.name.lower())
+        topics_and_sub_topics(top_level_topics)
 
     def clean(self, value):
         value = super(TopicField, self).clean(value)
