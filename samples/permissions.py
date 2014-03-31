@@ -731,7 +731,7 @@ def assert_can_edit_topic(user, topic=None):
     else:
         if user in topic.members.all():
             if not user.has_perm("chantal_common.can_edit_all_topics") and \
-                    not user.has_perm("chantal_common.can_edit_their_topics"):
+                    topic.manager != user:
                 description = _("You are not allowed to change this topic because you don't have the permission "
                                 "“{0}” or “{1}”.").format(translate_permission("chantal_common.can_edit_all_topics"),
                                                            translate_permission("chantal_common.can_edit_their_topics"))

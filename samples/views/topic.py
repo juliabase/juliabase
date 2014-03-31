@@ -32,6 +32,8 @@ from chantal_common.utils import append_error
 from chantal_common.models import Topic
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
+from  samples.views.permissions import PhysicalProcess as PermissionsPhysicalProcess
+from django.utils.text import capfirst
 
 
 class NewTopicForm(forms.Form):
@@ -43,6 +45,7 @@ class NewTopicForm(forms.Form):
     # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_("confidential"), required=False)
     parent_topic = forms.ChoiceField(label=_("Upper topic"), required=False)
+    topic_manager = form_utils.UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
@@ -56,6 +59,8 @@ class NewTopicForm(forms.Form):
                 Topic.objects.filter(department=user.chantal_user_details.department).iterator()
                 if permissions.has_permission_to_edit_topic(user, topic)]
         self.fields["parent_topic"].choices.insert(0, ("", 9 * "-"))
+        self.fields["topic_manager"].set_users(user, user)
+        self.fields["topic_manager"].initial = user.pk
 
     def clean_new_topic_name(self):
         topic_name = self.cleaned_data["new_topic_name"]
@@ -77,9 +82,12 @@ class NewTopicForm(forms.Form):
         cleaned_data = self.cleaned_data
         topic_name = cleaned_data["new_topic_name"]
         parent_topic = self.cleaned_data.get("parent_topic", None)
-        if Topic.objects.filter(name=topic_name, department=self.user.chantal_user_details.department, parent_topic=parent_topic).exists():
+        if Topic.objects.filter(name=topic_name, department=self.user.chantal_user_details.department,
+                                parent_topic=parent_topic).exists():
             append_error(self, _("This topic name is already used."), "new_topic_name")
             del cleaned_data["new_topic_name"]
+        if parent_topic and parent_topic.manager != cleaned_data.get("topic_manager"):
+            append_error(self, _("The topic manager must be the topic manager from the upper topic."), "topic_manager")
         return cleaned_data
 
 
@@ -105,20 +113,19 @@ def add(request):
             parent_topic = new_topic_form.cleaned_data.get("parent_topic", None)
             new_topic = Topic(name=new_topic_form.cleaned_data["new_topic_name"],
                               confidential=new_topic_form.cleaned_data["confidential"],
-                              department=request.user.chantal_user_details.department)
+                              department=request.user.chantal_user_details.department,
+                              manager=new_topic_form.cleaned_data["topic_manager"])
             new_topic.save()
             if parent_topic:
                 new_topic.parent_topic = parent_topic
                 new_topic.confidential = parent_topic.confidential
                 new_topic.save()
-                new_topic.set_members(parent_topic.members.all())
-                if parent_topic.confidential:
-                    new_topic.set_confidential(parent_topic.confidential)
                 next_view = None
                 next_view_kwargs = {}
             else:
                 next_view = "samples.views.topic.edit"
                 next_view_kwargs = {"id": django.utils.http.urlquote(new_topic.id, safe="")}
+            new_topic.manager.user_permissions.add(PermissionsPhysicalProcess.topic_manager_permission)
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
             return utils.successful_response(
@@ -165,6 +172,7 @@ class EditTopicForm(forms.Form):
     """
     members = form_utils.MultipleUsersField(label=_("Members"), required=False)
     confidential = forms.BooleanField(label=_("confidential"), required=False)
+    topic_manager = form_utils.UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)
@@ -173,6 +181,7 @@ class EditTopicForm(forms.Form):
         self.fields["confidential"].initial = topic.confidential
         self.user = user
         self.topic = topic
+        self.fields["topic_manager"].set_users(user, topic.manager)
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -208,11 +217,19 @@ def edit(request, id):
         added_members = []
         removed_members = []
         if edit_topic_form.is_valid():
+            old_manager = topic.manager
+            new_manager = edit_topic_form.cleaned_data["topic_manager"]
+            topic.manager = new_manager
             old_members = list(topic.members.all())
-            new_members = edit_topic_form.cleaned_data["members"]
+            new_members = edit_topic_form.cleaned_data["members"] + [new_manager]
+            topic.members = new_members
+            topic.confidential = edit_topic_form.cleaned_data["confidential"]
             topic.save()
-            topic.set_members(new_members)
-            topic.set_confidential(edit_topic_form.cleaned_data["confidential"])
+            if old_manager != new_manager:
+                if not old_manager.managed_topics.all():
+                    old_manager.user_permissions.remove(PermissionsPhysicalProcess.topic_manager_permission)
+                if not permissions.has_permission_to_edit_users_topics(new_manager):
+                    new_manager.user_permissions.add(PermissionsPhysicalProcess.topic_manager_permission)
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)
@@ -229,7 +246,8 @@ def edit(request, id):
                 request, _("Members of topic “{name}” were successfully updated.").format(name=topic.name))
     else:
         edit_topic_form = \
-            EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True)})
+            EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True),
+                                                        "topic_manager": topic.manager.pk})
     return render_to_response("samples/edit_topic.html",
                               {"title": _("Change topic memberships of “{0}”").format(topic.name),
                                "edit_topic": edit_topic_form},
