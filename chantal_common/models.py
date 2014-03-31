@@ -120,6 +120,8 @@ class Topic(models.Model):
     department = models.ForeignKey(Department, verbose_name=_("department"), related_name="topic")
     parent_topic = models.ForeignKey('self', verbose_name=_("parent topic"), related_name="child_topics",
                                     blank=True, null=True)
+    manager = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("topic manager"),
+                                related_name="managed_topics")
 
     class Meta:
         verbose_name = _("topic")
@@ -127,7 +129,7 @@ class Topic(models.Model):
         unique_together = ("name", "department", "parent_topic")
         _ = lambda x: x
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
-                       ("can_edit_their_topics", _("Can edit topics that he/she is a member of")))
+                       ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
     def __unicode__(self):
         return unicode(self.name)
@@ -173,41 +175,20 @@ class Topic(models.Model):
         """
         return True if self.parent_topic else False
 
-    def set_members(self, new_members):
-        """Sets the new members for the topic and all
-        child topics.
-
-        :Parameter:
-          - `new_members`: list of new members for the topic
-
-        :type new_members: list of ``django.contrib.auth.models.User``
+    def save(self):
+        """When the topic was edited, the sub topics must be updated.
         """
-        if isinstance(new_members, Iterable) and \
-            all(isinstance(member, django.contrib.auth.models.User)
-                for member in new_members):
-            self.members = new_members
-            self.save()
-            for child_topic in self.child_topics.iterator():
-                child_topic.set_members(new_members)
-
-    def set_confidential(self, confidential):
-        """Sets the confidential value for the topic and all
-        child topics.
-
-        :Parameter:
-          - `confidential`: ``True`` if topic is confidential else ``False``
-
-        :type confidential: bool
-        """
-        self.confidential = confidential
-        self.save()
+        super(Topic, self).save()
         for child_topic in self.child_topics.iterator():
-                child_topic.set_confidential(confidential)
+            child_topic.confidential = self.confidential
+            child_topic.members = self.members.all()
+            child_topic.manager = self.manager
+            child_topic.save()
 
     def get_top_level_topic(self):
         """
         :Returns:
-          the must upper topic from this topic.
+          the most upper topic from this topic.
 
         :rtype: ``Topic``
         """
