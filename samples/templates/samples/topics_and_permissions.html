@@ -34,6 +34,23 @@ copyright holder, you must destroy it immediately and completely.
   {% endif %}
 </p>
 
+<p>
+  {% if managed_topics %}
+   {% blocktrans count managed_topics|length as counter %}
+      {{ full_user_name }} is manager of the following topic:
+    {% plural %}
+      {{ full_user_name }} is manager of the following topics:
+    {% endblocktrans %}
+    {% for topic in managed_topics %}
+      <strong>{{ topic }}</strong>{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  {% else %}
+    {% blocktrans %}
+      {{ full_user_name }} isn't a manager of any topic.
+    {% endblocktrans %}
+  {% endif %}
+</p>
+
 
 <h2>{% trans 'Permissions' %}</h2>
 

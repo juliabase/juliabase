@@ -183,7 +183,8 @@ def topics_and_permissions(request, login_name):
     return render_to_response(
         "samples/topics_and_permissions.html",
         {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
-         "topics": user.topics.all(), "permissions": permissions.get_user_permissions(user),
+         "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
+         "permissions": permissions.get_user_permissions(user),
          "full_user_name": get_really_full_name(request.user),
          "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")},
         context_instance=RequestContext(request))
