@@ -251,14 +251,6 @@ class PermissionsForm(forms.Form):
         return self.cleaned_data
 
 
-class IsTopicManagerForm(forms.Form):
-    """Form class for setting whether a particular user is a “topic manager”.
-    It is used in `edit` but see `list_` for an explanation of this term.
-    """
-    _ = ugettext_lazy
-    is_topic_manager = forms.BooleanField(label=_("Is topic manager"), required=False)
-
-
 @login_required
 def edit(request, username):
     """View for editing user permissions.  You can change two kinds of user
@@ -282,7 +274,6 @@ def edit(request, username):
     edited_user = get_object_or_404(User, username=username)
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
-    can_appoint_topic_managers = user.has_perm("chantal_common.can_edit_all_topics")
     physical_processes = get_physical_processes(user)
     permissions_list = []
     for process in physical_processes:
@@ -295,8 +286,7 @@ def edit(request, username):
                 else:
                     permissions_list.append((process, PermissionsForm(edited_user, process, prefix=process.codename)))
     if request.method == "POST":
-        is_topic_manager_form = IsTopicManagerForm(request.POST)
-        if all(permission[1].is_valid() for permission in permissions_list) and is_topic_manager_form.is_valid():
+        if all(permission[1].is_valid() for permission in permissions_list):
             for process, permissions_form in permissions_list:
                 cleaned_data = permissions_form.cleaned_data
                 def process_permission(form_key, attribute_name, permission):
@@ -311,20 +301,10 @@ def edit(request, username):
                 process_permission("can_view_all", "full_viewers", process.view_all_permission)
                 process_permission("can_edit_all", "full_editors", process.edit_all_permission)
                 process_permission("can_edit_permissions", "permission_editors", process.edit_permissions_permission)
-            if is_topic_manager_form.cleaned_data["is_topic_manager"]:
-                edited_user.user_permissions.add(PhysicalProcess.topic_manager_permission)
-                edited_user.user_permissions.add(PhysicalProcess.add_external_operators_permission)
-            else:
-                edited_user.user_permissions.remove(PhysicalProcess.topic_manager_permission)
-                edited_user.user_permissions.remove(PhysicalProcess.add_external_operators_permission)
             return utils.successful_response(request, _("The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
-    else:
-        is_topic_manager_form = IsTopicManagerForm(
-            initial={"is_topic_manager": PhysicalProcess.topic_manager_permission in edited_user.user_permissions.all()})
     return render_to_response(
         "samples/edit_permissions.html",
         {"title": _("Change permissions of {name}").format(name=get_really_full_name(edited_user)),
-         "permissions_list": permissions_list,
-         "is_topic_manager": is_topic_manager_form if can_appoint_topic_managers else None},
+         "permissions_list": permissions_list},
         context_instance=RequestContext(request))
