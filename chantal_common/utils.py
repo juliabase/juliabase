@@ -542,14 +542,14 @@ def get_all_models(app_label=None):
     :rtype: dict mapping str to ``class``
     """
     global all_models, abstract_models
-    if all_models is None:
-        abstract_models = frozenset(abstract_models)
-        all_models = dict((model.__name__, model) for model in get_models())
-        all_models.update((model.__name__, model) for model in abstract_models)
     if app_label:
         result = dict((model.__name__, model) for model in get_models(get_app(app_label)))
         result.update((model.__name__, model) for model in abstract_models if model._meta.app_label == app_label)
         return result
+    if all_models is None:
+        abstract_models = frozenset(abstract_models)
+        all_models = dict((model.__name__, model) for model in get_models())
+        all_models.update((model.__name__, model) for model in abstract_models)
     return all_models.copy()
 
 
