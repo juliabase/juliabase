@@ -17,9 +17,10 @@ from chantal_common.models import Department
 from django.contrib.contenttypes.models import ContentType
 from chantal_common import utils
 from django.conf import settings
-from django.db.utils import DatabaseError
 import sys
 
+
+departments = {}
 def register_to_department(process_cls, department_name):
     """Connects a process with a department.
 
@@ -31,13 +32,19 @@ def register_to_department(process_cls, department_name):
     :type department_name: str
     """
     if not "syncdb" in sys.argv:
+        global departments
         try:
-            department = Department.objects.get(name=department_name)
+            if department_name in departments:
+                department = departments[department_name]
+            else:
+                department = Department.objects.get(name=department_name)
+                departments[department_name] = department
             content_type = ContentType.objects.get_for_model(process_cls)
             if content_type not in department.processes.iterator():
                 department.processes.add(content_type)
-        except (DatabaseError, Department.DoesNotExist):
-            pass
+        except Department.DoesNotExist:
+            department = Department.objects.create(name=department_name)
+            department.processes.add(content_type)
 
 
 def register_all_models_to_department(department_name):
