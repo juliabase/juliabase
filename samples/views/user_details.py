@@ -85,10 +85,17 @@ class UserDetailsForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
-        self.fields["default_folded_process_classes"].choices = form_utils.choices_of_content_types(
-            process_class for process_class in chantal_common_utils.get_all_models().itervalues()
-            if issubclass(process_class, models.Process) and not process_class._meta.abstract
-            and process_class not in [models.Process, models.Deposition])
+        choices = []
+        department_ids = json.loads(user.samples_user_details.show_user_from_department)
+        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+            process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
+                                          if ContentType.objects.get_for_model(process) in department.processes.all())
+            choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
+        if not choices:
+            choices = (("", 9 * "-"),)
+        self.fields["default_folded_process_classes"].choices = choices
+        self.fields["default_folded_process_classes"].initial = [content_type.id for content_type
+                                                     in user.samples_user_details.default_folded_process_classes.iterator()]
         self.fields["default_folded_process_classes"].widget.attrs["size"] = "15"
         self.fields["subscribed_feeds"].choices = form_utils.choices_of_content_types(
             list(get_all_addable_physical_process_models()) + [models.Sample, models.SampleSeries, Topic])
@@ -99,8 +106,7 @@ class UserDetailsForm(forms.ModelForm):
 
     class Meta:
         model = models.UserDetails
-        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",
-                  "default_folded_process_classes")
+        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",)
 
 
 @login_required
@@ -160,6 +166,8 @@ def edit_preferences(request, login_name):
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
             user_details = user_details_form.save(commit=False)
             user_details.show_user_from_department = json.dumps(user_details_form.cleaned_data["show_user_from_department"])
+            user_details.default_folded_process_classes = [ContentType.objects.get_for_id(int(id_))
+                 for id_ in user_details_form.cleaned_data["default_folded_process_classes"]]
             user_details.save()
             initials_form.save()
             return utils.successful_response(request, _("The preferences were successfully updated."))
