@@ -86,9 +86,12 @@ class UserDetailsForm(forms.ModelForm):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
         choices = []
+        processes = [process_class for process_class in chantal_common_utils.get_all_models().itervalues()
+                    if issubclass(process_class, models.Process) and not process_class._meta.abstract
+                    and process_class not in [models.Process, models.Deposition]]
         department_ids = json.loads(user.samples_user_details.show_user_from_department)
         for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
+            process_from_department = set(process for process in processes
                                           if ContentType.objects.get_for_model(process) in department.processes.all())
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
         if not choices:
