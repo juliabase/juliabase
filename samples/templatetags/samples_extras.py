@@ -729,3 +729,26 @@ def expand_topic(topic, user):
     result += """</div>
           """
     return mark_safe(result)
+
+@register.filter
+def class_name(value):
+    """Returns the class name for a database model instance.
+    """
+    return value.__class__.__name__
+
+@register.filter
+def strip_substrings(value, pattern):
+    """Removes substrings from a value.
+    The substring pattern should have a clear delimiter.
+
+    The allowed delimiter “;”, “,” and “\t”.
+    """
+    substring_pattern = map(unicode.strip, re.split(";|,|\t", pattern))
+    for sub_pattern in substring_pattern:
+        value = value.replace(sub_pattern, "")
+    return value
+
+@register.filter
+def camel_case_to_human_text(value):
+    # see `samples.views.utils.camel_case_to_human_text` for documentation
+    return samples.views.utils.camel_case_to_human_text(value)
