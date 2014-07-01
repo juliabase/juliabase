@@ -33,13 +33,13 @@ def register_to_department(process_cls, department_name):
     """
     if not "syncdb" in sys.argv:
         global departments
+        content_type = ContentType.objects.get_for_model(process_cls)
         try:
             if department_name in departments:
                 department = departments[department_name]
             else:
                 department = Department.objects.get(name=department_name)
                 departments[department_name] = department
-            content_type = ContentType.objects.get_for_model(process_cls)
             if content_type not in department.processes.iterator():
                 department.processes.add(content_type)
         except Department.DoesNotExist:
