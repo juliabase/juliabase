@@ -586,7 +586,8 @@ class Sample(models.Model):
         ordering = ["name"]
         _ = lambda x: x
         permissions = (("view_all_samples", _("Can view all samples from his/her department")),
-                       ("adopt_samples", _("Can adopt samples from his/her department")))
+                       ("adopt_samples", _("Can adopt samples from his/her department")),
+                       ("rename_samples", _("Can rename samples from his/her department")))
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.

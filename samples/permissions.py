@@ -303,6 +303,29 @@ def assert_can_fully_view_sample(user, sample):
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
+def assert_can_rename_sample(user, sample):
+    """Tests whether the user can rename all samples from his/her department.
+    It is recommended that only a few administrative users should get this permission.
+
+    :Parameters:
+      - `user`: the user whose permission should be checked
+      - `sample`: the sample to be renamed
+
+    :type user: ``django.contrib.auth.models.User``
+    :type sample: `models.Sample`
+
+    :Exceptions:
+      - `PermissionError`: raised if the user is not allowed to rename the
+        sample.
+    """
+    currently_responsible_person = sample.currently_responsible_person
+    if (not user.has_perm("samples.rename_samples") or \
+        currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department) \
+        and not user.is_superuser:
+        description = _("You are not allowed to rename the sample.")
+        raise PermissionError(user, description)
+
+
 def get_sample_clearance(user, sample):
     """Returns the clearance a user needs to visit a sample, if he needs one
     at all.

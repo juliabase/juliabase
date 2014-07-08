@@ -74,7 +74,12 @@ $(function() {chantal.request("{% url 'samples.views.json_client.get_folded_proc
       {% if not sample.clearance %}<a class="edit-icon"
          href="{% url 'samples.views.sample.export' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
          ><img src="{{ STATIC_URL }}chantal/icons/table.png" alt="export icon" width="16" height="16"
-               title="{% trans 'export as table' %}"/></a>{% endif %}</h1>{% endspaceless %}
+               title="{% trans 'export as table' %}"/></a>{% endif %}
+     {% if sample.can_rename_sample %}
+      <a class="edit-icon"
+           href="{% url 'samples.views.sample.rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples.views.sample.by_id' sample_id=sample.sample.id path_suffix='' %}"
+    ><img src="{{ STATIC_URL }}chantal/icons/tag_red.png" alt="rename icon" title="{% trans 'rename sample' %}"
+          width="16" height="16"/></a>{% endif %}</h1>{% endspaceless %}
 
       {% block extra_sample_header %}
         {# This block may be overridden or expanded in derived templates #}

@@ -1,0 +1,39 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+
+{% block frame_content %}
+<form method="post">
+  <table class="padding">
+    <tbody>
+    {% error_list sample_rename _("General error") "<tr>" %}
+      <tr>
+        {% input_field sample_rename.old_name %}
+      </tr>
+      <tr>
+        {% input_field sample_rename.new_name %}
+      </tr>
+      <tr>
+        {% input_field sample_rename.create_alias %}
+      </tr>
+    </tbody>
+  </table>
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+{% endblock %}

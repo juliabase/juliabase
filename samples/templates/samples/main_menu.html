@@ -135,6 +135,10 @@ $(function() { chantal.request("{% url 'samples.views.json_client.get_folded_mai
     {% if user.is_staff %}
       <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/user_suit.png")'><a href="admin/">{% trans 'Administration' %}</a></li>
     {% endif %}
+    {% if can_rename_samples %}
+      <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/tag_red.png")'>
+        <a href="{% url 'samples.views.sample.rename_sample' %}">{% trans 'Rename sample' %}</a></li>
+    {% endif %}
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/table.png")'>
      <a href="{% url 'samples.views.status.show' %}"
          >{% trans 'Status messages' %}</a></li>

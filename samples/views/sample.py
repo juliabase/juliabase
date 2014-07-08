@@ -40,9 +40,11 @@ from django.template import RequestContext
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
+from django.utils.text import capfirst
 import chantal_common.search
 from samples import models, permissions, data_tree
 from samples.views import utils, form_utils, feed_utils
+from django.forms.util import ValidationError
 
 
 
@@ -401,6 +403,9 @@ class SamplesAndProcesses(object):
         sample_details = sample.get_sample_details()
         if sample_details:
             self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
+        if permissions.has_permission_to_rename_sample(self.user, sample):
+            self.sample_context["id_for_rename"] = str(sample.pk)
+            self.sample_context["can_rename_sample"] = True
 
     def remove_noncleared_process_contexts(self, user, clearance):
         """Removes all items from ``self.process_contexts`` which the `user`
@@ -998,4 +1003,92 @@ def data_matrix_code(request):
         image.save(filepath)
         storage_changed.send(data_matrix_code)
     return render_to_response("samples/data_matrix_code.html", {"title": _("Data Matrix code"), "url": url, "data": data},
+                              context_instance=RequestContext(request))
+
+
+class SampleRenameForm(forms.Form):
+    """Form for rename a sample.
+    """
+    _ = ugettext_lazy
+    old_name = forms.CharField(label=capfirst(_("old sample name")), max_length=30, required=True)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30, required=True)
+    create_alias = forms.BooleanField(label=capfirst(_("keep old name as sample alias name")),
+                                      required=False)
+
+    def __init__(self, user, data=None, **kwargs):
+        super(SampleRenameForm, self).__init__(data, **kwargs)
+        self.user = user
+
+    def clean_old_name(self):
+        old_name = self.cleaned_data["old_name"]
+        try:
+            sample = models.Sample.objects.get(name=old_name)
+        except models.Sample.DoesNotExist:
+            raise ValidationError(_("This sample does not exists."))
+        if not permissions.has_permission_to_rename_sample(self.user, sample):
+            raise ValidationError(_("You are not allowed to rename the sample."))
+        return old_name
+
+    def clean_new_name(self):
+        new_name = self.cleaned_data.get("new_name", "")
+        if not new_name.strip():
+            raise ValidationError(_("New name is required."))
+        if models.Sample.objects.filter(name=new_name).exists():
+            raise ValidationError(_("A sample with this name exists already."))
+        return new_name
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        old_name = cleaned_data.get("old_name", "").strip()
+        new_name = cleaned_data.get("new_name", "").strip()
+        if new_name and new_name == old_name:
+            append_error(self, _("The new name must be differend then the old name."), "new_name")
+            del cleaned_data["new_name"]
+        return cleaned_data
+
+
+@login_required
+def rename_sample(request):
+    """Rename a sample given by its id.
+    This view should only be available for adminstative users.
+    For normal users use
+    ``samples.views.bulk_rename.bulk_rename``
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+
+    :type request: ``HttpRequest``
+
+    :Returns:
+      the HTTP response object
+
+    :rtype: ``HttpResponse``
+    """
+    sample_id = request.GET.get("sample_id")
+    if sample_id:
+        sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
+        permissions.assert_can_rename_sample(request.user, sample)
+    else:
+        sample = None
+    if request.method == "POST":
+        sample_rename_form = SampleRenameForm(request.user, request.POST)
+        if sample_rename_form.is_valid():
+            old_name = sample_rename_form.cleaned_data["old_name"]
+            if not sample:
+                sample = models.Sample.objects.get(name=old_name)
+            sample.name = sample_rename_form.cleaned_data["new_name"]
+            sample.save()
+            if sample_rename_form.cleaned_data["create_alias"]:
+                models.SampleAlias.objects.create(name=old_name, sample=sample)
+            feed_reporter = feed_utils.Reporter(request.user)
+            feed_reporter.report_edited_samples([sample], {"important": True,
+               "description": _("Sample {old_name} was renamed to {new_name}").format(new_name=sample.name, old_name=old_name)})
+            return utils.successful_response(
+                request, _("Sample {sample} was successfully changed in the database.").format(sample=sample))
+    else:
+        sample_rename_form = SampleRenameForm(request.user, initial={"old_name": sample.name if sample else ""})
+    title = _("Rename sample") + " “{sample}”".format(sample=sample) if sample else ""
+    return render_to_response("samples/rename_sample.html",
+                              {"title": title,
+                               "sample_rename": sample_rename_form},
                               context_instance=RequestContext(request))
