@@ -32,11 +32,12 @@ from django.conf.urls import *
 from django.conf import settings
 
 urlpatterns = patterns("django.contrib.auth.views",
-                       (r"^change_password$", "password_change", {"template_name": "chantal_common/change_password.html"}),
-                       (r"^change_password/done/$", "password_change_done",
-                        {"template_name": "chantal_common/password_changed.html"}),
-                       (r"^login$", "login", {"template_name": "chantal_common/login.html"}),
-                       (r"^logout$", "logout", {"template_name": "chantal_common/logout.html"}),
+                       url(r"^change_password$", "password_change", {"template_name": "chantal_common/change_password.html"},
+                           name="password_change"),
+                       url(r"^change_password/done/$", "password_change_done",
+                        {"template_name": "chantal_common/password_changed.html"}, name="password_change_done"),
+                       url(r"^login$", "login", {"template_name": "chantal_common/login.html"}, name="login"),
+                       url(r"^logout$", "logout", {"template_name": "chantal_common/logout.html"}, name="logout"),
                        )
 
 urlpatterns += patterns("chantal_common.views",
