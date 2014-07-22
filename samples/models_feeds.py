@@ -228,7 +228,7 @@ class FeedResult(FeedEntry):
         # Translators: experimental result
     result = models.ForeignKey(Result, verbose_name=_("result"))
     description = models.TextField(_("description"), blank=True)
-    is_new = models.BooleanField(_("result is new"))
+    is_new = models.BooleanField(_("result is new"), default=False)
 
     class Meta(FeedEntry.Meta):
         verbose_name = _("result feed entry")
