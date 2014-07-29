@@ -19,7 +19,7 @@ the Django application “chantal_kicker”.
 
 from __future__ import absolute_import
 
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.conf import settings
 
 urlpatterns = patterns("kicker.views",
