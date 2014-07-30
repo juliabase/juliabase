@@ -74,7 +74,7 @@ class ExternalOperator(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.external_operator.show", [urlquote(self.pk, safe="")])
+        return ("samples.views.external_operator.show", [self.pk])
 
 
 timestamp_inaccuracy_choices = (
@@ -700,7 +700,7 @@ class Sample(models.Model):
         if self.name.startswith("*"):
             return ("show_sample_by_id", (), {"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return ("show_sample_by_name", [urlquote(self.name, safe="")])
+            return ("show_sample_by_name", [self.name])
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -1272,7 +1272,7 @@ class SampleSeries(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.sample_series.show", [urlquote(self.name, safe="")])
+        return ("samples.views.sample_series.show", [self.name])
 
     def get_data(self):
         """Extract the data of this sample series as a tree of nodes with

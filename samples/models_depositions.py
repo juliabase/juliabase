@@ -59,7 +59,7 @@ class Deposition(PhysicalProcess):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.main.show_deposition", [urlquote(self.number, safe="")])
+        return ("samples.views.main.show_deposition", [self.number])
 
     def __unicode__(self):
         _ = ugettext
