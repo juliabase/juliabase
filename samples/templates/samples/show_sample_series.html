@@ -17,9 +17,9 @@ copyright holder, you must destroy it immediately and completely.
 {% load chantal %}
 {% load samples_extras %}
 
-{% block content_title %}{% spaceless %}<h1>{{ title }}{% if can_edit %}<a 
+{% block content_title %}{% spaceless %}<h1>{{ title }}{% if can_edit %}<a
                            class="edit-icon"
-                           href="{% url 'samples.views.sample_series.edit' name=sample_series.name|urlencode %}"
+                           href="{% url 'samples.views.sample_series.edit' name=sample_series.name %}"
            ><img src="{{ STATIC_URL }}chantal/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
                  width="16" height="16"/></a
      >{% endif %}
@@ -27,8 +27,8 @@ copyright holder, you must destroy it immediately and completely.
   href="{% url 'add_result' %}?sample_series={{ sample_series.name|urlquote_plus }}&amp;next={{ sample_series.get_absolute_url|urlquote_plus }}"
    ><img src="{{ STATIC_URL }}chantal/icons/lightbulb_add.png" alt="add-result icon" title="{% trans 'add result' %}"
          width="16" height="16"/></a>{% endif %}
-  <a class="edit-icon" 
-  href="{% url 'samples.views.sample_series.export' name=sample_series.name|urlencode %}?next={{ sample_series.get_absolute_url|urlquote_plus }}"
+  <a class="edit-icon"
+  href="{% url 'samples.views.sample_series.export' name=sample_series.name %}?next={{ sample_series.get_absolute_url|urlquote_plus }}"
      ><img src="{{ STATIC_URL }}chantal/icons/table.png" alt="export icon" width="16" height="16"
            title="{% trans 'export as table' %}"/></a>
 </h1>{% endspaceless %}{% endblock %}
@@ -59,7 +59,7 @@ copyright holder, you must destroy it immediately and completely.
     <p class="operator_and_timestamp">
       {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
     </p>
-    <h2>{{ process.name }}{% if process.edit_url %}<a class="edit-icon" 
+    <h2>{{ process.name }}{% if process.edit_url %}<a class="edit-icon"
                    href="{{ process.edit_url }}?next={{ sample_series.get_absolute_url|urlquote_plus }}"
              ><img src="{{ STATIC_URL }}chantal/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
                    width="16" height="16"/></a>{% endif %}</h2>
