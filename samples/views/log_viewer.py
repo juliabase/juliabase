@@ -28,7 +28,6 @@ from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _
 from samples import permissions
 from samples.views.shared_utils import camel_case_to_underscores
-from chantal_ipv import models
 
 
 start_pattern = re.compile(r"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d INFO     started crawling")
