@@ -177,7 +177,7 @@ class HotWireLayerForm(forms.ModelForm):
 
     class Meta:
         model = institute_models.ClusterToolHotWireLayer
-        exclude = ("deposition")
+        exclude = ("deposition",)
 
 
 class PECVDLayerForm(forms.ModelForm):
@@ -233,7 +233,7 @@ class PECVDLayerForm(forms.ModelForm):
 
     class Meta:
         model = institute_models.ClusterToolPECVDLayer
-        exclude = ("deposition")
+        exclude = ("deposition",)
 
 
 class ChangeLayerForm(forms.Form):

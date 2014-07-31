@@ -72,7 +72,7 @@ class StructuringForm(form_utils.ProcessForm):
 
     class Meta:
         model = institute_models.Structuring
-        exclude = ("external_operator")
+        exclude = ("external_operator",)
 
 def is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edit_description_form):
     """Tests the “inner” validity of all forms belonging to this view.  This

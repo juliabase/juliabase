@@ -36,56 +36,11 @@ from chantal_common.signals import maintain, storage_changed
 from chantal_common import utils
 from samples.models import Process, Result, PhysicalProcess, Sample, SampleAlias
 from samples.views import shared_utils, sample
-from chantal_institute import auth
+from chantal_common import auth
 from chantal_institute import models as chantal_institute_app
+from django.contrib.auth.management import create_permissions
+from south.signals import post_migrate
 
-
-def _synchronize_with_rsync(directory):
-    """Helper function for `synchronize_static_files` for the actual ``rsync``
-    call.
-
-    :Parameters:
-      - `directory`: the absolte path of the directory to be synchronised.  It
-        should end in a ``"/"``.
-
-    :type directory: str
-    """
-    hostname = socket.gethostname()
-    if hostname == "olga":
-        other_node = "mandy"
-    elif hostname == "mandy":
-        other_node = "olga"
-    else:
-        return
-    rsync_process = subprocess.Popen(["rsync", "-avuz", directory, other_node + ":" + directory], stdout=subprocess.PIPE)
-    output = rsync_process.communicate()[0]
-    assert rsync_process.returncode == 0
-    transmitted_paths = output.splitlines()[1:-3]
-    # FixMe: The following doesn't work in all cases, probably due to a race
-    # condition.  A delay time may fix this but we should try to deliver the
-    # HTTP response as quickly as possible.  Again, the clean solution is a
-    # cluster filesystem.  Another alternative is a cron job which walks
-    # through the synchronised directories and rounds the mtimes.
-    for path in transmitted_paths:
-        path = os.path.join(directory, path)
-        stats = os.stat(path)
-        os.utime(path, (stats.st_atime, int(stats.st_mtime)))
-
-
-def synchronize_static_files(sender, **kwargs):
-    """Synchronises the static files (mostly images) between the nodes of the
-    cluster.  It does this unidirectionally: The remote node is brought
-    up-to-date with the current node but not vice-versa.  The latter is not
-    necessary because this function is called when the *local* files have been
-    changed.
-
-    FixMe: This is an ugly hack.  Instead, a cluster file system across both
-    nodes must be used.
-    """
-    _synchronize_with_rsync("/var/www/chantal/")
-    _synchronize_with_rsync("/var/cache/chantal/")
-
-storage_changed.connect(synchronize_static_files)
 
 
 def synchronize_users_with_ad(sender, **kwargs):
@@ -129,8 +84,8 @@ def inform_process_supervisors(sender, instance, **kwargs):
                                                                     chantal_user_details__is_administrative=False))
             if recipients:
                 _ = lambda x: x
-                ## FixMe: This should be re-activated once most imports have
-                ## been done.
+                # # FixMe: This should be re-activated once most imports have
+                # # been done.
                 # utils.send_email(_(u"{user_name} uses {apparatus}"),
                 #                  _(u"Dear supervisors of {apparatus_plural},\n\n{user_name} has "
                 #                    u"created their first {apparatus}.\n"), recipients,
@@ -252,3 +207,50 @@ def clear_structuring_processes(sender, **kwargs):
             structurings[1].delete()
 
 maintain.connect(clear_structuring_processes)
+
+
+def extend_alias_names(sender, instance, action, reverse, **kwargs):
+    """Function to extend the alias name of a sample when the attend-tag was found in the comments
+    field of the result process.
+    This function is needed for the NADNuM project.
+
+    FixMe: This function should be an own signal which is triggered by the result process and not
+    by changing the many-to-many relationship between samples and processes.
+    """
+    if isinstance(instance, Result) and action == "post_add":
+        comments = instance.comments
+        match = re.search(r"append-tag:\s*\w+", comments)
+        samples = instance.samples.all()
+        if match and samples:
+            # Strip all possible leading underscores,
+            # because we want to make sure that we have only one underscore.
+            extend_alias = comments[match.start() + len("append-tag:"):match.end()].strip().lstrip("_")
+            extend_alias = "".join(["_", extend_alias])
+            sample = samples[0]
+            sample_aliases = sample.aliases.filter(name__contains=sample.name)
+            if sample_aliases:
+                sample_alias = sample_aliases[0]
+                sample_alias.name += extend_alias
+                sample_alias.save()
+            else:
+                sample_alias = SampleAlias.objects.create(name="".join([sample.name, extend_alias]), sample=sample)
+            instance.comments = re.sub(r"append-tag:\s*\w+", "*{0}*".format(sample_alias.name), comments)
+            instance.save()
+
+signals.m2m_changed.connect(extend_alias_names, sender=Sample.processes.through)
+
+
+# register a signal do update permissions every migration.
+# This is based on app django_extensions update_permissions command
+def update_permissions_after_migration(app, **kwargs):
+    """
+    Update app permission just after every migration.
+    This is based on app django_extensions update_permissions management command.
+
+    This is a workaround for the known problem, that south does not update
+    permissions on a schemamigration <http://south.aeracode.org/ticket/211>.
+    The workaround is taken from <http://devwithpassion.com/felipe/south-django-permissions/>
+    """
+    create_permissions(get_app(app), get_models(), 2 if settings.DEBUG else 0)
+
+post_migrate.connect(update_permissions_after_migration)

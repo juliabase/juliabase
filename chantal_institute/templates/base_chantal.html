@@ -26,7 +26,7 @@ copyright holder, you must destroy it immediately and completely.
   <link rel="shortcut icon" href="{{ STATIC_URL }}institute/favicon.ico" type="image/x-icon"/>
   <script type="text/javascript" src="{{ STATIC_URL }}chantal/js/jquery-1.5.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
+  <script type="text/javascript" src="{% url "django.views.i18n.javascript_catalog" %}"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}chantal/js/chantal.js"></script>
   <script type="text/javascript">
   // <![CDATA[
@@ -38,10 +38,10 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block content %}
   <ul style="display: none">
-    <li><a accesskey="m" href="{% url samples.views.main.main_menu %}">Main menu</a></li>
-    <li><a accesskey="s" href="{% url samples.views.sample.advanced_search %}">Advanced search</a></li>
-    <li><a accesskey="x" href="{% url django.contrib.auth.views.logout %}">Logout</a></li>
-    <li><a accesskey="a" href="{% url chantal_institute.views.samples.sample.add %}">Add samples</a></li>
+    <li><a accesskey="m" href="{% url "samples.views.main.main_menu" %}">Main menu</a></li>
+    <li><a accesskey="s" href="{% url "samples.views.sample.advanced_search" %}">Advanced search</a></li>
+    <li><a accesskey="x" href="{% url "django.contrib.auth.views.logout" %}">Logout</a></li>
+    <li><a accesskey="a" href="{% url "chantal_institute.views.samples.sample.add" %}">Add samples</a></li>
   </ul>
   <table class="headbar">
     <tbody>
@@ -57,7 +57,7 @@ copyright holder, you must destroy it immediately and completely.
       <td class="login-data">
         {% if user.is_authenticated %}
           {% trans 'Welcome,' %} {{ user|salutation }}.
-          <a href="{% url samples.views.main.main_menu %}"
+          <a href="{% url "samples.views.main.main_menu" %}"
              ><img src="{{ STATIC_URL }}chantal/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
                    width="16" height="16"/></a>
  <a href="/trac/newticket?reporter={{ user|get_really_full_name:'plain'|urlquote_plus }}&amp;cc={{ user.email|urlquote_plus }}"
@@ -65,7 +65,7 @@ copyright holder, you must destroy it immediately and completely.
                      title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
           {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
              src="{{ STATIC_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
-          <a href="{% url django.contrib.auth.views.logout %}"><img src="{{ STATIC_URL }}chantal/icons/door_open.png"
+          <a href="{% url "django.contrib.auth.views.logout" %}"><img src="{{ STATIC_URL }}chantal/icons/door_open.png"
                                                                     alt="log-out icon" title="{% trans 'Log out' %}"
                                                                     width="16" height="16"/></a>
         {% else %}
@@ -73,7 +73,7 @@ copyright holder, you must destroy it immediately and completely.
             src="{{ STATIC_URL }}chantal/icons/help.png" alt="help icon" title="{% trans 'Help' %}"
                                                                     width="16" height="16"/></a> /{% endif %}
           <!-- FixMe: The following is not the link to the real main menu. -->
-          <a href="{% url samples.views.main.main_menu %}"><img src="{{ STATIC_URL }}chantal/icons/house.png"
+          <a href="{% url "samples.views.main.main_menu" %}"><img src="{{ STATIC_URL }}chantal/icons/house.png"
                                                                 alt="log-in icon" title="{% trans 'Log in' %}"
                                                                 width="16" height="16"/></a>
         {% endif %}
@@ -99,8 +99,8 @@ copyright holder, you must destroy it immediately and completely.
     <div class="outer-frame">
       <div class="inner-frame">
         {% block float_image %}{% endblock %}
-	{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
-	{% block frame_content %}{% endblock %}
+    {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+    {% block frame_content %}{% endblock %}
         <div style="clear: both"></div>
       </div>
     </div>

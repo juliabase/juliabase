@@ -16,11 +16,12 @@
 """Django settings for a generic Chantal installation.
 """
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 import sys, ConfigParser, os.path, copy
 from django.conf.global_settings import LOGGING as OLD_LOGGING
 
 
+ALLOWED_HOSTS = ["chantal.ipv.kfa-juelich.de"]
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
@@ -53,7 +54,8 @@ DATABASES = {
         "NAME": "chantal",
         "USER": CREDENTIALS["postgresql_user"],
         "PASSWORD": CREDENTIALS["postgresql_password"],
-        "HOST": "192.168.xx.xxx"
+#        "HOST": "192.168.xx.xxx", # use this option when your server is on a different host
+        "ATOMIC_REQUESTS": True
         }
     }
 
@@ -108,7 +110,6 @@ MIDDLEWARE_CLASSES = (
     "chantal_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.middleware.transaction.TransactionMiddleware",
     "chantal_common.middleware.LocaleMiddleware",
 #    "refdb.middleware.TransactionMiddleware",
 #    "refdb.middleware.ConditionalViewMiddleware",
@@ -124,7 +125,6 @@ INSTALLED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.admin",
-    "django.contrib.markup",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "chantal_institute",
@@ -159,7 +159,7 @@ LOCALES_DICT = {"en": ("en_US", "UTF8"), "de": ("de_DE", "UTF8")}
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": ["192.168.26.130:11211", "192.168.26.131:11211"],
+        "LOCATION": ["192.168.XX.XX:11211"],
         "TIMEOUT": 3600 * 24 * 28
         }
     }
@@ -167,10 +167,6 @@ CACHES = {
 
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
-
-
-LOGGING = copy.deepcopy(OLD_LOGGING)
-LOGGING["handlers"]["mail_admins"]["class"] = "log.AdminEmailHandler"
 
 
 REFDB_USERNAME_PREFIX = "drefdbuser"
@@ -184,7 +180,7 @@ import subprocess, re, time, glob
 def _scan_version(package):
     try:
         dpgk = subprocess.Popen(["dpkg-query", "--show", package], stdout=subprocess.PIPE)
-        match = re.match(re.escape(package) + r"\t(?P<version>.+?)-", dpgk.communicate()[0].strip())
+        match = re.match(re.escape(package) + r"\t(?P<version>.+?)[-+]", dpgk.communicate()[0].strip())
         return match.group("version") if match else None
     except OSError:
         return 0
@@ -204,15 +200,15 @@ THUMBNAIL_WIDTH = 400
 
 
 # LDAP binding
-AD_DNS_NAME = "dc-e01.ad.fz-juelich.de"
+AD_DNS_NAMES = ["dc-e01.ad.fz-juelich.de", "dc-e02.ad.fz-juelich.de"]
 AD_LDAP_PORT = 636
 AD_SEARCH_DN = "DC=ad,DC=fz-juelich,DC=de"
 # This is the NT4/Samba domain name
 AD_NT4_DOMAIN = "fzj"
 AD_SEARCH_FIELDS = [b"mail", b"givenName", b"sn", b"department", b"telephoneNumber", b"msExchUserCulture",
                     b"generationQualifier", b"physicalDeliveryOfficeName", b"memberOf"]
-AD_LDAP_URL = "ldaps://{0}:{1}".format(AD_DNS_NAME, AD_LDAP_PORT)
-AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend", "chantal_institute.auth.ActiveDirectoryBackend")
+AD_LDAP_URLS = ["ldaps://{0}:{1}".format(AD_DNS_NAME, AD_LDAP_PORT) for AD_DNS_NAME in AD_DNS_NAMES]
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend", "chantal_common.auth.ActiveDirectoryBackend")
 
 # Dictionary mapping LDAP group names to sets of Django permission names.  Use
 # the ``codename`` of the permission, in particular, without any app label.
@@ -235,6 +231,14 @@ AD_MANAGED_PERMISSIONS = set(["view_all_samples", "adopt_samples", "edit_permiss
 # password, which means bigger maintenance work for the Chantal administrator.
 
 ADDITIONAL_LDAP_USERS = set([])
+
+# The cryptic ``!(userAccountControl...)`` filters out all inactive
+# accounts (i.e. former institute members).
+AD_LDAP_ACCOUNT_FILTER = "(!(userAccountControl:1.2.840.113556.1.4.803:=2))"
+
+CHANTAL_DEPARTMENTS = ["Institute"]
+
+MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "chantal_institute"}
 
 ADD_SAMPLE_VIEW = "chantal_institute.views.samples.sample.add"
 

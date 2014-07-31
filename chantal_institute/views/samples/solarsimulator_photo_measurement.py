@@ -91,7 +91,7 @@ class SolarsimulatorPhotoCellForm(forms.ModelForm):
 
     class Meta:
         model = SolarsimulatorPhotoCellMeasurement
-        exclude = ("measurement")
+        exclude = ("measurement",)
 
 
 def solarsimulator_cell_forms_from_post(post, form_cls):
