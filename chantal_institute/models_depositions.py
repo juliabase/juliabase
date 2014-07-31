@@ -65,7 +65,7 @@ class ClusterToolDeposition(samples.models_depositions.Deposition):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("chantal_institute.views.samples.cluster_tool_deposition.show", [urlquote(self.number, safe="")])
+        return ("chantal_institute.views.samples.cluster_tool_deposition.show", [self.number])
 
     @classmethod
     def get_add_link(cls):
@@ -273,7 +273,7 @@ class FiveChamberDeposition(samples.models_depositions.Deposition):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("chantal_institute.views.samples.five_chamber_deposition.show", [urlquote(self.number, safe="")])
+        return ("chantal_institute.views.samples.five_chamber_deposition.show", [self.number])
 
     @classmethod
     def get_add_link(cls):

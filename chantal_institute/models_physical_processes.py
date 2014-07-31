@@ -146,7 +146,7 @@ class PDSMeasurement(PhysicalProcess):
 
     @models.permalink
     def get_absolute_url(self):
-        return ("chantal_institute.views.samples.pds_measurement.show", (), {"pds_number": urlquote(self.number, safe="")})
+        return ("chantal_institute.views.samples.pds_measurement.show", (), {"pds_number": self.number})
 
     @classmethod
     def get_add_link(cls):
