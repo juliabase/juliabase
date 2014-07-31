@@ -14,20 +14,18 @@
 
 
 from __future__ import absolute_import, unicode_literals
-import os, socket
-from django.core.management import execute_manager
+import sys, os, socket
+from django.core.management import execute_from_command_line
 
 hostname = socket.gethostname()
-if hostname == "ipv609":
-    os.environ["DJANGO_SETTINGS_MODULE"] = "other_settings.marvin_settings"
+if hostname == "my_server":
+    os.environ["DJANGO_SETTINGS_MODULE"] = "other_settings.my_settings"
 else:
     os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
-
-settings = __import__(os.environ["DJANGO_SETTINGS_MODULE"])
 
 import django.contrib.auth.management
 def _get_only_custom_permissions(opts):
     return list(opts.permissions)
 django.contrib.auth.management._get_all_permissions = _get_only_custom_permissions
 
-execute_manager(settings)
+execute_from_command_line(sys.argv)
