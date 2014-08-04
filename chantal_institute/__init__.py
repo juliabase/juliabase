@@ -32,30 +32,13 @@ from django.utils.http import urlquote_plus
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.utils.translation import ugettext as _
-from chantal_common.signals import maintain, storage_changed
+from chantal_common.signals import maintain
 from chantal_common import utils
 from samples.models import Process, Result, PhysicalProcess, Sample, SampleAlias
 from samples.views import shared_utils, sample
-from chantal_common import auth
 from chantal_institute import models as chantal_institute_app
 from django.contrib.auth.management import create_permissions
 from south.signals import post_migrate
-
-
-
-def synchronize_users_with_ad(sender, **kwargs):
-    """Signal listener which synchronises all users which have been authorised
-    with the LDAP backend with the LDAP directory.  In particular, if a user
-    cannot be found anymore or has switched the institute is set to “inactive”.
-    Moreover, name, email, and permissions are updated.
-    """
-    ldap_connection = auth.LDAPConnection()
-    for user in django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                               chantal_user_details__is_administrative=False):
-        if not user.has_usable_password():
-            ldap_connection.synchronize_with_ad(user)
-
-maintain.connect(synchronize_users_with_ad)
 
 
 def inform_process_supervisors(sender, instance, **kwargs):

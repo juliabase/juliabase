@@ -182,43 +182,6 @@ except IOError:
 THUMBNAIL_WIDTH = 400
 
 
-# LDAP binding
-AD_DNS_NAMES = ["dc-e01.ad.fz-juelich.de", "dc-e02.ad.fz-juelich.de"]
-AD_LDAP_PORT = 636
-AD_SEARCH_DN = "DC=ad,DC=fz-juelich,DC=de"
-# This is the NT4/Samba domain name
-AD_NT4_DOMAIN = "fzj"
-AD_SEARCH_FIELDS = [b"mail", b"givenName", b"sn", b"department", b"telephoneNumber", b"msExchUserCulture",
-                    b"generationQualifier", b"physicalDeliveryOfficeName", b"memberOf"]
-AD_LDAP_URLS = ["ldaps://{0}:{1}".format(AD_DNS_NAME, AD_LDAP_PORT) for AD_DNS_NAME in AD_DNS_NAMES]
-AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend", "chantal_common.auth.ActiveDirectoryBackend")
-
-# Dictionary mapping LDAP group names to sets of Django permission names.  Use
-# the ``codename`` of the permission, in particular, without any app label.
-PERMISSIONS_OF_AD_GROUPS = {"TG_IEF-5_Gruppenleiter": set(["view_all_samples", "adopt_samples",
-                                                           "edit_permissions_for_all_physical_processes",
-                                                           "add_external_operator",
-                                                           "view_all_external_operators", "can_edit_all_topics"])}
-
-# Permission names which are managed by the Active Directory.  This means that
-# a user get these permissions only if he is a member of a group in
-# ``PERMISSIONS_OF_AD_GROUPS`` which grants the respective permission.  All
-# permissions *not* mentioned here can be set via Django's admin interface.
-AD_MANAGED_PERMISSIONS = set(["view_all_samples", "adopt_samples", "edit_permissions_for_all_physical_processes",
-                              "view_all_external_operators", "can_edit_all_topics"])
-
-# Set of usernames of LDAP users which should be allowed to log in (as long as
-# they exist in the LDAP directory).  This comes in handy for members of
-# neighbour instituts who need to use the IEK-PV database, too.  The
-# alternative would be a full-fledged Django account with locally stored
-# password, which means bigger maintenance work for the Chantal administrator.
-
-ADDITIONAL_LDAP_USERS = set([])
-
-# The cryptic ``!(userAccountControl...)`` filters out all inactive
-# accounts (i.e. former institute members).
-AD_LDAP_ACCOUNT_FILTER = "(!(userAccountControl:1.2.840.113556.1.4.803:=2))"
-
 CHANTAL_DEPARTMENTS = ["Institute"]
 
 MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "chantal_institute"}
