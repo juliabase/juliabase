@@ -17,7 +17,7 @@
 """
 
 from __future__ import absolute_import, unicode_literals
-import sys, ConfigParser, os.path, copy
+import sys, ConfigParser, os, copy
 from django.conf.global_settings import LOGGING as OLD_LOGGING
 
 
@@ -78,7 +78,17 @@ STATIC_URL = b"/media/"
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + b"admin/"
 
-SECRET_KEY = "fdsfdsjdfsjlofsldj"
+# Take SECRET_KEY from external file; generate it if necessary.
+secret_key_filepath = os.path.join(os.path.dirname(__file__), "secret_key.txt")
+try:
+    SECRET_KEY = open(secret_key_filepath).read()
+except IOError:
+    from django.utils.crypto import get_random_string
+    import stat
+    SECRET_KEY = get_random_string(50, "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)")
+    with open(secret_key_filepath, "w") as secret_key_file:
+        secret_key_file.write(SECRET_KEY)
+    os.chmod(secret_key_filepath, stat.S_IRUSR | stat.S_IWUSR)
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
