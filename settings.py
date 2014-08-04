@@ -30,12 +30,6 @@ IS_TESTSERVER = "runserver" in sys.argv
 WITH_EPYDOC = "epydoc" in sys.modules
 
 
-credentials = ConfigParser.SafeConfigParser()
-read_files = credentials.read(["/var/www/chantal.auth", os.path.expanduser("~/chantal.auth")])
-assert read_files, Exception("file with authentication data not found")
-CREDENTIALS = dict(credentials.items("DEFAULT"))
-
-
 DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
@@ -52,9 +46,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "chantal",
-        "USER": CREDENTIALS["postgresql_user"],
-        "PASSWORD": CREDENTIALS["postgresql_password"],
-#        "HOST": "192.168.xx.xxx", # use this option when your server is on a different host
+        "USER": "bronger",
+        "PASSWORD": "topsecret",   # This is a dummy password that the world is allowed to know
         "ATOMIC_REQUESTS": True
         }
     }
@@ -64,16 +57,6 @@ TIME_ZONE = "Europe/Berlin"
 LANGUAGE_CODE = "en-us"
 
 SITE_ID = 1
-
-# FixMe: When switching to Django 1.4 for good, remove this setting entirely.
-PASSWORD_HASHERS = (
-#    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-#    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-#    "django.contrib.auth.hashers.BCryptPasswordHasher",
-    "django.contrib.auth.hashers.SHA1PasswordHasher",
-#    "django.contrib.auth.hashers.MD5PasswordHasher",
-#    "django.contrib.auth.hashers.CryptPasswordHasher",
-)
 
 USE_I18N = True
 USE_L10N = False
@@ -92,9 +75,10 @@ USE_X_SENDFILE = True
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 STATIC_URL = b"/media/"
+
 ADMIN_MEDIA_PREFIX = STATIC_URL + b"admin/"
 
-SECRET_KEY = CREDENTIALS["salt"]
+SECRET_KEY = "fdsfdsjdfsjlofsldj"
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
@@ -111,8 +95,6 @@ MIDDLEWARE_CLASSES = (
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "chantal_common.middleware.LocaleMiddleware",
-#    "refdb.middleware.TransactionMiddleware",
-#    "refdb.middleware.ConditionalViewMiddleware",
     "samples.middleware.chantal.ExceptionsMiddleware",
     "chantal_common.middleware.JSONClientMiddleware",
 )
@@ -129,7 +111,6 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "chantal_institute",
     "samples",
-#    "refdb",
     "south",
     "chantal_common"
 )
@@ -139,7 +120,6 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
                                "django.contrib.messages.context_processors.messages",
-#                               "refdb.context_processors.default",
                                "chantal_common.context_processors.default",
                                "django.core.context_processors.static")
 
@@ -167,13 +147,6 @@ CACHES = {
 
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
-
-
-REFDB_USERNAME_PREFIX = "drefdbuser"
-REFDB_ROOT_USERNAME = CREDENTIALS["refdb_user"]
-REFDB_ROOT_PASSWORD = CREDENTIALS["refdb_password"]
-REFDB_CACHE_PREFIX = "refdb-reference-"
-REFDB_PATH_TO_INDEXER = b"/home/chantal/refdb/index_pdfs.py"
 
 
 import subprocess, re, time, glob
