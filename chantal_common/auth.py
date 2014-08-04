@@ -46,6 +46,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 import ldap
 from chantal_common.models import Department
+from chantal_common.signals import maintain
 
 
 class ActiveDirectoryBackend:
@@ -268,3 +269,17 @@ class LDAPConnection(object):
             user.groups.clear()
             user.topics.clear()
             user.user_permissions.clear()
+
+
+def synchronize_users_with_ad(sender, **kwargs):
+    """Signal listener which synchronises all users which have been authorised
+    with the LDAP backend with the LDAP directory.  In particular, if a user
+    cannot be found anymore or has switched the institute is set to “inactive”.
+    Moreover, name, email, and permissions are updated.
+    """
+    ldap_connection = LDAPConnection()
+    for user in User.objects.filter(is_active=True, chantal_user_details__is_administrative=False):
+        if not user.has_usable_password():
+            ldap_connection.synchronize_with_ad(user)
+
+maintain.connect(synchronize_users_with_ad)
