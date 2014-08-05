@@ -231,16 +231,21 @@ def add_user_details(sender, instance, created, **kwargs):
     if created:
         user_details, __ = samples_app.UserDetails.objects.get_or_create(
             user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
-        user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
-                                         ContentType.objects.get(app_label="samples", model="sampleseries"),
-                                         ContentType.objects.get(app_label="chantal_common", model="topic")]
+        try:
+            user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
+                                             ContentType.objects.get(app_label="samples", model="sampleseries"),
+                                             ContentType.objects.get(app_label="chantal_common", model="topic")]
+        except ContentType.DoesNotExist:
+            # This happens when you try to create a super user while creating
+            # the models with ``manage.py syncdb``.
+            raise ContentType.DoesNotExist("You cannot create a user while the database tables are not finished yet.")
 
         try:
             department = instance.chantal_user_details.department.name
         except AttributeError:
             department = "IEK-5"
         user_details.show_user_from_department = \
-        json.dumps(list(chantal_common_app.Department.objects.filter(name=department).values_list("id", flat=True)))
+            json.dumps(list(chantal_common_app.Department.objects.filter(name=department).values_list("id", flat=True)))
         user_details.save()
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
