@@ -1,0 +1,66 @@
+[
+{
+  "pk": 1,
+  "model": "auth.user",
+  "fields": {
+    "username": "nobody",
+    "last_name": "Nobody",
+    "password": "!"
+  }
+},
+{
+  "pk": 2,
+  "model": "auth.user",
+  "fields": {
+    "username": "chantal",
+    "first_name": "Chantal",
+    "is_superuser": true,
+    "is_staff": true,
+    "password": "pbkdf2_sha256$10000$6M4wIDbKNyiU$wxknFDlWqv13JtZ2M/MokIhiR/Bcj6IQLBUiJdpGWdU="
+  }
+},
+{
+  "pk": 1,
+  "model": "chantal_common.topic",
+  "fields": {
+    "name": "Legacy",
+    "confidential": false,
+    "manager": 1,
+    "members": [],
+    "department": 1
+  }
+},
+{
+  "pk": 1,
+  "model": "chantal_common.department",
+  "fields": {
+    "name": "Generic Institute"
+  }
+},
+{
+  "pk": "LGCY",
+  "model": "samples.initials",
+  "fields": {
+    "external_operator": null,
+    "user": 1
+  }
+},
+{
+  "pk": 1,
+  "model": "chantal_common.userdetails",
+  "fields": {
+    "department": 1,
+    "is_administrative": true,
+    "layout_last_modified": "1990-01-01T00:00:00"
+  }
+},
+{
+  "pk": 2,
+  "model": "chantal_common.userdetails",
+  "fields": {
+    "department": 1,
+    "is_administrative": true,
+    "layout_last_modified": "1990-01-01T00:00:00"
+  }
+}
+]
