@@ -26,7 +26,13 @@
         members: []
         name: Legacy
         confidential: false
+        department: 1
+        manager: 1
     model: chantal_common.topic
+    pk: 1
+-   fields:
+        name: "Generic Institute"
+    model: chantal_common.Department
     pk: 1
 -   fields:
         external_operator: null
@@ -36,10 +42,12 @@
 - fields:
         is_administrative: true
         layout_last_modified: 1990-01-01 00:00:00
+        department: 1
   model: chantal_common.userdetails
   pk: 1
 - fields:
         is_administrative: true
         layout_last_modified: 1990-01-01 00:00:00
+        department: 1
   model: chantal_common.userdetails
   pk: 2
