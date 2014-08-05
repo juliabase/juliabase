@@ -24,7 +24,7 @@ else:
     os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
 import django.contrib.auth.management
-def _get_only_custom_permissions(opts):
+def _get_only_custom_permissions(opts, ctype):
     return list(opts.permissions)
 django.contrib.auth.management._get_all_permissions = _get_only_custom_permissions
 
