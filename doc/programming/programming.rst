@@ -12,15 +12,11 @@
 .. permission of the copyright holder, you must destroy it immediately and
 .. completely.
 
+=============
+Programming
+=============
 
-Chantal programming guide
-=================================
-
-.. toctree::
-   :maxdepth: 2
-
-
-General considerations
+Coding guidelines
 ===========================
 
 Chantal source code modules should not exceed 1000 lines of code.  You should
