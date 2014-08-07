@@ -22,9 +22,9 @@ copyright holder, you must destroy it immediately and completely.
 {% block claim_links %}
   <p style="margin-bottom: 0.5ex">{% trans "Assert a new claim to …" %}</p>
   <ul style="margin-top: 0.5ex">
-    <li><a href="{% url samples.views.claim.add username=user.username %}"
+    <li><a href="{% url 'samples.views.claim.add username=user.username' %}"
            >{% trans 'existing samples' %}</a></li>
-    <li><a href="{% url chantal_institute.views.samples.claim.add_oldstyle username=user.username %}"
+    <li><a href="{% url 'chantal_institute.views.samples.claim.add_oldstyle' username=user.username %}"
       >{% trans 'old-style sample names which do not yet exist' %}</a></li>
   </ul>
   <p style="margin-bottom: 0.5ex">{% trans "“To exist” means here “to exist in the database”." %}</p>
