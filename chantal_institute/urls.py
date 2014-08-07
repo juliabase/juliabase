@@ -32,11 +32,7 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import url, patterns
 
 
-urlpatterns = patterns("chantal_institute.views.statistics",
-                       (r"^about$", "about"),
-                       )
-
-urlpatterns += patterns("samples.views.lab_notebook",
+urlpatterns = patterns("samples.views.lab_notebook",
                         url(r"^5-chamber_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
                             "export", {"process_name": "FiveChamberDeposition"}, "export_lab_notebook_FiveChamberDeposition"),
                         url(r"^5-chamber_depositions/lab_notebook/(?P<year_and_month>.*)",
