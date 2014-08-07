@@ -21,8 +21,8 @@ import sys, ConfigParser, os, copy
 from django.conf.global_settings import LOGGING as OLD_LOGGING
 
 
-ALLOWED_HOSTS = ["chantal.ipv.kfa-juelich.de"]
-DEBUG = False
+ALLOWED_HOSTS = ["0.0.0.0"]
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
 
@@ -34,7 +34,7 @@ DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
-    ("Chantal-Admins", "chantal-admins@googlegroups.com"),
+    ("Chantal-Admins", "bronger@physik.rwth-aachen.de"),
 )
 # If DEBUG == True, all outgoing email is redirected to this account.  If
 # empty, don't send any email at all.
@@ -46,8 +46,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "chantal",
-        "USER": "bronger",
-        "PASSWORD": "topsecret",   # This is a dummy password that the world is allowed to know
+        "USER": "chantal",
+        "PASSWORD": "****",
         "ATOMIC_REQUESTS": True
         }
     }
@@ -78,17 +78,7 @@ STATIC_URL = b"/media/"
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + b"admin/"
 
-# Take SECRET_KEY from external file; generate it if necessary.
-secret_key_filepath = os.path.join(os.path.dirname(__file__), "secret_key.txt")
-try:
-    SECRET_KEY = open(secret_key_filepath).read()
-except IOError:
-    from django.utils.crypto import get_random_string
-    import stat
-    SECRET_KEY = get_random_string(50, "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)")
-    with open(secret_key_filepath, "w") as secret_key_file:
-        secret_key_file.write(SECRET_KEY)
-    os.chmod(secret_key_filepath, stat.S_IRUSR | stat.S_IWUSR)
+SECRET_KEY = "vew7ooes7bt7aetrb77wuhwe95zislisdfo8z"
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
@@ -136,8 +126,8 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 # FixMe: Maybe too many?
 JAVASCRIPT_I18N_APPS = INSTALLED_APPS
 
-DOMAIN_NAME = "chantal.ipv.kfa-juelich.de"
-PROTOCOL = "https"
+DOMAIN_NAME = "0.0.0.0:8000"
+PROTOCOL = "http"
 
 LOGIN_URL = "{0}://{1}/login".format(PROTOCOL, DOMAIN_NAME)
 LOGIN_REDIRECT_URL = "/"
@@ -149,7 +139,7 @@ LOCALES_DICT = {"en": ("en_US", "UTF8"), "de": ("de_DE", "UTF8")}
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": ["192.168.XX.XX:11211"],
+        "LOCATION": ["localhost"],
         "TIMEOUT": 3600 * 24 * 28
         }
     }
