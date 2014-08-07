@@ -169,8 +169,8 @@ $(function() { chantal.request("{% url 'samples.views.json_client.get_folded_mai
       <a href="{% url 'samples.views.log_viewer.list' %}">{% trans 'Inspect crawler logs' %}</a></li>
     <!-- FixMe: These menu items must not be links from here but from another menue page. -->
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/server_lightning.png")'>
-      <a href="{% url 'chantal_ipv.views.statistics.about' %}">{% trans 'About Chantal' %}</a></li>
+      <a href="{% url 'samples.views.statistics.about' %}">{% trans 'About Chantal' %}</a></li>
     <li style='list-style-image: url("{{ STATIC_URL }}chantal/icons/server_chart.png")'>
-      <a href="{% url 'chantal_ipv.views.statistics.statistics' %}">{% trans 'Server statistics' %}</a></li>
+      <a href="{% url 'samples.views.statistics.statistics' %}">{% trans 'Server statistics' %}</a></li>
   </ul>
 {% endblock %}
