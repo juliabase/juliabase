@@ -249,3 +249,8 @@ def ptrans(context, string):
         {% ptrans 'month' 'May' %}
     """
     return pgettext(context, string)
+
+
+@register.filter
+def times08(value):
+    return value * 0.8
