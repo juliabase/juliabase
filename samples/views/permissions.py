@@ -32,7 +32,7 @@ from samples.views import utils, form_utils
 import django.core
 
 
-class PhysicalProcess(object):
+class PermissionsPhysicalProcess(object):
     """Class for holding the permissions status of a physical process class.
 
     :ivar name: the verbose plural name of the process class
@@ -178,7 +178,7 @@ def get_physical_processes(user):
                                   if ContentType.objects.get_for_model(process)
                                   in user.chantal_user_details.department.processes.all()]
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
-    all_physical_processes = [PhysicalProcess(process) for process in all_physical_processes]
+    all_physical_processes = [PermissionsPhysicalProcess(process) for process in all_physical_processes]
     return all_physical_processes
 
 
@@ -224,8 +224,8 @@ def list_(request):
     if user.has_perm("chantal_common.can_edit_all_topics"):
         topic_managers = utils.sorted_users(
             User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
-            .filter(Q(groups__permissions=PhysicalProcess.topic_manager_permission) |
-                    Q(user_permissions=PhysicalProcess.topic_manager_permission)).distinct())
+            .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |
+                    Q(user_permissions=PermissionsPhysicalProcess.topic_manager_permission)).distinct())
     else:
         topic_managers = None
     return render_to_response(

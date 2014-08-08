@@ -32,7 +32,7 @@ from chantal_common.utils import append_error
 from chantal_common.models import Topic
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
-from  samples.views.permissions import PhysicalProcess as PermissionsPhysicalProcess
+from  samples.views.permissions import PermissionsPhysicalProcess
 from django.utils.text import capfirst
 
 
