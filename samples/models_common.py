@@ -1435,6 +1435,7 @@ class UserDetails(models.Model):
                                      default="[]")
     folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
+    # FixMe: This must be renamed into `show_users_from_department`.
     show_user_from_department = models.TextField(_("show user from department"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
 
