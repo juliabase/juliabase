@@ -118,7 +118,7 @@ class Topic(models.Model):
                                      related_name="topics")
     confidential = models.BooleanField(_("confidential"), default=False)
     department = models.ForeignKey(Department, verbose_name=_("department"), related_name="topic")
-    parent_topic = models.ForeignKey('self', verbose_name=_("parent topic"), related_name="child_topics",
+    parent_topic = models.ForeignKey("self", verbose_name=_("parent topic"), related_name="child_topics",
                                     blank=True, null=True)
     manager = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("topic manager"),
                                 related_name="managed_topics")
