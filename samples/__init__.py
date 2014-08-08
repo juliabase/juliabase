@@ -240,12 +240,7 @@ def add_user_details(sender, instance, created, **kwargs):
             # the models with ``manage.py syncdb``.
             raise ContentType.DoesNotExist("You cannot create a user while the database tables are not finished yet.")
 
-        try:
-            department = instance.chantal_user_details.department.name
-        except AttributeError:
-            department = "IEK-5"
-        user_details.show_user_from_department = \
-            json.dumps(list(chantal_common_app.Department.objects.filter(name=department).values_list("id", flat=True)))
+        user_details.show_user_from_department = json.dumps([instance.chantal_user_details.department.id])
         user_details.save()
 
 signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
