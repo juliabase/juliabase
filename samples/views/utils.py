@@ -584,36 +584,6 @@ def digest_process(process, user, local_context={}):
     return process_context
 
 
-def get_physical_processes(department=""):
-    """Return a list with all registered physical processes, sorted by their name.
-    The processes can be filtered with the related department.
-
-    :Parameters:
-     - `department`: the related department from the processes
-
-    :type department: str
-
-    :Return:
-      all physical processes
-
-    :rtype: sorted list of `models.PhysicalProcess`
-    """
-    all_physical_processes = [process for process in chantal_common.utils.get_all_models().itervalues()
-                              if issubclass(process, models.PhysicalProcess) and not process._meta.abstract == True
-                              and not process == models.Deposition]
-    if department:
-        try:
-            department_processes = Department.objects.get(name=department).processes.all()
-        except Department.DoesNotExist:
-            all_physical_processes = []
-        else:
-            all_physical_processes = [process for process in all_physical_processes
-                                      if ContentType.objects.get_for_model(process)
-                                      in department_processes]
-    all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
-    return all_physical_processes
-
-
 def restricted_samples_query(user):
     """Returns a ``QuerySet`` which is restricted to samples the names of
     which the given user is allowed to see.  Note that this doesn't mean that

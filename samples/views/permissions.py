@@ -146,21 +146,41 @@ class UserListForm(forms.Form):
 
 
 def get_physical_processes(user):
-    """Return a list with all registered physical processes.  Their type is of
-    `PhysicalProcess`, which means that they contain information about the
-    users who have permissions for that process.
+    """Return a list with all registered physical process classes the user is
+    allowed to see (the classes per se; this is not about the visibility of the
+    process instances).  Their type is of `PermissionsPhysicalProcess`, which
+    means that they contain information about the users who have permissions
+    for that process.
+
+    You can see all physical process classes of your department.  A superuser
+    can see all classes.
+
+    The result is used to build the list of apparatuses for which one can set
+    permissions.
+
+    :Parameters:
+      - `user`:  The user for which the classes are returned that he is allowed
+        to see.
+
+    :type user: ``django.contrib.auth.models.User``
 
     :Return:
-      all physical processes
+      all physical processes for the user
 
     :rtype: list of `PhysicalProcess`
     """
-    if user.is_superuser:
-        all_physical_processes = [PhysicalProcess(process) for process in utils.get_physical_processes()]
-    else:
-        all_physical_processes = [PhysicalProcess(process) for process
-                                  in utils.get_physical_processes(user.chantal_user_details.department.name)]
+    all_physical_processes = [process for process in get_all_models().itervalues()
+                              if issubclass(process, models.PhysicalProcess) and not process._meta.abstract
+                              # FixMe: This will break someday:
+                              and process != models.Deposition]
+    if not user.is_superuser:
+        all_physical_processes = [process for process in all_physical_processes
+                                  if ContentType.objects.get_for_model(process)
+                                  in user.chantal_user_details.department.processes.all()]
+    all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
+    all_physical_processes = [PhysicalProcess(process) for process in all_physical_processes]
     return all_physical_processes
+
 
 @login_required
 def list_(request):
