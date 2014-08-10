@@ -349,13 +349,13 @@ class UserField(forms.ChoiceField):
         department_ids = json.loads(user.samples_user_details.show_user_from_department)
         self.choices = [("", 9 * "-")]
         for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            user_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
+            users_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False,
                                                                    chantal_user_details__department=department))
             if additional_user and additional_user.chantal_user_details.department == department:
-                user_from_department.add(additional_user)
+                users_from_department.add(additional_user)
             self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users_by_first_name(user_from_department)]))
+                                                  for user in utils.sorted_users_by_first_name(users_from_department)]))
 
 
     def set_users_without(self, user, excluded_user):
@@ -374,13 +374,13 @@ class UserField(forms.ChoiceField):
         department_ids = json.loads(user.samples_user_details.show_user_from_department)
         self.choices = [("", 9 * "-")]
         for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            user_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
+            users_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False,
                                                                    chantal_user_details__department=department))
             if excluded_user.chantal_user_details.department == department:
-                user_from_department.discard(excluded_user)
+                users_from_department.discard(excluded_user)
             self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users_by_first_name(user_from_department)]))
+                                                  for user in utils.sorted_users_by_first_name(users_from_department)]))
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -414,12 +414,12 @@ class MultipleUsersField(forms.MultipleChoiceField):
         self.choices = []
         department_ids = json.loads(user.samples_user_details.show_user_from_department)
         for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            user_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
+            users_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
                                                                    chantal_user_details__is_administrative=False,
                                                                    chantal_user_details__department=department))
-            user_from_department |= set([user for user in additional_users if user.chantal_user_details.department == department])
+            users_from_department |= set([user for user in additional_users if user.chantal_user_details.department == department])
             self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users_by_first_name(user_from_department)]))
+                                                  for user in utils.sorted_users_by_first_name(users_from_department)]))
 
         if not self.choices:
             self.choices = (("", 9 * "-"),)
