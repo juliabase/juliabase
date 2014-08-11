@@ -55,8 +55,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
     :type created: bool
     """
     if created:
-        chantal_app.UserDetails.objects.get_or_create(user=instance,
-                                                      department=chantal_app.Department.objects.get_or_create(name="IEK-5")[0])
+        chantal_app.UserDetails.objects.get_or_create(user=instance)
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 django_signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
