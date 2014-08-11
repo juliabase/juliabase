@@ -325,6 +325,44 @@ class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
+def _user_choices_by_department(user, include=(), exclude=()):
+    """Returns a choices list ready-to-be-used in multiple- and single-selection
+    widgets.  Basically, it consists of all users in the departments that the
+    user wants to see accorint to the `show_user_from_department` field.  It
+    collapses the list automatically if only one department is present.  Note
+    that no entry for “empty choice” is added.  This must be done by the
+    caller, if necessary.
+
+    :Parameters:
+      - `user`: the currently logged-in user
+      - `include`: list of users to be included additionally
+      - `exclude`: list of users to be excluded
+
+    :type user: `django.contrib.auth.models.User`
+    :type include: list of `django.contrib.auth.models.User`
+    :type exclude: list of `django.contrib.auth.models.User`
+
+    :Return:
+      list of choices, ready to be used in a `ChoiceField` or
+      `MultipleChoiceField`
+
+    :rtype: list of (int, str) or list of (str, list of (int, str))
+    """
+    choices = []
+    department_ids = json.loads(user.samples_user_details.show_user_from_department)
+    for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+        users_from_department = set(django.contrib.auth.models.User.objects.
+                                    filter(is_active=True, chantal_user_details__is_administrative=False,
+                                           chantal_user_details__department=department))
+        users_from_department |= set(user for user in include if user.chantal_user_details.department == department)
+        users_from_department -= set(user for user in exclude if user.chantal_user_details.department == department)
+        choices.append((department.name, [(user.pk, get_really_full_name(user))
+                                          for user in utils.sorted_users_by_first_name(users_from_department)]))
+    if len(choices) == 1:
+        choices = choices[0][1]
+    return choices
+
+
 class UserField(forms.ChoiceField):
     """Form field class for the selection of a single user.  This can be the
     new currently responsible person for a sample, or the person you wish to
@@ -346,16 +384,8 @@ class UserField(forms.ChoiceField):
 
         :type additional_user: ``django.contrib.auth.models.User``
         """
-        department_ids = json.loads(user.samples_user_details.show_user_from_department)
-        self.choices = [("", 9 * "-")]
-        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            users_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                                   chantal_user_details__is_administrative=False,
-                                                                   chantal_user_details__department=department))
-            if additional_user and additional_user.chantal_user_details.department == department:
-                users_from_department.add(additional_user)
-            self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users_by_first_name(users_from_department)]))
+        self.choices = [("", 9 * "-")] + \
+                       _user_choices_by_department(user, include=[additional_user] if additional_user else [])
 
 
     def set_users_without(self, user, excluded_user):
@@ -371,16 +401,8 @@ class UserField(forms.ChoiceField):
 
         :type excluded_user: ``django.contrib.auth.models.User``
         """
-        department_ids = json.loads(user.samples_user_details.show_user_from_department)
-        self.choices = [("", 9 * "-")]
-        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            users_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                                   chantal_user_details__is_administrative=False,
-                                                                   chantal_user_details__department=department))
-            if excluded_user.chantal_user_details.department == department:
-                users_from_department.discard(excluded_user)
-            self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users_by_first_name(users_from_department)]))
+        self.choices = [("", 9 * "-")] + \
+                       _user_choices_by_department(user, exclude=[excluded_user] if excluded_user else [])
 
     def clean(self, value):
         value = super(UserField, self).clean(value)
@@ -411,16 +433,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
 
         :type additional_users: iterable of ``django.contrib.auth.models.User``
         """
-        self.choices = []
-        department_ids = json.loads(user.samples_user_details.show_user_from_department)
-        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
-            users_from_department = set(django.contrib.auth.models.User.objects.filter(is_active=True,
-                                                                   chantal_user_details__is_administrative=False,
-                                                                   chantal_user_details__department=department))
-            users_from_department |= set([user for user in additional_users if user.chantal_user_details.department == department])
-            self.choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                                  for user in utils.sorted_users_by_first_name(users_from_department)]))
-
+        self.choices = _user_choices_by_department(user, include=additional_users)
         if not self.choices:
             self.choices = (("", 9 * "-"),)
 

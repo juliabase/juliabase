@@ -21,7 +21,6 @@ views package.  All symbols from `shared_utils` are also available here.  So
 from __future__ import absolute_import, unicode_literals
 
 from chantal_common import mimeparse
-from chantal_common.models import Department
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q

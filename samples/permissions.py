@@ -265,6 +265,25 @@ class PermissionError(Exception):
         self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
 
+class NoDepartment(object):
+    """Singleton class used to define an unset department attribute, so that an
+    unset department is never equal to another unset department.
+    """
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is not None:
+            cls._instance = super(NoDepartment, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+    def __eq__(self, other):
+        return False
+    def __ne__(self, other):
+        return True
+    def __bool__(self):
+        return False
+    # For Python 2.x
+    __nonzero__ = __bool__
+
+
 def assert_can_fully_view_sample(user, sample):
     """Tests whether the user can view the sample fully, i.e. without needing
     a clearance.
@@ -281,13 +300,14 @@ def assert_can_fully_view_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
-    if not sample.topic and currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department \
-        and not user.is_superuser:
+    sample_department = currently_responsible_person.chantal_user_details.department or NoDepartment()
+    user_department = user.chantal_user_details.department or NoDepartment()
+    if not sample.topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
     if sample.topic and user not in sample.topic.members.all() and currently_responsible_person != user and \
             not user.is_superuser:
-        if currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department:
+        if sample_department != user_department:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor belongs the "
                             "sample to your department.")
             raise PermissionError(user, description, new_topic_would_help=True)
@@ -319,9 +339,10 @@ def assert_can_rename_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
-    if (not user.has_perm("samples.rename_samples") or \
-        currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department) \
-        and not user.is_superuser:
+    sample_department = currently_responsible_person.chantal_user_details.department or NoDepartment()
+    user_department = user.chantal_user_details.department or NoDepartment()
+    if (not user.has_perm("samples.rename_samples") or sample_department != user_department) \
+       and not user.is_superuser:
         description = _("You are not allowed to rename the sample.")
         raise PermissionError(user, description)
 
@@ -612,8 +633,9 @@ def assert_can_edit_sample(user, sample):
     """
     from samples.views.permissions import PermissionsPhysicalProcess
     currently_responsible_person = sample.currently_responsible_person
-    if not sample.topic and currently_responsible_person.chantal_user_details.department != user.chantal_user_details.department \
-        and not user.is_superuser:
+    sample_department = currently_responsible_person.chantal_user_details.department or NoDepartment()
+    user_department = user.chantal_user_details.department or NoDepartment()
+    if not sample.topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
     if sample.topic and currently_responsible_person != user and not user.is_superuser and not \

@@ -191,6 +191,8 @@ class ChooseTaskListsForm(forms.Form):
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
                                           if ContentType.objects.get_for_model(process) in department.processes.all())
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
+        if len(choices) == 1:
+            choices = choices[0][1]
         if not choices:
             choices = (("", 9 * "-"),)
         self.fields["visible_task_lists"].choices = choices

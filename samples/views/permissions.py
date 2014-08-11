@@ -174,9 +174,12 @@ def get_physical_processes(user):
                               # FixMe: This will break someday:
                               and process != models.Deposition]
     if not user.is_superuser:
-        all_physical_processes = [process for process in all_physical_processes
-                                  if ContentType.objects.get_for_model(process)
-                                  in user.chantal_user_details.department.processes.all()]
+        user_department = user.chantal_user_details.department
+        if user_department:
+            all_physical_processes = [process for process in all_physical_processes
+                                      if ContentType.objects.get_for_model(process) in user_department.processes.all()]
+        else:
+            all_physical_processes = []
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
     all_physical_processes = [PermissionsPhysicalProcess(process) for process in all_physical_processes]
     return all_physical_processes
