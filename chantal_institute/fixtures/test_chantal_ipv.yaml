@@ -42,16 +42,16 @@
 
 # chantal_common
 
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, is_administrative: true, language: en}
   model: chantal_common.userdetails
   pk: 1
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, is_administrative: true, language: en}
   model: chantal_common.userdetails
   pk: 2
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, is_administrative: true, language: en}
   model: chantal_common.userdetails
   pk: 3
-- fields: {browser_system: windows, department: '', is_administrative: true, language: en}
+- fields: {browser_system: windows, is_administrative: true, language: en}
   model: chantal_common.userdetails
   pk: 4
 - fields:
