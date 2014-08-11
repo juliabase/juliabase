@@ -126,7 +126,7 @@ class Topic(models.Model):
     class Meta:
         verbose_name = _("topic")
         verbose_name_plural = _("topics")
-        unique_together = ("name", "department", "parent_topic")
+        unique_together = ("name", "department")
         _ = lambda x: x
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
