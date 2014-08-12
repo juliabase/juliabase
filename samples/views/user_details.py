@@ -58,8 +58,7 @@ def show_user(request, login_name):
 
     :rtype: ``HttpResponse``
     """
-    user = get_object_or_404(django.contrib.auth.models.User,
-                             username=login_name, chantal_user_details__is_administrative=False)
+    user = get_object_or_404(django.contrib.auth.models.User, username=login_name, is_superuser=False)
     connection = auth.LDAPConnection()
     attributes = connection.get_ad_data(user.username)
     userdetails = ()

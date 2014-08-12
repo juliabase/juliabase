@@ -117,7 +117,7 @@ class PermissionsPhysicalProcess(object):
             self.edit_all_permission = Permission.objects.get(codename="edit_every_{process_name}".format(**substitutions))
         except Permission.DoesNotExist:
             self.edit_all_permission = None
-        base_query = User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
+        base_query = User.objects.filter(is_active=True, is_superuser=False)
         permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
                                                Q(user_permissions=self.edit_permissions_permission)).distinct() \
                                                if self.edit_permissions_permission else []
@@ -226,7 +226,7 @@ def list_(request):
         user_list_form = None
     if user.has_perm("chantal_common.can_edit_all_topics"):
         topic_managers = utils.sorted_users(
-            User.objects.filter(is_active=True, chantal_user_details__is_administrative=False)
+            User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |
                     Q(user_permissions=PermissionsPhysicalProcess.topic_manager_permission)).distinct())
     else:

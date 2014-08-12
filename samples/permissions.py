@@ -229,8 +229,7 @@ def get_all_adders(process_class):
     except Permission.DoesNotExist:
         return User.objects.none()
     else:
-        return User.objects.filter(
-            is_active=True, chantal_user_details__is_administrative=False). \
+        return User.objects.filter(is_active=True, is_superuser=False). \
             filter(Q(groups__permissions=add_permission) | Q(user_permissions=add_permission)).distinct()
 
 

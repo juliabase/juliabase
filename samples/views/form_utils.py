@@ -352,8 +352,7 @@ def _user_choices_by_department(user, include=(), exclude=()):
     department_ids = json.loads(user.samples_user_details.show_user_from_department)
     for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
         users_from_department = set(django.contrib.auth.models.User.objects.
-                                    filter(is_active=True, chantal_user_details__is_administrative=False,
-                                           chantal_user_details__department=department))
+                                    filter(is_active=True, chantal_user_details__department=department))
         users_from_department |= set(user for user in include if user.chantal_user_details.department == department)
         users_from_department -= set(user for user in exclude if user.chantal_user_details.department == department)
         choices.append((department.name, [(user.pk, get_really_full_name(user))

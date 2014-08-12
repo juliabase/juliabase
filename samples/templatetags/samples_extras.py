@@ -110,11 +110,11 @@ quantity.needs_autoescape = True
 
 @register.filter
 def should_show(operator):
-    """Filter to decide whether an operator should be shown.  The operator
-    should not be shown if it is an administrative account, i.e. an account
-    that should not be visible except for administrators.
+    """Filter to decide whether an operator should be shown.  The operator should
+    not be shown if they are in no department because this is considered not an
+    account of an actual person.
     """
-    return not isinstance(operator, django.contrib.auth.models.User) or not operator.chantal_user_details.is_administrative
+    return not isinstance(operator, django.contrib.auth.models.User) or operator.chantal_user_details.department
 
 
 class VerboseNameNode(template.Node):
