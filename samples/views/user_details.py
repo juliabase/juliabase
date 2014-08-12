@@ -39,31 +39,6 @@ from chantal_common import utils as chantal_common_utils, auth
 from chantal_common.models import Topic, Department
 
 
-@login_required
-def show_user(request, login_name):
-    """View for showing basic information about a user, like the email
-    address.  Maybe this could be fleshed out with phone number, picture,
-    position, and field of interest.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `login_name`: the login name of the user to be shown
-
-    :type request: ``HttpRequest``
-    :type login_name: str
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    user = get_object_or_404(django.contrib.auth.models.User, username=login_name, is_superuser=False)
-    username = get_really_full_name(user)
-    department = user.chantal_user_details.department
-    return render_to_response("samples/show_user.html", {"title": username, "shown_user": user, "department": department},
-                              context_instance=RequestContext(request))
-
-
 class UserDetailsForm(forms.ModelForm):
     """Model form for user preferences.
     """

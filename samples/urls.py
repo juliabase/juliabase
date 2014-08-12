@@ -115,7 +115,6 @@ urlpatterns = patterns("samples.views",
                        (r"^external_operators/(?P<external_operator_id>.+)", "external_operator.show"),
                        (r"^external_operators/$", "external_operator.list_"),
 
-                       (r"^users/(?P<login_name>.+)", "user_details.show_user"),
                        (r"^preferences/(?P<login_name>.+)", "user_details.edit_preferences"),
                        (r"^topics_and_permissions/(?P<login_name>.+)", "user_details.topics_and_permissions"),
                        (r"^my_layers/(?P<login_name>.+)", "my_layers.edit"),
