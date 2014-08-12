@@ -71,9 +71,6 @@ class UserDetails(models.Model):
     layout_last_modified = models.DateTimeField(_("layout last modified"), auto_now_add=True)
     """Timestamp at which the settings which affect appearance of the HTML were
     changed for the last time."""
-    is_administrative = models.BooleanField(_("is administrative"), default=False)
-    """``True`` if the account doesn't belong to an actual user, and thus
-    shouldn't be eligible for things like "currently_responsible_person"."""
 
     class Meta:
         verbose_name = _("user details")

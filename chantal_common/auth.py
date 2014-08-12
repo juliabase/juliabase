@@ -272,13 +272,13 @@ class LDAPConnection(object):
 
 
 def synchronize_users_with_ad(sender, **kwargs):
-    """Signal listener which synchronises all users which have been authorised
-    with the LDAP backend with the LDAP directory.  In particular, if a user
-    cannot be found anymore or has switched the institute is set to “inactive”.
+    """Signal listener which synchronises all active users without a usable
+    password against the LDAP directory.  In particular, if a user cannot be
+    found anymore or has switched the institute is set to “inactive”.
     Moreover, name, email, and permissions are updated.
     """
     ldap_connection = LDAPConnection()
-    for user in User.objects.filter(is_active=True, chantal_user_details__is_administrative=False):
+    for user in User.objects.filter(is_active=True):
         if not user.has_usable_password():
             ldap_connection.synchronize_with_ad(user)
 
