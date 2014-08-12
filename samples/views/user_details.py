@@ -39,7 +39,6 @@ from chantal_common import utils as chantal_common_utils, auth
 from chantal_common.models import Topic, Department
 
 
-
 @login_required
 def show_user(request, login_name):
     """View for showing basic information about a user, like the email
@@ -59,17 +58,9 @@ def show_user(request, login_name):
     :rtype: ``HttpResponse``
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name, is_superuser=False)
-    connection = auth.LDAPConnection()
-    attributes = connection.get_ad_data(user.username)
-    userdetails = ()
-    if attributes:
-        office = attributes["physicalDeliveryOfficeName"][0]
-        phone = attributes["telephoneNumber"][0]
-        userdetails = (office, phone)
-    department = user.chantal_user_details.department
     username = get_really_full_name(user)
-    return render_to_response("samples/show_user.html", {"title": username, "shown_user": user, "userdetails": userdetails,
-                                                         "department": department},
+    department = user.chantal_user_details.department
+    return render_to_response("samples/show_user.html", {"title": username, "shown_user": user, "department": department},
                               context_instance=RequestContext(request))
 
 
