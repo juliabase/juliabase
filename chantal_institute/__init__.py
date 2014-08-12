@@ -63,8 +63,7 @@ def inform_process_supervisors(sender, instance, **kwargs):
             except django.contrib.auth.models.Permission.DoesNotExist:
                 return
             recipients = list(django.contrib.auth.models.User.objects.filter(user_permissions=permission)) or \
-                list(django.contrib.auth.models.User.objects.filter(is_staff=True,
-                                                                    chantal_user_details__is_administrative=False))
+                list(django.contrib.auth.models.User.objects.filter(is_staff=True).exclude(email=""))
             if recipients:
                 _ = lambda x: x
                 # # FixMe: This should be re-activated once most imports have
