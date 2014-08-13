@@ -22,7 +22,7 @@ must be set somewhere else because they are not stored in the AD.
 
 Every night the maintenance routine checks which active users cannot be found
 anymore in the AD, sets them to inactive and removes all their groups, topics,
-and permissions.  See the `chantal_ipv.synchronize_with_ad` function.
+and permissions.  See the `synchronize_with_ad` function.
 
 A seldom but possible problem is if someone tries to login, he is known in the
 AD, but it also known in Chantal as “inactive”.  This can mean one of two
