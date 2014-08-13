@@ -21,6 +21,7 @@ from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
+from django.contrib.auth import logout
 import django.core.urlresolvers
 from chantal_common.models import UserDetails, ErrorPage
 from chantal_common.utils import is_json_requested, JSONRequestException
@@ -30,10 +31,7 @@ import django.http
 from django.shortcuts import render_to_response
 
 
-"""Middleware for setting the current language to what can be found in
-`models.UserDetails` and for cache-disabling in presence of temporary messages.
-Additionally, I convert responses into JSON format if this was requested.
-"""
+"""Middleware classes for various totally unrelated things."""
 
 
 class LocaleMiddleware(object):
@@ -112,6 +110,24 @@ class MessageMiddleware(object):
                 response["Pragma"] = "no-cache"
                 response["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate, private"
         return response
+
+
+class ActiveUserMiddleware(object):
+    """Middleware to prevent a non-active user from using the site.  Unfortunately,
+    ``is_active=False`` only prevents a user from logging.  If he was already
+    logged in before ``is_active`` was set to ``False`` and doesn't log out, he
+    can use the site until the session is purged.  This middleware prevents
+    this.
+
+    Alternatively to this middleware, you can make sure that all the user's
+    sessions are purged when he or she is set to inactive.
+
+    This middleware must be after AuthenticationMiddleware in the list of
+    installed middleware classes.
+    """
+    def process_request(self, request):
+        if request.user.is_authenticated() and not request.user.is_active:
+           logout(request)
 
 
 class HttpResponseUnauthorised(django.http.HttpResponse):
