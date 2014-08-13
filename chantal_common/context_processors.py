@@ -21,9 +21,8 @@ dictionary passed to the templates.
 from __future__ import absolute_import, unicode_literals
 
 from django.utils.http import urlquote, urlquote_plus
-import django.core.urlresolvers
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext
 
 
 def default(request):
@@ -56,23 +55,7 @@ def default(request):
         result["url"] += "?" + request.GET.urlencode()
     # Now for the flags for the language switching
     if request.method == "GET" and request.user.is_authenticated():
-        old_query_string = request.META["QUERY_STRING"] or ""
-        if old_query_string:
-            old_query_string = "?" + old_query_string
-        def get_language_url(language_code):
-            url = django.core.urlresolvers.reverse("chantal_common.views.switch_language")
-            url += "?lang={0}&next=".format(language_code)
-            url += urlquote_plus(request.path + old_query_string)
-            return url
-        trac_url = "https://chantal.ipv.kfa-juelich.de/trac/wiki/TranslateChantal"
-        result["translation_flags"] = (("de", _("German"), get_language_url("de")),
-                                       ("en", _("English"), get_language_url("en")),
-                                       ("zh_CN", _("Chinese"), trac_url),
-                                       ("uk", _("Ukrainian"), trac_url),
-                                       ("ru", _("Russian"), trac_url),
-                                       ("fr", _("French"), trac_url),
-                                       ("nl", _("Dutch"), trac_url),
-                                       )
+        result["translation_flags"] = tuple((code, ugettext(language)) for code, language in settings.LANGUAGES)
     else:
         result["translation_flags"] = ()
     result["default_home_url"] = settings.LOGIN_REDIRECT_URL

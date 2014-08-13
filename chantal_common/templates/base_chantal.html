@@ -36,10 +36,10 @@ copyright holder, you must destroy it immediately and completely.
   <table class="headbar">
     <tr>
       <td class="info">
-        {% for translation_flag in translation_flags %}
-          <a href="{{ translation_flag.2 }}"
-             ><img src="{{ STATIC_URL }}chantal/flags/{{ translation_flag.0 }}.png"
-                   alt="{% blocktrans with translation_flag.1 as language %}switch to {{ language }}{% endblocktrans %}"
+        {% for language_code, language in translation_flags %}
+          <a href="{% url 'chantal_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
+             ><img src="{{ STATIC_URL }}chantal/flags/{{ language_code }}.png"
+                   alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
                    width="16" height="11"/></a>
         {% endfor %}
       </td>
