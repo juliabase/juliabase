@@ -41,7 +41,9 @@ Portions of this module are inspired by
 
 from __future__ import absolute_import, unicode_literals
 
+import datetime
 from django.contrib.auth.models import User, Permission
+from django.contrib.sessions.models import Session
 from django.conf import settings
 from django.core.mail import mail_admins
 import ldap
@@ -230,6 +232,10 @@ class LDAPConnection(object):
         in the Active Directory.  This includes user permissions, which are
         set according to the AD groups the user is a member of.
 
+        If the user is not found in the AD anymore, they are set to inactive,
+        all groups, topic memberships, and permissions cleared, and their
+        sessions purged.  (This way, we don't need the `ActiveUserMiddleware`.)
+
         Note that we don't map any AD data to Django *groups*.  Instead,
         everything is mapped to *permissions*.  The reason is that it doesn't
         make much sense to use convenience facilities like groups if
@@ -269,6 +275,9 @@ class LDAPConnection(object):
             user.groups.clear()
             user.topics.clear()
             user.user_permissions.clear()
+            for session in Session.objects.filter(expire_date__gte=datetime.datetime.now()).iterator():
+                if session.get_decoded().get("_auth_user_id") == user.id:
+                    session.delete()
 
 
 def synchronize_users_with_ad(sender, **kwargs):
