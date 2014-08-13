@@ -107,8 +107,8 @@ class LDAPConnection(object):
         self.managed_permissions = set(Permission.objects.filter(codename__in=settings.AD_MANAGED_PERMISSIONS))
 
     def is_valid(self, username, password):
-        """Returns whether the username/password combination is known in the
-        AD, and the user is a current member of the IEK-PV.
+        """Returns whether the username/password combination is known in the AD, and
+        whether the user is a current member of one of the eligible departments.
 
         :Parameters:
           - `username`: the login name of the user
@@ -119,7 +119,7 @@ class LDAPConnection(object):
 
         :Return:
           whether the username/password combination is known in the AD, and
-          the user is a member of the IEK-PV.
+          the user is a member of one of the eligible departments.
 
         :rtype: bool
         """
