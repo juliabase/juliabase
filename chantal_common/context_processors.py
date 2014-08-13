@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Additional context processors for Chantal.  There functions must be added
+"""Additional context processors for Chantal.  These functions must be added
 to `settings.TEMPLATE_CONTEXT_PROCESSORS`.  They add further data to the
 dictionary passed to the templates.
 """
@@ -51,6 +51,9 @@ def default(request):
     if hasattr(request, "chantal_help_link"):
         result["help_link"] = request.chantal_help_link
         del request.chantal_help_link
+    result["url"] = request.path
+    if request.GET:
+        result["url"] += "?" + request.GET.urlencode()
     # Now for the flags for the language switching
     if request.method == "GET" and request.user.is_authenticated():
         old_query_string = request.META["QUERY_STRING"] or ""
