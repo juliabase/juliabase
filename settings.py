@@ -28,7 +28,6 @@ TEMPLATE_DEBUG = DEBUG
 TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
 
 IS_TESTSERVER = "runserver" in sys.argv
-WITH_EPYDOC = "epydoc" in sys.modules
 
 
 DEFAULT_FROM_EMAIL = ""
