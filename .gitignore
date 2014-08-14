@@ -25,3 +25,4 @@ samples/remote_client/6k_import.py.sicher
 doc/remote_client/.build
 samples/migrations
 *.pyc
+doc/programming/.build
