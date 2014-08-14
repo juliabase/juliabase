@@ -48,7 +48,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "chantal",
         "USER": "chantal",
-        "PASSWORD": "****",
+        "PASSWORD": "12345",
         "ATOMIC_REQUESTS": True
         }
     }
