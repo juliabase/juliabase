@@ -13,8 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Helper classes and function for the views that are used for the ipv institude.
-It extends the samples.views.form_utils with institute specific classes and functions.
+"""Helper classes and function for the views that are used for the institute.
+It extends the samples.views.form_utils with institute specific classes and
+functions.
 """
 
 from __future__ import absolute_import, unicode_literals
