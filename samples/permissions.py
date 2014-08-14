@@ -40,10 +40,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
-from settings import WITH_EPYDOC
-if not WITH_EPYDOC:
-    # Attention! This is a cyclic import.  Don't use models in top-level code.
-    import samples.models
+import samples.models
 from chantal_common.models import Topic
 from chantal_common import utils as chantal_common_utils
 from samples.views import shared_utils

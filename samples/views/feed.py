@@ -33,10 +33,6 @@ import django.core.urlresolvers
 from samples.views import utils
 
 
-if settings.WITH_EPYDOC:
-    cache_page = lambda x: lambda y: y
-
-
 def indent(elem, level=0):
     """Indent a given ElementTree in-place by added whitespace so that it looks
     nicer in the flattened output.  Taken from the ElementTree webseite.  This

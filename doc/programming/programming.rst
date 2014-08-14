@@ -42,7 +42,7 @@ All variables and source code comments should be in English.
    format`_.  Sometimes, you can copy-and-paste the docstring with slight
    modifications.
 
-.. _`ReST format`: http://epydoc.sourceforge.net/manual-othermarkup.html
+.. _`ReST format`: http://sphinx-doc.org/rest.html
 
 Internationalisation is a very important point in Chantal.  All strings exposed
 to the user should be marked as translatable by putting them in ``_(u"...")``

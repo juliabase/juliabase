@@ -6,7 +6,6 @@ samples/locale/nl/LC_MESSAGES/django.mo
 samples/locale/ru/LC_MESSAGES/django.mo
 samples/locale/uk/LC_MESSAGES/django.mo
 samples/locale/zh_CN/LC_MESSAGES/django.mo
-epydoc
 monitor.pickle
 nohup.out
 handbuch.aux
