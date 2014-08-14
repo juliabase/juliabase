@@ -19,6 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 import sys, ConfigParser, os, copy
 from django.conf.global_settings import LOGGING as OLD_LOGGING
+from django.utils.translation import ugettext_lazy as _
 
 
 ALLOWED_HOSTS = ["0.0.0.0"]
@@ -135,6 +136,8 @@ LOGIN_REDIRECT_URL = "/"
 # FixMe: LOCALES_DICT should be generated from
 # /var/lib/locales/supported.d/local
 LOCALES_DICT = {"en": ("en_US", "UTF8"), "de": ("de_DE", "UTF8")}
+# This determines which flags are shown
+LANGUAGES = (("en", _("English")), ("de", _("German")))
 
 CACHES = {
     "default": {
