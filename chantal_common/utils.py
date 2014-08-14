@@ -307,11 +307,6 @@ def help_link(link):
     return decorate
 
 
-from django.conf import settings
-if settings.WITH_EPYDOC:
-    help_link = lambda x: lambda y: y
-
-
 def successful_response(request, success_report=None, view=None, kwargs={}, query_string="", forced=False):
     """After a POST request was successfully processed, there is typically a
     redirect to another page – maybe the main menu, or the page from where the
