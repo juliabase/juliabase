@@ -62,7 +62,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     elif anchor_type == "http":
         # FixMe: The view should be one of chantal_common.
         return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                    "samples.views.user_details.show_user", kwargs={"login_name": user.username}), full_name))
+                    "chantal_common.views.show_user", kwargs={"login_name": user.username}), full_name))
     elif anchor_type == "mailto":
         return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
     else:
