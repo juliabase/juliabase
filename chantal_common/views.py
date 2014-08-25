@@ -16,7 +16,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 import django.forms as forms
 import django.contrib.auth.models
@@ -44,7 +44,10 @@ def show_user(request, login_name):
 
     :rtype: ``HttpResponse``
     """
-    user = get_object_or_404(django.contrib.auth.models.User, username=login_name, is_superuser=False)
+    try:
+        user = django.contrib.auth.models.User.objects.filter(username=login_name).exclude(chantal_user_details__department=None)[0]
+    except IndexError:
+        raise Http404('No User matches the given query.')
     department = user.chantal_user_details.department
     username = get_really_full_name(user)
     return render_to_response("chantal_common/show_user.html",

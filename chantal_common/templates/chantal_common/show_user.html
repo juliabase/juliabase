@@ -1,5 +1,5 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "samples/base.html" %}
+{% extends "chantal_common/base.html" %}
 {% comment %}
 This file is part of Chantal, the samples database.
 
@@ -14,21 +14,24 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
-{% load samples_extras %}
 
 {% block frame_content %}
 <table class="padding10" style="margin-bottom: 2ex">
   <tbody>
   <tr>
-    {% value_field shown_user.username %}
+    <td class="label">{% trans 'Username' %}:</td><td class="value">{{ shown_user.username }}</td>
   </tr>
   {% if shown_user.email %}
     <tr>
-      <td class="label">{% verbose_name User.email %}:</td>
+      <td class="label">{% trans 'Email address' %}:</td>
       <td class="value" style="font-weight: normal"><a href="mailto:{{ shown_user.email }}">{{ shown_user.email }}</a></td>
     </tr>
   {% endif %}
-  {% value_field department %}
+  {% if department %}
+    <tr>
+      <td class="label">{% trans 'Department' %}:</td><td class="value">{{ department }}</td>
+    </tr>
+  {% endif %}
   </tbody>
 </table>
 {% endblock %}
