@@ -27,9 +27,7 @@ from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.contrib import messages
 from samples.views.form_utils import *
-from samples.views import sample
-from chantal_common.utils import append_error, is_json_requested, respond_in_json
-from django.utils.text import capfirst
+from chantal_common.utils import is_json_requested, respond_in_json
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):
@@ -81,7 +79,6 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
                     for sample in deposition.samples.all():
                         name_format = utils.sample_name_format(sample.name)
                         if name_format == "provisional" or name_format == "old" and sample.name[2] in ["N", "V"]:
-                            new_names[sample.id] = "{0}-{1}".format(deposition.number, len(new_names) + 1)
                             rename = True
                         elif name_format == "old":
                             new_names[sample.id] = sample.name
@@ -107,7 +104,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
         else:
             messages.error(request, _("The deposition was not saved due to incorrect or missing data."))
     else:
-        form_set.from_database(utils.parse_query_string(request))
+        form_set.from_database(request.GET)
     institute_model_name = utils.capitalize_first_letter(institute_model._meta.verbose_name)
     title = _("Edit {name} “{number}”").format(name=institute_model_name, number=deposition_number) if deposition_number \
         else _("Add {name}").format(name=institute_model._meta.verbose_name)

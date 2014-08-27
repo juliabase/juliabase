@@ -17,7 +17,7 @@
 FixMe: Layout files should be taken from cache if appropriate.
 """
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import, division
 import os.path, subprocess
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -39,12 +39,11 @@ def show_layout(request, process_id, sample_id):
     layout = layouts.get_layout(sample, process)
     if not layout:
         raise Http404(unicode("error"))
-    canvas, resolution = layout.draw_layout(pdf_filename)
-    canvas.showPage()
-    canvas.save()
+    layout.generate_pdf(pdf_filename)
 
     png_filename = os.path.join(settings.CACHE_ROOT, "layouts", "{0}-{1}.png".format(process.id, sample.id))
     chantal_common.utils.mkdirs(png_filename)
+    resolution = settings.THUMBNAIL_WIDTH / (layout.width / 72)
     subprocess.check_call(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r{0}".format(resolution), "-dEPSCrop",
                              "-sOutputFile=" + png_filename, pdf_filename])
     return chantal_common.utils.static_file_response(png_filename)

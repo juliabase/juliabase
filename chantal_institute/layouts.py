@@ -170,23 +170,45 @@ class Layout(object):
     particular process.  Additionally, the ``Structuring`` process which led to
     this layout is stored in the instance.
 
+    :ivar height: height of the layout in bp
+    :ivar width: width of the layout in bp
     :ivar sample: the sample with this layout
     :ivar process: the process for which this layout is created (*not* the
       process that created this layout!
     :ivar structuring: the structuring process which was used to determine
       which layout to use
 
+    :type height: float
+    :type width: float
     :type sample: ``samples.models.Sample``
     :type process: ``samples.models.Process``
     :type structuring: `chantal_institute.models.Structuring`
     """
+    width = 80 * mm
+    height = 80 * mm
 
     def __init__(self, sample, process, structuring):
         self.sample = sample
         self.process = process
         self.structuring = structuring
 
-    def draw_layout(self, filename):
+    def draw_layout(self, canvas):
+        """Draws the layout on the given canvas.  You must override this
+        method.
+
+        :Parameters:
+          - `canvas`: the ReportLab canvas
+
+        :type filename: ``reportlab.pdfgen.canvas.Canvas``
+
+        :Return:
+          the canvas object
+
+        :rtype: ``reportlab.pdfgen.canvas.Canvas``
+        """
+        raise NotImplementedError
+
+    def generate_pdf(self, filename):
         """Draws the layout and writes it to a PDF file.
 
         :Parameters:
@@ -194,7 +216,10 @@ class Layout(object):
 
         :type filename: unicode
         """
-        raise NotImplementedError
+        canvas = Canvas(filename, pagesize=(self.width, self.height))
+        self.draw_layout(canvas)
+        canvas.showPage()
+        canvas.save()
 
 
 class CellsLayout(Layout):
@@ -203,8 +228,6 @@ class CellsLayout(Layout):
     height and width of the mask close to 80 because font sizes and line
     thicknesses are optimised for this size.
 
-    :ivar height: height of the layout in arbitrary units
-    :ivar width: width of the layout in arbitrary units
     :ivar shapes: all cells on the layout; this is a dictionary mapping the
       cell's position (which may be an ordinary number) to a tuple ((origin_x,
       origin_y), (width, height)).  “Origin” is the lower left corner of the
@@ -213,12 +236,8 @@ class CellsLayout(Layout):
       The position of the cell must consist only of letters, digits,
       underscores and dashs.  Don't assume that it is case-sensitive.
 
-    :type height: float
-    :type width: float
     :type shapes: dict mapping unicode to ((float, float), (float, float))
     """
-    height = None
-    width = None
     shapes = {}
 
     def get_map_shapes(self):
@@ -311,8 +330,7 @@ class CellsLayout(Layout):
             colors_and_labels[cell.position] = (color, label)
         return colors_and_labels
 
-    def draw_layout(self, filename):
-        canvas = Canvas(filename, pagesize=(self.width * mm, self.height * mm))
+    def draw_layout(self, canvas):
         if isinstance(self.process, (chantal_institute.models.SolarsimulatorPhotoMeasurement)):
             colors_and_labels = self._get_colors_and_labels(self.process)
             if self.process.irradiance == "AM1.5":
@@ -325,7 +343,8 @@ class CellsLayout(Layout):
                 fontsize = 8
                 canvas.setFontSize(fontsize)
                 descent = reportlab.pdfbase.pdfmetrics.getDescent(default_fontname, fontsize)
-                canvas.drawCentredString(self.width * mm / 2, -descent, global_label)
+                canvas.setFillColorRGB(0, 0, 0)
+                canvas.drawCentredString(self.width / 2, -descent, global_label)
         else:
             colors_and_labels = {}
         for cell_index, coords in self.shapes.iteritems():
@@ -336,22 +355,20 @@ class CellsLayout(Layout):
                 color = (0.85, 0.85, 0.85)
                 label = None
             canvas.setFillColorRGB(*color)
-            canvas.rect(origin[0] * mm, origin[1] * mm, dimensions[0] * mm, dimensions[1] * mm, fill=1)
+            canvas.rect(origin[0], origin[1], dimensions[0], dimensions[1], fill=1)
             if label:
                 if 0.3 * color[0] + 0.59 * color[1] + 0.11 * color[2] < 0.3:
                     text_graylevel = 1
                 else:
                     text_graylevel = 0
-                _draw_constrained_text(canvas, label,
-                                       (origin[0] + dimensions[0] / 2) * mm, (origin[1] + dimensions[1] / 2) * mm,
-                                       9, dimensions[0] * mm, text_graylevel, background_color=color)
-        resolution = settings.THUMBNAIL_WIDTH * 25.4 / self.width
-        return canvas, resolution
+                _draw_constrained_text(canvas, label, (origin[0] + dimensions[0] / 2), (origin[1] + dimensions[1] / 2),
+                                       9, dimensions[0], text_graylevel, background_color=color)
+        return canvas
 
 
 class JuelichStandard(CellsLayout):
-    height = 105 - 30
-    width = 110 - 30
+    height = (105 - 30) * mm
+    width = (110 - 30) * mm
     shapes = {"1": ((18, 18.5), (10, 10)),
               "2": ((31.5, 18.5), (10, 10)),
               "3": ((43, 18.5), (10, 10)),
@@ -392,10 +409,10 @@ class JuelichStandard(CellsLayout):
     for cell_index, coords in shapes.iteritems():
         shapes[cell_index] = ((coords[0][0] - 15, coords[0][1] - 15), coords[1])
 
-    _scaling = 80 / max(height, width)
+    _scaling = 80 * mm / max(height, width)
     for cell_index, coords in shapes.iteritems():
-        shapes[cell_index] = ((_scaling * coords[0][0], _scaling * coords[0][1]),
-                              (_scaling * coords[1][0], _scaling * coords[1][1]))
+        shapes[cell_index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
+                              (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
     height *= _scaling
     width *= _scaling
 

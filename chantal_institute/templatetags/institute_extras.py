@@ -125,3 +125,7 @@ def depostion_time(time):
         return "{0}:{1:02}:{2:02}".format(int(hours), int(minutes), int(seconds))
     else:
         return "—"
+
+@register.filter
+def short_filepath(filepath):
+    return filepath[filepath.rfind("/") + 1:]
