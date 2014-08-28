@@ -1,0 +1,52 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "kicker/base.html" %}
+{% comment %}
+This file is part of Chantal-kicker, the Kicker module of Chantal.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load kicker %}
+
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block frame_content %}
+<div style="float:right">
+  <a href="{{ STATIC_URL }}kicker/kicker.pdf"
+     ><img src="{{ STATIC_URL }}kicker/kicker.png" alt='{% trans "kicker numbers" %}'/></a>
+</div>
+<table style="border: 2px solid gray" cellspacing="10">
+  <tbody>
+    {% for player, kicker_number in kicker_numbers %}
+      <tr>
+	<td>{{ player|nickname }}</td>
+	<td>{{ kicker_number }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<table cellspacing="10" style="font-size: x-small; margin-top: 3ex">
+  <tbody>
+    {% for match in latest_matches %}
+      <tr>
+	<td>{{ match.timestamp|date:"D" }}</td>
+	<td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
+          –<br/>{{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
+	<td>{{ match.goals_a }}:{{ match.goals_b }}</td>
+	<td>({{ match.reporter|nickname }})</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
