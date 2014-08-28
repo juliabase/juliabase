@@ -1,0 +1,70 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/templates/samples/edit_sample.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block sample_details %}
+  <h2>{% trans 'Informal stack' %}</h2>
+
+  {% if informal_layers.non_form_errors %}
+    <table class="tight-fullwidth">
+      <tbody>
+      <tr>
+        <td class="error-messages">
+	  <p>{% trans "General error" %}</p>{{ informal_layers.non_form_errors }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  {% endif %}
+  {{ informal_layers.management_form }}
+  <table border="1">
+    <thead>
+    <tr>
+      <th>{% verbose_name InformalLayer.index %}</th>
+      <th>{% verbose_name InformalLayer.doping %} / {% verbose_name InformalLayer.classification %}</th>
+      <th>{% verbose_name InformalLayer.comments %}</th>
+      <th>{% verbose_name InformalLayer.color %}</th>
+      <th>{% verbose_name InformalLayer.thickness %} {{ informal_layers.forms.0.thickness.help_text }}</th>
+      <th style="font-size: x-small">{% verbose_name InformalLayer.thickness_reliable %}</th>
+      <th style="font-size: x-small">{% verbose_name InformalLayer.structured %}</th>
+      <th style="font-size: x-small">{% verbose_name InformalLayer.textured %}</th>
+      <th style="font-size: x-small">{% verbose_name InformalLayer.always_collapsed %}</th>
+      <th style="font-size: x-small">{% verbose_name InformalLayer.verified %}</th>
+      <th style="font-size: x-small">{% trans 'delete' %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for layer in informal_layers.forms %}
+      {% error_list layer _("Error in layer") "<tr>" 11 %}
+      <tr style="text-align: center">
+        <td style="text-align: center">{{ layer.id }}{{ layer.index }}</td>
+        <td>{{ layer.doping }}{{ layer.classification }}</td>
+        <td>{{ layer.comments }}</td>
+        <td>{{ layer.color }}</td>
+        <td>{{ layer.thickness }}</td>
+        <td>{{ layer.thickness_reliable }}</td>
+        <td>{{ layer.structured }}</td>
+        <td>{{ layer.textured }}</td>
+        <td>{{ layer.always_collapsed }}</td>
+        <td>{{ layer.verified }}</td>
+        <td>{{ layer.DELETE }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

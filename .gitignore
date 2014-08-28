@@ -1,11 +1,3 @@
-samples/locale/es/LC_MESSAGES/django.mo
-samples/locale/de/LC_MESSAGES/django.mo
-samples/locale/en/LC_MESSAGES/django.mo
-samples/locale/fr/LC_MESSAGES/django.mo
-samples/locale/nl/LC_MESSAGES/django.mo
-samples/locale/ru/LC_MESSAGES/django.mo
-samples/locale/uk/LC_MESSAGES/django.mo
-samples/locale/zh_CN/LC_MESSAGES/django.mo
 monitor.pickle
 nohup.out
 handbuch.aux
@@ -26,10 +18,6 @@ doc/remote_client/.build
 samples/migrations
 *.pyc
 doc/programming/.build
-chantal_common/locale/de.mo
-chantal_common/locale/es.mo
-chantal_common/locale/fr.mo
-chantal_common/locale/de/LC_MESSAGES/django.mo
-chantal_common/locale/es/LC_MESSAGES/django.mo
-chantal_common/locale/fr/LC_MESSAGES/django.mo
 chantal_common/migrations
+secret_key.txt
+*.mo
