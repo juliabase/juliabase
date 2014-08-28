@@ -1,0 +1,69 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "chantal_common/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load chantal %}
+{% load samples_extras %}
+
+{% block css %}
+<style type="text/css">
+  td { vertical-align: top }
+</style>
+{% endblock %}
+
+
+{% block frame_content %}
+
+{% blocktrans %}
+  <p>Chantal uses the lightweight markup language “Markdown” for comments.  It
+  doesn't support images and headings though.  As compensation, it adds
+  implicit sample and sample series linking.  Follow the help link at the top
+  of the page for further information.</p>
+
+  <p>Here, you can test the markup as you like.  What you enter here is never
+  saved.</p>
+{% endblocktrans %}
+
+<form method="post">
+  {% error_list sandbox _("Error in markup") %}
+  <table border="1" style="width: 100%" class="padding">
+    <thead>
+      <tr>
+        {# Translators: Input for markdown conversion #}
+        <th style="width: 50%">{% trans 'input' %}</th>
+        {# Translators: result of conversion #}
+        <th>{% trans 'result' %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align: center">
+          {{ sandbox.sandbox }}
+        </td>
+        <td>
+          {% if extracted_content %}
+            <div>
+              {{ extracted_content|markdown }}
+            </div>
+          {% endif %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  {# Translators: result of markdown conversion #}
+  <p class="submit-button" style="clear: both"><button type="submit">{% trans 'Generate result' %}</button></p>
+</form>
+
+{% endblock %}

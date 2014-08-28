@@ -1,0 +1,132 @@
+/*
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+*/
+
+body {
+    background-color: gray;
+    font-family: "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, sans-serif;
+    margin: 0pt; padding: 0pt;
+}
+p.logo-text {
+    margin: 0pt 0pt 0pt -0.05em;
+    font-size: 50px;
+    color: #333333;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px white, -1px -1px 1px black;
+}
+
+div.main {
+    margin: 20px 25px 20px;
+}
+
+div.outer-frame {
+    clear: both;
+    margin-top: 20px;
+    border-color: #b2b2b2;
+    border-width: thin;
+    border-radius: 12px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-style: solid;
+}
+
+div.inner-frame {
+    margin: 1px;
+    padding: 10px;
+    border-color: black;
+    border-width: thin;
+    border-style: solid;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    background-color: #e6e6e6;
+    background-image: url("../checked.png");
+    min-height: 0px;   /* IE7 quirk */
+}
+
+/* FixMe: This is a cheap fix for Android 2.2, the standard browser of which
+cannot render the alpha channel of the background image properly.  It should be
+removed when this is not a problem anymore. */
+@media only screen and (max-device-width: 960px) {
+    div.inner-frame {
+    background-image: none;
+    }
+}
+
+table.headbar {
+    font-size: small;
+    color: white;
+    background-color: #045078;
+    width: 100%;
+    border-collapse: collapse
+}
+
+table.headbar a { color: white }
+table.headbar td { padding: 0.3ex 25px 0.5ex }
+table.headbar td.login-data { text-align: right }
+table.headbar td.info { text-align: left }
+
+div.success-report, div.error-report, div.debug-report, div.warning-report, div.info-report {
+    color: white; padding: 0.3ex 25px 0.5ex; text-align: right; font-size: small }
+div.success-report { background-color: green }
+div.error-report { background-color: red }
+div.debug-report { background-color: gainsboro; color: black }
+div.warning-report { background-color: coral }
+div.info-report { background-color: mediumpurple }
+
+h1 { margin-top: 0pt }
+
+span.label { margin-right: 0.5em }
+span.value { font-weight: bold }
+td.value, td.input { text-align: left }
+td.value { font-weight: bold; vertical-align: text-top }
+td.input { vertical-align: top }
+td.label { text-align: right; vertical-align: text-top; padding-right: 0.3em }
+span.help { font-size: small; font-weight: normal }
+
+/* MESSAGES & ERRORS */
+div.errorlist, td.error-messages { text-align: left; font-size: x-small; padding: 0pt }
+div.errorlist, td.error-messages p { padding: 0.5ex 0.5ex 0pt 0.5ex; margin: 0pt 0pt 0pt 0pt;
+                     color:white; background-color: maroon; font-weight: bold }
+ul.errorlist { margin:0 !important; padding: 0pt 0pt 0.5ex 0pt !important; background-color: maroon; font-weight: normal }
+.errorlist li { padding: 0pt 0.5ex 0pt 0.5ex; display:block; color:white }
+div.errorlist li { padding-left: 0pt }
+
+table.about { font-size: large; margin-top: 2ex; margin-bottom: 0pt; width: 60% }
+table.about th { border-bottom: solid gray 1px; padding-right: 2em; text-align: right; width: 40%; vertical-align: top }
+table.about td { text-align: left; width: 60%; vertical-align: top; text-indent: -3em; padding-left: 3.5em;
+         padding-bottom: 2ex }
+
+span.uptime { font-size: small }
+span.version { font-size: small }
+
+div.short-messages { text-align: center; clear: both }
+
+p.submit-button { text-align: right; margin-bottom: 0px; clear: right }
+
+a > img, img[usemap] { border: none }
+
+optgroup { font-weight: bold; font-style: normal }
+
+span.markdown-hint { font-size: small }
+
+ul.radio-select { list-style-type: none; display: inline; margin-left: 0; padding-left:0 }
+ul.radio-select li { display: inline; margin-right: 1em }
+
+table.tight-fullwidth { border-collapse: collapse; width: 100% }
+table.padding5 th, table.padding5 td { padding: 5px }
+table.padding8 th, table.padding8 td { padding: 8px }
+table.padding10 th, table.padding10 td { padding: 10px }
+
+/* FixMe: "border-color: black" is necessary only for IE7. */
+table.lab-notebook { margin-top: 2ex; border-collapse: collapse; border-color: black }
+table.lab-notebook th, table.lab-notebook td { padding: 6px }

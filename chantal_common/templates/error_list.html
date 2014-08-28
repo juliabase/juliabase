@@ -1,0 +1,34 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% if form %}
+  {% if form.errors or form.non_field_errors %}
+    {% ifequal outest_tag "<table>" %}
+      <table class="tight-fullwidth"><tbody>
+    {% endifequal %}
+    <tr>
+      <td class="error-messages"{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}>
+	{% for field in form %}
+	  {% if field.errors %}<p>{{ field.label|safe }}</p>{{ field.errors }}{% endif %}
+	{% endfor %}
+	{% if form.non_field_errors %}
+	  <p>{{ form_error_title }}</p>{{ form.non_field_errors }}
+	{% endif %}
+      </td>
+    </tr>
+    {% ifequal outest_tag "<table>" %}
+      </tbody></table>
+    {% endifequal %}
+  {% endif %}
+{% endif %}

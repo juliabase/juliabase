@@ -1,0 +1,41 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "chantal_common/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+
+{% block title %}{% trans 'Chantal login' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'Chantal login' %}</h1>{% endblock %}
+{% block frame_content %}
+
+{% if form.errors %}
+<p>{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
+
+<form method="post">
+  <table>
+    <tbody>
+    <tr><td><label for="id_username">{% trans 'Username' %}:</label></td><td>{{ form.username }}</td></tr>
+    <tr><td><label for="id_password">{% trans 'Password' %}:</label></td><td>{{ form.password }}</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    <input type="submit" value="{% trans 'login' %}"/>
+    <input type="hidden" name="next" value="{{ next }}"/>
+  </p>
+  {% csrf_token %}
+</form>
+
+{% endblock %}
