@@ -30,6 +30,7 @@ from chantal_common.utils import get_really_full_name, get_all_models, HttpRespo
 from samples import models, permissions
 from samples.views import utils, form_utils
 import django.core
+from django.contrib.contenttypes.models import ContentType
 
 
 class PermissionsPhysicalProcess(object):
