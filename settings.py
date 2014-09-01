@@ -17,7 +17,7 @@
 """
 
 from __future__ import absolute_import, unicode_literals
-import sys, ConfigParser, os, copy
+import sys, ConfigParser, os.path, copy
 from django.conf.global_settings import LOGGING as OLD_LOGGING
 from django.utils.translation import ugettext_lazy as _
 
@@ -150,29 +150,7 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-
-import subprocess, re, time, glob
-def _scan_version(package):
-    try:
-        dpgk = subprocess.Popen(["dpkg-query", "--show", package], stdout=subprocess.PIPE)
-        match = re.match(re.escape(package) + r"\t(?P<version>.+?)[-+]", dpgk.communicate()[0].strip())
-        return match.group("version") if match else None
-    except OSError:
-        return 0
-APACHE_VERSION = _scan_version("apache2")
-APACHE_STARTUP_TIME = 0
-POSTGRESQL_VERSION = _scan_version("postgresql")
-POSTGRESQL_STARTUP_TIME = 0
-PYTHON_VERSION = _scan_version("python")
-MATPLOTLIB_VERSION = _scan_version("python-matplotlib")
-try:
-    CHANTAL_REVNO = open("/tmp/chantal_revision").read()
-except IOError:
-    CHANTAL_REVNO = 0
-
-
 THUMBNAIL_WIDTH = 400
-
 
 CHANTAL_DEPARTMENTS = ["Institute"]
 

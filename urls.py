@@ -43,11 +43,6 @@ urlpatterns = patterns("",
                        (r"", include("samples.urls")),
                        )
 
-if "refdb" in settings.INSTALLED_APPS:
-    urlpatterns += patterns("",
-                            (r"^bib/", include("refdb.urls")),
-                            )
-
 urlpatterns += patterns("",
     (r"^admin/", include(admin.site.urls)),
 )
