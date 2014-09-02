@@ -48,4 +48,8 @@ samples.models.clearance_sets.update({
         ClusterToolDeposition: (ClusterToolDeposition, Substrate),
         })
 
-register_all_models_to_department("Institute")
+# Use this option when you want to set the related department to your
+# processes automatically.
+# You have to set a department in order to allow non-administrators the
+# option to grand permissions to processes to other users.
+#register_all_models_to_department("Institute")
