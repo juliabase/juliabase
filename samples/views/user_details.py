@@ -45,7 +45,7 @@ class UserDetailsForm(forms.ModelForm):
     _ = ugettext_lazy
     subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_("subscribed newsfeeds")), required=False)
     default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
-    show_user_from_department = forms.MultipleChoiceField(label=capfirst(_("show user from department")), required=False)
+    show_users_from_department = forms.MultipleChoiceField(label=capfirst(_("show user from department")), required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
@@ -54,8 +54,7 @@ class UserDetailsForm(forms.ModelForm):
         processes = [process_class for process_class in chantal_common_utils.get_all_models().itervalues()
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
-        department_ids = json.loads(user.samples_user_details.show_user_from_department)
-        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+        for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
             process_from_department = set(process for process in processes
                                           if ContentType.objects.get_for_model(process) in department.processes.all())
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
@@ -68,9 +67,10 @@ class UserDetailsForm(forms.ModelForm):
         self.fields["subscribed_feeds"].choices = form_utils.choices_of_content_types(
             list(get_all_addable_physical_process_models()) + [models.Sample, models.SampleSeries, Topic])
         self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
-        self.fields["show_user_from_department"].choices = [(department.pk, department.name)
+        self.fields["show_users_from_department"].choices = [(department.pk, department.name)
                                                             for department in Department.objects.iterator()]
-        self.fields["show_user_from_department"].initial = (json.loads(user.samples_user_details.show_user_from_department))
+        self.fields["show_users_from_department"].initial = user.samples_user_details.show_users_from_department.values_list("id",
+                                                                                                                             flat=True)
 
     class Meta:
         model = models.UserDetails
@@ -133,7 +133,8 @@ def edit_preferences(request, login_name):
         if user_details_form.is_valid() and initials_form.is_valid():
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
             user_details = user_details_form.save(commit=False)
-            user_details.show_user_from_department = json.dumps(user_details_form.cleaned_data["show_user_from_department"])
+            user_details.show_users_from_department = Department.objects.filter(id__in=
+                                                        user_details_form.cleaned_data["show_users_from_department"])
             user_details.default_folded_process_classes = [ContentType.objects.get_for_id(int(id_))
                  for id_ in user_details_form.cleaned_data["default_folded_process_classes"]]
             user_details.save()

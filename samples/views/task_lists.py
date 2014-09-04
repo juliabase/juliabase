@@ -186,8 +186,7 @@ class ChooseTaskListsForm(forms.Form):
     def __init__(self, user, data=None, **kwargs):
         super(ChooseTaskListsForm, self).__init__(data, **kwargs)
         choices = []
-        department_ids = json.loads(user.samples_user_details.show_user_from_department)
-        for department in Department.objects.filter(id__in=department_ids).order_by("name").iterator():
+        for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
                                           if ContentType.objects.get_for_model(process) in department.processes.all())
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))

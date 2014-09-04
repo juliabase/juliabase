@@ -33,7 +33,7 @@ from django.conf import settings
 from django.db import models
 from django.core.cache import cache
 from chantal_common.utils import get_really_full_name, cache_key_locked
-from chantal_common.models import Topic, PolymorphicModel
+from chantal_common.models import Topic, PolymorphicModel, Department
 from samples import permissions
 from samples.views import shared_utils
 from chantal_common import search
@@ -1438,6 +1438,8 @@ class UserDetails(models.Model):
     # FixMe: This must be renamed into `show_users_from_department`.
     show_user_from_department = models.TextField(_("show user from department"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
+    show_users_from_department = models.ManyToManyField(Department, related_name="shown_users",
+                                                        verbose_name=_("show users from department"), blank=True)
 
 
     class Meta:

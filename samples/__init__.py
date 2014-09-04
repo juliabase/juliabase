@@ -242,7 +242,7 @@ def add_user_details(sender, instance, created, **kwargs):
 
         department = instance.chantal_user_details.department
         if department:
-            user_details.show_user_from_department = json.dumps([department.id])
+            user_details.show_users_from_department = [department]
 
         user_details.save()
 
