@@ -45,6 +45,8 @@ def add_user_details(sender, instance, created=True, **kwargs):
     user.  However, you can also call it for existing users (``management.py``
     does it) because this function is idempotent.
 
+    If there is only one department, this is default for new users.
+
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``User`` model
       - `instance`: the newly-added user
@@ -55,7 +57,9 @@ def add_user_details(sender, instance, created=True, **kwargs):
     :type created: bool
     """
     if created:
-        chantal_app.UserDetails.objects.get_or_create(user=instance)
+        departments = chantal_app.Department.objects.all()
+        department = departments[0] if departments.count() == 1 else None
+        chantal_app.UserDetails.objects.get_or_create(user=instance, department=department)
 
 # It must be "post_save", otherwise, the ID may be ``None``.
 django_signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
