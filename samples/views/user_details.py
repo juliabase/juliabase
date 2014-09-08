@@ -45,7 +45,7 @@ class UserDetailsForm(forms.ModelForm):
     _ = ugettext_lazy
     subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_("subscribed newsfeeds")), required=False)
     default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
-    show_users_from_department = forms.MultipleChoiceField(label=capfirst(_("show user from department")), required=False)
+    show_users_from_department = forms.MultipleChoiceField(label=capfirst(_("show users from department")), required=False)
 
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
