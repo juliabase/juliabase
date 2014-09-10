@@ -36,8 +36,9 @@ main menu page.  We implement a three-level cache:
 
 1. The browser cache.  It is activated with ``last_modified`` functions for all
    three views.  If the page hasn't been modified since the user has last
-   accessed it, a 304 (Not Modified) is returned by the server.  We don't use
-   ETags for dynamic HTML material.
+   accessed it, a 304 (Not Modified) is returned by the server.  Additionally,
+   we generate ETags because some browsers ignore "Vary: Cookie" and show a
+   cached page to a different user.
 
 2. The samples cache.  This is only used for the samples view.  Whole samples
    are stored in the cache as a special data structure called

@@ -612,7 +612,7 @@ def sample_etag(request, sample_name):
 
     This routine is necessary because browsers don't handle the "Vary: Cookie"
     header well.  In order to avoid one user getting cached pages of another
-    user who used the same browser instance befor (e.g. in a lab), I must
+    user who used the same browser instance before (e.g. in a lab), I must
     create an ETag.
 
     :Parameters:

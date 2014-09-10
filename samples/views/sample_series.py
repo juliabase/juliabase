@@ -175,7 +175,7 @@ def sample_series_etag(request, name):
 
 
 @login_required
-@condition(last_modified_func=sample_series_timestamp)
+@condition(sample_series_etag, sample_series_timestamp)
 def show(request, name):
     """View for showing a sample series.  You can see a sample series if
     you're in its topic, or you're the currently responsible person for it,
