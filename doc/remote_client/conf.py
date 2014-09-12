@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -179,7 +179,7 @@ latex_paper_size = 'a4'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('handbuch', 'remote-client.tex', r'Der Chantal Remote-Client',
+  ('handbuch', 'remote-client.tex', r'Der JuliaBase Remote-Client',
    r'Torsten Bronger', 'howto'),
 ]
 

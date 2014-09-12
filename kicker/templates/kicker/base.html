@@ -1,7 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "base_chantal.html" %}
+{% extends "jb_base.html" %}
 {% comment %}
-This file is part of Chantal-Kicker, the Kicker module of Chantal.
+This file is part of JuliaBase-Kicker, the Kicker module of JuliaBase.
 
 Copyright (C) 2010 Forschungszentrum Jülich, Germany,
                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -16,6 +16,6 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 
 {% block app_title %}<a style="color: inherit; text-decoration: inherit" href="{% url "samples.views.main.main_menu" %}"
-                        >Chantal</a><img class="logo-ief-5" src="{{ STATIC_URL }}ipv/sonne.png"
+                        >JuliaBase</a><img class="logo-ief-5" src="{{ STATIC_URL }}ipv/sonne.png"
                                          alt="{% trans 'IEF-5 logo' %}" width="48" height="48"/>{% endblock %}
 {% block app_subtitle %}{% trans "The Kicker server" %}{% endblock %}

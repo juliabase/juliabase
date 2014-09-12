@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Additional context processors for Chantal.  These functions must be added
+"""Additional context processors for JuliaBase.  These functions must be added
 to `settings.TEMPLATE_CONTEXT_PROCESSORS`.  They add further data to the
 dictionary passed to the templates.
 """
@@ -47,9 +47,9 @@ def default(request):
     :rtype: dict mapping str to session data
     """
     result = {}
-    if hasattr(request, "chantal_help_link"):
-        result["help_link"] = request.chantal_help_link
-        del request.chantal_help_link
+    if hasattr(request, "jb_help_link"):
+        result["help_link"] = request.jb_help_link
+        del request.jb_help_link
     result["url"] = request.path
     if request.GET:
         result["url"] += "?" + request.GET.urlencode()

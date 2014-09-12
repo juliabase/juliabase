@@ -1,6 +1,6 @@
 # German translations of Chantal-common.
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -216,10 +216,10 @@ msgstr ""
 "der angegebene Prozess, Zitation etc. schon in der Datenbank existiert.\n"
 
 #: templates/500.html:26
-msgid "Internal Chantal error"
-msgstr "Interner Chantal-Fehler"
+msgid "Internal JuliaBase error"
+msgstr "Interner JuliaBase-Fehler"
 
-#: templates/500.html:34 templates/base_chantal.html:62
+#: templates/500.html:34 templates/jb_base.html:62
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -230,40 +230,40 @@ msgstr "Interner Server-Fehler"
 #: templates/500.html:48
 msgid ""
 "\n"
-"You experienced an internal error in the Chantal server software.  The\n"
+"You experienced an internal error in the JuliaBase server software.  The\n"
 "administrators have been contacted already and will do their best in\n"
 "eliminating the bug.  Typically, they will contact you as soon as the "
 "problem\n"
 "is tackled.\n"
 msgstr ""
 "\n"
-"Sie sind auf einen internen Fehler der Chantal-Serversoftware gestoßen.  Die "
+"Sie sind auf einen internen Fehler der JuliaBase-Serversoftware gestoßen.  Die "
 "Administatoren wurden bereits benachrichtigt und werden ihr bestes tun, den "
 "Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, sobald "
 "der Fehler behoben ist.\n"
 
-#: templates/base_chantal.html:37
+#: templates/jb_base.html:37
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: templates/base_chantal.html:43
+#: templates/jb_base.html:43
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/base_chantal.html:47
+#: templates/jb_base.html:47
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/base_chantal.html:51
+#: templates/jb_base.html:51
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: templates/base_chantal.html:53 templates/base_chantal.html.py:59
+#: templates/jb_base.html:53 templates/jb_base.html.py:59
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/base_chantal.html:55
+#: templates/jb_base.html:55
 msgid "Log out"
 msgstr "Abmelden"
 
@@ -299,8 +299,8 @@ msgstr "Mein Passwort ändern"
 
 #: templates/chantal_common/login.html:18
 #: templates/chantal_common/login.html:19
-msgid "Chantal login"
-msgstr "Chantal-Login"
+msgid "JuliaBase login"
+msgstr "JuliaBase-Login"
 
 #: templates/chantal_common/login.html:23
 msgid "Your username and password didn't match. Please try again."
@@ -331,7 +331,7 @@ msgstr "Erneut anmelden"
 #: templates/chantal_common/markdown_sandbox.html:29
 msgid ""
 "\n"
-"  <p>Chantal uses the lightweight markup language “Markdown” for comments.  "
+"  <p>JuliaBase uses the lightweight markup language “Markdown” for comments.  "
 "It\n"
 "  doesn't support images and headings though.  As compensation, it adds\n"
 "  implicit sample and sample series linking.  Follow the help link at the "
@@ -343,7 +343,7 @@ msgid ""
 "  saved.</p>\n"
 msgstr ""
 "\n"
-"  <p>Chantal benutzt die einfache Auszeichnungssprache „Markdown“ für "
+"  <p>JuliaBase benutzt die einfache Auszeichnungssprache „Markdown“ für "
 "Kommentare.  Es unterstützt allerdings weder Bilder noch Überschriften.  "
 "Dafür fügt es automatische Verlinkung von Proben- und Probenseriennamen "
 "hinzu.  Folgen Sie dem Hilfe-Link oben auf der Seite für weitere "
@@ -379,15 +379,15 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templatetags/chantal.py:149
+#: templatetags/juliabase.py:149
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: templatetags/chantal.py:158
+#: templatetags/juliabase.py:158
 msgid "Yes"
 msgstr "Ja"
 
-#: templatetags/chantal.py:158
+#: templatetags/juliabase.py:158
 msgid "No"
 msgstr "Nein"
 

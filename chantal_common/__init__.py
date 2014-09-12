@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -37,7 +37,7 @@ import datetime
 import django.contrib.auth.models
 from django.db.models import signals as django_signals
 from django.dispatch import receiver
-from . import models as chantal_app
+from . import models as jb_app
 from .signals import maintain
 
 
@@ -60,9 +60,9 @@ def add_user_details(sender, instance, created=True, **kwargs):
     :type created: bool
     """
     if created:
-        departments = chantal_app.Department.objects.all()
+        departments = jb_app.Department.objects.all()
         department = departments[0] if departments.count() == 1 else None
-        chantal_app.UserDetails.objects.get_or_create(user=instance, department=department)
+        jb_app.UserDetails.objects.get_or_create(user=instance, department=department)
 
 
 @receiver(maintain)
@@ -71,5 +71,5 @@ def expire_error_pages(sender, **kwargs):
     """
     now = datetime.datetime.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
-    for error_page in chantal_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
+    for error_page in jb_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
         error_page.delete()

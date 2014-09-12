@@ -2,7 +2,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. This file is part of Chantal, the samples database.
+.. This file is part of JuliaBase, the samples database.
 ..
 .. Copyright (C) 2011 Forschungszentrum Jülich, Germany,
 ..                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -21,10 +21,10 @@
 Overview
 =============
 
-The Chantal remote client is a Python programming library which enables you to
-communicate with the Chantal samples database.  You can read and write data of
-the database, and you can do arbitrary things with it inbetween.  This allows
-for a couple of very nice things:
+The JuliaBase remote client is a Python programming library which enables you
+to communicate with the JuliaBase samples database.  You can read and write
+data of the database, and you can do arbitrary things with it inbetween.  This
+allows for a couple of very nice things:
 
 #. So-called “crawlers“ can scan regularly for new measurement files and import
  them into the database.
@@ -54,6 +54,6 @@ if you query the database.
 Of course, you will have much non-Python in your institution, in form of code
 as well as competence.  Since the standard implementation of Python is an
 interpreter, it is very easy to call Python code from within another
-programming language.  While it is possible to talk to the Chantal server from
-most programming languages directly, we recommend going via the Python remote
-client because this is the easiest way.
+programming language.  While it is possible to talk to the JuliaBase server
+from most programming languages directly, we recommend going via the Python
+remote client because this is the easiest way.

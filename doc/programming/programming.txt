@@ -1,6 +1,6 @@
 .. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
 ..
-.. This file is part of Chantal, the samples database.
+.. This file is part of JuliaBase, the samples database.
 ..
 .. Copyright (C) 2010, 2012 Forschungszentrum Jülich, Germany,
 ..                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -19,10 +19,10 @@ Programming
 Coding guidelines
 ===========================
 
-Chantal source code modules should not exceed 1000 lines of code.  You should
+JuliaBase source code modules should not exceed 1000 lines of code.  You should
 stick to `PEP 8`_ and the `Django coding guidelines`_.
 
-Chantal makes one exception from PEP 8: I allow lines with 125 columns instead
+JuliaBase makes one exception from PEP 8: I allow lines with 125 columns instead
 of only 80.
 
 All variables and source code comments should be in English.
@@ -40,7 +40,7 @@ All variables and source code comments should be in English.
 
 .. _`ReST format`: http://sphinx-doc.org/rest.html
 
-Internationalisation is a very important point in Chantal.  All strings exposed
+Internationalisation is a very important point in JuliaBase.  All strings exposed
 to the user should be marked as translatable by putting them in ``_(u"...")``
 unless you have very good reason not to do so (e.g. for some proper names).
 Note that in code which is executed at module load time (e.g. model and form
@@ -52,14 +52,14 @@ Creating a new Django app
 
 Let us assume your institute or department is called “Institute of New
 Materials”, abbreviated “INM”.  You will then create a Django app called
-``chantal_inm``.
+``inm``.
 
 Adding a new process module
 =================================
 
 So you want to add a new measurement device or manufacturing process to your
-Chantal installation.  You do so by adding new models, views, URLs, and
-possibly an electronic lab notebook to your app “chantal_inm”.
+JuliaBase installation.  You do so by adding new models, views, URLs, and
+possibly an electronic lab notebook to your app “inm”.
 
 I will show how to do that step-by-step.  In this example case, we write the
 module for layer thickness measurements.
@@ -69,7 +69,7 @@ Overview
 
 The following steps are necessary for creating a process module:
 
-1. Create a database model in ``chantal_inm/models.py``.
+1. Create a database model in ``inm/models.py``.
 
 2. Create links in ``urls.py``.
 
@@ -88,7 +88,7 @@ The following steps are necessary for creating a process module:
 
 In general, you will not do all of this from scratch.  Instead, you will
 copy-and-paste from an already existing process which is as similar to the new
-one as possible.  There are so many processes already existing in Chantal that
+one as possible.  There are so many processes already existing in JuliaBase that
 this makes creating a new one relatively simple.
 
 
@@ -137,7 +137,7 @@ Schema migration
 After you add (or change) database models, you must to a so-called schema
 migration.  This means that the tables in the database PostgreSQL are actually
 changed, so that Django can use this new structure (a.k.a. schema).  If you
-don't do that, your database will not get corrupted, however, Chantal won't
+don't do that, your database will not get corrupted, however, JuliaBase won't
 work either.
 
 It is a good idea to test a schema migration first on a test server.
@@ -309,7 +309,7 @@ non-cluster-tool depositions however, you can use ``process.layers.all()`` in
 the template code instead.
 
 Read the docstrings in ``samples_extras.py`` for getting used to the filters
-and tags special to Chantal.
+and tags special to JuliaBase.
 
 
 Update for the Remote Client
@@ -665,7 +665,7 @@ Glossary
       in the literal meaning of the word, i.e. a deposition, an etching, a
       clean room process etc.  It can also be a measurement or a result.
       However, even the substrate, sample split, and sample death are
-      considered processes in chantal.
+      considered processes in JuliaBase.
 
       It may have been better to call this “history item” or just “item”
       instead of “process”.  The name “process” is due to merely historical

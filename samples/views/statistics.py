@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -78,7 +78,7 @@ def statistics(request):
     :rtype: ``HttpResponse``
     """
     return render_to_response("samples/statistics.html",
-                              {"title": _("Chantal server statistics"),
+                              {"title": _("JuliaBase server statistics"),
                                "cache_hit_rate": int(round((utils.cache_hit_rate() or 0) * 100)),
                                "cache_connections": get_cache_connections()},
                               context_instance=RequestContext(request))
@@ -86,8 +86,8 @@ def statistics(request):
 
 def about(request):
     """The “about” view.  It displays general superficial information about
-    Chantal.  This view is more or less static – it shows only the components
-    of Chantal and versioning information.
+    JuliaBase.  This view is more or less static – it shows only the components
+    of JuliaBase and versioning information.
 
     Note that you needn't be logged in for accessing this.
 
@@ -102,13 +102,13 @@ def about(request):
     :rtype: ``HttpResponse``
     """
     return render_to_response("samples/about.html",
-                              {"title": _("Chantal is presented to you by …"),
+                              {"title": _("JuliaBase is presented to you by …"),
                                "is_testserver": settings.IS_TESTSERVER,
                                "language_version": sys.version.split()[0],
                                "matplotlib_version": matplotlib.__version__,
                                "framework_version": django.get_version(),
                                # FixMe: Introduce version variable in
                                # chantal_common
-                               "chantal_version": "unknown"
+                               "juliabase_version": "unknown"
                                },
                               context_instance=RequestContext(request))

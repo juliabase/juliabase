@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Django settings for a generic Chantal installation.
+"""Django settings for a generic JuliaBase installation.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -34,7 +34,7 @@ DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
-    ("Chantal-Admins", "bronger@physik.rwth-aachen.de"),
+    ("JuliaBase-Admins", "bronger@physik.rwth-aachen.de"),
 )
 # If DEBUG == True, all outgoing email is redirected to this account.  If
 # empty, don't send any email at all.
@@ -45,8 +45,8 @@ MANAGERS = ADMINS
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "chantal",
-        "USER": "chantal",
+        "NAME": "juliabase",
+        "USER": "juliabase",
         "PASSWORD": "12345",
         "ATOMIC_REQUESTS": True
         }
@@ -64,9 +64,9 @@ DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
 
-STATIC_ROOT = b"/var/www/chantal/media/"
-MEDIA_ROOT = b"/var/www/chantal/uploads"
-CACHE_ROOT = b"/var/cache/chantal"
+STATIC_ROOT = b"/var/www/juliabase/media/"
+MEDIA_ROOT = b"/var/www/juliabase/uploads"
+CACHE_ROOT = b"/var/cache/juliabase"
 
 USE_X_SENDFILE = True
 
@@ -82,7 +82,7 @@ SECRET_KEY = "vew7ooes7bt7aetrb77wuhwe95zislisdfo8z"
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
-# template.  This is used in chantal_institute's "sample claim" views, for example.
+# template.  This is used in jb_institute's "sample claim" views, for example.
 TEMPLATE_DIRS = (os.path.dirname(os.path.abspath(__file__)),)
 TEMPLATE_LOADERS = (
     ("django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
@@ -95,7 +95,7 @@ MIDDLEWARE_CLASSES = (
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "chantal_common.middleware.LocaleMiddleware",
-    "samples.middleware.chantal.ExceptionsMiddleware",
+    "samples.middleware.juliabase.ExceptionsMiddleware",
     "chantal_common.middleware.JSONClientMiddleware",
 )
 APPEND_SLASH = False
@@ -109,7 +109,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "chantal_institute",
+    "jb_institute",
     "samples",
     "south",
     "chantal_common"
@@ -152,19 +152,19 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 THUMBNAIL_WIDTH = 400
 
-CHANTAL_DEPARTMENTS = ["Institute"]
+JB_DEPARTMENTS = ["Institute"]
 
-MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "chantal_institute"}
+MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 
-ADD_SAMPLE_VIEW = "chantal_institute.views.samples.sample.add"
+ADD_SAMPLE_VIEW = "jb_institute.views.samples.sample.add"
 
 MEASUREMENT_DATA_ROOT_DIR = b""
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, b"pds")
 
-PHYSICAL_PROCESS_BLACKLIST = [("chantal_institute", "substrate"),
-                              ("chantal_institute", "layerthicknessmeasurement")]
+PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
+                              ("jb_institute", "layerthicknessmeasurement")]
 SOLARSIMULATOR_1_ROOT_DIR = b""
-MERGE_CLEANUP_FUNCTION = "chantal_institute.utils.clean_up_after_merging"
+MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 
 CRAWLER_LOGS_ROOT = b""
 CRAWLER_LOGS_WHITELIST = set([])

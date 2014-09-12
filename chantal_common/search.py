@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -170,7 +170,7 @@ class SearchField(object):
           - `query_paths`: dictionary mapping field names to query paths ready
             to be used in a ``filter`` method call of a ``QuerySet``.
 
-            This parameter is not used in Chantal-samples but it may be
+            This parameter is not used in JuliaBase-samples but it may be
             interesting for institute-specific code if some models should be
             combined into one search tree node.  Then, a derivative of
             `SearchTreeNode` may use this parameter in order to trigger

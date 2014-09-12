@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -15,7 +15,7 @@
 
 """The most basic models like ``Sample``, ``SampleSeries``, ``UserDetails``
 etc.  It is important to see that this module is imported by almost all other
-models modules.  Therefore, you *must* *not* import any Chantal models module
+models modules.  Therefore, you *must* *not* import any JuliaBase models module
 here, in particular not ``models.py``.  Otherwise, you'd end up with
 irresolvable cyclic imports.
 """
@@ -162,7 +162,7 @@ class Process(PolymorphicModel):
         includes the full URL path to where the object can be seen.
 
         Note that Django itself uses this method in its built-in syndication
-        framework.  However currently, Chantal uses it only explicitly in
+        framework.  However currently, JuliaBase uses it only explicitly in
         re-directions and links in templates.
 
         :Return:
@@ -427,7 +427,7 @@ class Process(PolymorphicModel):
         """
         context = old_context.copy()
         if "browser_system" not in context:
-            context["browser_system"] = user.chantal_user_details.browser_system
+            context["browser_system"] = user.jb_user_details.browser_system
         if "process" not in context:
             context["process"] = self
         if "name" not in context:
@@ -739,9 +739,9 @@ class Sample(models.Model):
         return None
 
     def get_sample_details(self):
-        """Retreive the sample details of a sample.  Sample details are an
-        optional feature that doesn't exist in chantal_samples itself.  It can
-        be provided by an app built on top of it.
+        """Retreive the sample details of a sample.  Sample details are an optional
+        feature that doesn't exist in the app "samples" itself.  It can be
+        provided by an app built on top of it.
 
         If you do so, the sample details must have a O2O relationship to
         ``Sample`` with the related name ``sample_details``.  Furthermore, it
@@ -1104,11 +1104,11 @@ class Result(Process):
 
         Every image exist twice on the local filesystem.  First, it is in
         ``settings.MEDIA_ROOT/results``.  (Typically, ``MEDIA_ROOT`` is
-        ``/var/www/chantal/uploads/`` and should be backuped.)  This is the
+        ``/var/www/juliabase/uploads/`` and should be backuped.)  This is the
         original file, uploaded by the user.  Its filename is ``"0"`` plus the
         respective file extension (jpeg, png, or pdf).  The sub-directory is
         the primary key of the result.  (This allows for more than one image
-        per result in upcoming Chantal versions.)
+        per result in upcoming JuliaBase versions.)
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
         on the original file type, and stored in ``settings.MEDIA_ROOT``.

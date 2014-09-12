@@ -1,7 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "samples/base.html" %}
 {% comment %}
-This file is part of Chantal, the samples database.
+This file is part of JuliaBase, the samples database.
 
 Copyright (C) 2010 Forschungszentrum Jülich, Germany,
                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,7 +14,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
-{% load chantal %}
+{% load juliabase %}
 {% load samples_extras %}
 
 {% block frame_content %}
@@ -26,7 +26,7 @@ copyright holder, you must destroy it immediately and completely.
     <h3>{{ process_class|contenttype_name|capfirst }}<a
        class="edit-icon"
        href="{% url 'samples.views.task_lists.edit' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
-        <img src="{{ STATIC_URL }}chantal/icons/layout_add.png" alt="add icon" title="{% trans 'Add task' %}"
+        <img src="{{ STATIC_URL }}juliabase/icons/layout_add.png" alt="add icon" title="{% trans 'Add task' %}"
              width="16" height="16"/></a></h3>
   {% endspaceless %}
 
@@ -43,14 +43,14 @@ copyright holder, you must destroy it immediately and completely.
       {% if task.user_can_edit %}
         <a class="edit-icon"
            href="{% url 'samples.views.task_lists.edit' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}">
-           <img src="{{ STATIC_URL }}chantal/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
+           <img src="{{ STATIC_URL }}juliabase/icons/layout_edit.png" alt="edit icon" title="{% trans 'edit task' %}"
            width="16" height="16"/></a>
       {% endif %}
       {% if task.user_can_delete %}
         <form method="post"
               action="{% url 'samples.views.task_lists.remove' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}"
               style="display: inline">
-          <input type="image" src="{{ STATIC_URL }}chantal/icons/layout_delete.png" alt="{% trans 'remove task' %}"
+          <input type="image" src="{{ STATIC_URL }}juliabase/icons/layout_delete.png" alt="{% trans 'remove task' %}"
                  title="{% trans 'remove task' %}"/>
         </form>
       {% endif %}

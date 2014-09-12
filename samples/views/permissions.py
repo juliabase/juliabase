@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -175,7 +175,7 @@ def get_physical_processes(user):
                               # FixMe: This will break someday:
                               and process != models.Deposition]
     if not user.is_superuser:
-        user_department = user.chantal_user_details.department
+        user_department = user.jb_user_details.department
         if user_department:
             all_physical_processes = [process for process in all_physical_processes
                                       if ContentType.objects.get_for_model(process) in user_department.processes.all()]

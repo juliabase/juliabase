@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -12,9 +12,9 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-"""Models for testing Chantal-Samples.  Never use this code as a starting
+"""Models for testing JuliaBase-Samples.  Never use this code as a starting
 point for your own work.  It does not represent best common practises in the
-Chantal world.  In particular, nothing is translatable here.
+JuliaBase world.  In particular, nothing is translatable here.
 """
 
 from __future__ import unicode_literals

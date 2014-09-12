@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -15,7 +15,7 @@
 
 """Mapping URL patterns to function calls.  This is the local URL dispatch of
 the Django application “samples”, which is the actual sample database and the
-heart of Chantal.
+heart of JuliaBase.
 
 It takes the URL that the user chose, and converts it to a function call –
 possibly with parameters.

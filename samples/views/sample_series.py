@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -126,7 +126,7 @@ def embed_timestamp(request, name):
             request._sample_series_timestamp = None
         else:
             timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp,
-                            request.user.chantal_user_details.layout_last_modified)
+                            request.user.jb_user_details.layout_last_modified)
             request._sample_series_timestamp = adjust_timezone_information(timestamp)
 
 

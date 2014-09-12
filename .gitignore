@@ -6,8 +6,8 @@ handbuch.log
 handbuch.pdf
 handbuch.toc
 missfont.log
-samples/remote_client/chantal_remote.html
-samples/remote_client/chantal_remote.log
+samples/remote_client/jb_remote.html
+samples/remote_client/jb_remote.log
 samples/remote_client/la_import.py
 samples/remote_client/large_area_depositions.pickle
 media/results

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -30,7 +30,7 @@ import sys, os
 # If your extensions are in another directory, add it here. If the directory
 # is relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
-sys.path.extend(os.path.abspath('../../../{}'.format(path)) for path in ("chantal_samples", "chantal_institute"))
+sys.path.extend(os.path.abspath('../../../{}'.format(path)) for path in ("chantal_samples", "jb_institute"))
 #import settings
 
 # General configuration
@@ -53,7 +53,7 @@ source_suffix = '.txt'
 master_doc = 'overview'
 
 # General information about the project.
-project = 'Chantal'
+project = 'JuliaBase'
 copyright = '2014, Torsten Bronger'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -180,7 +180,7 @@ latex_font_size = '11pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('programming', 'programming.tex', r'Chantal programming guide',
+  ('programming', 'programming.tex', r'JuliaBase programming guide',
    r'Torsten Bronger', 'manual'),
 ]
 

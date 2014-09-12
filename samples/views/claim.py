@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -110,7 +110,7 @@ for reviewing this request.  If you don't want or cannot approve
 the request, please contact {requester} directly and ask him or her
 to withdraw the request.
 
-Chantal.
+JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
                  "url": "http://" + settings.DOMAIN_NAME +
                  django.core.urlresolvers.reverse(show, kwargs={"claim_id": claim.pk})})
@@ -236,7 +236,7 @@ responsible person” of the following samples:
 
 {samples}
 
-Chantal.
+JuliaBase.
 """), claim.requester, {"requester": get_really_full_name(claim.requester), "samples": sample_enumeration})
                 _ = ugettext
                 response = \

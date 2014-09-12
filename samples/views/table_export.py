@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,9 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Main routines and all views for the data export.  Believe it or not, this
-is probably the most complicated thing in Chantal.  The problem is that data in
-Chantal has a tree-like structure, which is completely incompatible with the
+"""Main routines and all views for the data export.  Believe it or not, this is
+probably the most complicated thing in JuliaBase.  The problem is that data in
+JuliaBase has a tree-like structure, which is completely incompatible with the
 table structure needed for CSV export.
 
 The tree

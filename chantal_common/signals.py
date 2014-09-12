@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Module for providing the Chantal signals.
+"""Module for providing the JuliaBase signals.
 
 :ivar maintain: This is sent in regular time intervals (e.g., every night), so
   that various subsystems can use it for maintenance work.  You can use this

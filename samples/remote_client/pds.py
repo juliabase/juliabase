@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -19,7 +19,7 @@ import os, re, codecs, datetime
 
 import ConfigParser
 credentials = ConfigParser.SafeConfigParser()
-credentials.read(os.path.expanduser("~/chantal.auth"))
+credentials.read(os.path.expanduser("~/juliabase.auth"))
 credentials = dict(credentials.items("DEFAULT"))
 
 root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"

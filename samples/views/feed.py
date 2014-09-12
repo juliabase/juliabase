@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -156,7 +156,7 @@ def show(request, username, user_hash):
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = \
-        _("Chantal news for {user_name}").format(user_name=get_really_full_name(user))
+        _("JuliaBase news for {user_name}").format(user_name=get_really_full_name(user))
     entries = [entry.actual_instance for entry in user.feed_entries.all()]
     if entries:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(entries[0].timestamp)
@@ -166,7 +166,7 @@ def show(request, username, user_hash):
     ElementTree.SubElement(author, "name").text = "Torsten Bronger"
     ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
     ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url)
-    ElementTree.SubElement(feed, "generator", version="1.0").text = "Chantal"
+    ElementTree.SubElement(feed, "generator", version="1.0").text = "JuliaBase"
     ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/ipv/sonne.png"
     ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/ipv/juelich.png"
     only_important = user.samples_user_details.only_important_news

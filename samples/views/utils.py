@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -173,7 +173,7 @@ def get_next_deposition_number(letter):
 class AmbiguityException(Exception):
     """Exception if a sample lookup leads to more than one matching alias
     (remember that alias names needn't be unique).  It is raised in
-    `lookup_sample` and typically caught in Chantal's own middleware.
+    `lookup_sample` and typically caught in JuliaBase's own middleware.
     """
 
     def __init__(self, sample_name, samples):
@@ -265,12 +265,12 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     The latter is appended to the URL as a query string with the ``next`` key,
     e.g.::
 
-        /chantal/6-chamber_deposition/08B410/edit/?next=/chantal/samples/08B410a
+        /juliabase/6-chamber_deposition/08B410/edit/?next=/juliabase/samples/08B410a
 
     This routine generated the proper ``HttpResponse`` object that contains the
     redirection.  It always has HTTP status code 303 (“see other”).
 
-    If the request came from the Chantal Remote Client, the response is a
+    If the request came from the JuliaBase Remote Client, the response is a
     pickled ``json_response``.  (Normally, a simple ``True``.)
 
     :Parameters:
@@ -378,12 +378,12 @@ class StructuredTopic(object):
     """Class that represents one topic which contains samples and sample
     series, used for `build_structured_sample_list`.
 
-    :ivar topic: the underlying Chantal topic which is represented by this
+    :ivar topic: the underlying JuliaBase topic which is represented by this
       instance.
 
-    :ivar topic_name: the underlying Chantal topic's name which is represented
-      by this instance.  It may be a surrogate name if the user is not allowed
-      to see the actual name.
+    :ivar topic_name: the underlying JuliaBase topic's name which is
+      represented by this instance.  It may be a surrogate name if the user is
+      not allowed to see the actual name.
 
     :ivar samples: the samples of this topic which belong to the “My Samples”
       of the user but which don't belong to any sample series.
@@ -566,7 +566,7 @@ def digest_process(process, user, local_context={}):
     :rtype: dict mapping str to ``object``
     """
     process = process.actual_instance
-    cache_key = process.get_cache_key(user.chantal_user_details.get_data_hash(), local_context)
+    cache_key = process.get_cache_key(user.jb_user_details.get_data_hash(), local_context)
     cached_context = chantal_common.utils.get_from_cache(cache_key) if cache_key else None
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
@@ -774,7 +774,7 @@ def table_export(request, data, label_column_heading):
                 else:
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \
-                        "attachment; filename=chantal--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
+                        "attachment; filename=juliabase--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
                     writer = UnicodeWriter(response)
                     writer.writerows(reduced_table)
                 return response

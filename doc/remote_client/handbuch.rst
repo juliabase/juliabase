@@ -2,7 +2,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. This file is part of Chantal, the samples database.
+.. This file is part of JuliaBase, the samples database.
 ..
 .. Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 ..                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -18,10 +18,10 @@
 .. highlight:: python
    :linenothreshold: 10
 
-Der Chantal Remote-Client
+Der JuliaBase Remote-Client
 ====================================
 
-Der „Chantal Remote-Client“ ist eine Programm-Bibliothek, die es ermöglicht,
+Der „JuliaBase Remote-Client“ ist eine Programm-Bibliothek, die es ermöglicht,
 von einem beliebigen Computer des Instituts Daten in die Datenbank
 automatisiert einzutragen und auszulesen.
 
@@ -76,7 +76,7 @@ können:
 
 #. Ein externes, rein kommandozeilenbasiertes Programm ausführen.
 
-Und mehr ist für den Chantal Remote-Client nicht nötig!
+Und mehr ist für den JuliaBase Remote-Client nicht nötig!
 
 Will man also aus einem Programm heraus Daten an die Datenbank senden, schreibt
 man diese Daten in eine Textdatei und ruft ein bestimmtes externes Programm
@@ -116,9 +116,9 @@ Eine Datei für den Remote-Client beginnt immer mit
 
 ::
 
-    from chantal_remote import *
+    from jb_remote import *
 
-Das bedeutet, daß alle Funktionen des Moduls ``chantal_remote`` eingebunden
+Das bedeutet, daß alle Funktionen des Moduls ``jb_remote`` eingebunden
 werden.
 
 Achtet darauf, daß alle Zeilen in der ersten Spalte beginnen, es sei denn, sie
@@ -136,7 +136,7 @@ Einloggen und ausloggen
 Es ist wichtig, sich beim Server zu identifizieren.  Dazu muß man sich zu
 Beginn der Datei einloggen und sich zuletzt auch wieder ausloggen::
 
-    from chantal_remote import *
+    from jb_remote import *
 
     login("r.meier", "mammaistdiebeste")
 
@@ -182,7 +182,7 @@ Proben hinzufügen
 Man kann bis zu 100 Proben auf einen Schlag hinzufügen.  Der folgende Befehl
 legt 10 neue Proben an und gibt an, daß sie zur Zeit im MAIKE-Labor liegen::
 
-    from chantal_remote import *
+    from jb_remote import *
     login("r.meier", "mammaistdiebeste")
     new_samples(10, "MAIKE-Labor")
     logout()

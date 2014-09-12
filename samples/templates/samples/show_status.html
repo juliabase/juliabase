@@ -1,7 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "samples/base.html" %}
 {% comment %}
-This file is part of Chantal, the samples database.
+This file is part of JuliaBase, the samples database.
 
 Copyright (C) 2010 Forschungszentrum Jülich, Germany,
                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,7 +14,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
-{% load chantal %}
+{% load juliabase %}
 {% load samples_extras %}
 
 {% block css %}
@@ -45,13 +45,13 @@ copyright holder, you must destroy it immediately and completely.
               <td>{{ status_message.message|markdown:"collapse" }}</td>
               <td style="text-align: center; vertical-align: middle">
                   {% if status_message.status_level == "undefined" %}
-                      <img src="{{ STATIC_URL }}chantal/icons/grey.png" alt="undefined"/>
+                      <img src="{{ STATIC_URL }}juliabase/icons/grey.png" alt="undefined"/>
                   {% else %}{% if status_message.status_level == "red" %}
-                      <img src="{{ STATIC_URL }}chantal/icons/red.png" alt="red"/>
+                      <img src="{{ STATIC_URL }}juliabase/icons/red.png" alt="red"/>
                   {% else %}{% if status_message.status_level == "yellow" %}
-                      <img src="{{ STATIC_URL }}chantal/icons/yellow.png" alt="yellow"/>
+                      <img src="{{ STATIC_URL }}juliabase/icons/yellow.png" alt="yellow"/>
                   {% else %}{% if status_message.status_level == "green" %}
-                      <img src="{{ STATIC_URL }}chantal/icons/green.png" alt="green"/>
+                      <img src="{{ STATIC_URL }}juliabase/icons/green.png" alt="green"/>
                   {% endif %}{% endif %}{% endif %}{% endif %}
               </td>
               <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
@@ -62,7 +62,7 @@ copyright holder, you must destroy it immediately and completely.
                   <form method="post" 
              action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
                         style="display: inline">
-                    <input type="image" src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="{% trans 'cancel' %}"
+                    <input type="image" src="{{ STATIC_URL }}juliabase/icons/cancel.png" alt="{% trans 'cancel' %}"
                            title="{% trans 'withdraw this status message for all processes' %}"/>
                   </form>
                 {% endif %}
@@ -106,13 +106,13 @@ copyright holder, you must destroy it immediately and completely.
                 <td>{{ status_message.message|markdown:"collapse" }}</td>
                 <td style="text-align: center; vertical-align: middle">
                     {% if status_message.status_level == "undefined" %}
-                        <img src="{{ STATIC_URL }}chantal/icons/grey.png" alt="{% trans 'undefined' %}"/>
+                        <img src="{{ STATIC_URL }}juliabase/icons/grey.png" alt="{% trans 'undefined' %}"/>
                     {% else %}{% if status_message.status_level == "red" %}
-                        <img src="{{ STATIC_URL }}chantal/icons/red.png" alt="{% trans 'red' %}"/>
+                        <img src="{{ STATIC_URL }}juliabase/icons/red.png" alt="{% trans 'red' %}"/>
                     {% else %}{% if status_message.status_level == "yellow" %}
-                        <img src="{{ STATIC_URL }}chantal/icons/yellow.png" alt="{% trans 'yellow' %}"/>
+                        <img src="{{ STATIC_URL }}juliabase/icons/yellow.png" alt="{% trans 'yellow' %}"/>
                     {% else %}{% if status_message.status_level == "green" %}
-                        <img src="{{ STATIC_URL }}chantal/icons/green.png" alt="{% trans 'green' %}"/>
+                        <img src="{{ STATIC_URL }}juliabase/icons/green.png" alt="{% trans 'green' %}"/>
                     {% endif %}{% endif %}{% endif %}{% endif %}
                 </td>
                 <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
@@ -123,7 +123,7 @@ copyright holder, you must destroy it immediately and completely.
                     <form method="post" 
               action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={% url 'samples.views.status.show' %}"
                           style="display: inline">
-                      <input type="image" src="{{ STATIC_URL }}chantal/icons/cancel.png" alt="{% trans 'cancel' %}"
+                      <input type="image" src="{{ STATIC_URL }}juliabase/icons/cancel.png" alt="{% trans 'cancel' %}"
                              title="{% trans 'withdraw this status message for all processes' %}"/>
                     </form>
                   {% endif %}

@@ -3,7 +3,7 @@
 import os
 import sys
 
-sys.path.append("/home/bronger/src/chantal_institute")
+sys.path.append("/home/bronger/src/jb_institute")
 sys.stdout = sys.stderr
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'

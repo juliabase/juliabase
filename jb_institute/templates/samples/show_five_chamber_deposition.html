@@ -1,0 +1,63 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of JuliaBase, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load juliabase %}
+{% load samples_extras %}
+{% load institute_extras %}
+
+<p>
+  <span class="label">{% verbose_name Deposition.number %}:</span><span class="value">{{ process.number }}</span>
+</p>
+
+{% if process.comments %}
+  <p>
+    <span class="label">{% verbose_name FiveChamberDeposition.comments %}:</span>
+  </p>
+  <blockquote>{{ process.comments|markdown_samples }}</blockquote>
+{% endif %}
+
+<table style="width: 100%">
+  <tbody>
+  {% for layer in process.layers.all %}
+  <tr>
+    <td style="border-style: solid; border-color: black; border-width: thin">
+      <table style="width: 100%">
+        <tbody>
+        <tr>
+          <td class="label">{% verbose_name FiveChamberLayer.number %}:</td>
+          <td class="value">{{ layer.number|three_digits }}</td>
+          {% value_field layer.sih4 "sccm" %}
+        </tr>
+        <tr>
+          {% value_field layer.layer_type %}
+          {% value_field layer.h2 "sccm" %}
+        </tr>
+        <tr>
+          <td class="label">{% verbose_name FiveChamberLayer.chamber %}:</td>
+          <td class="value">{{ layer.get_chamber_display }}</td>
+          <td class="label">{% trans 'Silane conc.' %}:</td>
+          <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
+        </tr>
+        <tr>
+          {% value_field layer.date %}
+          {% value_split_field layer.temperature_1 layer.temperature_2 "℃" %}
+        </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>

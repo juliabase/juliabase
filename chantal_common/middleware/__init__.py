@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -49,7 +49,7 @@ class LocaleMiddleware(object):
     def get_language_for_user(request):
         if request.user.is_authenticated():
             try:
-                language = request.user.chantal_user_details.language
+                language = request.user.jb_user_details.language
                 return language
             except (SiteProfileNotAvailable, UserDetails.DoesNotExist):
                 pass
@@ -142,7 +142,7 @@ class JSONClientMiddleware(object):
     """Middleware to convert responses to JSON if this was requested by the
     client.
 
-    It is important that this class comes after all non-Chantal middleware in
+    It is important that this class comes after all non-JuliaBase middleware in
     ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the
     ``Http404`` exception may be already caught.  FixMe: Is this really the
     case?

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -16,7 +16,7 @@
 """Module which defines the command ``maintenance``.  It should be called
 nightly as a cronjob.  For example, one line in the crontab may read::
 
-    0 3 * * * /home/chantal/fzj/manage.py maintenance
+    0 3 * * * /home/juliabase/juliabase/manage.py maintenance
 """
 
 from __future__ import absolute_import, unicode_literals

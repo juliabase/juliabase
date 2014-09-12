@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -48,7 +48,7 @@ def register_to_department(process_cls, department_name):
 
 
 def register_all_models_to_department(department_name):
-    """Connects all database models from an chantal app to the belonging department.
+    """Connects all database models from an juliabase app to the belonging department.
 
     :Parameter:
       - `department`: the name of the department to which the processes belongs

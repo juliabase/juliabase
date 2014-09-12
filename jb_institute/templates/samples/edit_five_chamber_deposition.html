@@ -1,0 +1,130 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of JuliaBase, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load juliabase %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">
+  {% error_list deposition _("Error in deposition") %}
+  {% error_list samples _("Error in sample list") %}
+  <table class="padding5">
+    <tbody>
+    <tr style="display: none">
+      {% input_field deposition.operator %}
+      <td></td>
+    </tr>
+    <tr>
+      <td style="text-align: right"><label for="id_{{ deposition.number.html_name }}"
+           >{{ deposition.number.label }}:</label></td>
+      <td>{{ deposition.number }}</td>
+      <td rowspan="3" style="padding-left: 2em; vertical-align:top">
+        <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
+                             >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
+    </tr>
+    <tr>
+      {% input_field deposition.timestamp %}
+    </tr>
+    <tr>
+     <td style="text-align: right">
+        <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:<br/>
+          {% markdown_hint %}</label></td>
+      <td>{{ deposition.comments }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  {% if layers_and_change_layers %}
+    <table style="width: 100%">
+      <tbody>
+      {% for layer, change_layer in layers_and_change_layers %}
+        <tr>
+          <td style="border-style: solid; border-color: black; border-width: thin">
+            <table style="width: 100%">
+              <tbody>
+              {% error_list layer _("Error in layer") "<tr>" 6 %}
+              {% error_list change_layer _("Error in layer") "<tr>" 6 %}
+              <tr>
+                <td class="label">
+                  <label for="id_{{ layer.number.html_name }}"
+                         >{{ layer.number.label }}:</label>
+                </td>
+                <td class="value">{{ layer.number }}</td>
+                {% input_field layer.sih4 %}
+              </tr>
+              <tr>
+                {% input_field layer.layer_type %}
+                {% input_field layer.h2 %}                
+              </tr>
+              <tr>
+                {% input_field layer.chamber %}
+                {% split_field layer.temperature_1 layer.temperature_2 %}
+              </tr>
+              <tr>
+                {% input_field layer.date %}
+
+              </tr>
+
+              <tr>
+                {% input_field change_layer.duplicate_this_layer %}
+               
+              </tr>
+              <tr>
+                {% input_field change_layer.remove_this_layer %}
+                
+              </tr>
+              <tr>
+                {% input_field change_layer.move_this_layer %}
+                
+              </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% include "samples/edit_description.html" %}
+
+  {% error_list add_layers _("Error with adding layers") %}
+  {% error_list remove_from_my_samples _("Error with removing from My Samples") %}
+  <table>
+    <tbody>
+    <tr>
+      {% input_field add_layers.number_of_layers_to_add %}
+    </tr>
+    <tr>
+      {% input_field add_layers.my_layer_to_be_added %}
+    </tr>
+    {% if remove_from_my_samples %}
+      <tr>
+        {% input_field remove_from_my_samples.remove_from_my_samples %}
+      </tr>
+    {% endif %}
+    </tbody>
+  </table>
+
+  <div style="display: none">
+    {{ deposition.timestamp_inaccuracy }}
+  </div>
+
+  <p class="submit-button"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -30,11 +30,11 @@ the new tables are automatically created.
 
 Note that this module doesn't define any models itself.  It is only the
 container where all models are finally brought together by module inclusion.
-The number and complexity of Chantal's models is too big for one file.
+The number and complexity of JuliaBase's models is too big for one file.
 Therefore, we have a few model modules, all starting with ``models_...`` and
-residing in this directory.  With ``from samples.models_... import *``
-I can give the rest of Chantal's modules the illusion that all models are
-actually here.
+residing in this directory.  With ``from samples.models_... import *`` I can
+give the rest of JuliaBase's modules the illusion that all models are actually
+here.
 """
 
 from __future__ import absolute_import, unicode_literals

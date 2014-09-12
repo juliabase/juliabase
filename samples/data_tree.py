@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -198,8 +198,8 @@ class DataItem(object):
       rubbish because it's actually always the same property.
 
       Thus, in order to preserve inheritance, such inherited attributes are
-      called “shared columns” in Chantal's CSV export.  They are marked with a
-      non-``None`` ``origin`` parameter which just contains a symbol for the
+      called “shared columns” in JuliaBase's CSV export.  They are marked with
+      a non-``None`` ``origin`` parameter which just contains a symbol for the
       model class, e.g. ``"process"`` for ``models.Process``.
 
     :type key: unicode

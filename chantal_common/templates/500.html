@@ -1,7 +1,7 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "base_chantal.html" %}
+{% extends "jb_base.html" %}
 {% comment %}
-This file is part of Chantal, the samples database.
+This file is part of JuliaBase, the samples database.
 
 Copyright (C) 2010 Forschungszentrum Jülich, Germany,
                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,16 +14,16 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
-{% load chantal %}
+{% load juliabase %}
 
 {% block extrahead %}
-  <link rel="stylesheet" type="text/css" media="screen" href="/media/chantal/css/main.css"/>
-  <link rel="stylesheet" type="text/css" media="print" href="/media/chantal/css/print.css"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="/media/juliabase/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="/media/juliabase/css/print.css"/>
   <!-- FixMe: We have no favicon yet. -->
-  <link rel="shortcut icon" href="/media/chantal/favicon.ico" type="image/x-icon"/>
+  <link rel="shortcut icon" href="/media/juliabase/favicon.ico" type="image/x-icon"/>
 {% endblock %}
 
-{% block title %}{% trans 'Internal Chantal error' %}{% endblock %}
+{% block title %}{% trans 'Internal JuliaBase error' %}{% endblock %}
 
 {% block content %}
   <table class="headbar">
@@ -32,7 +32,7 @@ copyright holder, you must destroy it immediately and completely.
       <td class="info">
       </td>
       <td class="login-data">
-        <a href="/"><img src="/media/chantal/icons/house.png" alt="log-in icon" title="{% trans 'Log in' %}"
+        <a href="/"><img src="/media/juliabase/icons/house.png" alt="log-in icon" title="{% trans 'Log in' %}"
                          width="16" height="16"/></a>
       </td>
     </tr>
@@ -41,14 +41,14 @@ copyright holder, you must destroy it immediately and completely.
 
   <div class="main">
     <div class="screen-only">
-      <p class="logo-text">Chantal</p>
+      <p class="logo-text">JuliaBase</p>
     </div>
 
     <div class="outer-frame">
       <div class="inner-frame">
 	<h1>{% trans 'Internal server error' %}</h1>
 	<p>{% blocktrans %}
-You experienced an internal error in the Chantal server software.  The
+You experienced an internal error in the JuliaBase server software.  The
 administrators have been contacted already and will do their best in
 eliminating the bug.  Typically, they will contact you as soon as the problem
 is tackled.

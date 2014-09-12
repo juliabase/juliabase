@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -45,10 +45,10 @@ def show_user(request, login_name):
     :rtype: ``HttpResponse``
     """
     try:
-        user = django.contrib.auth.models.User.objects.filter(username=login_name).exclude(chantal_user_details__department=None)[0]
+        user = django.contrib.auth.models.User.objects.filter(username=login_name).exclude(jb_user_details__department=None)[0]
     except IndexError:
         raise Http404('No User matches the given query.')
-    department = user.chantal_user_details.department
+    department = user.jb_user_details.department
     username = get_really_full_name(user)
     return render_to_response("chantal_common/show_user.html",
                               {"title": username, "shown_user": user, "department": department},
@@ -117,7 +117,7 @@ def switch_language(request):
     """
     language = request.GET.get("lang")
     if language in dict(models.languages):
-        user_details = request.user.chantal_user_details
+        user_details = request.user.jb_user_details
         user_details.language = language
         user_details.save()
     return utils.successful_response(request)

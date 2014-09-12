@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -57,7 +57,7 @@ class UserDetails(models.Model):
     registered user that is not stored by Django's user model itself.
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
-                                related_name="chantal_user_details")
+                                related_name="jb_user_details")
     department = models.ForeignKey(Department, verbose_name=_("department"), related_name="user_details",
                                    null=True, blank=True)
     """The department of the user and all samples that he/she is the currently
@@ -65,7 +65,7 @@ class UserDetails(models.Model):
     select-user choice fields (e.g. for moving a sample to another user).  So
     take care that if you compare this with another department which may also
     be ``None``, that in case both are ``None``, the result is ``False``.
-    Every sensible Chantal installation will have at least one department."""
+    Every sensible JuliaBase installation will have at least one department."""
     language = models.CharField(_("language"), max_length=10, choices=languages, default="de")
     browser_system = models.CharField(_("operating system"), max_length=10, default="windows")
     layout_last_modified = models.DateTimeField(_("layout last modified"), auto_now_add=True)

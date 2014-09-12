@@ -38,7 +38,7 @@ admin.autodiscover()
 
 
 urlpatterns = patterns("",
-                       (r"", include("chantal_institute.urls")),
+                       (r"", include("jb_institute.urls")),
                        (r"", include("chantal_common.urls")),
                        (r"", include("samples.urls")),
                        )

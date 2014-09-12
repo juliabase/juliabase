@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -69,9 +69,9 @@ class JSONRequestException(Exception):
     The ranges for the error codes are:
 
     0–999: special codes, codes common to all applications, and Chantal-common
-    1000–1999: Chantal-samples
-    2000–2999: institute-specific extensions to chantal-samples
-    3000–3999: Chantal-kicker
+    1000–1999: JuliaBase-samples
+    2000–2999: institute-specific extensions to JuliaBase-samples
+    3000–3999: JuliaBase-kicker
 
     The complete table with the error codes is in the main ``__init__.py`` of
     the respective app.
@@ -185,7 +185,7 @@ def check_markdown(text):
 
 
 def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_directory=False):
-    """Test whether a certain file is openable by Chantal.
+    """Test whether a certain file is openable by JuliaBase.
 
     :Parameters:
     - `filepath`: Path to the file to be tested.  This may be absolute or
@@ -286,14 +286,14 @@ class _AddHelpLink(object):
         update_wrapper(self, original_view_function)
 
     def __call__(self, request, *args, **kwargs):
-        request.chantal_help_link = self.help_link
+        request.juliabase_help_link = self.help_link
         return self.original_view_function(request, *args, **kwargs)
 
 
 def help_link(link):
     """Function decorator for views functions to set a help link for the view.
     The help link is embedded into the top line in the layout, see the template
-    ``base.html``.  Currently, it is prepended with ``"/trac/chantal/wiki/"``.
+    ``base.html``.  Currently, it is prepended with ``"/trac/juliabase/wiki/"``.
 
     :Parameters:
       - `link`: the relative URL to the help page.
@@ -315,7 +315,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     The latter is appended to the URL as a query string with the ``next`` key,
     e.g.::
 
-        /chantal/6-chamber_deposition/08B410/edit/?next=/chantal/samples/08B410a
+        /juliabase/6-chamber_deposition/08B410/edit/?next=/juliabase/samples/08B410a
 
     This routine generated the proper ``HttpResponse`` object that contains the
     redirection.  It always has HTTP status code 303 (“see other”).
@@ -353,7 +353,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
             # FixMe: Pass "next" to the next URL somehow in order to allow for
             # really nested forwarding.  So far, the “deeper” views must know
             # by themselves how to get back to the first one (which is the case
-            # for all current Chantal views).
+            # for all current JuliaBase views).
             pass
         else:
             # FixMe: So far, the outmost next-URL is used for the See-Other.
@@ -450,7 +450,7 @@ def send_email(subject, content, recipients, format_dict=None):
     if settings.DEBUG:
         recipients = list(django.contrib.auth.models.User.objects.filter(username=settings.DEBUG_EMAIL_REDIRECT_USERNAME))
     for recipient in recipients:
-        translation.activate(recipient.chantal_user_details.language)
+        translation.activate(recipient.jb_user_details.language)
         subject, content = ugettext(subject), ugettext(content)
         if format_dict is not None:
             subject = subject.format(**format_dict)
@@ -470,7 +470,7 @@ def send_email(subject, content, recipients, format_dict=None):
 def is_json_requested(request):
     """Tests whether the current request should be answered in JSON format
     instead of HTML.  Typically this means that the request was made by the
-    CHantal Remote Client or by JavaScript code.
+    JuliaBase Remote Client or by JavaScript code.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -488,7 +488,7 @@ def is_json_requested(request):
 
 
 def respond_in_json(value):
-    """The communication with the Chantal Remote Client or to AJAX clients
+    """The communication with the JuliaBase Remote Client or to AJAX clients
     should be done without generating HTML pages in order to have better
     performance.  Thus, all responses are Python objects, serialised in JSON
     notation.
@@ -575,7 +575,7 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
         computers, there may be trouble due to inaccurate clocks or filesystems
         where the modification timestamps have an accuracy of only 2 seconds
         (some Windows FS'es).  Set this parameter to a positive number to avoid
-        this.  Note that usually, Chantal *copies* *existing* timestamps, so
+        this.  Note that usually, JuliaBase *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
     :type destination: unicode

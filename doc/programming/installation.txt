@@ -1,6 +1,6 @@
 .. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
 ..
-.. This file is part of Chantal, the samples database.
+.. This file is part of JuliaBase, the samples database.
 ..
 .. Copyright (C) 2014 Forschungszentrum Jülich, Germany,
 ..                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -35,7 +35,7 @@ worth, the authors run Ubuntu Server.
    https://docs.djangoproject.com/en/1.7/topics/install/
 
 Mostly, no sophisticated finetuning of the components is necessary because
-Chantal deployments will serve only a few (< 1000) people.  In particular,
+JuliaBase deployments will serve only a few (< 1000) people.  In particular,
 PostgreSQL and Apache can run in default configuration by and large.  On the
 other hand, the computer should be a `high-availability system`_, possibly
 realised with virtual machines.  In our own installation, we manage a
@@ -45,7 +45,7 @@ document.  Your IT department may turn out to be very helpful with this.
 
 .. _high-availability system: http://linux-ha.org/
 
-In the following, we'll show you how to get Chantal up and running quickly.
+In the following, we'll show you how to get JuliaBase up and running quickly.
 While our way is already useful for a production system, you may wish or need
 to do it in a different way.  Thus, consider the following a good starting
 point for your own configuration.
@@ -90,13 +90,13 @@ In this snippet, you have to replace ``username`` with your UNIX user name, and
 ``topsecret`` with a proper password, which shouldn't be your UNIX login
 password.  Finally, create the database with::
 
-  $ createdb chantal
+  $ createdb juliabase
 
 
 Django and South
 ======================
 
-A certain version of Chantal works only with a certain version of Django.
+A certain version of JuliaBase works only with a certain version of Django.
 Currently, this is Django 1.6.5.  Install it according to `Django's own
 instructions`_.  Not further configuration is necessary.  Moreover, you must
 `install South`_.
@@ -104,39 +104,39 @@ instructions`_.  Not further configuration is necessary.  Moreover, you must
 .. _Django's own instructions: https://www.djangoproject.com/download/
 .. _install South: http://south.readthedocs.org/en/latest/installation.html
 
-Chantal
+JuliaBase
 ===========================
 
-Currently, Chantal is organised in non-public `Git`_ repositories.  There are
+Currently, JuliaBase is organised in non-public `Git`_ repositories.  There are
 three of them:
 
 1. chantal_common
-2. chantal_samples
-3. chantal_institute
+2. juliabase_samples
+3. jb_institute
 
 Each of these three repositories contains one Django app of the same name.
-chantal_common implements the basic Chantal functionality.  On top of that,
-chantal_samples implements the actual samples database.  And on top of that,
-chantal_institute implements code that is specific to the specific institution
-or department or work group that wants to use Chantal.  chantal_institute
-implements a *generic* institute.  You will replace chantal_institute with your
-own app and rename it accordingly.
+chantal_common implements the basic JuliaBase functionality.  On top of that,
+juliabase_samples implements the actual samples database.  And on top of that,
+jb_institute implements code that is specific to the specific institution or
+department or work group that wants to use JuliaBase.  jb_institute implements
+a *generic* institute.  You will replace jb_institute with your own app and
+rename it accordingly.
 
 .. _Git: http://git-scm.com/
 
-Once you have arranged with the `Chantal maintainers`_ read access for the Git
-repositories, you can check out the source code on your computer with::
+Once you have arranged with the `JuliaBase maintainers`_ read access for the
+Git repositories, you can check out the source code on your computer with::
 
   git clone git@bob.ipv.kfa-juelich.de:chantal_common
-  git clone git@bob.ipv.kfa-juelich.de:chantal_samples
-  git clone git@bob.ipv.kfa-juelich.de:chantal_institute
+  git clone git@bob.ipv.kfa-juelich.de:juliabase_samples
+  git clone git@bob.ipv.kfa-juelich.de:jb_institute
 
-.. _Chantal maintainers: mailto:m.goblet@fz-juelich.de
+.. _JuliaBase maintainers: mailto:m.goblet@fz-juelich.de
 
 It is important that you do this in the same common parent directory.  This
 creates three subdirectories of the three repository names.  In the
-subdirectory “chantal_institute” is the file `manage.py as known from Django`_,
-which is the command-line administration tool for Chantal.
+subdirectory “jb_institute” is the file `manage.py as known from Django`_,
+which is the command-line administration tool for JuliaBase.
 
 .. _manage.py as known from Django:
    https://docs.djangoproject.com/en/dev/ref/django-admin/
@@ -145,9 +145,9 @@ which is the command-line administration tool for Chantal.
 The settings.py file
 --------------------
 
-In the subdirectory “chantal_institute”, there is the file `settings.py
+In the subdirectory “jb_institute”, there is the file `settings.py
 as known from Django`_.  It contains the global configuration of your
-Chantal installation and needs to be adjusted by you.
+JuliaBase installation and needs to be adjusted by you.
 
 .. _settings.py as known from Django:
    https://docs.djangoproject.com/en/dev/topics/settings/
@@ -160,11 +160,11 @@ Apache
 Add to your Apache configuration something like the following::
 
   <VirtualHost *:80>
-    ServerName chantal.example.com
-    WSGIScriptAlias / /home/username/src/chantal_institute/django.wsgi
+    ServerName juliabase.example.com
+    WSGIScriptAlias / /home/username/src/jb_institute/django.wsgi
     XSendFile on
     XSendFilePath /
-    Alias /media /var/www/chantal/media
+    Alias /media /var/www/juliabase/media
     <Location "/">
       Order allow,deny
       Allow from all
@@ -173,7 +173,7 @@ Add to your Apache configuration something like the following::
   </VirtualHost>
 
 This snippet contains several parts that highly probably need to be adjusted by
-you, in particular ``chantal.example.com``, ``username``, and all paths in
+you, in particular ``juliabase.example.com``, ``username``, and all paths in
 general.  But this should be obvious.  The proper place for it depends on your
 Linux variant.  It may be the (new) file ``/etc/apache2/httpd.conf``, or a new
 file in ``/etc/apache2/conf.d``, or a new file in

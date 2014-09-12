@@ -1,6 +1,6 @@
 .. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
 ..
-.. This file is part of Chantal, the samples database.
+.. This file is part of JuliaBase, the samples database.
 ..
 .. Copyright (C) 2014 Forschungszentrum Jülich, Germany,
 ..                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,7 +13,7 @@
 .. completely.
 
 ============
-Chantal
+JuliaBase
 ============
 
 .. toctree::
@@ -25,8 +25,8 @@ Chantal
 About this document
 ===================================
 
-This document explains Chantal for the programmer.  It is a technical overview
-of the whole architecture.  Moreover, it is a guide for adapting Chantal to a
+This document explains JuliaBase for the programmer.  It is a technical overview
+of the whole architecture.  Moreover, it is a guide for adapting JuliaBase to a
 new institute, research department, or scientific group.
 
 If you want to read this manual, you should be familiar with several
@@ -44,9 +44,9 @@ technologies:
 Architecture
 ====================
 
-Since Chantal is based on the Django Web framework, it consists of several
+Since JuliaBase is based on the Django Web framework, it consists of several
 Django apps.  The core app is called “chantal_common”.  It provides
-functionality which is essential for all Chantal components.  On top of that,
+functionality which is essential for all JuliaBase components.  On top of that,
 the app “samples” contains all features of a samples database.  However, it
 does not contain institute-specific code in order to remain generic and
 flexible.  This institute-specific code resides in an app of its own and must

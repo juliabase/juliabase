@@ -1,11 +1,11 @@
-# Spanish translation for chantal
+# Spanish translation for JuliaBase
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the chantal package.
+# This file is distributed under the same license as the JuliaBase package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: chantal\n"
+"Project-Id-Version: JuliaBase\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-31 00:15+0100\n"
 "PO-Revision-Date: 2011-01-31 00:14+0100\n"
@@ -870,11 +870,11 @@ msgstr ""
 msgid "You can't access the feed of an inactive user."
 msgstr ""
 
-#: middleware/chantal.py:53
+#: middleware/juliabase.py:53
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: middleware/chantal.py:58
+#: middleware/juliabase.py:58
 msgid "Ambiguous sample name"
 msgstr ""
 
@@ -1437,7 +1437,7 @@ msgid "No topics available."
 msgstr ""
 
 #: templates/samples/login.html:18 templates/samples/login.html.py:19
-msgid "Chantal login"
+msgid "JuliaBase login"
 msgstr ""
 
 #: templates/samples/login.html:23
@@ -1587,7 +1587,7 @@ msgid "Sample claims"
 msgstr "Muestras divididas"
 
 #: templates/samples/main_menu.html:156
-msgid "About Chantal"
+msgid "About JuliaBase"
 msgstr ""
 
 #: templates/samples/main_menu.html:158
@@ -1616,7 +1616,7 @@ msgstr ""
 msgid ""
 "\n"
 "        Also note that the head of your institute group may add you to the\n"
-"        Chantal topic you need to access this resource.\n"
+"        JuliaBase topic you need to access this resource.\n"
 "      "
 msgstr ""
 
@@ -2061,7 +2061,7 @@ msgid ""
 "the request, please contact {requester} directly and ask him or her\n"
 "to withdraw the request.\n"
 "\n"
-"Chantal.\n"
+"JuliaBase.\n"
 msgstr ""
 
 #: views/claim.py:120
@@ -2116,7 +2116,7 @@ msgid ""
 "\n"
 "{samples}\n"
 "\n"
-"Chantal.\n"
+"JuliaBase.\n"
 msgstr ""
 
 #: views/claim.py:244
@@ -2161,7 +2161,7 @@ msgid "All you external contacts"
 msgstr ""
 
 #: views/feed.py:163
-msgid "Chantal news for {user_name}"
+msgid "JuliaBase news for {user_name}"
 msgstr ""
 
 #: views/form_utils.py:64
@@ -2254,7 +2254,7 @@ msgstr ""
 msgid "month"
 msgstr ""
 
-#. Translators: This is a page name in the Chantal wiki
+#. Translators: This is a page name in the JuliaBase wiki
 #: views/main.py:89
 msgid "MainMenu"
 msgstr ""

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Collection of tags and filters that I found useful for Chantal.
+"""Collection of tags and filters that I found useful for JuliaBase.
 """
 
 from __future__ import division, unicode_literals
@@ -30,7 +30,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import markdown
 from django.conf import settings
 import chantal_common.utils
-import chantal_common.templatetags.chantal
+import chantal_common.templatetags.juliabase
 import samples.views.utils
 from samples.views.form_utils import time_pattern
 import chantal_common.search
@@ -114,7 +114,7 @@ def should_show(operator):
     not be shown if they are in no department because this is considered not an
     account of an actual person.
     """
-    return not isinstance(operator, django.contrib.auth.models.User) or operator.chantal_user_details.department
+    return not isinstance(operator, django.contrib.auth.models.User) or operator.jb_user_details.department
 
 
 class VerboseNameNode(template.Node):
@@ -168,7 +168,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     linked or not, and if so, how.  There are three possible parameter values:
 
     ``"http"`` (default)
-        The user's name should be linked with his web page on Chantal
+        The user's name should be linked with his web page on JuliaBase
 
     ``"mailto"``
         The user's name should be linked with his email address
@@ -179,7 +179,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
 
     """
     if isinstance(user, django.contrib.auth.models.User):
-        return chantal_common.templatetags.chantal.get_really_full_name(user, anchor_type, autoescape)
+        return chantal_common.templatetags.juliabase.get_really_full_name(user, anchor_type, autoescape)
     elif isinstance(user, samples.models.ExternalOperator):
         full_name = user.name
         if autoescape:
@@ -301,7 +301,7 @@ def markdown_samples(value, margins="default"):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    value = chantal_common.templatetags.chantal.substitute_formulae(
+    value = chantal_common.templatetags.juliabase.substitute_formulae(
         chantal_common.utils.substitute_html_entities(unicode(value)))
     position = 0
     result = ""
@@ -397,7 +397,7 @@ class ValueFieldNode(template.Node):
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
-            field = chantal_common.templatetags.chantal.fancy_bool(field)
+            field = chantal_common.templatetags.juliabase.fancy_bool(field)
             unit = None
         elif self.unit == "user":
             field = get_really_full_name(field, autoescape=True)
@@ -686,7 +686,7 @@ def get_hash_value(instance):
 def expand_topic(topic, user):
     static_url = settings.STATIC_URL
     topic_id = topic.topic.id
-    result = """<h3><img src="{static_url}chantal/icons/group.png" alt="topic icon" style="margin-right: 0.5em" class="topics"
+    result = """<h3><img src="{static_url}juliabase/icons/group.png" alt="topic icon" style="margin-right: 0.5em" class="topics"
                    width="16" height="16" id="topic-image-{topic_id}"/>{topic_name}</h3>
             <div id="topic-{topic_id}">
             """.format(static_url=static_url, topic_id=topic_id, topic_name=topic.topic.name)
@@ -701,7 +701,7 @@ def expand_topic(topic, user):
     result += """<div class="my-samples-series">
                 """
     for series in topic.sample_series:
-        result += """<h4><img src="{static_url}chantal/icons/chart_organisation.png" alt="sample series icon" class="sample-series"
+        result += """<h4><img src="{static_url}juliabase/icons/chart_organisation.png" alt="sample series icon" class="sample-series"
                          style="margin-right: 0.5em" width="16" height="16" id="series-image-{sample_series_hash_value}"
                          /><a href="{sample_series_url}">{series_name}</a></h4>""" \
                          """<div id="sample-series-{sample_series_hash_value}">

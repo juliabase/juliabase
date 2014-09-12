@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,7 +14,7 @@
 
 
 """Custom logging class which doesn't send HTML emails.  This module must
-reside on top-level because in chantal_institute, the settings would be implicitly
+reside on top-level because in jb_institute, the settings would be implicitly
 imported, which leads to a cyclic import.
 """
 

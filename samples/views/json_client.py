@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -165,18 +165,18 @@ def available_items(request, model_name):
     else:
         raise Http404("Model name not found.")
     # FixMe: Add all interesing models here, and make it accessible from
-    # chantal_ipv.
+    # jb_institute.
     id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number", "OldClusterToolDeposition": "number",
                 "NewClusterToolDeposition": "number", "PHotWireDeposition": "number",
                 "LargeAreaDeposition": "number", "LargeSputterDeposition": "number"}.get(model_name, "id")
     return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
 
-# FixMe: The following two functions must go to Chantal-common.
+# FixMe: The following two functions must go to chantal_common.
 
 @require_http_methods(["POST"])
 def login_remote_client(request):
-    """Login for the Chantal Remote Client.  It only supports the HTTP POST
+    """Login for the JuliaBase Remote Client.  It only supports the HTTP POST
     method and expects ``username`` and ``password``.  AJAX code shouldn't need
     this because it has the cookie already.
 
@@ -206,7 +206,7 @@ def login_remote_client(request):
 @never_cache
 @require_http_methods(["GET"])
 def logout_remote_client(request):
-    """By requesting this view, the Chantal Remote Client can log out.  This
+    """By requesting this view, the JuliaBase Remote Client can log out.  This
     view can never fail.
 
     :Parameters:
@@ -258,7 +258,7 @@ def get_next_quirky_name(sample_name, year_digits):
     :type year_digits: str
 
     :Return:
-      the Chantal legacy sample name
+      the JuliaBase legacy sample name
 
     :rtype: unicode
     """

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -84,7 +84,7 @@ class MySeries(object):
         return self.__is_complete
 
 
-# Translators: This is a page name in the Chantal wiki
+# Translators: This is a page name in the JuliaBase wiki
 @help_link(_("MainMenu"))
 @login_required
 def main_menu(request):

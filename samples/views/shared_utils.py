@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,9 +14,9 @@
 
 
 """General helper functions.  This is for low-level stuff.  Never import other
-Chantal modules here, and avoid using Django, too.  The reason is that I'd like
-to avoid cyclic imports, and I'd like to avoid being forced to ship the whole
-of Django with the Remove Client (which uses this module).
+JuliaBase modules here, and avoid using Django, too.  The reason is that I'd
+like to avoid cyclic imports, and I'd like to avoid being forced to ship the
+whole of Django with the Remove Client (which uses this module).
 
 Note that all names defined here are also available in `utils`, so this module
 is really only interesting for the Remote Client.

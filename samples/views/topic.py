@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,9 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Views for editing Chantal topics in various ways.  You may add topics,
-get a list of them, and change user memberships in topics.  The list of
-topics is actually only a stepping stone to the membership edit view.
+"""Views for editing JuliaBase topics in various ways.  You may add topics, get
+a list of them, and change user memberships in topics.  The list of topics is
+actually only a stepping stone to the membership edit view.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -56,7 +56,7 @@ class NewTopicForm(forms.Form):
                                                    Topic.objects.iterator()]
         else:
             self.fields["parent_topic"].choices = [(topic.pk, topic.get_name_for_user(user)) for topic in
-                Topic.objects.filter(department=user.chantal_user_details.department).iterator()
+                Topic.objects.filter(department=user.jb_user_details.department).iterator()
                 if permissions.has_permission_to_edit_topic(user, topic)]
         self.fields["parent_topic"].choices.insert(0, ("", 9 * "-"))
         self.fields["topic_manager"].set_users(user, user)
@@ -82,7 +82,7 @@ class NewTopicForm(forms.Form):
         cleaned_data = self.cleaned_data
         topic_name = cleaned_data["new_topic_name"]
         parent_topic = self.cleaned_data.get("parent_topic", None)
-        if Topic.objects.filter(name=topic_name, department=self.user.chantal_user_details.department,
+        if Topic.objects.filter(name=topic_name, department=self.user.jb_user_details.department,
                                 parent_topic=parent_topic).exists():
             append_error(self, _("This topic name is already used."), "new_topic_name")
             del cleaned_data["new_topic_name"]
@@ -113,7 +113,7 @@ def add(request):
             parent_topic = new_topic_form.cleaned_data.get("parent_topic", None)
             new_topic = Topic(name=new_topic_form.cleaned_data["new_topic_name"],
                               confidential=new_topic_form.cleaned_data["confidential"],
-                              department=request.user.chantal_user_details.department,
+                              department=request.user.jb_user_details.department,
                               manager=new_topic_form.cleaned_data["topic_manager"])
             new_topic.save()
             if parent_topic:
@@ -155,7 +155,7 @@ def list_(request):
     """
     user = request.user
     all_toplevel_topics = Topic.objects.filter(parent_topic=None).order_by("name").all()
-    user_toplevel_topics = Topic.objects.filter(department=user.chantal_user_details.department,
+    user_toplevel_topics = Topic.objects.filter(department=user.jb_user_details.department,
                                                 parent_topic=None).order_by("name").all()
     toplevel_topics = set(topic for topic in user_toplevel_topics if permissions.has_permission_to_edit_topic(user, topic))
     if not toplevel_topics:

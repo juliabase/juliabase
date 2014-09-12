@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -13,19 +13,19 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Handle authentication against an Active Directory.  For every user who
-wants to log in (even the administrator), Chantal connects to the Active
-Directory to see whether the login/password combination can bind to it.  If it
-can but the user is not in Chantal's database, it is created and filled with
-the data from the AD, including permissions.  Groups are not used, and topics
-must be set somewhere else because they are not stored in the AD.
+"""Handle authentication against an Active Directory.  For every user who wants
+to log in (even the administrator), JuliaBase connects to the Active Directory
+to see whether the login/password combination can bind to it.  If it can but
+the user is not in JuliaBase's database, it is created and filled with the data
+from the AD, including permissions.  Groups are not used, and topics must be
+set somewhere else because they are not stored in the AD.
 
 Every night the maintenance routine checks which active users cannot be found
 anymore in the AD, sets them to inactive and removes all their groups, topics,
 and permissions.  See the `synchronize_with_ad` function.
 
 A seldom but possible problem is if someone tries to login, he is known in the
-AD, but it also known in Chantal as “inactive”.  This can mean one of two
+AD, but it also known in JuliaBase as “inactive”.  This can mean one of two
 things:
 
 1. The user is a former collegue.  The admin must set him back to “active” and
@@ -134,7 +134,7 @@ class LDAPConnection(object):
                 return False
             except ldap.LDAPError as e:
                 if settings.AD_LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.AD_LDAP_URLS):
-                    mail_admins("Chantal LDAP error", message=e.message["desc"])
+                    mail_admins("JuliaBase LDAP error", message=e.message["desc"])
                     return False
                 continue
             if not self.is_eligible_ldap_member(username):
@@ -171,7 +171,7 @@ class LDAPConnection(object):
                         settings.AD_SEARCH_FIELDS)[0][:2]
                 except ldap.LDAPError as e:
                     if settings.AD_LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.AD_LDAP_URLS):
-                        mail_admins("Chantal LDAP error", message=e.message["desc"])
+                        mail_admins("JuliaBase LDAP error", message=e.message["desc"])
                     else:
                         continue
                 ad_data = attributes if found else None
@@ -180,10 +180,10 @@ class LDAPConnection(object):
         return ad_data
 
     def is_eligible_ldap_member(self, username):
-        """Returns whether a user really is a member of one of the chantal
-        departments, or another authorised member of the LDAP directory.
-        This method even works if the user cannot be found in the AD at
-        all (it returns ``False`` then, of course).
+        """Returns whether a user really is a member of one of the JuliaBase
+        departments, or another authorised member of the LDAP directory.  This
+        method even works if the user cannot be found in the AD at all (it
+        returns ``False`` then, of course).
 
         :Parameters:
           - `username`: the login name of the user
@@ -191,14 +191,14 @@ class LDAPConnection(object):
         :type username: unicode
 
         :Return:
-          whether the user is in one of the chantal departments, or a specially
-          authorised LDAP member
+          whether the user is in one of the JuliaBase departments, or a
+          specially authorised LDAP member
 
         :rtype: bool
         """
         attributes = self.get_ad_data(username)
         return attributes is not None and (
-            attributes.get("department", [""])[0].upper() in settings.CHANTAL_DEPARTMENTS
+            attributes.get("department", [""])[0].upper() in settings.JB_DEPARTMENTS
             or username in settings.ADDITIONAL_LDAP_USERS)
 
     @staticmethod
@@ -258,10 +258,10 @@ class LDAPConnection(object):
             if "sn" in attributes:
                 user.last_name = attributes["sn"][0].decode("utf-8")
             if "department" in attributes:
-                user.chantal_user_details.department = \
+                user.jb_user_details.department = \
                 Department.objects.get_or_create(name=attributes["department"][0].decode("utf-8").upper())[0]
             user.email = attributes["mail"][0]
-            user.chantal_user_details.save()
+            user.jb_user_details.save()
             user.save()
 
             old_permissions = set(user.user_permissions.all())

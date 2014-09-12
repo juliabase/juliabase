@@ -1,0 +1,65 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of JuliaBase, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load juliabase %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">
+  {% error_list substrate _("Substrate error") %}
+  {% error_list samples _("Sample list error") %}
+  <table>
+    <tbody>
+    <tr>
+      {% input_field samples.sample_list %}
+    </tr>
+    <tr>
+      {% input_field substrate.timestamp %}
+    </tr>
+    {% if substrate.user.is_staff %}
+      <tr>
+        {% input_field substrate.operator %}
+      </tr>
+      <tr>
+        {% input_field substrate.external_operator %}
+      </tr>
+    {% else %}
+      <tr>
+        {% input_field substrate.combined_operator %}
+      </tr>
+    {% endif %}
+    <tr>
+      {% input_field substrate.material %}
+    </tr>
+    <tr>
+     <td class="label">
+        <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:<br/>
+          {% markdown_hint %}</label></td>
+      <td>{{ substrate.comments }}</td>
+    </tr>
+    </tbody>
+  </table>
+  <div style="display: none">
+    {{ substrate.timestamp_inaccuracy }}
+  </div>
+
+  {% include "samples/edit_description.html" %}
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}

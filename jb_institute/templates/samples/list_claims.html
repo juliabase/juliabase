@@ -1,0 +1,31 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/templates/samples/list_claims.html" %}
+{% comment %}
+This file is part of JuliaBase, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+
+{% block float_image %}
+<a href="{% trans 'http://en.wikipedia.org/wiki/Land_Run_of_1889' %}"><img class="vintage-image" src="{{ STATIC_URL }}samples/oklahoma.jpg" alt="{% trans 'Oklahoma land rush' %}" width="450" height="243"/></a>
+{% endblock %}
+
+{% block claim_links %}
+  <p style="margin-bottom: 0.5ex">{% trans "Assert a new claim to …" %}</p>
+  <ul style="margin-top: 0.5ex">
+    <li><a href="{% url 'samples.views.claim.add' username=user.username %}"
+           >{% trans 'existing samples' %}</a></li>
+    <li><a href="{% url 'jb_institute.views.samples.claim.add_oldstyle' username=user.username %}"
+      >{% trans 'old-style sample names which do not yet exist' %}</a></li>
+  </ul>
+  <p style="margin-bottom: 0.5ex">{% trans "“To exist” means here “to exist in the database”." %}</p>
+{% endblock %}

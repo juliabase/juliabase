@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -296,8 +296,8 @@ def assert_can_fully_view_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.chantal_user_details.department or NoDepartment()
-    user_department = user.chantal_user_details.department or NoDepartment()
+    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
+    user_department = user.jb_user_details.department or NoDepartment()
     if not sample.topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
@@ -335,8 +335,8 @@ def assert_can_rename_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.chantal_user_details.department or NoDepartment()
-    user_department = user.chantal_user_details.department or NoDepartment()
+    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
+    user_department = user.jb_user_details.department or NoDepartment()
     if (not user.has_perm("samples.rename_samples") or sample_department != user_department) \
        and not user.is_superuser:
         description = _("You are not allowed to rename the sample.")
@@ -629,8 +629,8 @@ def assert_can_edit_sample(user, sample):
     """
     from samples.views.permissions import PermissionsPhysicalProcess
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.chantal_user_details.department or NoDepartment()
-    user_department = user.chantal_user_details.department or NoDepartment()
+    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
+    user_department = user.jb_user_details.department or NoDepartment()
     if not sample.topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
@@ -832,7 +832,7 @@ def assert_can_view_feed(hash_value, user):
     :Exceptions:
       - `PermissionError`: Raised if the requester is not allowed to view the
         user's news feed.  It's ``user`` parameter is always ``None`` because
-        we don't know the user who is currently accessing Chantal.
+        we don't know the user who is currently accessing JuliaBase.
     """
     if not user.is_superuser:
         if hash_value != get_user_hash(user):

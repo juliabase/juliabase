@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,7 +14,7 @@
 
 
 u"""Collection of tags and filters that I found useful for ther Kicker app of
-Chantal.
+JuliaBase.
 """
 
 from __future__ import absolute_import

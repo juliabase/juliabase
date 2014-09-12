@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -362,7 +362,7 @@ def forms_from_post_data(post_data, deposition, remote_client):
     :Parameters:
       - `post_data`: the result from ``request.POST``
       - `deposition`: the deposition after which this split takes place
-      - `remote_client`: whether the request was sent from the Chantal remote
+      - `remote_client`: whether the request was sent from the JuliaBase remote
         client
 
     :type post_data: ``QueryDict``
@@ -405,7 +405,7 @@ def forms_from_database(deposition, remote_client, new_names):
 
     :Parameters:
       - `deposition`: the deposition to be converted to forms.
-      - `remote_client`: whether the request was sent from the Chantal remote
+      - `remote_client`: whether the request was sent from the JuliaBase remote
         client
       - `new_names`: dictionary which maps sample IDs to suggested new names of
         this sample; by default (i.e., if the sample ID doesn't occur in

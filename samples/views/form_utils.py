@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -351,9 +351,9 @@ def _user_choices_by_department(user, include=(), exclude=()):
     choices = []
     for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
         users_from_department = set(django.contrib.auth.models.User.objects.
-                                    filter(is_active=True, chantal_user_details__department=department))
-        users_from_department |= set(user for user in include if user.chantal_user_details.department == department)
-        users_from_department -= set(user for user in exclude if user.chantal_user_details.department == department)
+                                    filter(is_active=True, jb_user_details__department=department))
+        users_from_department |= set(user for user in include if user.jb_user_details.department == department)
+        users_from_department -= set(user for user in exclude if user.jb_user_details.department == department)
         choices.append((department.name, [(user.pk, get_really_full_name(user))
                                           for user in utils.sorted_users_by_first_name(users_from_department)]))
     if len(choices) == 1:
@@ -477,9 +477,9 @@ class TopicField(forms.ChoiceField):
             # FixMe: The second filter doesn't work because both values may be
             # None, which makes the expression True although it should be False
             # in this case.  Why not simply
-            # department=user.chantal_user_details.department instead?
+            # department=user.jb_user_details.department instead?
             all_topics = Topic.objects.filter(members__is_active=True). \
-            filter(members__chantal_user_details__department=user.chantal_user_details.department).distinct()
+            filter(members__jb_user_details__department=user.jb_user_details.department).distinct()
             user_topics = user.topics.all()
             top_level_topics = \
                 set(topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent())
@@ -567,7 +567,7 @@ class OperatorField(forms.ChoiceField):
            case.
 
     Good examples are in ``substrate.py`` and ``cleaning_process.py`` of the
-    IPV adaption of Chantal.  There, you can also see how one can deal with
+    IPV adaption of JuliaBase.  There, you can also see how one can deal with
     staff users (especially interesting for the remote client).
     """
 
@@ -633,7 +633,7 @@ class OperatorField(forms.ChoiceField):
             return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
 
 
-# FixMe: This should be moved to chantal_ipv, because this special case is only
+# FixMe: This should be moved to jb_institute, because this special case is only
 # necessary because samples may get renamed after depositions.  Maybe
 # refactoring should be done because it is used for substrates, too.
 
@@ -726,7 +726,7 @@ class RemoveFromMySamplesForm(forms.Form):
 
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
-"""Standard regular expression pattern for time durations in Chantal:
+"""Standard regular expression pattern for time durations in JuliaBase:
 HH:MM:SS, where hours can also be 3-digit and are optional."""
 def clean_time_field(value):
     """General helper function for use in the ``clean_...`` methods in forms.

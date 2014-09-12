@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -269,7 +269,7 @@ class SamplesAndProcesses(object):
         :rtype: `SamplesAndProcesses`
         """
         sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
-        cache_key = "sample:{0}-{1}".format(sample.pk, user.chantal_user_details.get_data_hash())
+        cache_key = "sample:{0}-{1}".format(sample.pk, user.jb_user_details.get_data_hash())
         # FixMe: ``samples.processes.count()`` should re replaced with the
         # expectation value of the number of processes because otherwise, we
         # hit the database again just for the sake of getting statistics.  But
@@ -579,7 +579,7 @@ def embed_timestamp(request, sample_name):
             user_details = request.user.samples_user_details
             timestamps.append(user_details.display_settings_timestamp)
             timestamps.append(user_details.my_samples_timestamp)
-            timestamps.append(request.user.chantal_user_details.layout_last_modified)
+            timestamps.append(request.user.jb_user_details.layout_last_modified)
             request._sample_timestamp = adjust_timezone_information(max(timestamps))
 
 

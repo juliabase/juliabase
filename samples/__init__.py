@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal, the samples database.
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -18,10 +18,10 @@ of them are for cache expiring, but `expire_feed_entries` cleans up the feed
 entries queue.
 
 
-Caching in Chantal-Samples
-==========================
+Caching in JuliaBase-Samples
+============================
 
-Since this module contains a lot of Chantal-Samples' caching code, it is the
+Since this module contains a lot of JuliaBase-Samples' caching code, it is the
 right place to say some general words about it.  It is rather complicated and
 scattered over a couple of modules, so it is important to document it
 thoroughly.
@@ -60,7 +60,7 @@ Cache invalidation
 Of course, the server must never serve outdated data to the user.  In order to
 prevent that, every change in the database triggers deletion of those cache
 items which have become obsolete.  This is very difficult to achive because
-Chantal-Samples contains so many inter-model dependencies (partly indirect).
+JuliaBase-Samples contains so many inter-model dependencies (partly indirect).
 
 It may also be possible to compare timestamps in order to detect obsolete cache
 items, however, calculating these timestamps is not much easier and required
@@ -138,11 +138,11 @@ for Django's ``User`` model because we cannot change its ``save()`` method in a
 clean way.
 
 Although even many changes which can only be applied through the admin
-interface of Django are dealt with in Chantal-Samples' cache invalidation code,
-some changes are not.  For example, if you change the name of a sample series,
-you must purge the cache manually.  This is done for efficiency reasons.  The
-name of a sample series shouldn't change after all, and cannot be changed from
-within Chantal-Samples.
+interface of Django are dealt with in JuliaBase-Samples' cache invalidation
+code, some changes are not.  For example, if you change the name of a sample
+series, you must purge the cache manually.  This is done for efficiency
+reasons.  The name of a sample series shouldn't change after all, and cannot be
+changed from within JuliaBase-Samples.
 
 
 Multihop touches
@@ -243,7 +243,7 @@ def add_user_details(sender, instance, created, **kwargs):
             # the models with ``manage.py syncdb``.
             raise ContentType.DoesNotExist("You cannot create a user while the database tables are not finished yet.")
 
-        department = instance.chantal_user_details.department
+        department = instance.jb_user_details.department
         if department:
             user_details.show_users_from_department = [department]
 
@@ -284,7 +284,7 @@ def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kw
             for sample in samples_app.Sample.objects.in_bulk(pk_set).itervalues():
                 sample.save()
     else:
-        # `instance` is a sample; shouldn't actually occur in Chantal's code
+        # `instance` is a sample; shouldn't actually occur in JuliaBase's code
         instance.save()
         if action == "pre_clear":
             for process in instance.processes.all():
@@ -301,7 +301,7 @@ def touch_sample_series_samples(sender, instance, action, reverse, model, pk_set
     samples are marked as “modified”.
     """
     if reverse:
-        # `instance` is a sample; shouldn't actually occur in Chantal's code
+        # `instance` is a sample; shouldn't actually occur in JuliaBase's code
         instance.save()
         if action == "pre_clear":
             for sample_series in instance.series.all():

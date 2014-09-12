@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of Chantal-Kicker
+# This file is part of JuliaBase-Kicker
 #
 # Copyright (C) 2010 Forschungszentrum Jülich, Germany,
 #                    Marvin Goblet <m.goblet@fz-juelich.de>,
@@ -14,7 +14,7 @@
 
 
 u"""Mapping URL patterns to function calls.  This is the local URL dispatch of
-the Django application “chantal_kicker”.
+the Django application “kicker”.
 """
 
 from __future__ import absolute_import

@@ -124,10 +124,10 @@ msgid ""
 msgstr ""
 
 #: templates/500.html:26
-msgid "Internal Chantal error"
+msgid "Internal JuliaBase error"
 msgstr ""
 
-#: templates/500.html:34 templates/base_chantal.html:59
+#: templates/500.html:34 templates/jb_base.html:59
 msgid "Log in"
 msgstr ""
 
@@ -138,35 +138,35 @@ msgstr ""
 #: templates/500.html:47
 msgid ""
 "\n"
-"You experienced an internal error in the Chantal server software.  The\n"
+"You experienced an internal error in the JuliaBase server software.  The\n"
 "administrators have been contacted already and will do their best in\n"
 "eliminating the bug.  Typically, they will contact you as soon as the "
 "problem\n"
 "is tackled.\n"
 msgstr ""
 
-#: templates/base_chantal.html:36
+#: templates/jb_base.html:36
 #, python-format
 msgid "switch to %(language)s"
 msgstr ""
 
-#: templates/base_chantal.html:42
+#: templates/jb_base.html:42
 msgid "Welcome,"
 msgstr ""
 
-#: templates/base_chantal.html:46
+#: templates/jb_base.html:46
 msgid "Main menu"
 msgstr ""
 
-#: templates/base_chantal.html:49
+#: templates/jb_base.html:49
 msgid "Report feature wish or bug"
 msgstr ""
 
-#: templates/base_chantal.html:51 templates/base_chantal.html.py:56
+#: templates/jb_base.html:51 templates/jb_base.html.py:56
 msgid "Help"
 msgstr ""
 
-#: templates/base_chantal.html:53
+#: templates/jb_base.html:53
 msgid "Log out"
 msgstr ""
 
@@ -199,7 +199,7 @@ msgstr ""
 
 #: templates/chantal_common/login.html:18
 #: templates/chantal_common/login.html:19
-msgid "Chantal login"
+msgid "JuliaBase login"
 msgstr ""
 
 #: templates/chantal_common/login.html:23
@@ -229,7 +229,7 @@ msgstr ""
 #: templates/chantal_common/markdown_sandbox.html:29
 msgid ""
 "\n"
-"  <p>Chantal uses the lightweight markup language “Markdown” for comments.  "
+"  <p>JuliaBase uses the lightweight markup language “Markdown” for comments.  "
 "It\n"
 "  doesn't support images and headings though.  As compensation, it adds\n"
 "  implicit sample and sample series linking.  Follow the help link at the "
@@ -265,14 +265,14 @@ msgstr ""
 msgid "Your password was changed."
 msgstr ""
 
-#: templatetags/chantal.py:145
+#: templatetags/juliabase.py:145
 msgid "with {markdown_link} syntax"
 msgstr ""
 
-#: templatetags/chantal.py:154
+#: templatetags/juliabase.py:154
 msgid "Yes"
 msgstr ""
 
-#: templatetags/chantal.py:154
+#: templatetags/juliabase.py:154
 msgid "No"
 msgstr ""
