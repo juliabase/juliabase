@@ -49,6 +49,7 @@ from django.core.mail import mail_admins
 import ldap
 from chantal_common.models import Department
 from chantal_common.signals import maintain
+from django.dispatch import receiver
 
 
 class ActiveDirectoryBackend:
@@ -280,6 +281,7 @@ class LDAPConnection(object):
                     session.delete()
 
 
+@receiver(maintain)
 def synchronize_users_with_ad(sender, **kwargs):
     """Signal listener which synchronises all active users without a usable
     password against the LDAP directory.  In particular, if a user cannot be
@@ -290,5 +292,3 @@ def synchronize_users_with_ad(sender, **kwargs):
     for user in User.objects.filter(is_active=True):
         if not user.has_usable_password():
             ldap_connection.synchronize_with_ad(user)
-
-maintain.connect(synchronize_users_with_ad)

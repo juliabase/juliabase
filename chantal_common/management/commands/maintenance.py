@@ -16,7 +16,7 @@
 """Module which defines the command ``maintenance``.  It should be called
 nightly as a cronjob.  For example, one line in the crontab may read::
 
-    0 3 * * * /home/chantal/chantal/manage.py maintenance
+    0 3 * * * /home/chantal/fzj/manage.py maintenance
 """
 
 from __future__ import absolute_import, unicode_literals

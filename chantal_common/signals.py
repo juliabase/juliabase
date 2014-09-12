@@ -20,11 +20,12 @@
   signal in your code like this::
 
       from chantal_common.signals import maintain
+      from django.dispatch import receiver
 
+      @receiver(maintain)
       def my_handler(sender, **kwargs):
           ...
 
-      maintain.connect(my_handler, sender=None)
 
 :ivar storage_changed: This is sent if the files on harddisk were changed.  In
   the reference deployment at IEK-5, this signal is used for triggering

@@ -162,6 +162,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, hashlib, json
 from django.db.models import signals
+from django.dispatch import receiver
 import django.contrib.auth.models
 from . import models as samples_app
 from chantal_common import models as chantal_common_app
@@ -170,6 +171,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
 
+@receiver(signals.m2m_changed, sender=samples_app.Sample.watchers.through)
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch the “My Samples modified” field in the ``UserDetails``.  This
     function is called whenever the “My Samples” of the user change.  It
@@ -199,7 +201,6 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
             for user in django.contrib.auth.models.User.objects.in_bulk(pk_set).itervalues():
                 touch_my_samples(user)
 
-signals.m2m_changed.connect(touch_my_samples, sender=samples_app.Sample.watchers.through)
 
 
 def get_identifying_data_hash(user):
@@ -225,6 +226,7 @@ def get_identifying_data_hash(user):
     return hash_.hexdigest()
 
 
+@receiver(signals.post_save, sender=django.contrib.auth.models.User)
 def add_user_details(sender, instance, created, **kwargs):
     """Create ``UserDetails`` for every newly created user.
     """
@@ -246,9 +248,8 @@ def add_user_details(sender, instance, created, **kwargs):
 
         user_details.save()
 
-signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
-
+@receiver(signals.post_save, sender=django.contrib.auth.models.User)
 def touch_user_samples_and_processes(sender, instance, created, **kwargs):
     """Removes all cached items of samples, sample series, and processes which
     are connected with a user.  This is done because the user's name may have
@@ -265,9 +266,8 @@ def touch_user_samples_and_processes(sender, instance, created, **kwargs):
         for sample_series in instance.sample_series.all():
             sample_series.save()
 
-signals.post_save.connect(touch_user_samples_and_processes, sender=django.contrib.auth.models.User)
 
-
+@receiver(signals.m2m_changed, sender=samples_app.Sample.processes.through)
 def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch samples and processes when the relation between both changes.
     For example, if the samples connected with a process are changed, both the
@@ -292,9 +292,8 @@ def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kw
             for process in samples_app.Process.objects.in_bulk(pk_set).itervalues():
                 process.save(with_relations=False)
 
-signals.m2m_changed.connect(touch_process_samples, sender=samples_app.Sample.processes.through)
 
-
+@receiver(signals.m2m_changed, sender=samples_app.SampleSeries.samples.through)
 def touch_sample_series_samples(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch samples and sample series when the relation between both changes.
     For example, if the members of a sample series are changed, all affected
@@ -319,9 +318,8 @@ def touch_sample_series_samples(sender, instance, action, reverse, model, pk_set
             for sample in samples_app.Sample.objects.in_bulk(pk_set).itervalues():
                 sample.save()
 
-signals.m2m_changed.connect(touch_sample_series_samples, sender=samples_app.SampleSeries.samples.through)
 
-
+@receiver(signals.m2m_changed, sender=samples_app.SampleSeries.results.through)
 def touch_sample_series_results(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch sample series when the relation between both changes.  Note that
     we never touch results here because they don't cache information about
@@ -339,9 +337,8 @@ def touch_sample_series_results(sender, instance, action, reverse, model, pk_set
         # `instance` is a sample series
         instance.save()
 
-signals.m2m_changed.connect(touch_sample_series_results, sender=samples_app.SampleSeries.results.through)
 
-
+@receiver(signals.m2m_changed, sender=chantal_common_app.Topic.members.through)
 def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch the display settings of all users for which the topics have
     changed because we must invalidate the browser cache for those users (the
@@ -359,9 +356,9 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
             for user in django.contrib.auth.models.User.objects.in_bulk(pk_set).itervalues():
                 user.samples_user_details.touch_display_settings()
 
-signals.m2m_changed.connect(touch_display_settings_by_topic, sender=chantal_common_app.Topic.members.through)
 
-
+@receiver(signals.m2m_changed, sender=django.contrib.auth.models.User.groups.through)
+@receiver(signals.m2m_changed, sender=django.contrib.auth.models.User.user_permissions.through)
 def touch_display_settings_by_group_or_permission(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch the sample settings of all users for which the groups or
     permissions have changed because we must invalidate the browser cache for
@@ -380,17 +377,11 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
         if action in ["pre_clear", "post_add", "post_remove"]:
             instance.samples_user_details.touch_display_settings()
 
-signals.m2m_changed.connect(touch_display_settings_by_group_or_permission,
-                            sender=django.contrib.auth.models.User.groups.through)
-signals.m2m_changed.connect(touch_display_settings_by_group_or_permission,
-                            sender=django.contrib.auth.models.User.user_permissions.through)
 
-
+@receiver(maintain)
 def expire_feed_entries(sender, **kwargs):
     """Deletes all feed entries which are older than six weeks.
     """
     now = datetime.datetime.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
     samples_app.FeedEntry.objects.filter(timestamp__lt=six_weeks_ago).delete()
-
-maintain.connect(expire_feed_entries, sender=None)

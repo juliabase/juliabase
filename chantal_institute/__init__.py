@@ -26,6 +26,7 @@ from __future__ import absolute_import, unicode_literals
 
 import socket, subprocess, os, os.path, re
 from django.db.models import signals
+from django.dispatch import receiver
 from django.conf import settings
 import django.contrib.auth.models
 from django.utils.http import urlquote_plus
@@ -41,6 +42,7 @@ from django.contrib.auth.management import create_permissions
 from south.signals import post_migrate
 
 
+@receiver(signals.pre_save)
 def inform_process_supervisors(sender, instance, **kwargs):
     """Send an email to the supervisors of an apparatus when a user creates
     his or her first process of this apparatus.  If no supervisors are found,
@@ -75,18 +77,16 @@ def inform_process_supervisors(sender, instance, **kwargs):
                 #                   "apparatus": process_class._meta.verbose_name,
                 #                   "user_name": utils.get_really_full_name(user)})
 
-signals.pre_save.connect(inform_process_supervisors)
 
-
+@receiver(signals.post_save, sender=Sample)
 def add_sample_details(sender, instance, created, **kwargs):
     """Create ``SampleDetails`` for every newly created sample.
     """
     if created:
         chantal_institute_app.SampleDetails.objects.get_or_create(sample=instance)
 
-signals.post_save.connect(add_sample_details, sender=Sample)
 
-
+@receiver(signals.post_save)
 def update_informal_layers(sender, instance, created, **kwargs):
     """Update the informal layers of all samples connected with the process
     that was recently changed.  Most of the work is done in the
@@ -177,9 +177,8 @@ def update_informal_layers(sender, instance, created, **kwargs):
                     layer.index = index
                     layer.save(with_relations=False)
 
-signals.post_save.connect(update_informal_layers)
 
-
+@receiver(maintain)
 def clear_structuring_processes(sender, **kwargs):
     """Function to delete duplicated structuring processes.
     """
@@ -188,9 +187,8 @@ def clear_structuring_processes(sender, **kwargs):
         if len(structurings) > 1:
             structurings[1].delete()
 
-maintain.connect(clear_structuring_processes)
 
-
+@receiver(signals.m2m_changed, sender=Sample.processes.through)
 def extend_alias_names(sender, instance, action, reverse, **kwargs):
     """Function to extend the alias name of a sample when the attend-tag was found in the comments
     field of the result process.
@@ -219,11 +217,10 @@ def extend_alias_names(sender, instance, action, reverse, **kwargs):
             instance.comments = re.sub(r"append-tag:\s*\w+", "*{0}*".format(sample_alias.name), comments)
             instance.save()
 
-signals.m2m_changed.connect(extend_alias_names, sender=Sample.processes.through)
-
 
 # register a signal do update permissions every migration.
 # This is based on app django_extensions update_permissions command
+@receiver(post_migrate)
 def update_permissions_after_migration(app, **kwargs):
     """
     Update app permission just after every migration.
@@ -234,5 +231,3 @@ def update_permissions_after_migration(app, **kwargs):
     The workaround is taken from <http://devwithpassion.com/felipe/south-django-permissions/>
     """
     create_permissions(get_app(app), get_models(), 2 if settings.DEBUG else 0)
-
-post_migrate.connect(update_permissions_after_migration)

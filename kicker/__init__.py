@@ -17,21 +17,21 @@ from __future__ import absolute_import
 
 from django.db.models import signals
 import django.contrib.auth.models
+from django.dispatch import receiver
 from . import models as kicker_app
 from chantal_common.signals import maintain
 
 
+@receiver(signals.post_save, sender=django.contrib.auth.models.User)
 def add_user_details(sender, instance, created, **kwargs):
     u"""Create ``UserDetails`` for every newly created user.
     """
     if created:
         kicker_app.UserDetails.objects.get_or_create(user=instance)
 
-signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
-
+@receiver(maintain)
 def create_user_details(sender, **kwargs):
     for user in django.contrib.auth.models.User.objects.all():
         kicker_app.UserDetails.objects.get_or_create(user=user)
 
-maintain.connect(create_user_details, sender=None)

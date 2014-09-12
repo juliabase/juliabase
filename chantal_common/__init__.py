@@ -36,10 +36,13 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import django.contrib.auth.models
 from django.db.models import signals as django_signals
+from django.dispatch import receiver
 from . import models as chantal_app
 from .signals import maintain
 
 
+# It must be "post_save", otherwise, the ID may be ``None``.
+@receiver(django_signals.post_save, sender=django.contrib.auth.models.User)
 def add_user_details(sender, instance, created=True, **kwargs):
     """Adds a `models.UserDetails` instance for every newly-created Django
     user.  However, you can also call it for existing users (``management.py``
@@ -61,10 +64,8 @@ def add_user_details(sender, instance, created=True, **kwargs):
         department = departments[0] if departments.count() == 1 else None
         chantal_app.UserDetails.objects.get_or_create(user=instance, department=department)
 
-# It must be "post_save", otherwise, the ID may be ``None``.
-django_signals.post_save.connect(add_user_details, sender=django.contrib.auth.models.User)
 
-
+@receiver(maintain)
 def expire_error_pages(sender, **kwargs):
     """Deletes all error pages which are older than six weeks.
     """
@@ -72,5 +73,3 @@ def expire_error_pages(sender, **kwargs):
     six_weeks_ago = now - datetime.timedelta(weeks=6)
     for error_page in chantal_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
         error_page.delete()
-
-maintain.connect(expire_error_pages, sender=None)
