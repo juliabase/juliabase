@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Default values of chantal_common settings."""
+"""Default values of jb_common settings."""
 
 from django.utils.translation import ugettext_lazy as _
 

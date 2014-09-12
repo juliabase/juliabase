@@ -2222,7 +2222,7 @@ msgstr ""
 #: templates/jb_institute/about.html:83
 msgid ""
 "\n"
-"    “<strong>Chantal</strong>” stands\n"
+"    “<strong>Chantaal</strong>” stands\n"
 "    for “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</"
 "strong>vailable <strong>n</strong>etworked \n"
 "    <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</"

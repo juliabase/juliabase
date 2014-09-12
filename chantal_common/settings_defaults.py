@@ -13,12 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Default values of chantal_common settings."""
+"""Default values of jb_common settings."""
 
 from django.utils.translation import ugettext_lazy as _
 
 
-CHANTAL_DEPARTMENTS = ["Institute"]
+JB_DEPARTMENTS = ["Institute"]
 DEBUG_EMAIL_REDIRECT_USERNAME = "t.bronger"
 JAVASCRIPT_I18N_APPS =
 LOCALES_DICT =
@@ -36,7 +36,7 @@ AD_SEARCH_DN =
 AD_SEARCH_FIELDS =
 PERMISSIONS_OF_AD_GROUPS =
 
-# Django settings which are used in chantal_common
+# Django settings which are used in jb_common
 
 LANGUAGES = (("en", _("English")), ("de", _("German")))
 DEBUG =
