@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Models in the relational database for Chantal-Common.
+"""Models in the relational database for JuliaBase-Common.
 """
 
 from __future__ import absolute_import, unicode_literals

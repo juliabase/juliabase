@@ -1,4 +1,4 @@
-# German translations of Chantal-common.
+# German translations of JuliaBase-common.
 #
 # This file is part of JuliaBase, the samples database.
 #
@@ -13,7 +13,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Chantal-common\n"
+"Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-19 08:35+0200\n"
 "PO-Revision-Date: 2011-08-19 08:37+0200\n"

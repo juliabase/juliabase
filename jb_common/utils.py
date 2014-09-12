@@ -64,11 +64,11 @@ class HttpResponseSeeOther(django.http.HttpResponse):
 class JSONRequestException(Exception):
     """Exception which is raised if a JSON response was requested and an error
     in the submitted data occured.  This will result in an HTTP 422 response in
-    Chantal-common's middleware.
+    JuliaBase-common's middleware.
 
     The ranges for the error codes are:
 
-    0–999: special codes, codes common to all applications, and Chantal-common
+    0–999: special codes, codes common to all applications, and JuliaBase-common
     1000–1999: JuliaBase-samples
     2000–2999: institute-specific extensions to JuliaBase-samples
     3000–3999: JuliaBase-kicker

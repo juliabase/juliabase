@@ -30,7 +30,7 @@ import sys, os
 # If your extensions are in another directory, add it here. If the directory
 # is relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
-sys.path.extend(os.path.abspath('../../../{}'.format(path)) for path in ("chantal_samples", "jb_institute"))
+sys.path.extend(os.path.abspath('../../../{}'.format(path)) for path in ("juliabase", "iek5"))
 #import settings
 
 # General configuration

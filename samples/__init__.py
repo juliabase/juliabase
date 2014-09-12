@@ -339,7 +339,7 @@ def touch_sample_series_results(sender, instance, action, reverse, model, pk_set
         instance.save()
 
 
-@receiver(signals.m2m_changed, sender=chantal_common_app.Topic.members.through)
+@receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
 def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch the display settings of all users for which the topics have
     changed because we must invalidate the browser cache for those users (the

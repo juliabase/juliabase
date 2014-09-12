@@ -61,7 +61,7 @@ def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
 # for every ``assert_can_...`` function found here.
 #
 # FixMe: This is copied from `samples.permissions`.  Maybe it should be move to
-# chantal-common.
+# jb_common.
 
 def generate_permission_function(assert_func):
     def has_permission(*args, **kwargs):

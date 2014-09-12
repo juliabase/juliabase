@@ -14,7 +14,7 @@
 
 from __future__ import unicode_literals
 
-from chantal_remote import *
+from jb_remote import *
 import os, re, codecs, datetime
 
 import ConfigParser
