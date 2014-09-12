@@ -25,7 +25,7 @@ from samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
-from chantal_common.utils import append_error, is_json_requested
+from jb_common.utils import append_error, is_json_requested
 from samples.views import utils, feed_utils
 from jb_institute.views import form_utils
 import jb_institute.models as institute_models

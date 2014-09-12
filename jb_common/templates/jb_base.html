@@ -37,7 +37,7 @@ copyright holder, you must destroy it immediately and completely.
     <tr>
       <td class="info">
         {% for language_code, language in translation_flags %}
-          <a href="{% url 'chantal_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
+          <a href="{% url 'jb_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
              ><img src="{{ STATIC_URL }}juliabase/flags/{{ language_code }}.png"
                    alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
                    width="16" height="11"/></a>
@@ -47,7 +47,7 @@ copyright holder, you must destroy it immediately and completely.
         {% if user.is_authenticated %}
           {% trans 'Welcome,' %}
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
-          {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
+          {# FixMe: Must be redirected to real main menu page of jb_common, once it exists. #}
           <a href="/"
              ><img src="{{ STATIC_URL }}juliabase/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
                    width="16" height="16"/></a>
@@ -62,7 +62,7 @@ copyright holder, you must destroy it immediately and completely.
         {% else %}
           {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
             src="{{ STATIC_URL }}juliabase/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
-          {# FixMe: Must be redirected to real main menu page of chantal_common, once it exists. #}
+          {# FixMe: Must be redirected to real main menu page of jb_common, once it exists. #}
           <a href="/"><img src="{{ STATIC_URL }}juliabase/icons/house.png" width="16" height="16"
                            alt="log-in icon" title="{% trans 'Log in' %}"/></a>
         {% endif %}

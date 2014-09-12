@@ -27,8 +27,8 @@ import django.core.urlresolvers
 from django import forms
 from django.forms.util import ValidationError
 from django.forms.models import inlineformset_factory
-from chantal_common.signals import storage_changed
-from chantal_common import search
+from jb_common.signals import storage_changed
+from jb_common import search
 from samples.data_tree import DataNode, DataItem
 import samples.models, samples.views.shared_utils
 
@@ -232,7 +232,7 @@ class SampleDetails(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         related_models = {InformalLayer: "informal_layers"}
         return search.SearchTreeNode(cls, related_models, search_fields=search.convert_fields_to_search_fields(cls))
@@ -336,7 +336,7 @@ class InformalLayer(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         search_fields = search.convert_fields_to_search_fields(
             cls, excluded_fieldnames=["additional_process_data", "color", "always_collapsed"])

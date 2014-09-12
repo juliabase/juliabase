@@ -29,8 +29,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
 from samples.views import utils
-from chantal_common.utils import help_link, is_json_requested, respond_in_json
-from chantal_common.models import Topic
+from jb_common.utils import help_link, is_json_requested, respond_in_json
+from jb_common.models import Topic
 
 
 class MySeries(object):

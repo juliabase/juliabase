@@ -20,7 +20,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
-from chantal_common.utils import append_error
+from jb_common.utils import append_error
 from samples.views import utils
 from jb_institute.views import form_utils
 import jb_institute.models as institute_models

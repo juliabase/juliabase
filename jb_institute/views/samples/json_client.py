@@ -30,7 +30,7 @@ from django.http import Http404
 from samples.views import utils
 from samples import models, permissions
 from jb_institute import models as institute_models, layouts
-from chantal_common.utils import respond_in_json, JSONRequestException
+from jb_common.utils import respond_in_json, JSONRequestException
 
 
 def get_substrates(sample):

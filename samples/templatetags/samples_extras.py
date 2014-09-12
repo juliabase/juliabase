@@ -29,12 +29,12 @@ import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 import markdown
 from django.conf import settings
-import chantal_common.utils
-import chantal_common.templatetags.juliabase
+import jb_common.utils
+import jb_common.templatetags.juliabase
 import samples.views.utils
 from samples.views.form_utils import time_pattern
-import chantal_common.search
-from chantal_common.models import Topic
+import jb_common.search
+from jb_common.models import Topic
 
 register = template.Library()
 
@@ -179,7 +179,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
 
     """
     if isinstance(user, django.contrib.auth.models.User):
-        return chantal_common.templatetags.juliabase.get_really_full_name(user, anchor_type, autoescape)
+        return jb_common.templatetags.juliabase.get_really_full_name(user, anchor_type, autoescape)
     elif isinstance(user, samples.models.ExternalOperator):
         full_name = user.name
         if autoescape:
@@ -247,7 +247,7 @@ def timestamp(value, minimal_inaccuracy=0):
     else:
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
-    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_,
+    return mark_safe(jb_common.utils.unicode_strftime(timestamp_,
                                                            timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
 
 
@@ -276,7 +276,7 @@ def status_timestamp(value, type_):
         inaccuracy = value.end_inaccuracy
     if inaccuracy == 6:
         return None
-    return mark_safe(chantal_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
+    return mark_safe(jb_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
 # FixMe: This pattern should probably be moved to settings.py.
@@ -301,8 +301,8 @@ def markdown_samples(value, margins="default"):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    value = chantal_common.templatetags.juliabase.substitute_formulae(
-        chantal_common.utils.substitute_html_entities(unicode(value)))
+    value = jb_common.templatetags.juliabase.substitute_formulae(
+        jb_common.utils.substitute_html_entities(unicode(value)))
     position = 0
     result = ""
     while position < len(value):
@@ -397,7 +397,7 @@ class ValueFieldNode(template.Node):
             verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
-            field = chantal_common.templatetags.juliabase.fancy_bool(field)
+            field = jb_common.templatetags.juliabase.fancy_bool(field)
             unit = None
         elif self.unit == "user":
             field = get_really_full_name(field, autoescape=True)
@@ -577,7 +577,7 @@ def display_search_tree(tree):
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", context_instance=template.Context(error_context))
-        if isinstance(search_field, chantal_common.search.RangeSearchField):
+        if isinstance(search_field, jb_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
             field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
             help_text = """ <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else ""
@@ -585,7 +585,7 @@ def display_search_tree(tree):
                 """<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
                 help_text=help_text)
-        elif isinstance(search_field, chantal_common.search.TextNullSearchField):
+        elif isinstance(search_field, jb_common.search.TextNullSearchField):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
             help_text = """ <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else ""

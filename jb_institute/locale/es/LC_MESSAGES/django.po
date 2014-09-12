@@ -2146,12 +2146,12 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-#: templates/chantal_common/base.html:20 templates/refdb/base.html:24
+#: templates/jb_common/base.html:20 templates/refdb/base.html:24
 #: templates/samples/base.html:25
 msgid "IEF-5 logo"
 msgstr ""
 
-#: templates/chantal_common/base.html:21
+#: templates/jb_common/base.html:21
 msgid "The database server"
 msgstr ""
 

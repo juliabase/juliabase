@@ -23,8 +23,8 @@ modification purposes.
 
 from __future__ import absolute_import, unicode_literals
 
-from chantal_common.signals import storage_changed
-from chantal_common.utils import append_error, static_file_response, \
+from jb_common.signals import storage_changed
+from jb_common.utils import append_error, static_file_response, \
     is_update_necessary, mkdirs
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -35,7 +35,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext, ugettext_lazy, pgettext_lazy
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
-import chantal_common.utils
+import jb_common.utils
 import datetime
 import os
 import os.path
@@ -260,7 +260,7 @@ class QuantityForm(forms.Form):
 
     def clean_quantity(self):
         quantity = " ".join(self.cleaned_data["quantity"].split())
-        return chantal_common.utils.substitute_html_entities(quantity)
+        return jb_common.utils.substitute_html_entities(quantity)
 
 
 class ValueForm(forms.Form):
@@ -606,8 +606,8 @@ def show(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
-    if chantal_common.utils.is_json_requested(request):
-        return chantal_common.utils.respond_in_json(result.get_data().to_dict())
+    if jb_common.utils.is_json_requested(request):
+        return jb_common.utils.respond_in_json(result.get_data().to_dict())
     template_context = {"title": _("Result “{title}”").format(title=result.title), "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.digest_process(result, request.user))

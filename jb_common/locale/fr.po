@@ -179,63 +179,63 @@ msgstr "Aide"
 msgid "Log out"
 msgstr "Se déconnecter"
 
-#: templates/chantal_common/change_password.html:18
-#: templates/chantal_common/change_password.html:19
+#: templates/jb_common/change_password.html:18
+#: templates/jb_common/change_password.html:19
 msgid "Password change"
 msgstr "Changement de mot de passe"
 
-#: templates/chantal_common/change_password.html:23
+#: templates/jb_common/change_password.html:23
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
 msgstr ""
 
-#: templates/chantal_common/change_password.html:28
+#: templates/jb_common/change_password.html:28
 msgid "Old password:"
 msgstr "Ancien mot de passe :"
 
-#: templates/chantal_common/change_password.html:30
+#: templates/jb_common/change_password.html:30
 msgid "New password:"
 msgstr "Nouveau mot de passe :"
 
-#: templates/chantal_common/change_password.html:32
+#: templates/jb_common/change_password.html:32
 msgid "Confirm password:"
 msgstr "Confirmez le mot de passe :"
 
-#: templates/chantal_common/change_password.html:34
+#: templates/jb_common/change_password.html:34
 msgid "Change my password"
 msgstr "Changer mon mot de passe"
 
-#: templates/chantal_common/login.html:18
-#: templates/chantal_common/login.html:19
+#: templates/jb_common/login.html:18
+#: templates/jb_common/login.html:19
 msgid "JuliaBase login"
 msgstr "Identifiant JuliaBase"
 
-#: templates/chantal_common/login.html:23
+#: templates/jb_common/login.html:23
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 
-#: templates/chantal_common/login.html:28
+#: templates/jb_common/login.html:28
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: templates/chantal_common/login.html:29
+#: templates/jb_common/login.html:29
 msgid "Password"
 msgstr "Mot de passe"
 
-#: templates/chantal_common/login.html:33
+#: templates/jb_common/login.html:33
 msgid "login"
 msgstr "identifiant"
 
-#: templates/chantal_common/logout.html:20
+#: templates/jb_common/logout.html:20
 msgid "Thanks for spending some quality time with the Web site today."
 msgstr "Merci d'avoir consacré un peu de votre temps à ce site."
 
-#: templates/chantal_common/logout.html:22
+#: templates/jb_common/logout.html:22
 msgid "Log in again"
 msgstr "Se reconnecter"
 
-#: templates/chantal_common/markdown_sandbox.html:29
+#: templates/jb_common/markdown_sandbox.html:29
 msgid ""
 "\n"
 "  <p>JuliaBase uses the lightweight markup language “Markdown” for comments.  "
@@ -250,27 +250,27 @@ msgid ""
 "  saved.</p>\n"
 msgstr ""
 
-#: templates/chantal_common/markdown_sandbox.html:40
+#: templates/jb_common/markdown_sandbox.html:40
 msgid "Error in markup"
 msgstr ""
 
-#: templates/chantal_common/markdown_sandbox.html:45
+#: templates/jb_common/markdown_sandbox.html:45
 msgid "input"
 msgstr "entrée"
 
-#: templates/chantal_common/markdown_sandbox.html:47
+#: templates/jb_common/markdown_sandbox.html:47
 msgid "result"
 msgstr "résultat"
 
-#: templates/chantal_common/markdown_sandbox.html:66
+#: templates/jb_common/markdown_sandbox.html:66
 msgid "Generate result"
 msgstr ""
 
-#: templates/chantal_common/password_changed.html:18
+#: templates/jb_common/password_changed.html:18
 msgid "Password change successful"
 msgstr "Changement de mot de passe effectué avec succès"
 
-#: templates/chantal_common/password_changed.html:24
+#: templates/jb_common/password_changed.html:24
 msgid "Your password was changed."
 msgstr "Votre mot de passe a été changé."
 

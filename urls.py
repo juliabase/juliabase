@@ -16,7 +16,7 @@
 
 """Root URL dispach for IEK-PV's Chantal installation.  Mapping URL patterns
 to function calls.  This is the local URL dispatch of the Django application
-“chantal_common”, which provides core functionality and core views for all
+“jb_common”, which provides core functionality and core views for all
 Chantal apps.
 
 
@@ -39,7 +39,7 @@ admin.autodiscover()
 
 urlpatterns = patterns("",
                        (r"", include("jb_institute.urls")),
-                       (r"", include("chantal_common.urls")),
+                       (r"", include("jb_common.urls")),
                        (r"", include("samples.urls")),
                        )
 

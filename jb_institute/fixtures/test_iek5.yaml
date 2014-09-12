@@ -40,37 +40,37 @@
   pk: 4
 
 
-# chantal_common
+# jb_common
 
 - fields: {browser_system: windows, language: en}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 1
 - fields: {browser_system: windows, language: en}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 2
 - fields: {browser_system: windows, language: en}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 3
 - fields: {browser_system: windows, language: en}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 4
 - fields:
     confidential: false
     members: []
     name: Legacy
-  model: chantal_common.topic
+  model: jb_common.topic
   pk: 1
 - fields:
     confidential: true
     members: [3]
     name: restricted topic
-  model: chantal_common.topic
+  model: jb_common.topic
   pk: 2
 - fields:
     confidential: false
     members: [3]
     name: non-restricted topic
-  model: chantal_common.topic
+  model: jb_common.topic
   pk: 3
 
 

@@ -22,7 +22,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from chantal_common.utils import append_error
+from jb_common.utils import append_error
 from jb_institute import models as institute_models
 from samples import permissions
 from samples.views import utils, feed_utils, form_utils

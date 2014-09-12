@@ -24,7 +24,7 @@ from django import template
 from django.utils.safestring import mark_safe
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
-from chantal_common import utils
+from jb_common import utils
 
 register = template.Library()
 

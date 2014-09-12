@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.forms.util import ValidationError
-from chantal_common.utils import append_error
+from jb_common.utils import append_error
 from samples import models
 from samples.views import utils
 from samples.views import form_utils

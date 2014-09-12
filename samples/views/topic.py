@@ -28,8 +28,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
-from chantal_common.utils import append_error
-from chantal_common.models import Topic
+from jb_common.utils import append_error
+from jb_common.models import Topic
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
 from  samples.views.permissions import PermissionsPhysicalProcess

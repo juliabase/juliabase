@@ -28,7 +28,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.conf import settings
 import django
-from chantal_common import utils
+from jb_common import utils
 
 
 def get_cache_connections():
@@ -108,7 +108,7 @@ def about(request):
                                "matplotlib_version": matplotlib.__version__,
                                "framework_version": django.get_version(),
                                # FixMe: Introduce version variable in
-                               # chantal_common
+                               # jb_common
                                "juliabase_version": "unknown"
                                },
                               context_instance=RequestContext(request))

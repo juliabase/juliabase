@@ -23,8 +23,8 @@ from django.template import loader, RequestContext
 from django.contrib.auth.models import SiteProfileNotAvailable
 from django.contrib.auth import logout
 import django.core.urlresolvers
-from chantal_common.models import UserDetails, ErrorPage
-from chantal_common.utils import is_json_requested, JSONRequestException
+from jb_common.models import UserDetails, ErrorPage
+from jb_common.utils import is_json_requested, JSONRequestException
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
@@ -167,7 +167,7 @@ class JSONClientMiddleware(object):
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)
             return HttpResponseUnprocessableEntity(
-                json.dumps((1, django.core.urlresolvers.reverse("chantal_common.views.show_error_page",
+                json.dumps((1, django.core.urlresolvers.reverse("jb_common.views.show_error_page",
                                                                 kwargs={"hash_value": hash_value}))),
                 content_type="application/json; charset=ascii")
         return response

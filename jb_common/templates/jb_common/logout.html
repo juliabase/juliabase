@@ -1,5 +1,5 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "chantal_common/base.html" %}
+{% extends "jb_common/base.html" %}
 {% comment %}
 This file is part of JuliaBase, the samples database.
 
@@ -15,12 +15,10 @@ copyright holder, you must destroy it immediately and completely.
 
 {% load i18n %}
 
-{% block title %}{% trans 'Password change successful' %}{% endblock %}
-
 {% block frame_content %}
 
-{% block content_title %}{% endblock %}
+<p>{% trans "Thanks for spending some quality time with the Web site today." %}</p>
 
-<p>{% trans 'Your password was changed.' %}</p>
+<p><a href="{% url 'django.contrib.auth.views.login' %}">{% trans 'Log in again' %}</a></p>
 
 {% endblock %}

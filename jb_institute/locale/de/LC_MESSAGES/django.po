@@ -3332,12 +3332,12 @@ msgstr "Abmelden"
 msgid "Log in"
 msgstr "Anmelden"
 
-#: templates/chantal_common/base.html:24 templates/refdb/base.html:24
+#: templates/jb_common/base.html:24 templates/refdb/base.html:24
 #: templates/samples/base.html:29
 msgid "IEF-5 logo"
 msgstr "Logo des IEF-5"
 
-#: templates/chantal_common/base.html:25
+#: templates/jb_common/base.html:25
 msgid "The database server"
 msgstr "Der Datenbank-Server"
 

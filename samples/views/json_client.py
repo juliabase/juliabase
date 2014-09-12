@@ -33,8 +33,8 @@ from django.views.decorators.cache import never_cache
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
-from chantal_common.models import Topic
-from chantal_common.utils import respond_in_json, JSONRequestException
+from jb_common.models import Topic
+from jb_common.utils import respond_in_json, JSONRequestException
 from samples.views import utils
 from samples import models, permissions
 from django.contrib.contenttypes.models import ContentType
@@ -172,7 +172,7 @@ def available_items(request, model_name):
     return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
 
 
-# FixMe: The following two functions must go to chantal_common.
+# FixMe: The following two functions must go to jb_common.
 
 @require_http_methods(["POST"])
 def login_remote_client(request):

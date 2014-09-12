@@ -27,8 +27,8 @@ from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
-from chantal_common.utils import get_really_full_name, check_markdown, append_error
-from chantal_common.models import Topic, Department
+from jb_common.utils import get_really_full_name, check_markdown, append_error
+from jb_common.models import Topic, Department
 from samples import models, permissions
 from samples.views import utils
 from django.utils.text import capfirst
@@ -462,7 +462,7 @@ class TopicField(forms.ChoiceField):
             for example.
 
         :type user: ``django.contrib.auth.models.User``
-        :type additional_topic: ``chantal_common.models.Topic``
+        :type additional_topic: ``jb_common.models.Topic``
         """
         def topics_and_sub_topics(parent_topics):
             for topic in parent_topics:

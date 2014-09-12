@@ -13,9 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, division, unicode_literals
-from chantal_common.models import Department
+from jb_common.models import Department
 from django.contrib.contenttypes.models import ContentType
-from chantal_common import utils
+from jb_common import utils
 from django.conf import settings
 import sys
 

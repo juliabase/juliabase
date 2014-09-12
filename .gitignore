@@ -18,6 +18,6 @@ doc/remote_client/.build
 samples/migrations
 *.pyc
 doc/programming/.build
-chantal_common/migrations
+jb_common/migrations
 secret_key.txt
 *.mo

@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal_common.utils import is_json_requested, respond_in_json, check_filepath
+from jb_common.utils import is_json_requested, respond_in_json, check_filepath
 from samples.views import utils, feed_utils
 from jb_institute.views import form_utils
 from samples import models, permissions

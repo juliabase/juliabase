@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.contrib import messages
 from samples.views.form_utils import *
-from chantal_common.utils import is_json_requested, respond_in_json
+from jb_common.utils import is_json_requested, respond_in_json
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):

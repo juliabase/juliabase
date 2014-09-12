@@ -26,7 +26,7 @@ from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from chantal_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther
+from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther
 from samples import models, permissions
 from samples.views import utils, form_utils
 import django.core
@@ -225,7 +225,7 @@ def list_(request):
             user_list_form = UserListForm(user)
     else:
         user_list_form = None
-    if user.has_perm("chantal_common.can_edit_all_topics"):
+    if user.has_perm("jb_common.can_edit_all_topics"):
         topic_managers = utils.sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |

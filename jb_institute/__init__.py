@@ -33,8 +33,8 @@ from django.utils.http import urlquote_plus
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.utils.translation import ugettext as _
-from chantal_common.signals import maintain
-from chantal_common import utils
+from jb_common.signals import maintain
+from jb_common import utils
 from samples.models import Process, Result, PhysicalProcess, Sample, SampleAlias
 from samples.views import shared_utils, sample
 from jb_institute import models as jb_institute_app

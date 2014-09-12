@@ -25,8 +25,8 @@ entries are self-contained.
 
 from __future__ import absolute_import, unicode_literals
 
-from chantal_common.models import Topic, PolymorphicModel
-from chantal_common.utils import get_really_full_name
+from jb_common.models import Topic, PolymorphicModel
+from jb_common.utils import get_really_full_name
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext

@@ -23,7 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-import chantal_common.search
+import jb_common.search
 from collections import Iterable
 
 
@@ -146,11 +146,11 @@ class Topic(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
-        search_fields = [chantal_common.search.TextSearchField(cls, "name")]
+        search_fields = [jb_common.search.TextSearchField(cls, "name")]
         related_models = {}
-        return chantal_common.search.SearchTreeNode(cls, related_models, search_fields)
+        return jb_common.search.SearchTreeNode(cls, related_models, search_fields)
 
     def get_name_for_user(self, user):
         """Determine the topic's name that can be shown to a certain user.  If

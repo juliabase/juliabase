@@ -23,7 +23,7 @@ from django.contrib.auth.models import SiteProfileNotAvailable
 from samples.models import UserDetails
 from samples.views import utils
 from samples.permissions import PermissionError
-from chantal_common.utils import HttpResponseUnauthorized
+from jb_common.utils import HttpResponseUnauthorized
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http

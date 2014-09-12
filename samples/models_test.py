@@ -24,8 +24,8 @@ from django.db import models
 import django.core.urlresolvers
 from django.utils.http import urlquote
 from django.conf import settings
-from chantal_common.utils import register_abstract_model
-from chantal_common import search
+from jb_common.utils import register_abstract_model
+from jb_common import search
 from samples import permissions
 import samples.models
 from samples.models import Sample, PhysicalProcess, Process

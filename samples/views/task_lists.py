@@ -25,11 +25,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
 from django.utils.text import capfirst
-from chantal_common import utils as common_utils
+from jb_common import utils as common_utils
 from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples import permissions
-from chantal_common.models import Department
+from jb_common.models import Department
 
 
 class SamplesForm(forms.Form):

@@ -19,7 +19,7 @@ from django.db.models import signals
 import django.contrib.auth.models
 from django.dispatch import receiver
 from . import models as kicker_app
-from chantal_common.signals import maintain
+from jb_common.signals import maintain
 
 
 @receiver(signals.post_save, sender=django.contrib.auth.models.User)

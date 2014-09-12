@@ -41,8 +41,8 @@ from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 import samples.models
-from chantal_common.models import Topic
-from chantal_common import utils as chantal_common_utils
+from jb_common.models import Topic
+from jb_common import utils as jb_common_utils
 from samples.views import shared_utils
 
 
@@ -159,7 +159,7 @@ def get_all_addable_physical_process_models():
     global all_addable_physical_process_models
     if all_addable_physical_process_models is None:
         all_addable_physical_process_models = {}
-        for process_class in chantal_common_utils.get_all_models().itervalues():
+        for process_class in jb_common_utils.get_all_models().itervalues():
             if issubclass(process_class, samples.models.PhysicalProcess):
                 try:
                     url = process_class.get_add_link()
@@ -310,12 +310,12 @@ def assert_can_fully_view_sample(user, sample):
         elif sample.topic.confidential:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name})."). \
-                            format(name=chantal_common_utils.get_really_full_name(currently_responsible_person))
+                            format(name=jb_common_utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name}), nor can you view all samples."). \
-                            format(name=chantal_common_utils.get_really_full_name(currently_responsible_person))
+                            format(name=jb_common_utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
@@ -759,30 +759,30 @@ def assert_can_edit_topic(user, topic=None):
         if we create a new one, list topics etc
 
     :type user: ``django.contrib.auth.models.User``
-    :type topic: ``chantal_common.models.Topic`` or ``NoneType``
+    :type topic: ``jb_common.models.Topic`` or ``NoneType``
 
     :Exceptions:
       - `PermissionError`: raised if the user is not allowed to edit topics,
         or to add new topics.
     """
     if not topic:
-        if not user.has_perm("chantal_common.can_edit_all_topics"):
+        if not user.has_perm("jb_common.can_edit_all_topics"):
             description = _("You are not allowed to add or list topics because you don't have the permission “{name}”.") \
-                .format(name=translate_permission("chantal_common.can_edit_all_topics"))
+                .format(name=translate_permission("jb_common.can_edit_all_topics"))
             raise PermissionError(user, description)
     else:
         if user in topic.members.all():
-            if not user.has_perm("chantal_common.can_edit_all_topics") and \
+            if not user.has_perm("jb_common.can_edit_all_topics") and \
                     topic.manager != user:
                 description = _("You are not allowed to change this topic because you don't have the permission "
-                                "“{0}” or “{1}”.").format(translate_permission("chantal_common.can_edit_all_topics"),
-                                                           translate_permission("chantal_common.can_edit_their_topics"))
+                                "“{0}” or “{1}”.").format(translate_permission("jb_common.can_edit_all_topics"),
+                                                           translate_permission("jb_common.can_edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("chantal_common.can_edit_all_topics"):
+            if not user.has_perm("jb_common.can_edit_all_topics"):
                 description = _("You are not allowed to change this topic because "
                                 "you don't have the permission “{name}”.").format(
-                    name=translate_permission("chantal_common.can_edit_all_topics"))
+                    name=translate_permission("jb_common.can_edit_all_topics"))
                 raise PermissionError(user, description)
             elif topic.confidential and not user.is_superuser:
                 description = _("You are not allowed to change this topic because it is confidential "
@@ -804,11 +804,11 @@ def assert_can_edit_users_topics(user):
       - `PermissionError`: raised if the user is not allowed to edit his/ her
         topics, or to add new sub topics.
     """
-    if not user.has_perm("chantal_common.can_edit_their_topics") and \
-        not user.has_perm("chantal_common.can_edit_all_topics"):
+    if not user.has_perm("jb_common.can_edit_their_topics") and \
+        not user.has_perm("jb_common.can_edit_all_topics"):
         description = _("You are not allowed to change your topics because you don't have the permission "
-                        "“{0}” or “{1}”.").format(translate_permission("chantal_common.can_edit_all_topics"),
-                                                  translate_permission("chantal_common.can_edit_their_topics"))
+                        "“{0}” or “{1}”.").format(translate_permission("jb_common.can_edit_all_topics"),
+                                                  translate_permission("jb_common.can_edit_their_topics"))
         raise PermissionError(user, description)
 
 

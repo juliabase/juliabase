@@ -50,7 +50,7 @@ def show_user(request, login_name):
         raise Http404('No User matches the given query.')
     department = user.jb_user_details.department
     username = get_really_full_name(user)
-    return render_to_response("chantal_common/show_user.html",
+    return render_to_response("jb_common/show_user.html",
                               {"title": username, "shown_user": user, "department": department},
                               context_instance=RequestContext(request))
 
@@ -92,7 +92,7 @@ def markdown_sandbox(request):
             extracted_content = sandbox_form.cleaned_data["sandbox"]
     else:
         sandbox_form = SandboxForm()
-    return render_to_response("chantal_common/markdown_sandbox.html",
+    return render_to_response("jb_common/markdown_sandbox.html",
                               {"title": _("Markdown sandbox"), "sandbox": sandbox_form,
                                "extracted_content": extracted_content},
                               context_instance=RequestContext(request))

@@ -14,7 +14,7 @@
 
 
 """Mapping URL patterns to function calls.  This is the local URL dispatch of
-the Django application “chantal_common”, which provides core functionality and
+the Django application “jb_common”, which provides core functionality and
 core views for all JuliaBase apps.
 
 
@@ -32,15 +32,15 @@ from django.conf.urls import *
 from django.conf import settings
 
 urlpatterns = patterns("django.contrib.auth.views",
-                       url(r"^change_password$", "password_change", {"template_name": "chantal_common/change_password.html"},
+                       url(r"^change_password$", "password_change", {"template_name": "jb_common/change_password.html"},
                            name="password_change"),
                        url(r"^change_password/done/$", "password_change_done",
-                        {"template_name": "chantal_common/password_changed.html"}, name="password_change_done"),
-                       url(r"^login$", "login", {"template_name": "chantal_common/login.html"}, name="login"),
-                       url(r"^logout$", "logout", {"template_name": "chantal_common/logout.html"}, name="logout"),
+                        {"template_name": "jb_common/password_changed.html"}, name="password_change_done"),
+                       url(r"^login$", "login", {"template_name": "jb_common/login.html"}, name="login"),
+                       url(r"^logout$", "logout", {"template_name": "jb_common/logout.html"}, name="logout"),
                        )
 
-urlpatterns += patterns("chantal_common.views",
+urlpatterns += patterns("jb_common.views",
                         (r"^users/(?P<login_name>.+)", "show_user"),
                         (r"^markdown$", "markdown_sandbox"),
                         (r"^switch_language$", "switch_language"),

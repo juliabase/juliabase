@@ -40,43 +40,43 @@
   pk: 4
 
 
-# chantal_common
+# jb_common
 
 - fields: {name: IEK-5}
-  model: chantal_common.department
+  model: jb_common.department
   pk: 1
 - fields: {browser_system: windows, language: en, layout_last_modified: "1970-01-01 00:00:00"}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 1
 - fields: {browser_system: windows, language: en, layout_last_modified: "1970-01-01 00:00:00"}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 2
 - fields: {browser_system: windows, language: en, layout_last_modified: "1970-01-01 00:00:00"}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 3
 - fields: {browser_system: windows, language: en, layout_last_modified: "1970-01-01 00:00:00"}
-  model: chantal_common.userdetails
+  model: jb_common.userdetails
   pk: 4
 - fields:
     confidential: false
     members: []
     name: Legacy
     department: 1
-  model: chantal_common.topic
+  model: jb_common.topic
   pk: 1
 - fields:
     confidential: true
     members: [3]
     name: restricted topic
     department: 1
-  model: chantal_common.topic
+  model: jb_common.topic
   pk: 2
 - fields:
     confidential: false
     members: [3]
     name: non-restricted topic
     department: 1
-  model: chantal_common.topic
+  model: jb_common.topic
   pk: 3
 
 

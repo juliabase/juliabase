@@ -47,8 +47,8 @@ from django.contrib.sessions.models import Session
 from django.conf import settings
 from django.core.mail import mail_admins
 import ldap
-from chantal_common.models import Department
-from chantal_common.signals import maintain
+from jb_common.models import Department
+from jb_common.signals import maintain
 from django.dispatch import receiver
 
 

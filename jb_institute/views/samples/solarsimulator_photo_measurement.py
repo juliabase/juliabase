@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from chantal_common.utils import append_error, is_json_requested, \
+from jb_common.utils import append_error, is_json_requested, \
     respond_in_json
 from jb_institute.models import SolarsimulatorPhotoMeasurement, SolarsimulatorPhotoCellMeasurement
 from jb_institute.views import form_utils

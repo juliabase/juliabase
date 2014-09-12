@@ -30,7 +30,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from chantal_common.utils import append_error, HttpResponseSeeOther, is_json_requested
+from jb_common.utils import append_error, HttpResponseSeeOther, is_json_requested
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from django.contrib import messages

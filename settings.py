@@ -91,12 +91,12 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "chantal_common.middleware.MessageMiddleware",
+    "jb_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "chantal_common.middleware.LocaleMiddleware",
+    "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
-    "chantal_common.middleware.JSONClientMiddleware",
+    "jb_common.middleware.JSONClientMiddleware",
 )
 APPEND_SLASH = False
 
@@ -112,7 +112,7 @@ INSTALLED_APPS = (
     "jb_institute",
     "samples",
     "south",
-    "chantal_common"
+    "jb_common"
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
@@ -120,7 +120,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
                                "django.contrib.messages.context_processors.messages",
-                               "chantal_common.context_processors.default",
+                               "jb_common.context_processors.default",
                                "django.core.context_processors.static")
 
 # FixMe: Maybe too many?

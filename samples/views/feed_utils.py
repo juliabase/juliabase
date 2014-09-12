@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
-import chantal_common.models
+import jb_common.models
 from samples import models
 from samples.views import utils
 from samples import permissions
@@ -163,7 +163,7 @@ class Reporter(object):
           - `topic`: the topic whose members should be informed with the next
             feed entry
 
-        :type topic: ``chantal_common.models.Topic``
+        :type topic: ``jb_common.models.Topic``
         """
         self.interested_users.update(user for user in topic.members.iterator()
                                      if not user.samples_user_details.only_important_news)
@@ -211,7 +211,7 @@ class Reporter(object):
             entry.samples = samples
             entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
             self.__add_topic_members(topic)
-            self.__connect_with_users(entry, chantal_common.models.Topic)
+            self.__connect_with_users(entry, jb_common.models.Topic)
 
     def report_physical_process(self, process, edit_description=None):
         """Generate a feed entry for a physical process (deposition,
@@ -324,7 +324,7 @@ class Reporter(object):
             keys correspond to the fields of `form_utils.EditDescriptionForm`.
 
         :type samples: list of `models.Sample`
-        :type old_topic: ``chantal_common.models.Topic``
+        :type old_topic: ``jb_common.models.Topic``
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
@@ -337,7 +337,7 @@ class Reporter(object):
         if old_topic:
             self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
-        self.__connect_with_users(entry, chantal_common.models.Topic)
+        self.__connect_with_users(entry, jb_common.models.Topic)
 
     def report_edited_samples(self, samples, edit_description):
         """Generate a feed entry about a general edit of sample(s).  All users
@@ -441,7 +441,7 @@ class Reporter(object):
             `form_utils.EditDescriptionForm`.
 
         :type sample_series: list of `models.SampleSeries`
-        :type old_topic: ``chantal_common.models.Topic``
+        :type old_topic: ``jb_common.models.Topic``
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
@@ -480,12 +480,12 @@ class Reporter(object):
             for removed users
 
         :type users: iterable of ``django.contrib.auth.models.User``
-        :type topic: ``chantal_common.models.Topic``
+        :type topic: ``jb_common.models.Topic``
         :type action: str
         """
         entry = models.FeedChangedTopic.objects.create(originator=self.originator, topic=topic, action=action)
         self.interested_users = set(users)
-        self.__connect_with_users(entry, chantal_common.models.Topic)
+        self.__connect_with_users(entry, jb_common.models.Topic)
 
     def report_status_message(self, process_class, status_message):
         """Generate one feed entry for new status messages for physical

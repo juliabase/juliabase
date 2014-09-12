@@ -29,7 +29,7 @@ from django.conf import settings
 from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataNode, DataItem
-from chantal_common import search
+from jb_common import search
 from samples.views import utils
 from jb_institute import layouts
 import jb_institute.views.shared_utils as institute_utils
@@ -221,7 +221,7 @@ class SolarsimulatorCell(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)

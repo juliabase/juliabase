@@ -26,7 +26,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
-from chantal_common.utils import get_really_full_name
+from jb_common.utils import get_really_full_name
 from samples import permissions, models
 from django.conf import settings
 import django.core.urlresolvers

@@ -28,8 +28,8 @@ from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_unicode
 from django.contrib.auth.decorators import login_required
-import chantal_common.utils
-from chantal_common.utils import append_error
+import jb_common.utils
+from jb_common.utils import append_error
 from samples import models
 from samples.views import utils, feed_utils
 from jb_institute.views import form_utils
@@ -162,7 +162,7 @@ class HotWireLayerForm(forms.ModelForm):
         """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        chantal_common.utils.check_markdown(comments)
+        jb_common.utils.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -218,7 +218,7 @@ class PECVDLayerForm(forms.ModelForm):
         """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        chantal_common.utils.check_markdown(comments)
+        jb_common.utils.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -298,7 +298,7 @@ class FormSet(object):
         self.edit_description_form = None
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
-        self.json_client = chantal_common.utils.is_json_requested(request)
+        self.json_client = jb_common.utils.is_json_requested(request)
 
     def from_post_data(self, post_data):
         """Interpret the POST data and create bound forms for the layers.

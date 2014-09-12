@@ -111,7 +111,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext, defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.data_tree import DataNode
-import chantal_common.utils
+import jb_common.utils
 import csv
 import cStringIO
 import codecs

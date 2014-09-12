@@ -28,7 +28,7 @@ from django.utils.http import urlquote, urlquote_plus
 from django.db import models
 from samples.models_common import PhysicalProcess, Sample
 from samples.data_tree import DataNode, DataItem
-from chantal_common import search
+from jb_common import search
 
 default_location_of_deposited_samples = {}
 """Dictionary mapping process classes to strings which contain the default
@@ -88,7 +88,7 @@ class Deposition(PhysicalProcess):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         if cls == Deposition:
             # So that only derived classes get included into the searchable
@@ -153,7 +153,7 @@ class Layer(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)

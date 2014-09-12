@@ -27,7 +27,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
-from chantal_common.utils import append_error
+from jb_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils
 from django.contrib import messages

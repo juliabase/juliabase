@@ -21,7 +21,7 @@
 },
 {
   "pk": 1,
-  "model": "chantal_common.topic",
+  "model": "jb_common.topic",
   "fields": {
     "name": "Legacy",
     "confidential": false,
@@ -32,7 +32,7 @@
 },
 {
   "pk": 1,
-  "model": "chantal_common.department",
+  "model": "jb_common.department",
   "fields": {
     "name": "Generic Institute"
   }
@@ -47,14 +47,14 @@
 },
 {
   "pk": 1,
-  "model": "chantal_common.userdetails",
+  "model": "jb_common.userdetails",
   "fields": {
     "layout_last_modified": "1990-01-01T00:00:00"
   }
 },
 {
   "pk": 2,
-  "model": "chantal_common.userdetails",
+  "model": "jb_common.userdetails",
   "fields": {
     "layout_last_modified": "1990-01-01T00:00:00"
   }

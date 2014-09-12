@@ -27,7 +27,7 @@ from django.db import models
 import samples.models_depositions
 from samples import permissions
 from samples.data_tree import DataItem
-from chantal_common import models as chantal_common_models
+from jb_common import models as jb_common_models
 
 
 class ClusterToolHotWireAndPECVDGases(models.Model):
@@ -134,7 +134,7 @@ class ClusterToolDeposition(samples.models_depositions.Deposition):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         model_field = super(ClusterToolDeposition, cls).get_search_tree_node()
         model_field.related_models.update({ClusterToolHotWireLayer: "layers", ClusterToolPECVDLayer: "layers"})
@@ -145,7 +145,7 @@ samples.models_depositions.default_location_of_deposited_samples[ClusterToolDepo
     _("cluster tool deposition lab")
 
 
-class ClusterToolLayer(samples.models_depositions.Layer, chantal_common_models.PolymorphicModel):
+class ClusterToolLayer(samples.models_depositions.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
     base class for the actual layer models `ClusterToolHotWireLayer` and
     `ClusterToolPECVDLayer`.  This is *not* an abstract model though because

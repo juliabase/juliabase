@@ -94,7 +94,7 @@ in order to delete cache items or to update a last-modified timestamp:
    ``my_samples_timestamp`` which is the last time the user has changed his “My
    Samples”.
 
-   Additionally, the ``UserDetails`` of ``chantal_common`` contain the field
+   Additionally, the ``UserDetails`` of ``jb_common`` contain the field
    ``layout_last_modified`` which is updated when language or browser are
    changed (this also affects display of samples and sample series).
 
@@ -166,8 +166,8 @@ from django.db.models import signals
 from django.dispatch import receiver
 import django.contrib.auth.models
 from . import models as samples_app
-from chantal_common import models as chantal_common_app
-from chantal_common.signals import maintain
+from jb_common import models as jb_common_app
+from jb_common.signals import maintain
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 
@@ -237,7 +237,7 @@ def add_user_details(sender, instance, created, **kwargs):
         try:
             user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
                                              ContentType.objects.get(app_label="samples", model="sampleseries"),
-                                             ContentType.objects.get(app_label="chantal_common", model="topic")]
+                                             ContentType.objects.get(app_label="jb_common", model="topic")]
         except ContentType.DoesNotExist:
             # This happens when you try to create a super user while creating
             # the models with ``manage.py syncdb``.

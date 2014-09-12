@@ -145,7 +145,7 @@ def encode_multipart_formdata(data):
 class JuliaBaseError(Exception):
     """Exception class for high-level JuliaBase errors.
 
-    :ivar error_code: The numerical error code.  See ``chantal_common.utils``
+    :ivar error_code: The numerical error code.  See ``jb_common.utils``
       for further information, and the root ``__init__.py`` file of the various
       JuliaBase apps for the tables with the error codes.
 

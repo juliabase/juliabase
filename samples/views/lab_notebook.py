@@ -37,7 +37,7 @@ from django.utils.http import urlquote_plus
 from samples import models, permissions
 from samples.views import utils
 from samples.data_tree import DataNode
-from chantal_common.utils import HttpResponseSeeOther, get_all_models
+from jb_common.utils import HttpResponseSeeOther, get_all_models
 
 
 class YearMonthForm(forms.Form):

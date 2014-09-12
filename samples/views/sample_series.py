@@ -23,7 +23,7 @@ be changed once they have been created.
 
 from __future__ import absolute_import, unicode_literals
 
-from chantal_common.utils import append_error, adjust_timezone_information
+from jb_common.utils import append_error, adjust_timezone_information
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms.util import ValidationError
@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
-import chantal_common.utils
+import jb_common.utils
 import datetime
 import django.contrib.auth.models
 import hashlib
@@ -84,7 +84,7 @@ class SampleSeriesForm(forms.ModelForm):
         """Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
-        chantal_common.utils.check_markdown(description)
+        jb_common.utils.check_markdown(description)
         return description
 
     def validate_unique(self):

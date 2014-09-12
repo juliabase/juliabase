@@ -29,8 +29,8 @@ from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import HttpResponse, Http404
 from django.utils.translation import ugettext as _
-from chantal_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs
-from chantal_common.signals import storage_changed
+from jb_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs
+from jb_common.signals import storage_changed
 from samples.views import utils
 from . import models
 

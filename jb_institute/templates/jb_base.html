@@ -48,7 +48,7 @@ copyright holder, you must destroy it immediately and completely.
     <tr>
       <td class="info">
         {% for language_code, language in translation_flags %}
-          <a href="{% url 'chantal_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
+          <a href="{% url 'jb_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
              ><img src="{{ STATIC_URL }}juliabase/flags/{{ language_code }}.png"
                    alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
                    width="16" height="11"/></a>

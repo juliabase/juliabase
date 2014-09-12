@@ -28,7 +28,7 @@ import markdown as markup
 from django.utils.translation import ugettext as _, pgettext
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
-from chantal_common import utils
+from jb_common import utils
 
 register = template.Library()
 
@@ -38,7 +38,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     """Unfortunately, Django's get_full_name method for users returns the
     empty string if the user has no first and surname set. However, it'd be
     sensible to use the login name as a fallback then. This is realised here.
-    See also `chantal_common.utils.get_really_full_name`.
+    See also `jb_common.utils.get_really_full_name`.
 
     The optional parameter to this filter determines whether the name should be
     linked or not, and if so, how.  There are three possible parameter values:
@@ -60,9 +60,9 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     if anchor_type == "plain" or not user.jb_user_details.department:
         return mark_safe(full_name)
     elif anchor_type == "http":
-        # FixMe: The view should be one of chantal_common.
+        # FixMe: The view should be one of jb_common.
         return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                    "chantal_common.views.show_user", kwargs={"login_name": user.username}), full_name))
+                    "jb_common.views.show_user", kwargs={"login_name": user.username}), full_name))
     elif anchor_type == "mailto":
         return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
     else:
@@ -129,7 +129,7 @@ def markdown(value, margins="default"):
     1.7 or later so that this works.
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
-    `chantal_common.utils.substitute_html_entities`.  This creates a mild
+    `jb_common.utils.substitute_html_entities`.  This creates a mild
     escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
@@ -148,7 +148,7 @@ def markdown_hint():
     """
     return """<span class="markdown-hint">(""" + _("""with {markdown_link} syntax""") \
         .format(markdown_link="""<a href="{0}">Markdown</a>""".format(
-           django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox"))) + ")</span>"
+           django.core.urlresolvers.reverse("jb_common.views.markdown_sandbox"))) + ")</span>"
 
 
 @register.filter

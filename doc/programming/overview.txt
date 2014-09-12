@@ -45,7 +45,7 @@ Architecture
 ====================
 
 Since JuliaBase is based on the Django Web framework, it consists of several
-Django apps.  The core app is called “chantal_common”.  It provides
+Django apps.  The core app is called “jb_common”.  It provides
 functionality which is essential for all JuliaBase components.  On top of that,
 the app “samples” contains all features of a samples database.  However, it
 does not contain institute-specific code in order to remain generic and

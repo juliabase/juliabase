@@ -110,12 +110,12 @@ JuliaBase
 Currently, JuliaBase is organised in non-public `Git`_ repositories.  There are
 three of them:
 
-1. chantal_common
+1. jb_common
 2. juliabase_samples
 3. jb_institute
 
 Each of these three repositories contains one Django app of the same name.
-chantal_common implements the basic JuliaBase functionality.  On top of that,
+jb_common implements the basic JuliaBase functionality.  On top of that,
 juliabase_samples implements the actual samples database.  And on top of that,
 jb_institute implements code that is specific to the specific institution or
 department or work group that wants to use JuliaBase.  jb_institute implements
@@ -127,7 +127,7 @@ rename it accordingly.
 Once you have arranged with the `JuliaBase maintainers`_ read access for the
 Git repositories, you can check out the source code on your computer with::
 
-  git clone git@bob.ipv.kfa-juelich.de:chantal_common
+  git clone git@bob.ipv.kfa-juelich.de:jb_common
   git clone git@bob.ipv.kfa-juelich.de:juliabase_samples
   git clone git@bob.ipv.kfa-juelich.de:jb_institute
 

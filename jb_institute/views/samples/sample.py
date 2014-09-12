@@ -33,7 +33,7 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from chantal_common.utils import append_error, get_really_full_name
+from jb_common.utils import append_error, get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from jb_institute import models as institute_models
@@ -84,7 +84,7 @@ class AddSamplesForm(forms.Form):
         self.fields["substrate_comments"].help_text = \
             """<span class="markdown-hint">""" + _("""with {markdown_link} syntax""").format(
             markdown_link="""<a href="{0}">Markdown</a>""".format(
-                    django.core.urlresolvers.reverse("chantal_common.views.markdown_sandbox"))) + "</span>"
+                    django.core.urlresolvers.reverse("jb_common.views.markdown_sandbox"))) + "</span>"
         self.fields["substrate_originator"].choices = [("<>", get_really_full_name(user))]
         external_contacts = user.external_contacts.all()
         if external_contacts:

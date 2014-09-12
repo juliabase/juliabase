@@ -30,13 +30,13 @@ from django.forms.util import ValidationError
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
-from chantal_common.utils import get_really_full_name
+from jb_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
-from chantal_common import utils as chantal_common_utils, auth
-from chantal_common.models import Topic, Department
+from jb_common import utils as jb_common_utils, auth
+from jb_common.models import Topic, Department
 
 
 class UserDetailsForm(forms.ModelForm):
@@ -51,7 +51,7 @@ class UserDetailsForm(forms.ModelForm):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
         choices = []
-        processes = [process_class for process_class in chantal_common_utils.get_all_models().itervalues()
+        processes = [process_class for process_class in jb_common_utils.get_all_models().itervalues()
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
         for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():

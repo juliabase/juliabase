@@ -32,11 +32,11 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from chantal_common.utils import get_really_full_name, cache_key_locked
-from chantal_common.models import Topic, PolymorphicModel, Department
+from jb_common.utils import get_really_full_name, cache_key_locked
+from jb_common.models import Topic, PolymorphicModel, Department
 from samples import permissions
 from samples.views import shared_utils
-from chantal_common import search
+from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
 import collections
@@ -472,7 +472,7 @@ class Process(PolymorphicModel):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         if cls == Process:
             raise NotImplementedError
@@ -858,7 +858,7 @@ class Sample(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
@@ -1340,7 +1340,7 @@ class SampleSeries(models.Model):
         :Return:
           the tree node for this model instance
 
-        :rtype: ``chantal_common.search.SearchTreeNode``
+        :rtype: ``jb_common.search.SearchTreeNode``
         """
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
@@ -1454,7 +1454,7 @@ class UserDetails(models.Model):
         This method must be called every time when something was changed which
         influences the display of a sample datasheet (and is not covered by
         other timestamps (``my_samples_timestamp``,
-        `chantal_common.models.UserDetails.layout_last_modified`), e. g. topic
+        `jb_common.models.UserDetails.layout_last_modified`), e. g. topic
         memberships.  It is used for efficient caching.
         """
         self.display_settings_timestamp = datetime.datetime.now()

@@ -19,7 +19,7 @@
   that various subsystems can use it for maintenance work.  You can use this
   signal in your code like this::
 
-      from chantal_common.signals import maintain
+      from jb_common.signals import maintain
       from django.dispatch import receiver
 
       @receiver(maintain)

@@ -20,7 +20,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import, unicode_literals
 
-from chantal_common import mimeparse
+from jb_common import mimeparse
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
@@ -36,7 +36,7 @@ from samples.views.shared_utils import *
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm, \
     defaultfilters, UnicodeWriter
-import chantal_common.utils
+import jb_common.utils
 import datetime
 import copy
 import json
@@ -301,9 +301,9 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :rtype: ``HttpResponse``
     """
-    if chantal_common.utils.is_json_requested(request):
-        return chantal_common.utils.respond_in_json(json_response)
-    return chantal_common.utils.successful_response(request, success_report,
+    if jb_common.utils.is_json_requested(request):
+        return jb_common.utils.respond_in_json(json_response)
+    return jb_common.utils.successful_response(request, success_report,
                                                     view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 
@@ -392,7 +392,7 @@ class StructuredTopic(object):
       which contain “My Samples” of the user.  They themselves contain a list
       of their samples.  See `StructuredSeries` for further information.
 
-    :type topic: ``chantal_common.models.Topic``
+    :type topic: ``jb_common.models.Topic``
     :type samples: list of `models.Sample`
     :type sample_series: list of `StructuredSeries`
     """
@@ -567,12 +567,12 @@ def digest_process(process, user, local_context={}):
     """
     process = process.actual_instance
     cache_key = process.get_cache_key(user.jb_user_details.get_data_hash(), local_context)
-    cached_context = chantal_common.utils.get_from_cache(cache_key) if cache_key else None
+    cached_context = jb_common.utils.get_from_cache(cache_key) if cache_key else None
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
         if cache_key:
             keys_list_key = "process-keys:{0}".format(process.pk)
-            with chantal_common.utils.cache_key_locked("process-lock:{0}".format(process.pk)):
+            with jb_common.utils.cache_key_locked("process-lock:{0}".format(process.pk)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
@@ -770,7 +770,7 @@ def table_export(request, data, label_column_heading):
                 if requested_mime_type == "application/json":
                     data = [dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
                             for row in reduced_table[1:]]
-                    return chantal_common.utils.respond_in_json(data)
+                    return jb_common.utils.respond_in_json(data)
                 else:
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \

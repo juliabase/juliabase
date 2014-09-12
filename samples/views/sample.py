@@ -23,8 +23,8 @@ import hashlib, os.path, time, urllib, json
 from cStringIO import StringIO
 import PIL
 import PIL.ImageOps
-from chantal_common.signals import storage_changed
-from chantal_common.utils import append_error, HttpResponseSeeOther, \
+from jb_common.signals import storage_changed
+from jb_common.utils import append_error, HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
     mkdirs, cache_key_locked, get_from_cache, unlazy_object
 from django.conf import settings
@@ -41,7 +41,7 @@ from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
-import chantal_common.search
+import jb_common.search
 from samples import models, permissions, data_tree
 from samples.views import utils, form_utils, feed_utils
 from django.forms.util import ValidationError
@@ -838,11 +838,11 @@ def advanced_search(request):
 
     :rtype: ``HttpResponse``
     """
-    model_list = [model for model in chantal_common.search.get_all_searchable_models() if hasattr(model, "get_absolute_url")]
+    model_list = [model for model in jb_common.search.get_all_searchable_models() if hasattr(model, "get_absolute_url")]
     search_tree = None
     results, add_forms = [], []
     too_many_results = False
-    root_form = chantal_common.search.SearchModelForm(model_list, request.GET)
+    root_form = jb_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     no_permission_message = None
     _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
@@ -861,7 +861,7 @@ def advanced_search(request):
                     Q(currently_responsible_person=request.user)).distinct()
             else:
                 base_query = None
-            results, too_many_results = chantal_common.search.get_search_results(search_tree, max_results, base_query)
+            results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
@@ -900,11 +900,11 @@ def advanced_search(request):
                     elif isinstance(export_result, HttpResponse):
                         return export_result
             search_performed = True
-        root_form = chantal_common.search.SearchModelForm(
+        root_form = jb_common.search.SearchModelForm(
             model_list, initial={"_old_model": root_form.cleaned_data["_model"], "_model": root_form.cleaned_data["_model"],
                                  "_search_parameters_hash": _search_parameters_hash})
     else:
-        root_form = chantal_common.search.SearchModelForm(model_list)
+        root_form = jb_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = ""
     content_dict = {"title": _("Advanced search"), "search_root": root_form, "search_tree": search_tree,
                     "results": zip(results, add_forms), "search_performed": search_performed,
