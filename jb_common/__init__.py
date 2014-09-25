@@ -37,8 +37,8 @@ import datetime
 import django.contrib.auth.models
 from django.db.models import signals as django_signals
 from django.dispatch import receiver
-from . import models as jb_app
-from .signals import maintain
+from jb_common import models as jb_app
+from jb_common.signals import maintain
 
 
 # It must be "post_save", otherwise, the ID may be ``None``.

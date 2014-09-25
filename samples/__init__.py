@@ -165,7 +165,7 @@ import datetime, hashlib, json
 from django.db.models import signals
 from django.dispatch import receiver
 import django.contrib.auth.models
-from . import models as samples_app
+from samples import models as samples_app
 from jb_common import models as jb_common_app
 from jb_common.signals import maintain
 from django.contrib.contenttypes.models import ContentType

@@ -32,7 +32,7 @@ from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.translation import ugettext as _, ugettext
 from django.utils.functional import allow_lazy
-from . import mimeparse
+from jb_common import mimeparse
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):

@@ -18,7 +18,7 @@ from __future__ import absolute_import
 from django.db.models import signals
 import django.contrib.auth.models
 from django.dispatch import receiver
-from . import models as kicker_app
+from kicker import models as kicker_app
 from jb_common.signals import maintain
 
 

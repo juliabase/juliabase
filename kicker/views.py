@@ -32,7 +32,7 @@ from django.utils.translation import ugettext as _
 from jb_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs
 from jb_common.signals import storage_changed
 from samples.views import utils
-from . import models
+from kicker import models
 
 
 class NoKickerNumber(Exception):
@@ -56,8 +56,8 @@ def average_match_duration(two_player_game):
 
 def get_elo_delta(goals_a, goals_b, number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
                   seconds, two_player_game):
-    S = 1/2 + 1/2 * (goals_a - goals_b) / (seconds * average_goal_frequency(two_player_game))
-    E = 1 / (1 + 10**((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
+    S = 1 / 2 + 1 / 2 * (goals_a - goals_b) / (seconds * average_goal_frequency(two_player_game))
+    E = 1 / (1 + 10 ** ((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
     delta = math.sqrt(seconds / average_match_duration(two_player_game)) * (S - E)
     return delta
 
@@ -96,7 +96,7 @@ def get_current_kicker_number_or_estimate(player):
                                       match.seconds, two_player_game=match.player_a_1 == match.player_a_2)
                 delta_player = 40 * delta
                 if player in [match.player_b_1, match.player_b_2]:
-                    delta_player = - delta_player
+                    delta_player = -delta_player
                 preliminary_kicker_number += delta_player
                 number_of_matches += 1
             if number_of_matches < 7:
@@ -140,15 +140,15 @@ class MatchResult(object):
                 match.seconds, self.two_player_game)
             self.delta_a_1 = get_k(match.player_a_1) * delta
             self.delta_a_2 = get_k(match.player_a_2) * delta
-            self.delta_b_1 = - get_k(match.player_b_1) * delta
-            self.delta_b_2 = - get_k(match.player_b_2) * delta
+            self.delta_b_1 = -get_k(match.player_b_1) * delta
+            self.delta_b_2 = -get_k(match.player_b_2) * delta
             self.new_number_a_1 = self.number_player_a_1 + self.delta_a_1
             self.new_number_a_2 = self.number_player_a_2 + self.delta_a_2
             self.new_number_b_1 = self.number_player_b_1 + self.delta_b_1
             self.new_number_b_2 = self.number_player_b_2 + self.delta_b_2
-            B = 10**((self.number_player_b_1 + self.number_player_b_2 - self.number_player_a_1 - self.number_player_a_2)
+            B = 10 ** ((self.number_player_b_1 + self.number_player_b_2 - self.number_player_a_1 - self.number_player_a_2)
                      / 800)
-            self.expected_goal_difference = (1 / (1 + B) - 1/2) * \
+            self.expected_goal_difference = (1 / (1 + B) - 1 / 2) * \
                 2 * average_goal_frequency(self.two_player_game) * average_match_duration(self.two_player_game)
             self.estimated_win_team_1 = get_k() * delta
 
@@ -164,19 +164,19 @@ class MatchResult(object):
             for shares in self.player_a_1.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_a_1, timestamp=self.timestamp)
+                    value=get_old_stock_value(shares.owner) + shares.number / 100 * self.delta_a_1, timestamp=self.timestamp)
             for shares in self.player_a_2.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_a_2, timestamp=self.timestamp)
+                    value=get_old_stock_value(shares.owner) + shares.number / 100 * self.delta_a_2, timestamp=self.timestamp)
             for shares in self.player_b_1.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_b_1, timestamp=self.timestamp)
+                    value=get_old_stock_value(shares.owner) + shares.number / 100 * self.delta_b_1, timestamp=self.timestamp)
             for shares in self.player_b_2.sold_shares.all():
                 models.StockValue.objects.create(
                     gambler=shares.owner,
-                    value=get_old_stock_value(shares.owner) + shares.number/100 * self.delta_b_2, timestamp=self.timestamp)
+                    value=get_old_stock_value(shares.owner) + shares.number / 100 * self.delta_b_2, timestamp=self.timestamp)
 
 
 @login_required
