@@ -23,7 +23,7 @@ import dateutil.tz
 import django.http
 import django.contrib.auth.models
 from django.core.cache import cache
-from django.db.models import get_models, get_app
+from django.apps.registry import apps
 from django.conf import settings
 from django.utils.encoding import iri_to_uri, smart_str
 from django.forms.util import ErrorList, ValidationError
@@ -537,12 +537,12 @@ def get_all_models(app_label=None):
     """
     global all_models, abstract_models
     if app_label:
-        result = dict((model.__name__, model) for model in get_models(get_app(app_label)))
+        result = dict((model.__name__, model) for model in apps.get_app_config(app_label).get_models())
         result.update((model.__name__, model) for model in abstract_models if model._meta.app_label == app_label)
         return result
     if all_models is None:
         abstract_models = frozenset(abstract_models)
-        all_models = dict((model.__name__, model) for model in get_models())
+        all_models = dict((model.__name__, model) for model in apps.get_models())
         all_models.update((model.__name__, model) for model in abstract_models)
     return all_models.copy()
 
