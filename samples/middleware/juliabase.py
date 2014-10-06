@@ -19,7 +19,6 @@ import locale, re
 from django.utils.cache import patch_vary_headers
 from django.utils import translation
 from django.template import loader, RequestContext
-from django.contrib.auth.models import SiteProfileNotAvailable
 from samples.models import UserDetails
 from samples.views import utils
 from samples.permissions import PermissionError
