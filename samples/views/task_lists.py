@@ -29,7 +29,7 @@ from jb_common import utils as common_utils
 from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples import permissions
-from jb_common.models import Department
+from django.conf import settings
 
 
 class SamplesForm(forms.Form):
@@ -188,7 +188,7 @@ class ChooseTaskListsForm(forms.Form):
         choices = []
         for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
-                                          if ContentType.objects.get_for_model(process) in department.processes.all())
+                                          if process._meta.app_label in settings.MAP_DEPARTMENTS_TO_APP_LABELS.get(department.name))
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
         if len(choices) == 1:
             choices = choices[0][1]
