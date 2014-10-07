@@ -107,6 +107,7 @@ class StatusForm(forms.ModelForm):
 
     class Meta:
         model = models.StatusMessage
+        fields = "__all__"
 
 
 @login_required
