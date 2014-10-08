@@ -174,7 +174,6 @@ def get_physical_processes(user):
                               if issubclass(process, models.PhysicalProcess) and not process._meta.abstract
                               # FixMe: This will break someday:
                               and process != models.Deposition]
-    print all_physical_processes
     if not user.is_superuser:
         user_department = user.jb_user_details.department
         if user_department:
