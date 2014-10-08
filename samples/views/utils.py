@@ -482,7 +482,10 @@ def build_structured_sample_list(samples, user):
             topicless_samples.append(sample)
     structured_topics = create_topic_tree(structured_topics)
     for topic_id in sub_topics:
-        del structured_topics[topic_id]
+        try:
+            del structured_topics[topic_id]
+        except KeyError:
+            continue
     structured_topics = sorted(structured_topics.itervalues(),
                                key=lambda structured_topic: structured_topic.topic.name)
     return structured_topics, topicless_samples
