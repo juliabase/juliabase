@@ -28,7 +28,6 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
-from jb_common.utils import append_error
 from jb_common.models import Topic
 from samples import models, permissions
 from samples.views import utils, feed_utils, form_utils
@@ -84,10 +83,9 @@ class NewTopicForm(forms.Form):
         parent_topic = self.cleaned_data.get("parent_topic", None)
         if Topic.objects.filter(name=topic_name, department=self.user.jb_user_details.department,
                                 parent_topic=parent_topic).exists():
-            append_error(self, _("This topic name is already used."), "new_topic_name")
-            del cleaned_data["new_topic_name"]
+            self.add_error("new_topic_name", _("This topic name is already used."))
         if parent_topic and parent_topic.manager != cleaned_data.get("topic_manager"):
-            append_error(self, _("The topic manager must be the topic manager from the upper topic."), "topic_manager")
+            self.add_error("topic_manager", _("The topic manager must be the topic manager from the upper topic."))
         return cleaned_data
 
 
@@ -188,8 +186,8 @@ class EditTopicForm(forms.Form):
         if "members" in cleaned_data and "confidential" in cleaned_data:
             if cleaned_data["confidential"] and \
                     not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):
-                append_error(self, _("In confidential topics, at least one member must have permission to edit the topic."),
-                             "members")
+                self.add_error("members",
+                               _("In confidential topics, at least one member must have permission to edit the topic."))
         return cleaned_data
 
 @login_required

@@ -30,7 +30,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext, ugettext_lazy, ungettext
 from django.conf import settings
-from jb_common.utils import append_error, send_email, get_really_full_name
+from jb_common.utils import send_email, get_really_full_name
 from jb_common.models import Topic
 from samples.views import utils
 from samples import permissions
@@ -96,7 +96,7 @@ class SubstrateForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
         if "material" in cleaned_data and "comments" in cleaned_data:
             if cleaned_data["material"] == "custom" and not cleaned_data["comments"]:
-                append_error(self, _("For a custom substrate, you must give substrate comments."), "comments")
+                self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
         return cleaned_data
 
     class Meta:

@@ -27,7 +27,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.forms.util import ValidationError
 import django.contrib.auth.models
-from jb_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils
 from django.contrib import messages
@@ -138,7 +137,7 @@ def is_referentially_valid(my_layer_forms):
         if my_layer_form.is_valid():
             nickname = my_layer_form.cleaned_data["nickname"]
             if nickname in nicknames:
-                append_error(my_layer_form, _("Nickname is already given."))
+                my_layer_form.add_error(None, _("Nickname is already given."))
                 referentially_valid = False
             else:
                 nicknames.add(nickname)

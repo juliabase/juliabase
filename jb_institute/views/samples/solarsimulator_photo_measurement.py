@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from jb_common.utils import append_error, is_json_requested, \
+from jb_common.utils import is_json_requested, \
     respond_in_json
 from jb_institute.models import SolarsimulatorPhotoMeasurement, SolarsimulatorPhotoCellMeasurement
 from jb_institute.views import form_utils
@@ -60,13 +60,13 @@ class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
             operator, external_operator = cleaned_data["combined_operator"]
             if operator:
                 if final_operator and final_operator != operator:
-                    append_error(self, u"Your operator and combined operator didn't match.", "combined_operator")
+                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
                 else:
                     final_operator = operator
             if external_operator:
                 if final_external_operator and final_external_operator != external_operator:
-                    append_error(self, u"Your external operator and combined external operator didn't match.",
-                                 "combined_external_operator")
+                    self.add_error("combined_external_operator",
+                                   "Your external operator and combined external operator didn't match.")
                 else:
                     final_external_operator = external_operator
         if not final_operator:
@@ -168,14 +168,13 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
     """
     referentially_valid = True
     if not solarsimulator_cell_forms:
-        append_error(samples_form, _(u"No measurenents given."))
+        samples_form.add_error(None, _("No measurenents given."))
         referentially_valid = False
     if solarsimulator_measurement_form and solarsimulator_measurement_form.is_valid():
         if samples_form.is_valid() and referentially_valid:
             sample = samples_form.cleaned_data["sample"]
             if form_utils.dead_samples([sample], solarsimulator_measurement_form.cleaned_data.get("timestamp")):
-                append_error(solarsimulator_measurement_form, _(u"Sample is already dead at this time."),
-                             "timestamp")
+                solarsimulator_measurement_form.add_error("timestamp", _("Sample is already dead at this time."))
                 referentially_valid = False
         positions = set()
         for measurement_form in solarsimulator_cell_forms:
@@ -184,7 +183,7 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
                 cell_index = measurement_form.cleaned_data["cell_index"]
                 position = measurement_form.cleaned_data["position"]
                 if position in positions:
-                    append_error(measurement_form, _(u"This cell position is already given."))
+                    measurement_form.add_error(None, _("This cell position is already given."))
                     referentially_valid = False
                 else:
                     positions.add(position)
@@ -193,8 +192,8 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
                 if process_id:
                     query_set = query_set.exclude(measurement__id=process_id)
                 if query_set.exists():
-                    append_error(measurement_form,
-                                 _(u"A solarsimulator measurement with this cell index and data file already exists."))
+                    measurement_form.add_error(None,
+                                 _("A solarsimulator measurement with this cell index and data file already exists."))
                     referentially_valid = False
     else:
         referentially_valid = False

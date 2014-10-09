@@ -170,7 +170,7 @@ class TaskForm(forms.ModelForm):
         cleaned_data = super(TaskForm, self).clean()
         if cleaned_data.get("status") in ["2 accepted", "3 in progress", "0 finished"]:
             if not cleaned_data.get("operator"):
-                common_utils.append_error(self, _("With this status, you must set an operator."), "operator")
+                self.add_error("operator", _("With this status, you must set an operator."))
         return cleaned_data
 
     class Meta:
