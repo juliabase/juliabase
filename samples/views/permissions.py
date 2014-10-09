@@ -30,7 +30,7 @@ from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSe
 from samples import models, permissions
 from samples.views import utils, form_utils
 import django.core
-from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 
 class PermissionsPhysicalProcess(object):
@@ -178,7 +178,7 @@ def get_physical_processes(user):
         user_department = user.jb_user_details.department
         if user_department:
             all_physical_processes = [process for process in all_physical_processes
-                                      if ContentType.objects.get_for_model(process) in user_department.processes.all()]
+                                      if process._meta.app_label in settings.MAP_DEPARTMENTS_TO_APP_LABELS.get(user_department.name)]
         else:
             all_physical_processes = []
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())

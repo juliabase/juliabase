@@ -20,7 +20,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
-from jb_common.utils import append_error
 from samples.views import utils
 from jb_institute.views import form_utils
 import jb_institute.models as institute_models
@@ -54,13 +53,13 @@ class StructuringForm(form_utils.ProcessForm):
             operator, external_operator = cleaned_data["combined_operator"]
             if operator:
                 if final_operator and final_operator != operator:
-                    append_error(self, "Your operator and combined operator didn't match.", "combined_operator")
+                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
                 else:
                     final_operator = operator
             if external_operator:
                 if final_external_operator and final_external_operator != external_operator:
-                    append_error(self, "Your external operator and combined external operator didn't match.",
-                                 "combined_external_operator")
+                    self.add_error("combined_external_operator",
+                                   "Your external operator and combined external operator didn't match.")
                 else:
                     final_external_operator = external_operator
         if not final_operator:
@@ -127,7 +126,7 @@ def is_referentially_valid(structuring_form, sample_form):
     if structuring_form.is_valid():
         if sample_form.is_valid() and form_utils.dead_samples([sample_form.cleaned_data["sample"]],
                                                               structuring_form.cleaned_data["timestamp"]):
-            append_error(structuring_form, _("Sample is already dead at this time."), "timestamp")
+            structuring_form.add_error("timestamp", _("Sample is already dead at this time."))
             referentially_valid = False
     return referentially_valid
 

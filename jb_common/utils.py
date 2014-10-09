@@ -23,7 +23,7 @@ import dateutil.tz
 import django.http
 import django.contrib.auth.models
 from django.core.cache import cache
-from django.db.models import get_models, get_app
+from django.apps.registry import apps
 from django.conf import settings
 from django.utils.encoding import iri_to_uri, smart_str
 from django.forms.util import ErrorList, ValidationError
@@ -138,34 +138,6 @@ def get_really_full_name(user):
     :rtype: unicode
     """
     return user.get_full_name() or unicode(user)
-
-
-def append_error(form, error_message, fieldname="__all__"):
-    """This function is called if a validation error is found in form data
-    which cannot be found by the ``is_valid`` method itself.  The reason is
-    very simple: For many types of invalid data, you must take other forms in
-    the same view into account.
-
-    See, for example, `split_after_deposition.is_referentially_valid`.
-
-    FixMe: Possibly this function will be superseeded by
-    <https://code.djangoproject.com/ticket/20867>.
-
-    :Parameters:
-      - `form`: the form to which the erroneous field belongs
-      - `error_message`: the message to be presented to the user
-      - `fieldname`: the name of the field that triggered the validation
-        error.  It is optional, and if not given, the error is considered an
-        error of the form as a whole.
-
-    :type form: ``forms.Form`` or ``forms.ModelForm``.
-    :type fieldname: str
-    :type error_message: unicode
-    """
-    # FixMe: Is it really a good idea to call ``is_valid`` here?
-    # ``append_error`` is also called in ``clean`` methods after all.
-    form.is_valid()
-    form._errors.setdefault(fieldname, ErrorList()).append(error_message)
 
 
 dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r](-+|=+)\s*$")
@@ -537,12 +509,12 @@ def get_all_models(app_label=None):
     """
     global all_models, abstract_models
     if app_label:
-        result = dict((model.__name__, model) for model in get_models(get_app(app_label)))
+        result = dict((model.__name__, model) for model in apps.get_app_config(app_label).get_models())
         result.update((model.__name__, model) for model in abstract_models if model._meta.app_label == app_label)
         return result
     if all_models is None:
         abstract_models = frozenset(abstract_models)
-        all_models = dict((model.__name__, model) for model in get_models())
+        all_models = dict((model.__name__, model) for model in apps.get_models())
         all_models.update((model.__name__, model) for model in abstract_models)
     return all_models.copy()
 

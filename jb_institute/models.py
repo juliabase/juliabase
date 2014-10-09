@@ -41,15 +41,9 @@ from jb_institute.models_physical_processes import *
 from jb_institute.models_depositions import *
 from jb_institute.models_sample_details import *
 import samples.models
-from samples.utils import register_all_models_to_department
+
 
 samples.models.clearance_sets.update({
         PDSMeasurement: (PDSMeasurement, Substrate),
         ClusterToolDeposition: (ClusterToolDeposition, Substrate),
         })
-
-# Use this option when you want to set the related department to your
-# processes automatically.
-# You have to set a department in order to allow non-administrators the
-# option to grand permissions to processes to other users.
-#register_all_models_to_department("Institute")
