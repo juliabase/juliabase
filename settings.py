@@ -111,7 +111,6 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "jb_institute",
     "samples",
-    "south",
     "jb_common"
 )
 
