@@ -22,6 +22,11 @@ from django.conf.global_settings import LOGGING as OLD_LOGGING
 from django.utils.translation import ugettext_lazy as _
 
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 ALLOWED_HOSTS = ["0.0.0.0"]
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -38,8 +43,6 @@ ADMINS = (
 # empty, don't send any email at all.
 DEBUG_EMAIL_REDIRECT_USERNAME = "t.bronger"
 
-MANAGERS = ADMINS
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -53,8 +56,6 @@ DATABASES = {
 TIME_ZONE = "Europe/Berlin"
 
 LANGUAGE_CODE = "en-us"
-
-SITE_ID = 1
 
 USE_I18N = True
 USE_L10N = False
