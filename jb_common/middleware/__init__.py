@@ -20,7 +20,6 @@ from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
-from django.contrib.auth.models import SiteProfileNotAvailable
 from django.contrib.auth import logout
 import django.core.urlresolvers
 from jb_common.models import UserDetails, ErrorPage
@@ -51,7 +50,7 @@ class LocaleMiddleware(object):
             try:
                 language = request.user.jb_user_details.language
                 return language
-            except (SiteProfileNotAvailable, UserDetails.DoesNotExist):
+            except UserDetails.DoesNotExist:
                 pass
         return translation.get_language_from_request(request)
 
