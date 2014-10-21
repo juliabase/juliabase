@@ -50,6 +50,12 @@ def add_user_details(sender, instance, created=True, **kwargs):
 
     If there is only one department, this is default for new users.
 
+    You may call this function directly from a migration (where signals don't
+    work).  But then, you have to pass the ``UserDetails`` and ``Department``
+    models in the keyword arguments ``model_user_details`` and
+    ``model_department``, respectively, because they may be the historical
+    version.
+
     :Parameters:
       - `sender`: the sender of the signal; will always be the ``User`` model
       - `instance`: the newly-added user
@@ -59,10 +65,12 @@ def add_user_details(sender, instance, created=True, **kwargs):
     :type instance: ``django.contrib.auth.models.User``
     :type created: bool
     """
+    UserDetails = kwargs.get("model_user_details", jb_app.UserDetails)
+    Department = kwargs.get("model_department", jb_app.Department)
     if created:
-        departments = jb_app.Department.objects.all()
+        departments = Department.objects.all()
         department = departments[0] if departments.count() == 1 else None
-        jb_app.UserDetails.objects.get_or_create(user=instance, department=department)
+        UserDetails.objects.get_or_create(user=instance, department=department)
 
 
 @receiver(maintain)

@@ -168,7 +168,7 @@ import django.contrib.auth.models
 from samples import models as samples_app
 from jb_common import models as jb_common_app
 from jb_common.signals import maintain
-from django.contrib.contenttypes.models import ContentType
+import django.contrib.contenttypes.management
 from django.db.models import Q
 
 
@@ -228,11 +228,19 @@ def get_identifying_data_hash(user):
 
 
 @receiver(signals.post_save, sender=django.contrib.auth.models.User)
-def add_user_details(sender, instance, created, **kwargs):
+def add_user_details(sender, instance, created=True, **kwargs):
     """Create ``UserDetails`` for every newly created user.
+
+    You may call this function directly from a migration (where signals don't
+    work).  But then, you have to pass the ``UserDetails`` and ``ContentType``
+    models in the keyword arguments ``model_user_details`` and
+    ``model_content_type``, respectively, because they may be the historical
+    version.
     """
+    UserDetails = kwargs.get("model_user_details", samples_app.UserDetails)
+    ContentType = kwargs.get("model_content_type", django.contrib.contenttypes.models.ContentType)
     if created:
-        user_details, __ = samples_app.UserDetails.objects.get_or_create(
+        user_details, __ = UserDetails.objects.get_or_create(
             user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
         try:
             user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
