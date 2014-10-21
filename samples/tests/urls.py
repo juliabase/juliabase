@@ -22,6 +22,7 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import *
 from django.conf import settings
 from django.contrib import admin
+from django.conf.urls.static import static
 
 admin.autodiscover()
 
@@ -35,7 +36,4 @@ urlpatterns += patterns("",
     (r"^admin/", include(admin.site.urls)),
 )
 
-if settings.IS_TESTSERVER:
-    urlpatterns += patterns("",
-                            (r"^media/(?P<path>.*)$", "django.views.static.serve", {"document_root": settings.STATIC_ROOT}),
-                            )
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
