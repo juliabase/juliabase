@@ -18,6 +18,7 @@ FixMe: Layout files should be taken from cache if appropriate.
 """
 
 from __future__ import unicode_literals, absolute_import, division
+
 import os.path, subprocess
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -38,7 +39,7 @@ def show_layout(request, process_id, sample_id):
     jb_common.utils.mkdirs(pdf_filename)
     layout = layouts.get_layout(sample, process)
     if not layout:
-        raise Http404(unicode("error"))
+        raise Http404("error")
     layout.generate_pdf(pdf_filename)
 
     png_filename = os.path.join(settings.CACHE_ROOT, "layouts", "{0}-{1}.png".format(process.id, sample.id))

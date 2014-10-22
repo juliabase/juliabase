@@ -21,6 +21,7 @@ well as models for layers.
 """
 
 from __future__ import absolute_import, unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
@@ -38,6 +39,7 @@ This is used in
 """
 
 
+@python_2_unicode_compatible
 class Deposition(PhysicalProcess):
     """The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
@@ -61,7 +63,7 @@ class Deposition(PhysicalProcess):
     def get_absolute_url(self):
         return ("samples.views.main.show_deposition", [self.number])
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("deposition {number}").format(number=self.number)
 

@@ -17,6 +17,7 @@
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import subprocess
 from django.http import Http404
@@ -65,10 +66,10 @@ def show_stack(request, sample_id, thumbnail):
             jb_common.utils.mkdirs(locations["diagram_file"])
             informal_stacks.generate_diagram(
                 locations["diagram_file"], [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
-                unicode(sample), _("Layer stack of {0}").format(sample))
+                six.text_type(sample), _("Layer stack of {0}").format(sample))
         if thumbnail:
             subprocess.call(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
                              "-sOutputFile=" + locations["thumbnail_file"], locations["diagram_file"]])
         storage_changed.send(models.SampleDetails)
     return jb_common.utils.static_file_response(
-        filepath, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(unicode(sample))))
+        filepath, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(six.text_type(sample))))

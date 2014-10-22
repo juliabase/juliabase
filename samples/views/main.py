@@ -18,6 +18,7 @@ better place to be (yet).
 """
 
 from __future__ import absolute_import, unicode_literals, division
+import django.utils.six as six
 
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
@@ -105,7 +106,7 @@ def main_menu(request):
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user.my_samples.all(), request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = []
-    for process_class, process in permissions.get_all_addable_physical_process_models().iteritems():
+    for process_class, process in permissions.get_all_addable_physical_process_models().items():
         try:
             url = django.core.urlresolvers.reverse("lab_notebook_" + process["type"], kwargs={"year_and_month": ""})
         except django.core.urlresolvers.NoReverseMatch:
@@ -229,6 +230,6 @@ def show_process(request, process_id):
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data().to_dict())
-    template_context = {"title": unicode(process), "samples": process.samples.all(), "process": process}
+    template_context = {"title": six.text_type(process), "samples": process.samples.all(), "process": process}
     template_context.update(utils.digest_process(process, request.user))
     return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))

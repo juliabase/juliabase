@@ -19,6 +19,7 @@ used e.g. for the CSV export of model instances.
 """
 
 from __future__ import unicode_literals
+import django.utils.six as six
 
 class DataNode(object):
     """Class for a node in a data tree intended to hold instance data.
@@ -59,11 +60,11 @@ class DataNode(object):
         :type instance: ``models.Model`` or unicode or str
         :type descriptive_name: unicode
         """
-        if isinstance(instance, basestring):
+        if isinstance(instance, six.string_types):
             self.name = self.descriptive_name = instance
         else:
-            self.name = unicode(instance._meta.verbose_name)
-        self.descriptive_name = unicode(descriptive_name) or self.name
+            self.name = six.text_type(instance._meta.verbose_name)
+        self.descriptive_name = six.text_type(descriptive_name) or self.name
         self.items = []
         self.children = []
 
@@ -220,5 +221,5 @@ class DataItem(object):
         :type value: object
         :type origin: unicode or ``NoneType``
         """
-        assert isinstance(key, basestring)
+        assert isinstance(key, six.string_types)
         self.key, self.value, self.origin = key, value, origin

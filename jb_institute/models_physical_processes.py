@@ -18,6 +18,7 @@ includes measurements, etching processes, clean room work etc.
 """
 
 from __future__ import absolute_import, unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 import os.path
 import numpy
@@ -50,6 +51,7 @@ substrate_materials = (
 """Contains all possible choices for `Substrate.material`.
 """
 
+@python_2_unicode_compatible
 class Substrate(PhysicalProcess):
     """Model for substrates.  It is the very first process of a sample.  It is
     some sort of birth certificale of the sample.  If it doesn't exist, we
@@ -69,7 +71,7 @@ class Substrate(PhysicalProcess):
         verbose_name = _("substrate")
         verbose_name_plural = _("substrates")
 
-    def __unicode__(self):
+    def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
     def get_data(self):
@@ -101,6 +103,7 @@ pds_apparatus_choices = (
     ("pds2", _("PDS #2"))
 )
 
+@python_2_unicode_compatible
 class PDSMeasurement(PhysicalProcess):
     """Model for PDS measurements.
     """
@@ -120,7 +123,7 @@ class PDSMeasurement(PhysicalProcess):
                        ("view_every_pds_measurement", _("Can view all PDS measurements")))
         ordering = ["number"]
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         try:
             return _("PDS measurement of {sample}").format(sample=self.samples.get())
@@ -182,6 +185,7 @@ class PDSMeasurement(PhysicalProcess):
         return data_node
 
 
+@python_2_unicode_compatible
 class SolarsimulatorCell(models.Model):
     position = models.CharField(_("cell position"), max_length=5)
     cell_index = models.PositiveIntegerField(_("cell index"))
@@ -191,7 +195,7 @@ class SolarsimulatorCell(models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("cell {position} of {solarsimulator_measurement}").format(
             position=self.position, solarsimulator_measurement=self.measurement)
@@ -231,6 +235,7 @@ irradiance_choices = (("AM1.5", "AM1.5"),
                       ("OG590", "OG590"),
                       ("BG7", "BG7"))
 
+@python_2_unicode_compatible
 class SolarsimulatorPhotoMeasurement(PhysicalProcess):
     irradiance = models.CharField(_("irradiance"), max_length=10, choices=irradiance_choices)
     temperature = models.DecimalField(_("temperature"), max_digits=3, decimal_places=1, help_text=_("in ℃"),
@@ -247,7 +252,7 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
                         _("Can edit perms for photo measurements")),
                        ("view_every_solarsimulator_photo_measurement", _("Can view all photo measurements")))
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         try:
             return _("solarsimulator photo measurement of {sample}").format(sample=self.samples.get())

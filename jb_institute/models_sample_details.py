@@ -18,6 +18,8 @@ particular, it contains the informal layer stacks.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
+from django.utils.encoding import python_2_unicode_compatible
 
 import os.path
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
@@ -33,6 +35,7 @@ from samples.data_tree import DataNode, DataItem
 import samples.models, samples.views.shared_utils
 
 
+@python_2_unicode_compatible
 class SampleDetails(models.Model):
     """Model for sample details.  It extends the ``Sample`` model as
     ``UserDetails`` extend ``User``, i.e. through a one-to-one relationship.
@@ -48,8 +51,8 @@ class SampleDetails(models.Model):
         verbose_name = _("sample details")
         verbose_name_plural = pgettext_lazy("plural", "sample details")
 
-    def __unicode__(self):
-        return unicode(self.sample)
+    def __str__(self):
+        return six.text_type(self.sample)
 
     def save(self, *args, **kwargs):
         """Saves the object to the database.  I touch the associated sample,
@@ -250,6 +253,7 @@ classification_choices = (("a-Si:H", "a-Si:H"), ("muc-Si:H", "µc-Si:H"), ("si-w
 
 doping_choices = (("p", "p"), ("i", "i"), ("n", "n"))
 
+@python_2_unicode_compatible
 class InformalLayer(models.Model):
     """Model for one layer in the informal layer stack diagram.
     """
@@ -276,7 +280,7 @@ class InformalLayer(models.Model):
         verbose_name = _("informal layer")
         verbose_name_plural = _("informal layers")
 
-    def __unicode__(self):
+    def __str__(self):
         return "{0}-{1} ({2})".format(self.sample_details.sample, self.index, self.classification or self.comments)
 
     def save(self, *args, **kwargs):

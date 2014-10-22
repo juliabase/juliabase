@@ -22,6 +22,7 @@ be changed once they have been created.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 from jb_common.utils import append_error, adjust_timezone_information
 from django import forms
@@ -69,7 +70,7 @@ class SampleSeriesForm(forms.ModelForm):
         if sample_series:
             self.fields["currently_responsible_person"].set_users(user, sample_series.currently_responsible_person)
         else:
-            self.fields["currently_responsible_person"].choices = ((user.pk, unicode(user)),)
+            self.fields["currently_responsible_person"].choices = ((user.pk, six.text_type(user)),)
         self.fields["topic"].set_topics(user, sample_series.topic if sample_series else None)
 
     def clean_short_name(self):
@@ -169,8 +170,8 @@ def sample_series_etag(request, name):
     embed_timestamp(request, name)
     if request._sample_series_timestamp:
         hash_ = hashlib.sha1()
-        hash_.update(str(request._sample_series_timestamp))
-        hash_.update(str(request.user.pk))
+        hash_.update(str(request._sample_series_timestamp).encode("utf-8"))
+        hash_.update(str(request.user.pk).encode("utf-8"))
         return hash_.hexdigest()
 
 

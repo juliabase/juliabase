@@ -35,13 +35,13 @@ class ExportTest(TestCase):
     def test_substrate_export(self):
         response = self.client.get("/processes/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
-        self.assertEqual(json.loads(response.content), substrate_data)
+        self.assertEqual(json.loads(response.content.decode("ascii")), substrate_data)
 
     def test_pds_measurement_export(self):
         response = self.client.get("/pds_measurements/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
         self.assertEqual(
-            json.loads(response.content),
+            json.loads(response.content.decode("ascii")),
             {"sample IDs": [2], "apparatus": "pds1", "timestamp inaccuracy": 0, "timestamp": "2010-12-02 12:07:36",
              "external operator": None,
              "operator": "testuser", "finished": True, "comments": "",
@@ -59,7 +59,7 @@ class AdminExportTest(TestCase):
     def test_substrate_by_sample_export(self):
         response = self.client.get("/substrates_by_sample/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
-        self.assertEqual(json.loads(response.content),
+        self.assertEqual(json.loads(response.content.decode("ascii")),
                          {"operator": "testuser", "timestamp": "2010-12-02 11:07:36", "material": "corning",
                           "timestamp inaccuracy": 0, "comments": "", "finished": True, "sample IDs": [1, 2],
                           "external operator": None, "type": "substrate", "ID": 1})

@@ -55,6 +55,6 @@ def register_all_models_to_department(department_name):
 
     :type department_name: str
     """
-    for process_class in utils.get_all_models(settings.MAP_DEPARTMENTS_TO_APP_LABELS[department_name]).itervalues():
+    for process_class in utils.get_all_models(settings.MAP_DEPARTMENTS_TO_APP_LABELS[department_name]).values():
         if not process_class._meta.abstract == True:
             register_to_department(process_class, department_name)

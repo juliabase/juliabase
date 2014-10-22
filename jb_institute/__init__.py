@@ -130,10 +130,10 @@ def update_informal_layers(sender, instance, created, **kwargs):
             which of them is next for being added to the stack.
             """
             if consumed_layers:
-                for sub_layers in non_process_layers.itervalues():
+                for sub_layers in non_process_layers.values():
                     sub_layers -= consumed_layers
             while non_process_layers:
-                next_layers = [layer for layer, sublayers in non_process_layers.iteritems() if not sublayers]
+                next_layers = [layer for layer, sublayers in non_process_layers.items() if not sublayers]
                 if not next_layers:
                     break
                 assert len(next_layers) == 1
@@ -141,7 +141,7 @@ def update_informal_layers(sender, instance, created, **kwargs):
                 informal_layers.append(next_layer)
                 del non_process_layers[next_layer]
                 one_removed = False
-                for sub_layers in non_process_layers.itervalues():
+                for sub_layers in non_process_layers.values():
                     if next_layer in sub_layers:
                         sub_layers.remove(next_layer)
                         one_removed = True

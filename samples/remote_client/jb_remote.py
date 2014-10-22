@@ -13,6 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import unicode_literals
+import six
 
 import urllib, urllib2, cookielib, json, logging
 import datetime, re, time, random
@@ -31,7 +32,7 @@ __all__ = ["login", "logout", "new_samples", "SixChamberDeposition", "SixChamber
 def quote_header(value):
     if isinstance(value, bool):
         return "on" if value else None
-    return unicode(value).encode("utf-8")
+    return six.text_type(value).encode("utf-8")
 
 
 class ResponseError(Exception):
@@ -51,7 +52,7 @@ class JuliaBaseConnection(object):
         root_url = self.root_url if not https else "https" + self.root_url[4:]
         if data is not None:
             cleaned_data = {}
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 key = quote_header(key)
                 if value is not None:
                     if not isinstance(value, list):
@@ -179,7 +180,7 @@ class SixChamberLayer(object):
         self.channels = []
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "number": layer_index + 1,
                 prefix + "chamber": self.chamber,
                 prefix + "pressure": self.pressure,
@@ -262,7 +263,7 @@ class LargeAreaLayer(object):
             self.dc_bias = self.electrode = self.electrodes_distance = None
 
     def get_data(self, layer_number, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "number": self.number or layer_number,
                 prefix + "date": self.date,
                 prefix + "layer_type": self.layer_type,
@@ -328,7 +329,7 @@ class SmallClusterToolHotwireLayer(object):
             self.si2h6 = self.ph3_h2 = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "layer_type": "hotwire",
                 prefix + "pressure": self.pressure,
                 prefix + "time": self.time,
@@ -374,7 +375,7 @@ class SmallClusterToolPECVDLayer(object):
             self.si2h6 = self.ph3_h2 = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "layer_type": "PECVD",
                 prefix + "chamber": self.chamber,
                 prefix + "pressure": self.pressure,

@@ -19,6 +19,7 @@ views package.  All symbols from `shared_utils` are also available here.  So
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 from jb_common import mimeparse
 from django.conf import settings
@@ -443,7 +444,7 @@ def build_structured_sample_list(samples, user):
         """Goes through all given topics and makes sure that all parent
         topics are also included.
         """
-        for structured_topic in structured_topics.itervalues():
+        for structured_topic in structured_topics.values():
             if structured_topic.topic.has_parent():
                 try:
                     parent_structured_topic = structured_topics[structured_topic.topic.parent_topic.id]
@@ -483,7 +484,7 @@ def build_structured_sample_list(samples, user):
     structured_topics = create_topic_tree(structured_topics)
     for topic_id in sub_topics:
         del structured_topics[topic_id]
-    structured_topics = sorted(structured_topics.itervalues(),
+    structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
     return structured_topics, topicless_samples
 
@@ -536,7 +537,7 @@ def format_enumeration(items):
 
     :rtype: unicode
     """
-    items = sorted(unicode(item) for item in items)
+    items = sorted(six.text_type(item) for item in items)
     if len(items) > 2:
         return _(", ").join(items[:-1]) + _(", and ") + items[-1]
     elif len(items) == 2:

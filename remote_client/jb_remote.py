@@ -24,6 +24,18 @@ Unix-like systems, it is in /tmp.
 """
 
 from __future__ import unicode_literals
+import six
+def python_2_unicode_compatible(klass):
+    """Class decorator taken from django.utils.encoding."""
+    if six.PY2:
+        if '__str__' not in klass.__dict__:
+            raise ValueError("@python_2_unicode_compatible cannot be applied "
+                             "to %s because it doesn't define __str__()." %
+                             klass.__name__)
+        klass.__unicode__ = klass.__str__
+        klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
+    return klass
+
 import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path, datetime, re, time, random, sys, \
     subprocess
 import cPickle as pickle
@@ -69,7 +81,7 @@ def clean_header(value):
     elif isinstance(value, file):
         return value
     else:
-        return unicode(value).encode("utf-8")
+        return six.text_type(value).encode("utf-8")
 
 
 def comma_separated_ids(ids):
@@ -104,7 +116,7 @@ def encode_multipart_formdata(data):
 
     non_file_items = []
     file_items = []
-    for key, value in data.iteritems():
+    for key, value in data.items():
         if isinstance(value, file):
             file_items.append((key, value))
         else:
@@ -142,6 +154,7 @@ def encode_multipart_formdata(data):
     return content_type, body
 
 
+@python_2_unicode_compatible
 class JuliaBaseError(Exception):
     """Exception class for high-level JuliaBase errors.
 
@@ -160,11 +173,7 @@ class JuliaBaseError(Exception):
         self.error_code, self.error_message = error_code, message
 
     def __str__(self):
-        # FixMe: In Python3, the ``encode`` call must be dropped.
-        return "({0}) {1}".format(self.error_code, self.error_message.encode("utf-8"))
-
-    def __unicode__(self):
-        return self.__str__()
+        return "({0}) {1}".format(self.error_code, self.error_message)
 
 
 class PrimaryKeys(object):
@@ -259,7 +268,7 @@ class JuliaBaseConnection(object):
         """
         if data is not None:
             cleaned_data = {}
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 key = clean_header(key)
                 if value is not None:
                     if not isinstance(value, list):
@@ -509,7 +518,7 @@ class ClusterToolDeposition(object):
             self.number = data["number"]
             self.carrier = data["carrier"]
             self.layers = []
-            layers = [(int(key[6:]), value) for key, value in data.iteritems() if key.startswith("layer ")]
+            layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
                 if layer_data["layer type"] == "PECVD":
                     ClusterToolPECVDLayer(self, layer_data)
@@ -579,7 +588,7 @@ class ClusterToolHotWireLayer(object):
             self.time = self.comments = self.wire_material = self.base_pressure = self.h2 = self.sih4 = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "layer_type": "hot-wire",
                 prefix + "time": self.time,
                 prefix + "comments": self.comments,
@@ -609,7 +618,7 @@ class ClusterToolPECVDLayer(object):
                 self.deposition_power = self.h2 = self.sih4 = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "layer_type": "PECVD",
                 prefix + "chamber": self.chamber,
                 prefix + "time": self.time,
@@ -765,7 +774,7 @@ class Sample(object):
             self.purpose = data["purpose"]
             self.tags = data["tags"]
             self.topic = data["topic"]
-            self.processes = dict((key, value) for key, value in data.iteritems() if key.startswith("process "))
+            self.processes = dict((key, value) for key, value in data.items() if key.startswith("process "))
         else:
             self.id = self.name = self.current_location = self.currently_responsible_person = self.purpose = self.tags = \
                 self.topic = self.timestamp = None
@@ -831,7 +840,7 @@ def normalize_sample_name(sample_name):
     sample_name = " ".join(sample_name.split())
     translations = {"ä": "ae", "ö": "oe", "ü": "ue", "Ä": "Ae", "Ö": "Oe", "Ü": "Ue", "ß": "ss",
                     " ": "_", "°": "o"}
-    for from_, to in translations.iteritems():
+    for from_, to in translations.items():
         sample_name = sample_name.replace(from_, to)
     allowed_sample_name_characters = []
     for character in sample_name:
@@ -1275,7 +1284,7 @@ class SolarsimulatorPhotoMeasurement(object):
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.cells = {}
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 if key.startswith("cell position "):
                     cell = PhotoCellMeasurement(value)
                     self.cells[cell.position] = cell
@@ -1301,7 +1310,7 @@ class SolarsimulatorPhotoMeasurement(object):
                 "remove_from_my_samples": False,
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
-        for index, cell in enumerate(self.cells.itervalues()):
+        for index, cell in enumerate(self.cells.values()):
             data.update(cell.get_data(index))
         with TemporaryMySamples(self.sample_id):
             if self.existing:
@@ -1328,7 +1337,7 @@ class PhotoCellMeasurement(object):
                 self.isc = self.data_file = None
 
     def get_data(self, index):
-        prefix = unicode(index) + "-"
+        prefix = six.text_type(index) + "-"
         return {prefix + "position": self.position,
                 prefix + "cell_index": self.cell_index,
                 prefix + "area": self.area,
@@ -1397,7 +1406,7 @@ class FiveChamberDeposition(object):
             self.comments = data["comments"]
             self.number = data["number"]
             self.layers = []
-            layers = [(int(key[6:]), value) for key, value in data.iteritems() if key.startswith("layer ")]
+            layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
                 FiveChamberLayer(self, layer_data)
             self.existing = True
@@ -1475,7 +1484,7 @@ class FiveChamberLayer(object):
                 self.sih4 = self.h2 = self.silane_concentration = self.date = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "number": layer_index + 1,
                 prefix + "chamber": self.chamber,
                 prefix + "temperature_1": self.temperature_1,

@@ -19,6 +19,7 @@ substrate with every sample, too (and possibly a cleaning process).
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import datetime
 from django.db import transaction, IntegrityError
@@ -29,7 +30,7 @@ from django.forms.util import ValidationError
 from django.forms import widgets
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
@@ -43,7 +44,7 @@ from jb_institute import printer_labels
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
     def render(self):
         return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                    """<li style="white-space: nowrap">{0}</li>""".format(force_unicode(w)) for w in self)))
+                    """<li style="white-space: nowrap">{0}</li>""".format(force_text(w)) for w in self)))
 
 
 rename_choices = (("", _("no names")),
@@ -186,7 +187,7 @@ def add_samples_to_database(add_samples_form, user):
         if topic:
             for watcher in (user_details.user for user_details in topic.auto_adders.all()):
                 watcher.my_samples.add(sample)
-        new_names.append(unicode(sample))
+        new_names.append(six.text_type(sample))
     return new_names, samples
 
 

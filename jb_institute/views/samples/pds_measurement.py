@@ -19,6 +19,7 @@ doesn't happen here).
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import datetime, os.path, re, codecs
 from django.template import RequestContext
@@ -107,7 +108,7 @@ def get_data_from_file(number):
     if comments.startswith("\n"):
         comments = comments[1:]
     result["comments"] = comments
-    result["number"] = unicode(number)
+    result["number"] = six.text_type(number)
     return result, sample
 
 

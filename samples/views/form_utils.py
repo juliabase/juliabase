@@ -18,6 +18,7 @@ and validation.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import re, os.path, datetime, json
 from django.forms.util import ErrorList, ValidationError
@@ -466,7 +467,7 @@ class TopicField(forms.ChoiceField):
         """
         def topics_and_sub_topics(parent_topics):
             for topic in parent_topics:
-                name = 2 * " " + unicode(topic) if topic.has_parent() else  unicode(topic)
+                name = 2 * " " + six.text_type(topic) if topic.has_parent() else six.text_type(topic)
                 self.choices.append((topic.pk, name))
                 child_topics = topic.child_topics.all()
                 if child_topics:
@@ -822,7 +823,7 @@ def clean_quantity_field(value, units):
     """
     if not value:
         return ""
-    value = unicode(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
+    value = six.text_type(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
     match = quantity_pattern.match(value)
     if not match:
         raise ValidationError(_("Must be a physical quantity with number and unit."))
@@ -897,7 +898,7 @@ def collect_subform_indices(post_data, subform_key="number", prefix=""):
     """
     subform_name_pattern = re.compile(re.escape(prefix) + r"(?P<index>\d+)(_\d+)*-(?P<key>.+)")
     values = {}
-    for key, value in post_data.iteritems():
+    for key, value in post_data.items():
         match = subform_name_pattern.match(key)
         if match:
             index = int(match.group("index"))
@@ -961,14 +962,14 @@ def normalize_prefixes(post_data):
                 digested_post_data[key] = post_data.getlist(key)
     level0_indices = sorted(level0_indices)
     normalization_necessary = level0_indices and level0_indices[-1] != len(level0_indices) - 1
-    for key, value in level1_indices.iteritems():
+    for key, value in level1_indices.items():
         level1_indices[key] = sorted(value)
         normalization_necessary = normalization_necessary or (
             level1_indices[key] and level1_indices[key][-1] != len(level1_indices[key]) - 1)
     if normalization_necessary:
         new_post_data = QueryDict("").copy()
-        for key, value in digested_post_data.iteritems():
-            if isinstance(key, basestring):
+        for key, value in digested_post_data.items():
+            if isinstance(key, six.string_types):
                 new_post_data.setlist(key, value)
             elif len(key) == 2:
                 new_post_data.setlist("{0}-{1}".format(level0_indices.index(key[0]), key[1]), value)
@@ -1013,7 +1014,7 @@ def choices_of_content_types(classes):
     can be picked by the user.
 
     This routine is necessary for two reasons: It translates the model names
-    behind the content types – ``unicode(contentype_instance)`` yields the
+    behind the content types – ``six.text_type(contentype_instance)`` yields the
     English model name only.  And secondly, it sorts the choices by their
     (translated) names.
 

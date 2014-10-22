@@ -17,6 +17,7 @@
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import re, codecs, os.path, unicodedata
 from django.template.defaultfilters import stringfilter
@@ -134,7 +135,7 @@ def markdown(value, margins="default"):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    result = markup.markdown(substitute_formulae(utils.substitute_html_entities(unicode(value))))
+    result = markup.markdown(substitute_formulae(utils.substitute_html_entities(six.text_type(value))))
     if result.startswith("<p>"):
         if margins == "collapse":
             result = mark_safe("""<p style="margin: 0pt">""" + result[3:])

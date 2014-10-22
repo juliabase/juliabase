@@ -26,7 +26,7 @@ from django import forms
 from django.forms import widgets
 from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.contrib.auth.decorators import login_required
 import jb_common.utils
 from jb_common.utils import append_error
@@ -41,7 +41,7 @@ _ = ugettext
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
     def render(self):
         return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                    "<li>{0}</li>".format(force_unicode(w)) for w in self)))
+                    "<li>{0}</li>".format(force_text(w)) for w in self)))
 
 new_layer_choices = (
     ("hot-wire", _("hot-wire")),

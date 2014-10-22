@@ -191,7 +191,7 @@ deposition.timestamp_inaccuracy = 3
 deposition.timestamp = u'%s %02d:00:00'""" % (date, deposition_number, comments, date, hour)
     for layer in deposition:
         print >> outfile, "\nlayer = LargeAreaLayer(deposition)"
-        for key, value in layer.fields.iteritems():
+        for key, value in layer.fields.items():
             if key != "__" and key != "comments":
                 if key == "date":
                     value = datum2date(value)

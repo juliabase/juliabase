@@ -17,6 +17,8 @@
 """
 
 from __future__ import division, unicode_literals
+import django.utils.six as six
+
 import string, re, sys, decimal
 from django.template.defaultfilters import stringfilter
 from django import template
@@ -71,7 +73,7 @@ def quantity(value, unit=None, autoescape=False):
         elif isinstance(number, decimal.Decimal):
             value_string = "{0:g}".format(float(number))
         else:
-            value_string = unicode(number)
+            value_string = six.text_type(number)
         if autoescape:
             value_string = conditional_escape(value_string)
         result = ""
@@ -135,7 +137,7 @@ class VerboseNameNode(template.Node):
             break
         else:
             return ""
-        verbose_name = unicode(model._meta.get_field(field).verbose_name)
+        verbose_name = six.text_type(model._meta.get_field(field).verbose_name)
         if verbose_name:
             verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         return verbose_name
@@ -302,7 +304,7 @@ def markdown_samples(value, margins="default"):
     however, I can't easily do that without allowing HTML tags, too.
     """
     value = jb_common.templatetags.juliabase.substitute_formulae(
-        jb_common.utils.substitute_html_entities(unicode(value)))
+        jb_common.utils.substitute_html_entities(six.text_type(value)))
     position = 0
     result = ""
     while position < len(value):
@@ -390,11 +392,11 @@ class ValueFieldNode(template.Node):
     def render(self, context):
         field = self.field.resolve(context)
         if "." not in self.field_name:
-            verbose_name = unicode(context[self.field_name]._meta.verbose_name)
+            verbose_name = six.text_type(context[self.field_name]._meta.verbose_name)
         else:
             instance, field_name = self.field_name.rsplit(".", 1)
             model = context[instance].__class__
-            verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
+            verbose_name = six.text_type(model._meta.get_field(field_name).verbose_name)
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = jb_common.templatetags.juliabase.fancy_bool(field)
@@ -440,14 +442,14 @@ def value_field(parser, token):
     if len(tokens) == 4:
         tag, field, unit, significant_digits = tokens
         if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
-            raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
+            raise template.TemplateSyntaxError("value_field's unit argument should be in quotes")
         unit = unit[1:-1]
     elif len(tokens) == 3:
         tag, field, unit = tokens
         significant_digits = None
         if not (unit[0] == unit[-1] and unit[0] in ('"', "'")):
             if not isinstance(unit, int):
-                raise template.TemplateSyntaxError, "value_field's unit argument should be in quotes"
+                raise template.TemplateSyntaxError("value_field's unit argument should be in quotes")
             else:
                 significant_digits = unit
                 unit = None
@@ -457,7 +459,7 @@ def value_field(parser, token):
         tag, field = tokens
         unit = significant_digits = None
     else:
-        raise template.TemplateSyntaxError, "value_field requires one, two, or three arguments"
+        raise template.TemplateSyntaxError("value_field requires one, two, or three arguments")
     return ValueFieldNode(field, unit or None, significant_digits)
 
 
@@ -483,7 +485,7 @@ def split_field(field1, field2, field3=None):
     help_text = """ <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else ""
     fields = [field1, field2, field3]
     result += """<td class="input">{fields_string}{help_text}</td>""".format(
-        fields_string=separator.join(unicode(field) for field in fields if field), help_text=help_text)
+        fields_string=separator.join(six.text_type(field) for field in fields if field), help_text=help_text)
     return result
 
 
@@ -500,11 +502,11 @@ class ValueSplitFieldNode(template.Node):
     def render(self, context):
         fields = [field.resolve(context) for field in self.fields]
         if "." not in self.field_name:
-            verbose_name = unicode(context[self.field_name]._meta.verbose_name)
+            verbose_name = six.text_type(context[self.field_name]._meta.verbose_name)
         else:
             instance, __, field_name = self.field_name.rpartition(".")
             model = context[instance].__class__
-            verbose_name = unicode(model._meta.get_field(field_name).verbose_name)
+            verbose_name = six.text_type(model._meta.get_field(field_name).verbose_name)
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
@@ -560,7 +562,7 @@ def value_split_field(parser, token):
         if i > 0:
             if token[0] == token[-1] and token[0] in ('"', "'"):
                 if i < len(tokens) - 1:
-                    raise template.TemplateSyntaxError, "the unit must be the very last argument"
+                    raise template.TemplateSyntaxError("the unit must be the very last argument")
                 unit = token[1:-1]
             else:
                 fields.append(token)
@@ -604,7 +606,7 @@ def display_search_tree(tree):
     if tree.children:
         result += """<tr><td colspan="2">"""
         for i, child in enumerate(tree.children):
-            result += unicode(child[0].as_p())
+            result += six.text_type(child[0].as_p())
             if child[1]:
                 result += display_search_tree(child[1])
             if i < len(tree.children) - 1:

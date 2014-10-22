@@ -262,7 +262,7 @@ class CellsLayout(Layout):
         """
         map_shapes = {}
         resolution = settings.THUMBNAIL_WIDTH / self.width
-        for key, coords in self.shapes.iteritems():
+        for key, coords in self.shapes.items():
             map_shapes[key] = {"type": "rect",
                                "coords": ",".join(str(int(round(x * resolution))) for x in
                                                   (coords[0][0],
@@ -347,7 +347,7 @@ class CellsLayout(Layout):
                 canvas.drawCentredString(self.width / 2, -descent, global_label)
         else:
             colors_and_labels = {}
-        for cell_index, coords in self.shapes.iteritems():
+        for cell_index, coords in self.shapes.items():
             origin, dimensions = coords
             try:
                 color, label = colors_and_labels[cell_index]
@@ -406,11 +406,11 @@ class JuelichStandard(CellsLayout):
               "35": ((58, 82.5), (20, 5)),
               "36": ((81.5, 82.5), (10, 5))}
 
-    for cell_index, coords in shapes.iteritems():
+    for cell_index, coords in shapes.items():
         shapes[cell_index] = ((coords[0][0] - 15, coords[0][1] - 15), coords[1])
 
     _scaling = 80 * mm / max(height, width)
-    for cell_index, coords in shapes.iteritems():
+    for cell_index, coords in shapes.items():
         shapes[cell_index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
                               (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
     height *= _scaling

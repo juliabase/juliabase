@@ -119,8 +119,8 @@ def get_user_hash(user):
     :rtype: str
     """
     user_hash = hashlib.sha1()
-    user_hash.update(settings.SECRET_KEY)
-    user_hash.update(user.username)
+    user_hash.update(settings.SECRET_KEY.encode("utf-8"))
+    user_hash.update(user.username.encode("utf-8"))
     return user_hash.hexdigest()[:10]
 
 
@@ -159,7 +159,7 @@ def get_all_addable_physical_process_models():
     global all_addable_physical_process_models
     if all_addable_physical_process_models is None:
         all_addable_physical_process_models = {}
-        for process_class in jb_common_utils.get_all_models().itervalues():
+        for process_class in jb_common_utils.get_all_models().values():
             if issubclass(process_class, samples.models.PhysicalProcess):
                 try:
                     url = process_class.get_add_link()
@@ -193,7 +193,7 @@ def get_allowed_physical_processes(user):
     :rtype: list of dict mapping str to unicode
     """
     allowed_physical_processes = []
-    for physical_process_class, add_data in get_all_addable_physical_process_models().iteritems():
+    for physical_process_class, add_data in get_all_addable_physical_process_models().items():
         if has_permission_to_add_physical_process(user, physical_process_class):
             allowed_physical_processes.append(add_data.copy())
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())

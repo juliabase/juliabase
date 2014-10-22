@@ -24,6 +24,7 @@ entries are self-contained.
 """
 
 from __future__ import absolute_import, unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 from jb_common.models import Topic, PolymorphicModel
 from jb_common.utils import get_really_full_name
@@ -38,6 +39,7 @@ import hashlib
 
 
 
+@python_2_unicode_compatible
 class FeedEntry(PolymorphicModel):
     """Abstract base model for newsfeed entries.  This is also not really
     abstract as it has a table in the database, however, it is never
@@ -58,7 +60,7 @@ class FeedEntry(PolymorphicModel):
         verbose_name_plural = _("feed entries")
         ordering = ["-timestamp"]
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("feed entry #{number}").format(number=self.pk)
 
@@ -75,9 +77,9 @@ class FeedEntry(PolymorphicModel):
         """
         super(FeedEntry, self).save(*args, **kwargs)
         entry_hash = hashlib.sha1()
-        entry_hash.update(repr(self.timestamp))
-        entry_hash.update(repr(self.originator))
-        entry_hash.update(repr(self.pk))
+        entry_hash.update(repr(self.timestamp).encode("utf-8"))
+        entry_hash.update(repr(self.originator).encode("utf-8"))
+        entry_hash.update(repr(self.pk).encode("utf-8"))
         self.sha1_hash = entry_hash.hexdigest()
         super(FeedEntry, self).save()
 
