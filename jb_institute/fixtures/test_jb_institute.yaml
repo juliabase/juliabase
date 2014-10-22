@@ -13,20 +13,6 @@
 # auth
 
 - fields:
-    last_name: "Nobody"
-    username: nobody
-    password: "!"
-  model: auth.user
-  pk: 1
-- fields:
-    first_name: "Julia"
-    is_staff: true
-    is_superuser: true
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
-    username: juliabase
-  model: auth.user
-  pk: 2
-- fields:
     first_name: "Testuser"
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     username: testuser
@@ -42,34 +28,32 @@
 
 # jb_common
 
-- fields: {browser_system: windows, language: en}
-  model: jb_common.userdetails
-  pk: 1
-- fields: {browser_system: windows, language: en}
-  model: jb_common.userdetails
-  pk: 2
-- fields: {browser_system: windows, language: en}
+- fields:
+    browser_system: windows
+    language: en
+    layout_last_modified: 2010-12-02 10:58:14.147042
   model: jb_common.userdetails
   pk: 3
-- fields: {browser_system: windows, language: en}
+- fields:
+    browser_system: windows
+    language: en
+    layout_last_modified: 2010-12-02 10:58:14.147042
   model: jb_common.userdetails
   pk: 4
-- fields:
-    confidential: false
-    members: []
-    name: Legacy
-  model: jb_common.topic
-  pk: 1
 - fields:
     confidential: true
     members: [3]
     name: restricted topic
+    department: 1
+    manager: 1
   model: jb_common.topic
   pk: 2
 - fields:
     confidential: false
     members: [3]
     name: non-restricted topic
+    department: 1
+    manager: 1
   model: jb_common.topic
   pk: 3
 
@@ -128,8 +112,6 @@
     timestamp_inaccuracy: 0
     number: 1
     raw_datafile: T:/Daten/pds/p4600-/pd4636.dat
-    evaluated_datafile: T:/Daten/pds/p4600-/a_pd4636_joe.dat
-    phase_corrected_evaluated_datafile: ''
     apparatus: pds1
   model: jb_institute.pdsmeasurement
   pk: 2
@@ -162,30 +144,9 @@
     watchers: [3]
   model: samples.sample
   pk: 2
-- fields: {external_operator: null, user: 1}
-  model: samples.initials
-  pk: LGCY
 - fields: {external_operator: null, user: 3}
   model: samples.initials
   pk: TU
-- fields:
-    auto_addition_topics: []
-    display_settings_timestamp: 2010-12-02 10:58:14.147042
-    idenfifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
-    my_layers: ''
-    my_samples_timestamp: 2010-12-02 10:58:14.147070
-    only_important_news: false
-  model: samples.userdetails
-  pk: 1
-- fields:
-    auto_addition_topics: []
-    display_settings_timestamp: 2010-12-02 10:58:14.161719
-    idenfifying_data_hash: 80206e8f98a656781795d87133a96de7aeb425d1
-    my_layers: ''
-    my_samples_timestamp: 2010-12-02 10:58:14.161742
-    only_important_news: false
-  model: samples.userdetails
-  pk: 2
 - fields:
     auto_addition_topics: [2, 3]
     display_settings_timestamp: 2010-12-02 11:00:16.637389
