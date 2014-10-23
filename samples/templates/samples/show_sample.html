@@ -139,13 +139,13 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
                     {% endblocktrans %}
                   </p>
 
-                  {% ifnotequal number_of_sample_series 1 %}
+                  {% if number_of_sample_series != 1 %}
                     <ul class="sample-series-list">
                       {% for sample_series in sample_serieses %}
                         <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series }}</a></li>
                       {% endfor %}
                     </ul>
-                  {% endifnotequal %}
+                  {% endif %}
                 {% endif %}
               {% endwith %}
             {% endwith %}

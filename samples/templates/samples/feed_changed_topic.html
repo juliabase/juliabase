@@ -14,7 +14,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 
 <p>
-  {% ifequal entry.action "added" %}
+  {% if entry.action == "added" %}
     {% blocktrans with entry.topic as topic %}
       You were added to topic “{{ topic }}”.
     {% endblocktrans %}
@@ -22,5 +22,5 @@ copyright holder, you must destroy it immediately and completely.
     {% blocktrans with entry.topic as topic %}
       You are no longer a member of topic “{{ topic }}”.
     {% endblocktrans %}
-  {% endifequal %}
+  {% endif %}
 </p>

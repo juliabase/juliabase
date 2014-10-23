@@ -14,9 +14,9 @@ copyright holder, you must destroy it immediately and completely.
 
 {% if form %}
   {% if form.errors or form.non_field_errors %}
-    {% ifequal outest_tag "<table>" %}
+    {% if outest_tag == "<table>" %}
       <table class="tight-fullwidth"><tbody>
-    {% endifequal %}
+    {% endif %}
     <tr>
       <td class="error-messages"{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}>
 	{% for field in form %}
@@ -27,8 +27,8 @@ copyright holder, you must destroy it immediately and completely.
 	{% endif %}
       </td>
     </tr>
-    {% ifequal outest_tag "<table>" %}
+    {% if outest_tag == "<table>" %}
       </tbody></table>
-    {% endifequal %}
+    {% endif %}
   {% endif %}
 {% endif %}
