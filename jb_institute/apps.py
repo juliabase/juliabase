@@ -20,3 +20,6 @@ from django.utils.translation import ugettext_lazy as _
 class InstituteConfig(AppConfig):
     name = "jb_institute"
     verbose_name = _("Institute")
+
+    def ready(self):
+        import jb_institute.signals
