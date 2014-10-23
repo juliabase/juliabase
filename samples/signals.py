@@ -240,7 +240,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
     UserDetails = kwargs.get("model_user_details", samples_app.UserDetails)
     ContentType = kwargs.get("model_content_type", django.contrib.contenttypes.models.ContentType)
     if created:
-        user_details, __ = UserDetails.objects.get_or_create(
+        user_details = UserDetails.objects.create(
             user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
         try:
             user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),

@@ -27,7 +27,7 @@ def add_user_details(sender, instance, created, **kwargs):
     u"""Create ``UserDetails`` for every newly created user.
     """
     if created:
-        kicker_app.UserDetails.objects.get_or_create(user=instance)
+        kicker_app.UserDetails.objects.create(user=instance)
 
 
 @receiver(maintain)

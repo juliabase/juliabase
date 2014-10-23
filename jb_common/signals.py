@@ -50,8 +50,6 @@ storage_changed = django.dispatch.Signal()
 @receiver(django_signals.post_save, sender=django.contrib.auth.models.User)
 def add_user_details(sender, instance, created=True, **kwargs):
     """Adds a `models.UserDetails` instance for every newly-created Django user.
-    However, you can also call it for existing users because this functionality
-    is idempotent.
 
     If there is only one department, this is default for new users.  Otherwise,
     no department is set here.
@@ -76,7 +74,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
     if created:
         departments = Department.objects.all()
         department = departments[0] if departments.count() == 1 else None
-        UserDetails.objects.get_or_create(user=instance, department=department)
+        UserDetails.objects.create(user=instance, department=department)
 
 
 @receiver(maintain)
