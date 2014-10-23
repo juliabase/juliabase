@@ -13,11 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Module for hooks into the ``User`` model.  They assure that every time a
-user is added, ``UserDetails`` are added.
-
-Additionally, there is a hook to purge too old error pages.
-
+"""
 The error codes for a JSON client are the following:
 
     ======= ===============================================
@@ -33,53 +29,5 @@ The error codes for a JSON client are the following:
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
-import django.contrib.auth.models
-from django.db.models import signals as django_signals
-from django.dispatch import receiver
-from jb_common import models as jb_app
-from jb_common.signals import maintain
-
 
 default_app_config = "jb_common.apps.JBCommonConfig"
-
-# It must be "post_save", otherwise, the ID may be ``None``.
-@receiver(django_signals.post_save, sender=django.contrib.auth.models.User)
-def add_user_details(sender, instance, created=True, **kwargs):
-    """Adds a `models.UserDetails` instance for every newly-created Django
-    user.  However, you can also call it for existing users (``management.py``
-    does it) because this function is idempotent.
-
-    If there is only one department, this is default for new users.
-
-    You may call this function directly from a migration (where signals don't
-    work).  But then, you have to pass the ``UserDetails`` and ``Department``
-    models in the keyword arguments ``model_user_details`` and
-    ``model_department``, respectively, because they may be the historical
-    version.
-
-    :Parameters:
-      - `sender`: the sender of the signal; will always be the ``User`` model
-      - `instance`: the newly-added user
-      - `created`: whether the user was newly created.
-
-    :type sender: model class
-    :type instance: ``django.contrib.auth.models.User``
-    :type created: bool
-    """
-    UserDetails = kwargs.get("model_user_details", jb_app.UserDetails)
-    Department = kwargs.get("model_department", jb_app.Department)
-    if created:
-        departments = Department.objects.all()
-        department = departments[0] if departments.count() == 1 else None
-        UserDetails.objects.get_or_create(user=instance, department=department)
-
-
-@receiver(maintain)
-def expire_error_pages(sender, **kwargs):
-    """Deletes all error pages which are older than six weeks.
-    """
-    now = datetime.datetime.now()
-    six_weeks_ago = now - datetime.timedelta(weeks=6)
-    for error_page in jb_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
-        error_page.delete()

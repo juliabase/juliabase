@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 
 import datetime
 from django.db import models, migrations
-from samples import add_user_details as add_samples_user_details
-from jb_common import add_user_details as add_common_user_details
 import django.contrib.contenttypes.management
+from jb_common.signals import add_user_details as add_common_user_details
+from samples.signals import add_user_details as add_samples_user_details
 
 
 def populate_with_initial_data(apps, schema_editor):

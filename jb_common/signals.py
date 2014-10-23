@@ -34,9 +34,56 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import datetime
+from django.db.models import signals as django_signals
+from django.dispatch import receiver
 import django.dispatch
+import django.contrib.auth.models
+from jb_common import models
 
 
 maintain = django.dispatch.Signal()
 
 storage_changed = django.dispatch.Signal()
+
+
+@receiver(django_signals.post_save, sender=django.contrib.auth.models.User)
+def add_user_details(sender, instance, created=True, **kwargs):
+    """Adds a `models.UserDetails` instance for every newly-created Django user.
+    However, you can also call it for existing users because this functionality
+    is idempotent.
+
+    If there is only one department, this is default for new users.  Otherwise,
+    no department is set here.
+
+    You may call this function directly from a data migration (where signals
+    don't work).  But then, you have to pass the ``UserDetails`` and
+    ``Department`` models in the keyword arguments ``model_user_details`` and
+    ``model_department``, respectively, because they may be the historical
+    version.
+
+    :Parameters:
+      - `sender`: the sender of the signal; will always be the ``User`` model
+      - `instance`: the newly-added user
+      - `created`: whether the user was newly created.
+
+    :type sender: model class
+    :type instance: ``django.contrib.auth.models.User``
+    :type created: bool
+    """
+    UserDetails = kwargs.get("model_user_details", models.UserDetails)
+    Department = kwargs.get("model_department", models.Department)
+    if created:
+        departments = Department.objects.all()
+        department = departments[0] if departments.count() == 1 else None
+        UserDetails.objects.get_or_create(user=instance, department=department)
+
+
+@receiver(maintain)
+def expire_error_pages(sender, **kwargs):
+    """Deletes all error pages which are older than six weeks.
+    """
+    now = datetime.datetime.now()
+    six_weeks_ago = now - datetime.timedelta(weeks=6)
+    for error_page in jb_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
+        error_page.delete()
