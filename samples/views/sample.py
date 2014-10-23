@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -1024,7 +1024,7 @@ class SampleRenameForm(forms.Form):
         try:
             sample = models.Sample.objects.get(name=old_name)
         except models.Sample.DoesNotExist:
-            raise ValidationError(_("This sample does not exists."))
+            raise ValidationError(_("This sample does not exist."))
         if not permissions.has_permission_to_rename_sample(self.user, sample):
             raise ValidationError(_("You are not allowed to rename the sample."))
         return old_name
@@ -1034,7 +1034,7 @@ class SampleRenameForm(forms.Form):
         if not new_name.strip():
             raise ValidationError(_("New name is required."))
         if models.Sample.objects.filter(name=new_name).exists():
-            raise ValidationError(_("A sample with this name exists already."))
+            raise ValidationError(_("A sample with this name already exists."))
         return new_name
 
     def clean(self):
@@ -1042,7 +1042,7 @@ class SampleRenameForm(forms.Form):
         old_name = cleaned_data.get("old_name", "").strip()
         new_name = cleaned_data.get("new_name", "").strip()
         if new_name and new_name == old_name:
-            append_error(self, _("The new name must be differend then the old name."), "new_name")
+            append_error(self, _("The new name must be different from the old name."), "new_name")
             del cleaned_data["new_name"]
         return cleaned_data
 

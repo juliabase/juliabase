@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -231,7 +231,9 @@ def get_all_adders(process_class):
 
 
 class PermissionError(Exception):
-    """Common class for all permission exceptions.
+    """Common class for all permission exceptions.  We have our own exception class
+    and don't use Django's `PermissionDenied` because we need additional
+    context variables.
 
     :ivar description: the full description of the problem, possible remedy
       inclusive.  It should be a complete sentence, which addresses the user

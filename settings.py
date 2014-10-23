@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -150,7 +150,8 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 THUMBNAIL_WIDTH = 400
 
-JB_DEPARTMENTS = ["Institute"]
+# Mapping LDAP department names to JuliaBase department names
+AD_LDAP_DEPARTMENTS = {"Institute": "Institute"}
 
 MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 

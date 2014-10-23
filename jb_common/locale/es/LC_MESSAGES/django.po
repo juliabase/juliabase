@@ -1,1 +1,402 @@
-../../es.po
+# Spanish translation for JuliaBase-common
+#
+# This file is part of JuliaBase, the samples database.
+#
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
+#
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: JuliaBase-common 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-10-22 20:00+0200\n"
+"PO-Revision-Date: 2010-07-20 06:02+0000\n"
+"Last-Translator: Paco Molinero <paco@byasl.com>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: models.py:35 models.py:120
+msgid "name"
+msgstr "nombre"
+
+#: models.py:40 models.py:61 models.py:124
+msgid "department"
+msgstr ""
+
+#: models.py:41
+msgid "departments"
+msgstr ""
+
+#: models.py:59 models.py:239
+msgid "user"
+msgstr "usuario"
+
+#: models.py:69
+msgid "language"
+msgstr "idioma"
+
+#: models.py:70
+msgid "operating system"
+msgstr ""
+
+#: models.py:71
+#, fuzzy
+#| msgid "settings last modified"
+msgid "layout last modified"
+msgstr "configuración modificada por última vez"
+
+#: models.py:76 models.py:77
+msgid "user details"
+msgstr "Detalles del usuario"
+
+#: models.py:121
+msgid "members"
+msgstr "miembros"
+
+#: models.py:123
+msgid "confidential"
+msgstr ""
+
+#: models.py:125
+msgid "parent topic"
+msgstr ""
+
+#: models.py:127
+msgid "topic manager"
+msgstr ""
+
+#: models.py:131
+msgid "topic"
+msgstr ""
+
+#: models.py:132
+msgid "topics"
+msgstr ""
+
+#: models.py:135
+msgid "Can edit all topics, and can add new topics"
+msgstr ""
+
+#: models.py:136
+msgid "Can edit topics that he/she is a manager of"
+msgstr ""
+
+#: models.py:168
+#, python-brace-format
+msgid "topic #{number} (confidential)"
+msgstr ""
+
+#: models.py:238
+msgid "hash value"
+msgstr ""
+
+#: models.py:241
+msgid "requested URL"
+msgstr ""
+
+#: models.py:243
+msgid "timestamp"
+msgstr ""
+
+#: models.py:246
+msgid "error page"
+msgstr ""
+
+#: models.py:247
+msgid "error pages"
+msgstr ""
+
+#: search.py:254
+msgid "You can't search for empty values while giving a non-empty value."
+msgstr ""
+
+#: search.py:261
+msgid "explicitly empty"
+msgstr ""
+
+#: search.py:342
+msgid ""
+"The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
+msgstr ""
+
+#: search.py:370
+msgid "Invalid date or time."
+msgstr ""
+
+#: search.py:402
+msgid "doesn't matter"
+msgstr ""
+
+#: search.py:402
+#, fuzzy
+#| msgid "Yes"
+msgid "yes"
+msgstr "Si"
+
+#: search.py:402
+msgid "no"
+msgstr ""
+
+#: search.py:424
+msgid "containing"
+msgstr ""
+
+#: search.py:761
+#, fuzzy
+#| msgid "restricted"
+msgid "restrict to"
+msgstr "restringido"
+
+#: settings_defaults.py:41
+msgid "English"
+msgstr "Inglés"
+
+#: settings_defaults.py:41
+msgid "German"
+msgstr "Aleman"
+
+#: templates/404.html:26 templates/404.html.py:27
+msgid "Resource not found"
+msgstr "Recurso no encontrado"
+
+#: templates/404.html:30
+#, python-format
+msgid ""
+"\n"
+"The resource » <em>%(request_path)s</em> « could not be found.  Please check "
+"that the URL\n"
+"is correct, and/or check that the denoted sample, process, reference etc is "
+"already in the\n"
+"database.\n"
+msgstr ""
+
+#: templates/500.html:26
+msgid "Internal JuliaBase error"
+msgstr "Error interno de JuliaBase"
+
+#: templates/500.html:35 templates/jb_base.html:67
+msgid "Log in"
+msgstr "Iniciar Sesión"
+
+#: templates/500.html:49
+msgid "Internal server error"
+msgstr "Error interno del servidor"
+
+#: templates/500.html:50
+msgid ""
+"\n"
+"You experienced an internal error in the JuliaBase server software.  The\n"
+"administrators have been contacted already and will do their best in\n"
+"eliminating the bug.  Typically, they will contact you as soon as the "
+"problem\n"
+"is tackled.\n"
+msgstr ""
+"\n"
+"Ha sufrido un error interno en el software del servidor JuliaBase. Los\n"
+"administradores ya están al corriente y harán cuanto puedan para \n"
+"eliminar el error. Se pondrán en contacto (normalmente) con usted\n"
+"tan pronto como el error sea resuelto.\n"
+
+#: templates/jb_base.html:42
+#, python-format
+msgid "switch to %(language)s"
+msgstr "cambiar a %(language)s"
+
+#: templates/jb_base.html:48
+msgid "Welcome,"
+msgstr "Bienvenido,"
+
+#: templates/jb_base.html:52
+msgid "Main menu"
+msgstr "Menú Principal"
+
+#: templates/jb_base.html:56
+msgid "Report feature wish or bug"
+msgstr "Informar de error o de deseo de mejora"
+
+#: templates/jb_base.html:58 templates/jb_base.html.py:64
+msgid "Help"
+msgstr "Ayuda"
+
+#: templates/jb_base.html:60
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: templates/jb_common/change_password.html:18
+#: templates/jb_common/change_password.html:19
+msgid "Password change"
+msgstr "Cambiar contraseña"
+
+#: templates/jb_common/change_password.html:23
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Por favor ingresa tu contraseña antigua, por razones de seguridad, y luego "
+"ingresa tu nueva contraseña dos veces para que podamos verificar que fueron "
+"ingresadas correctamente."
+
+#: templates/jb_common/change_password.html:28
+msgid "Old password:"
+msgstr "Contraseña anterior:"
+
+#: templates/jb_common/change_password.html:30
+msgid "New password:"
+msgstr "Nueva contraseña:"
+
+#: templates/jb_common/change_password.html:32
+msgid "Confirm password:"
+msgstr "Confirmar contraseña:"
+
+#: templates/jb_common/change_password.html:34
+msgid "Change my password"
+msgstr "Cambiar mi contraseña"
+
+#: templates/jb_common/login.html:18 templates/jb_common/login.html.py:19
+msgid "JuliaBase login"
+msgstr "Inicio de sesión en JuliaBase"
+
+#: templates/jb_common/login.html:23
+msgid "Your username and password didn't match. Please try again."
+msgstr "Su nombre de usuario y contraseña no concuerdan. Inténtelo de nuevo."
+
+#: templates/jb_common/login.html:29 templates/jb_common/show_user.html:22
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: templates/jb_common/login.html:30
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/jb_common/login.html:35
+msgid "login"
+msgstr "Iniciar sesión"
+
+#: templates/jb_common/logout.html:20
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr "Gracias por pasar un buen rato hoy con el sitio web."
+
+#: templates/jb_common/logout.html:22
+msgid "Log in again"
+msgstr "Iniciar sesión de nuevo"
+
+#: templates/jb_common/markdown_sandbox.html:29
+msgid ""
+"\n"
+"  <p>JuliaBase uses the lightweight markup language “Markdown” for "
+"comments.  It\n"
+"  doesn't support images and headings though.  As compensation, it adds\n"
+"  implicit sample and sample series linking.  Follow the help link at the "
+"top\n"
+"  of the page for further information.</p>\n"
+"\n"
+"  <p>Here, you can test the markup as you like.  What you enter here is "
+"never\n"
+"  saved.</p>\n"
+msgstr ""
+
+#: templates/jb_common/markdown_sandbox.html:40
+msgid "Error in markup"
+msgstr "Error en marcaje"
+
+#. Translators: Input for markdown conversion
+#: templates/jb_common/markdown_sandbox.html:45
+msgid "input"
+msgstr "entrada"
+
+#. Translators: result of conversion
+#: templates/jb_common/markdown_sandbox.html:47
+msgid "result"
+msgstr "resultado"
+
+#. Translators: result of markdown conversion
+#: templates/jb_common/markdown_sandbox.html:66
+msgid "Generate result"
+msgstr "Generar resultado"
+
+#: templates/jb_common/password_changed.html:18
+msgid "Password change successful"
+msgstr "La contraseña fue cambiada con exito"
+
+#: templates/jb_common/password_changed.html:24
+msgid "Your password was changed."
+msgstr "Su contraseña fue cambiada."
+
+#: templates/jb_common/show_user.html:26
+msgid "Email address"
+msgstr ""
+
+#: templates/jb_common/show_user.html:32
+msgid "Department"
+msgstr ""
+
+#: templatetags/juliabase.py:149
+#, fuzzy, python-brace-format
+msgid "with {markdown_link} syntax"
+msgstr "con %(markdown_link)s sintaxis"
+
+#: templatetags/juliabase.py:158
+msgid "Yes"
+msgstr "Si"
+
+#: templatetags/juliabase.py:158
+msgid "No"
+msgstr "No"
+
+#: utils.py:184
+msgid "You mustn't use image and headings syntax in Markdown markup."
+msgstr ""
+
+#: utils.py:215
+#, python-brace-format
+msgid "Couldn't open {filename}."
+msgstr ""
+
+#: utils.py:234
+msgid "This file is not in an allowed directory."
+msgstr ""
+
+#: views.py:62
+msgid "Sandbox"
+msgstr "Arenero"
+
+#: views.py:72
+msgid "MarkdownMarkup"
+msgstr ""
+
+#: views.py:96
+msgid "Markdown sandbox"
+msgstr ""
+
+#~ msgid "Chinese"
+#~ msgstr "Chino"
+
+#~ msgid "Ukrainian"
+#~ msgstr "Ucraniano"
+
+#~ msgid "Russian"
+#~ msgstr "Ruso"
+
+#~ msgid "French"
+#~ msgstr "Francés"
+
+#~ msgid "Dutch"
+#~ msgstr "Holandés"
+
+#~ msgid "is an external user"
+#~ msgstr "es un usuario externo"
+
+#~ msgid "project"
+#~ msgstr "projecto"
+
+#~ msgid "projects"
+#~ msgstr "proyectos"

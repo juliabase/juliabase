@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -77,7 +77,7 @@ class SampleSeriesForm(forms.ModelForm):
         """
         short_name = self.cleaned_data["short_name"].strip()
         if not short_name and self.fields["short_name"].required:
-            raise ValidationError(_("This field is requierd."))
+            raise ValidationError(_("This field is required."))
         return short_name
 
     def clean_description(self):

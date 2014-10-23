@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -44,12 +44,12 @@ class HttpResponseUnauthorized(django.http.HttpResponse):
 
 
 class HttpResponseSeeOther(django.http.HttpResponse):
-    """Response class for HTTP 303 redirects.  Unfortunately, Django does the
-    same wrong thing as most other web frameworks: it knows only one type of
+    """Response class for HTTP 303 redirects.  Unfortunately, Django does the same
+    wrong thing as most other web frameworks: it knows only one type of
     redirect, with the HTTP status code 302.  However, this is very often not
-    desirable.  In Django-RefDB, we've frequently the use case where an HTTP
-    POST request was successful, and we want to redirect the user back to the
-    main page, for example.
+    desirable.  For example, you may experience the use case where an HTTP POST
+    request was successful, and you want to redirect the user back to the main
+    page.
 
     This must be done with status code 303, and therefore, this class exists.
     It can simply be used as a drop-in replacement of HttpResponseRedirect.

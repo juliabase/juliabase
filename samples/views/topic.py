@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -72,7 +72,7 @@ class NewTopicForm(forms.Form):
         if pk:
             parent_topic = Topic.objects.get(pk=int(pk))
             if not permissions.has_permission_to_edit_topic(self.user, parent_topic):
-                raise ValidationError(_("You are not allowed to edit the topic “{parent_topic}”").\
+                raise ValidationError(_("You are not allowed to edit the topic “{parent_topic}”.").\
                                       format(parent_topic=parent_topic.name))
             return parent_topic
         elif not permissions.has_permission_to_edit_topic(self.user):

@@ -3,9 +3,9 @@
 #
 # This file is part of JuliaBase, the samples database.
 #
-# Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-#                    Marvin Goblet <m.goblet@fz-juelich.de>,
-#                    Torsten Bronger <t.bronger@fz-juelich.de>
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
 #
 # You must not use, install, pass on, offer, sell, analyse, modify, or
 # distribute this software without explicit permission of the copyright holder.
@@ -1433,6 +1433,7 @@ class UserDetails(models.Model):
                                                 verbose_name=_("visible task lists"), blank=True)
     folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
+    # Translators: This is plural.
     folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
     show_users_from_department = models.ManyToManyField(Department, related_name="shown_users",
