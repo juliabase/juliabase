@@ -1433,6 +1433,7 @@ class UserDetails(models.Model):
                                                 verbose_name=_("visible task lists"), blank=True)
     folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
+    # Translators: This is plural.
     folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
     show_users_from_department = models.ManyToManyField(Department, related_name="shown_users",

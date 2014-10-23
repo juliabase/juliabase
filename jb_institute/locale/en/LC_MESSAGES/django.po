@@ -1,4 +1,4 @@
-# English translations for JuliaBase
+# English translations for JuliaBase-institute
 #
 # This file is part of JuliaBase, the samples database.
 #
@@ -13,1965 +13,660 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1\n"
+"Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-12 13:24+0100\n"
+"POT-Creation-Date: 2014-10-22 21:01+0200\n"
 "PO-Revision-Date: 2011-01-31 00:11+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: __init__.py:111
-msgid "{user_name} uses {apparatus}"
-msgstr ""
-
-#: __init__.py:112
-msgid ""
-"Dear supervisors of {apparatus_plural},\n"
-"\n"
-"{user_name} has created their first {apparatus}.\n"
-msgstr ""
-
-#. Translators: Of a deposition system
-#: models_depositions.py:38 models_depositions.py:109
-#: models_depositions.py:347 models_depositions.py:416
-#: models_depositions.py:742 models_depositions.py:862
-#: models_depositions.py:992
-msgid "carrier"
-msgstr ""
-
-#: models_depositions.py:41
-msgid "6-chamber deposition"
-msgstr ""
-
-#: models_depositions.py:42
-msgid "6-chamber depositions"
-msgstr ""
-
-#: models_depositions.py:44
-#, fuzzy
-msgid "Can add 6-chamber depositions"
-msgstr "sample series"
-
-#: models_depositions.py:45
-msgid "Can edit perms for 6-chamber depositions"
-msgstr "Can edit permissions for 6-chamber depositions"
-
-#: models_depositions.py:46
-#, fuzzy
-msgid "Can view all 6-chamber depositions"
-msgstr "sample series"
-
-#: models_depositions.py:90 models_depositions.py:382
-msgid "lab notebook for {process_name}"
-msgstr ""
-
-#: models_depositions.py:95
-msgid "deposition number"
-msgstr ""
-
-#: models_depositions.py:118
-msgid "6-chamber deposition lab"
-msgstr ""
-
-#: models_depositions.py:126 models_depositions.py:127
-#: models_depositions.py:128 models_depositions.py:130
-#: models_depositions.py:132 models_depositions.py:134
-#: models_depositions.py:135 models_depositions.py:136
-#: models_depositions.py:137 models_depositions.py:138
-#: models_depositions.py:139 models_depositions.py:290
-#: models_depositions.py:462 models_depositions.py:463
-#: models_depositions.py:465 models_depositions.py:466
-#: models_depositions.py:468 models_depositions.py:469
-#: models_depositions.py:470 models_depositions.py:471
-#: models_depositions.py:673 models_depositions.py:674
-#: models_depositions.py:675 models_depositions.py:678
-#: models_depositions.py:705 models_depositions.py:708
-#: models_depositions.py:711 models_depositions.py:714
-#: models_depositions.py:717 models_depositions.py:720
-#: models_depositions.py:723 models_depositions.py:726
-#: models_depositions.py:729 models_depositions.py:732
-#: models_depositions.py:1124 models_depositions.py:1125
-#: models_depositions.py:1126 models_depositions.py:1127
-#: models_depositions.py:1128 models_depositions.py:1129
-#: models_depositions.py:1300 models_depositions.py:1301
-#: models_depositions.py:1302 models_depositions.py:1303
-#: models_depositions.py:1304 models_depositions.py:1305
+#: models_depositions.py:34 models_depositions.py:35 models_depositions.py:330
+#: models_depositions.py:331
 msgid "in sccm"
 msgstr ""
 
-#: models_depositions.py:128 models_depositions.py:270
-msgid "2% PH₃ in SiH₄"
+#: models_depositions.py:52 models_depositions.py:123
+msgid "carrier"
 msgstr ""
 
-#: models_depositions.py:130 models_depositions.py:271
-msgid "1% TMB in He"
-msgstr ""
-
-#: models_depositions.py:132 models_depositions.py:272
-msgid "5ppm B₂H₆ in H₂"
-msgstr ""
-
-#: models_depositions.py:139 models_depositions.py:278
-msgid "10 ppm PH₃ in H₂"
-msgstr ""
-
-#: models_depositions.py:161 models_depositions.py:458
-#: models_depositions.py:829 models_depositions.py:951
-#: models_depositions.py:1039 models_depositions.py:1120
-#: models_depositions.py:1268
-msgid "deposition"
-msgstr ""
-
-#: models_depositions.py:162 models_depositions.py:225
-#: models_depositions.py:609 models_depositions.py:1123
-#: models_depositions.py:1181
-msgid "chamber"
-msgstr ""
-
-#. Translators: Physical unit is meant
-#: models_depositions.py:164 models_depositions.py:569
-#: models_depositions.py:610
-msgid "deposition pressure"
-msgstr ""
-
-#: models_depositions.py:164 models_depositions.py:174
-#: models_depositions.py:569 models_depositions.py:578
-#: models_depositions.py:610 models_depositions.py:620
-msgid "with unit"
-msgstr ""
-
-#: models_depositions.py:165 models_depositions.py:570
-#: models_depositions.py:611
-msgid "deposition time"
-msgstr ""
-
-#: models_depositions.py:165 models_depositions.py:171
-#: models_depositions.py:176 models_depositions.py:570
-#: models_depositions.py:575 models_depositions.py:580
-#: models_depositions.py:611 models_depositions.py:617
-#: models_depositions.py:622
-msgid "format HH:MM:SS"
-msgstr ""
-
-#: models_depositions.py:167 models_depositions.py:613
-msgid "substrate–electrode distance"
-msgstr ""
-
-#: models_depositions.py:168 models_depositions.py:481
-#: models_depositions.py:572 models_depositions.py:614
-#: models_depositions.py:1138
-msgid "in mm"
-msgstr ""
-
-#: models_depositions.py:169 models_depositions.py:242
-#: models_depositions.py:573 models_depositions.py:615
-#: models_depositions.py:646 models_physical_processes.py:580
-#: templates/samples/lab_notebook_large_area_deposition.html:44
-#: templates/samples/lab_notebook_pds_measurement.html:30
-#: templates/samples/lab_notebook_raman_measurement_one.html:31
-#: templates/samples/lab_notebook_raman_measurement_three.html:31
-#: templates/samples/lab_notebook_raman_measurement_two.html:31
-#: templates/samples/lab_notebook_six_chamber_deposition.html:40
-msgid "comments"
-msgstr ""
-
-#: models_depositions.py:170 models_depositions.py:229
-#: models_depositions.py:574 models_depositions.py:616
-msgid "transfer in the chamber"
-msgstr ""
-
-#: models_depositions.py:171 models_depositions.py:230
-#: models_depositions.py:575 models_depositions.py:617
-#: models_depositions.py:679 models_depositions.py:1277
-msgid "pre-heat"
-msgstr ""
-
-#: models_depositions.py:172 models_depositions.py:231
-#: models_depositions.py:576 models_depositions.py:618
-msgid "gas of gas pre-heat"
-msgstr ""
-
-#: models_depositions.py:173 models_depositions.py:232
-#: models_depositions.py:577 models_depositions.py:619
-msgid "pressure of gas pre-heat"
-msgstr ""
-
-#: models_depositions.py:175 models_depositions.py:233
-#: models_depositions.py:579 models_depositions.py:621
-msgid "time of gas pre-heat"
-msgstr ""
-
-#: models_depositions.py:177 models_depositions.py:581
-#: models_depositions.py:623
-msgid "heating temperature"
-msgstr ""
-
-#: models_depositions.py:177 models_depositions.py:474
-#: models_depositions.py:581 models_depositions.py:584
-#: models_depositions.py:623 models_depositions.py:652
-#: models_depositions.py:653 models_depositions.py:654
-#: models_depositions.py:655 models_depositions.py:1132
-#: models_depositions.py:1275 models_depositions.py:1276
-#: models_physical_processes.py:881 models_physical_processes.py:951
-msgid "in ℃"
-msgstr ""
-
-#: models_depositions.py:178 models_depositions.py:235
-#: models_depositions.py:582 models_depositions.py:624
-msgid "transfer out of the chamber"
-msgstr ""
-
-#: models_depositions.py:179 models_depositions.py:625
-msgid "plasma start power"
-msgstr ""
-
-#. Translators: Watt
-#: models_depositions.py:181 models_depositions.py:186
-#: models_depositions.py:472 models_depositions.py:592
-#: models_depositions.py:626 models_depositions.py:631
-#: models_depositions.py:656 models_depositions.py:657
-#: models_depositions.py:658 models_depositions.py:666
-#: models_depositions.py:667 models_depositions.py:1130
-#: models_depositions.py:1285
-msgid "in W"
-msgstr ""
-
-#: models_depositions.py:182 models_depositions.py:237
-msgid "plasma start with carrier"
-msgstr ""
-
-#: models_depositions.py:183 models_depositions.py:628
-msgid "deposition frequency"
-msgstr ""
-
-#: models_depositions.py:184 models_depositions.py:476
-#: models_depositions.py:629 models_depositions.py:1134
-msgid "in MHz"
-msgstr ""
-
-#: models_depositions.py:185 models_depositions.py:630
-msgid "deposition power"
-msgstr ""
-
-#: models_depositions.py:187 models_depositions.py:594
-#: models_depositions.py:632 models_depositions.py:647
-#: models_depositions.py:1280
-msgid "base pressure"
-msgstr ""
-
-#: models_depositions.py:187 models_depositions.py:473
-#: models_depositions.py:1131
-msgid "in Torr"
-msgstr ""
-
-#: models_depositions.py:191
-msgid "6-chamber layer"
-msgstr ""
-
-#: models_depositions.py:192
-msgid "6-chamber layers"
-msgstr ""
-
-#: models_depositions.py:196 models_depositions.py:489
-#: models_depositions.py:838 models_depositions.py:960
-#: models_depositions.py:1048 models_depositions.py:1147
-#: models_depositions.py:1320
+#: models_depositions.py:55
 #, fuzzy
-msgid "layer {number} of {deposition}"
+msgid "cluster tool deposition"
 msgstr "sample series"
 
-#: models_depositions.py:227 models_depositions.py:477
-#: models_depositions.py:1135
-msgid "time"
-msgstr ""
-
-#: models_depositions.py:228
-msgid "electr. dist./mm"
-msgstr ""
-
-#: models_depositions.py:236
-msgid "P_start/W"
-msgstr ""
-
-#: models_depositions.py:238
-msgid "yes"
-msgstr ""
-
-#: models_depositions.py:238
-msgid "no"
-msgstr ""
-
-#: models_depositions.py:241
-msgid "p_base/Torr"
-msgstr ""
-
-#: models_depositions.py:248
-msgid "(in sccm)"
-msgstr ""
-
-#: models_depositions.py:279
-msgid "5% PH₃ in H₂"
-msgstr ""
-
-#: models_depositions.py:287
-msgid "channel"
-msgstr ""
-
-#: models_depositions.py:288
-msgid "layer"
-msgstr ""
-
-#: models_depositions.py:289 models_depositions.py:676
-#: models_depositions.py:703 models_depositions.py:706
-#: models_depositions.py:709 models_depositions.py:712
-#: models_depositions.py:715 models_depositions.py:718
-#: models_depositions.py:721 models_depositions.py:724
-#: models_depositions.py:727 models_depositions.py:730
-msgid "gas and dilution"
-msgstr ""
-
-#: models_depositions.py:290 models_depositions.py:677
-#: models_depositions.py:704 models_depositions.py:707
-#: models_depositions.py:710 models_depositions.py:713
-#: models_depositions.py:716 models_depositions.py:719
-#: models_depositions.py:722 models_depositions.py:725
-#: models_depositions.py:728 models_depositions.py:731
-msgid "flow rate"
-msgstr ""
-
-#: models_depositions.py:293
-msgid "6-chamber channel"
-msgstr ""
-
-#: models_depositions.py:294
-msgid "6-chamber channels"
-msgstr ""
-
-#: models_depositions.py:300
-msgid "channel {number} of {layer}"
-msgstr ""
-
-#: models_depositions.py:348 models_depositions.py:417
-msgid "substrate size"
-msgstr ""
-
-#: models_depositions.py:350 models_depositions.py:418
-msgid "load chamber"
-msgstr ""
-
-#: models_depositions.py:351 models_depositions.py:419
+#: models_depositions.py:56
 #, fuzzy
-msgid "sample holder"
+msgid "cluster tool depositions"
 msgstr "sample series"
 
-#: models_depositions.py:354
-msgid "large-area deposition"
-msgstr ""
-
-#: models_depositions.py:355
-msgid "large-area depositions"
-msgstr ""
-
-#: models_depositions.py:357
+#: models_depositions.py:58
 #, fuzzy
-msgid "Can add large-area depositions"
+msgid "Can add cluster tool depositions"
 msgstr "sample series"
 
-#: models_depositions.py:358
-msgid "Can edit perms for large-area depositions"
-msgstr "Can edit permissions for large-area depositions"
-
-#: models_depositions.py:359
-#, fuzzy
-msgid "Can view all large-area depositions"
-msgstr "sample series"
-
-#: models_depositions.py:360
-#, fuzzy
-msgid "Can edit all large-area depositions"
-msgstr "sample series"
-
-#: models_depositions.py:422 models_depositions.py:818
-msgid "large-area deposition lab"
-msgstr ""
-
-#: models_depositions.py:442
-msgid "NN large PC1"
-msgstr ""
-
-#: models_depositions.py:443
-msgid "NN large PC2"
-msgstr ""
-
-#: models_depositions.py:444
-msgid "NN large PC3"
-msgstr ""
-
-#: models_depositions.py:445
-msgid "NN small 1"
-msgstr ""
-
-#: models_depositions.py:446
-msgid "NN small 2"
-msgstr ""
-
-#: models_depositions.py:447
-msgid "NN40 large PC1"
-msgstr ""
-
-#: models_depositions.py:448
-msgid "NN40 large PC2"
-msgstr ""
-
-#: models_depositions.py:459 models_depositions.py:536
-#: models_depositions.py:1121 models_depositions.py:1179
-#: models_depositions.py:1269 models_depositions.py:1361
-msgid "date"
-msgstr ""
-
-#: models_depositions.py:460 models_depositions.py:537
-#: models_depositions.py:1122 models_depositions.py:1180
-msgid "layer type"
-msgstr ""
-
-#: models_depositions.py:461 models_depositions.py:538
-msgid "station"
-msgstr ""
-
-#: models_depositions.py:462 models_depositions.py:1124
-msgid "SiH₄"
-msgstr ""
-
-#: models_depositions.py:463
-msgid "SiH₄<sup>end</sup>"
-msgstr ""
-
-#: models_depositions.py:465 models_depositions.py:1125
-msgid "H₂"
-msgstr ""
-
-#: models_depositions.py:466
-msgid "H₂<sup>end</sup>"
-msgstr ""
-
-#: models_depositions.py:472 models_depositions.py:1130
-msgid "power"
-msgstr ""
-
-#: models_depositions.py:473 models_depositions.py:1131
-#: models_physical_processes.py:1124 models_physical_processes.py:1176
-msgid "pressure"
-msgstr ""
-
-#: models_depositions.py:474 models_depositions.py:652
-#: models_depositions.py:1132 models_physical_processes.py:881
-#: models_physical_processes.py:951
-msgid "temperature"
-msgstr ""
-
-#: models_depositions.py:475 models_depositions.py:1133
-msgid "HF frequency"
-msgstr ""
-
-#: models_depositions.py:477 models_depositions.py:1135
-msgid "in sec"
-msgstr ""
-
-#: models_depositions.py:478 models_depositions.py:1136
-msgid "DC bias"
-msgstr ""
-
-#. #-#-#-#-#  django.pot (PACKAGE VERSION)  #-#-#-#-#
-#. Translators: Volt
-#: models_depositions.py:478 models_depositions.py:590
-#: models_depositions.py:663 models_depositions.py:670
-#: models_depositions.py:672 models_depositions.py:1136
-#: models_depositions.py:1287 models_depositions.py:1288
-#: models_depositions.py:1308 models_depositions.py:1309
-#: models_physical_processes.py:959
-msgid "in V"
-msgstr ""
-
-#: models_depositions.py:479 models_depositions.py:555
-msgid "electrode"
-msgstr ""
-
-#: models_depositions.py:480 models_depositions.py:1137
-msgid "electrodes distance"
-msgstr ""
-
-#: models_depositions.py:484
-msgid "large-area layer"
-msgstr ""
-
-#: models_depositions.py:485
-msgid "large-area layers"
-msgstr ""
-
-#: models_depositions.py:540
-msgid "SiH₄_end/sccm"
-msgstr ""
-
-#: models_depositions.py:542
-msgid "H₂_end/sccm"
-msgstr ""
-
-#: models_depositions.py:548
-msgid "SC_end/%"
-msgstr ""
-
-#: models_depositions.py:553 models_depositions.py:1193
-msgid "time/s"
-msgstr ""
-
-#: models_depositions.py:554 models_depositions.py:1194
-msgid "DC bias/V"
-msgstr ""
-
-#: models_depositions.py:556 models_depositions.py:1195
-msgid "elec. dist./mm"
-msgstr ""
-
-#: models_depositions.py:561
-msgid "rhenium"
-msgstr ""
-
-#: models_depositions.py:562
-msgid "tantalum"
-msgstr ""
-
-#: models_depositions.py:563
-msgid "tungsten"
-msgstr ""
-
-#: models_depositions.py:571
-msgid "substrate–wire distance"
-msgstr ""
-
-#: models_depositions.py:583
-msgid "filament temperature"
-msgstr ""
-
-#: models_depositions.py:585
-msgid "wire current"
-msgstr ""
-
-#. Translators: Ampère
-#: models_depositions.py:587 models_depositions.py:665
-#: models_depositions.py:668 models_depositions.py:1289
-#: models_depositions.py:1291
-msgid "in A"
-msgstr ""
-
-#: models_depositions.py:588
-msgid "wire voltage"
-msgstr ""
-
-#: models_depositions.py:591
-msgid "wire power"
-msgstr ""
-
-#: models_depositions.py:593
-msgid "wire material"
-msgstr ""
-
-#: models_depositions.py:594 models_depositions.py:632
-#: models_depositions.py:648 models_depositions.py:650
-#: models_physical_processes.py:1124 models_physical_processes.py:1176
-msgid "in mbar"
-msgstr ""
-
-#: models_depositions.py:627
-msgid "plasma start with shutter"
-msgstr ""
-
-#: models_depositions.py:649
-msgid "working pressure"
-msgstr ""
-
-#: models_depositions.py:651
-msgid "valve"
-msgstr ""
-
-#: models_depositions.py:651 models_depositions.py:1282
-#: models_physical_processes.py:665 models_physical_processes.py:880
-#: models_physical_processes.py:950
-msgid "in %"
-msgstr ""
-
-#: models_depositions.py:653
-msgid "thermo."
-msgstr ""
-
-#: models_depositions.py:655
-msgid "pyro"
-msgstr ""
-
-#: models_depositions.py:658
-msgid "Ion"
-msgstr ""
-
-#: models_depositions.py:663 models_depositions.py:1287
-#: models_depositions.py:1288
-msgid "voltage"
-msgstr ""
-
-#: models_depositions.py:664
-msgid "el. current"
-msgstr ""
-
-#: models_depositions.py:666 models_depositions.py:667
-msgid "refl. power"
-msgstr ""
-
-#: models_depositions.py:668 models_depositions.py:1289
-#: models_depositions.py:1291
-msgid "current"
-msgstr ""
-
-#: models_depositions.py:669 models_depositions.py:671
-msgid "U<sub>bias</sub>"
-msgstr ""
-
-#: models_depositions.py:679 models_depositions.py:680
-#: models_depositions.py:681 models_depositions.py:683
-#: models_depositions.py:1277 models_depositions.py:1298
-#: models_physical_processes.py:572
-msgid "in min"
-msgstr ""
-
-#: models_depositions.py:680
-msgid "pre-sputter"
-msgstr ""
-
-#: models_depositions.py:681
-msgid "sputter"
-msgstr ""
-
-#: models_depositions.py:682
-msgid "ion treatment duration"
-msgstr ""
-
-#: models_depositions.py:684
-msgid "large shutter"
-msgstr ""
-
-#: models_depositions.py:685
-msgid "small shutter"
-msgstr ""
-
-#: models_depositions.py:686
-msgid "rotation"
-msgstr ""
-
-#: models_depositions.py:687
-msgid "in U/min"
-msgstr ""
-
-#: models_depositions.py:688
-msgid "loading chamber"
-msgstr ""
-
-#: models_depositions.py:690
-msgid "R<sub>□</sub>"
-msgstr ""
-
-#: models_depositions.py:691 models_physical_processes.py:884
-#: models_physical_processes.py:886 models_physical_processes.py:953
-#: models_physical_processes.py:955
-msgid "in Ω"
-msgstr ""
-
-#: models_depositions.py:692
-msgid "thickness"
-msgstr ""
-
-#: models_depositions.py:693 models_physical_processes.py:286
-#: models_physical_processes.py:658 models_physical_processes.py:660
-#: models_physical_processes.py:887 models_physical_processes.py:888
-#: models_physical_processes.py:956 models_physical_processes.py:957
-#: models_physical_processes.py:1125 models_physical_processes.py:1177
-msgid "in nm"
-msgstr ""
-
-#: models_depositions.py:745
-#, fuzzy
-msgid "cluster tool I deposition"
-msgstr "sample series"
-
-#: models_depositions.py:746
-#, fuzzy
-msgid "cluster tool I depositions"
-msgstr "sample series"
-
-#: models_depositions.py:748
-#, fuzzy
-msgid "Can add cluster tool I depositions"
-msgstr "sample series"
-
-#: models_depositions.py:750
+#. Translators: Don't abbreviate "perms" in translation
+#. (not even to English)
+#: models_depositions.py:62
 msgid "Can edit perms for cluster tool I depositions"
 msgstr "Can edit permissions for cluster tool I depositions"
 
-#: models_depositions.py:751
+#: models_depositions.py:63
 #, fuzzy
-msgid "Can view all cluster tool I depositions"
+msgid "Can view all cluster tool depositions"
 msgstr "sample series"
 
-#: models_depositions.py:833
-msgid "cluster tool I layer"
-msgstr ""
-
-#: models_depositions.py:834
-msgid "cluster tool I layers"
-msgstr ""
-
-#: models_depositions.py:847
-msgid "cluster tool I hot-wire layer"
-msgstr ""
-
-#: models_depositions.py:848
-msgid "cluster tool I hot-wire layers"
-msgstr ""
-
-#: models_depositions.py:855
-msgid "cluster tool I PECVD layer"
-msgstr ""
-
-#: models_depositions.py:856
-msgid "cluster tool I PECVD layers"
-msgstr ""
-
-#: models_depositions.py:865
+#: models_depositions.py:64
 #, fuzzy
-msgid "cluster tool II deposition"
+msgid "Can edit all cluster tool depositions"
 msgstr "sample series"
 
-#: models_depositions.py:866
+#: models_depositions.py:145
 #, fuzzy
-msgid "cluster tool II depositions"
+msgid "cluster tool deposition lab"
 msgstr "sample series"
 
-#: models_depositions.py:868
+#: models_depositions.py:156 models_depositions.py:326
+msgid "deposition"
+msgstr ""
+
+#: models_depositions.py:160
 #, fuzzy
-msgid "Can add cluster tool II depositions"
+msgid "cluster tool layer"
 msgstr "sample series"
 
-#: models_depositions.py:870
-msgid "Can edit perms for cluster tool II depositions"
-msgstr "Can edit permissions for cluster tool II depositions"
-
-#: models_depositions.py:871
+#: models_depositions.py:161
 #, fuzzy
-msgid "Can view all cluster tool II depositions"
+msgid "cluster tool layers"
 msgstr "sample series"
 
-#: models_depositions.py:943
-#, fuzzy
-msgid "cluster tool II deposition lab"
+#: models_depositions.py:165 models_depositions.py:343
+#, fuzzy, python-brace-format
+msgid "layer {number} of {deposition}"
 msgstr "sample series"
 
-#: models_depositions.py:955
-msgid "cluster tool II layer"
+#: models_depositions.py:169
+msgid "unknown"
 msgstr ""
 
-#: models_depositions.py:956
-msgid "cluster tool II layers"
+#: models_depositions.py:170
+msgid "rhenium"
 msgstr ""
 
-#: models_depositions.py:969
-msgid "cluster tool II hot-wire layer"
+#: models_depositions.py:171
+msgid "tantalum"
 msgstr ""
 
-#: models_depositions.py:970
-msgid "cluster tool II hot-wire layers"
+#: models_depositions.py:172
+msgid "tungsten"
 msgstr ""
 
-#: models_depositions.py:977
-msgid "cluster tool II PECVD layer"
+#: models_depositions.py:178 models_depositions.py:221
+msgid "deposition time"
 msgstr ""
 
-#: models_depositions.py:978
-msgid "cluster tool II PECVD layers"
+#: models_depositions.py:178 models_depositions.py:221
+msgid "format HH:MM:SS"
 msgstr ""
 
-#: models_depositions.py:985
-msgid "cluster tool II Sputter layer"
+#: models_depositions.py:179 models_depositions.py:205
+#: models_depositions.py:222 models_depositions.py:252
+#: models_sample_details.py:261 models_sample_details.py:323
+#: templates/samples/lab_notebook_five_chamber_deposition.html:33
+msgid "comments"
 msgstr ""
 
-#: models_depositions.py:986
-msgid "cluster tool II Sputter layers"
+#: models_depositions.py:180 models_depositions.py:206
+msgid "wire material"
 msgstr ""
 
-#: models_depositions.py:995
-msgid "p-hot-wire deposition"
+#: models_depositions.py:181 models_depositions.py:207
+msgid "base pressure"
 msgstr ""
 
-#: models_depositions.py:996
-msgid "p-hot-wire depositions"
+#: models_depositions.py:181
+msgid "in mbar"
 msgstr ""
 
-#: models_depositions.py:998
+#: models_depositions.py:184
 #, fuzzy
-msgid "Can add p-hot-wire depositions"
+msgid "cluster tool hot-wire layer"
 msgstr "sample series"
 
-#: models_depositions.py:999
-msgid "Can edit perms for p-hot-wire depositions"
-msgstr "Can edit permissions for p-hot-wire depositions"
+#: models_depositions.py:185
+#, fuzzy
+msgid "cluster tool hot-wire layers"
+msgstr "sample series"
 
-#: models_depositions.py:1000
-msgid "Can view all p-hot-wire depositions"
+#: models_depositions.py:204 models_depositions.py:251
+msgid "time"
 msgstr ""
 
-#: models_depositions.py:1033
-msgid "p-hot-wire deposition lab"
+#: models_depositions.py:220 models_depositions.py:250
+#: models_depositions.py:329 models_depositions.py:374
+#: templates/samples/lab_notebook_five_chamber_deposition.html:28
+msgid "chamber"
 msgstr ""
 
-#: models_depositions.py:1043
-msgid "p-hot-wire deposition layer"
+#: models_depositions.py:223 models_depositions.py:253
+msgid "plasma start with shutter"
 msgstr ""
 
-#: models_depositions.py:1044
-msgid "p-hot-wire deposition layers"
+#: models_depositions.py:224 models_depositions.py:254
+msgid "deposition power"
 msgstr ""
 
-#: models_depositions.py:1055
+#: models_depositions.py:225
+msgid "in W"
+msgstr ""
+
+#: models_depositions.py:229
+#, fuzzy
+msgid "cluster tool PECVD layer"
+msgstr "sample series"
+
+#: models_depositions.py:230
+#, fuzzy
+msgid "cluster tool PECVD layers"
+msgstr "sample series"
+
+#: models_depositions.py:253
+msgid "yes"
+msgstr ""
+
+#: models_depositions.py:253
+msgid "no"
+msgstr ""
+
+#: models_depositions.py:264
 #, fuzzy
 msgid "5-chamber deposition"
 msgstr "sample series"
 
-#: models_depositions.py:1056
+#: models_depositions.py:265
 #, fuzzy
 msgid "5-chamber depositions"
 msgstr "sample series"
 
-#: models_depositions.py:1058
+#: models_depositions.py:267
 #, fuzzy
 msgid "Can add 5-chamber depositions"
 msgstr "sample series"
 
-#: models_depositions.py:1059
+#. Translators: Don't abbreviate "perms" in translation
+#. (not even to English)
+#: models_depositions.py:270
 msgid "Can edit perms for 5-chamber depositions"
 msgstr "Can edit permissions for 5-chamber depositions"
 
-#: models_depositions.py:1060
+#: models_depositions.py:271
 #, fuzzy
 msgid "Can view all 5-chamber depositions"
 msgstr "sample series"
 
-#: models_depositions.py:1093
+#: models_depositions.py:272
+#, fuzzy
+msgid "Can edit all 5-chamber depositions"
+msgstr "sample series"
+
+#: models_depositions.py:306
 #, fuzzy
 msgid "5-chamber deposition lab"
 msgstr "sample series"
 
-#: models_depositions.py:1142
+#: models_depositions.py:327 models_depositions.py:372
+msgid "date"
+msgstr ""
+
+#: models_depositions.py:328 models_depositions.py:373
+msgid "layer type"
+msgstr ""
+
+#: models_depositions.py:332
+msgid "temperature 1"
+msgstr ""
+
+#: models_depositions.py:332 models_depositions.py:334
+msgid "in ℃"
+msgstr ""
+
+#: models_depositions.py:334
+msgid "temperature 2"
+msgstr ""
+
+#: models_depositions.py:338
 msgid "5-chamber layer"
 msgstr ""
 
-#: models_depositions.py:1143
+#: models_depositions.py:339
 msgid "5-chamber layers"
 msgstr ""
 
-#: models_depositions.py:1204
-msgid "large sputter deposition"
-msgstr ""
-
-#: models_depositions.py:1205
-#, fuzzy
-msgid "large sputter depositions"
-msgstr "sample series"
-
-#: models_depositions.py:1207
-#, fuzzy
-msgid "Can add large sputter depositions"
-msgstr "sample series"
-
-#: models_depositions.py:1208
-msgid "Can edit perms for large sputter depositions"
-msgstr "Can edit permissions for large sputter depositions"
-
-#: models_depositions.py:1209
-msgid "Can view all large sputter depositions"
-msgstr ""
-
-#: models_depositions.py:1242
-msgid "large sputter deposition lab"
-msgstr ""
-
-#: models_depositions.py:1270
-msgid "layer description"
-msgstr ""
-
-#: models_depositions.py:1271 models_depositions.py:1363
-msgid "loadlock"
-msgstr ""
-
-#: models_depositions.py:1272 models_depositions.py:1364
-msgid "target"
-msgstr ""
-
-#: models_depositions.py:1273 models_depositions.py:1365
-msgid "modus"
-msgstr ""
-
-#: models_depositions.py:1274
-msgid "&#x64; (tube target)"
-msgstr ""
-
-#: models_depositions.py:1274
-msgid "in rpm"
-msgstr ""
-
-#: models_depositions.py:1275
-msgid "temperature LL"
-msgstr ""
-
-#: models_depositions.py:1276
-msgid "temperature PC"
-msgstr ""
-
-#: models_depositions.py:1278
-msgid "opertating pressure"
-msgstr ""
-
-#: models_depositions.py:1279
-msgid "in 10⁻³ mbar"
-msgstr ""
-
-#: models_depositions.py:1280
-msgid "in 10⁻⁷ mbar"
-msgstr ""
-
-#: models_depositions.py:1282
-msgid "throttle"
-msgstr ""
-
-#: models_depositions.py:1284
-msgid "gen. power"
-msgstr ""
-
-#: models_depositions.py:1284
-msgid "in kW"
-msgstr ""
-
-#: models_depositions.py:1285
-msgid "ref. power"
-msgstr ""
-
-#: models_depositions.py:1295
-msgid "feed rate"
-msgstr ""
-
-#: models_depositions.py:1295
-msgid "in mm/s"
-msgstr ""
-
-#: models_depositions.py:1296 models_depositions.py:1380
-msgid "steps"
-msgstr ""
-
-#: models_depositions.py:1297 models_depositions.py:1381
-msgid "static"
-msgstr ""
-
-#: models_depositions.py:1298
-msgid "static time"
-msgstr ""
-
-#: models_depositions.py:1308 models_depositions.py:1309
-msgid "U<sub>cal</sub>"
-msgstr ""
-
-#: models_depositions.py:1310 models_depositions.py:1311
-#: models_depositions.py:1389
-msgid "calibration"
-msgstr ""
-
-#: models_depositions.py:1315
-msgid "large sputter layer"
-msgstr ""
-
-#: models_depositions.py:1316
-msgid "large sputter layers"
-msgstr ""
-
-#: models_depositions.py:1362
-msgid "Layer description"
-msgstr ""
-
-#: models_depositions.py:1367
-msgid "T_LL/℃"
-msgstr ""
-
-#: models_depositions.py:1368
-msgid "T_PC/℃"
-msgstr ""
-
-#: models_depositions.py:1369
-msgid "pre-heat/min"
-msgstr ""
-
-#: models_depositions.py:1370
-msgid "op. pressure/10⁻³ mbar"
-msgstr ""
-
-#: models_depositions.py:1371
-msgid "b. pressure/10⁻⁷ mbar"
-msgstr ""
-
-#: models_depositions.py:1372
-msgid "throttle/%"
-msgstr ""
-
-#: models_depositions.py:1373
-msgid "gen. power/kW"
-msgstr ""
-
-#: models_depositions.py:1374
-msgid "ref. power/W"
-msgstr ""
-
-#: models_depositions.py:1375
-msgid "voltage/V"
-msgstr ""
-
-#: models_depositions.py:1376
-msgid "current/A"
-msgstr ""
-
-#: models_depositions.py:1379
-msgid "feed/mm/s"
-msgstr ""
-
-#: models_depositions.py:1382
-msgid "static time/min"
-msgstr ""
-
-#: models_depositions.py:1388
-msgid "U_cal/V"
-msgstr ""
-
 #. Translators: sample substrate type
-#: models_physical_processes.py:44
+#: models_physical_processes.py:40 models_physical_processes.py:376
 msgid "custom"
 msgstr ""
 
-#: models_physical_processes.py:47
+#: models_physical_processes.py:43
 msgid "Corning glass"
 msgstr ""
 
-#: models_physical_processes.py:48
+#: models_physical_processes.py:44 models_sample_details.py:248
 msgid "glass"
 msgstr ""
 
-#: models_physical_processes.py:49
+#: models_physical_processes.py:45 models_sample_details.py:247
 msgid "silicon wafer"
 msgstr ""
 
-#: models_physical_processes.py:50
+#: models_physical_processes.py:46
 msgid "quartz"
 msgstr ""
 
-#: models_physical_processes.py:51
+#: models_physical_processes.py:47
 msgid "sapphire"
 msgstr ""
 
-#: models_physical_processes.py:52
+#: models_physical_processes.py:48
 msgid "aluminium foil"
 msgstr ""
 
-#: models_physical_processes.py:70
+#: models_physical_processes.py:66
 msgid "substrate material"
 msgstr ""
 
-#: models_physical_processes.py:73
+#: models_physical_processes.py:69
 msgid "substrate"
 msgstr ""
 
-#: models_physical_processes.py:74
+#: models_physical_processes.py:70
 msgid "substrates"
 msgstr ""
 
-#: models_physical_processes.py:77
+#: models_physical_processes.py:73
+#, python-brace-format
 msgid "{material} substrate #{number}"
 msgstr ""
 
-#: models_physical_processes.py:89
+#: models_physical_processes.py:86
 msgid "material"
 msgstr ""
 
-#: models_physical_processes.py:105 models_physical_processes.py:128
-#: views/samples/sample.py:51
-msgid "cleaning number"
-msgstr ""
-
-#: models_physical_processes.py:108
-msgid "cleaning process"
-msgstr ""
-
-#: models_physical_processes.py:109
-msgid "cleaning processes"
-msgstr ""
-
-#: models_physical_processes.py:111
-msgid "Can clean samples"
-msgstr ""
-
-#: models_physical_processes.py:112
-msgid "Can edit perms for cleaning processes"
-msgstr "Can edit permissions for cleaning processes"
-
-#: models_physical_processes.py:113
-msgid "Can view all cleaning processes"
-msgstr ""
-
-#: models_physical_processes.py:152
-msgid "Hall measurement"
-msgstr ""
-
-#: models_physical_processes.py:153
-msgid "Hall measurements"
-msgstr ""
-
-#: models_physical_processes.py:155
-msgid "Can add hall measurements"
-msgstr ""
-
-#: models_physical_processes.py:156
-msgid "Can edit perms for hall measurements"
-msgstr "Can edit permissions for hall measurements"
-
-#: models_physical_processes.py:157
-msgid "Can view all hall measurements"
-msgstr ""
-
-#: models_physical_processes.py:162
-msgid "hall measurement of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:164
-msgid "hall measurement #{number}"
-msgstr ""
-
-#: models_physical_processes.py:183
+#: models_physical_processes.py:100
 msgid "PDS #1"
 msgstr ""
 
-#: models_physical_processes.py:184
+#: models_physical_processes.py:101
 msgid "PDS #2"
 msgstr ""
 
-#: models_physical_processes.py:190 models_physical_processes.py:274
+#: models_physical_processes.py:107 models_physical_processes.py:179
 msgid "PDS number"
 msgstr ""
 
-#: models_physical_processes.py:191 models_physical_processes.py:276
+#: models_physical_processes.py:108 models_physical_processes.py:181
 msgid "raw data file"
 msgstr ""
 
-#: models_physical_processes.py:192 models_physical_processes.py:195
-#: models_physical_processes.py:197
+#: models_physical_processes.py:109
 msgid "only the relative path below \"pds/\""
 msgstr ""
 
-#. Translators: PDS file.  Its filename starts with "a_".
-#: models_physical_processes.py:194 models_physical_processes.py:277
-#: models_physical_processes.py:655 models_physical_processes.py:789
-msgid "evaluated data file"
-msgstr ""
-
-#: models_physical_processes.py:196 models_physical_processes.py:278
-msgid "phase-corrected evaluated data file"
-msgstr ""
-
-#: models_physical_processes.py:198 models_physical_processes.py:275
-#: models_physical_processes.py:574 models_physical_processes.py:625
-#: models_physical_processes.py:821
+#: models_physical_processes.py:110 models_physical_processes.py:180
 msgid "apparatus"
 msgstr ""
 
-#: models_physical_processes.py:201
+#: models_physical_processes.py:113
 msgid "PDS measurement"
 msgstr ""
 
-#: models_physical_processes.py:202
+#: models_physical_processes.py:114
 msgid "PDS measurements"
 msgstr ""
 
-#: models_physical_processes.py:204
+#: models_physical_processes.py:116
 msgid "Can add PDS measurements"
 msgstr ""
 
-#: models_physical_processes.py:205
+#. Translators: Don't abbreviate "perms" in translation
+#. (not even to English)
+#: models_physical_processes.py:119
 msgid "Can edit perms for PDS measurements"
 msgstr "Can edit permissions for PDS measurements"
 
-#: models_physical_processes.py:206
+#: models_physical_processes.py:120
 msgid "Can view all PDS measurements"
 msgstr ""
 
-#: models_physical_processes.py:212
+#: models_physical_processes.py:126
+#, python-brace-format
 msgid "PDS measurement of {sample}"
 msgstr ""
 
-#: models_physical_processes.py:214
+#: models_physical_processes.py:128
+#, python-brace-format
 msgid "PDS measurement #{number}"
 msgstr ""
 
-#: models_physical_processes.py:221
+#: models_physical_processes.py:135
 msgid "energy in eV"
 msgstr ""
 
-#: models_physical_processes.py:222
+#: models_physical_processes.py:136
 msgid "α in cm⁻¹"
 msgstr ""
 
-#: models_physical_processes.py:222
+#: models_physical_processes.py:136
 msgid "PDS signal in a.u."
 msgstr ""
 
-#: models_physical_processes.py:224 models_physical_processes.py:717
+#: models_physical_processes.py:138
 msgid "unevaluated"
 msgstr ""
 
-#: models_physical_processes.py:285
-msgid "Dektak number"
-msgstr ""
-
-#: models_physical_processes.py:286 models_physical_processes.py:1125
-#: models_physical_processes.py:1177 models_physical_processes.py:1243
-#: models_physical_processes.py:1287
-msgid "layer thickness"
-msgstr ""
-
-#: models_physical_processes.py:289
-msgid "Dektak measurement"
-msgstr ""
-
-#: models_physical_processes.py:290
-msgid "Dektak measurements"
-msgstr ""
-
-#: models_physical_processes.py:292
-msgid "Can add Dektak measurements"
-msgstr ""
-
-#: models_physical_processes.py:293
-msgid "Can edit perms for Dektak measurements"
-msgstr "Can edit permissions for Dektak measurements"
-
-#: models_physical_processes.py:294
-msgid "Can view all Dektak measurements"
-msgstr ""
-
-#: models_physical_processes.py:299 views/samples/dektak_measurement.py:219
-msgid "Dektak measurement of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:301
-msgid "Dektak measurement #{number}"
-msgstr ""
-
-#: models_physical_processes.py:327 models_physical_processes.py:1168
-#: models_physical_processes.py:1222
-msgid "layer thickness/nm"
-msgstr ""
-
-#: models_physical_processes.py:334
-msgid "conductivity measurements number"
-msgstr ""
-
-#: models_physical_processes.py:337
+#: models_physical_processes.py:186 models_physical_processes.py:212
 #, fuzzy
-msgid "Conductivity measurement"
+msgid "cell position"
 msgstr "sample series"
 
-#: models_physical_processes.py:338
-#, fuzzy
-msgid "Conductivity measurements"
-msgstr "sample series"
-
-#: models_physical_processes.py:340
-#, fuzzy
-msgid "Can add conductivity measurements"
-msgstr "Can edit permissions for conductance measurements"
-
-#: models_physical_processes.py:342
-#, fuzzy
-msgid "Can edit perms for conductivity measurements"
-msgstr "Can edit permissions for conductance measurements"
-
-#: models_physical_processes.py:343
-#, fuzzy
-msgid "Can view all conductivity measurements"
-msgstr "sample series"
-
-#: models_physical_processes.py:348
-msgid "Conductivity measurement of Sample {sample}"
+#: models_physical_processes.py:187 models_physical_processes.py:211
+msgid "cell index"
 msgstr ""
 
-#: models_physical_processes.py:350
-msgid "Conductivity measurement #{number}"
-msgstr ""
-
-#: models_physical_processes.py:556
-msgid "conductivity #0"
-msgstr ""
-
-#: models_physical_processes.py:557
-msgid "conductivity #1"
-msgstr ""
-
-#: models_physical_processes.py:558
-msgid "conductivity #2"
-msgstr ""
-
-#: models_physical_processes.py:561
-msgid "dark"
-msgstr ""
-
-#: models_physical_processes.py:562
-msgid "photo"
-msgstr ""
-
-#: models_physical_processes.py:568
-msgid "conductivity measurement set"
-msgstr ""
-
-#: models_physical_processes.py:569
-msgid "measurement number"
-msgstr ""
-
-#: models_physical_processes.py:570
-msgid "file name"
-msgstr ""
-
-#: models_physical_processes.py:571 models_physical_processes.py:626
-msgid "light conditions"
-msgstr ""
-
-#: models_physical_processes.py:572
-msgid "temper time"
-msgstr ""
-
-#: models_physical_processes.py:573
-msgid "temper temperature"
-msgstr ""
-
-#: models_physical_processes.py:573
-msgid "in K"
-msgstr ""
-
-#: models_physical_processes.py:575 models_physical_processes.py:624
-msgid "cooled with nitrogen"
-msgstr ""
-
-#: models_physical_processes.py:576 views/samples/sample.py:67
-msgid "timestamp"
-msgstr ""
-
-#: models_physical_processes.py:577
-msgid "timestamp inaccuracy"
-msgstr ""
-
-#: models_physical_processes.py:583
-msgid "Single conductivity measurement"
-msgstr ""
-
-#: models_physical_processes.py:584
-#, fuzzy
-msgid "Single conductivity measurements"
-msgstr "Can edit permissions for conductance measurements"
-
-#: models_physical_processes.py:589
-msgid "Single conductivity measurement #{number} from {set}"
-msgstr ""
-
-#: models_physical_processes.py:619
-msgid "Conductivity measurement {number}"
-msgstr ""
-
-#: models_physical_processes.py:620 models_physical_processes.py:652
-#: models_physical_processes.py:787
-#: templates/samples/lab_notebook_large_area_deposition.html:29
-#: templates/samples/lab_notebook_pds_measurement.html:25
-#: templates/samples/lab_notebook_raman_measurement_one.html:25
-#: templates/samples/lab_notebook_raman_measurement_three.html:25
-#: templates/samples/lab_notebook_raman_measurement_two.html:25
-#: templates/samples/lab_notebook_six_chamber_deposition.html:30
-msgid "number"
-msgstr ""
-
-#: models_physical_processes.py:621
-msgid "data file name"
-msgstr ""
-
-#: models_physical_processes.py:622
-msgid "temper time/min"
-msgstr ""
-
-#: models_physical_processes.py:623
-msgid "temperature/K"
-msgstr ""
-
-#: models_physical_processes.py:631 models_physical_processes.py:638
-#: models_physical_processes.py:643
-msgid "unknown"
-msgstr ""
-
-#: models_physical_processes.py:639
-msgid "micro"
-msgstr ""
-
-#: models_physical_processes.py:640
-msgid "macro"
-msgstr ""
-
-#: models_physical_processes.py:644
-msgid "silicon CCD"
-msgstr ""
-
-#: models_physical_processes.py:646
-msgid "photomultiplier"
-msgstr ""
-
-#: models_physical_processes.py:653 models_physical_processes.py:788
+#: models_physical_processes.py:188
 msgid "data file"
 msgstr ""
 
-#: models_physical_processes.py:654 models_physical_processes.py:656
-msgid "only the relative path below \"daten/\""
+#: models_physical_processes.py:189
+msgid "only the relative path below \"maike_user/ascii files/\""
 msgstr ""
 
-#: models_physical_processes.py:657
-msgid "&lambda;<sub>central</sub>"
+#: models_physical_processes.py:196
+#, python-brace-format
+msgid "cell {position} of {solarsimulator_measurement}"
 msgstr ""
 
-#: models_physical_processes.py:659
-msgid "&lambda;<sub>excitation</sub>"
+#: models_physical_processes.py:210
+#, python-brace-format
+msgid "cell position {position}"
 msgstr ""
 
-#: models_physical_processes.py:661
-msgid "slit"
+#: models_physical_processes.py:213
+msgid "data file name"
 msgstr ""
 
-#: models_physical_processes.py:661
-msgid "in μm"
+#: models_physical_processes.py:235 models_physical_processes.py:302
+msgid "irradiance"
 msgstr ""
 
-#: models_physical_processes.py:662 models_physical_processes.py:793
-msgid "accumulation"
+#: models_physical_processes.py:236 models_physical_processes.py:303
+msgid "temperature"
 msgstr ""
 
-#: models_physical_processes.py:663
-msgid "measurement time"
+#: models_physical_processes.py:236
+msgid "in ℃"
 msgstr ""
 
-#: models_physical_processes.py:663 models_physical_processes.py:882
-msgid "in seconds"
-msgstr ""
-
-#: models_physical_processes.py:664
-msgid "laser power"
-msgstr ""
-
-#: models_physical_processes.py:664
-msgid "in mW"
-msgstr ""
-
-#: models_physical_processes.py:667 models_physical_processes.py:797
-msgid "grating"
-msgstr ""
-
-#: models_physical_processes.py:668 models_physical_processes.py:798
-msgid "objective"
-msgstr ""
-
-#: models_physical_processes.py:669
-msgid "peak position a-Si:H"
-msgstr ""
-
-#: models_physical_processes.py:669 models_physical_processes.py:672
-#: models_physical_processes.py:673 models_physical_processes.py:675
-msgid "in cm⁻¹"
-msgstr ""
-
-#: models_physical_processes.py:671
-msgid "peak position µc-Si:H"
-msgstr ""
-
-#: models_physical_processes.py:673
-msgid "peak width a-Si:H"
-msgstr ""
-
-#: models_physical_processes.py:675
-msgid "peak width µc-Si:H"
-msgstr ""
-
-#: models_physical_processes.py:677 models_physical_processes.py:805
-msgid "measured through substrate"
-msgstr ""
-
-#: models_physical_processes.py:678 models_physical_processes.py:803
-msgid "setup"
-msgstr ""
-
-#: models_physical_processes.py:679 models_physical_processes.py:804
-msgid "detector"
-msgstr ""
-
-#: models_physical_processes.py:683
-msgid "Raman measurement"
-msgstr ""
-
-#: models_physical_processes.py:684
-msgid "Raman measurements"
-msgstr ""
-
-#: models_physical_processes.py:691
-msgid "Raman {apparatus_number} measurement of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:705 models_physical_processes.py:712
-msgid "intensity (normalised)"
-msgstr ""
-
-#: models_physical_processes.py:716
-msgid "counts"
-msgstr ""
-
-#: models_physical_processes.py:723
-msgid "wavenumber in cm⁻¹"
-msgstr ""
-
-#: models_physical_processes.py:790
-msgid "λ (central)/nm"
-msgstr ""
-
-#: models_physical_processes.py:791
-msgid "λ (excitation)/nm"
-msgstr ""
-
-#: models_physical_processes.py:792
-msgid "slit/μm"
-msgstr ""
-
-#: models_physical_processes.py:794
-msgid "measurement time/s"
-msgstr ""
-
-#: models_physical_processes.py:795
-msgid "laser power/mW"
-msgstr ""
-
-#: models_physical_processes.py:796
-msgid "IcRS/%"
-msgstr ""
-
-#: models_physical_processes.py:799 models_physical_processes.py:800
-msgid "position {peak}"
-msgstr ""
-
-#: models_physical_processes.py:801 models_physical_processes.py:802
-msgid "width {peak}"
-msgstr ""
-
-#: models_physical_processes.py:829 models_physical_processes.py:845
-#: models_physical_processes.py:861
-msgid "Raman {apparatus_number} measurement"
-msgstr ""
-
-#: models_physical_processes.py:830 models_physical_processes.py:846
-#: models_physical_processes.py:862
-msgid "Raman {apparatus_number} measurements"
-msgstr ""
-
-#: models_physical_processes.py:832
+#: models_physical_processes.py:240 models_physical_processes.py:255
+#: models_physical_processes.py:351
 #, fuzzy
-msgid "Can add Raman 1 measurements"
-msgstr "Can edit permissions for Raman measurements"
-
-#: models_physical_processes.py:833
-#, fuzzy
-msgid "Can edit perms for Raman 1 measurements"
-msgstr "Can edit permissions for Raman measurements"
-
-#: models_physical_processes.py:834
-#, fuzzy
-msgid "Can view all Raman 1 measurements"
+msgid "solarsimulator photo measurement"
 msgstr "sample series"
 
-#: models_physical_processes.py:848
+#: models_physical_processes.py:241
 #, fuzzy
-msgid "Can add Raman 2 measurements"
-msgstr "Can edit permissions for Raman measurements"
-
-#: models_physical_processes.py:849
-#, fuzzy
-msgid "Can edit perms for Raman 2 measurements"
-msgstr "Can edit permissions for Raman measurements"
-
-#: models_physical_processes.py:850
-#, fuzzy
-msgid "Can view all Raman 2 measurements"
+msgid "solarsimulator photo measurements"
 msgstr "sample series"
 
-#: models_physical_processes.py:864
+#: models_physical_processes.py:243
 #, fuzzy
-msgid "Can add Raman 3 measurements"
-msgstr "Can edit permissions for Raman measurements"
+msgid "Can add photo measurements"
+msgstr "Can edit permissions for conductance measurements"
 
-#: models_physical_processes.py:865
+#: models_physical_processes.py:247
 #, fuzzy
-msgid "Can edit perms for Raman 3 measurements"
-msgstr "Can edit permissions for Raman measurements"
+#| msgid "Can edit perms for hall measurements"
+msgid "Can edit perms for photo measurements"
+msgstr "Can edit permissions for hall measurements"
 
-#: models_physical_processes.py:866
+#: models_physical_processes.py:248
 #, fuzzy
-msgid "Can view all Raman 3 measurements"
+msgid "Can view all photo measurements"
 msgstr "sample series"
 
-#: models_physical_processes.py:878 models_physical_processes.py:948
-msgid "etching number"
+#: models_physical_processes.py:253
+#, python-brace-format
+msgid "solarsimulator photo measurement of {sample}"
 msgstr ""
 
-#: models_physical_processes.py:879 models_physical_processes.py:949
-msgid "acid"
+#: models_physical_processes.py:320
+msgid "voltage in V"
 msgstr ""
 
-#: models_physical_processes.py:880 models_physical_processes.py:950
-msgid "acid concentration"
+#: models_physical_processes.py:321
+msgid "current density in mA/cm²"
 msgstr ""
 
-#: models_physical_processes.py:882
-msgid "etching time"
+#: models_physical_processes.py:352
+msgid "area"
 msgstr ""
 
-#: models_physical_processes.py:883 models_physical_processes.py:952
-msgid "surface resistance before etching"
+#: models_physical_processes.py:352
+msgid "in cm²"
 msgstr ""
 
-#: models_physical_processes.py:885 models_physical_processes.py:954
-msgid "surface resistance after etching"
+#: models_physical_processes.py:353
+msgid "efficiency η"
 msgstr ""
 
-#: models_physical_processes.py:887 models_physical_processes.py:956
-msgid "layer thickness before etching"
-msgstr ""
-
-#: models_physical_processes.py:888 models_physical_processes.py:957
-msgid "layer thickness after etching"
-msgstr ""
-
-#: models_physical_processes.py:891
-msgid "manual etching"
-msgstr ""
-
-#: models_physical_processes.py:892
-msgid "manual etchings"
-msgstr ""
-
-#: models_physical_processes.py:894
-msgid "Can add manual etchings"
-msgstr ""
-
-#: models_physical_processes.py:895
-msgid "Can edit perms for manual etchings"
-msgstr "Can edit permissions for manual etchings"
-
-#: models_physical_processes.py:896
-#, fuzzy
-msgid "Can view all manual etchings"
-msgstr "sample series"
-
-#: models_physical_processes.py:901
-msgid "manual etching of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:903
-msgid "manual etching #{number}"
-msgstr ""
-
-#: models_physical_processes.py:935 models_physical_processes.py:1007
-msgid "acid/%"
-msgstr ""
-
-#: models_physical_processes.py:936 models_physical_processes.py:1008
-msgid "temperature/℃"
-msgstr ""
-
-#: models_physical_processes.py:937
-msgid "etching time/s"
-msgstr ""
-
-#: models_physical_processes.py:938 models_physical_processes.py:1009
-msgid "surface resistance b./Ω"
-msgstr ""
-
-#: models_physical_processes.py:939 models_physical_processes.py:1010
-msgid "surface resistance a./Ω"
-msgstr ""
-
-#: models_physical_processes.py:940 models_physical_processes.py:1011
-msgid "layer thickness b./nm"
-msgstr ""
-
-#: models_physical_processes.py:941 models_physical_processes.py:1012
-msgid "layer thickness a./nm"
-msgstr ""
-
-#: models_physical_processes.py:958
-msgid "throughput speed"
-msgstr ""
-
-#: models_physical_processes.py:958
-msgid "in m/min"
-msgstr ""
-
-#: models_physical_processes.py:959
-msgid "voltage indicated"
-msgstr ""
-
-#: models_physical_processes.py:962
-msgid "throughput etching"
-msgstr ""
-
-#: models_physical_processes.py:963
-msgid "throughput etchings"
-msgstr ""
-
-#: models_physical_processes.py:965
-msgid "Can add throughput etchings"
-msgstr ""
-
-#: models_physical_processes.py:966
-msgid "Can edit perms for throughput etchings"
-msgstr "Can edit permissions for throughput etchings"
-
-#: models_physical_processes.py:967
-#, fuzzy
-msgid "Can view all throughput etchings"
-msgstr "sample series"
-
-#: models_physical_processes.py:972
-msgid "throughput etching plant process of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:974
-msgid "throughput etching plant process #{number}"
-msgstr ""
-
-#: models_physical_processes.py:1013
-msgid "throughput speed/ m/min"
-msgstr ""
-
-#: models_physical_processes.py:1014
-msgid "voltage indicated/V"
-msgstr ""
-
-#: models_physical_processes.py:1021
-msgid "DSR number"
-msgstr ""
-
-#: models_physical_processes.py:1022 models_physical_processes.py:1064
-msgid "data files directory"
-msgstr ""
-
-#. Translators: "Messwerte/" is part of the location path and shouldn't be translated
-#: models_physical_processes.py:1024
-msgid "only the relative path below \"Messwerte/\""
-msgstr ""
-
-#: models_physical_processes.py:1026
-msgid "DSR measurement"
-msgstr ""
-
-#: models_physical_processes.py:1027
-msgid "DSR measurements"
-msgstr ""
-
-#: models_physical_processes.py:1029
-msgid "Can add DSR measurements"
-msgstr ""
-
-#: models_physical_processes.py:1030
-msgid "Can edit perms for DSR measurements"
-msgstr "Can edit permissions for DSR measurements"
-
-#: models_physical_processes.py:1031
-msgid "Can view all DSR measurements"
-msgstr ""
-
-#: models_physical_processes.py:1036 views/samples/dsr_measurement.py:214
-msgid "DSR measurement of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:1038
-msgid "DSR measurement #{number}"
-msgstr ""
-
-#: models_physical_processes.py:1071
-msgid "IR number"
-msgstr ""
-
-#: models_physical_processes.py:1072 models_physical_processes.py:1115
-msgid "SPA data file"
-msgstr ""
-
-#: models_physical_processes.py:1073 models_physical_processes.py:1116
-msgid "CSV data file"
-msgstr ""
-
-#: models_physical_processes.py:1076
-msgid "IR measurement"
-msgstr ""
-
-#: models_physical_processes.py:1077
-msgid "IR measurements"
-msgstr ""
-
-#: models_physical_processes.py:1079
-msgid "Can add IR measurements"
-msgstr ""
-
-#: models_physical_processes.py:1080
-msgid "Can edit perms for IR measurements"
-msgstr "Can edit permissions for IR measurements"
-
-#: models_physical_processes.py:1081
-msgid "Can view all IR measurements"
-msgstr ""
-
-#: models_physical_processes.py:1086 views/samples/ir_measurement.py:227
-msgid "IR measurement of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:1088
-msgid "IR measurement #{number}"
-msgstr ""
-
-#: models_physical_processes.py:1123 models_physical_processes.py:1175
-msgid "evaporation number"
-msgstr ""
-
-#: models_physical_processes.py:1128
-msgid "small evaporation"
-msgstr ""
-
-#: models_physical_processes.py:1129
-#, fuzzy
-msgid "small evaporations"
-msgstr "sample series"
-
-#: models_physical_processes.py:1131
-msgid "Can add small evaporations"
-msgstr ""
-
-#: models_physical_processes.py:1132
-msgid "Can edit perms for small evaporations"
-msgstr "Can edit permissions for small evaporations"
-
-#: models_physical_processes.py:1133
-#, fuzzy
-msgid "Can view all small evaporations"
-msgstr "sample series"
-
-#: models_physical_processes.py:1138 models_physical_processes.py:1191
-msgid "Evaporation of {sample}"
-msgstr ""
-
-#: models_physical_processes.py:1140 models_physical_processes.py:1193
-msgid "Evaporation #{number}"
-msgstr ""
-
-#: models_physical_processes.py:1167 models_physical_processes.py:1221
-msgid "pressure/mbar"
-msgstr ""
-
-#: models_physical_processes.py:1178 models_physical_processes.py:1223
-msgid "evaporation material"
-msgstr ""
-
-#: models_physical_processes.py:1181
-#, fuzzy
-msgid "large evaporation"
-msgstr "sample series"
-
-#: models_physical_processes.py:1182
-#, fuzzy
-msgid "large evaporations"
-msgstr "sample series"
-
-#: models_physical_processes.py:1184
-#, fuzzy
-msgid "Can add large evaporations"
-msgstr "sample series"
-
-#: models_physical_processes.py:1185
-msgid "Can edit perms for large evaporations"
-msgstr "Can edit permissions for large evaporations"
-
-#: models_physical_processes.py:1186
-#, fuzzy
-msgid "Can view all large evaporations"
-msgstr "sample series"
-
-#: models_physical_processes.py:1231
-msgid "profilers + edge"
-msgstr ""
-
-#: models_physical_processes.py:1232
-msgid "ellipsometer"
-msgstr ""
-
-#: models_physical_processes.py:1233
-msgid "calculated from deposition parameters"
-msgstr ""
-
-#: models_physical_processes.py:1234
-msgid "estimate"
-msgstr ""
-
-#: models_physical_processes.py:1235
-msgid "other"
-msgstr ""
-
-#: models_physical_processes.py:1244 models_physical_processes.py:1288
-msgid "unit"
-msgstr ""
-
-#: models_physical_processes.py:1245 models_physical_processes.py:1289
-msgid "measurement method"
-msgstr ""
-
-#: models_physical_processes.py:1246 models_physical_processes.py:1290
-msgid "uncertainty"
-msgstr ""
-
-#: models_physical_processes.py:1247
+#: models_physical_processes.py:353 models_physical_processes.py:355
 msgid "in %"
 msgstr ""
 
-#: models_physical_processes.py:1250
-msgid "layer thickness measurement"
+#: models_physical_processes.py:354
+msgid "maximum power point"
 msgstr ""
 
-#: models_physical_processes.py:1251
-msgid "layer thickness measurements"
+#: models_physical_processes.py:354
+msgid "in mW"
 msgstr ""
 
-#: models_physical_processes.py:1256
-msgid "layer thickness of {sample}"
+#: models_physical_processes.py:355
+msgid "fill factor"
 msgstr ""
 
-#: models_physical_processes.py:1258
-msgid "layer thickness #{number}"
+#: models_physical_processes.py:356
+msgid "short-circuit current density"
+msgstr ""
+
+#: models_physical_processes.py:356
+msgid "in mA/cm²"
+msgstr ""
+
+#: models_physical_processes.py:358
+msgid "solarsimulator photo cell measurement"
+msgstr ""
+
+#: models_physical_processes.py:359
+msgid "solarsimulator photo cell measurements"
+msgstr ""
+
+#: models_physical_processes.py:400
+msgid "layout"
+msgstr ""
+
+#: models_physical_processes.py:401
+msgid "length"
+msgstr ""
+
+#: models_physical_processes.py:401 models_physical_processes.py:402
+msgid "in mm"
+msgstr ""
+
+#: models_physical_processes.py:402
+msgid "width"
+msgstr ""
+
+#: models_physical_processes.py:403
+msgid "parameters"
+msgstr ""
+
+#: models_physical_processes.py:406
+msgid "structuring"
+msgstr ""
+
+#: models_physical_processes.py:407
+msgid "structurings"
+msgstr ""
+
+#: models_sample_details.py:44 views/form_utils.py:208
+#, fuzzy
+msgid "sample"
+msgstr "sample series"
+
+#: models_sample_details.py:48 models_sample_details.py:257
+#, fuzzy
+msgid "sample details"
+msgstr "sample series"
+
+#: models_sample_details.py:49
+#, fuzzy
+msgctxt "plural"
+msgid "sample details"
+msgstr "sample series"
+
+#: models_sample_details.py:241
+msgid "black"
+msgstr ""
+
+#: models_sample_details.py:241
+msgid "blue"
+msgstr ""
+
+#: models_sample_details.py:241
+msgid "brown"
+msgstr ""
+
+#: models_sample_details.py:241
+msgid "darkgray"
+msgstr ""
+
+#: models_sample_details.py:242
+msgid "green"
+msgstr ""
+
+#: models_sample_details.py:242
+msgid "lightblue"
+msgstr ""
+
+#: models_sample_details.py:243
+msgid "lightgreen"
+msgstr ""
+
+#: models_sample_details.py:243
+msgid "magenta"
+msgstr ""
+
+#: models_sample_details.py:244
+msgid "orange"
+msgstr ""
+
+#: models_sample_details.py:244
+msgid "red"
+msgstr ""
+
+#: models_sample_details.py:244
+msgctxt "color"
+msgid "silver"
+msgstr ""
+
+#: models_sample_details.py:245
+msgid "white"
+msgstr ""
+
+#: models_sample_details.py:245
+msgid "yellow"
+msgstr ""
+
+#: models_sample_details.py:248
+msgctxt "metall"
+msgid "silver"
+msgstr ""
+
+#: models_sample_details.py:249
+msgid "HF dip"
+msgstr ""
+
+#: models_sample_details.py:256 models_sample_details.py:320
+msgid "index"
+msgstr ""
+
+#: models_sample_details.py:258 models_sample_details.py:321
+msgid "doping"
+msgstr ""
+
+#: models_sample_details.py:259 models_sample_details.py:322
+msgid "classification"
+msgstr ""
+
+#: models_sample_details.py:262
+msgid "color"
+msgstr ""
+
+#: models_sample_details.py:263 models_sample_details.py:324
+msgid "thickness"
+msgstr ""
+
+#: models_sample_details.py:263
+msgid "in nm"
+msgstr ""
+
+#: models_sample_details.py:264 models_sample_details.py:325
+msgid "thickness reliable"
+msgstr ""
+
+#: models_sample_details.py:265 models_sample_details.py:326
+msgid "structured"
+msgstr ""
+
+#: models_sample_details.py:266 models_sample_details.py:327
+msgid "textured"
+msgstr ""
+
+#: models_sample_details.py:267
+msgid "always collapsed"
+msgstr ""
+
+#: models_sample_details.py:268
+#, fuzzy
+msgid "process"
+msgstr "sample series"
+
+#: models_sample_details.py:270
+msgid "additional process data"
+msgstr ""
+
+#: models_sample_details.py:271 models_sample_details.py:328
+msgid "verified"
+msgstr ""
+
+#: models_sample_details.py:276
+msgid "informal layer"
+msgstr ""
+
+#: models_sample_details.py:277
+msgid "informal layers"
+msgstr ""
+
+#: models_sample_details.py:350
+msgid "You must give a classification or comments or both."
 msgstr ""
 
 #: permissions.py:52
+#, python-brace-format
 msgid ""
 "You are not allowed to edit the substrate #{number} because you are not "
 "allowed to edit all affected samples."
@@ -1983,15 +678,11 @@ msgid ""
 "all affected samples."
 msgstr ""
 
-#: templates/404.html:26
-msgid "woman with binoculars"
-msgstr ""
-
-#: templates/404.html:32 templates/404.html.py:33
+#: templates/404.html:28 templates/404.html.py:29
 msgid "Resource not found"
 msgstr ""
 
-#: templates/404.html:36
+#: templates/404.html:32
 #, python-format
 msgid ""
 "\n"
@@ -2006,23 +697,19 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr ""
 
-#: templates/500.html:33 templates/jb_base.html:44
+#: templates/500.html:34 templates/jb_base.html:61
 msgid "Main menu"
 msgstr ""
 
-#: templates/500.html:42 templates/jb_base.html:76
+#: templates/500.html:44 templates/jb_base.html:94
 msgid "Jülich Forschungszentrum logo"
 msgstr ""
 
 #: templates/500.html:51
-msgid "ancient human dispatcher"
-msgstr ""
-
-#: templates/500.html:53
 msgid "Internal server error"
 msgstr ""
 
-#: templates/500.html:54
+#: templates/500.html:52
 msgid ""
 "\n"
 "<p>You experienced an internal error in the JuliaBase server software.  The\n"
@@ -2037,205 +724,38 @@ msgid ""
 "database.</p>\n"
 msgstr ""
 
-#: templates/jb_base.html:36
+#: templates/jb_base.html:53
 #, python-format
 msgid "switch to %(language)s"
 msgstr ""
 
-#: templates/jb_base.html:42
+#: templates/jb_base.html:59
 msgid "Welcome,"
 msgstr ""
 
-#: templates/jb_base.html:48
+#: templates/jb_base.html:65
 msgid "Report feature wish or bug"
 msgstr ""
 
-#: templates/jb_base.html:50 templates/jb_base.html.py:56
+#: templates/jb_base.html:67 templates/jb_base.html.py:73
 msgid "Help"
 msgstr ""
 
-#: templates/jb_base.html:52
+#: templates/jb_base.html:69
 msgid "Log out"
 msgstr ""
 
-#: templates/jb_base.html:60
+#: templates/jb_base.html:77
 msgid "Log in"
 msgstr ""
 
-#: templates/jb_common/base.html:20 templates/refdb/base.html:24
-#: templates/samples/base.html:25
+#: templates/jb_common/base.html:24 templates/refdb/base.html:24
+#: templates/samples/base.html:29
 msgid "IEF-5 logo"
 msgstr ""
 
-#: templates/jb_common/base.html:21
+#: templates/jb_common/base.html:25
 msgid "The database server"
-msgstr ""
-
-#: templates/jb_institute/about.html:19
-msgid "stewardess"
-msgstr ""
-
-#: templates/jb_institute/about.html:34
-msgid "Operating system"
-msgstr ""
-
-#: templates/jb_institute/about.html:36
-msgid "Ubuntu logo"
-msgstr ""
-
-#: templates/jb_institute/about.html:41
-msgid "Web server"
-msgstr ""
-
-#: templates/jb_institute/about.html:43
-msgid "Django testserver"
-msgstr ""
-
-#: templates/jb_institute/about.html:45 templates/jb_institute/about.html:48
-msgid "http://en.wikipedia.org/wiki/Apache_HTTP_Server"
-msgstr ""
-
-#: templates/jb_institute/about.html:46
-msgid "Apache logo"
-msgstr ""
-
-#: templates/jb_institute/about.html:53
-msgid "Database"
-msgstr ""
-
-#: templates/jb_institute/about.html:55 templates/jb_institute/about.html:58
-msgid "http://en.wikipedia.org/wiki/PostgreSQL"
-msgstr ""
-
-#: templates/jb_institute/about.html:56
-msgid "PostgreSQL logo"
-msgstr ""
-
-#: templates/jb_institute/about.html:62
-msgid "Web framework"
-msgstr ""
-
-#: templates/jb_institute/about.html:64 templates/jb_institute/about.html:67
-msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
-msgstr ""
-
-#: templates/jb_institute/about.html:65
-msgid "Django logo"
-msgstr ""
-
-#: templates/jb_institute/about.html:71
-msgid "Plotting system"
-msgstr ""
-
-#: templates/jb_institute/about.html:73 templates/jb_institute/about.html:76
-msgid "http://matplotlib.sourceforge.net/"
-msgstr ""
-
-#: templates/jb_institute/about.html:75
-msgid "Matplotlib logo"
-msgstr ""
-
-#: templates/jb_institute/about.html:83
-msgid ""
-"\n"
-"    “<strong>Chantaal</strong>” stands\n"
-"    for “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</"
-"strong>vailable <strong>n</strong>etworked \n"
-"    <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</"
-"strong>ibrary”.\n"
-"  "
-msgstr ""
-
-#: templates/jb_institute/statistics.html:23
-msgid "secretary"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:36
-msgid "Availability"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:39
-msgid "No data available."
-msgstr ""
-
-#: templates/jb_institute/statistics.html:41
-#, python-format
-msgid ""
-"%(availability)s \n"
-"         availability since %(start_date)s."
-msgstr ""
-
-#: templates/jb_institute/statistics.html:45
-msgid "Most recent downtimes:"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:56
-msgid "Work load"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:58
-msgid ""
-"\n"
-"<p>These plots are re-calculated every 10 minutes, the underlying "
-"resolution\n"
-"  being higher, though.  Lines referring to “mandy” are slightly thicker "
-"than\n"
-"  those referring to “olga”.</p>\n"
-"\n"
-"<p>“Memory usage” also shows the use of swap storage in red.</p>\n"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:66
-msgid "server load statistics plots"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:69
-msgid "Backups"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:71
-msgid "Hourly backups of the database tables"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:76
-msgid "Last backup:"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:80
-msgid "Last copy of all backups to sonne:"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:85
-msgid "No log data found."
-msgstr ""
-
-#: templates/jb_institute/statistics.html:88
-msgid "Tivoli storage manager"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:94
-#: templates/jb_institute/statistics.html:118
-msgid "Log file could not be accessed."
-msgstr ""
-
-#: templates/jb_institute/statistics.html:97
-#: templates/jb_institute/statistics.html:121
-msgid "last backup"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:100
-#: templates/jb_institute/statistics.html:124
-msgid "Time"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:104
-#: templates/jb_institute/statistics.html:128
-msgid "Objects inspected"
-msgstr ""
-
-#: templates/jb_institute/statistics.html:108
-#: templates/jb_institute/statistics.html:132
-msgid "Objects failed"
 msgstr ""
 
 #: templates/refdb/base.html:26
@@ -2245,263 +765,125 @@ msgstr ""
 #: templates/samples/add_claim_oldstyle.html:21
 #: templates/samples/add_claim_oldstyle.html:22
 #: templates/samples/add_claim_oldstyle.html:23
-#: templates/samples/add_samples.html:22
+#: templates/samples/add_samples.html:22 templates/samples/edit_sample.html:28
 msgid "General error"
 msgstr ""
 
-#: templates/samples/add_claim_oldstyle.html:25 views/samples/sample.py:64
+#: templates/samples/add_claim_oldstyle.html:25 views/samples/sample.py:65
 msgid "Substrate"
 msgstr ""
 
-#: templates/samples/base.html:26
+#: templates/samples/base.html:30
 msgid "The samples database"
 msgstr ""
 
-#: templates/samples/edit_cleaning_process.html:22
-msgid "cleaning process error"
+#: templates/samples/copy_informal_stack.html:21
+msgid ""
+"Attention: The informal stacks of the selected destination samples will be "
+"overwritten!"
 msgstr ""
 
-#: templates/samples/edit_cleaning_process.html:23
-#: templates/samples/edit_substrate.html:23
-msgid "Sample list error"
+#: templates/samples/copy_informal_stack.html:24
+#, fuzzy
+msgid "Error in destination samples"
+msgstr "sample series"
+
+#: templates/samples/copy_informal_stack.html:28
+#: templates/samples/show_sample.html:26
+msgid "layer stack"
 msgstr ""
 
-#: templates/samples/edit_conductivity_measurement.html:22
-#, fuzzy
-msgid "Error in conductivity measurements"
-msgstr "sample series"
-
-#: templates/samples/edit_conductivity_measurement.html:23
-#: templates/samples/edit_dektak_measurement.html:23
-#: templates/samples/edit_dsr_measurement.html:23
-#: templates/samples/edit_ir_measurement.html:23
-#: templates/samples/edit_pds_measurement.html:23
-#: templates/samples/edit_raman_measurement.html:23
-msgid "Error in sample"
-msgstr ""
-
-#: templates/samples/edit_conductivity_measurement.html:24
-#: templates/samples/edit_dektak_measurement.html:24
-#: templates/samples/edit_dsr_measurement.html:24
-#: templates/samples/edit_ir_measurement.html:24
-#: templates/samples/edit_manual_etching.html:31
-#: templates/samples/edit_pds_measurement.html:25
-#: templates/samples/edit_raman_measurement.html:24
-#: templates/samples/edit_throughput_etching.html:31
-#, fuzzy
-msgid "Error with removal from “My Samples”"
-msgstr "sample series"
-
-#: templates/samples/edit_conductivity_measurement.html:48
-#, fuzzy
-msgid "Error in conductivity measurement"
-msgstr "sample series"
-
-#: templates/samples/edit_conductivity_measurement.html:82
-#: templates/samples/edit_five_chamber_deposition.html:101
-#: templates/samples/edit_large_area_deposition.html:119
-#: templates/samples/edit_large_sputter_deposition.html:126
-#: templates/samples/edit_p_hot_wire_deposition.html:205
-msgid "Error with adding layers"
-msgstr ""
-
-#: templates/samples/edit_dektak_measurement.html:22
-#, fuzzy
-msgid "Error in Dektak data"
-msgstr "sample series"
-
-#: templates/samples/edit_dsr_measurement.html:22
-#, fuzzy
-msgid "Error in DSR data"
-msgstr "sample series"
-
+#: templates/samples/edit_cluster_tool_deposition.html:29
 #: templates/samples/edit_five_chamber_deposition.html:22
-#: templates/samples/edit_large_area_deposition.html:22
-#: templates/samples/edit_large_sputter_deposition.html:22
-#: templates/samples/edit_manual_etching.html:29
-#: templates/samples/edit_p_hot_wire_deposition.html:29
-#: templates/samples/edit_six_chamber_deposition.html:29
-#: templates/samples/edit_small_cluster_tool_deposition.html:29
 msgid "Error in deposition"
 msgstr ""
 
+#: templates/samples/edit_cluster_tool_deposition.html:30
 #: templates/samples/edit_five_chamber_deposition.html:23
-#: templates/samples/edit_large_area_deposition.html:23
-#: templates/samples/edit_large_evaporation.html:23
-#: templates/samples/edit_large_sputter_deposition.html:23
-#: templates/samples/edit_layer_thickness_measurement.html:23
-#: templates/samples/edit_manual_etching.html:30
-#: templates/samples/edit_p_hot_wire_deposition.html:30
-#: templates/samples/edit_six_chamber_deposition.html:30
-#: templates/samples/edit_small_cluster_tool_deposition.html:30
-#: templates/samples/edit_small_evaporation.html:23
-#: templates/samples/edit_throughput_etching.html:30
 #, fuzzy
 msgid "Error in sample list"
 msgstr "sample series"
 
-#: templates/samples/edit_five_chamber_deposition.html:53
-#: templates/samples/edit_five_chamber_deposition.html:54
-#: templates/samples/edit_large_area_deposition.html:63
-#: templates/samples/edit_large_area_deposition.html:64
-#: templates/samples/edit_large_sputter_deposition.html:53
-#: templates/samples/edit_large_sputter_deposition.html:54
-#: templates/samples/edit_p_hot_wire_deposition.html:61
-#: templates/samples/edit_six_chamber_deposition.html:69
-#: templates/samples/edit_small_cluster_tool_deposition.html:61
+#: templates/samples/edit_cluster_tool_deposition.html:66
+#: templates/samples/edit_five_chamber_deposition.html:58
+#: templates/samples/edit_five_chamber_deposition.html:59
+#: templates/samples/edit_sample.html:53
 #, fuzzy
 msgid "Error in layer"
 msgstr "sample series"
 
-#: templates/samples/edit_five_chamber_deposition.html:102
-#: templates/samples/edit_large_area_deposition.html:120
-#: templates/samples/edit_large_evaporation.html:59
-#: templates/samples/edit_large_sputter_deposition.html:127
-#: templates/samples/edit_p_hot_wire_deposition.html:206
-#: templates/samples/edit_small_evaporation.html:54
+#: templates/samples/edit_cluster_tool_deposition.html:78
+msgid "layer number"
+msgstr ""
+
+#: templates/samples/edit_cluster_tool_deposition.html:145
+msgid "Gas flows in sccm"
+msgstr ""
+
+#: templates/samples/edit_five_chamber_deposition.html:104
+msgid "Error with adding layers"
+msgstr ""
+
+#: templates/samples/edit_five_chamber_deposition.html:105
 #, fuzzy
 msgid "Error with removing from My Samples"
 msgstr "sample series"
 
-#: templates/samples/edit_ir_measurement.html:22
-#, fuzzy
-msgid "Error in IR data"
-msgstr "sample series"
-
-#: templates/samples/edit_large_evaporation.html:22
-#: templates/samples/edit_small_evaporation.html:22
-#: templates/samples/edit_throughput_etching.html:29
-#, fuzzy
-msgid "Error in process"
-msgstr "sample series"
-
-#: templates/samples/edit_layer_thickness_measurement.html:22
-#, fuzzy
-msgid "Error in measurement"
-msgstr "sample series"
-
-#: templates/samples/edit_p_hot_wire_deposition.html:71
-#: templates/samples/edit_small_cluster_tool_deposition.html:71
-msgid "layer number"
-msgstr ""
-
-#: templates/samples/edit_p_hot_wire_deposition.html:143
-#: templates/samples/edit_small_cluster_tool_deposition.html:264
-msgid "Gas flows in sccm"
-msgstr ""
-
 #: templates/samples/edit_pds_measurement.html:22
 msgid "Error in PDS data"
+msgstr ""
+
+#: templates/samples/edit_pds_measurement.html:23
+#: templates/samples/edit_solarsimulator_measurement.html:23
+msgid "Error in sample"
 msgstr ""
 
 #: templates/samples/edit_pds_measurement.html:24
 msgid "Extract from datafile error"
 msgstr ""
 
-#: templates/samples/edit_raman_measurement.html:22
+#: templates/samples/edit_pds_measurement.html:25
+#: templates/samples/edit_solarsimulator_measurement.html:24
 #, fuzzy
-msgid "Error in Raman data"
+msgid "Error with removal from “My Samples”"
 msgstr "sample series"
 
-#: templates/samples/edit_six_chamber_deposition.html:90
-#: views/samples/five_chamber_deposition.py:110
-#: views/samples/large_area_deposition.py:151
-#: views/samples/large_sputter_deposition.py:127
-#: views/samples/new_cluster_tool_deposition.py:329
-#: views/samples/p_hot_wire_deposition.py:139
-#: views/samples/small_cluster_tool_deposition.py:276
-msgid "duplicate this layer"
+#: templates/samples/edit_sample.html:21
+msgid "Informal stack"
 msgstr ""
 
-#: templates/samples/edit_six_chamber_deposition.html:95
-msgid "delete this layer"
-msgstr ""
-
-#: templates/samples/edit_six_chamber_deposition.html:150
+#: templates/samples/edit_sample.html:48
 msgid "delete"
 msgstr ""
 
-#: templates/samples/edit_six_chamber_deposition.html:153
+#: templates/samples/edit_solarsimulator_measurement.html:22
 #, fuzzy
-msgid "Error in channel"
+msgid "Error in solarsimulator measurements"
 msgstr "sample series"
 
-#: templates/samples/edit_six_chamber_deposition.html:165
-msgid "Number of channels to be added:"
-msgstr ""
-
-#: templates/samples/edit_six_chamber_deposition.html:184
-msgid "Number of layers to be added:"
-msgstr ""
+#: templates/samples/edit_solarsimulator_measurement.html:59
+#, fuzzy
+msgid "Error in solarsimulator measurement"
+msgstr "sample series"
 
 #: templates/samples/edit_substrate.html:22
 msgid "Substrate error"
 msgstr ""
 
-#: templates/samples/lab_notebook_large_area_deposition.html:31
-msgid "type"
+#: templates/samples/edit_substrate.html:23
+msgid "Sample list error"
 msgstr ""
 
-#: templates/samples/lab_notebook_large_area_deposition.html:95
-#: templates/samples/lab_notebook_pds_measurement.html:47
-#: templates/samples/lab_notebook_raman_measurement_one.html:51
-#: templates/samples/lab_notebook_raman_measurement_three.html:51
-#: templates/samples/lab_notebook_raman_measurement_two.html:51
-#: templates/samples/lab_notebook_six_chamber_deposition.html:86
-msgid "No data found for this time range."
+#: templates/samples/lab_notebook_five_chamber_deposition.html:27
+msgid "number"
 msgstr ""
 
-#: templates/samples/lab_notebook_pds_measurement.html:26
-#: templates/samples/lab_notebook_raman_measurement_one.html:26
-#: templates/samples/lab_notebook_raman_measurement_three.html:26
-#: templates/samples/lab_notebook_raman_measurement_two.html:26
-#, fuzzy
-msgid "sample"
-msgstr "sample series"
-
-#: templates/samples/lab_notebook_pds_measurement.html:27
-#: templates/samples/lab_notebook_raman_measurement_one.html:29
-#: templates/samples/lab_notebook_raman_measurement_three.html:29
-#: templates/samples/lab_notebook_raman_measurement_two.html:29
-msgid "eval."
-msgstr ""
-
-#: templates/samples/lab_notebook_pds_measurement.html:28
-msgid "ph.-c. eval."
-msgstr ""
-
-#: templates/samples/lab_notebook_pds_measurement.html:29
-#: templates/samples/lab_notebook_raman_measurement_one.html:30
-#: templates/samples/lab_notebook_raman_measurement_three.html:30
-#: templates/samples/lab_notebook_raman_measurement_two.html:30
-msgid "app."
-msgstr ""
-
-#: templates/samples/lab_notebook_pds_measurement.html:38
-#: templates/samples/lab_notebook_raman_measurement_one.html:41
-#: templates/samples/lab_notebook_raman_measurement_three.html:41
-#: templates/samples/lab_notebook_raman_measurement_two.html:41
-msgid "evaluated"
-msgstr ""
-
-#: templates/samples/lab_notebook_pds_measurement.html:39
-msgid "phase-corrected evaluated"
-msgstr ""
-
-#: templates/samples/lab_notebook_raman_measurement_one.html:27
-#: templates/samples/lab_notebook_raman_measurement_three.html:27
-#: templates/samples/lab_notebook_raman_measurement_two.html:27
-msgid "manufacturer"
-msgstr ""
-
-#: templates/samples/lab_notebook_raman_measurement_one.html:28
-#: templates/samples/lab_notebook_raman_measurement_three.html:28
-#: templates/samples/lab_notebook_raman_measurement_two.html:28
-msgid "&lambda;<sub>ex.</sub>"
-msgstr ""
-
-#: templates/samples/lab_notebook_six_chamber_deposition.html:61
+#: templates/samples/lab_notebook_five_chamber_deposition.html:53
 msgid "(not finished)"
+msgstr ""
+
+#: templates/samples/lab_notebook_five_chamber_deposition.html:75
+msgid "No data found for this time range."
 msgstr ""
 
 #: templates/samples/list_claims.html:19
@@ -2532,11 +914,7 @@ msgstr ""
 msgid "woman in laboratory"
 msgstr ""
 
-#: templates/samples/permission_error.html:21
-msgid "woman with lock"
-msgstr ""
-
-#: templates/samples/permission_error.html:27
+#: templates/samples/permission_error.html:22
 #, python-format
 msgid ""
 "\n"
@@ -2546,156 +924,90 @@ msgid ""
 "    "
 msgstr ""
 
-#: templates/samples/permission_error.html:32
+#: templates/samples/permission_error.html:27
 msgid ""
 "\n"
-"        Also note that the head of your institute topic may add you to the\n"
+"        Also note that the head of your institute group may add you to the\n"
 "        JuliaBase topic you need to access this resource.\n"
 "      "
 msgstr ""
 
-#: templates/samples/permission_error.html:39
+#: templates/samples/permission_error.html:34
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 
-#: templates/samples/show_cleaning_process.html:19 views/samples/sample.py:76
-msgid "Cleaning number"
-msgstr ""
-
-#: templates/samples/show_conductivity_measurement_set.html:27
-msgid "Measurement number"
-msgstr ""
-
-#: templates/samples/show_conductivity_measurement_set.html:36
-msgid "Value"
-msgstr ""
-
-#: templates/samples/show_conductivity_measurement_set.html:40
-msgid "Temperature"
-msgstr ""
-
-#: templates/samples/show_conductivity_measurement_set.html:49
-msgid "characteristics curve"
-msgstr ""
-
-#: templates/samples/show_conductivity_measurement_set.html:51
-msgid "conductivity"
-msgstr ""
-
 #: templates/samples/show_five_chamber_deposition.html:50
-#: templates/samples/show_large_area_deposition.html:61
 msgid "Silane conc."
+msgstr ""
+
+#: templates/samples/show_sample.html:23
+#, fuzzy
+msgid "sample label"
+msgstr "sample series"
+
+#: templates/samples/show_sample.html:28
+msgid "copy informal stack"
+msgstr ""
+
+#: templates/samples/show_solarsimulator_photo_measurement.html:59
+msgid "cell layout"
 msgstr ""
 
 #: templates/samples/show_substrate.html:19
 msgid "Material"
 msgstr ""
 
-#: templatetags/institute_extras.py:105
+#: templatetags/institute_extras.py:72
+#: views/samples/cluster_tool_deposition.py:47
+msgid "hot-wire"
+msgstr ""
+
+#: templatetags/institute_extras.py:84
+#, python-brace-format
 msgid "Mr {lastname}"
 msgstr ""
 
-#: views/form_utils.py:78
+#: views/form_utils.py:96
+#, python-brace-format
 msgid "Deposition {number} was successfully changed in the database."
 msgstr ""
 
-#: views/form_utils.py:83
+#: views/form_utils.py:100
+#, python-brace-format
 msgid "Deposition {number} was successfully added to the database."
 msgstr ""
 
-#: views/form_utils.py:86
+#: views/form_utils.py:105
 msgid "The deposition was not saved due to incorrect or missing data."
 msgstr ""
 
-#: views/form_utils.py:91 views/samples/large_evaporation.py:335
-#: views/samples/small_evaporation.py:334
+#: views/form_utils.py:109
+#, python-brace-format
 msgid "Edit {name} “{number}”"
 msgstr ""
 
-#: views/form_utils.py:92 views/samples/large_evaporation.py:336
-#: views/samples/small_evaporation.py:335
+#: views/form_utils.py:110
+#: views/samples/solarsimulator_photo_measurement.py:283
+#, python-brace-format
 msgid "Add {name}"
 msgstr ""
 
-#: views/form_utils.py:122
+#: views/form_utils.py:140
+#, python-brace-format
 msgid "{name} “{number}”"
 msgstr ""
 
-#: views/form_utils.py:157 views/samples/conductivity_measurement.py:393
+#: views/form_utils.py:175
 msgid "This number is already in use."
 msgstr ""
 
-#: views/form_utils.py:161 views/samples/conductivity_measurement.py:399
-#: views/samples/manual_etching.py:196
+#: views/form_utils.py:179
+#: views/samples/solarsimulator_photo_measurement.py:177
+#: views/samples/structuring.py:130
 msgid "Sample is already dead at this time."
 msgstr ""
 
-#: views/statistics.py:74
-msgid "today, %H:%M"
-msgstr ""
-
-#: views/statistics.py:76
-msgid "yesterday, %H:%M"
-msgstr ""
-
-#: views/statistics.py:78 views/statistics.py:160
-msgid "%A, %b %d, %Y, %H:%M"
-msgstr ""
-
-#: views/statistics.py:117 views/statistics.py:129 views/statistics.py:133
-msgid "%b %d, %Y, %H:%M"
-msgstr ""
-
-#: views/statistics.py:122
-msgid "100.0 %"
-msgstr ""
-
-#: views/statistics.py:131
-msgid "%H:%M"
-msgstr ""
-
-#: views/statistics.py:135
-msgid "{from_} until {to} ({minutes} minute)"
-msgid_plural "{from_} until {to} ({minutes} minutes)"
-msgstr[0] ""
-msgstr[1] ""
-
-#: views/statistics.py:156
-msgid "%H:%M today"
-msgstr ""
-
-#: views/statistics.py:158
-msgid "%H:%M yesterday"
-msgstr ""
-
-#: views/statistics.py:175 views/statistics.py:177
-msgid "successful, {timestamp}"
-msgstr ""
-
-#: views/statistics.py:179 views/statistics.py:181
-#, fuzzy
-msgid "failed, {timestamp}"
-msgstr "sample series"
-
-#: views/statistics.py:183 views/statistics.py:185
-msgid "no log data found"
-msgstr ""
-
-#: views/statistics.py:203
-msgid "JuliaBase server statistics"
-msgstr ""
-
-#: views/statistics.py:228
-msgid "JuliaBase revision {revision_number}"
-msgstr ""
-
-#: views/statistics.py:230
-msgid "JuliaBase is presented to you by …"
-msgstr ""
-
-#: views/samples/claim.py:49 views/samples/cleaning_process.py:116
-#: views/samples/large_evaporation.py:45
-#: views/samples/throughput_etching.py:43
+#: views/samples/claim.py:49
 #, fuzzy
 msgid "Samples"
 msgstr "sample series"
@@ -2704,32 +1016,41 @@ msgstr "sample series"
 msgid "Comma-separated"
 msgstr ""
 
-#: views/samples/claim.py:68
+#: views/samples/claim.py:65
+#, python-brace-format
+msgid "The name {name} appears more than once."
+msgstr ""
+
+#: views/samples/claim.py:71
+#, python-brace-format
 msgid "The name {invalid_names} is not valid."
 msgid_plural "The names {invalid_names} are not valid."
 msgstr[0] ""
 msgstr[1] ""
 
-#: views/samples/claim.py:79
+#: views/samples/claim.py:82
+#, python-brace-format
 msgid "The name {existing_names} is already existing."
 msgid_plural "The names {existing_names} are already existing."
 msgstr[0] ""
 msgstr[1] ""
 
-#: views/samples/claim.py:96 views/samples/sample.py:126
-#: views/samples/substrate.py:72
+#: views/samples/claim.py:99 views/samples/sample.py:119
+#: views/samples/substrate.py:70
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 
-#: views/samples/claim.py:128
+#: views/samples/claim.py:131
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 
-#: views/samples/claim.py:138
+#: views/samples/claim.py:141
+#, python-brace-format
 msgid "Sample request from {requester}"
 msgstr ""
 
-#: views/samples/claim.py:139
+#: views/samples/claim.py:142
+#, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
 "\n"
@@ -2745,531 +1066,306 @@ msgid ""
 "JuliaBase.\n"
 msgstr ""
 
-#: views/samples/claim.py:169
+#: views/samples/claim.py:172
+#, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr ""
 
-#: views/samples/claim.py:175
+#: views/samples/claim.py:178
 msgid "Assert claim"
 msgstr ""
 
-#: views/samples/cleaning_process.py:35
-#: views/samples/conductivity_measurement.py:118
-#: views/samples/dektak_measurement.py:79 views/samples/dsr_measurement.py:69
-#: views/samples/five_chamber_deposition.py:42
-#: views/samples/ir_measurement.py:75
-#: views/samples/large_area_deposition.py:54
-#: views/samples/large_evaporation.py:77
-#: views/samples/large_sputter_deposition.py:44
-#: views/samples/layer_thickness.py:69 views/samples/manual_etching.py:76
-#: views/samples/new_cluster_tool_deposition.py:100
-#: views/samples/p_hot_wire_deposition.py:44
-#: views/samples/pds_measurement.py:174 views/samples/raman_measurement.py:79
-#: views/samples/six_chamber_deposition.py:65
-#: views/samples/small_cluster_tool_deposition.py:95
-#: views/samples/small_evaporation.py:77 views/samples/substrate.py:37
-#: views/samples/throughput_etching.py:74
+#: views/samples/cluster_tool_deposition.py:48
+msgid "PECVD"
+msgstr ""
+
+#: views/samples/cluster_tool_deposition.py:49
+msgid "none"
+msgstr ""
+
+#: views/samples/cluster_tool_deposition.py:59
+msgid "Layer to be added"
+msgstr ""
+
+#: views/samples/cluster_tool_deposition.py:62
+msgid "Nickname of My Layer to be added"
+msgstr ""
+
+#: views/samples/cluster_tool_deposition.py:94
+#: views/samples/five_chamber_deposition.py:39
+#: views/samples/pds_measurement.py:119
+#: views/samples/solarsimulator_photo_measurement.py:39
+#: views/samples/structuring.py:32 views/samples/substrate.py:35
 msgid "Operator"
 msgstr ""
 
-#: views/samples/cleaning_process.py:79 views/samples/sample.py:117
-msgid "The cleaning number you have chosen isn't valid."
-msgstr ""
-
-#: views/samples/cleaning_process.py:81
-msgid "The cleaning number you have chosen already exists."
-msgstr ""
-
-#: views/samples/cleaning_process.py:188
-msgid "Cleaning process {name} was successfully changed in the database."
-msgstr ""
-
-#: views/samples/cleaning_process.py:193
-msgid "Cleaning process {name} was successfully added to the database."
-msgstr ""
-
-#: views/samples/cleaning_process.py:199
-msgid "Edit cleaning process “{name}”"
-msgstr ""
-
-#: views/samples/cleaning_process.py:200
-msgid "Add cleaning process"
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:65
-msgid "Could not access {filename}"
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:77
-msgid ""
-"The sample in the file ''{filename}'' doesn't match with the selected sample"
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:85
-#: views/samples/dektak_measurement.py:46 views/samples/dsr_measurement.py:37
-#: views/samples/ir_measurement.py:43 views/samples/layer_thickness.py:37
-#: views/samples/manual_etching.py:45 views/samples/pds_measurement.py:141
-#: views/samples/raman_measurement.py:46 views/samples/small_evaporation.py:46
-#, fuzzy
-msgid "Sample"
-msgstr "sample series"
-
-#: views/samples/conductivity_measurement.py:201
-msgid "The number doesn't match the right format"
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:209 views/samples/sample.py:100
-msgid "The timestamp must not be in the future."
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:229
-msgid "Number of measurements to be added"
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:241
-#, fuzzy
-msgid "Remove Measurement"
-msgstr "sample series"
-
-#: views/samples/conductivity_measurement.py:386
-msgid "No measurenents given."
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:466
-#: views/samples/dektak_measurement.py:200
-#: views/samples/dsr_measurement.py:196 views/samples/ir_measurement.py:209
-#: views/samples/pds_measurement.py:347 views/samples/raman_measurement.py:240
-msgid "{process} was successfully changed in the database."
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:468
-#: views/samples/dektak_measurement.py:201
-#: views/samples/dsr_measurement.py:197 views/samples/ir_measurement.py:210
-#: views/samples/pds_measurement.py:348 views/samples/raman_measurement.py:242
-msgid "{process} was successfully added to the database."
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:472
-msgid "Conductivity measurements of {sample}"
-msgstr ""
-
-#: views/samples/conductivity_measurement.py:473
-#, fuzzy
-msgid "Add conductivity measurements"
-msgstr "Can edit permissions for conductance measurements"
-
-#: views/samples/dektak_measurement.py:220
-msgid "Add Dektak measurement"
-msgstr ""
-
-#: views/samples/dsr_measurement.py:84
-msgid "The directory could not be found."
-msgstr ""
-
-#: views/samples/dsr_measurement.py:86
-msgid "The path leads not to a directory."
-msgstr ""
-
-#: views/samples/dsr_measurement.py:214
-msgid "Add DSR measurement"
-msgstr ""
-
-#: views/samples/five_chamber_deposition.py:62
-#: views/samples/large_area_deposition.py:75
-#: views/samples/large_sputter_deposition.py:64
-#: views/samples/new_cluster_tool_deposition.py:118
-#: views/samples/p_hot_wire_deposition.py:62
-#: views/samples/six_chamber_deposition.py:85
-#: views/samples/small_cluster_tool_deposition.py:113
+#: views/samples/cluster_tool_deposition.py:112
+#: views/samples/five_chamber_deposition.py:59
 msgid "The deposition number must not be changed."
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:69
-#: views/samples/large_area_deposition.py:90
-#: views/samples/large_sputter_deposition.py:71
-#: views/samples/new_cluster_tool_deposition.py:129
-#: views/samples/p_hot_wire_deposition.py:73
-#: views/samples/six_chamber_deposition.py:102
-#: views/samples/small_cluster_tool_deposition.py:124
+#: views/samples/cluster_tool_deposition.py:116
+#: views/samples/five_chamber_deposition.py:63
+msgid "This deposition number exists already."
+msgstr ""
+
+#: views/samples/cluster_tool_deposition.py:123
+#: views/samples/five_chamber_deposition.py:70
 msgid "The first two digits must match the year of the deposition."
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:111
-#: views/samples/large_area_deposition.py:152
-#: views/samples/large_sputter_deposition.py:128
-#: views/samples/new_cluster_tool_deposition.py:330
-#: views/samples/p_hot_wire_deposition.py:140
-#: views/samples/small_cluster_tool_deposition.py:277
+#: views/samples/cluster_tool_deposition.py:244
+#: views/samples/five_chamber_deposition.py:112
+msgid "duplicate this layer"
+msgstr ""
+
+#: views/samples/cluster_tool_deposition.py:245
+#: views/samples/five_chamber_deposition.py:113
 msgid "remove this layer"
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:112
-#: views/samples/large_area_deposition.py:153
-#: views/samples/large_sputter_deposition.py:129
-#: views/samples/new_cluster_tool_deposition.py:331
-#: views/samples/p_hot_wire_deposition.py:141
-#: views/samples/small_cluster_tool_deposition.py:278
+#: views/samples/cluster_tool_deposition.py:246
+#: views/samples/five_chamber_deposition.py:114
 msgid "move this layer"
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:113
-#: views/samples/large_area_deposition.py:154
-#: views/samples/large_sputter_deposition.py:130
-#: views/samples/new_cluster_tool_deposition.py:332
-#: views/samples/p_hot_wire_deposition.py:142
-#: views/samples/small_cluster_tool_deposition.py:279
+#: views/samples/cluster_tool_deposition.py:247
+#: views/samples/five_chamber_deposition.py:115
 msgid "up"
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:113
-#: views/samples/large_area_deposition.py:154
-#: views/samples/large_sputter_deposition.py:130
-#: views/samples/new_cluster_tool_deposition.py:332
-#: views/samples/p_hot_wire_deposition.py:142
-#: views/samples/small_cluster_tool_deposition.py:279
+#: views/samples/cluster_tool_deposition.py:247
+#: views/samples/five_chamber_deposition.py:115
 msgid "down"
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:125
-#: views/samples/large_area_deposition.py:166
-#: views/samples/large_sputter_deposition.py:142
-#: views/samples/new_cluster_tool_deposition.py:344
-#: views/samples/p_hot_wire_deposition.py:154
-#: views/samples/small_cluster_tool_deposition.py:291
+#: views/samples/cluster_tool_deposition.py:259
+#: views/samples/five_chamber_deposition.py:127
 msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 
-#: views/samples/five_chamber_deposition.py:399
-#: views/samples/large_area_deposition.py:470
-#: views/samples/large_sputter_deposition.py:416
-#: views/samples/new_cluster_tool_deposition.py:665
-#: views/samples/p_hot_wire_deposition.py:436
-#: views/samples/six_chamber_deposition.py:438
-#: views/samples/small_cluster_tool_deposition.py:599
-msgid "No layers given."
-msgstr ""
-
-#: views/samples/five_chamber_deposition.py:407
-#: views/samples/large_area_deposition.py:504
-#: views/samples/large_evaporation.py:246
-#: views/samples/large_sputter_deposition.py:424
-#: views/samples/new_cluster_tool_deposition.py:659
-#: views/samples/p_hot_wire_deposition.py:430
-#: views/samples/p_hot_wire_deposition.py:446
-#: views/samples/six_chamber_deposition.py:432
-#: views/samples/small_cluster_tool_deposition.py:593
-#: views/samples/small_evaporation.py:246
-#: views/samples/throughput_etching.py:197
+#: views/samples/cluster_tool_deposition.py:575
+#: views/samples/five_chamber_deposition.py:412
+#, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] ""
 msgstr[1] ""
 
-#: views/samples/ir_measurement.py:227
-msgid "Add IR measurement"
+#: views/samples/cluster_tool_deposition.py:581
+#: views/samples/five_chamber_deposition.py:404
+msgid "No layers given."
 msgstr ""
 
-#: views/samples/large_area_deposition.py:95
-msgid ""
-"The sample holder must be specified if the substrate size is smaller than "
-"30×30."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:134
-msgid "If given, this field must be different from the initial {gasname} flow."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:483
-msgid "You can't change the number of the first layer."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:492
-msgid "New layers collide with following deposition."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:497
-msgid "Overlap with previous deposition numbers."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:512
-msgid "Layer number is not consecutive."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:515
-msgid "Layer date must not be after deposition timestamp."
-msgstr ""
-
-#: views/samples/large_area_deposition.py:518
-msgid "Layer date is not consecutive."
-msgstr ""
-
-#: views/samples/large_evaporation.py:106
-#: views/samples/small_evaporation.py:105
-msgid "The evaporation number you have chosen isn't valid."
-msgstr ""
-
-#: views/samples/large_evaporation.py:108
-#: views/samples/small_evaporation.py:107
-msgid "The evaporation number you have chosen already exists."
-msgstr ""
-
-#: views/samples/large_evaporation.py:321
-#: views/samples/small_evaporation.py:321
-msgid "Process {number} was successfully changed in the database."
-msgstr ""
-
-#: views/samples/large_evaporation.py:329
-#: views/samples/small_evaporation.py:328
-msgid "Process {number} was successfully added to the database."
-msgstr ""
-
-#: views/samples/large_sputter_deposition.py:112
-msgid "The “static field” is not set."
-msgstr ""
-
-#: views/samples/large_sputter_deposition.py:114
-msgid "No static time is set."
-msgstr ""
-
-#: views/samples/layer_thickness.py:213
-msgid "{measurement} was successfully changed in the database."
-msgstr ""
-
-#: views/samples/layer_thickness.py:215
-msgid "{measurement} was successfully added to the database."
-msgstr ""
-
-#: views/samples/layer_thickness.py:227
-msgid "Thickness of {sample}"
-msgstr ""
-
-#: views/samples/layer_thickness.py:227
-msgid "Add thickness"
-msgstr ""
-
-#: views/samples/manual_etching.py:101 views/samples/throughput_etching.py:98
-msgid "The etching number you have chosen isn't valid."
-msgstr ""
-
-#: views/samples/manual_etching.py:103 views/samples/throughput_etching.py:100
-msgid "The etching number you have chosen already exists."
-msgstr ""
-
-#: views/samples/manual_etching.py:124
-msgid "Split the sample after etching"
-msgstr ""
-
-#: views/samples/manual_etching.py:192 views/samples/throughput_etching.py:190
-msgid "This etching number is already in use."
-msgstr ""
-
-#: views/samples/manual_etching.py:244 views/samples/throughput_etching.py:248
-msgid "Etching process {number} was successfully changed in the database."
-msgstr ""
-
-#: views/samples/manual_etching.py:251 views/samples/manual_etching.py:256
-#: views/samples/throughput_etching.py:256
-#: views/samples/throughput_etching.py:261
-msgid "Etching process {number} was successfully added to the database."
-msgstr ""
-
-#: views/samples/manual_etching.py:277
-msgid "Manual etching #{number}"
-msgstr ""
-
-#: views/samples/manual_etching.py:278
-msgid "Add manual etching"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:50
-#: views/samples/small_cluster_tool_deposition.py:48
-msgid "hot-wire"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:51
-#: views/samples/small_cluster_tool_deposition.py:49
-msgid "PECVD"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:52
-msgid "Sputter"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:53
-#: views/samples/small_cluster_tool_deposition.py:50
-msgid "none"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:63
-#: views/samples/small_cluster_tool_deposition.py:60
-msgid "Layer to be added"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:66
-#: views/samples/six_chamber_deposition.py:54
-#: views/samples/small_cluster_tool_deposition.py:63
-msgid "Nickname of My Layer to be added"
-msgstr ""
-
-#: views/samples/new_cluster_tool_deposition.py:122
-#: views/samples/p_hot_wire_deposition.py:66
-#: views/samples/six_chamber_deposition.py:89
-#: views/samples/small_cluster_tool_deposition.py:117
-msgid "This deposition number exists already."
-msgstr ""
-
-#: views/samples/pds_measurement.py:229
+#: views/samples/pds_measurement.py:156
 msgid "Overwrite with file data"
 msgstr ""
 
-#: views/samples/pds_measurement.py:364
+#: views/samples/pds_measurement.py:274
+#: views/samples/solarsimulator_photo_measurement.py:262
+#, python-brace-format
+msgid "{process} was successfully changed in the database."
+msgstr ""
+
+#: views/samples/pds_measurement.py:275
+#: views/samples/solarsimulator_photo_measurement.py:264
+#, python-brace-format
+msgid "{process} was successfully added to the database."
+msgstr ""
+
+#: views/samples/pds_measurement.py:291
+#, python-brace-format
 msgid "Edit PDS measurement of {sample}"
 msgstr ""
 
-#: views/samples/pds_measurement.py:365
+#: views/samples/pds_measurement.py:292
 msgid "Add PDS measurement"
 msgstr ""
 
-#: views/samples/pds_measurement.py:394
+#: views/samples/pds_measurement.py:321
+#, python-brace-format
 msgid "PDS measurement #{pds_number}"
 msgstr ""
 
-#: views/samples/raman_measurement.py:267
-msgid "Edit Raman {apparatus_number} measurement of {sample}"
-msgstr ""
-
-#: views/samples/raman_measurement.py:269
-msgid "Add Raman {apparatus_number} measurement"
-msgstr ""
-
-#: views/samples/sample.py:48
+#: views/samples/sample.py:49
 msgid "no names"
 msgstr ""
 
 #. Translators: "new-style" names
-#: views/samples/sample.py:50
+#: views/samples/sample.py:51
 msgid "new-style"
 msgstr ""
 
-#: views/samples/sample.py:63
+#: views/samples/sample.py:52
+msgid "cleaning number"
+msgstr ""
+
+#: views/samples/sample.py:64
 msgid "Number of samples"
 msgstr ""
 
-#: views/samples/sample.py:65
+#: views/samples/sample.py:66
 msgid "Substrate comments"
 msgstr ""
 
-#: views/samples/sample.py:66
+#: views/samples/sample.py:67
 msgid "Substrate originator"
 msgstr ""
 
-#: views/samples/sample.py:69
-msgid "Current location"
+#: views/samples/sample.py:68
+msgid "timestamp"
 msgstr ""
 
 #: views/samples/sample.py:70
-msgid "Purpose"
+msgid "Current location"
 msgstr ""
 
 #: views/samples/sample.py:71
-msgid "Tags"
+msgid "Purpose"
 msgstr ""
 
 #: views/samples/sample.py:72
-msgid "separated with commas, no whitespace"
+msgid "Tags"
 msgstr ""
 
 #: views/samples/sample.py:73
-msgid "Topic"
+msgid "separated with commas, no whitespace"
 msgstr ""
 
 #: views/samples/sample.py:74
+msgid "Topic"
+msgstr ""
+
+#: views/samples/sample.py:75
 msgid "Rename"
 msgstr ""
 
-#: views/samples/sample.py:83
+#: views/samples/sample.py:77
+msgid "Cleaning number"
+msgstr ""
+
+#: views/samples/sample.py:85
+#, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr ""
 
-#: views/samples/sample.py:119
-msgid "The cleaning number you have chosen doesn't exist."
+#: views/samples/sample.py:102
+msgid "The timestamp must not be in the future."
 msgstr ""
 
-#: views/samples/sample.py:128
+#: views/samples/sample.py:121
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 
-#: views/samples/sample.py:247
+#: views/samples/sample.py:235
+#, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
 "added to “My Samples”."
 msgstr ""
 
-#: views/samples/sample.py:250
+#: views/samples/sample.py:238
+#, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 
-#: views/samples/sample.py:261
+#: views/samples/sample.py:249
 msgid "Add samples"
 msgstr ""
 
-#: views/samples/six_chamber_deposition.py:444
-#: views/samples/six_chamber_deposition.py:452
-msgid "Number is a duplicate."
+#: views/samples/sample.py:256
+msgid "Destination samples"
 msgstr ""
 
-#: views/samples/substrate.py:123
+#: views/samples/sample.py:296
+#, python-brace-format
+msgid "Informal stack was copied from sample {sample}."
+msgstr ""
+
+#: views/samples/sample.py:300
+#, python-brace-format
+msgid "Informal stack of {sample} was successfully copied."
+msgstr ""
+
+#: views/samples/sample.py:304
+#, python-brace-format
+msgid "Copy informal stack of “{sample}”"
+msgstr ""
+
+#: views/samples/solarsimulator_photo_measurement.py:171
+msgid "No measurenents given."
+msgstr ""
+
+#: views/samples/solarsimulator_photo_measurement.py:187
+msgid "This cell position is already given."
+msgstr ""
+
+#: views/samples/solarsimulator_photo_measurement.py:197
+msgid ""
+"A solarsimulator measurement with this cell index and data file already "
+"exists."
+msgstr ""
+
+#: views/samples/solarsimulator_photo_measurement.py:281
+#, python-brace-format
+msgid "{name} of {sample}"
+msgstr ""
+
+#: views/samples/solarsimulator_photo_measurement.py:328
+#, python-brace-format
+msgid "Solarsimulator measurement #{number}"
+msgstr ""
+
+#: views/samples/stack.py:68
+#, python-brace-format
+msgid "Layer stack of {0}"
+msgstr ""
+
+#: views/samples/structuring.py:172
+msgid "Structuring process was successfully changed in the database."
+msgstr ""
+
+#: views/samples/structuring.py:175
+msgid "Structuring process was successfully added to the database."
+msgstr ""
+
+#: views/samples/structuring.py:187
+#, fuzzy
+msgid "Edit structuring process"
+msgstr "sample series"
+
+#: views/samples/structuring.py:187
+#, fuzzy
+msgid "Add structuring process"
+msgstr "sample series"
+
+#: views/samples/substrate.py:121
+#, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
 "namely from {1}."
 msgstr ""
 
-#: views/samples/substrate.py:127
+#: views/samples/substrate.py:125
+#, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr ""
 
-#: views/samples/substrate.py:169
+#: views/samples/substrate.py:167
+#, python-brace-format
 msgid "Substrate {0} was successfully changed in the database."
 msgstr ""
 
-#: views/samples/substrate.py:174
+#: views/samples/substrate.py:172
+#, python-brace-format
 msgid "Substrate {0} was successfully added to the database."
 msgstr ""
 
-#: views/samples/substrate.py:180
+#: views/samples/substrate.py:178
+#, python-brace-format
 msgid "Edit substrate “{0}”"
 msgstr ""
 
-#: views/samples/substrate.py:180
+#: views/samples/substrate.py:178
 msgid "Add substrate"
 msgstr ""
-
-#: views/samples/throughput_etching.py:122
-msgid "Split the sample(s) after etching"
-msgstr ""
-
-#: views/samples/throughput_etching.py:282
-msgid "Throughput etching plant process {number}"
-msgstr ""
-
-#: views/samples/throughput_etching.py:283
-msgid "Add throughput etching plant process"
-msgstr ""
-
-#, fuzzy
-#~ msgid "Error in Conductance data"
-#~ msgstr "sample series"
-
-#~ msgid "Can edit perms for substrates"
-#~ msgstr "Can edit permissions for substrates"
-
-#~ msgid "Can edit perms for layer thickness measurements"
-#~ msgstr "Can edit permissions for layer thickness measurements"
-
-#, fuzzy
-#~ msgid "Can create and edit cluster tool I depositions"
-#~ msgstr "sample series"
-
-#, fuzzy
-#~ msgid "Can create and edit cluster tool II depositions"
-#~ msgstr "sample series"
