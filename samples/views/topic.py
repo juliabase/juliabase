@@ -72,7 +72,7 @@ class NewTopicForm(forms.Form):
         if pk:
             parent_topic = Topic.objects.get(pk=int(pk))
             if not permissions.has_permission_to_edit_topic(self.user, parent_topic):
-                raise ValidationError(_("You are not allowed to edit the topic “{parent_topic}”").\
+                raise ValidationError(_("You are not allowed to edit the topic “{parent_topic}”.").\
                                       format(parent_topic=parent_topic.name))
             return parent_topic
         elif not permissions.has_permission_to_edit_topic(self.user):

@@ -77,7 +77,7 @@ class SampleSeriesForm(forms.ModelForm):
         """
         short_name = self.cleaned_data["short_name"].strip()
         if not short_name and self.fields["short_name"].required:
-            raise ValidationError(_("This field is requierd."))
+            raise ValidationError(_("This field is required."))
         return short_name
 
     def clean_description(self):
