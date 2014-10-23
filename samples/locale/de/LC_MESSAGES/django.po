@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-23 09:55+0200\n"
+"POT-Creation-Date: 2014-10-23 14:52+0200\n"
 "PO-Revision-Date: 2014-10-23 09:59+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -1179,7 +1179,9 @@ msgstr ""
 msgid ""
 "You are not allowed to change this topic because you don't have the "
 "permission “{0}” or “{1}”."
-msgstr "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder „{1}“ fehlt."
+msgstr ""
+"Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
+"„{1}“ fehlt."
 
 #: permissions.py:785
 #, python-brace-format
@@ -1202,7 +1204,9 @@ msgstr ""
 msgid ""
 "You are not allowed to change your topics because you don't have the "
 "permission “{0}” or “{1}”."
-msgstr "Sie dürfen Ihre Themen nicht ändern, weil Ihnen die Berechtgung „{0}“ oder „{1}“ fehlt."
+msgstr ""
+"Sie dürfen Ihre Themen nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
+"„{1}“ fehlt."
 
 #: permissions.py:841
 msgid ""
@@ -1248,24 +1252,6 @@ msgstr "http://matplotlib.sourceforge.net/"
 #: templates/samples/about.html:52
 msgid "Matplotlib logo"
 msgstr "Matplotlib-Logo"
-
-#: templates/samples/about.html:61
-msgid ""
-"\n"
-"    “<strong>Chantaal</strong>” stands\n"
-"    for “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</"
-"strong>vailable <strong>n</strong>etworked\n"
-"    <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</"
-"strong>ibrary”.\n"
-"  "
-msgstr ""
-"\n"
-"    “<strong>Chantaal</strong>” steht\n"
-"    für “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</"
-"strong>vailable <strong>n</strong>etworked\n"
-"    <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</"
-"strong>ibrary”.\n"
-"  "
 
 #: templates/samples/add_claim.html:21 templates/samples/add_claim.html:22
 #: templates/samples/add_status_message.html:21
@@ -3906,7 +3892,8 @@ msgstr "Sie dürfen das Thema „{parent_topic}“ nicht ändern."
 #: views/topic.py:79
 msgid ""
 "You are only allowed to create sub topics. You have to select an upper topic."
-msgstr "Sie dürfen keine Unterthemen anlegen.  Sie müssen ein Überthema auswählen."
+msgstr ""
+"Sie dürfen keine Unterthemen anlegen.  Sie müssen ein Überthema auswählen."
 
 #: views/topic.py:87
 msgid "This topic name is already used."

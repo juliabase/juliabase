@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-23 09:55+0200\n"
+"POT-Creation-Date: 2014-10-23 14:52+0200\n"
 "PO-Revision-Date: 2011-01-31 00:14+0100\n"
 "Last-Translator: JoseRoberto <Unknown>\n"
 "Language: es\n"
@@ -1229,17 +1229,6 @@ msgstr ""
 
 #: templates/samples/about.html:52
 msgid "Matplotlib logo"
-msgstr ""
-
-#: templates/samples/about.html:61
-msgid ""
-"\n"
-"    “<strong>Chantaal</strong>” stands\n"
-"    for “<strong>c</strong>omprehensive <strong>h</strong>ighly-<strong>a</"
-"strong>vailable <strong>n</strong>etworked\n"
-"    <strong>t</strong>est-items <strong>a</strong>rchiving <strong>l</"
-"strong>ibrary”.\n"
-"  "
 msgstr ""
 
 #: templates/samples/add_claim.html:21 templates/samples/add_claim.html:22
