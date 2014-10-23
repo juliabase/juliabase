@@ -41,6 +41,8 @@ from jb_institute import models as jb_institute_app
 from django.contrib.auth.management import create_permissions
 
 
+default_app_config = "jb_institute.apps.InstituteConfig"
+
 @receiver(signals.pre_save)
 def inform_process_supervisors(sender, instance, **kwargs):
     """Send an email to the supervisors of an apparatus when a user creates

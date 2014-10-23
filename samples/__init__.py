@@ -171,6 +171,7 @@ from jb_common.signals import maintain
 import django.contrib.contenttypes.management
 from django.db.models import Q
 
+default_app_config = "samples.apps.SamplesConfig"
 
 @receiver(signals.m2m_changed, sender=samples_app.Sample.watchers.through)
 def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs):

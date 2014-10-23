@@ -41,6 +41,8 @@ from jb_common import models as jb_app
 from jb_common.signals import maintain
 
 
+default_app_config = "jb_common.apps.JBCommonConfig"
+
 # It must be "post_save", otherwise, the ID may be ``None``.
 @receiver(django_signals.post_save, sender=django.contrib.auth.models.User)
 def add_user_details(sender, instance, created=True, **kwargs):
