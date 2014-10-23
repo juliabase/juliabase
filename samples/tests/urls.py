@@ -24,8 +24,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
 
-admin.autodiscover()
-
 
 urlpatterns = patterns("",
                        (r"", include("jb_common.urls")),
