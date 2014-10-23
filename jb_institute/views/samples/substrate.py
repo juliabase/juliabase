@@ -36,6 +36,7 @@ class SubstrateForm(form_utils.ProcessForm):
 
     class Meta:
         model = institute_models.Substrate
+        fields = "__all__"
 
     def __init__(self, user, *args, **kwargs):
         super(SubstrateForm, self).__init__(*args, **kwargs)
