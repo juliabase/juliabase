@@ -56,15 +56,4 @@ copyright holder, you must destroy it immediately and completely.
   </tr>
   </tbody>
 </table>
-
-{% if short_messages %}
-  <div class="short-messages">
-  {% for short_message in short_messages %}
-    {{ short_message }}
-    {% if not forloop.last %}
-    •
-    {% endif %}
-  {% endfor %}
-  </div>
-{% endif %}
 {% endblock %}
