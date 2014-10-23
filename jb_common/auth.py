@@ -198,7 +198,8 @@ class LDAPConnection(object):
         """
         attributes = self.get_ad_data(username)
         return attributes is not None and (
-            attributes.get("department", [""])[0].upper() in settings.JB_DEPARTMENTS
+            not settings.AD_LDAP_DEPARTMENTS or
+            attributes.get("department", [""])[0].decode("utf-8") in settings.AD_LDAP_DEPARTMENTS
             or username in settings.ADDITIONAL_LDAP_USERS)
 
     @staticmethod
@@ -258,8 +259,8 @@ class LDAPConnection(object):
             if "sn" in attributes:
                 user.last_name = attributes["sn"][0].decode("utf-8")
             if "department" in attributes:
-                user.jb_user_details.department = \
-                Department.objects.get_or_create(name=attributes["department"][0].decode("utf-8").upper())[0]
+                jb_department_name = settings.AD_LDAP_DEPARTMENTS[attributes["department"][0].decode("utf-8")]
+                user.jb_user_details.department = Department.objects.get(name=jb_department_name)[0]
             user.email = attributes["mail"][0]
             user.jb_user_details.save()
             user.save()

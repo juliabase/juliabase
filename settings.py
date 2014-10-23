@@ -152,7 +152,8 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 THUMBNAIL_WIDTH = 400
 
-JB_DEPARTMENTS = ["Institute"]
+# Mapping LDAP department names to JuliaBase department names
+AD_LDAP_DEPARTMENTS = {"Institute": "Institute"}
 
 MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 
