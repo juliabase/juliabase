@@ -40,12 +40,10 @@ copyright holder, you must destroy it immediately and completely.
 	  You are now the new responsible person for these samples.
 	{% endblocktrans %}
       </em>
+    {% elif entry.important %}
+      {% trans 'The change was significant.' %}
     {% else %}
-      {% if entry.important %}
-	{% trans 'The change was significant.' %}
-      {% else %}
-	{% trans 'The change was minor.' %}
-      {% endif %}
+      {% trans 'The change was minor.' %}
     {% endif %}
     {% trans 'Description of the change:' %}
   </p>

@@ -67,19 +67,19 @@ copyright holder, you must destroy it immediately and completely.
                 </td>
                  <td class="label">{% verbose_name ClusterToolHotWireLayer.time %}:</td>
                  <td class="value"> {{ layer.time|depostion_time }}</td>
-                 {% ifequal layer.type "PECVD" %}
+                 {% if layer.type == "PECVD" %}
                     {% value_field layer.plasma_start_with_shutter "yes/no" %}
-                 {% else %}{% ifequal layer.type "hot-wire" %}
+                 {% elif layer.type == "hot-wire" %}
                     <td class="label">{% verbose_name ClusterToolHotWireLayer.wire_material %}:</td>
                     <td class="value">{{ layer.get_wire_material_display }}</td>
-                 {% endifequal %}{% endifequal %}
+                 {% endif %}
               </tr>
               <tr>
-                  {% ifequal layer.type "hot-wire" %}
+                  {% if layer.type == "hot-wire" %}
                     {% value_field layer.base_pressure %}
-                  {% else %}{% ifequal layer.type "PECVD" %}
+                  {% elif layer.type == "PECVD" %}
                     {% value_field layer.deposition_power "W" %}
-                  {% endifequal %}{% endifequal %}
+                  {% endif %}
               </tr>
               </tbody>
             </table>

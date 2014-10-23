@@ -64,10 +64,8 @@ function showCellData{{ process.id }}(process_id, position) {
           {{ cell.position }}
           {% if process.irradiance == "AM1.5" %}
             ({{ cell.eta|round:"3" }} %)
-          {% else %}
-            {% if process.irradiance == "OG590" or process.irradiance == "BG7" %}
-              ({{ cell.isc|round:"3" }} mA/cm²)
-            {% endif %}
+          {% elif process.irradiance == "OG590" or process.irradiance == "BG7" %}
+            ({{ cell.isc|round:"3" }} mA/cm²)
           {% endif %}
         </li>
       {% endfor %}

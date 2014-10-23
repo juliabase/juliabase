@@ -46,13 +46,13 @@ copyright holder, you must destroy it immediately and completely.
               <td style="text-align: center; vertical-align: middle">
                   {% if status_message.status_level == "undefined" %}
                       <img src="{{ STATIC_URL }}juliabase/icons/grey.png" alt="undefined"/>
-                  {% else %}{% if status_message.status_level == "red" %}
+                  {% elif status_message.status_level == "red" %}
                       <img src="{{ STATIC_URL }}juliabase/icons/red.png" alt="red"/>
-                  {% else %}{% if status_message.status_level == "yellow" %}
+                  {% elif status_message.status_level == "yellow" %}
                       <img src="{{ STATIC_URL }}juliabase/icons/yellow.png" alt="yellow"/>
-                  {% else %}{% if status_message.status_level == "green" %}
+                  {% elif status_message.status_level == "green" %}
                       <img src="{{ STATIC_URL }}juliabase/icons/green.png" alt="green"/>
-                  {% endif %}{% endif %}{% endif %}{% endif %}
+                  {% endif %}
               </td>
               <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
               <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
@@ -107,13 +107,13 @@ copyright holder, you must destroy it immediately and completely.
                 <td style="text-align: center; vertical-align: middle">
                     {% if status_message.status_level == "undefined" %}
                         <img src="{{ STATIC_URL }}juliabase/icons/grey.png" alt="{% trans 'undefined' %}"/>
-                    {% else %}{% if status_message.status_level == "red" %}
+                    {% elif status_message.status_level == "red" %}
                         <img src="{{ STATIC_URL }}juliabase/icons/red.png" alt="{% trans 'red' %}"/>
-                    {% else %}{% if status_message.status_level == "yellow" %}
+                    {% elif status_message.status_level == "yellow" %}
                         <img src="{{ STATIC_URL }}juliabase/icons/yellow.png" alt="{% trans 'yellow' %}"/>
-                    {% else %}{% if status_message.status_level == "green" %}
+                    {% elif status_message.status_level == "green" %}
                         <img src="{{ STATIC_URL }}juliabase/icons/green.png" alt="{% trans 'green' %}"/>
-                    {% endif %}{% endif %}{% endif %}{% endif %}
+                    {% endif %}
                 </td>
                 <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
                 <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>

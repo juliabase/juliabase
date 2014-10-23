@@ -109,18 +109,18 @@ copyright holder, you must destroy it immediately and completely.
                         </table>
                       </td>
                         {% input_field layer.time %}
-                        {% ifequal layer.type "hot-wire" %}
+                        {% if layer.type == "hot-wire" %}
                           {% input_field layer.wire_material %}
-                        {% else %}{% ifequal layer.type "PECVD" %}
+                        {% elif layer.type == "PECVD" %}
                           {% input_field layer.plasma_start_with_shutter %}
-                        {% endifequal %}{% endifequal %}
+                        {% endif %}
                     </tr>
                     <tr>
-                      {% ifequal layer.type "hot-wire" %}
+                      {% if layer.type == "hot-wire" %}
                         {% input_field layer.base_pressure %}
-                      {% else %}{% ifequal layer.type "PECVD" %}
+                      {% elif layer.type == "PECVD" %}
                         {% input_field layer.deposition_power %}
-                      {% endifequal %}{% endifequal %}
+                      {% endif %}
                     </tr>
                     </tbody>
                   </table>
