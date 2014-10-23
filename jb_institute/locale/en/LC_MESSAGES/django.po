@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-22 21:01+0200\n"
+"POT-Creation-Date: 2014-10-23 14:50+0200\n"
 "PO-Revision-Date: 2011-01-31 00:11+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: es\n"
@@ -749,17 +749,12 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-#: templates/jb_common/base.html:24 templates/refdb/base.html:24
-#: templates/samples/base.html:29
+#: templates/jb_common/base.html:24 templates/samples/base.html:29
 msgid "IEF-5 logo"
 msgstr ""
 
 #: templates/jb_common/base.html:25
 msgid "The database server"
-msgstr ""
-
-#: templates/refdb/base.html:26
-msgid "Beyond Beyer's paper piles"
 msgstr ""
 
 #: templates/samples/add_claim_oldstyle.html:21

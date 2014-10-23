@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-22 21:01+0200\n"
+"POT-Creation-Date: 2014-10-23 14:50+0200\n"
 "PO-Revision-Date: 2014-10-22 21:30+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -738,18 +738,13 @@ msgstr "Abmelden"
 msgid "Log in"
 msgstr "Anmelden"
 
-#: templates/jb_common/base.html:24 templates/refdb/base.html:24
-#: templates/samples/base.html:29
+#: templates/jb_common/base.html:24 templates/samples/base.html:29
 msgid "IEF-5 logo"
 msgstr "Logo des IEF-5"
 
 #: templates/jb_common/base.html:25
 msgid "The database server"
 msgstr "Der Datenbank-Server"
-
-#: templates/refdb/base.html:26
-msgid "Beyond Beyer's paper piles"
-msgstr "Jenseits von Beyers Papierstapeln"
 
 #: templates/samples/add_claim_oldstyle.html:21
 #: templates/samples/add_claim_oldstyle.html:22
@@ -1386,3 +1381,6 @@ msgstr "Ändern des Substrates „{0}“"
 #: views/samples/substrate.py:178
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
+
+#~ msgid "Beyond Beyer's paper piles"
+#~ msgstr "Jenseits von Beyers Papierstapeln"
