@@ -14,6 +14,16 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+from .common import connection, primary_keys
+
+__all__ = ["login", "logout", "new_samples", "Sample", "rename_after_deposition", "PDSMeasurement",
+           "get_or_create_sample", "ClusterToolDeposition", "ClusterToolHotWireLayer",
+           "ClusterToolPECVDLayer", "PIDLock", "find_changed_files", "defer_files", "send_error_mail",
+           "JuliaBaseError", "Result", "setup_logging"]
+
+
+primary_keys.components.add("external_operators=*")
+
 
 class TemporaryMySamples(object):
     """Context manager for adding samples to the “My Samples” list
@@ -95,9 +105,9 @@ def new_samples(number_of_samples, current_location, substrate="asahi-u", timest
                                "substrate_comments": substrate_comments,
                                "purpose": purpose,
                                "tags": tags,
-                               "topic": connection.primary_keys["topics"].get(topic),
+                               "topic": primary_keys["topics"].get(topic),
                                "currently_responsible_person":
-                                   connection.primary_keys["users"][connection.username]})
+                                   primary_keys["users"][connection.username]})
     logging.info("Successfully created {number} samples with the ids {ids}.".format(
             number=len(samples), ids=comma_separated_ids(samples)))
     return samples
@@ -159,7 +169,7 @@ class Result(object):
         number_of_quantities = len(self.quantities_and_values)
         number_of_values = number_of_quantities and len(self.quantities_and_values[0][1])
         data = {"finished": self.finished,
-                "operator": connection.primary_keys["users"][self.operator],
+                "operator": primary_keys["users"][self.operator],
                 "timestamp": format_timestamp(self.timestamp),
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "comments": self.comments,
@@ -172,7 +182,7 @@ class Result(object):
                 "previous-number_of_values": number_of_values,
                 "remove_from_my_samples": False,
                 "external_operator": self.external_operator and \
-                    connection.primary_keys["external_operators"][self.external_operator],
+                    primary_keys["external_operators"][self.external_operator],
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
         for i, quantity_and_values in enumerate(self.quantities_and_values):

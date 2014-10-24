@@ -12,27 +12,14 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-"""Library for communicating with JuliaBase through HTTP.  Typical usage is::
-
-    from jb_remote import *
-    login("r.miller", "mysecurepassword")
-    new_samples(10, "PECVD lab")
-    logout()
-
-This module writes a log file.  On Windows, it is in the current directory.  On
-Unix-like systems, it is in /tmp.
-"""
-
 from __future__ import absolute_import, unicode_literals, division
 
 import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path, datetime, re, time, random, sys, \
     subprocess
-import cPickle as pickle
 
-__all__ = ["login", "logout", "new_samples", "Sample", "rename_after_deposition", "PDSMeasurement",
-           "get_or_create_sample", "ClusterToolDeposition", "ClusterToolHotWireLayer",
-           "ClusterToolPECVDLayer", "PIDLock", "find_changed_files", "defer_files", "send_error_mail",
-           "JuliaBaseError", "Result", "setup_logging"]
+__all__ = ["login", "logout", "PIDLock", "find_changed_files", "defer_files", "send_error_mail", "JuliaBaseError", "setup_logging"]
+
+from . import settings
 
 
 def setup_logging(enable=False):
@@ -168,23 +155,6 @@ class JuliaBaseError(Exception):
         return self.__str__()
 
 
-class PrimaryKeys(object):
-    """Dictionary-like class for storing primary keys.  I use this class only
-    to delay the costly loading of the primary keys until they are really
-    accessed.  This way, GET-request-only usage of the Remote Client becomes
-    faster.
-    """
-
-    def __init__(self, connection):
-        self.connection = connection
-        self.primary_keys = None
-
-    def __getitem__(self, key):
-        if self.primary_keys is None:
-            self.primary_keys = self.connection.open("primary_keys?topics=*&users=*&external_operators=*")
-        return self.primary_keys[key]
-
-
 class JuliaBaseConnection(object):
     """Class for the routines that connect to the database at HTTP level.
     This is a singleton class, and its only instance resides at top-level in
@@ -194,10 +164,9 @@ class JuliaBaseConnection(object):
     opener.addheaders = [("User-agent", "JuliaBase-Remote/0.1"),
                          ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
 
-    def __init__(self, jb_url="https://juliabase.my_institute.kfa-juelich.de/"):
-        self.root_url = jb_url
+    def __init__(self):
         self.username = None
-        self.primary_keys = PrimaryKeys(self)
+        self.root_url = None
 
     def _do_http_request(self, url, data=None):
         logging.debug("{0} {1!r}".format(url, data))
@@ -271,22 +240,22 @@ class JuliaBaseConnection(object):
                         cleaned_list = [clean_header(item) for item in value if value is not None]
                         if cleaned_list:
                             cleaned_data[key] = cleaned_list
-            response = self._do_http_request(self.root_url + relative_url, cleaned_data)
+            response = self._do_http_request(settings.self.root_url + relative_url, cleaned_data)
         else:
-            response = self._do_http_request(self.root_url + relative_url)
+            response = self._do_http_request(settings.self.root_url + relative_url)
         if response_is_json:
             assert response.info()["Content-Type"].startswith("application/json")
             return json.loads(response.read())
         else:
             return response.read()
 
-    def login(self, username, password):
+    def login(self, root_url, username, password):
+        self.root_url = root_url
         self.username = username
         self.open("login_remote_client", {"username": username, "password": password})
 
     def logout(self):
         self.open("logout_remote_client")
-
 
 connection = JuliaBaseConnection()
 
@@ -307,8 +276,9 @@ def login(username, password, testserver=False):
     setup_logging()
     if testserver:
         logging.info("Logging into the testserver.")
-        connection.root_url = "http://my_testserver.my_institute.kfa-juelich.de/"
-    connection.login(username, password)
+        connection.login(settings.testserver_root_url, username, password)
+    else:
+        connection.login(settings.root_url, username, password)
     logging.info("Successfully logged-in as {0}.".format(username))
 
 
@@ -317,3 +287,31 @@ def logout():
     """
     connection.logout()
     logging.info("Successfully logged-out.")
+
+
+class PrimaryKeys(object):
+    """Dictionary-like class for storing primary keys.  I use this class only
+    to delay the costly loading of the primary keys until they are really
+    accessed.  This way, GET-request-only usage of the Remote Client becomes
+    faster.  It is a singleton.
+
+    :ivar components: set of types of primary keys that should be fetched.  For
+        example, it may contain ``"external_operators=*"`` if all external
+        operator's primary keys should be fetched.  The modules the are part of
+        jb_remote are supposed to populate this attribute in top-level module
+        code.
+
+    :type components: set of str
+    """
+
+    def __init__(self, connection):
+        self.connection = connection
+        self.primary_keys = None
+        self.components = {"topics=*", "users=*"}
+
+    def __getitem__(self, key):
+        if self.primary_keys is None:
+            self.primary_keys = self.connection.open("primary_keys?" + "&".join(self.components))
+        return self.primary_keys[key]
+
+primary_keys = PrimaryKeys(connection)

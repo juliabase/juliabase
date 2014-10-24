@@ -13,3 +13,14 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, unicode_literals, division
+
+# Must end in "/".
+root_url = "https://juliabase.my_institute.kfa-juelich.de/"
+testserver_root_url = "https://test-jb.my_institute.kfa-juelich.de/"
+
+smtp_server = "mailrelay.example.com:587"
+# If not empty, TLS is used.
+smtp_login = "username"
+smtp_password = "password"
+email_from = "me@example.com"
+email_to = "admins@example.com"
