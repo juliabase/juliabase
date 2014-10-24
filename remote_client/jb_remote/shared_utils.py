@@ -26,7 +26,7 @@ part of the institute-specific package.  So synchronise it now and then with
 its copy there.
 """
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, division
 
 import re, string, codecs, os, os.path
 
