@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
 from django.db import models, migrations
-import django.contrib.contenttypes.management
-from jb_common.signals import add_user_details as add_common_user_details
-from samples.signals import add_user_details as add_samples_user_details
 
 
 def populate_with_initial_data(apps, schema_editor):
@@ -22,16 +18,6 @@ def populate_with_initial_data(apps, schema_editor):
 
     Topic = apps.get_model("jb_common", "Topic")
     Topic.objects.create(name="Legacy", manager=nobody, department=generic_institute)
-
-    UserDetails = apps.get_model("jb_common", "UserDetails")
-    add_common_user_details(User, nobody, model_user_details=UserDetails, model_department=Department)
-    add_common_user_details(User, julia, model_user_details=UserDetails, model_department=Department)
-
-    django.contrib.contenttypes.management.update_all_contenttypes()
-    UserDetails = apps.get_model("samples", "UserDetails")
-    ContentType = apps.get_model("contenttypes", "ContentType")
-    add_samples_user_details(User, nobody, model_user_details=UserDetails, model_content_type=ContentType)
-    add_samples_user_details(User, julia, model_user_details=UserDetails, model_content_type=ContentType)
 
     Initials = apps.get_model("samples", "Initials")
     Initials.objects.create(initials="LGCY", user=nobody)

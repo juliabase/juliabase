@@ -16,13 +16,22 @@ from __future__ import absolute_import, unicode_literals, division
 
 from django.db.models import signals
 from django.dispatch import receiver
-import django.contrib.auth.models
+from django.contrib.auth.models import User
 from kicker import models as kicker_app
 
 
-@receiver(signals.post_save, sender=django.contrib.auth.models.User)
+@receiver(signals.post_save, sender=User)
 def add_user_details(sender, instance, created, **kwargs):
-    u"""Create ``UserDetails`` for every newly created user.
+    """Create ``UserDetails`` for every newly created user.
     """
     if created:
         kicker_app.UserDetails.objects.create(user=instance)
+
+
+@receiver(signals.post_migrate)
+def add_all_user_details(sender, **kwargs):
+    """Create ``UserDetails`` for all users where necessary.  This is needed
+    because during data migrations, no signals are sent.
+    """
+    for user in User.objects.filter(kicker_user_details=None):
+        add_user_details(User, user, created=True)

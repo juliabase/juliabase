@@ -164,12 +164,12 @@ from __future__ import absolute_import, unicode_literals
 import datetime, hashlib, json
 from django.db.models import signals
 from django.dispatch import receiver
-import django.contrib.auth.models
+from django.contrib.auth.models import User
 from samples import models as samples_app
 from jb_common import models as jb_common_app
-from jb_common.signals import maintain
+from jb_common.signals import maintain, add_all_user_details as jb_add_all_user_details
 import django.contrib.contenttypes.management
-from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
 
 
 @receiver(signals.m2m_changed, sender=samples_app.Sample.watchers.through)
@@ -199,7 +199,7 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
             for user in instance.watchers.all():
                 touch_my_samples(user)
         elif action in ["post_add", "post_remove"]:
-            for user in django.contrib.auth.models.User.objects.in_bulk(pk_set).itervalues():
+            for user in User.objects.in_bulk(pk_set).itervalues():
                 touch_my_samples(user)
 
 
@@ -227,20 +227,12 @@ def get_identifying_data_hash(user):
     return hash_.hexdigest()
 
 
-@receiver(signals.post_save, sender=django.contrib.auth.models.User)
+@receiver(signals.post_save, sender=User)
 def add_user_details(sender, instance, created=True, **kwargs):
     """Create ``UserDetails`` for every newly created user.
-
-    You may call this function directly from a data migration (where signals
-    don't work).  But then, you have to pass the ``UserDetails`` and
-    ``ContentType`` models in the keyword arguments ``model_user_details`` and
-    ``model_content_type``, respectively, because they may be the historical
-    version.
     """
-    UserDetails = kwargs.get("model_user_details", samples_app.UserDetails)
-    ContentType = kwargs.get("model_content_type", django.contrib.contenttypes.models.ContentType)
     if created:
-        user_details = UserDetails.objects.create(
+        user_details = samples_app.UserDetails.objects.create(
             user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
         try:
             user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
@@ -258,7 +250,23 @@ def add_user_details(sender, instance, created=True, **kwargs):
         user_details.save()
 
 
-@receiver(signals.post_save, sender=django.contrib.auth.models.User)
+@receiver(signals.post_migrate)
+def add_all_user_details(sender, **kwargs):
+    """Create ``UserDetails`` for all users where necessary.  This is needed
+    because during data migrations, no signals are sent.
+    """
+    users_to_be_updated = User.objects.filter(samples_user_details=None)
+    if users_to_be_updated.exists():
+        # The following two ugly lines are necessary because "samples" depend
+        # on contenttypes and jb_common to be set up fully, and we cannot set
+        # the guarantee the ordering of the post_migrate calls.
+        django.contrib.contenttypes.management.update_all_contenttypes()
+        jb_add_all_user_details()
+        for user in users_to_be_updated:
+            add_user_details(User, user, created=True)
+
+
+@receiver(signals.post_save, sender=User)
 def touch_user_samples_and_processes(sender, instance, created, **kwargs):
     """Removes all cached items of samples, sample series, and processes which
     are connected with a user.  This is done because the user's name may have
@@ -362,12 +370,12 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
             for user in instance.members.all():
                 user.samples_user_details.touch_display_settings()
         elif action in ["post_add", "post_remove"]:
-            for user in django.contrib.auth.models.User.objects.in_bulk(pk_set).itervalues():
+            for user in User.objects.in_bulk(pk_set).itervalues():
                 user.samples_user_details.touch_display_settings()
 
 
-@receiver(signals.m2m_changed, sender=django.contrib.auth.models.User.groups.through)
-@receiver(signals.m2m_changed, sender=django.contrib.auth.models.User.user_permissions.through)
+@receiver(signals.m2m_changed, sender=User.groups.through)
+@receiver(signals.m2m_changed, sender=User.user_permissions.through)
 def touch_display_settings_by_group_or_permission(sender, instance, action, reverse, model, pk_set, **kwargs):
     """Touch the sample settings of all users for which the groups or
     permissions have changed because we must invalidate the browser cache for
@@ -379,7 +387,7 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
             for user in instance.user_set.all():
                 user.samples_user_details.touch_display_settings()
         elif action in ["post_add", "post_remove"]:
-            for user in django.contrib.auth.models.User.objects.in_bulk(pk_set).itervalues():
+            for user in User.objects.in_bulk(pk_set).itervalues():
                 user.samples_user_details.touch_display_settings()
     else:
         # `instance` is a user
