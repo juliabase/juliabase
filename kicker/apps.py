@@ -14,4 +14,13 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-default_app_config = "kicker.apps.KickerConfig"
+from django.apps import AppConfig
+from django.utils.translation import ugettext_lazy as _
+
+
+class KickerConfig(AppConfig):
+    name = "kicker"
+    verbose_name = _("Kicker")
+
+    def ready(self):
+        import kicker.signals
