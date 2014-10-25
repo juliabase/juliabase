@@ -167,7 +167,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from samples import models as samples_app
 from jb_common import models as jb_common_app
-from jb_common.signals import maintain, add_all_user_details as jb_add_all_user_details
+import jb_common.signals
 import django.contrib.contenttypes.management
 from django.contrib.contenttypes.models import ContentType
 
@@ -231,19 +231,29 @@ def get_identifying_data_hash(user):
 def add_user_details(sender, instance, created=True, **kwargs):
     """Create ``UserDetails`` for every newly created user.
     """
+    # This routine is slightly problematic because we depend on fully ready
+    # contenttypes and existing jb_common.UserDetails.  Since we cannot rely on
+    # the calling order, and have to trigger the respective initialisers
+    # ourselves if necessary.
+    def set_subscribed_feeds(user_details):
+        user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
+                                         ContentType.objects.get(app_label="samples", model="sampleseries"),
+                                         ContentType.objects.get(app_label="jb_common", model="topic")]
     if created:
         user_details = samples_app.UserDetails.objects.create(
             user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
         try:
-            user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
-                                             ContentType.objects.get(app_label="samples", model="sampleseries"),
-                                             ContentType.objects.get(app_label="jb_common", model="topic")]
+            set_subscribed_feeds(user_details)
         except ContentType.DoesNotExist:
-            # This happens when you try to create a super user while creating
-            # the models with ``manage.py syncdb``.
-            raise ContentType.DoesNotExist("You cannot create a user while the database tables are not finished yet.")
+            # This can happen only during the initial migration.
+            django.contrib.contenttypes.management.update_all_contenttypes()
+            set_subscribed_feeds(user_details)
 
-        department = instance.jb_user_details.department
+        try:
+            department = instance.jb_user_details.department
+        except jb_common_app.UserDetails.DoesNotExist:
+            jb_common.signals.add_user_details(User, instance, created=True)
+            department = instance.jb_user_details.department
         if department:
             user_details.show_users_from_department = [department]
 
@@ -255,15 +265,8 @@ def add_all_user_details(sender, **kwargs):
     """Create ``UserDetails`` for all users where necessary.  This is needed
     because during data migrations, no signals are sent.
     """
-    users_to_be_updated = User.objects.filter(samples_user_details=None)
-    if users_to_be_updated.exists():
-        # The following two ugly lines are necessary because "samples" depend
-        # on contenttypes and jb_common to be set up fully, and we cannot set
-        # the guarantee the ordering of the post_migrate calls.
-        django.contrib.contenttypes.management.update_all_contenttypes()
-        jb_add_all_user_details()
-        for user in users_to_be_updated:
-            add_user_details(User, user, created=True)
+    for user in User.objects.filter(samples_user_details=None):
+        add_user_details(User, user, created=True)
 
 
 @receiver(signals.post_save, sender=User)
@@ -395,7 +398,7 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
             instance.samples_user_details.touch_display_settings()
 
 
-@receiver(maintain)
+@receiver(jb_common.signals.maintain)
 def expire_feed_entries(sender, **kwargs):
     """Deletes all feed entries which are older than six weeks.
     """
