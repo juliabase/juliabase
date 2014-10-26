@@ -25,8 +25,10 @@ Unix-like systems, it is in /tmp.
 
 from __future__ import absolute_import, unicode_literals
 
-from .jb_remote.common import connection
-from .jb_remote.samples import primary_keys
+import re
+
+from jb_remote.common import connection
+from jb_remote.samples import primary_keys
 
 
 class ClusterToolDeposition(object):

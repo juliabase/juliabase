@@ -12,6 +12,19 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+"""The settings for the remote client.  If you want to change them in an
+institute-specific module, just import this one with::
+
+    from jb_remote import settings
+
+and change the settings like this::
+
+    settings.root_url = "https://juliabase.ipv.kfa-juelich.de/"
+
+It is important to change the settings before the login into JuliaBase takes
+place.
+"""
+
 from __future__ import absolute_import, unicode_literals, division
 
 # Must end in "/".
