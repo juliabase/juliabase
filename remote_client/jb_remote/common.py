@@ -14,10 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path, datetime, re, time, random, sys, \
-    subprocess
-
-__all__ = ["login", "logout", "PIDLock", "find_changed_files", "defer_files", "send_error_mail", "JuliaBaseError", "setup_logging"]
+import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path, datetime, time, random
 
 from . import settings
 
@@ -240,9 +237,9 @@ class JuliaBaseConnection(object):
                         cleaned_list = [clean_header(item) for item in value if value is not None]
                         if cleaned_list:
                             cleaned_data[key] = cleaned_list
-            response = self._do_http_request(settings.self.root_url + relative_url, cleaned_data)
+            response = self._do_http_request(self.root_url + relative_url, cleaned_data)
         else:
-            response = self._do_http_request(settings.self.root_url + relative_url)
+            response = self._do_http_request(self.root_url + relative_url)
         if response_is_json:
             assert response.info()["Content-Type"].startswith("application/json")
             return json.loads(response.read())
@@ -304,14 +301,13 @@ class PrimaryKeys(object):
     :type components: set of str
     """
 
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self):
         self.primary_keys = None
         self.components = {"topics=*", "users=*"}
 
     def __getitem__(self, key):
         if self.primary_keys is None:
-            self.primary_keys = self.connection.open("primary_keys?" + "&".join(self.components))
+            self.primary_keys = connection.open("primary_keys?" + "&".join(self.components))
         return self.primary_keys[key]
 
-primary_keys = PrimaryKeys(connection)
+primary_keys = PrimaryKeys()

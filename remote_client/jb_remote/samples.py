@@ -14,12 +14,8 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-from .common import connection, primary_keys
-
-__all__ = ["login", "logout", "new_samples", "Sample", "rename_after_deposition", "PDSMeasurement",
-           "get_or_create_sample", "ClusterToolDeposition", "ClusterToolHotWireLayer",
-           "ClusterToolPECVDLayer", "PIDLock", "find_changed_files", "defer_files", "send_error_mail",
-           "JuliaBaseError", "Result", "setup_logging"]
+import datetime, urllib
+from .common import connection, primary_keys, comma_separated_ids, format_timestamp, logging
 
 
 primary_keys.components.add("external_operators=*")
@@ -111,6 +107,62 @@ def new_samples(number_of_samples, current_location, substrate="asahi-u", timest
     logging.info("Successfully created {number} samples with the ids {ids}.".format(
             number=len(samples), ids=comma_separated_ids(samples)))
     return samples
+
+
+class Sample(object):
+    """Class representing samples.
+    """
+
+    def __init__(self, name=None, id_=None):
+        """Class constructor.
+
+        :Parameters:
+          - `name`: the name of an existing sample; it is ignored if `id_` is
+            given
+          - `id_`: the ID of an existing sample
+
+        :type name: unicode
+        :type id_: int
+        """
+        if name or id_:
+            data = connection.open("samples/by_id/{0}".format(id_)) if id_ else \
+                connection.open("samples/{0}".format(urllib.quote(name)))
+            self.id = data["ID"]
+            self.name = data["name"]
+            self.current_location = data["current location"]
+            self.currently_responsible_person = data["currently responsible person"]
+            self.purpose = data["purpose"]
+            self.tags = data["tags"]
+            self.topic = data["topic"]
+            self.processes = dict((key, value) for key, value in data.iteritems() if key.startswith("process "))
+        else:
+            self.id = self.name = self.current_location = self.currently_responsible_person = self.purpose = self.tags = \
+                self.topic = self.timestamp = None
+        self.legacy = False
+        self.edit_description = None
+        self.edit_important = True
+
+    def submit(self):
+        data = {"name": self.name, "current_location": self.current_location,
+                "currently_responsible_person": primary_keys["users"][self.currently_responsible_person],
+                "purpose": self.purpose, "tags": self.tags,
+                "edit_description-description": self.edit_description,
+                "edit_description-important": self.edit_important}
+        if self.topic:
+            data["topic"] = primary_keys["topics"][self.topic]
+        if self.id:
+            connection.open("samples/by_id/{0}/edit/".format(self.id), data)
+        else:
+            if not self.timestamp:
+                self.timestamp = datetime.datetime(1990, 1, 1)
+            return connection.open("add_sample?" + urllib.urlencode(
+                    {"legacy": self.legacy, "timestamp": format_timestamp(self.timestamp)}), data)
+
+    def add_to_my_samples(self):
+        connection.open("change_my_samples", {"add": self.id})
+
+    def remove_from_my_samples(self):
+        connection.open("change_my_samples", {"remove": self.id})
 
 
 class Result(object):

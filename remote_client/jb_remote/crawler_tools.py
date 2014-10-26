@@ -18,7 +18,7 @@ from six.moves import cPickle as pickle
 from six.moves.email_mime_multipart import MIMEMultipart
 from six.moves.email_mime_text import MIMEText
 
-import os, sys, re, subprocess, time, smtplib, email
+import os, sys, re, subprocess, time, smtplib, email, logging
 
 from . import settings
 
@@ -222,8 +222,8 @@ def send_error_mail(from_, subject, text, html=None):
         try:
             server = smtplib.SMTP(settings.smtp_server)
             if settings.smtp_login:
-                s.starttls()
-                s.login(settings.smtp_login, settings.smtp_password)
+                server.starttls()
+                server.login(settings.smtp_login, settings.smtp_password)
             message = MIMEMultipart()
             message["Subject"] = subject
             message["From"] = '"{0}" <{1}>'. \
