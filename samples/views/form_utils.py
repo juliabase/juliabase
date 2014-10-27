@@ -836,43 +836,6 @@ def clean_quantity_field(value, units):
     return match.group("number") + " " + unit
 
 
-deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
-def clean_deposition_number_field(value, letter):
-    """Checks wheter a deposition number given by the user in a form is a
-    valid one.  Note that it does not check whether a deposition with this
-    number already exists in the database.  It just checks the syntax of the
-    number.
-
-    :Parameters:
-      - `value`: the deposition number entered by the user
-      - `letter`: the single uppercase letter denoting the deposition system;
-        it may also be a list containing multiple possibily letters
-
-    :type value: unicode
-    :type letter: unicode or list of unicode
-
-    :Return:
-      the original ``value`` (unchanged)
-
-    :rtype: unicode
-
-    :Exceptions:
-      - `ValidationError`: if the deposition number was not a valid deposition
-        number
-    """
-    if not deposition_number_pattern.match(value):
-        # Translators: “YY” is year, “L” is letter, and “NNN” is number
-        raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."))
-    if isinstance(letter, list):
-        if value[2] not in letter:
-            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(
-                    letter=", ".join(letter)))
-    else:
-        if value[2] != letter:
-            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
-    return value
-
-
 def collect_subform_indices(post_data, subform_key="number", prefix=""):
     """Find all indices of subforms of a certain type (e.g. layers) and return
     them so that the objects (e.g. layers) have a sensible order (e.g. sorted
