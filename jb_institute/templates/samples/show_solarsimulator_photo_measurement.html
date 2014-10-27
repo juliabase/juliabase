@@ -64,10 +64,8 @@ function showCellData{{ process.id }}(process_id, position) {
           {{ cell.position }}
           {% if process.irradiance == "AM1.5" %}
             ({{ cell.eta|round:"3" }} %)
-          {% else %}
-            {% if process.irradiance == "OG590" or process.irradiance == "BG7" %}
-              ({{ cell.isc|round:"3" }} mA/cm²)
-            {% endif %}
+          {% elif process.irradiance == "OG590" or process.irradiance == "BG7" %}
+            ({{ cell.isc|round:"3" }} mA/cm²)
           {% endif %}
         </li>
       {% endfor %}
@@ -102,11 +100,11 @@ function showCellData{{ process.id }}(process_id, position) {
           {% verbose_name SolarsimulatorPhotoCellMeasurement.data_file %}:
       </td>
       <td class="value" style="font-weight: normal">
-        {% ifequal browser_system "windows" %}
+        {% if browser_system == "windows" %}
           <a href="file:///P:/LABOR%20USER/maike_user/ascii%20files/{{ cell.data_file|urlquote }}">
         {% else %}
           <a href="file:///mnt/P/LABOR%20USER/maike_user/ascii%20files/{{ cell.data_file|urlquote }}">
-        {% endifequal %}
+        {% endif %}
             {{ cell.data_file }}</a></td>
         </tr>
       </tbody>

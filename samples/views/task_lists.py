@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import copy, datetime, json
+import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q

@@ -22,7 +22,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
-from django.utils.http import urlquote, urlquote_plus
+from django.utils.http import urlquote_plus
 from django.db import models
 import samples.models_depositions
 from samples import permissions

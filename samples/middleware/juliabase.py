@@ -15,15 +15,10 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import locale, re
-from django.utils.cache import patch_vary_headers
-from django.utils import translation
 from django.template import loader, RequestContext
-from samples.models import UserDetails
 from samples.views import utils
 from samples.permissions import PermissionError
 from jb_common.utils import HttpResponseUnauthorized
-from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
 from django.shortcuts import render_to_response

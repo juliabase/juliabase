@@ -20,28 +20,21 @@ views package.  All symbols from `shared_utils` are also available here.  So
 
 from __future__ import absolute_import, unicode_literals
 
+import datetime, copy, re
 from jb_common import mimeparse
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import Context, RequestContext
-from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
-from functools import update_wrapper
+from django.template import defaultfilters
 from samples import models, permissions
 from samples.views.shared_utils import *
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm, \
-    defaultfilters, UnicodeWriter
+    UnicodeWriter
 import jb_common.utils
-import datetime
-import copy
-import json
-import re
-import string
 
 
 old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$")

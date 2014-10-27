@@ -30,7 +30,7 @@ from jb_common.utils import get_really_full_name
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from samples.models_common import Sample, UserDetails, Process, Result, \
+from samples.models_common import Sample, Process, Result, \
     SampleSplit, SampleSeries, StatusMessage, Task
 import django.contrib.auth.models
 import django.core.urlresolvers

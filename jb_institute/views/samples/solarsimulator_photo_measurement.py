@@ -78,6 +78,7 @@ class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
 
     class Meta:
         model = SolarsimulatorPhotoMeasurement
+        fields = "__all__"
 
 
 class SolarsimulatorPhotoCellForm(forms.ModelForm):

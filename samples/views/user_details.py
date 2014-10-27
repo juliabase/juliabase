@@ -19,14 +19,12 @@ information, and preferences.
 
 from __future__ import absolute_import, unicode_literals
 
-import re, json, copy
+import json, copy
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
-from django.conf import settings
 from django import forms
-from django.forms.util import ValidationError
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
@@ -35,7 +33,7 @@ from samples import models, permissions
 from samples.views import utils, form_utils
 from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
-from jb_common import utils as jb_common_utils, auth
+from jb_common import utils as jb_common_utils
 from jb_common.models import Topic, Department
 
 

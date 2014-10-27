@@ -34,9 +34,55 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import datetime
+from django.db.models import signals
+from django.dispatch import receiver
 import django.dispatch
+from django.contrib.auth.models import User
+from jb_common import models
 
 
 maintain = django.dispatch.Signal()
 
 storage_changed = django.dispatch.Signal()
+
+
+@receiver(signals.post_save, sender=User)
+def add_user_details(sender, instance, created=True, **kwargs):
+    """Adds a `models.UserDetails` instance for every newly-created Django user.
+
+    If there is only one department, this is default for new users.  Otherwise,
+    no department is set here.
+
+    :Parameters:
+      - `sender`: the sender of the signal; will always be the ``User`` model
+      - `instance`: the newly-added user
+      - `created`: whether the user was newly created.
+
+    :type sender: model class
+    :type instance: ``django.contrib.auth.models.User``
+    :type created: bool
+    """
+    if created:
+        departments = models.Department.objects.all()
+        department = departments[0] if departments.count() == 1 else None
+        models.UserDetails.objects.create(user=instance, department=department)
+
+
+@receiver(signals.post_migrate)
+def add_all_user_details(**kwargs):
+    """Create ``UserDetails`` for all users where necessary.  This is needed
+    because during data migrations, no signals are sent.
+    """
+    for user in User.objects.filter(jb_user_details=None):
+        add_user_details(User, user, created=True)
+
+
+@receiver(maintain)
+def expire_error_pages(sender, **kwargs):
+    """Deletes all error pages which are older than six weeks.
+    """
+    now = datetime.datetime.now()
+    six_weeks_ago = now - datetime.timedelta(weeks=6)
+    for error_page in models.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
+        error_page.delete()

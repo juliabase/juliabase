@@ -29,7 +29,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 from jb_common.models import Topic
-from samples import models, permissions
+from samples import permissions
 from samples.views import utils, feed_utils, form_utils
 from  samples.views.permissions import PermissionsPhysicalProcess
 from django.utils.text import capfirst

@@ -41,7 +41,6 @@ from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 import samples.models
-from jb_common.models import Topic
 from jb_common import utils as jb_common_utils
 from samples.views import shared_utils
 

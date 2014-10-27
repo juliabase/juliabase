@@ -43,8 +43,8 @@ class ExportTest(TestCase):
         self.assertEqual(
             json.loads(response.content),
             {"sample IDs": [2], "apparatus": "pds1", "timestamp inaccuracy": 0, "timestamp": "2010-12-02 12:07:36",
-             "evaluated data file": "T:/Daten/pds/p4600-/a_pd4636_joe.dat", "external operator": None,
-             "phase-corrected evaluated data file": "", "operator": "testuser", "finished": True, "comments": "",
+             "external operator": None,
+             "operator": "testuser", "finished": True, "comments": "",
              "PDS number": 1, "type": "PDS measurement", "raw data file": "T:/Daten/pds/p4600-/pd4636.dat"})
 
 

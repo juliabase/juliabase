@@ -30,10 +30,9 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from jb_common.utils import HttpResponseSeeOther, is_json_requested
+from jb_common.utils import is_json_requested
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
-from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 
 

@@ -20,10 +20,8 @@ the database was changed in one way or another.
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
 import jb_common.models
 from samples import models
-from samples.views import utils
 from samples import permissions
 
 

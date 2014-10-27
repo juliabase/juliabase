@@ -36,7 +36,6 @@ here.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
 from jb_institute.models_physical_processes import *
 from jb_institute.models_depositions import *
 from jb_institute.models_sample_details import *

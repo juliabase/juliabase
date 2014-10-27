@@ -17,17 +17,19 @@
 """
 
 from __future__ import absolute_import, unicode_literals
-import sys, ConfigParser, os.path, copy
-from django.conf.global_settings import LOGGING as OLD_LOGGING
+import sys, os.path
 from django.utils.translation import ugettext_lazy as _
+
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 ALLOWED_HOSTS = ["0.0.0.0"]
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
-
-IS_TESTSERVER = "runserver" in sys.argv
 
 
 DEFAULT_FROM_EMAIL = ""
@@ -39,8 +41,6 @@ ADMINS = (
 # If DEBUG == True, all outgoing email is redirected to this account.  If
 # empty, don't send any email at all.
 DEBUG_EMAIL_REDIRECT_USERNAME = "t.bronger"
-
-MANAGERS = ADMINS
 
 DATABASES = {
     "default": {
@@ -55,8 +55,6 @@ DATABASES = {
 TIME_ZONE = "Europe/Berlin"
 
 LANGUAGE_CODE = "en-us"
-
-SITE_ID = 1
 
 USE_I18N = True
 USE_L10N = False

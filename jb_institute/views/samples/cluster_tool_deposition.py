@@ -124,6 +124,7 @@ class DepositionForm(form_utils.ProcessForm):
 
     class Meta:
         model = institute_models.ClusterToolDeposition
+        fields = "__all__"
 
 
 class HotWireLayerForm(forms.ModelForm):

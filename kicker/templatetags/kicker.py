@@ -19,11 +19,7 @@ JuliaBase.
 
 from __future__ import absolute_import
 
-from django.template.defaultfilters import stringfilter
 from django import template
-from django.utils.safestring import mark_safe
-# This *must* be absolute because otherwise, a Django module of the same name
-# is imported.
 from jb_common import utils
 
 register = template.Library()

@@ -23,6 +23,7 @@ modification purposes.
 
 from __future__ import absolute_import, unicode_literals
 
+import datetime, os, json, subprocess
 from jb_common.signals import storage_changed
 from jb_common.utils import static_file_response, \
     is_update_necessary, mkdirs
@@ -36,12 +37,6 @@ from django.utils.translation import ugettext, ugettext_lazy, pgettext_lazy
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 import jb_common.utils
-import datetime
-import os
-import os.path
-import re
-import json
-import subprocess
 import django.forms as forms
 
 _ = ugettext

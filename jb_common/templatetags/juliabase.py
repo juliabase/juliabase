@@ -18,7 +18,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import re, codecs, os.path, unicodedata
+import re
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.safestring import mark_safe

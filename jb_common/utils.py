@@ -15,7 +15,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-import codecs, re, os, os.path, time, json, decimal, datetime, copy, mimetypes
+import codecs, re, os, os.path, time, json, datetime, copy, mimetypes
 from contextlib import contextmanager
 from smtplib import SMTPException
 from functools import update_wrapper

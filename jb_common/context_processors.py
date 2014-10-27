@@ -20,7 +20,6 @@ dictionary passed to the templates.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.utils.http import urlquote, urlquote_plus
 from django.conf import settings
 from django.utils.translation import ugettext
 

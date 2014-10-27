@@ -17,24 +17,24 @@
 etc.  It is important to see that this module is imported by almost all other
 models modules.  Therefore, you *must* *not* import any JuliaBase models module
 here, in particular not ``models.py``.  Otherwise, you'd end up with
-irresolvable cyclic imports.
+irresolvable cyclic imports.  For the same reason, it is sometimes (e.g. for
+`samples.permissions`) necessary to avoid the ``from`` keyword.
 """
 
 from __future__ import absolute_import, division, unicode_literals
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
+from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy, get_language
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
-from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
 from jb_common.utils import get_really_full_name, cache_key_locked
 from jb_common.models import Topic, PolymorphicModel, Department
-from samples import permissions
+import samples.permissions
 from samples.views import shared_utils
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
@@ -672,7 +672,7 @@ class Sample(models.Model):
 
         :rtype: unicode
         """
-        if self.tags and permissions.has_permission_to_fully_view_sample(user, self):
+        if self.tags and samples.permissions.has_permission_to_fully_view_sample(user, self):
             tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
             return " ({0})".format(tags)
         else:
@@ -947,7 +947,7 @@ class SampleSplit(Process):
         else:
             context["parent"] = None
         if context["sample"].last_process_if_split() == self and \
-                permissions.has_permission_to_edit_sample(user, context["sample"]):
+                samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
             context["resplit_url"] = django.core.urlresolvers.reverse(
                 "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
         else:
@@ -1155,7 +1155,7 @@ class Result(Process):
                                 "image_url": image_locations["image_url"]})
             else:
                 context["thumbnail_url"] = context["image_url"] = None
-        if permissions.has_permission_to_edit_result_process(user, self):
+        if samples.permissions.has_permission_to_edit_result_process(user, self):
             context["edit_url"] = \
                 django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
         else:
@@ -1564,8 +1564,8 @@ class ProcessWithSamplePositions(models.Model):
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict and sample:
                 context["sample_position"] = (sample if (sample.topic and not sample.topic.confidential) or
-                                                    permissions.has_permission_to_fully_view_sample(user, sample) or
-                                                    permissions.has_permission_to_add_edit_physical_process(user, self,
+                                                    samples.permissions.has_permission_to_fully_view_sample(user, sample) or
+                                                    samples.permissions.has_permission_to_add_edit_physical_process(user, self,
                                                                                     self.content_type.model_class())
                                                     else _("confidential sample"),
                                                     sample_positions_dict[unicode(sample.id)])
@@ -1573,8 +1573,8 @@ class ProcessWithSamplePositions(models.Model):
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict:
                 context["sample_positions"] = collections.OrderedDict((sample if (sample.topic and not sample.topic.confidential) or
-                                                    permissions.has_permission_to_fully_view_sample(user, sample) or
-                                                    permissions.has_permission_to_add_edit_physical_process(user, self,
+                                                    samples.permissions.has_permission_to_fully_view_sample(user, sample) or
+                                                    samples.permissions.has_permission_to_add_edit_physical_process(user, self,
                                                                                     self.content_type.model_class())
                                                     else _("confidential sample"),
                                                     sample_positions_dict[unicode(sample.id)])

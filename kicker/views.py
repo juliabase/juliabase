@@ -14,7 +14,7 @@
 
 from __future__ import division, absolute_import, unicode_literals
 
-import datetime, time, socket, os, subprocess, math
+import datetime, os, math
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
@@ -27,7 +27,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
-from django.http import HttpResponse, Http404
+from django.http import Http404
 from django.utils.translation import ugettext as _
 from jb_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs
 from jb_common.signals import storage_changed

@@ -60,6 +60,8 @@ operating system by default anyway, you must install:
 - PostgreSQL (and the Python module “psycopg2” for it)
 - memcached (and the Python module for it)
 - matplotlib
+- reportlab
+- Dejavu fonts
 
 PostgreSQL
 ==============
@@ -93,31 +95,28 @@ password.  Finally, create the database with::
   $ createdb juliabase
 
 
-Django and South
-======================
+Django
+=========
 
 A certain version of JuliaBase works only with a certain version of Django.
-Currently, this is Django 1.6.5.  Install it according to `Django's own
-instructions`_.  Not further configuration is necessary.  Moreover, you must
-`install South`_.
+Currently, this is Django 1.7.  Install it according to `Django's own
+instructions`_.  Not further configuration is necessary.
 
 .. _Django's own instructions: https://www.djangoproject.com/download/
-.. _install South: http://south.readthedocs.org/en/latest/installation.html
 
 JuliaBase
 ===========================
 
-Currently, JuliaBase is organised in non-public `Git`_ repositories.  There are
-three of them:
+Currently, JuliaBase is organised in a non-public `Git`_ repository.
+It contains three Django apps:
 
 1. jb_common
-2. juliabase_samples
+2. samples
 3. jb_institute
 
-Each of these three repositories contains one Django app of the same name.
-jb_common implements the basic JuliaBase functionality.  On top of that,
-juliabase_samples implements the actual samples database.  And on top of that,
-jb_institute implements code that is specific to the specific institution or
+“jb_common” implements the basic JuliaBase functionality.  On top of that,
+“samples” implements the actual samples database.  And on top of that,
+“jb_institute” implements code that is specific to the specific institution or
 department or work group that wants to use JuliaBase.  jb_institute implements
 a *generic* institute.  You will replace jb_institute with your own app and
 rename it accordingly.
@@ -125,19 +124,11 @@ rename it accordingly.
 .. _Git: http://git-scm.com/
 
 Once you have arranged with the `JuliaBase maintainers`_ read access for the
-Git repositories, you can check out the source code on your computer with::
+Git repository, you can check out the source code on your computer with::
 
-  git clone git@bob.ipv.kfa-juelich.de:jb_common
-  git clone git@bob.ipv.kfa-juelich.de:juliabase_samples
-  git clone git@bob.ipv.kfa-juelich.de:jb_institute
+  git clone git@bob.ipv.kfa-juelich.de:juliabase
 
 .. _JuliaBase maintainers: mailto:m.goblet@fz-juelich.de
-
-It is important that you do this in the same common parent directory.  This
-creates three subdirectories of the three repository names.  In the
-subdirectory “jb_institute” is the file `manage.py as known from Django`_,
-which is the command-line administration tool for JuliaBase.
-
 .. _manage.py as known from Django:
    https://docs.djangoproject.com/en/dev/ref/django-admin/
 

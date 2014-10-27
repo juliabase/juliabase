@@ -26,14 +26,14 @@ part of the institute-specific package.  So synchronise it now and then with
 its copy there.
 """
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, division
 
 import re, string, codecs, os, os.path
 
 
 def int_or_zero(number):
     """Converts ``number`` to an integer.  If this doesn't work, return ``0``.
-    
+
     :Parameters:
       - `number`: a string that is supposed to contain an integer number
 

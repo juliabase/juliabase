@@ -20,7 +20,6 @@ the Django application “kicker”.
 from __future__ import absolute_import
 
 from django.conf.urls import *
-from django.conf import settings
 
 urlpatterns = patterns("kicker.views",
                        (r"^matches/(?P<id_>\d+)/edit/$", "edit_match"),
