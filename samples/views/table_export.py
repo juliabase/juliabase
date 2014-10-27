@@ -107,10 +107,7 @@ strightforward).
 from __future__ import absolute_import, unicode_literals
 
 from django.forms.util import ValidationError
-from django.shortcuts import render_to_response
-from django.template import RequestContext, defaultfilters
 from django.utils.translation import ugettext as _, ugettext_lazy
-from samples.data_tree import DataNode
 import jb_common.utils
 import csv
 import cStringIO

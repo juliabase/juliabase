@@ -29,14 +29,13 @@ import datetime, re
 from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 import django.core.urlresolvers
-from django.template import Context, loader, RequestContext
+from django.template import loader, RequestContext
 import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
-from samples import models, permissions
+from samples import permissions
 from samples.views import utils
-from samples.data_tree import DataNode
 from jb_common.utils import HttpResponseSeeOther, get_all_models
 
 

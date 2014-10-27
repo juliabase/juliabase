@@ -36,12 +36,10 @@ here.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
 from jb_institute.models_physical_processes import *
 from jb_institute.models_depositions import *
 from jb_institute.models_sample_details import *
 import samples.models
-from samples.utils import register_all_models_to_department
 
 samples.models.clearance_sets.update({
         PDSMeasurement: (PDSMeasurement, Substrate),

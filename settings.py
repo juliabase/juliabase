@@ -17,8 +17,7 @@
 """
 
 from __future__ import absolute_import, unicode_literals
-import sys, ConfigParser, os.path, copy
-from django.conf.global_settings import LOGGING as OLD_LOGGING
+import sys, os.path
 from django.utils.translation import ugettext_lazy as _
 
 

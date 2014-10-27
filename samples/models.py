@@ -39,7 +39,6 @@ here.
 
 from __future__ import absolute_import, unicode_literals
 
-import copy, inspect
 from django.conf import settings
 from samples.models_common import *
 from samples.models_depositions import *

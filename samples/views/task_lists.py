@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import copy, datetime, json
+import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -29,7 +29,6 @@ from jb_common import utils as common_utils
 from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples import permissions
-from jb_common.models import Department
 
 
 class SamplesForm(forms.Form):

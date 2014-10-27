@@ -24,21 +24,16 @@ which is called nightly.
 
 from __future__ import absolute_import, unicode_literals
 
-import socket, subprocess, os, os.path, re
+import re
 from django.db.models import signals
 from django.dispatch import receiver
-from django.conf import settings
 import django.contrib.auth.models
-from django.utils.http import urlquote_plus
-from django.http import Http404
-from django.shortcuts import render_to_response
 from django.utils.translation import ugettext as _
 from jb_common.signals import maintain
 from jb_common import utils
-from samples.models import Process, Result, PhysicalProcess, Sample, SampleAlias
-from samples.views import shared_utils, sample
+from samples.models import Result, PhysicalProcess, Sample, SampleAlias
+from samples.views import shared_utils
 from jb_institute import models as jb_institute_app
-from django.contrib.auth.management import create_permissions
 
 
 @receiver(signals.pre_save)

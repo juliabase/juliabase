@@ -23,12 +23,11 @@ from __future__ import absolute_import, unicode_literals
 import re
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import Http404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy
 import jb_common.utils
 from jb_common.utils import append_error, get_really_full_name
 from samples import permissions

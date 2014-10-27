@@ -19,8 +19,8 @@ and validation.
 
 from __future__ import absolute_import, unicode_literals
 
-import re, os.path, datetime, json
-from django.forms.util import ErrorList, ValidationError
+import re, datetime, json
+from django.forms.util import ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms import ModelForm
@@ -28,8 +28,8 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from jb_common.utils import get_really_full_name, check_markdown, append_error
-from jb_common.models import Topic, Department
-from samples import models, permissions
+from jb_common.models import Topic
+from samples import models
 from samples.views import utils
 from django.utils.text import capfirst
 

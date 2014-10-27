@@ -21,8 +21,6 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.forms import widgets
 from django.forms.util import ValidationError
@@ -33,7 +31,7 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
-from jb_common.utils import check_markdown, get_really_full_name, append_error, HttpResponseSeeOther
+from jb_common.utils import check_markdown, append_error
 from jb_common.search import DateTimeField
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models, PermissionError

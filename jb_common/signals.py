@@ -84,5 +84,5 @@ def expire_error_pages(sender, **kwargs):
     """
     now = datetime.datetime.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
-    for error_page in jb_app.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
+    for error_page in models.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
         error_page.delete()

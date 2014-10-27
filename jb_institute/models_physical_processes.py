@@ -24,7 +24,6 @@ import numpy
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db import models
 import django.core.urlresolvers
-from django.utils.http import urlquote
 from django.conf import settings
 from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess

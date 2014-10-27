@@ -17,11 +17,11 @@
 """
 
 from __future__ import division, unicode_literals
-import string, re, sys, decimal
+import re, sys, decimal
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.template.loader import render_to_string
-from django.utils.html import conditional_escape, escape
+from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 import django.utils.http
 import django.core.urlresolvers
@@ -34,7 +34,6 @@ import jb_common.templatetags.juliabase
 import samples.views.utils
 from samples.views.form_utils import time_pattern
 import jb_common.search
-from jb_common.models import Topic
 
 register = template.Library()
 

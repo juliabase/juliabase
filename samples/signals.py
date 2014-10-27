@@ -161,7 +161,7 @@ is greater than 1:
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, hashlib, json
+import datetime, hashlib
 from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.auth.models import User

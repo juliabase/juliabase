@@ -25,10 +25,9 @@ from __future__ import absolute_import, division, unicode_literals
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
+from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy, get_language
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
-from django.utils.http import urlquote, urlquote_plus
 import django.core.urlresolvers
 from django.conf import settings
 from django.db import models

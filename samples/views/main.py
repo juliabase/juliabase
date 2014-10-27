@@ -27,7 +27,7 @@ import django.core.urlresolvers
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ungettext, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
 from jb_common.utils import help_link, is_json_requested, respond_in_json
 from jb_common.models import Topic

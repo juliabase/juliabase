@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-from django.db import models, migrations
+from django.db import migrations
 
 
 def populate_with_initial_data(apps, schema_editor):

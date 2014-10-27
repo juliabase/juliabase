@@ -23,7 +23,6 @@ from __future__ import absolute_import, unicode_literals
 
 import sys, json
 from django.db.utils import IntegrityError
-from django.db.models import Q
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _

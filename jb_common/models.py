@@ -24,7 +24,6 @@ from django.contrib.contenttypes import generic
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 import jb_common.search
-from collections import Iterable
 
 
 class Department(models.Model):
