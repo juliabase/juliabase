@@ -260,7 +260,7 @@ class LDAPConnection(object):
                 user.last_name = attributes["sn"][0].decode("utf-8")
             if "department" in attributes:
                 jb_department_name = settings.AD_LDAP_DEPARTMENTS[attributes["department"][0].decode("utf-8")]
-                user.jb_user_details.department = Department.objects.get(name=jb_department_name)[0]
+                user.jb_user_details.department = Department.objects.get(name=jb_department_name)
             user.email = attributes["mail"][0]
             user.jb_user_details.save()
             user.save()
